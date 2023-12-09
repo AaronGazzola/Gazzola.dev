@@ -2,6 +2,8 @@
 import { useEffect } from "react";
 import useIsMounted from "./useIsMounted";
 
+// TODO: adjust height on resize
+
 const useBodyHeight = () => {
   const isMounted = useIsMounted();
   useEffect(() => {
