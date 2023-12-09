@@ -8,7 +8,7 @@ import { $getRoot, $isParagraphNode, LexicalNode } from "lexical";
 import { Method, Question, Role } from "@/lib/constants";
 
 // TODO:
-// Handle read stream
+// - Handle read stream
 
 type Message = {
   id: string;
