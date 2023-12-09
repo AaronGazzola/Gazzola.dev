@@ -1,8 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "./animations.css";
-@import "./fonts.css";
+@import "@/styles/animations.css";
+@import "@/styles//fonts.css";
 
 :root {
   --color-scrollbar-thumb: rgba(255, 255, 255, 0.3);
