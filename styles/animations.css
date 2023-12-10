@@ -63,21 +63,21 @@
 }
 
 .bg-image {
-  animation: zoom 1.5s ease-out forwards;
+  animation: zoom 1s ease-out forwards;
 }
 
 .bg-overlay {
-  animation: partialFadeOut 1.5s ease-in-out forwards;
+  animation: partialFadeOut 1s ease-in-out forwards;
 }
 
 .expand {
-  animation: expand 1.5s ease-in-out 0.7s forwards;
+  animation: expand 1s ease-out forwards;
 }
 
 .fade-in-layout {
-  animation: fadeIn 1.5s ease 1s forwards;
+  animation: fadeIn 1s ease 0.5s forwards;
 }
 
 .fade-in-content {
-  animation: fadeIn 1s ease 1.7s forwards;
+  animation: fadeIn 0.5s ease 1.2s forwards;
 }
