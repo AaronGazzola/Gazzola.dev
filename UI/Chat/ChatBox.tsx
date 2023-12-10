@@ -1,11 +1,12 @@
 "use client";
 import Message from "./Message";
 import Editor, { OnEditorChange } from "./Editor/Editor";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { v4 as idGen } from "uuid";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $getRoot, $isParagraphNode, LexicalNode } from "lexical";
 import { Method, Question, Role } from "@/lib/constants";
+import { LayoutContext } from "@/context/LayoutContext";
 
 // TODO:
 // - Handle read stream
@@ -18,6 +19,7 @@ type Message = {
 };
 
 const ChatBox = () => {
+  const { bgIsLoaded } = useContext(LayoutContext);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "init",
@@ -113,8 +115,18 @@ const ChatBox = () => {
   useEffect(updateScroll, [messages]);
   return (
     <div className="absolute inset-0 flex flex-col items-center">
-      <div className="grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 opacity-0 w-full flex flex-col items-center pr-3 pt-4 max-w-[650px] h-full expand">
-        <div className="w-full h-full flex flex-col items-left opacity-0 fade-in-content">
+      <div
+        className={[
+          "grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 opacity-0 w-full flex flex-col items-center pr-3 pt-4 max-w-[650px] h-full",
+          bgIsLoaded ? "expand" : "",
+        ].join(" ")}
+      >
+        <div
+          className={[
+            "w-full h-full flex flex-col items-left opacity-0",
+            bgIsLoaded ? "fade-in-content" : "",
+          ].join(" ")}
+        >
           <div
             ref={scrollRef}
             className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-7 sm:pr-10 pt-3"

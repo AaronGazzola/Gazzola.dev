@@ -1,9 +1,17 @@
 "use client";
+import { LayoutContext } from "@/context/LayoutContext";
 import Link from "next/link";
+import { useContext } from "react";
 
 const Footer = () => {
+  const { bgIsLoaded } = useContext(LayoutContext);
   return (
-    <div className="flex text-sm footer-text pb-4 pt-5 opacity-0 fade-in-layout">
+    <div
+      className={[
+        "flex text-sm footer-text pb-4 pt-5 opacity-0",
+        bgIsLoaded ? "fade-in-layout" : "",
+      ].join(" ")}
+    >
       <div className="space-x-10 flex">
         {[
           {
