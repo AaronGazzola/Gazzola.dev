@@ -99,7 +99,7 @@ const ChatBox = () => {
         return onEmit("Who is this Aaron guy and why should I hire him??");
       case Question.Porfiolio:
         return onEmit(
-          "Did he make Gazzola.dev? What else has he made? Give me some links!"
+          "Did he make This web app (Gazzola.dev)? What else has he made? Give me some links!"
         );
       case Question.Availability:
         return onEmit("When is he available to hire?");
