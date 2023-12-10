@@ -43,6 +43,8 @@ const ChatBox = () => {
       ]);
       setMessage("");
       editor.update(() => $getRoot().clear());
+      if (document.activeElement instanceof HTMLElement)
+        document.activeElement.blur();
       try {
         const res = await fetch("/api/chat", {
           method: Method.Post,
