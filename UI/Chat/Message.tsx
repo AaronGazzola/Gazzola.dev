@@ -69,7 +69,7 @@ const Message = ({
                   {part}
                   {urlRegex.test(links[i]) && (
                     <Link
-                      className="text-blue-300 hover:text-blue-600 cursor-pointer"
+                      className="text-blue-300 hover:text-blue-600 cursor-pointer break-words"
                       href={links[i]}
                       target="_blank"
                       rel="noopener noreferrer"
