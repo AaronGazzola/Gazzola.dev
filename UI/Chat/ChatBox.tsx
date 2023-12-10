@@ -30,6 +30,8 @@ const ChatBox = () => {
   ]);
   const [message, setMessage] = useState("");
   const [isLoading, seIstLoading] = useState(false);
+  const [editorWillBlurNextUpdate, setEditorWillBlurNextUpdate] =
+    useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [editor] = useLexicalComposerContext();
 
@@ -42,9 +44,10 @@ const ChatBox = () => {
         { id: idGen(), isUser: true, message: messageVar },
       ]);
       setMessage("");
-      editor.update(() => $getRoot().clear());
-      if (document.activeElement instanceof HTMLElement)
-        document.activeElement.blur();
+      editor.update(() => {
+        $getRoot().clear();
+      });
+      setEditorWillBlurNextUpdate(true);
       try {
         const res = await fetch("/api/chat", {
           method: Method.Post,
@@ -115,6 +118,16 @@ const ChatBox = () => {
   };
 
   useEffect(updateScroll, [messages]);
+
+  useEffect(() => {
+    return editor.registerUpdateListener(() => {
+      if (editorWillBlurNextUpdate) {
+        editor.blur();
+        setEditorWillBlurNextUpdate(false);
+      }
+    });
+  });
+
   return (
     <div className="absolute inset-0 flex flex-col items-center">
       <div
