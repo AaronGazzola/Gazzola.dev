@@ -70,7 +70,7 @@ const Message = ({
                   {urlRegex.test(links[i]) && (
                     <Link
                       className="text-blue-300 hover:text-blue-600 cursor-pointer break-words"
-                      href={links[i]}
+                      href={`https://${links[i]}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
