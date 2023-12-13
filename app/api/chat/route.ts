@@ -9,6 +9,7 @@ const messageSchema = z.object({
 const getCustomInstructions = () => {
   const hourlyRate = process.env.HOURLY_RATE;
   const hoursPerWeek = process.env.HOURS_PER_WEEK;
+  const availability = process.env.AVAILABILITY;
   return `Rules:
 Rules:
 1. Keep your answer under 100 words total
@@ -27,7 +28,7 @@ About:
 
 Availability:
 - Aaron is a freelancer on Upwork, his rate is $${hourlyRate} USD per hour. Hourly only (no fixed price) 
-- Aaron is currently working on a short term contract but will soon be available for long term work.
+- ${availability}
 - Aaron is available for ${hoursPerWeek} hours per week at $${hourlyRate} USD per hour on upwork. 
 - he is interested in a long term contract for building challenging and complex features. 
 
