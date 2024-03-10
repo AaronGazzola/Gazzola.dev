@@ -8,8 +8,8 @@
   --color-scrollbar-track: rgba(0, 0, 0, 0.15);
 }
 
-/* Set screen height with useScreenHeight for mobile devices */
-.h-screen-hook {
+/* Override tailwind screen height with variable set in useScreenHeight */
+.h-screen {
   height: calc(var(--vh, 1vh) * 100);
 }
 
@@ -33,6 +33,14 @@
 .top-vignette {
   background-image: linear-gradient(
     to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    transparent 100%
+  );
+}
+
+.bottom-vignette {
+  background-image: linear-gradient(
+    to top,
     rgba(0, 0, 0, 1) 0%,
     transparent 100%
   );

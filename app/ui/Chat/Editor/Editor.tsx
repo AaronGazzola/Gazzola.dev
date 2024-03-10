@@ -41,7 +41,7 @@ const Editor = ({
             />
           }
           placeholder={
-            <div className="-z-10 absolute top-3 left-6 text-gray-700 italic">
+            <div className="-z-10 absolute top-3 left-6 text-gray-400 italic">
               Message Aaron&apos;s AI ...
             </div>
           }

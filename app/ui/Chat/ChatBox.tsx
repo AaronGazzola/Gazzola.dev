@@ -35,7 +35,7 @@ const initialConfig = {
 const ChatBox = () => {
   useScreenHeight();
   return (
-    <div className="flex flex-col w-full h-screen-hook px-5 sm:px-10 items-center relative overflow-hidden">
+    <div className="flex flex-col w-full h-screen px-5 sm:px-10 items-center relative overflow-hidden">
       <LexicalComposer initialConfig={initialConfig}>
         <Chat />
       </LexicalComposer>
@@ -116,12 +116,13 @@ const Chat = () => {
     [editor, message]
   );
 
-  function updateScroll() {
-    var element = scrollRef.current;
-    if (!element) return;
-    element.scrollTop = element.scrollHeight;
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }
+  // TODO: remove?
+  // function updateScroll() {
+  //   var element = scrollRef.current;
+  //   if (!element) return;
+  //   element.scrollTop = element.scrollHeight;
+  //   scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }
 
   const onEditorChange: OnEditorChange = (editorState) => {
     let messageText = "";
@@ -155,7 +156,7 @@ const Chat = () => {
     }
   };
 
-  useEffect(updateScroll, [messages]);
+  // useEffect(updateScroll, [messages]);
 
   useEffect(() => {
     return editor.registerUpdateListener(() => {

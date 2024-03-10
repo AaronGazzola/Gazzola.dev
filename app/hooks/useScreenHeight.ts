@@ -6,7 +6,6 @@ const useScreenHeight = () => {
   useEffect(() => {
     if (!isMounted) return;
     const setViewportHeight = () => {
-      console.log("test");
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     };
