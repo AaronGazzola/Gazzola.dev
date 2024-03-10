@@ -1,0 +1,83 @@
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes partialFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes expand {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.3);
+  }
+  80% {
+    opacity: 0.5;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@keyframes dashAnimation {
+  0% {
+    stroke-dasharray: 0, 100;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 150, 0;
+    stroke-dashoffset: -100;
+  }
+  100% {
+    stroke-dasharray: 0, 100;
+    stroke-dashoffset: -200;
+  }
+}
+
+.animatedLine {
+  animation: dashAnimation 2s linear infinite;
+}
+
+.bg-image {
+  animation: zoom 1s ease-out forwards;
+}
+
+.bg-overlay {
+  animation: partialFadeOut 1s ease-in-out forwards;
+}
+
+.expand {
+  animation: expand 1s ease-out forwards;
+}
+
+.fade-in-layout {
+  animation: fadeIn 1s ease 0.5s forwards;
+}
+
+.fade-in-content {
+  animation: fadeIn 0.5s ease 0.7s forwards;
+}
