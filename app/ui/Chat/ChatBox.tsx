@@ -9,7 +9,6 @@ import { Method, Question, Role } from "@/app/lib/constants";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import useScreenHeight from "@/app/hooks/useScreenHeight";
 import Image from "next/image";
-import useIsMounted from "@/app/hooks/useIsMounted";
 
 // TODO:
 // - Handle read stream
@@ -34,27 +33,24 @@ const initialConfig = {
 };
 
 const ChatBox = () => {
-  const isMounted = useIsMounted();
   useScreenHeight();
   return (
     <div className="flex flex-col w-full h-screen-hook px-5 sm:px-10 items-center relative overflow-hidden">
       <LexicalComposer initialConfig={initialConfig}>
         <Chat />
       </LexicalComposer>
-      {/* TODO: Find better fix that using isMounted for initial image position bug */}
-      {isMounted && (
-        <div className="inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-black z-10 bg-overlay" />
-          <div className="absolute top-0 right-0 left-0 h-36 z-10 top-vignette" />
-          <Image
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full min-h-full"
-            src="/Astronaut in code with moon.png"
-            alt="Astronaut in cyberspace background image"
-            width={1456}
-            height={832}
-          />
-        </div>
-      )}
+
+      <div className="absolute inset-0 -z-10 overflow-hidden flex items-center justify-center ">
+        <div className="absolute inset-0 bg-black z-10 bg-overlay" />
+        <div className="absolute top-0 right-0 left-0 h-36 z-10 top-vignette" />
+        <Image
+          className="object-cover object-center h-full w-full"
+          src="/Astronaut in code with moon.png"
+          alt="Astronaut in cyberspace background image"
+          width={1456}
+          height={832}
+        />
+      </div>
     </div>
   );
 };
