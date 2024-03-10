@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const BioImage = () => {
+const BioPortrait = () => {
   const ref = useRef<null | HTMLDivElement>(null);
   const [showAltImage, setShowAltImage] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -74,4 +74,4 @@ const BioImage = () => {
   );
 };
 
-export default BioImage;
+export default BioPortrait;

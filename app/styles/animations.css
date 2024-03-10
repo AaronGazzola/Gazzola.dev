@@ -125,3 +125,20 @@
 .phase-in {
   animation: phaseIn 2s ease-out forwards;
 }
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate {
+  animation: rotate 30s linear infinite;
+}
+
+.rotate-reverse {
+  animation: rotate 30s linear infinite reverse;
+}
