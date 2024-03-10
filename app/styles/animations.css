@@ -7,6 +7,15 @@
   }
 }
 
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 @keyframes partialFadeOut {
   from {
     opacity: 1;
@@ -72,6 +81,14 @@
 
 .expand {
   animation: expand 1s ease-out forwards;
+}
+
+.fade-in-moon {
+  animation: fadeIn 1s ease 0.5s forwards;
+}
+
+.fade-out-moon {
+  animation: fadeOut 1s ease 0.5s forwards;
 }
 
 .fade-in-layout {
