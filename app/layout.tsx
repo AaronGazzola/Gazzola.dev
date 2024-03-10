@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/styles/globals.css";
 import { inter } from "@/app/styles/fonts";
+import clsx from "clsx";
 
 export const metadata: Metadata = {
   title: "Gazzola Development",
@@ -18,7 +19,9 @@ export default function RootLayout({
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="alternate icon" href="/icon.ico" />
       </head>
-      <body className={`${inter.className} antialiased text-gray-200 bg-black`}>
+      <body
+        className={clsx(inter.className, "antialiased text-gray-100 bg-black")}
+      >
         {children}
       </body>
     </html>
