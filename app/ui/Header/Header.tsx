@@ -13,7 +13,7 @@ const Header = () => {
       <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
         AARON GAZZOLA
       </h1>
-      <h2 className="text-lg font-medium">Full Stack TypeScript Engineer</h2>
+      <h2 className="text-lg font-medium">Full Stack TypeScript Engineer:</h2>
       <h3 className="text-lg font-medium">Next.js Specialist</h3>
       <Image
         className="object-cover w-full max-w-[1000px] mt-12"

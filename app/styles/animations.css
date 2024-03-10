@@ -81,3 +81,47 @@
 .fade-in-content {
   animation: fadeIn 0.5s ease 0.7s forwards;
 }
+
+@keyframes phaseOut {
+  0% {
+    width: 100%;
+    border-radius: 50%;
+    z-index: 10;
+  }
+  50% {
+    width: 50%;
+    border-radius: 0%;
+    z-index: 0;
+  }
+  100% {
+    width: 50%;
+    border-radius: 0%;
+    z-index: 0;
+  }
+}
+
+@keyframes phaseIn {
+  0% {
+    width: 50%;
+    border-radius: 0%;
+    z-index: 0;
+  }
+  50% {
+    width: 50%;
+    border-radius: 0%;
+    z-index: 0;
+  }
+  100% {
+    width: 100%;
+    border-radius: 50%;
+    z-index: 10;
+  }
+}
+
+.phase-out {
+  animation: phaseOut 2s ease-in forwards;
+}
+
+.phase-in {
+  animation: phaseIn 2s ease-out forwards;
+}
