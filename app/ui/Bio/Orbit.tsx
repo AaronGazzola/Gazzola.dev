@@ -26,10 +26,10 @@ const Orbit = () => {
     if (!ref.current) return;
     const { top, bottom } = ref.current.getBoundingClientRect();
     const center = (top + bottom) / 2;
-    const oneThirdWindowHeight = window.innerHeight / 3;
+    const oneQuarterWindowHeight = window.innerHeight / 4;
     const willShowAltImage =
-      center > oneThirdWindowHeight &&
-      center < window.innerHeight - oneThirdWindowHeight;
+      center > oneQuarterWindowHeight &&
+      center < window.innerHeight - oneQuarterWindowHeight;
     if (isAnimating || showAltImage === willShowAltImage) return;
     setHasScrolled(true);
     setShowAltImage(willShowAltImage);
