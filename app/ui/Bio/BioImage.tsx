@@ -1,27 +1,35 @@
 "use client";
 import clsx from "clsx";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const BioImage = () => {
   const ref = useRef<null | HTMLDivElement>(null);
-  const [animationTrigger, setAnimationTrigger] = useState(false);
+  const [showAltImage, setShowAltImage] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const onScroll = useCallback(() => {
+    if (!ref.current) return;
+    const { top, bottom } = ref.current.getBoundingClientRect();
+    const center = (top + bottom) / 2;
+    const oneThirdWindowHeight = window.innerHeight / 3;
+    const willShowAltImage =
+      center > oneThirdWindowHeight &&
+      center < window.innerHeight - oneThirdWindowHeight;
+    if (isAnimating || showAltImage === willShowAltImage) return;
+    setShowAltImage(willShowAltImage);
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 2000);
+  }, [isAnimating, showAltImage]);
 
   useEffect(() => {
-    const onScroll = () => {
-      if (!ref.current) return;
-      const { top, bottom } = ref.current.getBoundingClientRect();
-      const center = (top + bottom) / 2;
-      const oneThirdWindowHeight = window.innerHeight / 3;
-      setAnimationTrigger(
-        center > oneThirdWindowHeight &&
-          center < window.innerHeight - oneThirdWindowHeight
-      );
-    };
     window.addEventListener("scroll", onScroll);
-    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [onScroll]);
+
+  useEffect(() => {
+    if (!isAnimating) onScroll();
+  }, [isAnimating, onScroll]);
 
   return (
     <div className="flex items-center justify-center" ref={ref}>
@@ -29,7 +37,7 @@ const BioImage = () => {
         <div
           className={clsx(
             "absolute bottom-0 top-0 left-0 overflow-hidden",
-            animationTrigger ? "phase-out" : "phase-in"
+            showAltImage ? "phase-out" : "phase-in"
           )}
         >
           <div className="absolute inset-0 z-10 bg-black opacity-10"></div>
@@ -47,7 +55,7 @@ const BioImage = () => {
         <div
           className={clsx(
             "absolute bottom-0 top-0 right-0 w-full overflow-hidden",
-            animationTrigger ? "phase-in" : "phase-out"
+            showAltImage ? "phase-in" : "phase-out"
           )}
         >
           <div className="absolute right-0 w-56">
