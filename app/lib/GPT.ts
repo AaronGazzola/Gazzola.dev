@@ -1,3 +1,17 @@
+const getYearsOfExperience = () => {
+  const startDate = new Date("2019-10-01");
+  const todayDate = new Date();
+  const yearsDifference = todayDate.getFullYear() - startDate.getFullYear();
+  const monthsDifference = todayDate.getMonth() - startDate.getMonth();
+  const dayDifference = todayDate.getDate() - startDate.getDate();
+
+  // Adjust the year difference if the current date is before the anniversary in the current year
+  if (monthsDifference < 0 || (monthsDifference === 0 && dayDifference < 0)) {
+    return yearsDifference - 1;
+  }
+  return yearsDifference;
+};
+
 export const getCustomInstructions = (
   hourlyRate: string,
   hoursPerWeek: string,
@@ -11,10 +25,10 @@ export const getCustomInstructions = (
   The rest of this message is information for you to use when writing your response:
   
   About:
-  - Aaron has over 4 years of experience working with node to build web apps
-  - Aaron specialises in Next.js with Typescript.
+  - Aaron is a Full Stack TypeScript Engineer and Next.js Specialist
+  - Aaron has over ${getYearsOfExperience()} years of experience working with node to build web apps
   - Aaron is Top rated plus on Upwork, with a 100% job success.
-  - Aaron has extensive experience with: Lexical, Prisma, Postgres, TailwindCSS
+  - Aaron has extensive experience with: Next.js, TypeScript, PostgreSQL, Prisma, Tailwind, HTML, CSS, JS, Git and much more.
   - Aaron completed a First Class Honours degree in Science in Australia.
   - Github url: github.com/AaronGazzola/
   - Upwork (contact) url: www.upwork.com/freelancers/~017424c1cc6bed64e2
