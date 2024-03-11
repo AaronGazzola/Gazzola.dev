@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const Bio = () => {
   return (
-    <div className="flex flex-row flex-wrap items-center justify-center">
+    <div className="flex flex-row flex-wrap items-center justify-center my-16 mb-10">
       <div className="flex flex-col p-6 sm:p-10 m-2 relative text-gray-200 max-w-md">
         <div className="border border-gray-400 border-t-transparent border-r-transparent rounded-bl-[15px] absolute left-1 sm:left-3 bottom-1 sm:bottom-3 w-16 h-16"></div>
         <div className="border border-gray-400 border-b-transparent border-l-transparent rounded-tr-[20px] absolute right-1 sm:right-3 top-4 sm:top-6 w-16 h-16"></div>

@@ -11,7 +11,7 @@ const ImageDivider = () => {
       <h1
         className={clsx(
           sourceCodePro.className,
-          "tracking-[1.1rem] text-white text-[1.5rem] sm:text-[2.5rem] absolute bottom-4 left-1 sm:left-5 right-0 text-shadow lg:text-center"
+          "tracking-[1.2rem] md:tracking-[2rem] text-white md:text-gray-300 text-[1.5rem] md:text-[2.5rem] absolute bottom-6 md:bottom-4 left-1 sm:left-5 right-0 text-shadow lg:text-center"
         )}
       >
         BEEP BOOP
