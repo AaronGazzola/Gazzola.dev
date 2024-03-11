@@ -2,7 +2,6 @@ import Orbit from "./Orbit";
 import clsx from "clsx";
 import { sourceCodePro } from "@/app/styles/fonts";
 import Buttons from "./Buttons";
-import Image from "next/image";
 
 const Bio = () => {
   return (
@@ -18,14 +17,14 @@ const Bio = () => {
         >
           An Insightful Technologist
         </h1>
-        <p className="text-md">
+        <p className="text-md sm:text-lg">
           As technology evolves, the horizon expands for those who understand
           the full spectrum of development. As a Full Stack Engineer, I provide
           comprehensive solutions that cater to both the front-end and back-end
           needs of your project, ensuring a seamless and dynamic user
           experience.
         </p>
-        <p className="text-md">
+        <p className="text-md sm:text-lg">
           I am insightful and autonomous, granting me the foresight and
           independence to proactively discern and dismantle barriers, ensuring
           your projects flow smoothly and reach new heights of success.

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import useIsMounted from "../hooks/useIsMounted";
 
+// TOODO: Fix server conflict
 const stars = [...new Array(400)].map(() => {
   return {
     x: `${Math.random() * 100}%`,
