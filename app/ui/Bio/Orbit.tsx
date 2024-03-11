@@ -48,7 +48,7 @@ const Orbit = () => {
 
   return (
     <div
-      className="flex items-center justify-center p-16 relative my-10"
+      className="flex items-center justify-center m-2 p-14 sm:p-16 relative"
       ref={ref}
     >
       {moonImageNames.map((imageName, index) => (

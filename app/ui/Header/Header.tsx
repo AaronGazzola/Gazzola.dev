@@ -7,7 +7,7 @@ const Header = () => {
     <div
       className={clsx(
         sourceCodePro.className,
-        "flex flex-col justify-end w-full px-5 sm:px-10 items-center relative overflow-hidden"
+        "flex flex-col justify-end w-full px-5 sm:px-10 items-center relative overflow-hidden text-center"
       )}
     >
       <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
