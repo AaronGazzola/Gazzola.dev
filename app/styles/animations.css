@@ -159,3 +159,57 @@
 .rotate-reverse {
   animation: rotate 30s linear infinite reverse;
 }
+
+@keyframes buttonRotate {
+  0% {
+    transform: rotate(360deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes buttonRotateReverse {
+  0% {
+    transform: rotate(90deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(450deg);
+    opacity: 0;
+  }
+}
+
+.button-rotate {
+  animation: buttonRotate 2s linear infinite;
+}
+
+.button-rotate-reverse {
+  animation: buttonRotateReverse 2s linear infinite;
+}
