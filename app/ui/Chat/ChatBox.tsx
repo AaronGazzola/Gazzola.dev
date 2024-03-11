@@ -123,13 +123,37 @@ const Chat = () => {
     [editor, messages, message]
   );
 
-  // TODO: remove?
-  // function updateScroll() {
-  //   var element = scrollRef.current;
-  //   if (!element) return;
-  //   element.scrollTop = element.scrollHeight;
-  //   scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  // }
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    const totalScrollDistance = element.scrollHeight - element.clientHeight;
+    let start: number | null = null;
+
+    function step(timestamp: number) {
+      if (!element) return;
+      start = start ?? timestamp;
+      const progress = timestamp - start;
+      const duration = 500; // Duration of the animation in milliseconds
+      const easeInOutQuad = (t: number) =>
+        t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+      // Calculate how far to scroll
+      const scrollDistance =
+        easeInOutQuad(Math.min(progress / duration, 1)) *
+        (totalScrollDistance - element.scrollTop);
+
+      element.scrollTop += scrollDistance;
+
+      if (progress < duration) {
+        window.requestAnimationFrame(step);
+      } else {
+        // Ensure we're exactly at the bottom, especially if there were rounding errors
+        element.scrollTop = totalScrollDistance;
+      }
+    }
+
+    window.requestAnimationFrame(step);
+  }, [messages]);
 
   const onEditorChange: OnEditorChange = (editorState) => {
     let messageText = "";
