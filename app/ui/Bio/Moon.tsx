@@ -14,9 +14,6 @@ const Moon = ({
   hasScrolled: boolean;
   showAltImage: boolean;
 }) => {
-  console.log(
-    !hasScrolled ? "" : showAltImage ? "fade-in-moon" : "fade-out-moon"
-  );
   return (
     <div
       className={clsx(

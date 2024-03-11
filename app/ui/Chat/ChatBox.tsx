@@ -77,11 +77,12 @@ const Chat = () => {
   const onEmit = useCallback(
     async (messageArg = "") => {
       const messageVar = messageArg || message;
-      seIstLoading(true);
-      setMessages((prev) => [
-        ...prev,
+      const messagesVar = [
+        ...messages,
         { id: idGen(), isUser: true, message: messageVar },
-      ]);
+      ];
+      seIstLoading(true);
+      setMessages(messagesVar);
       setMessage("");
       editor.update(() => {
         $getRoot().clear();
@@ -94,7 +95,12 @@ const Chat = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message: messageVar,
+            messages: messagesVar
+              .map((message) => ({
+                role: message.isUser ? "user" : "assistant",
+                content: message.message,
+              }))
+              .slice(1),
           }),
         });
         const data = await res.json();
@@ -114,7 +120,7 @@ const Chat = () => {
         seIstLoading(false);
       }
     },
-    [editor, message]
+    [editor, messages, message]
   );
 
   // TODO: remove?
