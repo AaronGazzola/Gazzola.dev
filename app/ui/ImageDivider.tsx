@@ -11,10 +11,10 @@ const ImageDivider = () => {
       <h1
         className={clsx(
           sourceCodePro.className,
-          "tracking-[1rem] text-white text-[1.5rem] sm:text-[2.5rem] absolute bottom-5 left-1 sm:left-5 right-0 text-shadow lg:text-center"
+          "tracking-[1rem] text-white text-[1.5rem] sm:text-[2.5rem] absolute bottom-4 left-1 sm:left-5 right-0 text-shadow lg:text-center"
         )}
       >
-        VANGUARD ARCHITECT
+        DIGITAL VANGUARD
       </h1>
       <Image
         className="object-cover h-full w-full"

@@ -12,6 +12,7 @@ import Image from "next/image";
 
 // TODO:
 // - Handle read stream
+// - Remove lexical?
 
 type Message = {
   id: string;
