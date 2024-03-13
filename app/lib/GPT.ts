@@ -20,6 +20,7 @@ export const getCustomInstructions = (
   return `Rules:
   Rules:
   1. Keep your answer under 100 words total
+  2. Do not use markdown to format text
   3. Use the information below to inform your answer
   
   The rest of this message is information for you to use when writing your response:
