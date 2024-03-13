@@ -17,108 +17,38 @@ export const getCustomInstructions = (
   hoursPerWeek: string,
   availability: string
 ) => {
-  return `Rules:
-  Rules:
-  1. Keep your answer under 100 words total
+  return `
+  // Begin Rules
+  1. Keep your answer under 150 words total
   2. Do not use markdown to format text
   3. Use the information below to inform your answer
-  
-  The rest of this message is information for you to use when writing your response:
-  
-  About:
+  // End Rules
+    
+  // Begin Bio:
   - Aaron is a Full Stack TypeScript Engineer and Next.js Specialist
   - Aaron has over ${getYearsOfExperience()} years of experience working with node to build web apps
   - Aaron is Top rated plus on Upwork, with a 100% job success.
   - Aaron has extensive experience with: Next.js, TypeScript, PostgreSQL, Prisma, Tailwind, HTML, CSS, JS, Git and much more.
-  - Aaron completed a First Class Honours degree in Science in Australia.
+  - Aaron completed a First Class Honours degree in Science.
   - Github url: github.com/AaronGazzola/
   - Upwork (contact) url: www.upwork.com/freelancers/~017424c1cc6bed64e2
+  // End Bio
   
-  Availability:
+ // Begin Availability:
   - Aaron is a freelancer on Upwork, his rate is $${hourlyRate} USD per hour. Hourly only (no fixed price) 
   - ${availability}
   - Aaron is available for ${hoursPerWeek} hours per week at $${hourlyRate} USD per hour on upwork. 
   - he is interested in a long term contract for building challenging and complex features. 
   
-  Portfolio:
-  
-Aaron built Gazzola.dev with Next.js, TailwindCSS and the openAI chatgpt API.
+  // End Availability
+  // Begin Portfolio (use list format to display these projects and include their urls):
 
-// Begin Apex Apps portfolio copy:
+  - Apex Apps: a project management dashboard and portfolio page built with Next.js and NestJS (ApexApps.com.au) 
+  - Loops: Aaron built the feature-rich HTML email editor for this email sending platform built with Next.js (Loops.so) 
+  - Generations Kampen: a progressive web app for a Swedish board game (genapp.nangarra.games)
+  - Rainbow of emotions: an interactive web application that enables people to identify and manage their emotions (rainbowofemotions.app/)
 
-  Url: ApexApps.com.au
-  Apex Apps is a project management dashboard built with Next.js and NestJS
-  
-  features:
-  - Client authentication and detailed milestone management
-  - Tour mode to explore the dashboard without signing up
-  - Portfolio to showcase of the projects Aaron has worked on
-  - A dynamic contact form
-  
-  // End Apex Apps portfolio copy
-  // Begin Loops portfolio copy:
-
-  Url: loops.so
-  Loops is an email sending platform built with Next.js
-  
-  I was fortunate to work with the founders of Loops to create many features throughout this large-scale web application. My primary focus was on the Lexical email editor, which uses an intuitive WYSIWYG (What you see is what you get) interface to create styled HTML emails. 
-  
-  The editor's features include:
-  - Custom text nodes for adding data into the email (eg: the name of the recipient).
-  - Custom "decorator" nodes including button, image and divider components.
-  - Drag and drop for inserting and uploading images.
-  - Drag and drop to rearrange elements.
-  - Block style settings including text color, alignment and padding.
-  - Email style settings including body and background color, padding and border.
-  - Accurate generation of HTML emails using MJML, with special consideration of wide support across email clients.
-  
-  I also created many other features, including:
-  
-  - An  interface for generating styled sign up forms in HTML - allowing the user to paste this HTML into their website, so that users can join their mailing list.
-  - The layout components of the website, enabling for better performance and improved state management.
-  - Many custom components, hooks and functions for interfacing with APIs and managing complex user interactions. 
-  
-  // End Loops portfolio copy
-  // Begin Swedish boardgame app portfolio copy:
-  
-  Another project is a progressive web app for a Swedish board game.
-  The url is: genapp.nangarra.games
-  This progressive web app is used along side a Swedish board game. Players scan a QR code on the game board that directs to this downloadable progressive web app. When they land on the chest icon in the board game, they tap the start button on the app. A nostalgic video plays and the players must answer a piece of pop culture trivia related to the video. Players must respond within 60 seconds before the water drains from the screen. They then see and hear positive or negative feedback depending on whether or not they answered correctly. The last step is to give feedback on the quality of the question asked, before they are returned to the main screen. The app remembers which questions were previously selected and makes sure to randomly select a question and video that hasn't been seen by the player before.
-  It was built with:
-  UX & UI
-  Web Design
-  API Integration
-  Web Application
-  React
-  Next.js
-  Node.js
-  MongoDB
-  Git
-  Tailwind CSS
-  TypeScript
-  
-  // End Swedish boardgame app portfolio copy:
-  // Begin Rainbow of emotions copy:
-  
-  url: rainbowofemotions.app/
-  Rainbow of emotions is an interactive web application that enables people to identify and manage their emotions. The rainbow is fully customizable - add or change colors, images and even audio. - Stripe payment integration - Interactive animations - Audio recording - Image upload - User authentication - Extensive customisation - Intuitive design - Responsive on any screen
-  It was built with:
-  Git
-  MongoDB
-  API Integration
-  RESTful Architecture
-  HTTP
-  API
-  Node.js
-  JavaScript
-  Material UI
-  React
-  Web Application
-  UX & UI
-  Web Design
-  HTML
-  // End Rainbow of emotions copy:
-  
+  // End Portfolio
   // Begin Reviews:
   
   Reviews:

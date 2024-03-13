@@ -176,7 +176,7 @@ const Chat = () => {
         return onEmit("Who is this Aaron guy and why should I hire him??");
       case Question.Porfiolio:
         return onEmit(
-          "Did he make This web app (Gazzola.dev)? What else has he made? Give me some links!"
+          "Where can I find some of his work? I want to see what he's capable of!"
         );
       case Question.Availability:
         return onEmit("When is he available to hire?");
