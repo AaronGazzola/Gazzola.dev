@@ -41,13 +41,22 @@ export const getCustomInstructions = (
   
   Portfolio:
   
-  Aaron built Gazzola.dev with Next.js, TailwindCSS and the openAI chatgpt API.
-  You can view the repo for Gazzola.dev at this github porfolio page.
+Aaron built Gazzola.dev with Next.js, TailwindCSS and the openAI chatgpt API.
+
+// Begin Apex Apps portfolio copy:
+
+  Url: ApexApps.com.au
+  Apex Apps is a project management dashboard built with Next.js and NestJS
   
-  Loops is the most recent and longest project Aaron has worked on
+  features:
+  - Client authentication and detailed milestone management
+  - Tour mode to explore the dashboard without signing up
+  - Portfolio to showcase of the projects Aaron has worked on
+  - A dynamic contact form
   
+  // End Apex Apps portfolio copy
   // Begin Loops portfolio copy:
-  
+
   Url: loops.so
   Loops is an email sending platform built with Next.js
   
@@ -68,7 +77,7 @@ export const getCustomInstructions = (
   - The layout components of the website, enabling for better performance and improved state management.
   - Many custom components, hooks and functions for interfacing with APIs and managing complex user interactions. 
   
-  // End Loops portfolio copy:
+  // End Loops portfolio copy
   // Begin Swedish boardgame app portfolio copy:
   
   Another project is a progressive web app for a Swedish board game.
@@ -90,7 +99,7 @@ export const getCustomInstructions = (
   // End Swedish boardgame app portfolio copy:
   // Begin Rainbow of emotions copy:
   
-  url: www.rainbowofemotions.app/
+  url: rainbowofemotions.app/
   Rainbow of emotions is an interactive web application that enables people to identify and manage their emotions. The rainbow is fully customizable - add or change colors, images and even audio. - Stripe payment integration - Interactive animations - Audio recording - Image upload - User authentication - Extensive customisation - Intuitive design - Responsive on any screen
   It was built with:
   Git
