@@ -19,15 +19,17 @@ const Bio = () => {
         </h1>
         <p className="text-md sm:text-lg">
           As technology evolves, the horizon expands for those who understand
-          the full spectrum of development. As a Full Stack Engineer, I provide
-          comprehensive solutions that cater to both the front-end and back-end
-          needs of your project, ensuring a seamless and dynamic user
-          experience.
+          the full spectrum of development. With extensive experience in design,
+          production, testing and continuous deployment - I am well equipped to
+          orchestrate your project from inception to success.
         </p>
         <p className="text-md sm:text-lg">
           I am insightful and autonomous, granting me the foresight and
-          independence to proactively discern and dismantle barriers, ensuring
-          your projects flow smoothly and reach new heights of success.
+          independence to proactively discern and dismantle barriers.
+        </p>
+        <p className="text-md sm:text-lg">
+          I&apos;m also friendly! I enjoy collaborating with others and value
+          being a part of a team.
         </p>
         <Buttons />
       </div>
