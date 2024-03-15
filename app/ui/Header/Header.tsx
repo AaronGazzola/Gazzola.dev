@@ -1,22 +1,37 @@
+"use client";
 import { sourceCodePro } from "@/app/styles/fonts";
 import clsx from "clsx";
 import Image from "next/image";
+import { ScrollParallax } from "react-just-parallax";
 
 const Header = () => {
   return (
     <div
       className={clsx(
         sourceCodePro.className,
-        "flex flex-col justify-end w-full px-5 sm:px-10 items-center relative overflow-hidden text-center"
+        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center h-screen"
       )}
     >
-      <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
-        AARON GAZZOLA
-      </h1>
-      <h2 className="text-lg font-medium">Full Stack TypeScript Engineer:</h2>
-      <h3 className="text-lg font-medium">Next.js Specialist</h3>
+      <div className="px-5 sm:px-10">
+        <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
+          AARON GAZZOLA
+        </h1>
+        <h2 className="text-lg font-medium">Full Stack TypeScript Engineer:</h2>
+        <h3 className="text-lg font-medium">Next.js Specialist</h3>
+      </div>
+      <ScrollParallax isAbsolutelyPositioned>
+        <div className="absolute top-[60%] sm:top-[40%] left-2/3 z-20 bg-black -translate-x-1/2 px-2 py-1 rounded shadow shadow-gray-500 whitespace-nowrap">
+          Top Rated Plus
+        </div>
+      </ScrollParallax>
+      <ScrollParallax isAbsolutelyPositioned>
+        <div className="absolute top-[45%] sm:top-[30%] left-1/3 z-20 bg-black px-2 py-1 rounded shadow shadow-gray-500 -translate-x-1/2 whitespace-nowrap">
+          100% Job Success
+        </div>
+      </ScrollParallax>
+
       <Image
-        className="object-cover w-full max-w-[1000px] mt-12"
+        className="object-cover w-[150%] max-w-[1000px] mt-12"
         src="/Space suit bust portrait.png"
         alt="Space suit with programming code reflected in visor"
         width={2912}
@@ -25,7 +40,7 @@ const Header = () => {
         placeholder="blur"
         blurDataURL={headerImagePreloader}
       />
-      <div className="absolute bottom-0 right-0 left-0 h-24 z-10 bottom-vignette" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-24 z-10 bottom-vignette w-full max-w-[1000px]" />
     </div>
   );
 };

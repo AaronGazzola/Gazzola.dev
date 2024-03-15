@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import useIsMounted from "../hooks/useIsMounted";
+import { ScrollParallax } from "react-just-parallax";
 
 // TOODO: Fix server conflict
-const stars = [...new Array(400)].map(() => {
+const stars = [...new Array(500)].map(() => {
   return {
     x: `${Math.random() * 100}%`,
     y: `${Math.random() * 100}%`,
@@ -18,39 +19,27 @@ const stars = [...new Array(400)].map(() => {
 
 const Stars = () => {
   const isMounted = useIsMounted();
-  const [scrollPercentage, setScrollPercentage] = useState(0);
 
-  useEffect(() => {
-    if (!isMounted) return;
-
-    const onScroll = (e: Event) => {
-      setScrollPercentage((window.scrollY / document.body.scrollHeight) * 100);
-    };
-    window.addEventListener("scroll", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [isMounted]);
   return (
     <div className="absolute inset-0 -z-20 overflow-hidden">
       {stars.map((star, i) => {
-        const range = Math.floor(i / 50) + 1;
+        const strength = (i / stars.length) * 0.2;
         return (
-          <div
-            className=""
-            key={i}
-            style={{
-              position: "absolute",
-              left: star.x,
-              top: star.y,
-              width: star.size,
-              height: star.size,
-              backgroundColor: star.color,
-              borderRadius: "50%",
-              opacity: star.opacity,
-              transform: `translateY(${scrollPercentage * 20 * range}%)`,
-            }}
-          />
+          <ScrollParallax isAbsolutelyPositioned strength={strength} key={i}>
+            <div
+              className=""
+              style={{
+                position: "absolute",
+                left: star.x,
+                top: star.y,
+                width: star.size,
+                height: star.size,
+                backgroundColor: star.color,
+                borderRadius: "50%",
+                opacity: star.opacity,
+              }}
+            />
+          </ScrollParallax>
         );
       })}
     </div>
