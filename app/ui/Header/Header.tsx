@@ -3,6 +3,7 @@ import { sourceCodePro } from "@/app/styles/fonts";
 import clsx from "clsx";
 import Image from "next/image";
 import { ScrollParallax } from "react-just-parallax";
+import { JobSuccessIcon, TopRatedIcon } from "../SVG";
 
 const Header = () => {
   return (
@@ -20,12 +21,24 @@ const Header = () => {
         <h3 className="text-lg font-medium">Next.js Specialist</h3>
       </div>
       <ScrollParallax isAbsolutelyPositioned>
-        <div className="absolute top-[60%] sm:top-[40%] left-2/3 z-20 bg-black -translate-x-1/2 px-2 py-1 rounded shadow shadow-gray-500 whitespace-nowrap">
+        <div className="absolute top-[60%] sm:top-[40%] left-2/3 z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
+          <TopRatedIcon
+            className="w-7 h-7 mr-1.5"
+            path1ClassName="fill-gray-900 stroke-white"
+            path2ClassName="stroke-white"
+          />
           Top Rated Plus
         </div>
       </ScrollParallax>
       <ScrollParallax isAbsolutelyPositioned>
-        <div className="absolute top-[45%] sm:top-[30%] left-1/3 z-20 bg-black px-2 py-1 rounded shadow shadow-gray-500 -translate-x-1/2 whitespace-nowrap">
+        <div className="absolute top-[45%] sm:top-[30%] left-1/3 z-20 bg-black p-2 rounded-lg shadow shadow-gray-500 -translate-x-1/2 whitespace-nowrap space-x-10 flex items-center">
+          <div className="border rounded-full p-0.5 mr-1.5 bg-gray-900">
+            <JobSuccessIcon
+              className="w-5 h-5"
+              path1ClassName="stroke-white"
+              path2ClassName="stroke-white"
+            />
+          </div>
           100% Job Success
         </div>
       </ScrollParallax>

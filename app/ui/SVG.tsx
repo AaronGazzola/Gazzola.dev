@@ -28,3 +28,65 @@ export const GithubLogo = ({ className = "" }: { className?: string }) => {
     </svg>
   );
 };
+
+export const TopRatedIcon = ({
+  className = "",
+  path1ClassName = "",
+  path2ClassName = "",
+}: {
+  className?: string;
+  path1ClassName?: string;
+  path2ClassName?: string;
+}) => {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      aria-hidden="true"
+      viewBox="0 0 28 28"
+      role="img"
+    >
+      <path
+        className={path1ClassName}
+        d="M12 1.155a4 4 0 014 0l8.124 4.69a4 4 0 012 3.464v9.382a4 4 0 01-2 3.464L16 26.845a4 4 0 01-4 0l-8.124-4.69a4 4 0 01-2-3.464V9.309a4 4 0 012-3.464L12 1.155z"
+      ></path>
+      <path
+        className={path2ClassName}
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        stroke-width="1.5"
+        d="M17.94 18.396c.2.73-.597 1.262-1.195.863l-2.723-1.793-2.724 1.793c-.598.399-1.395-.199-1.196-.863l.731-3.122-2.524-2.06c-.598-.465-.266-1.395.465-1.46l3.255-.2 1.196-3.056c.265-.664 1.262-.664 1.527 0l1.196 3.056m1.662.199v4.65M20 14.078h-4.65"
+      ></path>
+    </svg>
+  );
+};
+
+export const JobSuccessIcon = ({
+  className = "",
+  path1ClassName = "",
+  path2ClassName = "",
+}: {
+  className?: string;
+  path1ClassName?: string;
+  path2ClassName?: string;
+}) => {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      role="img"
+    >
+      <path
+        className={path1ClassName}
+        fill-rule="evenodd"
+        d="M18.37 19.002H5.63v-1.867h12.74v1.867zm.02-3.736H5.608L3 8.314l4.992 1.664L12 5l4.008 4.978L21 8.314l-2.61 6.952z"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  );
+};
