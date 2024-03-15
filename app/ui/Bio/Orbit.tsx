@@ -59,6 +59,7 @@ const Orbit = () => {
           total={moonImageNames.length}
           hasScrolled={hasScrolled}
           showAltImage={showAltImage}
+          isAnimating={isAnimating}
         />
       ))}
       <Portrait hasScrolled={hasScrolled} showAltImage={showAltImage} />

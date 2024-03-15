@@ -7,17 +7,20 @@ const Moon = ({
   index,
   hasScrolled,
   showAltImage,
+  isAnimating,
 }: {
   imageName: string;
   total: number;
   index: number;
   hasScrolled: boolean;
   showAltImage: boolean;
+  isAnimating: boolean;
 }) => {
   return (
     <div
       className={clsx(
-        "absolute origin-bottom-left h-1/2 left-1/2 top-0 rotate transition-opacity ease"
+        "absolute origin-bottom-left h-1/2 left-1/2 top-0 rotate transition-opacity ease",
+        isAnimating || showAltImage ? "rotate" : ""
       )}
       style={{
         animationDelay: `-${index * (30 / total)}s`,
@@ -44,7 +47,10 @@ const Moon = ({
           )}
         />
         <Image
-          className="w-8 h-8 rotate-reverse"
+          className={clsx(
+            "w-8 h-8 rotate-reverse",
+            isAnimating || showAltImage ? "rotate-reverse" : ""
+          )}
           style={{
             animationDelay: `-${index * (30 / total)}s`,
           }}
