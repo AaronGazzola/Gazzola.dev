@@ -29,7 +29,7 @@ const Bio = () => {
         </p>
         <p className="text-md sm:text-lg">
           I&apos;m also friendly! I enjoy collaborating with others and value
-          being a part of a team.
+          being part of a team.
         </p>
         <Buttons />
       </div>
