@@ -12,7 +12,7 @@ import {
 import { A11y } from "swiper/modules";
 import { useEffect, useRef, useState } from "react";
 import useIsMounted from "../hooks/useIsMounted";
-import { Chevron } from "./SVG";
+import { Chevron, GithubLogo, OpenLinkIcon } from "./SVG";
 
 enum Direction {
   Left,
@@ -75,16 +75,16 @@ const Slider = () => {
   };
 
   return (
-    <div className="relative overflow-hidden h-[400px] sm:h-[500px] md:h-[600px] flex items-start justify-center ">
+    <div className="relative overflow-hidden h-[400px] sm:h-[550px] md:h-[600px] flex items-start justify-center ">
       <div className="absolute top-0 right-0 left-0 h-12 z-10 top-vignette" />
       <div className="absolute bottom-0 right-0 left-0  h-12 z-10 bottom-vignette" />
       <div className="absolute inset-0"></div>
       <div className="absolute inset-0 flex items-center justify-center select-none">
-        <SliderButton onClick={onClickNext} direction={Direction.Left} />
-        <SliderButton onClick={onClickNext} direction={Direction.Right} />
-
         <Swiper
-          className={clsx(!isMounted && "opacity-0", "h-full max-w-[1100px]")}
+          className={clsx(
+            !isMounted && "opacity-0",
+            "h-full max-w-[1200px] relative"
+          )}
           modules={[A11y]}
           spaceBetween={0}
           slidesPerView={3}
@@ -92,6 +92,8 @@ const Slider = () => {
           centerInsufficientSlides
           loop
         >
+          <SliderButton onClick={onClickNext} direction={Direction.Left} />
+          <SliderButton onClick={onClickNext} direction={Direction.Right} />
           {slides.map((slide, index) => {
             return (
               <SwiperSlide
@@ -114,7 +116,7 @@ const Slider = () => {
       </div>
 
       <Image
-        className="object-cover h-full w-full"
+        className="object-cover h-full w-full blur-[2px]"
         src="/Astronaut code wall.png"
         alt="Astronaut floating cyberspace divider image"
         width={1456}
@@ -170,10 +172,46 @@ const Slide = ({
       ref={slideRef}
       className={clsx(
         "absolute inset-0 flex items-center justify-center transition-all overflow-visible cursor-pointer",
-        isActive ? "opacity-100 scale-[200%] md:scale-150" : "opacity-50"
+        isActive
+          ? "opacity-100 scale-[250%] md:scale-[225%] lg:scale-[175%]"
+          : "opacity-70"
       )}
     >
       <div className="relative">
+        {githubLink && (
+          <a
+            className={clsx(
+              "absolute bottom-0.5 left-0.5 group",
+              isActive ? "opacity-100" : "opacity-0"
+            )}
+            href={githubLink}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <div className="relative w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6">
+              <GithubLogo className="fill-gray-700 group-hover:fill-black absolute inset-0 w-full h-full z-10" />
+              <div className="absolute rounded-full inset-px bg-white opacity-50 group-hover:opacity-100 -z10"></div>
+            </div>
+          </a>
+        )}
+
+        {liveLink && (
+          <a
+            className={clsx(
+              "absolute bottom-0.5 right-0.5 group",
+              isActive ? "opacity-100" : "opacity-0"
+            )}
+            href={liveLink}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <div className="relative w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6">
+              <OpenLinkIcon className="stroke-gray-700 group-hover:stroke-black absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 lg:w-4 lg:h-4 z-10" />
+              <div className="absolute rounded-full inset-px bg-white opacity-50 group-hover:opacity-80 -z10"></div>
+            </div>
+          </a>
+        )}
+
         <Image
           className="rounded"
           src={isActive && !pauseGif ? gif : image}
@@ -185,7 +223,7 @@ const Slide = ({
           className={clsx(
             sourceCodePro.className,
             isActive ? "opacity-100" : "opacity-0",
-            "text-shadow font-bold sm:font-medium tracking-[0.7rem] text-[1.3rem] text-gray-50 absolute text-center whitespace-nowrap left-1/2 -translate-x-1/2 top-full scale-[35%] sm:scale-[50%] md:scale-100"
+            "text-shadow font-bold md:font-medium tracking-[0.7rem] text-[1.3rem] text-gray-50 absolute text-center whitespace-nowrap left-1/2 -translate-x-1/2 top-full scale-[25%] sm:scale-[40%] md:scale-[70%] lg:scale-100"
           )}
         >
           {title.toUpperCase()}
