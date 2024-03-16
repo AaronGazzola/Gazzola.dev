@@ -38,6 +38,14 @@
   );
 }
 
+.slider-left-vignette {
+  background-image: radial-gradient(
+    circle at left center,
+    rgba(255, 255, 255, 1) 0%,
+    transparent 50%
+  );
+}
+
 .bottom-vignette {
   background-image: linear-gradient(
     to top,

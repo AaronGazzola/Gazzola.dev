@@ -53,10 +53,10 @@ export const TopRatedIcon = ({
       ></path>
       <path
         className={path2ClassName}
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-miterlimit="10"
-        stroke-width="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit="10"
+        strokeWidth="1.5"
         d="M17.94 18.396c.2.73-.597 1.262-1.195.863l-2.723-1.793-2.724 1.793c-.598.399-1.395-.199-1.196-.863l.731-3.122-2.524-2.06c-.598-.465-.266-1.395.465-1.46l3.255-.2 1.196-3.056c.265-.664 1.262-.664 1.527 0l1.196 3.056m1.662.199v4.65M20 14.078h-4.65"
       ></path>
     </svg>
@@ -66,11 +66,9 @@ export const TopRatedIcon = ({
 export const JobSuccessIcon = ({
   className = "",
   path1ClassName = "",
-  path2ClassName = "",
 }: {
   className?: string;
   path1ClassName?: string;
-  path2ClassName?: string;
 }) => {
   return (
     <svg
@@ -83,10 +81,52 @@ export const JobSuccessIcon = ({
     >
       <path
         className={path1ClassName}
-        fill-rule="evenodd"
+        fillRule="evenodd"
         d="M18.37 19.002H5.63v-1.867h12.74v1.867zm.02-3.736H5.608L3 8.314l4.992 1.664L12 5l4.008 4.978L21 8.314l-2.61 6.952z"
-        clip-rule="evenodd"
+        clipRule="evenodd"
       ></path>
+    </svg>
+  );
+};
+
+export const Chevron = ({
+  direction,
+  className = "",
+}: {
+  direction: "left" | "right";
+  className?: string;
+}) => {
+  if (direction === "left")
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+      >
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+    );
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="m9 18 6-6-6-6" />
     </svg>
   );
 };

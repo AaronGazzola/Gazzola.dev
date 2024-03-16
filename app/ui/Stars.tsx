@@ -19,7 +19,7 @@ const stars = [...new Array(500)].map(() => {
 
 const Stars = () => {
   const isMounted = useIsMounted();
-
+  if (!isMounted) return <></>;
   return (
     <div className="absolute inset-0 -z-20 overflow-hidden">
       {stars.map((star, i) => {

@@ -1,7 +1,7 @@
 import ChatBox from "@/app/ui/Chat/ChatBox";
 import Header from "./ui/Header/Header";
 import Bio from "./ui/Bio/Bio";
-import ImageDivider from "./ui/ImageDivider";
+import Slider from "./ui/Slider";
 import Stars from "./ui/Stars";
 
 export default function Home() {
@@ -9,7 +9,7 @@ export default function Home() {
     <main className="relative">
       <Header />
       <Bio />
-      <ImageDivider />
+      <Slider />
       <ChatBox />
       <Stars />
     </main>

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import "@/app/styles/globals.css";
 import { inter } from "@/app/styles/fonts";
 import clsx from "clsx";
+import "@/app/styles/globals.css";
+import "swiper/css";
 
 export const metadata: Metadata = {
   title: "Gazzola Development",
