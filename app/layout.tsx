@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { inter } from "@/app/styles/fonts";
+import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import "@/app/styles/globals.css";
 import "swiper/css";
@@ -24,6 +25,7 @@ export default function RootLayout({
         className={clsx(inter.className, "antialiased text-gray-100 bg-black")}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );

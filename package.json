@@ -17,6 +17,7 @@
     "@lexical/rich-text": "^0.12.4",
     "@lexical/selection": "^0.12.4",
     "@types/three": "^0.158.3",
+    "@vercel/analytics": "^1.2.2",
     "axios": "^1.6.2",
     "clsx": "^2.1.0",
     "lexical": "^0.12.4",
