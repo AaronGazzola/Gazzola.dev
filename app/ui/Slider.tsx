@@ -218,6 +218,7 @@ const Slide = ({
           width={width}
           height={height}
           alt={title}
+          priority
         />
         <h1
           className={clsx(
