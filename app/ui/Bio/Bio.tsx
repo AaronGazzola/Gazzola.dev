@@ -21,7 +21,7 @@ const Bio = () => {
         <p className="text-md sm:text-lg">
           As technology evolves, the horizon expands for those who understand
           the full spectrum of development. From design to deployment - I am
-          well equipped to build, test and maintain web applications.
+          well equipped to build, test and maintain your web app.
         </p>
         <p className="text-md sm:text-lg">
           I am insightful and autonomous, providing foresight and independence
