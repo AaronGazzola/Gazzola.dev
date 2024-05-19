@@ -37,6 +37,15 @@ const slides = [
     width: 600,
   },
   {
+    gif: "/questionnaire.gif",
+    title: "Questionnaire",
+    liveLink: "https://questionnaire-demo-six.vercel.app",
+    image: "/questionnaire-screenshot.png",
+    githubLink: "https://github.com/AaronGazzola/questionnaire-demo",
+    height: 930,
+    width: 1262,
+  },
+  {
     gif: "/apexapps.com.au.gif",
     title: "Apex Apps",
     githubLink: "https://github.com/AaronGazzola/ApexApps.com.au",
