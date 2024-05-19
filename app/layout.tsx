@@ -8,6 +8,18 @@ import "swiper/css";
 export const metadata: Metadata = {
   title: "Gazzola Development",
   description: "Aaron Gazzola's web development portfolio",
+  openGraph: {
+    title: "Gazzola Development",
+    description: "Aaron Gazzola's web development portfolio",
+    images: [
+      {
+        url: "/GazzolaLogo.png",
+        width: 2048,
+        height: 2048,
+        alt: "Gazzola development logo",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
