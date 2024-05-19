@@ -8,12 +8,13 @@ import "swiper/css";
 export const metadata: Metadata = {
   title: "Gazzola Development",
   description: "Aaron Gazzola's web development portfolio",
+  metadataBase: new URL("https://gazzola.dev"),
   openGraph: {
     title: "Gazzola Development",
     description: "Aaron Gazzola's web development portfolio",
     images: [
       {
-        url: "https://gazzola.dev/GazzolaLogo.png",
+        url: "/GazzolaLogo.png",
         width: 2048,
         height: 2048,
         alt: "Gazzola development logo",
