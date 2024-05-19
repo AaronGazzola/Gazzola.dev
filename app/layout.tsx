@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     description: "Aaron Gazzola's web development portfolio",
     images: [
       {
-        url: "/GazzolaLogo.png",
+        url: "https://gazzola.dev/GazzolaLogo.png",
         width: 2048,
         height: 2048,
         alt: "Gazzola development logo",
