@@ -17,8 +17,10 @@ const Header = () => {
         <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
           AARON GAZZOLA
         </h1>
-        <h2 className="text-lg font-medium">Full Stack TypeScript Engineer:</h2>
-        <h3 className="text-lg font-medium">Next.js Specialist</h3>
+        <h2 className="text-lg font-medium">Full Stack Tech Lead</h2>
+        <h3 className="text-lg font-medium">
+          Typescript + Next.js + Supabase + shadcn
+        </h3>
       </div>
       <ScrollParallax isAbsolutelyPositioned>
         <div className="absolute top-[60%] sm:top-[40%] left-2/3 z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
