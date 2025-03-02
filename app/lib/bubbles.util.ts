@@ -130,6 +130,12 @@ export const bubbleMedia: BubbleMedia[] = [
     title: "Eco3D.Shop",
     liveLink: "https://eco3d.shop",
   },
+  {
+    gif: "/cash-dash-text.png",
+    thumbnail: "/cash-dash-logo.png",
+    title: "Cash Dash Pro Demo",
+    liveLink: "https://demo.cashdash.pro",
+  },
 ];
 
 // Array of pop icons
