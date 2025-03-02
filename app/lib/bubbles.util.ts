@@ -136,6 +136,19 @@ export const bubbleMedia: BubbleMedia[] = [
     title: "Cash Dash Pro Demo",
     liveLink: "https://demo.cashdash.pro",
   },
+  {
+    gif: "/github-full.png",
+    thumbnail: "/github-thumb.png",
+    title: "Github",
+    liveLink: "https://github.com/AaronGazzola",
+  },
+
+  {
+    gif: "/upwork-full.png",
+    thumbnail: "/upwork-thumb.png",
+    title: "Github",
+    liveLink: "https://www.upwork.com/freelancers/~017424c1cc6bed64e2",
+  },
 ];
 
 // Array of pop icons
