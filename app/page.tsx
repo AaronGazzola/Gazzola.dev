@@ -80,7 +80,7 @@ const Bubbles: React.FC<BubblesProps> = ({
     dimensions.width,
     dimensions.height,
     maxSpeed,
-    minSpeed,
+    minSize,
   ]);
 
   // Animation function for smooth growth
@@ -239,6 +239,11 @@ const Bubbles: React.FC<BubblesProps> = ({
 
   // Handle mouse leave for bubbles
   const handleMouseLeave = (id: number) => {
+    // If a link was clicked, don't close the bubble
+    if (linkClickedRef.current) {
+      return;
+    }
+
     // Clear any growing timeout for this bubble
     if (growTimeoutRef.current[id]) {
       clearTimeout(growTimeoutRef.current[id]);
@@ -278,10 +283,21 @@ const Bubbles: React.FC<BubblesProps> = ({
   const handleLinkClick = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     linkClickedRef.current = true;
+
+    // Set a timeout to reset the linkClicked flag after navigation occurs
+    setTimeout(() => {
+      linkClickedRef.current = false;
+    }, 300);
   };
 
   // Handle touch start event for bubbles
   const handleTouchStart = (event: React.TouchEvent, bubbleId: number) => {
+    // Don't prevent default or stop propagation for link elements
+    if ((event.target as HTMLElement).closest("a")) {
+      linkClickedRef.current = true;
+      return;
+    }
+
     // Prevent default to avoid scrolling and other default behaviors
     event.preventDefault();
     event.stopPropagation();
@@ -302,12 +318,16 @@ const Bubbles: React.FC<BubblesProps> = ({
 
   // Handle touch end event for bubbles
   const handleTouchEnd = (event: React.TouchEvent, bubbleId: number) => {
+    // Don't prevent default for link elements
+    if ((event.target as HTMLElement).closest("a")) {
+      return;
+    }
+
     // Prevent default behavior
     event.preventDefault();
 
     // Don't pop if a link was clicked
     if (linkClickedRef.current) {
-      linkClickedRef.current = false;
       return;
     }
 
@@ -326,12 +346,22 @@ const Bubbles: React.FC<BubblesProps> = ({
 
   // Handle touch move to maintain hover state even when moving
   const handleTouchMove = (event: React.TouchEvent) => {
+    // Don't prevent default for link elements
+    if ((event.target as HTMLElement).closest("a")) {
+      return;
+    }
+
     // Prevent default to avoid scrolling
     event.preventDefault();
   };
 
   // Handle touch cancel (e.g., when a system dialog appears)
   const handleTouchCancel = (event: React.TouchEvent, bubbleId: number) => {
+    // Don't reset if a link was clicked
+    if (linkClickedRef.current) {
+      return;
+    }
+
     // Reset any active touches
     Array.from(event.changedTouches).forEach((touch) => {
       if (touchBubbleRef.current[touch.identifier]) {
@@ -674,7 +704,7 @@ const Bubbles: React.FC<BubblesProps> = ({
                   style={{
                     position: "absolute",
                     bottom: "1rem",
-                    left: 0,
+                    left: "1rem", // Changed from 0 to 1rem for better spacing
                     zIndex: 20,
                     opacity: 1,
                     transition: "opacity 0.3s ease",
@@ -696,6 +726,10 @@ const Bubbles: React.FC<BubblesProps> = ({
                       onTouchStart={(e) => {
                         e.stopPropagation();
                         linkClickedRef.current = true;
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
                       }}
                     >
                       <div className="w-10 h-10 bg-white rounded-full">
@@ -730,6 +764,10 @@ const Bubbles: React.FC<BubblesProps> = ({
                       onTouchStart={(e) => {
                         e.stopPropagation();
                         linkClickedRef.current = true;
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
                       }}
                     >
                       <div className="w-10 h-10 bg-white rounded-full p-1 flex items-center justify-center">
