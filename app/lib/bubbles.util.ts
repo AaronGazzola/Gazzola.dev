@@ -128,7 +128,7 @@ export const bubbleMedia: BubbleMedia[] = [
   },
   {
     gif: "/eco3d-screenshot.png",
-    thumbnail: "/eco3d-screenshot.png",
+    thumbnail: "/eco3d-logo.png",
     title: "Eco3D.Shop",
     liveLink: "https://eco3d.shop",
   },
