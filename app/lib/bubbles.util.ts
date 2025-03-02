@@ -124,6 +124,12 @@ export const bubbleMedia: BubbleMedia[] = [
     liveLink: "https://questionnaire-demo-six.vercel.app",
     githubLink: "https://github.com/AaronGazzola/questionnaire-demo",
   },
+  {
+    gif: "/eco3d-screenshot.png",
+    thumbnail: "/eco3d-screenshot.png",
+    title: "Eco3D.Shop",
+    liveLink: "https://eco3d.shop",
+  },
 ];
 
 // Array of pop icons
