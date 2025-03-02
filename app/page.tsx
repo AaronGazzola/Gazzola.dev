@@ -121,6 +121,7 @@ const Bubbles: React.FC<BubblesProps> = ({
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [selectedBubble, setSelectedBubble] = useState<number | null>(null);
+  const [activeTouchId, setActiveTouchId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>(0);
   const lastBubbleTime = useRef<number>(0);
@@ -128,6 +129,7 @@ const Bubbles: React.FC<BubblesProps> = ({
   const growAnimationRef = useRef<{ [key: number]: number }>({});
   const popTimeoutRef = useRef<{ [key: number]: NodeJS.Timeout }>({});
   const glowAnimationRef = useRef<{ [key: number]: number }>({});
+  const touchBubbleRef = useRef<{ [touchId: number]: number }>({});
 
   // Initialize dimensions
   useEffect(() => {
@@ -364,6 +366,95 @@ const Bubbles: React.FC<BubblesProps> = ({
     setSelectedBubble(null);
   };
 
+  // Handle touch start event for bubbles
+  const handleTouchStart = (event: React.TouchEvent, bubbleId: number) => {
+    // Prevent default to avoid scrolling and other default behaviors
+    event.preventDefault();
+
+    // Only process if we don't already have an active touch
+    if (activeTouchId === null) {
+      // Get the first touch from the event
+      const touch = event.touches[0];
+
+      // Save the touch identifier and associated bubble
+      setActiveTouchId(touch.identifier);
+      touchBubbleRef.current[touch.identifier] = bubbleId;
+
+      // Call the same handler as for mouse enter
+      handleMouseEnter(bubbleId);
+    }
+  };
+
+  // Handle touch end event for bubbles
+  const handleTouchEnd = (event: React.TouchEvent, bubbleId: number) => {
+    // Prevent default behavior
+    event.preventDefault();
+
+    // Process any ending touches
+    Array.from(event.changedTouches).forEach((touch) => {
+      if (touch.identifier === activeTouchId) {
+        // Reset the active touch
+        setActiveTouchId(null);
+        delete touchBubbleRef.current[touch.identifier];
+
+        // Call the same handler as for mouse leave
+        handleMouseLeave(bubbleId);
+      }
+    });
+  };
+
+  // Handle touch move to maintain hover state even when moving
+  const handleTouchMove = (event: React.TouchEvent) => {
+    // Prevent default to avoid scrolling
+    event.preventDefault();
+  };
+
+  // Handle touch cancel (e.g., when a system dialog appears)
+  const handleTouchCancel = (event: React.TouchEvent, bubbleId: number) => {
+    // Reset any active touches
+    Array.from(event.changedTouches).forEach((touch) => {
+      if (touchBubbleRef.current[touch.identifier]) {
+        // Call the mouse leave handler for the associated bubble
+        handleMouseLeave(touchBubbleRef.current[touch.identifier]);
+
+        // Clean up
+        delete touchBubbleRef.current[touch.identifier];
+      }
+    });
+
+    setActiveTouchId(null);
+  };
+
+  // Global touch handler for container to capture touch events that might leave bubbles
+  useEffect(() => {
+    const handleGlobalTouchEnd = (event: TouchEvent) => {
+      // Check if we have an active touch that's ending
+      Array.from(event.changedTouches).forEach((touch) => {
+        if (touch.identifier === activeTouchId) {
+          // Get the associated bubble ID
+          const bubbleId = touchBubbleRef.current[touch.identifier];
+          if (bubbleId) {
+            // Call the mouse leave handler
+            handleMouseLeave(bubbleId);
+
+            // Clean up
+            delete touchBubbleRef.current[touch.identifier];
+            setActiveTouchId(null);
+          }
+        }
+      });
+    };
+
+    // Add global event listener to catch all touch ends
+    document.addEventListener("touchend", handleGlobalTouchEnd);
+    document.addEventListener("touchcancel", handleGlobalTouchEnd);
+
+    return () => {
+      document.removeEventListener("touchend", handleGlobalTouchEnd);
+      document.removeEventListener("touchcancel", handleGlobalTouchEnd);
+    };
+  }, [activeTouchId]);
+
   // Animation loop
   useEffect(() => {
     if (dimensions.width === 0 || dimensions.height === 0) return;
@@ -455,6 +546,7 @@ const Bubbles: React.FC<BubblesProps> = ({
         height: "100vh",
         background: backgroundColor,
         overflow: "hidden",
+        touchAction: "none", // Prevent browser handling of touch events
       }}
     >
       {bubbles.map((bubble) => {
@@ -478,6 +570,10 @@ const Bubbles: React.FC<BubblesProps> = ({
             onClick={() => handleBubbleClick(bubble.id)}
             onMouseEnter={() => handleMouseEnter(bubble.id)}
             onMouseLeave={() => handleMouseLeave(bubble.id)}
+            onTouchStart={(e) => handleTouchStart(e, bubble.id)}
+            onTouchEnd={(e) => handleTouchEnd(e, bubble.id)}
+            onTouchCancel={(e) => handleTouchCancel(e, bubble.id)}
+            onTouchMove={handleTouchMove}
             style={{
               position: "absolute",
               left: bubble.isHovered ? "50%" : `${bubble.x}px`,
@@ -549,6 +645,7 @@ const Bubbles: React.FC<BubblesProps> = ({
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              touchAction: "none", // Disable browser handling of all panning/zooming gestures
             }}
           >
             {/* Pop Icon (only shown when popping) */}
@@ -600,6 +697,7 @@ const Bubbles: React.FC<BubblesProps> = ({
                         height: "100%",
                         objectFit: "cover",
                       }}
+                      draggable="false" // Prevent image dragging
                     />
                   </div>
                 )}
@@ -627,6 +725,7 @@ const Bubbles: React.FC<BubblesProps> = ({
                         left: 0,
                         opacity: 1, // Full opacity for playing GIFs
                       }}
+                      draggable="false" // Prevent image dragging
                     />
                   </div>
                 )}
@@ -652,6 +751,7 @@ const Bubbles: React.FC<BubblesProps> = ({
                         width: "1.5rem",
                         height: "1.5rem",
                       }}
+                      onClick={(e) => e.stopPropagation()} // Prevent bubble click event
                     >
                       <div className="w-10 h-10  bg-white rounded-full">
                         <GithubLogo className="fill-gray-700 hover:fill-black absolute inset-0 w-10 h-10" />
@@ -680,6 +780,7 @@ const Bubbles: React.FC<BubblesProps> = ({
                         width: "1.5rem",
                         height: "1.5rem",
                       }}
+                      onClick={(e) => e.stopPropagation()} // Prevent bubble click event
                     >
                       <div className="w-10 h-10  bg-white rounded-full p-1 flex items-center justify-center">
                         <ExternalLinkIcon className="text-black" />
