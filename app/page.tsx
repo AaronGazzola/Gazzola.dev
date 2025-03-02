@@ -370,6 +370,7 @@ const Bubbles: React.FC<BubblesProps> = ({
   const handleTouchStart = (event: React.TouchEvent, bubbleId: number) => {
     // Prevent default to avoid scrolling and other default behaviors
     event.preventDefault();
+    event.stopPropagation();
 
     // Only process if we don't already have an active touch
     if (activeTouchId === null) {
@@ -538,6 +539,7 @@ const Bubbles: React.FC<BubblesProps> = ({
     <div
       className="select-none"
       ref={containerRef}
+      onContextMenu={(e) => e.preventDefault()} // Prevent right-click/long-press menu globally
       style={{
         position: "fixed",
         top: 0,
@@ -547,6 +549,9 @@ const Bubbles: React.FC<BubblesProps> = ({
         background: backgroundColor,
         overflow: "hidden",
         touchAction: "none", // Prevent browser handling of touch events
+        WebkitTouchCallout: "none", // Disable iOS touch callout
+        WebkitUserSelect: "none", // Disable selection on iOS
+        userSelect: "none", // Disable text selection
       }}
     >
       {bubbles.map((bubble) => {
@@ -696,8 +701,13 @@ const Bubbles: React.FC<BubblesProps> = ({
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
+                        WebkitTouchCallout: "none", // Disable iOS touch callout
+                        WebkitUserSelect: "none", // Disable selection on iOS
+                        userSelect: "none", // Disable text selection
+                        pointerEvents: "none", // Pass all pointer events to the parent
                       }}
                       draggable="false" // Prevent image dragging
+                      onContextMenu={(e) => e.preventDefault()} // Prevent right-click/long-press menu
                     />
                   </div>
                 )}
@@ -724,8 +734,13 @@ const Bubbles: React.FC<BubblesProps> = ({
                         top: 0,
                         left: 0,
                         opacity: 1, // Full opacity for playing GIFs
+                        WebkitTouchCallout: "none", // Disable iOS touch callout
+                        WebkitUserSelect: "none", // Disable selection on iOS
+                        userSelect: "none", // Disable text selection
+                        pointerEvents: "none", // Pass all pointer events to the parent
                       }}
                       draggable="false" // Prevent image dragging
+                      onContextMenu={(e) => e.preventDefault()} // Prevent right-click/long-press menu
                     />
                   </div>
                 )}
