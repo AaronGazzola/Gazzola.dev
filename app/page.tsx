@@ -1,114 +1,15 @@
 "use client";
 import { GithubLogo } from "@/app/Logos";
 import {
-  BookHeart,
-  Eclipse,
-  ExternalLinkIcon,
-  Heart,
-  Moon,
-  Power,
-  Salad,
-  Sparkles,
-  Star,
-  Sun,
-} from "lucide-react";
+  Bubble,
+  BubblesProps,
+  bubbleMedia,
+  popIcons,
+  vibrantColors,
+} from "@/app/lib/bubbles.util";
+import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-
-// Interfaces
-interface Bubble {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  speed: number;
-  opacity: number;
-  isHovered: boolean;
-  isPopping: boolean;
-  gifIndex: number;
-  isGrowing: boolean;
-  visualSize: number; // Added to track the visual size during growth
-  popIcon: number; // Added to track which icon to show when popping
-  popColor: string; // Added to track the color of the pop icon
-  glowIntensity: number; // Added to track the glow intensity during the growing phase
-}
-
-interface BubblesProps {
-  minSize?: number;
-  maxSize?: number;
-  minSpeed?: number;
-  maxSpeed?: number;
-  bubbleCount?: number;
-  backgroundColor?: string;
-}
-
-// GIF and thumbnail data
-const bubbleMedia = [
-  {
-    gif: "/rainbowofemotions.app.gif",
-    thumbnail: "/rainbow-screenshot.jpg",
-    title: "Rainbow of Emotions",
-    liveLink: "https://rainbowofemotions.app/about",
-  },
-  {
-    gif: "/email-editor.gif",
-    thumbnail: "/email-editor-screenshot.png",
-    title: "Loops Email Editor",
-    liveLink: "https://loops.so",
-  },
-  {
-    gif: "/generations-kampen.gif",
-    thumbnail: "/generations-kampen-screenshot.jpg",
-    title: "Generations Kampen",
-    githubLink: "https://github.com/AaronGazzola/Generations-kampen",
-    liveLink: "https://genapp.nangarra.games/",
-  },
-  {
-    gif: "/origami.cool.gif",
-    thumbnail: "/origami-screenshot.jpg",
-    title: "Origami.Cool",
-    githubLink: "https://github.com/AaronGazzola/Origami.cool",
-  },
-  {
-    gif: "/questionnaire.gif",
-    thumbnail: "/questionnaire-screenshot.png",
-    title: "Questionnaire",
-    liveLink: "https://questionnaire-demo-six.vercel.app",
-    githubLink: "https://github.com/AaronGazzola/questionnaire-demo",
-  },
-];
-
-// Array of pop icons
-const popIcons = [
-  Sparkles,
-  Heart,
-  Sun,
-  Moon,
-  Star,
-  Eclipse,
-  Salad,
-  BookHeart,
-  Power,
-];
-
-// Array of vibrant colors for pop icons
-const vibrantColors = [
-  "#FF5252", // Bright Red
-  "#FF4081", // Pink
-  "#7C4DFF", // Deep Purple
-  "#536DFE", // Indigo
-  "#448AFF", // Blue
-  "#40C4FF", // Light Blue
-  "#18FFFF", // Cyan
-  "#64FFDA", // Teal
-  "#69F0AE", // Green
-  "#B2FF59", // Light Green
-  "#EEFF41", // Lime
-  "#FFFF00", // Yellow
-  "#FFD740", // Amber
-  "#FFAB40", // Orange
-  "#FF6E40", // Deep Orange
-];
 
 const Bubbles: React.FC<BubblesProps> = ({
   minSize = 40,
@@ -130,6 +31,7 @@ const Bubbles: React.FC<BubblesProps> = ({
   const popTimeoutRef = useRef<{ [key: number]: NodeJS.Timeout }>({});
   const glowAnimationRef = useRef<{ [key: number]: number }>({});
   const touchBubbleRef = useRef<{ [touchId: number]: number }>({});
+  const linkClickedRef = useRef<boolean>(false);
 
   // Initialize dimensions
   useEffect(() => {
@@ -240,6 +142,12 @@ const Bubbles: React.FC<BubblesProps> = ({
 
   // Handle click for bubble popping
   const handleBubbleClick = (id: number) => {
+    // Skip bubble popping if a link was clicked
+    if (linkClickedRef.current) {
+      linkClickedRef.current = false;
+      return;
+    }
+
     const bubble = bubbles.find((b) => b.id === id);
 
     // Only pop if the bubble is not already hovered (in second phase)
@@ -366,6 +274,12 @@ const Bubbles: React.FC<BubblesProps> = ({
     setSelectedBubble(null);
   };
 
+  // Handle link click for both mouse and touch events
+  const handleLinkClick = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    linkClickedRef.current = true;
+  };
+
   // Handle touch start event for bubbles
   const handleTouchStart = (event: React.TouchEvent, bubbleId: number) => {
     // Prevent default to avoid scrolling and other default behaviors
@@ -390,6 +304,12 @@ const Bubbles: React.FC<BubblesProps> = ({
   const handleTouchEnd = (event: React.TouchEvent, bubbleId: number) => {
     // Prevent default behavior
     event.preventDefault();
+
+    // Don't pop if a link was clicked
+    if (linkClickedRef.current) {
+      linkClickedRef.current = false;
+      return;
+    }
 
     // Process any ending touches
     Array.from(event.changedTouches).forEach((touch) => {
@@ -429,6 +349,11 @@ const Bubbles: React.FC<BubblesProps> = ({
   // Global touch handler for container to capture touch events that might leave bubbles
   useEffect(() => {
     const handleGlobalTouchEnd = (event: TouchEvent) => {
+      // Skip if a link was clicked
+      if (linkClickedRef.current) {
+        return;
+      }
+
       // Check if we have an active touch that's ending
       Array.from(event.changedTouches).forEach((touch) => {
         if (touch.identifier === activeTouchId) {
@@ -589,7 +514,7 @@ const Bubbles: React.FC<BubblesProps> = ({
               height: bubble.isPopping
                 ? `${bubble.visualSize * 1.5}px`
                 : displaySize,
-              borderRadius: bubble.isHovered ? "8px" : "50%",
+              borderRadius: bubble.isHovered ? "20px" : "50%",
               border: bubble.isPopping ? `1px dashed black` : "none",
               background: bubble.isPopping
                 ? "transparent"
@@ -748,12 +673,11 @@ const Bubbles: React.FC<BubblesProps> = ({
                 <div
                   style={{
                     position: "absolute",
-                    bottom: "0.5rem",
-                    left: "0.5rem",
+                    bottom: "1rem",
+                    left: 0,
                     zIndex: 20,
                     opacity: 1,
                     transition: "opacity 0.3s ease",
-                    cursor: "pointer",
                   }}
                 >
                   {bubble.isHovered && media.githubLink && (
@@ -765,10 +689,16 @@ const Bubbles: React.FC<BubblesProps> = ({
                         position: "relative",
                         width: "1.5rem",
                         height: "1.5rem",
+                        display: "block",
+                        pointerEvents: "auto", // Explicitly enable pointer events
                       }}
-                      onClick={(e) => e.stopPropagation()} // Prevent bubble click event
+                      onClick={handleLinkClick}
+                      onTouchStart={(e) => {
+                        e.stopPropagation();
+                        linkClickedRef.current = true;
+                      }}
                     >
-                      <div className="w-10 h-10  bg-white rounded-full">
+                      <div className="w-10 h-10 bg-white rounded-full">
                         <GithubLogo className="fill-gray-700 hover:fill-black absolute inset-0 w-10 h-10" />
                       </div>
                     </Link>
@@ -777,12 +707,11 @@ const Bubbles: React.FC<BubblesProps> = ({
                 <div
                   style={{
                     position: "absolute",
-                    bottom: "0.5rem",
-                    right: "0.5rem",
+                    bottom: "1rem",
+                    right: "1rem",
                     zIndex: 20,
                     opacity: 1,
                     transition: "opacity 0.3s ease",
-                    cursor: "pointer",
                   }}
                 >
                   {bubble.isHovered && media.liveLink && (
@@ -794,10 +723,16 @@ const Bubbles: React.FC<BubblesProps> = ({
                         position: "relative",
                         width: "1.5rem",
                         height: "1.5rem",
+                        display: "block",
+                        pointerEvents: "auto", // Explicitly enable pointer events
                       }}
-                      onClick={(e) => e.stopPropagation()} // Prevent bubble click event
+                      onClick={handleLinkClick}
+                      onTouchStart={(e) => {
+                        e.stopPropagation();
+                        linkClickedRef.current = true;
+                      }}
                     >
-                      <div className="w-10 h-10  bg-white rounded-full p-1 flex items-center justify-center">
+                      <div className="w-10 h-10 bg-white rounded-full p-1 flex items-center justify-center">
                         <ExternalLinkIcon className="text-black" />
                       </div>
                     </Link>
