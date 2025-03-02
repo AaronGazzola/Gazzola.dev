@@ -16,6 +16,7 @@ export const useBubbles = ({
   minSpeed = 0.5,
   maxSpeed = 1.5,
   bubbleCount = 50,
+  onBubblePop = undefined,
 }: BubbleHookProps): BubbleHookReturnType => {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -174,6 +175,11 @@ export const useBubbles = ({
           b.id === id ? { ...b, isPopping: true, isGrowing: false } : b
         )
       );
+
+      // Call onBubblePop callback if provided
+      if (onBubblePop && bubble) {
+        onBubblePop(id, bubble.popColor);
+      }
 
       // Remove the bubble after animation completes
       popTimeoutRef.current[id] = setTimeout(() => {

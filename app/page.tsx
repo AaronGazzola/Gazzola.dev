@@ -4,7 +4,33 @@ import { useBubbles } from "@/app/hooks/bubbles.hook";
 import { BubblesProps, bubbleMedia, popIcons } from "@/app/lib/bubbles.util";
 import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+
+// Function to get a complementary color
+const getComplementaryColor = (hexColor: string): string => {
+  // Remove the # if present
+  hexColor = hexColor.replace("#", "");
+
+  // Convert to RGB
+  const r = parseInt(hexColor.substr(0, 2), 16);
+  const g = parseInt(hexColor.substr(2, 2), 16);
+  const b = parseInt(hexColor.substr(4, 2), 16);
+
+  // Get complementary RGB values (255 - original)
+  const compR = 255 - r;
+  const compG = 255 - g;
+  const compB = 255 - b;
+
+  // Make it darker and more subtle
+  const darkR = Math.floor(compR * 0.3);
+  const darkG = Math.floor(compG * 0.3);
+  const darkB = Math.floor(compB * 0.3);
+
+  // Convert back to hex
+  return `#${darkR.toString(16).padStart(2, "0")}${darkG
+    .toString(16)
+    .padStart(2, "0")}${darkB.toString(16).padStart(2, "0")}`;
+};
 
 const Bubbles: React.FC<BubblesProps> = ({
   minSize = 40,
@@ -14,6 +40,19 @@ const Bubbles: React.FC<BubblesProps> = ({
   bubbleCount = 50,
   backgroundColor = "linear-gradient(180deg, rgba(75, 0, 130, 0.6) 0%, rgba(138, 43, 226, 0.6) 100%)",
 }) => {
+  // State for background color
+  const [currentBgColor, setCurrentBgColor] = useState<string>(backgroundColor);
+
+  // Custom bubble click handler to update background color
+  const customBubbleClickHandler = (
+    bubbleId: number,
+    popColor: string
+  ): void => {
+    // Get complementary color of the pop icon color
+    const complementaryColor = getComplementaryColor(popColor);
+    setCurrentBgColor(complementaryColor);
+  };
+
   const {
     bubbles,
     containerRef,
@@ -32,6 +71,7 @@ const Bubbles: React.FC<BubblesProps> = ({
     minSpeed,
     maxSpeed,
     bubbleCount,
+    onBubblePop: customBubbleClickHandler, // Pass custom handler for bubble pop
   });
 
   return (
@@ -45,12 +85,13 @@ const Bubbles: React.FC<BubblesProps> = ({
         left: 0,
         width: "100%",
         height: "100vh",
-        background: backgroundColor,
+        background: currentBgColor, // Use dynamic background color
         overflow: "hidden",
         touchAction: "none", // Prevent browser handling of touch events
         WebkitTouchCallout: "none", // Disable iOS touch callout
         WebkitUserSelect: "none", // Disable selection on iOS
         userSelect: "none", // Disable text selection
+        transition: "background 0.5s ease", // Smooth transition for background changes
       }}
     >
       {bubbles.map((bubble) => {

@@ -58,6 +58,7 @@ export interface BubblesProps {
   maxSpeed?: number;
   bubbleCount?: number;
   backgroundColor?: string;
+  onBubblePop?: (bubbleId: number, popColor: string) => void;
 }
 
 export interface BubbleHookProps {
@@ -66,6 +67,7 @@ export interface BubbleHookProps {
   minSpeed?: number;
   maxSpeed?: number;
   bubbleCount?: number;
+  onBubblePop?: (bubbleId: number, popColor: string) => void;
 }
 
 export interface BubbleMedia {
