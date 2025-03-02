@@ -1,7 +1,8 @@
 "use client";
-import Image from "next/image";
-import { sourceCodePro } from "../styles/fonts";
 import clsx from "clsx";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { A11y } from "swiper/modules";
 import {
   Swiper,
   SwiperClass,
@@ -9,9 +10,8 @@ import {
   useSwiper,
   useSwiperSlide,
 } from "swiper/react";
-import { A11y } from "swiper/modules";
-import { useEffect, useRef, useState } from "react";
 import useIsMounted from "../hooks/useIsMounted";
+import { sourceCodePro } from "../styles/fonts";
 import { Chevron, GithubLogo, OpenLinkIcon } from "./SVG";
 
 enum Direction {
