@@ -80,7 +80,7 @@ const Bubbles: React.FC<BubblesProps> = ({
     dimensions.width,
     dimensions.height,
     maxSpeed,
-    minSize,
+    minSpeed,
   ]);
 
   // Animation function for smooth growth
@@ -328,6 +328,7 @@ const Bubbles: React.FC<BubblesProps> = ({
 
     // Don't pop if a link was clicked
     if (linkClickedRef.current) {
+      linkClickedRef.current = false;
       return;
     }
 
@@ -704,7 +705,7 @@ const Bubbles: React.FC<BubblesProps> = ({
                   style={{
                     position: "absolute",
                     bottom: "1rem",
-                    left: "1rem", // Changed from 0 to 1rem for better spacing
+                    left: 0,
                     zIndex: 20,
                     opacity: 1,
                     transition: "opacity 0.3s ease",
@@ -721,15 +722,18 @@ const Bubbles: React.FC<BubblesProps> = ({
                         height: "1.5rem",
                         display: "block",
                         pointerEvents: "auto", // Explicitly enable pointer events
+                        touchAction: "auto", // Enable default touch behavior for links
+                        cursor: "pointer",
+                        zIndex: 30,
                       }}
                       onClick={handleLinkClick}
                       onTouchStart={(e) => {
-                        e.stopPropagation();
+                        // Allow event to propagate but mark as link clicked
                         linkClickedRef.current = true;
                       }}
                       onTouchEnd={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
+                        // Don't stop propagation or prevent default here
+                        // to allow the click/tap to go through
                       }}
                     >
                       <div className="w-10 h-10 bg-white rounded-full">
@@ -759,15 +763,18 @@ const Bubbles: React.FC<BubblesProps> = ({
                         height: "1.5rem",
                         display: "block",
                         pointerEvents: "auto", // Explicitly enable pointer events
+                        touchAction: "auto", // Enable default touch behavior for links
+                        cursor: "pointer",
+                        zIndex: 30,
                       }}
                       onClick={handleLinkClick}
                       onTouchStart={(e) => {
-                        e.stopPropagation();
+                        // Allow event to propagate but mark as link clicked
                         linkClickedRef.current = true;
                       }}
                       onTouchEnd={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
+                        // Don't stop propagation or prevent default here
+                        // to allow the click/tap to go through
                       }}
                     >
                       <div className="w-10 h-10 bg-white rounded-full p-1 flex items-center justify-center">
