@@ -151,6 +151,12 @@ export const bubbleMedia: BubbleMedia[] = [
     title: "Github",
     liveLink: "https://www.upwork.com/freelancers/~017424c1cc6bed64e2",
   },
+  {
+    gif: "/apexapps.com.au.gif",
+    thumbnail: "/apex-screenshot.jpg",
+    title: "Apex Apps",
+    githubLink: "https://github.com/AaronGazzola/ApexApps.com.au",
+  },
 ];
 
 // Array of pop icons
