@@ -1,13 +1,13 @@
 import { Role } from "@/app/lib/constants";
+import { CircleUserRound } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
 import urlRegexSafe from "url-regex-safe";
-import RobotIcon from "./RobotIcon";
 import UserIcon from "./UserIcon";
 
 const Message = ({
   message = "",
-  role = Role.AI,
+  role = Role.Admin,
   isNew = false,
   isInitial = false,
   isLoading = false,
@@ -25,9 +25,13 @@ const Message = ({
     <div className="w-full pb-10 pl-7 sm:pl-10">
       <div className="w-full">
         <div className="flex items-center">
-          {isUser ? <UserIcon /> : <RobotIcon />}
+          {isUser ? (
+            <UserIcon />
+          ) : (
+            <CircleUserRound className="stroke-[1.5px]" />
+          )}
           <h2 className="tracking-wider font-semibold text-lg sm:text-xl ml-3 text-gray-200 text-shadow-sm font-brand">
-            {isUser ? "You" : "AI"}
+            {isUser ? "You" : "Az"}
           </h2>
         </div>
         <div className="relative">

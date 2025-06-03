@@ -1,18 +1,30 @@
-import { EditorState, LexicalEditor } from "lexical";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { EditorState, LexicalEditor } from "lexical";
+import { useEffect } from "react";
+import SendIcon from "../SendIcon";
 import useEditor from "./hooks/useEditor";
 import EnterPlugin from "./plugins/EnterPlugin";
-import SendIcon from "../SendIcon";
 
 export type OnEditorChange = (
   editorState: EditorState,
   editor: LexicalEditor,
   tags: Set<string>
 ) => void;
+
+const ReadOnlyPlugin = () => {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    editor.setEditable(false);
+  }, [editor]);
+
+  return null;
+};
 
 const Editor = ({
   onChange,
@@ -25,6 +37,7 @@ const Editor = ({
 }) => {
   const { isFocused, contentEditableProps } = useEditor();
   const messageIsEmpty = message === "";
+
   return (
     <div className="pt-4 px-5 pb-5 relative">
       <div
@@ -42,7 +55,7 @@ const Editor = ({
           }
           placeholder={
             <div className="-z-10 absolute top-3 left-6 text-gray-400 italic">
-              Message Aaron&apos;s AI ...
+              Chat coming soon...
             </div>
           }
           ErrorBoundary={LexicalErrorBoundary}
@@ -50,6 +63,7 @@ const Editor = ({
         <HistoryPlugin />
         <OnChangePlugin onChange={onChange} />
         <EnterPlugin onEmit={onEmit} />
+        <ReadOnlyPlugin />
         <button
           disabled={messageIsEmpty}
           type="button"

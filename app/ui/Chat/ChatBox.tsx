@@ -27,6 +27,7 @@ const initialConfig = {
   namespace: "MyEditor",
   theme,
   onError,
+  readonly: true,
 };
 
 const ChatBox = () => {
