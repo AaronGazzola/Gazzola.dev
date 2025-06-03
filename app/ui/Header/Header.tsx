@@ -1,6 +1,7 @@
 "use client";
 import { sourceCodePro } from "@/app/styles/fonts";
 import clsx from "clsx";
+import { Clock } from "lucide-react";
 import Image from "next/image";
 import { ScrollParallax } from "react-just-parallax";
 import { JobSuccessIcon, TopRatedIcon } from "../SVG";
@@ -38,6 +39,11 @@ const Header = () => {
             <JobSuccessIcon className="w-5 h-5" path1ClassName="stroke-white" />
           </div>
           100% Job Success
+        </div>
+      </ScrollParallax>
+      <ScrollParallax isAbsolutelyPositioned>
+        <div className="absolute top-[80%] sm:top-[70%] left-[40%] z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
+          <Clock className="w-7 h-7 mr-1.5 stroke-[1px]" />5 years of experience
         </div>
       </ScrollParallax>
 

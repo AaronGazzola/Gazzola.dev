@@ -1,23 +1,21 @@
+import { Role } from "@/app/lib/constants";
 import Link from "next/link";
+import { Fragment } from "react";
+import urlRegexSafe from "url-regex-safe";
 import RobotIcon from "./RobotIcon";
 import UserIcon from "./UserIcon";
-import { Question, Role } from "@/app/lib/constants";
-import urlRegexSafe from "url-regex-safe";
-import { Fragment } from "react";
 
 const Message = ({
   message = "",
   role = Role.AI,
   isNew = false,
   isInitial = false,
-  onSelectQuestion,
   isLoading = false,
 }: {
   message?: string;
   role?: Role;
   isNew?: boolean;
   isInitial?: boolean;
-  onSelectQuestion?: (question: Question) => void;
   isLoading?: boolean;
 }) => {
   const isUser = role === Role.User;
@@ -82,26 +80,6 @@ const Message = ({
             </p>
           );
         })}
-        {isInitial && (
-          <ul className="list-disc list-inside mt-2">
-            {Object.values(Question).map((question) => (
-              <li
-                key={question}
-                onClick={() => onSelectQuestion?.(question)}
-                className="rounded text-blue-300 hover:text-blue-600 cursor-pointer"
-              >
-                {question === Question.About && "Who is Aaron?"}
-                {question === Question.Porfiolio &&
-                  "Where can I find some of his work?"}
-                {question === Question.Availability &&
-                  "What is his current availability?"}
-                {question === Question.Reviews &&
-                  "What do people say about his work?"}
-                {question === Question.Contact && "How can I contact him?"}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   );

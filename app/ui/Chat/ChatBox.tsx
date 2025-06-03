@@ -1,18 +1,14 @@
 "use client";
-import Message from "./Message";
-import Editor, { OnEditorChange } from "./Editor/Editor";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { v4 as idGen } from "uuid";
+import useScreenHeight from "@/app/hooks/useScreenHeight";
+import { Method, Role } from "@/app/lib/constants";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $getRoot, $isParagraphNode, LexicalNode } from "lexical";
-import { Method, Question, Role } from "@/app/lib/constants";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import useScreenHeight from "@/app/hooks/useScreenHeight";
 import Image from "next/image";
-
-// TODO:
-// - Handle read stream
-// - Remove lexical?
+import { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as idGen } from "uuid";
+import Editor, { OnEditorChange } from "./Editor/Editor";
+import Message from "./Message";
 
 type Message = {
   id: string;
@@ -57,14 +53,13 @@ const ChatBox = () => {
 };
 
 const Chat = () => {
-  // TODO: replace background is loaded with scroll trigger
   const bgIsLoaded = true;
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "init",
       isUser: false,
       message:
-        "Hello, please select or type a question to learn about Aaron and his work.",
+        "Hi! I'm Aaron (M, 33, BSc Hons), I taught myself web dev in 2 years and have been full-time full-stack for 5 years. Are you building a web app? Need a hand?\n\nAsk me anything!",
     },
   ]);
   const [message, setMessage] = useState("");
@@ -170,23 +165,6 @@ const Chat = () => {
     setMessage(messageText);
   };
 
-  const onSelectQuestion = (question: Question) => {
-    switch (question) {
-      case Question.About:
-        return onEmit("Who is this Aaron guy and why should I hire him??");
-      case Question.Porfiolio:
-        return onEmit(
-          "Where can I find some of his work? I want to see what he's capable of!"
-        );
-      case Question.Availability:
-        return onEmit("When is he available to hire?");
-      case Question.Reviews:
-        return onEmit("Show me some reviews!");
-      case Question.Contact:
-        return onEmit("How can I contact him?");
-    }
-  };
-
   // useEffect(updateScroll, [messages]);
 
   useEffect(() => {
@@ -223,7 +201,6 @@ const Chat = () => {
                 message={message.message}
                 isNew={message.isNew}
                 isInitial={message.id === "init"}
-                onSelectQuestion={onSelectQuestion}
               />
             ))}
             <Message isLoading={isLoading} />
