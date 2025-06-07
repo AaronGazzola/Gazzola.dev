@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import useIsMounted from "../hooks/useIsMounted";
 import { ScrollParallax } from "react-just-parallax";
+import useIsMounted from "../hooks/useIsMounted";
 
 // TOODO: Fix server conflict
 const stars = [...new Array(500)].map(() => {

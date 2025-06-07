@@ -16,6 +16,10 @@
     "@lexical/react": "^0.12.4",
     "@lexical/rich-text": "^0.12.4",
     "@lexical/selection": "^0.12.4",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@radix-ui/react-collapsible": "^1.1.11",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@supabase/supabase-js": "^2.49.10",
     "@types/three": "^0.158.3",
     "@vercel/analytics": "^1.2.2",
     "axios": "^1.6.2",
@@ -33,7 +37,8 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.158.0",
     "url-regex-safe": "^4.0.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@types/node": "^20",

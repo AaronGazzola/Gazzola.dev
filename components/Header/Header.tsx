@@ -1,5 +1,5 @@
 "use client";
-import { sourceCodePro } from "@/app/styles/fonts";
+import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { Clock } from "lucide-react";
 import Image from "next/image";

@@ -1,6 +1,6 @@
-import ChatBox from "@/app/ui/Chat/ChatBox";
-import Header from "./ui/Header/Header";
-import Stars from "./ui/Stars";
+import ChatBox from "@/components/Chat/ChatApp";
+import Header from "../components/Header/Header";
+import Stars from "../components/Stars";
 
 export default function Home() {
   return (

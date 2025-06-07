@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import { inter } from "@/app/styles/fonts";
+import { inter } from "@/styles/fonts";
+import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
-import "@/app/styles/globals.css";
+import type { Metadata } from "next";
 import "swiper/css";
 
 export const metadata: Metadata = {
   title: "Gazzola Development",
-  description: "Aaron Gazzola's web development portfolio",
+  description: "Aaron Gazzola's web development consultation chat app",
   metadataBase: new URL("https://gazzola.dev"),
   openGraph: {
     title: "Gazzola Development",
-    description: "Aaron Gazzola's web development portfolio",
+    description: "Aaron Gazzola's web development consultation chat app",
     images: [
       {
         url: "/GazzolaLogo.png",
