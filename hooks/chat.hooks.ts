@@ -15,11 +15,10 @@ export const useChatWindow = () => {
     addMessage,
     addConversation,
     setSelectedConversationId,
-    isLoading,
-    setLoading,
   } = useChatStore();
 
   const [currentMessage, setCurrentMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const messages = selectedConversationId
     ? getConversationMessages(selectedConversationId)
@@ -32,7 +31,7 @@ export const useChatWindow = () => {
   const handleSendMessage = useCallback(async () => {
     if (!currentMessage.trim() || !user) return;
 
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       let conversationId = selectedConversationId;
@@ -75,13 +74,10 @@ export const useChatWindow = () => {
 
       addMessage(newMessage);
       setCurrentMessage("");
-
-      // TODO: Send to API
-      // await sendMessage(newMessage);
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [
     currentMessage,
@@ -91,7 +87,6 @@ export const useChatWindow = () => {
     addMessage,
     addConversation,
     setSelectedConversationId,
-    setLoading,
   ]);
 
   return {
