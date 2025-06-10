@@ -8,10 +8,8 @@ const ChatApp = () => {
 
   return (
     <div className="flex flex-col w-full h-screen px-5 sm:px-10 items-center relative overflow-hidden">
-      <div className="absolute inset-5 flex flex-row items-center gap-4">
-        <div className="w-2/3 h-full">
-          <ChatWindow />
-        </div>
+      <div className="absolute inset-5 flex items-center gap-4 flex-col">
+        <ChatWindow />
       </div>
       <div className="absolute inset-0 -z-10 overflow-hidden flex items-center justify-center ">
         <div className="absolute inset-0 bg-black z-10 bg-overlay" />

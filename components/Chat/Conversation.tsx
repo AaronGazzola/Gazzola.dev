@@ -28,25 +28,27 @@ const Conversation = ({ conversation }: ConversationProps) => {
 
   return (
     <Collapsible open={isExpanded} onOpenChange={handleToggle}>
-      <CollapsibleTrigger className="flex items-center justify-between w-full p-3 text-left hover:bg-gray-800/50 rounded transition-colors border border-gray-700/50">
-        <div className="flex items-center gap-3">
-          <MessageCircle className="h-4 w-4 text-gray-400 flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-gray-200 truncate tracking-wider">
-              {conversation.title ||
-                `Conversation ${conversation.id.slice(0, 8)}`}
-            </div>
-            <div className="text-xs text-gray-400">
-              {conversation.messages.length} messages
+      <div className="pl-6">
+        <CollapsibleTrigger className="flex items-center justify-between w-full p-3 text-left hover:bg-gray-800/50 rounded transition-colors border border-gray-700/50">
+          <div className="flex items-center gap-3">
+            <MessageCircle className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-gray-200 truncate tracking-wider">
+                {conversation.title ||
+                  `Conversation ${conversation.id.slice(0, 8)}`}
+              </div>
+              <div className="text-xs text-gray-400">
+                {conversation.messages.length} messages
+              </div>
             </div>
           </div>
-        </div>
-        {isExpanded ? (
-          <ChevronDown className="h-4 w-4 text-gray-400" />
-        ) : (
-          <ChevronRight className="h-4 w-4 text-gray-400" />
-        )}
-      </CollapsibleTrigger>
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4 text-gray-400" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-gray-400" />
+          )}
+        </CollapsibleTrigger>
+      </div>
       <CollapsibleContent className="mt-2 space-y-2">
         {sortedMessages.map((message) => (
           <Message
