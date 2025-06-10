@@ -1,0 +1,1 @@
+//-| Filepath: hooks/contract.hooks.ts

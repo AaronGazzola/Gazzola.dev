@@ -1,3 +1,4 @@
+// file path: types/chat.types.ts
 export interface Message {
   id: string;
   senderId: string;
@@ -39,7 +40,11 @@ export interface ChatState {
   ) => void;
   removeConversation: (conversationId: string) => void;
   addMessage: (conversationId: string, message: Message) => void;
-  updateMessage: (conversationId: string, messageId: string, updates: Partial<Message>) => void;
+  updateMessage: (
+    conversationId: string,
+    messageId: string,
+    updates: Partial<Message>
+  ) => void;
   removeMessage: (conversationId: string, messageId: string) => void;
   addFile: (file: FileUpload) => void;
   removeFile: (fileId: string) => void;

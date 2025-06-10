@@ -1,3 +1,4 @@
+// file path: components/Chat/Conversation.tsx
 "use client";
 import {
   Collapsible,

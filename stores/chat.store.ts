@@ -1,3 +1,4 @@
+// file path: stores/chat.store.ts
 import {
   ChatState,
   Conversation,
@@ -45,15 +46,19 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set((state) => ({
       conversations: state.conversations.map((conv) =>
         conv.id === conversationId
-          ? { 
-              ...conv, 
+          ? {
+              ...conv,
               messages: [...conv.messages, message],
-              lastMessageAt: message.createdAt 
+              lastMessageAt: message.createdAt,
             }
           : conv
       ),
     })),
-  updateMessage: (conversationId: string, messageId: string, updates: Partial<Message>) =>
+  updateMessage: (
+    conversationId: string,
+    messageId: string,
+    updates: Partial<Message>
+  ) =>
     set((state) => ({
       conversations: state.conversations.map((conv) =>
         conv.id === conversationId

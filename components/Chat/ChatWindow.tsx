@@ -1,3 +1,4 @@
+// file path: components/Chat/ChatWindow.tsx
 "use client";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatWindow } from "@/hooks/chat.hooks";
