@@ -1,7 +1,5 @@
-//-\ filepath: components/Chat/ChatApp.tsx
 "use client";
 import ChatWindow from "@/components/Chat/ChatWindow";
-import ConversationAccordion from "@/components/Chat/ConversationAccordion";
 import useScreenHeight from "@/hooks/useScreenHeight";
 import Image from "next/image";
 
@@ -11,9 +9,6 @@ const ChatApp = () => {
   return (
     <div className="flex flex-col w-full h-screen px-5 sm:px-10 items-center relative overflow-hidden">
       <div className="absolute inset-5 flex flex-row items-center gap-4">
-        <div className="w-1/3 h-full">
-          <ConversationAccordion />
-        </div>
         <div className="w-2/3 h-full">
           <ChatWindow />
         </div>

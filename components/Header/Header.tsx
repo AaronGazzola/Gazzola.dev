@@ -18,7 +18,7 @@ const Header = () => {
         <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
           AARON GAZZOLA
         </h1>
-        <h2 className="text-lg font-medium">Full Stack Tech Lead</h2>
+        <h2 className="text-lg font-medium">Full Stack Vibe Lead</h2>
         <h3 className="text-lg font-medium">
           Typescript + Next.js + Supabase + Shadcn
         </h3>

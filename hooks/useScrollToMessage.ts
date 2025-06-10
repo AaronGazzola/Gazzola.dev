@@ -1,14 +1,14 @@
 //-\ filepath: hooks/useScrollToMessage.ts
 "use client";
-import { Message } from "@/types/chat.types";
+import { Conversation } from "@/types/chat.types";
 import { useEffect, useRef } from "react";
 
-export const useScrollToMessage = (messages: Message[]) => {
+export const useScrollToMessage = (conversations: Conversation[]) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const element = scrollRef.current;
-    if (!element || messages.length === 0) return;
+    if (!element || !conversations[0]?.messages.length) return;
 
     const totalScrollDistance = element.scrollHeight - element.clientHeight;
     let start: number | null = null;
@@ -37,7 +37,7 @@ export const useScrollToMessage = (messages: Message[]) => {
     }
 
     window.requestAnimationFrame(step);
-  }, [messages]);
+  }, [conversations]);
 
   return { scrollRef };
 };

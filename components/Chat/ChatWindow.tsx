@@ -1,20 +1,19 @@
-//-\ filepath: components/Chat/ChatWindow.tsx
 "use client";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatWindow } from "@/hooks/chat.hooks";
 import { useScrollToMessage } from "@/hooks/useScrollToMessage";
-import Message from "./Message";
+import Conversation from "./Conversation";
 
 const ChatWindow = () => {
   const {
-    messages,
+    conversations,
     currentMessage,
     isLoading,
     handleSendMessage,
     handleMessageChange,
   } = useChatWindow();
 
-  const { scrollRef } = useScrollToMessage(messages);
+  const { scrollRef } = useScrollToMessage(conversations);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -24,21 +23,19 @@ const ChatWindow = () => {
     }
   };
 
+  const sortedConversations = [...conversations].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
   return (
     <div className="grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 opacity-0 w-full flex flex-col items-center pr-3 pt-4 max-w-[650px] h-full expand">
       <div className="w-full h-full flex flex-col items-left opacity-0 fade-in-content">
         <div
           ref={scrollRef}
-          className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-7 sm:pr-10 pt-3"
+          className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-7 sm:pr-10 pt-3 space-y-2"
         >
-          {messages.map((message) => (
-            <Message
-              key={message.id}
-              role={message.senderId}
-              message={message.content}
-              isNew={false}
-              isInitial={message.id === "init"}
-            />
+          {sortedConversations.map((conversation) => (
+            <Conversation key={conversation.id} conversation={conversation} />
           ))}
         </div>
         <div className="pt-4">

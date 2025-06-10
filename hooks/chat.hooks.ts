@@ -1,4 +1,3 @@
-//-| filepath: hooks/chat.hooks.ts
 "use client";
 import { useAppStore } from "@/stores/app.store";
 import { useChatStore } from "@/stores/chat.store";
@@ -11,7 +10,6 @@ export const useChatWindow = () => {
   const {
     conversations,
     selectedConversationId,
-    getConversationMessages,
     addMessage,
     addConversation,
     setSelectedConversationId,
@@ -19,10 +17,6 @@ export const useChatWindow = () => {
 
   const [currentMessage, setCurrentMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const messages = selectedConversationId
-    ? getConversationMessages(selectedConversationId)
-    : [];
 
   const handleMessageChange = useCallback((value: string) => {
     setCurrentMessage(value);
@@ -54,6 +48,7 @@ export const useChatWindow = () => {
             id: createId(),
             title: "New Conversation",
             participants: [user.id],
+            messages: [],
             lastMessageAt: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -66,13 +61,12 @@ export const useChatWindow = () => {
 
       const newMessage: Message = {
         id: `msg_${Date.now()}`,
-        conversationId: conversationId!,
         senderId: user.id,
         content: currentMessage.trim(),
         createdAt: new Date().toISOString(),
       };
 
-      addMessage(newMessage);
+      addMessage(conversationId!, newMessage);
       setCurrentMessage("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -90,7 +84,7 @@ export const useChatWindow = () => {
   ]);
 
   return {
-    messages,
+    conversations,
     currentMessage,
     isLoading,
     handleSendMessage,
@@ -103,9 +97,7 @@ export const useConversationAccordion = () => {
   const {
     conversations,
     selectedConversationId,
-    expandedGroups,
     setSelectedConversationId,
-    setExpandedGroups,
     addConversation,
   } = useChatStore();
 
@@ -162,17 +154,6 @@ export const useConversationAccordion = () => {
     [setSelectedConversationId]
   );
 
-  const handleGroupToggle = useCallback(
-    (groupName: string) => {
-      setExpandedGroups(
-        expandedGroups.includes(groupName)
-          ? expandedGroups.filter((g) => g !== groupName)
-          : [...expandedGroups, groupName]
-      );
-    },
-    [expandedGroups, setExpandedGroups]
-  );
-
   const handleNewConversation = useCallback(() => {
     if (!user) return;
 
@@ -180,6 +161,7 @@ export const useConversationAccordion = () => {
       id: createId(),
       title: "New Conversation",
       participants: [user.id],
+      messages: [],
       lastMessageAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -192,9 +174,7 @@ export const useConversationAccordion = () => {
   return {
     groupedConversations,
     selectedConversationId,
-    expandedGroups,
     handleConversationSelect,
-    handleGroupToggle,
     handleNewConversation,
   };
 };
