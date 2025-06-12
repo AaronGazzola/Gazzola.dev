@@ -79,9 +79,9 @@ const Sidebar = () => {
   return (
     <>
       <ShadcnSidebar collapsible="icon" className="border-r-gray-800">
-        <SidebarContent className="h-full bg-transparent border-gray-700 overflow-x-hidden gap-0">
+        <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
           <SidebarHeader
-            className={cn(isExpanded && "p-6", "border-b border-gray-700")}
+            className={cn(isExpanded && "pt-8 p-6", "border-b border-gray-700")}
           >
             <div
               className={cn(
@@ -95,17 +95,15 @@ const Sidebar = () => {
                     <h1 className="text-xl font-bold text-white">
                       Gazzola.dev
                     </h1>
-                    {!isMobile && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-white hover:text-white hover:bg-gray-800"
-                        onClick={toggleSidebar}
-                      >
-                        <Menu className="h-5 w-5" />
-                        <span className="sr-only">Toggle Sidebar</span>
-                      </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-white hover:text-white hover:bg-gray-800"
+                      onClick={toggleSidebar}
+                    >
+                      <Menu className="h-5 w-5" />
+                      <span className="sr-only">Toggle Sidebar</span>
+                    </Button>
                   </div>
                   <p className="text-sm text-white font-medium mt-1">
                     Aaron Gazzola&apos;s web development consultation chat app

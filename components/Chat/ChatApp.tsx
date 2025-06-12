@@ -29,8 +29,14 @@ const ChatApp = () => {
           </Button>
         )}
 
-        <div className="absolute inset-5 flex items-center gap-4 flex-col">
+        <div className="absolute inset-5 bottom-16 sm:bottom-10 flex items-center gap-4 flex-col">
           <ChatWindow />
+        </div>
+        <div className="absolute bottom-0 rounded-t-lg bg-blue-400/20 flex flex-col items-center">
+          <p className="text-center text-sm font-bold px-2 py-1">
+            This app is a work in progress, check out my latest live-stream at
+            @azanything for updates!
+          </p>
         </div>
 
         <div className="absolute inset-0 -z-10 overflow-hidden flex items-center justify-center">
