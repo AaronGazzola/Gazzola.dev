@@ -1,10 +1,11 @@
-import Sidebar from "@/components/Sidebar";
+//-| Filepath: app/layout.tsx
 import { inter } from "@/styles/fonts";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import type { Metadata } from "next";
 import "swiper/css";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export const metadata: Metadata = {
   title: "Gazzola Development",
@@ -38,8 +39,9 @@ export default function RootLayout({
       <body
         className={clsx(inter.className, "antialiased text-gray-100 bg-black")}
       >
-        <Sidebar />
-        {children}
+        <SidebarProvider>
+          {children}
+        </SidebarProvider>
         <Analytics />
       </body>
     </html>
