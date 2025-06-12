@@ -34,7 +34,7 @@ const ChatApp = () => {
         </div>
         <div className="absolute bottom-0 rounded-t-lg bg-blue-400/20 flex flex-col items-center">
           <a
-            href="https://www.youtube.com/@AzAnything"
+            href="https://www.youtube.com/@AzAnything/streams"
             target="_blank"
             rel="noopener noreferrer"
             className="text-center text-sm font-bold px-2 py-1 text-white"
