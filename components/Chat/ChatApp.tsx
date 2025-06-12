@@ -33,10 +33,15 @@ const ChatApp = () => {
           <ChatWindow />
         </div>
         <div className="absolute bottom-0 rounded-t-lg bg-blue-400/20 flex flex-col items-center">
-          <p className="text-center text-sm font-bold px-2 py-1">
+          <a
+            href="https://www.youtube.com/@AzAnything"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-center text-sm font-bold px-2 py-1 text-white"
+          >
             This app is a work in progress, check out my latest live-stream at
             @azanything for updates!
-          </p>
+          </a>
         </div>
 
         <div className="absolute inset-0 -z-10 overflow-hidden flex items-center justify-center">
