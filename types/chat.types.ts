@@ -1,4 +1,4 @@
-// file path: types/chat.types.ts
+//-| filepath: types/chat.types.ts
 export interface Message {
   id: string;
   senderId: string;

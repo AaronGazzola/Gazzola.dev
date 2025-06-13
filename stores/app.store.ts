@@ -27,12 +27,14 @@ const initialState = {
   user: defaultUser,
   profile: null,
   ui: initialUIState,
+  isAdmin: false,
 };
 
 export const useAppStore = create<AppState>((set, get) => ({
   ...initialState,
   setUser: (user: User | null) => set({ user }),
   setProfile: (profile: Profile | null) => set({ profile }),
+  setIsAdmin: (isAdmin: boolean) => set({ isAdmin }),
   openContractModal: (contractId: string) =>
     set((state) => ({
       ui: {

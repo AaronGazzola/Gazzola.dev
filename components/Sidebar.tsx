@@ -1,3 +1,4 @@
+//-| filepath: components/Sidebar.tsx
 "use client";
 
 import ContractDialog from "@/component/ContractDialog";
@@ -20,18 +21,33 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useContractStore } from "@/stores/contract.store";
-import { FileText, LogOut, Menu, MessageCircle, User } from "lucide-react";
+import {
+  FileText,
+  LogOut,
+  Menu,
+  MessageCircle,
+  Shield,
+  User,
+} from "lucide-react";
 import { useState } from "react";
 
 const Sidebar = () => {
   const { conversations, selectedConversationId, setSelectedConversationId } =
     useChatStore();
   const { contracts, setSelectedContractId } = useContractStore();
-  const { user, profile, openContractModal, openProfileModal } = useAppStore();
+  const {
+    user,
+    profile,
+    isAdmin,
+    setIsAdmin,
+    openContractModal,
+    openProfileModal,
+  } = useAppStore();
   const { open, isMobile, toggleSidebar } = useSidebar();
 
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
@@ -65,6 +81,10 @@ const Sidebar = () => {
 
   const handleSignOutClick = () => {
     setIsSignOutDialogOpen(true);
+  };
+
+  const handleAdminToggle = (checked: boolean) => {
+    setIsAdmin(checked);
   };
 
   const sortedConversations = [...conversations].sort(
@@ -126,7 +146,7 @@ const Sidebar = () => {
 
           {isExpanded && (
             <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex-1 p-4 space-y-6">
+              <div className="flex-1 p-4 space-y-6 relative">
                 <SidebarGroup>
                   <SidebarGroupLabel>
                     <div className="flex items-center gap-2">
@@ -206,9 +226,24 @@ const Sidebar = () => {
                     </ScrollArea>
                   </SidebarGroupContent>
                 </SidebarGroup>
+                <div className="absolute bottom-0 left-0 right-0 flex flex-shrink-0 items-center gap-3 px-3 py-2">
+                  <label
+                    htmlFor="admin-toggle"
+                    className="text-sm font-medium text-gray-100 w-full h-full flex gap-3 cursor-pointer  "
+                  >
+                    <Shield className="h-4 w-4 text-gray-100" />
+                    Admin Mode
+                  </label>
+                  <Switch
+                    id="admin-toggle"
+                    checked={isAdmin}
+                    onCheckedChange={handleAdminToggle}
+                    className="ml-auto"
+                  />
+                </div>
               </div>
 
-              <div className="p-4 border-t border-gray-700">
+              <div className="border-t border-gray-700">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button

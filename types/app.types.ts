@@ -35,8 +35,10 @@ export interface AppState {
   user: UserInfo | null;
   profile: Profile | null;
   ui: UIState;
+  isAdmin: boolean;
   setUser: (user: User | null) => void;
   setProfile: (profile: Profile | null) => void;
+  setIsAdmin: (isAdmin: boolean) => void;
   openContractModal: (contractId: string) => void;
   closeContractModal: () => void;
   openProfileModal: (profileId?: string) => void;
