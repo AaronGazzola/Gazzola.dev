@@ -1,4 +1,4 @@
-//-| filepath: components/Sidebar.tsx
+//-| Filepath: components/Sidebar.tsx
 "use client";
 
 import ContractDialog from "@/component/ContractDialog";
@@ -33,6 +33,7 @@ import {
   MessageCircle,
   Shield,
   User,
+  Plus,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -73,6 +74,10 @@ const Sidebar = () => {
   const handleContractClick = (contractId: string) => {
     setSelectedContractId(contractId);
     openContractModal(contractId);
+  };
+
+  const handleCreateContract = () => {
+    openContractModal("");
   };
 
   const handleProfileClick = () => {
@@ -192,11 +197,22 @@ const Sidebar = () => {
 
                 <SidebarGroup>
                   <SidebarGroupLabel>
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-gray-100" />
-                      <span className="text-sm font-medium text-gray-100">
-                        Contracts
-                      </span>
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-gray-100" />
+                        <span className="text-sm font-medium text-gray-100">
+                          Contracts
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
+                        onClick={handleCreateContract}
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">Create contract</span>
+                      </Button>
                     </div>
                   </SidebarGroupLabel>
                   <SidebarGroupContent>

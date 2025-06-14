@@ -1,6 +1,5 @@
 //-| Filepath: stores/contract.store.ts
 import { Contract, ContractState } from "@/types/contract.types";
-import { Conversation } from "@/types/chat.types";
 import { create } from "zustand";
 
 const initialState = {
@@ -39,13 +38,13 @@ export const useContractStore = create<ContractState>((set, get) => ({
           ? null
           : state.selectedContractId,
     })),
-  addConversationToContract: (contractId: string, conversation: Conversation) =>
+  addConversationToContract: (contractId: string, conversationId: string) =>
     set((state) => ({
       contracts: state.contracts.map((contract) =>
         contract.id === contractId
           ? {
               ...contract,
-              conversations: [...contract.conversations, conversation],
+              conversationIds: [...contract.conversationIds, conversationId],
             }
           : contract
       ),
@@ -56,8 +55,8 @@ export const useContractStore = create<ContractState>((set, get) => ({
         contract.id === contractId
           ? {
               ...contract,
-              conversations: contract.conversations.filter(
-                (conv) => conv.id !== conversationId
+              conversationIds: contract.conversationIds.filter(
+                (id) => id !== conversationId
               ),
             }
           : contract
