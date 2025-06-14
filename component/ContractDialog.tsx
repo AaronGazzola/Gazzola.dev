@@ -25,13 +25,13 @@ import { useChatStore } from "@/stores/chat.store";
 import { useContractStore } from "@/stores/contract.store";
 import { Contract } from "@/types/contract.types";
 import { createId } from "@paralleldrive/cuid2";
-import { MessageCircle } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ContractDialog = () => {
   const { ui, closeContractModal, isAdmin, user } = useAppStore();
   const { getContractById, updateContract, addContract } = useContractStore();
-  const { conversations } = useChatStore();
+  const { conversations, selectedConversationId, setSelectedConversationId } = useChatStore();
 
   const [formData, setFormData] = useState<Partial<Contract>>({
     title: "",
@@ -148,6 +148,14 @@ const ContractDialog = () => {
       setSelectedConversationIds((prev) =>
         prev.filter((id) => id !== conversationId)
       );
+    }
+  };
+
+  const handleConversationHeaderClick = (conversationId: string) => {
+    if (selectedConversationId === conversationId) {
+      setSelectedConversationId(null);
+    } else {
+      setSelectedConversationId(conversationId);
     }
   };
 
@@ -289,34 +297,67 @@ const ContractDialog = () => {
                 <ScrollArea className="h-64">
                   <div className="space-y-2">
                     {sortedConversations.map((conversation) => (
-                      <div
-                        key={conversation.id}
-                        className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded"
-                      >
-                        <Checkbox
-                          id={conversation.id}
-                          checked={selectedConversationIds.includes(
-                            conversation.id
-                          )}
-                          onCheckedChange={(checked) =>
-                            handleConversationToggle(
-                              conversation.id,
-                              checked as boolean
-                            )
-                          }
-                        />
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <MessageCircle className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-900 truncate">
-                              {conversation.title ||
-                                `Conversation ${conversation.id.slice(0, 8)}`}
+                      <div key={conversation.id} className="border rounded-lg bg-white">
+                        <div
+                          className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-t-lg cursor-pointer"
+                          onClick={() => handleConversationHeaderClick(conversation.id)}
+                        >
+                          <Checkbox
+                            id={conversation.id}
+                            checked={selectedConversationIds.includes(
+                              conversation.id
+                            )}
+                            onCheckedChange={(checked) =>
+                              handleConversationToggle(
+                                conversation.id,
+                                checked as boolean
+                              )
+                            }
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-gray-900 truncate">
+                                {conversation.title ||
+                                  `Conversation ${conversation.id.slice(0, 8)}`}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {conversation.messages.length} messages
+                              </div>
                             </div>
-                            <div className="text-xs text-gray-500">
-                              {conversation.messages.length} messages
+                            <div className="ml-auto">
+                              {selectedConversationId === conversation.id ? (
+                                <ChevronDown className="h-4 w-4 text-gray-500" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4 text-gray-500" />
+                              )}
                             </div>
                           </div>
                         </div>
+                        
+                        {selectedConversationId === conversation.id && (
+                          <div className="border-t p-3 bg-gray-50 rounded-b-lg">
+                            <div className="space-y-2 max-h-32 overflow-y-auto">
+                              {conversation.messages.length > 0 ? (
+                                conversation.messages.slice(-3).map((message) => (
+                                  <div key={message.id} className="text-xs text-gray-600 p-2 bg-white rounded border">
+                                    <div className="font-medium mb-1">
+                                      User {message.senderId.slice(0, 8)}
+                                    </div>
+                                    <div className="truncate">
+                                      {message.content.slice(0, 100)}
+                                      {message.content.length > 100 && "..."}
+                                    </div>
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-xs text-gray-500 italic">
+                                  No messages in this conversation
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                     {conversations.length === 0 && (
