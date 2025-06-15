@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatWindow } from "@/hooks/chat.hooks";
 import { useScrollToMessage } from "@/hooks/useScrollToMessage";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useChatStore } from "@/stores/chat.store";
 import { createId } from "@paralleldrive/cuid2";
-import { Send, Plus } from "lucide-react";
+import { Plus, Send } from "lucide-react";
 import Conversation from "./Conversation";
 
 const ChatWindow = () => {
@@ -21,7 +21,8 @@ const ChatWindow = () => {
   } = useChatWindow();
 
   const { isAdmin, user } = useAppStore();
-  const { addConversation, addMessage, setSelectedConversationId } = useChatStore();
+  const { addConversation, addMessage, setSelectedConversationId } =
+    useChatStore();
 
   const { scrollRef } = useScrollToMessage(conversations);
 

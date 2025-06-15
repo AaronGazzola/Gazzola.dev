@@ -1,5 +1,4 @@
 //-| filepath: types/app.types.ts
-import { User } from "@supabase/supabase-js";
 
 export interface Profile {
   id: string;
@@ -26,17 +25,20 @@ export interface UIState {
   };
 }
 
-export type UserInfo = Pick<
-  User,
-  "id" | "email" | "created_at" | "confirmed_at" | "email_confirmed_at"
->;
+export type UserInfo = {
+  id: string;
+  email?: string | undefined;
+  created_at: string;
+  confirmed_at?: string | undefined;
+  email_confirmed_at?: string | undefined;
+};
 
 export interface AppState {
   user: UserInfo | null;
   profile: Profile | null;
   ui: UIState;
   isAdmin: boolean;
-  setUser: (user: User | null) => void;
+  setUser: (user: UserInfo | null) => void;
   setProfile: (profile: Profile | null) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   openContractModal: (contractId: string) => void;
