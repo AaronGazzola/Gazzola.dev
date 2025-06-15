@@ -1,7 +1,6 @@
 //-| filepath: stores/app.store.ts
 import { AppState, Profile, UIState, UserInfo } from "@/types/app.types";
 import { createId } from "@paralleldrive/cuid2";
-import { User } from "@supabase/supabase-js";
 import { create } from "zustand";
 
 const defaultUser: UserInfo = {
@@ -32,7 +31,7 @@ const initialState = {
 
 export const useAppStore = create<AppState>((set, get) => ({
   ...initialState,
-  setUser: (user: User | null) => set({ user }),
+  setUser: (user: UserInfo | null) => set({ user }),
   setProfile: (profile: Profile | null) => set({ profile }),
   setIsAdmin: (isAdmin: boolean) => set({ isAdmin }),
   openContractModal: (contractId: string) =>
