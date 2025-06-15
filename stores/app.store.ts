@@ -1,15 +1,6 @@
-//-| filepath: stores/app.store.ts
-import { AppState, Profile, UIState, UserInfo } from "@/types/app.types";
-import { createId } from "@paralleldrive/cuid2";
+//-| Filepath: stores/app.store.ts
+import { AppState, Profile, UIState, User } from "@/types/app.types";
 import { create } from "zustand";
-
-const defaultUser: UserInfo = {
-  id: createId(),
-  email: "email@example.com",
-  created_at: new Date().toISOString(),
-  confirmed_at: new Date().toISOString(),
-  email_confirmed_at: new Date().toISOString(),
-};
 
 const initialUIState: UIState = {
   contractModal: {
@@ -20,20 +11,25 @@ const initialUIState: UIState = {
     isOpen: false,
     profileId: null,
   },
+  authModal: {
+    isOpen: false,
+  },
 };
 
 const initialState = {
-  user: defaultUser,
+  user: null,
   profile: null,
   ui: initialUIState,
   isAdmin: false,
+  isAuthenticated: false,
 };
 
 export const useAppStore = create<AppState>((set, get) => ({
   ...initialState,
-  setUser: (user: UserInfo | null) => set({ user }),
+  setUser: (user: User | null) => set({ user, isAuthenticated: !!user }),
   setProfile: (profile: Profile | null) => set({ profile }),
   setIsAdmin: (isAdmin: boolean) => set({ isAdmin }),
+  setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
   openContractModal: (contractId: string) =>
     set((state) => ({
       ui: {
@@ -60,6 +56,20 @@ export const useAppStore = create<AppState>((set, get) => ({
       ui: {
         ...state.ui,
         profileModal: { isOpen: false, profileId: null },
+      },
+    })),
+  openAuthModal: () =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        authModal: { isOpen: true },
+      },
+    })),
+  closeAuthModal: () =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        authModal: { isOpen: false },
       },
     })),
   reset: () => set(initialState),

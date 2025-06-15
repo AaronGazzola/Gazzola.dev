@@ -1,5 +1,5 @@
 //-| Filepath: types/contract.types.ts
-import { UserInfo } from "@/types/app.types";
+import { User } from "@/types/app.types";
 
 export interface Contract {
   id: string;
@@ -11,7 +11,7 @@ export interface Contract {
   price: number;
   refundStatus: "pending" | "approved" | "denied" | "completed";
   progressStatus: "not_started" | "in_progress" | "completed" | "cancelled";
-  user: UserInfo;
+  user: User;
   conversationIds: string[];
   userApproved: boolean;
   adminApproved: boolean;
@@ -28,7 +28,7 @@ export interface ContractInsert {
   price: number;
   refundStatus: "pending" | "approved" | "denied" | "completed";
   progressStatus: "not_started" | "in_progress" | "completed" | "cancelled";
-  user: UserInfo;
+  user: User;
   conversationIds: string[];
   userApproved: boolean;
   adminApproved: boolean;
@@ -43,7 +43,7 @@ export interface ContractUpdate {
   price?: number;
   refundStatus?: "pending" | "approved" | "denied" | "completed";
   progressStatus?: "not_started" | "in_progress" | "completed" | "cancelled";
-  user?: UserInfo;
+  user?: User;
   conversationIds?: string[];
   userApproved?: boolean;
   adminApproved?: boolean;
@@ -78,8 +78,14 @@ export interface ContractState {
   addContract: (contract: Contract) => void;
   updateContract: (contractId: string, updates: Partial<Contract>) => void;
   removeContract: (contractId: string) => void;
-  addConversationToContract: (contractId: string, conversationId: string) => void;
-  removeConversationFromContract: (contractId: string, conversationId: string) => void;
+  addConversationToContract: (
+    contractId: string,
+    conversationId: string
+  ) => void;
+  removeConversationFromContract: (
+    contractId: string,
+    conversationId: string
+  ) => void;
   getContractById: (contractId: string) => Contract | null;
   getUserContracts: (userId: string) => Contract[];
   reset: () => void;

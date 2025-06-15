@@ -22,7 +22,7 @@ import { Profile } from "@/types/app.types";
 import { useState, useEffect } from "react";
 
 const ProfileDialog = () => {
-  const { ui, profile, closeProfileModal, setProfile } = useAppStore();
+  const { ui, profile, user, closeProfileModal, setProfile } = useAppStore();
 
   const [formData, setFormData] = useState<Partial<Profile>>({
     firstName: "",
@@ -43,6 +43,16 @@ const ProfileDialog = () => {
         company: profile.company || "",
         role: profile.role,
       });
+    } else if (user) {
+      const nameParts = user.name?.split(" ") || [];
+      setFormData({
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+        email: user.email || "",
+        phone: "",
+        company: "",
+        role: "client",
+      });
     } else {
       setFormData({
         firstName: "",
@@ -53,7 +63,7 @@ const ProfileDialog = () => {
         role: "client",
       });
     }
-  }, [profile]);
+  }, [profile, user]);
 
   const handleSave = () => {
     if (profile) {
@@ -67,6 +77,20 @@ const ProfileDialog = () => {
         updatedAt: new Date().toISOString(),
       };
       setProfile(updatedProfile);
+    } else if (user) {
+      const newProfile: Profile = {
+        id: crypto.randomUUID(),
+        userId: user.id,
+        firstName: formData.firstName || "",
+        lastName: formData.lastName || "",
+        email: formData.email || "",
+        phone: formData.phone || "",
+        company: formData.company || "",
+        role: formData.role || "client",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      setProfile(newProfile);
     }
     closeProfileModal();
   };

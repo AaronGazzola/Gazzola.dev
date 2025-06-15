@@ -1,4 +1,4 @@
-
+//-| file path: prisma/schema.prisma 
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"

@@ -3,6 +3,7 @@
 
 import ContractDialog from "@/component/ContractDialog";
 import ProfileDialog from "@/component/ProfileDialog";
+import AuthDialog from "@/component/AuthDialog";
 import SignOutConfirm from "@/component/SignOutConfirm";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,7 @@ import {
   Plus,
   Shield,
   User,
+  LogIn,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -46,8 +48,10 @@ const Sidebar = () => {
     profile,
     isAdmin,
     setIsAdmin,
+    isAuthenticated,
     openContractModal,
     openProfileModal,
+    openAuthModal,
   } = useAppStore();
   const { open, isMobile, toggleSidebar } = useSidebar();
 
@@ -55,7 +59,7 @@ const Sidebar = () => {
 
   const displayName = profile
     ? `${profile.firstName} ${profile.lastName}`
-    : user?.email || "User";
+    : user?.name || user?.email || "User";
 
   const isExpanded = isMobile || open;
 
@@ -86,6 +90,10 @@ const Sidebar = () => {
 
   const handleSignOutClick = () => {
     setIsSignOutDialogOpen(true);
+  };
+
+  const handleSignInClick = () => {
+    openAuthModal();
   };
 
   const handleAdminToggle = (checked: boolean) => {
@@ -149,7 +157,7 @@ const Sidebar = () => {
             )}
           </SidebarHeader>
 
-          {isExpanded && (
+          {isExpanded && isAuthenticated && (
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="flex-1 p-4 space-y-6 relative">
                 <SidebarGroup>
@@ -301,7 +309,7 @@ const Sidebar = () => {
             </div>
           )}
 
-          {!isExpanded && (
+          {!isExpanded && isAuthenticated && (
             <div className="flex flex-col items-center py-4 space-y-4">
               <Button
                 variant="ghost"
@@ -323,11 +331,25 @@ const Sidebar = () => {
               </Button>
             </div>
           )}
+
+          {!isAuthenticated && (
+            <div className="flex flex-col items-center justify-center flex-1 p-4">
+              <Button
+                variant="default"
+                className="w-full flex items-center gap-2"
+                onClick={handleSignInClick}
+              >
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Button>
+            </div>
+          )}
         </SidebarContent>
       </ShadcnSidebar>
 
       <ContractDialog />
       <ProfileDialog />
+      <AuthDialog />
       <SignOutConfirm
         isOpen={isSignOutDialogOpen}
         onClose={() => setIsSignOutDialogOpen(false)}

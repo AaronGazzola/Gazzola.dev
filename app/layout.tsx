@@ -1,5 +1,5 @@
-//-| Filepath: app/layout.tsx
 import { SidebarProvider } from "@/components/ui/sidebar";
+import Providers from "@/providers/Providers";
 import { inter } from "@/styles/fonts";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
@@ -39,7 +39,9 @@ export default function RootLayout({
       <body
         className={clsx(inter.className, "antialiased text-gray-100 bg-black")}
       >
-        <SidebarProvider>{children}</SidebarProvider>
+        <Providers>
+          <SidebarProvider>{children}</SidebarProvider>
+        </Providers>
         <Analytics />
       </body>
     </html>
