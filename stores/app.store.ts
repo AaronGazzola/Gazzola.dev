@@ -1,5 +1,5 @@
 //-| Filepath: stores/app.store.ts
-import { AppState, Profile, UIState, User } from "@/types/app.types";
+import { AppState, Profile, UIState } from "@/types/app.types";
 import { create } from "zustand";
 
 const initialUIState: UIState = {
@@ -17,19 +17,15 @@ const initialUIState: UIState = {
 };
 
 const initialState = {
-  user: null,
   profile: null,
   ui: initialUIState,
   isAdmin: false,
-  isAuthenticated: false,
 };
 
 export const useAppStore = create<AppState>((set, get) => ({
   ...initialState,
-  setUser: (user: User | null) => set({ user, isAuthenticated: !!user }),
   setProfile: (profile: Profile | null) => set({ profile }),
   setIsAdmin: (isAdmin: boolean) => set({ isAdmin }),
-  setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
   openContractModal: (contractId: string) =>
     set((state) => ({
       ui: {

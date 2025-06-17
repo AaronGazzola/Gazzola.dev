@@ -1,9 +1,9 @@
 //-| Filepath: components/Sidebar.tsx
 "use client";
 
+import AuthDialog from "@/component/AuthDialog";
 import ContractDialog from "@/component/ContractDialog";
 import ProfileDialog from "@/component/ProfileDialog";
-import AuthDialog from "@/component/AuthDialog";
 import SignOutConfirm from "@/component/SignOutConfirm";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -23,19 +23,20 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
+import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useContractStore } from "@/stores/contract.store";
 import {
   FileText,
+  LogIn,
   LogOut,
   Menu,
   MessageCircle,
   Plus,
   Shield,
   User,
-  LogIn,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -43,16 +44,20 @@ const Sidebar = () => {
   const { conversations, selectedConversationId, setSelectedConversationId } =
     useChatStore();
   const { contracts, setSelectedContractId } = useContractStore();
+
   const {
-    user,
     profile,
     isAdmin,
     setIsAdmin,
-    isAuthenticated,
     openContractModal,
     openProfileModal,
     openAuthModal,
   } = useAppStore();
+
+  const { data: session } = useSession();
+  const user = session?.user;
+  const isAuthenticated = !!user;
+
   const { open, isMobile, toggleSidebar } = useSidebar();
 
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
@@ -170,7 +175,7 @@ const Sidebar = () => {
                     </div>
                   </SidebarGroupLabel>
                   <SidebarGroupContent>
-                    <ScrollArea className="h-48">
+                    <ScrollArea className="">
                       <div className="space-y-1">
                         {sortedConversations.map((conversation) => (
                           <button
@@ -202,7 +207,6 @@ const Sidebar = () => {
                     </ScrollArea>
                   </SidebarGroupContent>
                 </SidebarGroup>
-
                 <SidebarGroup>
                   <SidebarGroupLabel>
                     <div className="flex items-center justify-between w-full">
@@ -224,7 +228,7 @@ const Sidebar = () => {
                     </div>
                   </SidebarGroupLabel>
                   <SidebarGroupContent>
-                    <ScrollArea className="h-48">
+                    <ScrollArea className="">
                       <div className="space-y-1">
                         {sortedContracts.map((contract) => (
                           <button
@@ -250,6 +254,7 @@ const Sidebar = () => {
                     </ScrollArea>
                   </SidebarGroupContent>
                 </SidebarGroup>
+
                 <div className="absolute bottom-0 left-0 right-0 flex flex-shrink-0 items-center gap-3 px-3 py-2">
                   <label
                     htmlFor="admin-toggle"

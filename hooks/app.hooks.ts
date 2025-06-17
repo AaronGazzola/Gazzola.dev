@@ -1,58 +1,31 @@
 //-| Filepath: hooks/app.hooks.ts
 "use client";
 
-import {
-  getSessionAction,
-  signInAction,
-  signOutAction,
-  signUpAction,
-} from "@/actions/app.actions";
+import { signIn, signOut, signUp } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app.store";
 import { AuthCredentials } from "@/types/app.types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-export const useSession = () => {
-  const { setUser, setIsAuthenticated } = useAppStore();
-
-  return useQuery({
-    queryKey: ["session"],
-    queryFn: async () => {
-      const { data, error } = await getSessionAction();
-
-      if (error) {
-        throw new Error(error);
-      }
-
-      if (data) {
-        setUser(data);
-        setIsAuthenticated(true);
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-
-      return data;
-    },
-    staleTime: 1000 * 60 * 5,
-    refetchOnWindowFocus: false,
-  });
-};
 
 export const useSignIn = () => {
   const queryClient = useQueryClient();
-  const { closeAuthModal } = useAppStore();
+  const { closeAuthModal, setUser } = useAppStore();
 
   return useMutation({
     mutationFn: async (credentials: AuthCredentials) => {
-      const { data, error } = await signInAction(credentials);
+      const result = await signIn.email({
+        email: credentials.email,
+        password: credentials.password,
+      });
 
-      if (error) throw new Error(error);
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
 
-      return data;
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setUser(data.data.user);
       queryClient.invalidateQueries({ queryKey: ["session"] });
       closeAuthModal();
       toast.success("Signed in successfully");
@@ -65,17 +38,30 @@ export const useSignIn = () => {
 
 export const useSignUp = () => {
   const queryClient = useQueryClient();
-  const { closeAuthModal } = useAppStore();
+  const { closeAuthModal, setUser } = useAppStore();
 
   return useMutation({
     mutationFn: async (credentials: AuthCredentials) => {
-      const { data, error } = await signUpAction(credentials);
-      console.log({ data, error });
-      if (error) throw error;
+      console.log({
+        email: credentials.email,
+        password: credentials.password,
+        name: credentials.email.split("@")[0], // Default name from email
+      });
+      const result = await signUp.email({
+        email: credentials.email,
+        password: credentials.password,
+        name: credentials.email.split("@")[0], // Default name from email
+      });
+      console.log(result);
 
-      return data;
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setUser(data.data.user);
       queryClient.invalidateQueries({ queryKey: ["session"] });
       closeAuthModal();
       toast.success("Account created successfully");
@@ -88,17 +74,20 @@ export const useSignUp = () => {
 
 export const useSignOut = () => {
   const queryClient = useQueryClient();
-  const { reset } = useAppStore();
+  const { reset, setUser } = useAppStore();
 
   return useMutation({
     mutationFn: async () => {
-      const { data, error } = await signOutAction();
+      const result = await signOut();
 
-      if (error) throw new Error(error);
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
 
-      return data;
+      return result;
     },
     onSuccess: () => {
+      setUser(null);
       reset();
       queryClient.clear();
       toast.success("Signed out successfully");
@@ -107,16 +96,4 @@ export const useSignOut = () => {
       toast.error(error.message || "Failed to sign out");
     },
   });
-};
-
-export const useAuthInitialization = () => {
-  const { data: user, isLoading } = useSession();
-
-  useEffect(() => {
-    if (!isLoading) {
-      console.log("Auth initialized:", { user });
-    }
-  }, [user, isLoading]);
-
-  return { user, isLoading };
 };

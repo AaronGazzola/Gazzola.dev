@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSignIn, useSignUp } from "@/hooks/app.hooks";
+import { client } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app.store";
 import { AuthCredentials } from "@/types/app.types";
 import { Github } from "lucide-react";
@@ -18,22 +18,35 @@ import { useState } from "react";
 
 const AuthDialog = () => {
   const { ui, closeAuthModal } = useAppStore();
-  const signInMutation = useSignIn();
-  const signUpMutation = useSignUp();
-
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<AuthCredentials>({
     email: "",
     password: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (isSignUp) {
-      signUpMutation.mutate(formData);
-    } else {
-      signInMutation.mutate(formData);
+    try {
+      if (isSignUp) {
+        await client.signUp.email({
+          email: formData.email,
+          password: formData.password,
+          name: formData.email.split("@")[0],
+        });
+      } else {
+        await client.signIn.email({
+          email: formData.email,
+          password: formData.password,
+        });
+      }
+      closeAuthModal();
+    } catch (error) {
+      console.error("Authentication error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -48,8 +61,6 @@ const AuthDialog = () => {
     setIsSignUp(!isSignUp);
     setFormData({ email: "", password: "" });
   };
-
-  const isLoading = signInMutation.isPending || signUpMutation.isPending;
 
   return (
     <Dialog open={ui.authModal.isOpen} onOpenChange={() => closeAuthModal()}>

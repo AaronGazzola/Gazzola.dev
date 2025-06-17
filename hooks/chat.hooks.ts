@@ -1,12 +1,13 @@
 "use client";
-import { useAppStore } from "@/stores/app.store";
+import { useSession } from "@/lib/auth-client";
 import { useChatStore } from "@/stores/chat.store";
 import { Message } from "@/types/chat.types";
 import { createId } from "@paralleldrive/cuid2";
 import { useCallback, useEffect, useState } from "react";
 
 export const useChatWindow = () => {
-  const { user } = useAppStore();
+  const { data: session } = useSession();
+  const user = session?.user;
   const {
     conversations,
     selectedConversationId,
@@ -93,7 +94,8 @@ export const useChatWindow = () => {
 };
 
 export const useConversationAccordion = () => {
-  const { user } = useAppStore();
+  const { data: session } = useSession();
+  const user = session?.user;
   const {
     conversations,
     selectedConversationId,

@@ -1,14 +1,15 @@
-//-| filepath: components/Chat/ChatWindow.tsx
+//-| Filepath: components/Chat/ChatWindow.tsx
 "use client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatWindow } from "@/hooks/chat.hooks";
 import { useScrollToMessage } from "@/hooks/useScrollToMessage";
+import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useChatStore } from "@/stores/chat.store";
 import { createId } from "@paralleldrive/cuid2";
-import { Plus, Send } from "lucide-react";
+import { LogIn, Plus, Send } from "lucide-react";
 import Conversation from "./Conversation";
 
 const ChatWindow = () => {
@@ -20,16 +21,22 @@ const ChatWindow = () => {
     handleMessageChange,
   } = useChatWindow();
 
-  const { isAdmin, user } = useAppStore();
+  const { isAdmin, openAuthModal } = useAppStore();
   const { addConversation, addMessage, setSelectedConversationId } =
     useChatStore();
+
+  const { data: session } = useSession();
+  const user = session?.user;
+  const isAuthenticated = !!user;
 
   const { scrollRef } = useScrollToMessage(conversations);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      if (isAuthenticated) {
+        handleSendMessage();
+      }
     }
   };
 
@@ -63,6 +70,10 @@ const ChatWindow = () => {
     handleMessageChange("");
   };
 
+  const handleSignInClick = () => {
+    openAuthModal();
+  };
+
   const sortedConversations = [...conversations].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
@@ -80,26 +91,30 @@ const ChatWindow = () => {
             <Conversation key={conversation.id} conversation={conversation} />
           ))}
         </div>
-        <div className="pt-4 pl-4 pr-4 pb-4">
+        <div className="pt-4 pl-4 pr-4 pb-4 relative">
           <div className="relative">
             <Textarea
               value={currentMessage}
               onChange={(e) => handleMessageChange(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type your message..."
-              disabled={isLoading}
-              className="min-h-[80px] resize-none border border-white/10 focus:border-white/40 pr-16"
+              disabled={isLoading || !isAuthenticated}
+              className={cn(
+                "min-h-[80px] resize-none border border-white/10 focus:border-white/40 pr-16",
+                !isAuthenticated && "blur-sm"
+              )}
             />
             <div className="absolute right-2 bottom-2 flex flex-col gap-2">
               <Button
                 onClick={handleSendMessage}
-                disabled={isLoading || isMessageEmpty}
+                disabled={isLoading || isMessageEmpty || !isAuthenticated}
                 size="icon"
                 className={cn(
                   "h-8 w-8",
-                  isMessageEmpty
+                  isMessageEmpty || !isAuthenticated
                     ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
+                    : "bg-blue-600 hover:bg-blue-700",
+                  !isAuthenticated && "blur-sm"
                 )}
               >
                 <Send className="h-4 w-4" />
@@ -108,13 +123,14 @@ const ChatWindow = () => {
               {isAdmin && (
                 <Button
                   onClick={handleCreateNewConversation}
-                  disabled={isLoading || isMessageEmpty}
+                  disabled={isLoading || isMessageEmpty || !isAuthenticated}
                   size="icon"
                   className={cn(
                     "h-8 w-8",
-                    isMessageEmpty
+                    isMessageEmpty || !isAuthenticated
                       ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
-                      : "bg-green-600 hover:bg-green-700"
+                      : "bg-green-600 hover:bg-green-700",
+                    !isAuthenticated && "blur-sm"
                   )}
                 >
                   <Plus className="h-4 w-4" />
@@ -123,6 +139,17 @@ const ChatWindow = () => {
               )}
             </div>
           </div>
+          {!isAuthenticated && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded">
+              <Button
+                onClick={handleSignInClick}
+                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              >
+                <LogIn className="h-4 w-4" />
+                Sign In to Chat
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { signOut } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useContractStore } from "@/stores/contract.store";
@@ -24,11 +25,12 @@ const SignOutConfirm = ({ isOpen, onClose }: SignOutConfirmProps) => {
   const { reset: resetChat } = useChatStore();
   const { reset: resetContract } = useContractStore();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     resetApp();
     resetChat();
     resetContract();
     onClose();
+    await signOut();
   };
 
   return (
@@ -37,7 +39,8 @@ const SignOutConfirm = ({ isOpen, onClose }: SignOutConfirmProps) => {
         <DialogHeader>
           <DialogTitle>Sign Out</DialogTitle>
           <DialogDescription>
-            Are you sure you want to sign out? This will clear all your local data and you will need to sign in again.
+            Are you sure you want to sign out? This will clear all your local
+            data and you will need to sign in again.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
