@@ -1,7 +1,8 @@
-//-| file path: lib/auth-client.ts
+//-| Filepath: lib/auth-client.ts
 import {
   adminClient,
   genericOAuthClient,
+  inferAdditionalFields,
   multiSessionClient,
   oidcClient,
   oneTapClient,
@@ -11,9 +12,11 @@ import {
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { toast } from "sonner";
+import type { auth } from "./auth";
 
 export const client = createAuthClient({
   plugins: [
+    inferAdditionalFields<typeof auth>(),
     organizationClient(),
     twoFactorClient({
       onTwoFactorRedirect() {
@@ -49,6 +52,7 @@ export const {
   organization,
   useListOrganizations,
   useActiveOrganization,
+  admin,
 } = client;
 
 client.$store.listen("$sessionSignal", async () => {});

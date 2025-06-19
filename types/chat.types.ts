@@ -1,29 +1,23 @@
-//-| filepath: types/chat.types.ts
-export interface Message {
-  id: string;
-  senderId: string;
-  content: string;
-  createdAt: string;
+//-| Filepath: types/chat.types.ts
+import {
+  Contract as PrismaContract,
+  Conversation as PrismaConversation,
+  FileUpload as PrismaFileUpload,
+  Message as PrismaMessage,
+} from "@/generated/prisma";
+
+export interface Message extends PrismaMessage {
+  conversations: PrismaConversation[];
+  files: PrismaFileUpload[];
 }
 
-export interface Conversation {
-  id: string;
-  title?: string;
-  participants: string[];
+export interface Conversation extends PrismaConversation {
   messages: Message[];
-  lastMessageAt: string;
-  createdAt: string;
-  updatedAt: string;
+  contracts: PrismaContract[];
 }
 
-export interface FileUpload {
-  id: string;
-  messageId: string;
-  filename: string;
-  url: string;
-  size: number;
-  mimeType: string;
-  createdAt: string;
+export interface FileUpload extends PrismaFileUpload {
+  message: Message;
 }
 
 export interface ChatState {

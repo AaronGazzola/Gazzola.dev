@@ -1,4 +1,4 @@
-//-| file path: prisma/schema.prisma 
+//-| file path: prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -9,16 +9,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RefundStatus {
+  pending
+  approved
+  denied
+  completed
+}
+
+enum ProgressStatus {
+  not_started
+  in_progress
+  completed
+  cancelled
+}
+
 model User {
   id            String    @id
   name          String
   email         String
   emailVerified Boolean
   image         String?
+  role          String    @default("user")
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  profile       Profile?
 
   @@unique([email])
   @@map("user")
@@ -67,4 +83,81 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Profile {
+  id        String     @id
+  userId    String     @unique
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  company   String?
+  avatar    String?
+  createdAt DateTime
+  updatedAt DateTime
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contracts Contract[]
+
+  @@map("profile")
+}
+
+model Conversation {
+  id            String    @id
+  title         String?
+  participants  String[]
+  lastMessageAt DateTime
+  createdAt     DateTime
+  updatedAt     DateTime
+  messages      Message[]
+  contracts     Contract[]
+
+  @@map("conversation")
+}
+
+model Message {
+  id             String       @id
+  senderId       String
+  content        String
+  createdAt      DateTime
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  files          FileUpload[]
+
+  @@map("message")
+}
+
+model FileUpload {
+  id        String   @id
+  messageId String
+  filename  String
+  url       String
+  size      Int
+  mimeType  String
+  createdAt DateTime
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@map("file_upload")
+}
+
+model Contract {
+  id              String         @id
+  title           String
+  description     String
+  startDate       DateTime
+  targetDate      DateTime
+  dueDate         DateTime
+  price           Float
+  refundStatus    RefundStatus
+  progressStatus  ProgressStatus
+  profileId       String
+  conversationIds String[]
+  userApproved    Boolean
+  adminApproved   Boolean
+  createdAt       DateTime
+  updatedAt       DateTime
+  profile         Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  conversations   Conversation[]
+
+  @@map("contract")
 }

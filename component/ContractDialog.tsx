@@ -29,16 +29,14 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ContractDialog = () => {
-  const { ui, closeContractModal, isAdmin, user } = useAppStore();
+  const { ui, closeContractModal, isAdmin, profile } = useAppStore();
   const { getContractById, updateContract, addContract } = useContractStore();
-  const { conversations, selectedConversationId, setSelectedConversationId } = useChatStore();
+  const { conversations, selectedConversationId, setSelectedConversationId } =
+    useChatStore();
 
   const [formData, setFormData] = useState<Partial<Contract>>({
     title: "",
     description: "",
-    startDate: "",
-    targetDate: "",
-    dueDate: "",
     price: 0,
     refundStatus: "pending",
     progressStatus: "not_started",
@@ -60,9 +58,9 @@ const ContractDialog = () => {
       setFormData({
         title: contract.title,
         description: contract.description,
-        startDate: contract.startDate.split("T")[0],
-        targetDate: contract.targetDate.split("T")[0],
-        dueDate: contract.dueDate.split("T")[0],
+        startDate: contract.startDate,
+        targetDate: contract.targetDate,
+        dueDate: contract.dueDate,
         price: contract.price,
         refundStatus: contract.refundStatus,
         progressStatus: contract.progressStatus,
@@ -73,9 +71,6 @@ const ContractDialog = () => {
       setFormData({
         title: "",
         description: "",
-        startDate: "",
-        targetDate: "",
-        dueDate: "",
         price: 0,
         refundStatus: "pending",
         progressStatus: "not_started",
@@ -90,41 +85,36 @@ const ContractDialog = () => {
       updateContract(ui.contractModal.contractId, {
         ...formData,
         startDate: formData.startDate
-          ? new Date(formData.startDate).toISOString()
+          ? new Date(formData.startDate)
           : contract.startDate,
         targetDate: formData.targetDate
-          ? new Date(formData.targetDate).toISOString()
+          ? new Date(formData.targetDate)
           : contract.targetDate,
         dueDate: formData.dueDate
-          ? new Date(formData.dueDate).toISOString()
+          ? new Date(formData.dueDate)
           : contract.dueDate,
         conversationIds: selectedConversationIds,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(),
       });
-    } else if (!isEditMode && user) {
-      const now = new Date().toISOString();
+    } else if (!isEditMode && profile) {
+      const now = new Date();
       const newContract: Contract = {
         id: createId(),
         title: formData.title || "",
         description: formData.description || "",
-        startDate: formData.startDate
-          ? new Date(formData.startDate).toISOString()
-          : now,
-        targetDate: formData.targetDate
-          ? new Date(formData.targetDate).toISOString()
-          : now,
-        dueDate: formData.dueDate
-          ? new Date(formData.dueDate).toISOString()
-          : now,
+        startDate: formData.startDate ? new Date(formData.startDate) : now,
+        targetDate: formData.targetDate ? new Date(formData.targetDate) : now,
+        dueDate: formData.dueDate ? new Date(formData.dueDate) : now,
         price: formData.price || 0,
         refundStatus: formData.refundStatus || "pending",
         progressStatus: formData.progressStatus || "not_started",
-        user: user,
+        profile,
         conversationIds: selectedConversationIds,
         userApproved: !isAdmin,
         adminApproved: isAdmin,
         createdAt: now,
         updatedAt: now,
+        profileId: profile.id,
       };
       addContract(newContract);
     }
@@ -297,10 +287,15 @@ const ContractDialog = () => {
                 <ScrollArea className="h-64">
                   <div className="space-y-2">
                     {sortedConversations.map((conversation) => (
-                      <div key={conversation.id} className="border rounded-lg bg-white">
+                      <div
+                        key={conversation.id}
+                        className="border rounded-lg bg-white"
+                      >
                         <div
                           className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-t-lg cursor-pointer"
-                          onClick={() => handleConversationHeaderClick(conversation.id)}
+                          onClick={() =>
+                            handleConversationHeaderClick(conversation.id)
+                          }
                         >
                           <Checkbox
                             id={conversation.id}
@@ -334,22 +329,27 @@ const ContractDialog = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         {selectedConversationId === conversation.id && (
                           <div className="border-t p-3 bg-gray-50 rounded-b-lg">
                             <div className="space-y-2 max-h-32 overflow-y-auto">
                               {conversation.messages.length > 0 ? (
-                                conversation.messages.slice(-3).map((message) => (
-                                  <div key={message.id} className="text-xs text-gray-600 p-2 bg-white rounded border">
-                                    <div className="font-medium mb-1">
-                                      User {message.senderId.slice(0, 8)}
+                                conversation.messages
+                                  .slice(-3)
+                                  .map((message) => (
+                                    <div
+                                      key={message.id}
+                                      className="text-xs text-gray-600 p-2 bg-white rounded border"
+                                    >
+                                      <div className="font-medium mb-1">
+                                        User {message.senderId.slice(0, 8)}
+                                      </div>
+                                      <div className="truncate">
+                                        {message.content.slice(0, 100)}
+                                        {message.content.length > 100 && "..."}
+                                      </div>
                                     </div>
-                                    <div className="truncate">
-                                      {message.content.slice(0, 100)}
-                                      {message.content.length > 100 && "..."}
-                                    </div>
-                                  </div>
-                                ))
+                                  ))
                               ) : (
                                 <p className="text-xs text-gray-500 italic">
                                   No messages in this conversation

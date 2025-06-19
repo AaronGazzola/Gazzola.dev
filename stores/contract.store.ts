@@ -32,7 +32,9 @@ export const useContractStore = create<ContractState>((set, get) => ({
     })),
   removeContract: (contractId: string) =>
     set((state) => ({
-      contracts: state.contracts.filter((contract) => contract.id !== contractId),
+      contracts: state.contracts.filter(
+        (contract) => contract.id !== contractId
+      ),
       selectedContractId:
         state.selectedContractId === contractId
           ? null
@@ -49,7 +51,10 @@ export const useContractStore = create<ContractState>((set, get) => ({
           : contract
       ),
     })),
-  removeConversationFromContract: (contractId: string, conversationId: string) =>
+  removeConversationFromContract: (
+    contractId: string,
+    conversationId: string
+  ) =>
     set((state) => ({
       contracts: state.contracts.map((contract) =>
         contract.id === contractId
@@ -68,7 +73,7 @@ export const useContractStore = create<ContractState>((set, get) => ({
   },
   getUserContracts: (userId: string) => {
     const { contracts } = get();
-    return contracts.filter((contract) => contract.user.id === userId);
+    return contracts.filter((contract) => contract.profileId === userId);
   },
   reset: () => set(initialState),
 }));

@@ -1,22 +1,13 @@
 //-| Filepath: types/contract.types.ts
-import { User } from "@/types/app.types";
+import {
+  Contract as PrismaContract,
+  Profile,
+  ProgressStatus,
+  RefundStatus,
+} from "@/generated/prisma";
 
-export interface Contract {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  targetDate: string;
-  dueDate: string;
-  price: number;
-  refundStatus: "pending" | "approved" | "denied" | "completed";
-  progressStatus: "not_started" | "in_progress" | "completed" | "cancelled";
-  user: User;
-  conversationIds: string[];
-  userApproved: boolean;
-  adminApproved: boolean;
-  createdAt: string;
-  updatedAt: string;
+export interface Contract extends PrismaContract {
+  profile: Profile;
 }
 
 export interface ContractInsert {
@@ -26,9 +17,9 @@ export interface ContractInsert {
   targetDate: string;
   dueDate: string;
   price: number;
-  refundStatus: "pending" | "approved" | "denied" | "completed";
-  progressStatus: "not_started" | "in_progress" | "completed" | "cancelled";
-  user: User;
+  refundStatus: RefundStatus;
+  progressStatus: ProgressStatus;
+  user: Profile;
   conversationIds: string[];
   userApproved: boolean;
   adminApproved: boolean;
@@ -41,9 +32,9 @@ export interface ContractUpdate {
   targetDate?: string;
   dueDate?: string;
   price?: number;
-  refundStatus?: "pending" | "approved" | "denied" | "completed";
-  progressStatus?: "not_started" | "in_progress" | "completed" | "cancelled";
-  user?: User;
+  refundStatus?: RefundStatus;
+  progressStatus?: ProgressStatus;
+  user?: Profile;
   conversationIds?: string[];
   userApproved?: boolean;
   adminApproved?: boolean;
@@ -51,8 +42,8 @@ export interface ContractUpdate {
 
 export interface GetContractsParams {
   searchTerm?: string;
-  progressStatus?: Contract["progressStatus"][];
-  refundStatus?: Contract["refundStatus"][];
+  progressStatus?: ProgressStatus[];
+  refundStatus?: RefundStatus[];
   sortBy?: keyof Contract;
   sortOrder?: "asc" | "desc";
   page?: number;
@@ -69,8 +60,8 @@ export interface ContractState {
   selectedContractId: string | null;
   filters: {
     searchTerm: string;
-    progressStatus: Contract["progressStatus"][];
-    refundStatus: Contract["refundStatus"][];
+    progressStatus: ProgressStatus[];
+    refundStatus: RefundStatus[];
   };
   setContracts: (contracts: Contract[]) => void;
   setSelectedContractId: (id: string | null) => void;

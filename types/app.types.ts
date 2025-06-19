@@ -1,16 +1,9 @@
 //-| Filepath: types/app.types.ts
-export interface Profile {
-  id: string;
-  userId: string;
-  role: "admin" | "client";
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  company?: string;
-  avatar?: string;
-  createdAt: string;
-  updatedAt: string;
+import { Contract, Profile as PrismaProfile, User } from "@/generated/prisma";
+
+export interface Profile extends PrismaProfile {
+  user: User;
+  contracts: Contract[];
 }
 
 export interface UIState {
