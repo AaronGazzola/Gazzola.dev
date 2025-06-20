@@ -21,6 +21,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
+  if (!isAdminRoute && session?.user.role === "admin") {
+    return NextResponse.redirect(
+      new URL(configuration.paths.admin, request.url)
+    );
+  }
+
   return NextResponse.next();
 }
 

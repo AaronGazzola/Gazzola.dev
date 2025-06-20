@@ -1,3 +1,4 @@
+//-| File Path: configuration.ts
 const config = {
   // App Information
   title: "Gazzola.dev",
@@ -10,7 +11,7 @@ const config = {
 
   // Routes
   paths: {
-    chat: (userId?: string) => (userId ? "/" : `/chat/${userId}`),
+    chat: (userId?: string) => (!userId ? "/" : `/chat/${userId}`),
     admin: "/admin",
   },
 };
