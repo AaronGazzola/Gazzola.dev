@@ -8,11 +8,7 @@ export async function getAuthenticatedUser() {
     headers: await headers(),
   });
 
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  return session.user;
+  return session?.user || null;
 }
 
 export async function getOptionalUser() {
