@@ -5,6 +5,7 @@ import AuthDialog from "@/component/AuthDialog";
 import ContractDialog from "@/component/ContractDialog";
 import ProfileDialog from "@/component/ProfileDialog";
 import SignOutConfirm from "@/component/SignOutConfirm";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,15 +24,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
-import { useSession } from "@/lib/auth-client";
+import { useGetAuth, useSignOutMutation } from "@/hooks/auth.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
+import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useContractStore } from "@/stores/contract.store";
 import {
   FileText,
   LogIn,
   LogOut,
+  Mail,
   Menu,
   MessageCircle,
   Plus,
@@ -39,6 +42,48 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
+
+const SidebarSkeleton = () => {
+  const { open, isMobile } = useSidebar();
+  const isExpanded = isMobile || open;
+
+  return (
+    <ShadcnSidebar collapsible="icon" className="border-r-gray-800">
+      <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
+        <SidebarHeader
+          className={cn(isExpanded && "pt-8 p-6", "border-b border-gray-700")}
+        >
+          <div className="h-8 bg-gray-700 rounded animate-pulse" />
+          {isExpanded && (
+            <div className="h-4 bg-gray-700 rounded animate-pulse mt-2" />
+          )}
+        </SidebarHeader>
+        {isExpanded && (
+          <div className="flex-1 p-4 space-y-6">
+            <div className="space-y-2">
+              <div className="h-6 bg-gray-700 rounded animate-pulse" />
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-16 bg-gray-700 rounded animate-pulse"
+                />
+              ))}
+            </div>
+            <div className="space-y-2">
+              <div className="h-6 bg-gray-700 rounded animate-pulse" />
+              {[1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="h-16 bg-gray-700 rounded animate-pulse"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </SidebarContent>
+    </ShadcnSidebar>
+  );
+};
 
 const Sidebar = () => {
   const { conversations, selectedConversationId, setSelectedConversationId } =
@@ -54,8 +99,10 @@ const Sidebar = () => {
     openAuthModal,
   } = useAppStore();
 
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { user, isVerified, isLoading } = useAuthStore();
+  const { resendVerificationEmail } = useGetAuth();
+  const signOutMutation = useSignOutMutation();
+
   const isAuthenticated = !!user;
 
   const { open, isMobile, toggleSidebar } = useSidebar();
@@ -67,6 +114,10 @@ const Sidebar = () => {
     : user?.name || user?.email || "User";
 
   const isExpanded = isMobile || open;
+
+  if (isLoading) {
+    return <SidebarSkeleton />;
+  }
 
   const getInitials = (name: string) => {
     const words = name.split(" ");
@@ -103,6 +154,14 @@ const Sidebar = () => {
 
   const handleAdminToggle = (checked: boolean) => {
     setIsAdmin(checked);
+  };
+
+  const handleResendEmail = () => {
+    resendVerificationEmail.mutate();
+  };
+
+  const handleSignOut = () => {
+    signOutMutation.mutate({});
   };
 
   const sortedConversations = [...conversations].sort(
@@ -162,7 +221,42 @@ const Sidebar = () => {
             )}
           </SidebarHeader>
 
-          {isExpanded && isAuthenticated && (
+          {isExpanded && isAuthenticated && !isVerified && (
+            <div className="p-4">
+              <Alert className="border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
+                <Mail className="h-4 w-4 text-yellow-600" />
+                <AlertDescription className="text-yellow-800 dark:text-yellow-200">
+                  <div className="flex flex-col gap-2">
+                    <span>Verify your email to continue</span>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleResendEmail}
+                        disabled={resendVerificationEmail.isPending}
+                        className="text-xs"
+                      >
+                        {resendVerificationEmail.isPending
+                          ? "Sending..."
+                          : "Resend Email"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleSignOut}
+                        disabled={signOutMutation.isPending}
+                        className="text-xs"
+                      >
+                        Sign Out
+                      </Button>
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+
+          {isExpanded && isAuthenticated && isVerified && (
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="flex-1 p-4 space-y-6 relative">
                 <SidebarGroup>
@@ -314,7 +408,7 @@ const Sidebar = () => {
             </div>
           )}
 
-          {!isExpanded && isAuthenticated && (
+          {!isExpanded && isAuthenticated && isVerified && (
             <div className="flex flex-col items-center py-4 space-y-4">
               <Button
                 variant="ghost"

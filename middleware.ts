@@ -1,4 +1,4 @@
-//-| Filepath: src/middleware.ts
+//-| Filepath: middleware.ts
 import configuration from "@/configuration";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,11 +17,21 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/chat");
   const isHome = pathname === "/";
 
-  if (isAdminRoute && (!session || session.user.role !== "admin") && !isHome) {
+  if (
+    isAdminRoute &&
+    (!session ||
+      !session.user.emailVerified ||
+      session.user.role !== "admin") &&
+    !isHome
+  ) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (!isAdminRoute && session?.user.role === "admin") {
+  if (
+    !isAdminRoute &&
+    session?.user.role === "admin" &&
+    session.user.emailVerified
+  ) {
     return NextResponse.redirect(
       new URL(configuration.paths.admin, request.url)
     );

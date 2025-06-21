@@ -1,4 +1,4 @@
-//-| Filepath: src/actions/auth.actions.ts
+//-| Filepath: actions/auth.actions.ts
 "use server";
 
 import { auth } from "@/lib/auth";
@@ -18,9 +18,9 @@ async function getAuthenticatedUser() {
   return session?.user || null;
 }
 
-export const checkUserVerificationAction = async (
-  userId: string
-): Promise<ActionResponse<boolean>> => {
+export const checkUserVerificationAction = async (): Promise<
+  ActionResponse<boolean>
+> => {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),

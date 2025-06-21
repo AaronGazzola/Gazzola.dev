@@ -13,6 +13,7 @@ const config = {
   paths: {
     chat: (userId?: string) => (!userId ? "/" : `/chat/${userId}`),
     admin: "/admin",
+    home: "/",
   },
 };
 

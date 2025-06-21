@@ -1,17 +1,49 @@
 //-| Filepath: lib/auth.ts
+import { resend } from "@/lib/email/resend";
+import reactResetPasswordEmail from "@/lib/email/reset-password";
+import reactVerificationEmail from "@/lib/email/verification";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
 import { prisma } from "./prisma-client";
 
+const from = process.env.BETTER_AUTH_EMAIL || "";
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  emailVerification: {
+    verificationUrl: process.env.NEXT_PUBLIC_APP_URL,
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await resend.emails.send({
+        from,
+        to: user.email,
+        subject: "Verify your email address",
+        react: reactVerificationEmail({
+          username: user.email,
+          verificationLink: url,
+        }),
+      });
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
+    sendResetPassword: async ({ user, url }) => {
+      await resend.emails.send({
+        from,
+        to: user.email,
+        subject: "Reset your password",
+        react: reactResetPasswordEmail({
+          username: user.email,
+          resetLink: url,
+        }),
+      });
+    },
   },
   user: {
     additionalFields: {
