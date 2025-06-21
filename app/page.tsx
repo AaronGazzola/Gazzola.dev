@@ -1,3 +1,4 @@
+//-| File path: app/page.tsx
 import ChatApp from "@/components/Chat/ChatApp";
 import Header from "../components/Header/Header";
 import Stars from "../components/Stars";

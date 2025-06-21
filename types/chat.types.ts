@@ -7,7 +7,6 @@ import {
 } from "@/generated/prisma";
 
 export interface Message extends PrismaMessage {
-  conversations: PrismaConversation[];
   files: PrismaFileUpload[];
 }
 

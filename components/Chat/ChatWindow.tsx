@@ -14,7 +14,6 @@ import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";
-import { createId } from "@paralleldrive/cuid2";
 import { LogIn, Mail, Plus, Send } from "lucide-react";
 import Conversation from "./Conversation";
 
@@ -45,11 +44,10 @@ const ChatWindow = () => {
     isLoading,
     handleSendMessage,
     handleMessageChange,
+    handleCreateNewConversation,
   } = useChatWindow();
 
   const { openAuthModal } = useAppStore();
-  const { addConversation, addMessage, setSelectedConversationId } =
-    useChatStore();
   const { isPending: authLoading } = useGetAuth();
   const { user, isVerified, isAdmin } = useAuthStore();
   const resendVerificationEmail = useResendVerificationEmail();
@@ -70,36 +68,6 @@ const ChatWindow = () => {
         handleSendMessage();
       }
     }
-  };
-
-  const handleCreateNewConversation = () => {
-    if (!currentMessage.trim() || !user) return;
-
-    const conversationId = createId();
-    const messageId = createId();
-    const now = new Date().toISOString();
-
-    const newConversation = {
-      id: conversationId,
-      title: `Conversation ${conversationId.slice(0, 8)}`,
-      participants: [user.id],
-      messages: [],
-      lastMessageAt: now,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const newMessage = {
-      id: messageId,
-      senderId: user.id,
-      content: currentMessage,
-      createdAt: now,
-    };
-
-    addConversation(newConversation);
-    addMessage(conversationId, newMessage);
-    setSelectedConversationId(conversationId);
-    handleMessageChange("");
   };
 
   const handleSignInClick = () => {

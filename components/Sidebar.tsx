@@ -28,10 +28,10 @@ import {
   useResendVerificationEmail,
   useSignOutMutation,
 } from "@/hooks/auth.hooks";
+import { useConversationAccordion } from "@/hooks/chat.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
-import { useChatStore } from "@/stores/chat.store";
 import { useContractStore } from "@/stores/contract.store";
 import {
   FileText,
@@ -88,14 +88,18 @@ const SidebarSkeleton = () => {
 };
 
 const Sidebar = () => {
-  const { conversations, selectedConversationId, setSelectedConversationId } =
-    useChatStore();
   const { contracts, setSelectedContractId } = useContractStore();
+  const {
+    groupedConversations,
+    selectedConversationId,
+    handleConversationSelect,
+    handleNewConversation,
+  } = useConversationAccordion();
 
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isPending } = useGetAuth();
 
-  const { user, isVerified, profile, isAdmin, setIsAdmin } = useAuthStore();
+  const { user, isVerified, profile, isAdmin } = useAuthStore();
   const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
 
@@ -121,10 +125,6 @@ const Sidebar = () => {
       return `${words[0][0]}${words[1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
-  };
-
-  const handleConversationClick = (conversationId: string) => {
-    setSelectedConversationId(conversationId);
   };
 
   const handleContractClick = (contractId: string) => {
@@ -156,14 +156,11 @@ const Sidebar = () => {
     signOutMutation.mutate({});
   };
 
-  const sortedConversations = [...conversations].sort(
-    (a, b) =>
-      new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime()
-  );
-
   const sortedContracts = [...contracts].sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
+
+  const allConversations = Object.values(groupedConversations).flat();
 
   return (
     <>
@@ -253,38 +250,56 @@ const Sidebar = () => {
               <div className="flex-1 p-4 space-y-6 relative">
                 <SidebarGroup>
                   <SidebarGroupLabel>
-                    <div className="flex items-center gap-2">
-                      <MessageCircle className="h-4 w-4 text-gray-100" />
-                      <span className="text-sm font-medium text-gray-100">
-                        Conversations
-                      </span>
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <MessageCircle className="h-4 w-4 text-gray-100" />
+                        <span className="text-sm font-medium text-gray-100">
+                          Conversations
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
+                        onClick={handleNewConversation}
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">New conversation</span>
+                      </Button>
                     </div>
                   </SidebarGroupLabel>
                   <SidebarGroupContent>
                     <ScrollArea className="">
                       <div className="space-y-1">
-                        {sortedConversations.map((conversation) => (
-                          <button
-                            key={conversation.id}
-                            onClick={() =>
-                              handleConversationClick(conversation.id)
-                            }
-                            className={`w-full text-left p-3 rounded-lg transition-colors border ${
-                              selectedConversationId === conversation.id
-                                ? "bg-gray-800 border-gray-600"
-                                : "hover:bg-gray-800/50 border-gray-700/50"
-                            }`}
-                          >
-                            <div className="text-sm font-medium text-gray-100 truncate">
-                              {conversation.title ||
-                                `Conversation ${conversation.id.slice(0, 8)}`}
+                        {Object.entries(groupedConversations).map(([groupName, conversations]) => (
+                          <div key={groupName} className="space-y-1">
+                            <div className="text-xs text-gray-400 font-medium px-1 py-1">
+                              {groupName}
                             </div>
-                            <div className="text-xs text-gray-100">
-                              {conversation.messages.length} messages
-                            </div>
-                          </button>
+                            {conversations.map((conversation) => (
+                              <button
+                                key={conversation.id}
+                                onClick={() =>
+                                  handleConversationSelect(conversation.id)
+                                }
+                                className={`w-full text-left p-3 rounded-lg transition-colors border ${
+                                  selectedConversationId === conversation.id
+                                    ? "bg-gray-800 border-gray-600"
+                                    : "hover:bg-gray-800/50 border-gray-700/50"
+                                }`}
+                              >
+                                <div className="text-sm font-medium text-gray-100 truncate">
+                                  {conversation.title ||
+                                    `Conversation ${conversation.id.slice(0, 8)}`}
+                                </div>
+                                <div className="text-xs text-gray-100">
+                                  {conversation.messages.length} messages
+                                </div>
+                              </button>
+                            ))}
+                          </div>
                         ))}
-                        {conversations.length === 0 && (
+                        {allConversations.length === 0 && (
                           <p className="text-xs text-gray-200 font-medium italic p-3">
                             No conversations yet
                           </p>
