@@ -1,10 +1,4 @@
 //-| Filepath: types/app.types.ts
-import { Contract, Profile as PrismaProfile, User } from "@/generated/prisma";
-
-export interface Profile extends PrismaProfile {
-  user: User;
-  contracts: Contract[];
-}
 
 export interface UIState {
   contractModal: {
@@ -21,11 +15,7 @@ export interface UIState {
 }
 
 export interface AppState {
-  profile: Profile | null;
   ui: UIState;
-  isAdmin: boolean;
-  setProfile: (profile: Profile | null) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
   openContractModal: (contractId: string) => void;
   closeContractModal: () => void;
   openProfileModal: (profileId?: string) => void;
@@ -38,9 +28,4 @@ export interface AppState {
 export interface ActionResponse<T> {
   data?: T | null;
   error?: string | null;
-}
-
-export interface AuthCredentials {
-  email: string;
-  password: string;
 }

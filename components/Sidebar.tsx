@@ -23,8 +23,11 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Switch } from "@/components/ui/switch";
-import { useGetAuth, useSignOutMutation } from "@/hooks/auth.hooks";
+import {
+  useGetAuth,
+  useResendVerificationEmail,
+  useSignOutMutation,
+} from "@/hooks/auth.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
@@ -38,7 +41,6 @@ import {
   Menu,
   MessageCircle,
   Plus,
-  Shield,
   User,
 } from "lucide-react";
 import { useState } from "react";
@@ -90,17 +92,11 @@ const Sidebar = () => {
     useChatStore();
   const { contracts, setSelectedContractId } = useContractStore();
 
-  const {
-    profile,
-    isAdmin,
-    setIsAdmin,
-    openContractModal,
-    openProfileModal,
-    openAuthModal,
-  } = useAppStore();
+  const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
+  const { isPending } = useGetAuth();
 
-  const { user, isVerified, isLoading } = useAuthStore();
-  const { resendVerificationEmail } = useGetAuth();
+  const { user, isVerified, profile, isAdmin, setIsAdmin } = useAuthStore();
+  const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
 
   const isAuthenticated = !!user;
@@ -115,7 +111,7 @@ const Sidebar = () => {
 
   const isExpanded = isMobile || open;
 
-  if (isLoading) {
+  if (isPending && !user) {
     return <SidebarSkeleton />;
   }
 
@@ -150,10 +146,6 @@ const Sidebar = () => {
 
   const handleSignInClick = () => {
     openAuthModal();
-  };
-
-  const handleAdminToggle = (checked: boolean) => {
-    setIsAdmin(checked);
   };
 
   const handleResendEmail = () => {
@@ -348,22 +340,6 @@ const Sidebar = () => {
                     </ScrollArea>
                   </SidebarGroupContent>
                 </SidebarGroup>
-
-                <div className="absolute bottom-0 left-0 right-0 flex flex-shrink-0 items-center gap-3 px-3 py-2">
-                  <label
-                    htmlFor="admin-toggle"
-                    className="text-sm font-medium text-gray-100 w-full h-full flex gap-3 cursor-pointer  "
-                  >
-                    <Shield className="h-4 w-4 text-gray-100" />
-                    Admin Mode
-                  </label>
-                  <Switch
-                    id="admin-toggle"
-                    checked={isAdmin}
-                    onCheckedChange={handleAdminToggle}
-                    className="ml-auto"
-                  />
-                </div>
               </div>
 
               <div className="border-t border-gray-700">

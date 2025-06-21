@@ -1,84 +1,74 @@
-//-| Filepath: src/hooks/auth.hooks.ts
-import { checkUserVerificationAction } from "@/actions/auth.actions";
+//-| Filepath: hooks/auth.hooks.ts
 import config from "@/configuration";
 import { useAuthStore } from "@/stores/auth.store";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import {
+  SignInCredentials,
+  SignOutParams,
+  SignUpCredentials,
+  SocialSignInParams,
+} from "@/types/auth.types";
+import { useMutation } from "@tanstack/react-query";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
 import { client, signIn, signOut, signUp, useSession } from "@/lib/auth-client";
 
-interface SignInCredentials {
-  email: string;
-  password: string;
-}
-
-interface SignUpCredentials {
-  email: string;
-  password: string;
-  name?: string;
-}
-
-interface SocialSignInParams {
-  provider: "google";
-  callbackURL?: string;
-}
-
-interface SignOutParams {
-  redirectTo?: string;
-}
-
 export function useGetAuth() {
-  const { data: session, isPending: sessionPending } = useSession();
-  const { setUser, setIsVerified, setIsLoading, clearAuth } = useAuthStore();
-
-  const {
-    data: isVerified,
-    isPending: verificationPending,
-    refetch: refetchVerification,
-  } = useQuery({
-    queryKey: ["user-verification"],
-    queryFn: () => checkUserVerificationAction(),
-    enabled: !!session?.user,
-  });
-
-  const isLoading = sessionPending || verificationPending;
+  const { data: session, isPending } = useSession();
+  const { setUser, setProfile, setIsVerified, setIsAdmin, clearAuth } =
+    useAuthStore();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
-    setIsLoading(isLoading);
-
     if (session?.user) {
       setUser({
         id: session.user.id,
         email: session.user.email,
         name: session.user.name,
         emailVerified: session.user.emailVerified,
+        image: session.user.image || null,
+        role: session.user.role || "user",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
+      setIsVerified(session.user.emailVerified);
+      const isAdmin = session.user.role === "admin";
+      setIsAdmin(isAdmin);
 
-      if (isVerified?.data !== null && isVerified?.data !== undefined) {
-        setIsVerified(isVerified.data);
-      }
+      if (
+        isAdmin &&
+        pathname !== config.paths.admin &&
+        !pathname.startsWith("/chat")
+      )
+        router.push(config.paths.admin);
     } else {
       clearAuth();
     }
   }, [
     session,
-    isVerified,
-    isLoading,
     setUser,
+    setProfile,
     setIsVerified,
-    setIsLoading,
+    setIsAdmin,
     clearAuth,
+    router,
+    pathname,
   ]);
 
-  const resendVerificationEmail = useMutation({
+  return {
+    isPending,
+  };
+}
+
+export const useResendVerificationEmail = () => {
+  const { user } = useAuthStore();
+  return useMutation({
     mutationFn: async () => {
-      if (!session?.user?.email) {
-        throw new Error("No user email found");
-      }
+      if (!user?.email) throw new Error("No user email found");
       await client.sendVerificationEmail({
-        email: session.user.email,
+        email: user.email,
       });
     },
     onSuccess: () => {
@@ -88,13 +78,7 @@ export function useGetAuth() {
       toast.error(error.message || "Failed to send verification email");
     },
   });
-
-  return {
-    isLoading,
-    refetchVerification,
-    resendVerificationEmail,
-  };
-}
+};
 
 export function useSignInMutation() {
   const router = useRouter();
@@ -105,7 +89,6 @@ export function useSignInMutation() {
     },
     onSuccess: () => {
       toast.success("Successfully logged in!");
-      router.push(config.paths.home);
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to log in");

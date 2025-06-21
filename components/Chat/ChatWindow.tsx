@@ -1,17 +1,21 @@
 //-| Filepath: components/Chat/ChatWindow.tsx
 "use client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  useGetAuth,
+  useResendVerificationEmail,
+  useSignOutMutation,
+} from "@/hooks/auth.hooks";
 import { useChatWindow } from "@/hooks/chat.hooks";
 import { useScrollToMessage } from "@/hooks/useScrollToMessage";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
-import { useChatStore } from "@/stores/chat.store";
 import { useAuthStore } from "@/stores/auth.store";
-import { useSignOutMutation, useGetAuth } from "@/hooks/auth.hooks";
+import { useChatStore } from "@/stores/chat.store";
 import { createId } from "@paralleldrive/cuid2";
-import { LogIn, Plus, Send, Mail } from "lucide-react";
+import { LogIn, Mail, Plus, Send } from "lucide-react";
 import Conversation from "./Conversation";
 
 const ChatWindowSkeleton = () => {
@@ -43,12 +47,12 @@ const ChatWindow = () => {
     handleMessageChange,
   } = useChatWindow();
 
-  const { isAdmin, openAuthModal } = useAppStore();
+  const { openAuthModal } = useAppStore();
   const { addConversation, addMessage, setSelectedConversationId } =
     useChatStore();
-
-  const { user, isVerified, isLoading: authLoading } = useAuthStore();
-  const { resendVerificationEmail } = useGetAuth();
+  const { isPending: authLoading } = useGetAuth();
+  const { user, isVerified, isAdmin } = useAuthStore();
+  const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
 
   const isAuthenticated = !!user;
@@ -107,7 +111,7 @@ const ChatWindow = () => {
   };
 
   const handleSignOut = () => {
-    signOutMutation.mutate();
+    signOutMutation.mutate({});
   };
 
   const sortedConversations = [...conversations].sort(
@@ -135,7 +139,9 @@ const ChatWindow = () => {
                       disabled={resendVerificationEmail.isPending}
                       className="text-xs"
                     >
-                      {resendVerificationEmail.isPending ? "Sending..." : "Resend Email"}
+                      {resendVerificationEmail.isPending
+                        ? "Sending..."
+                        : "Resend Email"}
                     </Button>
                     <Button
                       size="sm"
@@ -152,7 +158,7 @@ const ChatWindow = () => {
             </Alert>
           </div>
         )}
-        
+
         <div
           ref={scrollRef}
           className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-5 pt-3 space-y-2"

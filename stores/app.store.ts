@@ -1,5 +1,5 @@
 //-| Filepath: stores/app.store.ts
-import { AppState, Profile, UIState } from "@/types/app.types";
+import { AppState, UIState } from "@/types/app.types";
 import { create } from "zustand";
 
 const initialUIState: UIState = {
@@ -17,15 +17,11 @@ const initialUIState: UIState = {
 };
 
 const initialState = {
-  profile: null,
   ui: initialUIState,
-  isAdmin: false,
 };
 
 export const useAppStore = create<AppState>((set, get) => ({
   ...initialState,
-  setProfile: (profile: Profile | null) => set({ profile }),
-  setIsAdmin: (isAdmin: boolean) => set({ isAdmin }),
   openContractModal: (contractId: string) =>
     set((state) => ({
       ui: {
