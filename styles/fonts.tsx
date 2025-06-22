@@ -1,3 +1,4 @@
+//-| File path: styles/fonts.tsx
 import { Inter, Source_Code_Pro } from "next/font/google";
 
 export const inter = Inter({ subsets: ["latin"] });

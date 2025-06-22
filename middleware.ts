@@ -1,3 +1,4 @@
+//-| File path: middleware.ts
 //-| Filepath: middleware.ts
 import configuration from "@/configuration";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,3 +1,4 @@
+//-| File path: components/ui/separator.tsx
 "use client";
 
 import * as SeparatorPrimitive from "@radix-ui/react-separator";

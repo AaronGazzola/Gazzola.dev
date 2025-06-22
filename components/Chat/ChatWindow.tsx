@@ -1,3 +1,4 @@
+//-| File path: components/Chat/ChatWindow.tsx
 //-| Filepath: components/Chat/ChatWindow.tsx
 "use client";
 import { Alert, AlertDescription } from "@/components/ui/alert";

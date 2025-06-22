@@ -1,3 +1,4 @@
+//-| File path: app/chat/page.tsx
 import { getAuthenticatedUser } from "@/lib/auth.utils";
 
 const page = async () => {

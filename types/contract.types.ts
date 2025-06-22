@@ -1,3 +1,4 @@
+//-| File path: types/contract.types.ts
 //-| Filepath: types/contract.types.ts
 import {
   Contract as PrismaContract,

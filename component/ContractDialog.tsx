@@ -1,3 +1,4 @@
+//-| File path: component/ContractDialog.tsx
 //-| Filepath: component/ContractDialog.tsx
 "use client";
 

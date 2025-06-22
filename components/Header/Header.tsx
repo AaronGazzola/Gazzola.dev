@@ -1,3 +1,4 @@
+//-| File path: components/Header/Header.tsx
 "use client";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";

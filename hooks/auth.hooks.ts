@@ -1,3 +1,4 @@
+//-| File path: hooks/auth.hooks.ts
 //-| Filepath: hooks/auth.hooks.ts
 import config from "@/configuration";
 import { useAuthStore } from "@/stores/auth.store";

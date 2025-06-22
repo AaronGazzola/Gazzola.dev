@@ -1,3 +1,4 @@
+//-| File path: hooks/useScrollToMessage.ts
 //-\ filepath: hooks/useScrollToMessage.ts
 "use client";
 import { Conversation } from "@/types/chat.types";

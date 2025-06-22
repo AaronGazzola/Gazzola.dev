@@ -1,3 +1,4 @@
+//-| File path: components/ui/sidebar.tsx
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";

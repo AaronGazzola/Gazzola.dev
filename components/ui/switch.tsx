@@ -1,3 +1,4 @@
+//-| File path: components/ui/switch.tsx
 "use client";
 
 import * as SwitchPrimitives from "@radix-ui/react-switch";

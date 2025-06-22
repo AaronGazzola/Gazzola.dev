@@ -1,3 +1,4 @@
+//-| File path: app/stores/admin.store.ts
 //-| Filepath: app/stores/admin.store.ts
 import { AdminFilters } from "@/app/types/admin.types";
 import { create } from "zustand";

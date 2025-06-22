@@ -1,3 +1,4 @@
+//-| File path: app/admin/page.tsx
 //-| Filepath: app/admin/page.tsx
 "use client";
 

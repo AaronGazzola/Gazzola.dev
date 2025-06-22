@@ -1,3 +1,4 @@
+//-| File path: app/components/admin/UserTable.tsx
 //-| Filepath: app/components/admin/UserTable.tsx
 "use client";
 

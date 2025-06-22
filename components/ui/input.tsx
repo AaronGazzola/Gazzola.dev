@@ -1,3 +1,4 @@
+//-| File path: components/ui/input.tsx
 import * as React from "react";
 
 import { cn } from "@/lib/tailwind.utils";

@@ -1,3 +1,4 @@
+//-| File path: components/ui/scroll-area.tsx
 "use client";
 
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";

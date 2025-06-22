@@ -1,3 +1,4 @@
+//-| File path: components/Stars.tsx
 "use client";
 
 import { ScrollParallax } from "react-just-parallax";

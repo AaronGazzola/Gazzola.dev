@@ -1,3 +1,4 @@
+//-| File path: components/ui/checkbox.tsx
 "use client";
 
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";

@@ -1,3 +1,4 @@
+//-| File path: lib/auth.utils.ts
 //-| Filepath: lib/auth.utils.ts
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

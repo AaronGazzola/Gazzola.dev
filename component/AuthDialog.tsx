@@ -1,3 +1,4 @@
+//-| File path: component/AuthDialog.tsx
 //-| Filepath: component/AuthDialog.tsx
 "use client";
 

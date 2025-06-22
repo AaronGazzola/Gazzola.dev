@@ -1,3 +1,4 @@
+//-| File path: lib/email/verification.tsx
 //-| file path: lib/email/verification.tsx
 import {
   Body,

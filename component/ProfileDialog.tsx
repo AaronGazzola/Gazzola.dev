@@ -1,3 +1,4 @@
+//-| File path: component/ProfileDialog.tsx
 //-| Filepath: component/ProfileDialog.tsx
 "use client";
 

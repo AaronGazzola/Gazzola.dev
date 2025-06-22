@@ -1,3 +1,4 @@
+//-| File path: lib/email/resend.ts
 //-| file path: lib/email/resend.ts
 import { Resend } from "resend";
 

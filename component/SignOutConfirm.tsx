@@ -1,3 +1,4 @@
+//-| File path: component/SignOutConfirm.tsx
 //-| Filepath: component/SignOutConfirm.tsx
 "use client";
 

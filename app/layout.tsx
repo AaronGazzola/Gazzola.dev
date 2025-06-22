@@ -1,3 +1,4 @@
+//-| File path: app/layout.tsx
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Providers from "@/providers/Providers";
 import { inter } from "@/styles/fonts";

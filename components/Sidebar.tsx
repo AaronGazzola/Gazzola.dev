@@ -1,3 +1,4 @@
+//-| File path: components/Sidebar.tsx
 //-| Filepath: components/Sidebar.tsx
 "use client";
 

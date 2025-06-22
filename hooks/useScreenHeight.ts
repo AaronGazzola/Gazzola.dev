@@ -1,3 +1,4 @@
+//-| File path: hooks/useScreenHeight.ts
 import { useEffect } from "react";
 import useIsMounted from "./useIsMounted";
 

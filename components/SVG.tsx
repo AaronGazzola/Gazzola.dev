@@ -1,3 +1,4 @@
+//-| File path: components/SVG.tsx
 export const UpworkLogo = ({ className = "" }: { className?: string }) => {
   return (
     <svg

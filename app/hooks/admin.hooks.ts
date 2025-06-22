@@ -1,3 +1,4 @@
+//-| File path: app/hooks/admin.hooks.ts
 //-| Filepath: app/hooks/admin.hooks.ts
 "use client";
 

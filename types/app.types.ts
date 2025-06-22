@@ -1,3 +1,4 @@
+//-| File path: types/app.types.ts
 //-| Filepath: types/app.types.ts
 
 export interface UIState {

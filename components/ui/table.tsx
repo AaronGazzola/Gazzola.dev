@@ -1,3 +1,4 @@
+//-| File path: components/ui/table.tsx
 import { cn } from "@/lib/tailwind.utils";
 import * as React from "react";
 

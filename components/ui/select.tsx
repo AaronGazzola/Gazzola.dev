@@ -1,3 +1,4 @@
+//-| File path: components/ui/select.tsx
 "use client";
 
 import * as SelectPrimitive from "@radix-ui/react-select";

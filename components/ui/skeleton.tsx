@@ -1,3 +1,4 @@
+//-| File path: components/ui/skeleton.tsx
 import { cn } from "@/lib/tailwind.utils";
 
 function Skeleton({

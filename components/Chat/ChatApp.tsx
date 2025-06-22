@@ -1,3 +1,4 @@
+//-| File path: components/Chat/ChatApp.tsx
 //-| Filepath: components/Chat/ChatApp.tsx
 "use client";
 import ChatWindow from "@/components/Chat/ChatWindow";
