@@ -1,5 +1,4 @@
 //-| File path: types/chat.types.ts
-//-| Filepath: types/chat.types.ts
 import {
   Contract as PrismaContract,
   Conversation as PrismaConversation,

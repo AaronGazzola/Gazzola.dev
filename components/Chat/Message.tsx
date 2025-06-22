@@ -1,4 +1,4 @@
-//-| File path: components/Chat/Message.tsx
+//-| Filepath: components/Chat/Message.tsx
 import { CircleUserRound, PersonStanding } from "lucide-react";
 
 interface MessageProps {

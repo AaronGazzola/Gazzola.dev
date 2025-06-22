@@ -1,7 +1,4 @@
-//-| File path: components/Sidebar.tsx
-//-| Filepath: components/Sidebar.tsx
 "use client";
-
 import AuthDialog from "@/component/AuthDialog";
 import ContractDialog from "@/component/ContractDialog";
 import ProfileDialog from "@/component/ProfileDialog";
@@ -29,11 +26,13 @@ import {
   useResendVerificationEmail,
   useSignOutMutation,
 } from "@/hooks/auth.hooks";
-import { useConversationAccordion } from "@/hooks/chat.hooks";
+import { useConversations } from "@/hooks/chat.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
 import { useContractStore } from "@/stores/contract.store";
+import { Conversation } from "@/types/chat.types";
+import { format } from "date-fns";
 import {
   FileText,
   LogIn,
@@ -44,12 +43,12 @@ import {
   Plus,
   User,
 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const SidebarSkeleton = () => {
   const { open, isMobile } = useSidebar();
   const isExpanded = isMobile || open;
-
   return (
     <ShadcnSidebar collapsible="icon" className="border-r-gray-800">
       <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
@@ -90,30 +89,27 @@ const SidebarSkeleton = () => {
 
 const Sidebar = () => {
   const { contracts, setSelectedContractId } = useContractStore();
-  const {
-    groupedConversations,
-    selectedConversationId,
-    handleConversationSelect,
-    handleNewConversation,
-  } = useConversationAccordion();
-
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isPending } = useGetAuth();
-
   const { user, isVerified, profile, isAdmin } = useAuthStore();
   const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
-
   const isAuthenticated = !!user;
-
   const { open, isMobile, toggleSidebar } = useSidebar();
-
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
+  const params = useParams();
+  const router = useRouter();
+  const userId = params.userId as string;
+
+  const {
+    data: conversations = [],
+    isLoading: conversationsLoading,
+    error: conversationsError,
+  } = useConversations(userId);
 
   const displayName = profile
     ? `${profile.firstName} ${profile.lastName}`
     : user?.name || user?.email || "User";
-
   const isExpanded = isMobile || open;
 
   if (isPending && !user) {
@@ -157,11 +153,17 @@ const Sidebar = () => {
     signOutMutation.mutate({});
   };
 
+  const handleConversationClick = (conversation: Conversation) => {
+    router.push(`/chat/${userId}?conversationId=${conversation.id}`);
+  };
+
+  const handleNewConversation = () => {
+    router.push(`/chat/${userId}`);
+  };
+
   const sortedContracts = [...contracts].sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-
-  const allConversations = Object.values(groupedConversations).flat();
 
   return (
     <>
@@ -210,7 +212,6 @@ const Sidebar = () => {
               </Button>
             )}
           </SidebarHeader>
-
           {isExpanded && isAuthenticated && !isVerified && (
             <div className="p-4">
               <Alert className="border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
@@ -245,7 +246,6 @@ const Sidebar = () => {
               </Alert>
             </div>
           )}
-
           {isExpanded && isAuthenticated && isVerified && (
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="flex-1 p-4 space-y-6 relative">
@@ -258,52 +258,68 @@ const Sidebar = () => {
                           Conversations
                         </span>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
-                        onClick={handleNewConversation}
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span className="sr-only">New conversation</span>
-                      </Button>
                     </div>
                   </SidebarGroupLabel>
                   <SidebarGroupContent>
-                    <ScrollArea className="">
+                    <ScrollArea className="max-h-[33vh] overflow-auto">
                       <div className="space-y-1">
-                        {Object.entries(groupedConversations).map(([groupName, conversations]) => (
-                          <div key={groupName} className="space-y-1">
-                            <div className="text-xs text-gray-400 font-medium px-1 py-1">
-                              {groupName}
-                            </div>
-                            {conversations.map((conversation) => (
-                              <button
-                                key={conversation.id}
-                                onClick={() =>
-                                  handleConversationSelect(conversation.id)
-                                }
-                                className={`w-full text-left p-3 rounded-lg transition-colors border ${
-                                  selectedConversationId === conversation.id
-                                    ? "bg-gray-800 border-gray-600"
-                                    : "hover:bg-gray-800/50 border-gray-700/50"
-                                }`}
-                              >
-                                <div className="text-sm font-medium text-gray-100 truncate">
-                                  {conversation.title ||
-                                    `Conversation ${conversation.id.slice(0, 8)}`}
-                                </div>
-                                <div className="text-xs text-gray-100">
-                                  {conversation.messages.length} messages
-                                </div>
-                              </button>
+                        {conversationsLoading ? (
+                          <div className="animate-pulse">
+                            {[1, 2, 3].map((i) => (
+                              <div
+                                key={i}
+                                className="h-16 bg-gray-700 rounded mb-2"
+                              />
                             ))}
                           </div>
-                        ))}
-                        {allConversations.length === 0 && (
+                        ) : conversationsError ? (
+                          <div className="text-red-400 text-sm p-3">
+                            Failed to load conversations
+                          </div>
+                        ) : conversations.length === 0 ? (
                           <p className="text-xs text-gray-200 font-medium italic p-3">
                             No conversations yet
                           </p>
+                        ) : (
+                          conversations.map((conversation) => {
+                            const lastMessage =
+                              conversation.messages[
+                                conversation.messages.length - 1
+                              ];
+                            return (
+                              <button
+                                key={conversation.id}
+                                onClick={() =>
+                                  handleConversationClick(conversation)
+                                }
+                                className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50"
+                              >
+                                <div className="flex justify-between items-start mb-1">
+                                  <h3 className="font-medium text-gray-100 truncate tracking-wider">
+                                    {conversation.title ||
+                                      `Conversation ${conversation.id.slice(0, 8)}`}
+                                  </h3>
+                                  <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
+                                    {format(
+                                      new Date(conversation.lastMessageAt),
+                                      "MMM d"
+                                    )}
+                                  </span>
+                                </div>
+                                {lastMessage && (
+                                  <p className="text-sm text-gray-300 truncate">
+                                    {lastMessage.content}
+                                  </p>
+                                )}
+                                <div className="text-xs text-gray-400 mt-1">
+                                  {conversation.messages.length} message
+                                  {conversation.messages.length !== 1
+                                    ? "s"
+                                    : ""}
+                                </div>
+                              </button>
+                            );
+                          })
                         )}
                       </div>
                     </ScrollArea>
@@ -357,7 +373,6 @@ const Sidebar = () => {
                   </SidebarGroupContent>
                 </SidebarGroup>
               </div>
-
               <div className="border-t border-gray-700">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -399,7 +414,6 @@ const Sidebar = () => {
               </div>
             </div>
           )}
-
           {!isExpanded && isAuthenticated && isVerified && (
             <div className="flex flex-col items-center py-4 space-y-4">
               <Button
@@ -422,7 +436,6 @@ const Sidebar = () => {
               </Button>
             </div>
           )}
-
           {!isAuthenticated && (
             <div className="flex flex-col items-center justify-center flex-1 p-4">
               <Button
@@ -437,7 +450,6 @@ const Sidebar = () => {
           )}
         </SidebarContent>
       </ShadcnSidebar>
-
       <ContractDialog />
       <ProfileDialog />
       <AuthDialog />

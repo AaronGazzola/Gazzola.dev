@@ -1,5 +1,4 @@
-//-| File path: components/Chat/Conversation.tsx
-// file path: components/Chat/Conversation.tsx
+//-| Filepath: components/Chat/Conversation.tsx
 "use client";
 import {
   Collapsible,
@@ -17,7 +16,6 @@ interface ConversationProps {
 
 const Conversation = ({ conversation }: ConversationProps) => {
   const { selectedConversationId, setSelectedConversationId } = useChatStore();
-
   const isExpanded = selectedConversationId === conversation.id;
 
   const sortedMessages = [...conversation.messages].sort(

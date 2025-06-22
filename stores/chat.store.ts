@@ -1,5 +1,4 @@
 //-| File path: stores/chat.store.ts
-//-| filepath: stores/chat.store.ts
 import {
   ChatState,
   Conversation,
