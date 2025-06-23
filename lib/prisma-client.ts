@@ -1,5 +1,4 @@
 //-| File path: lib/prisma-client.ts
-//-| Filepath: lib/prisma-client.ts
 import { PrismaClient } from "@/generated/prisma";
 
 const globalForPrisma = globalThis as unknown as {

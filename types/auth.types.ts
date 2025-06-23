@@ -1,4 +1,3 @@
-//-| File path: types/auth.types.ts
 //-| Filepath: types/auth.types.ts
 import { Contract, Profile as PrismaProfile, User } from "@/generated/prisma";
 

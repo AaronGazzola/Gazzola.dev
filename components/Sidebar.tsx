@@ -1,3 +1,4 @@
+//-| File path: components/Sidebar.tsx
 "use client";
 import AuthDialog from "@/component/AuthDialog";
 import ContractDialog from "@/component/ContractDialog";
@@ -27,6 +28,7 @@ import {
   useSignOutMutation,
 } from "@/hooks/auth.hooks";
 import { useConversations } from "@/hooks/chat.hooks";
+import { useGetContracts } from "@/hooks/contract.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
@@ -88,7 +90,7 @@ const SidebarSkeleton = () => {
 };
 
 const Sidebar = () => {
-  const { contracts, setSelectedContractId } = useContractStore();
+  const { setSelectedContractId } = useContractStore();
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isPending } = useGetAuth();
   const { user, isVerified, profile, isAdmin } = useAuthStore();
@@ -106,6 +108,12 @@ const Sidebar = () => {
     isLoading: conversationsLoading,
     error: conversationsError,
   } = useConversations(userId);
+
+  const {
+    data: contracts = [],
+    isLoading: contractsLoading,
+    error: contractsError,
+  } = useGetContracts();
 
   const displayName = profile
     ? `${profile.firstName} ${profile.lastName}`
@@ -160,10 +168,6 @@ const Sidebar = () => {
   const handleNewConversation = () => {
     router.push(`/chat/${userId}`);
   };
-
-  const sortedContracts = [...contracts].sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
 
   return (
     <>
@@ -348,25 +352,40 @@ const Sidebar = () => {
                   <SidebarGroupContent>
                     <ScrollArea className="">
                       <div className="space-y-1">
-                        {sortedContracts.map((contract) => (
-                          <button
-                            key={contract.id}
-                            onClick={() => handleContractClick(contract.id)}
-                            className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50"
-                          >
-                            <div className="text-sm font-medium text-gray-100 truncate">
-                              {contract.title}
-                            </div>
-                            <div className="text-xs text-gray-100">
-                              ${contract.price.toLocaleString()} •{" "}
-                              {contract.progressStatus.replace("_", " ")}
-                            </div>
-                          </button>
-                        ))}
-                        {contracts.length === 0 && (
+                        {contractsLoading ? (
+                          <div className="animate-pulse">
+                            {[1, 2].map((i) => (
+                              <div
+                                key={i}
+                                className="h-16 bg-gray-700 rounded mb-2"
+                              />
+                            ))}
+                          </div>
+                        ) : contractsError ? (
+                          <div className="text-red-400 text-sm p-3">
+                            Failed to load contracts
+                          </div>
+                        ) : contracts?.length === 0 ? (
                           <p className="text-xs text-gray-200 font-medium italic p-3">
                             No contracts yet
                           </p>
+                        ) : (
+                          contracts?.map((contract) => (
+                            <button
+                              key={contract.id}
+                              onClick={() => handleContractClick(contract.id)}
+                              className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50"
+                            >
+                              <div className="text-sm font-medium text-gray-100 truncate">
+                                {contract.title}
+                              </div>
+                              <div className="text-xs text-gray-100">
+                                ${contract.price.toLocaleString()} •{" "}
+                                {contract.progressStatus?.replace("_", " ") ||
+                                  "Not started"}
+                              </div>
+                            </button>
+                          ))
                         )}
                       </div>
                     </ScrollArea>

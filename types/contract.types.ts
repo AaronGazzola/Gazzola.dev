@@ -1,5 +1,4 @@
 //-| File path: types/contract.types.ts
-//-| Filepath: types/contract.types.ts
 import {
   Contract as PrismaContract,
   Profile,
@@ -9,51 +8,6 @@ import {
 
 export interface Contract extends PrismaContract {
   profile: Profile;
-}
-
-export interface ContractInsert {
-  title: string;
-  description: string;
-  startDate: string;
-  targetDate: string;
-  dueDate: string;
-  price: number;
-  refundStatus: RefundStatus;
-  progressStatus: ProgressStatus;
-  user: Profile;
-  conversationIds: string[];
-  userApproved: boolean;
-  adminApproved: boolean;
-}
-
-export interface ContractUpdate {
-  title?: string;
-  description?: string;
-  startDate?: string;
-  targetDate?: string;
-  dueDate?: string;
-  price?: number;
-  refundStatus?: RefundStatus;
-  progressStatus?: ProgressStatus;
-  user?: Profile;
-  conversationIds?: string[];
-  userApproved?: boolean;
-  adminApproved?: boolean;
-}
-
-export interface GetContractsParams {
-  searchTerm?: string;
-  progressStatus?: ProgressStatus[];
-  refundStatus?: RefundStatus[];
-  sortBy?: keyof Contract;
-  sortOrder?: "asc" | "desc";
-  page?: number;
-  pageSize?: number;
-}
-
-export interface ContractListResponse {
-  data: Contract[];
-  total: number;
 }
 
 export interface ContractState {

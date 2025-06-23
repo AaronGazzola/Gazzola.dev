@@ -1,8 +1,11 @@
 //-| Filepath: hooks/chat.hooks.ts
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getConversationsAction, sendMessageAction, createConversationAction } from "@/actions/chat.actions";
+import {
+  createConversationAction,
+  getConversationsAction,
+  sendMessageAction,
+} from "@/actions/chat.actions";
 import { Conversation, Message } from "@/types/chat.types";
-import { ActionResponse } from "@/types/app.types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useConversations = (userId: string) => {
   return useQuery({

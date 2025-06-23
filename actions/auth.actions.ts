@@ -1,5 +1,4 @@
 //-| File path: actions/auth.actions.ts
-//-| Filepath: actions/auth.actions.ts
 "use server";
 
 import { auth } from "@/lib/auth";
@@ -18,6 +17,28 @@ async function getAuthenticatedUser() {
 
   return session?.user || null;
 }
+
+export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
+  try {
+    const user = await getAuthenticatedUser();
+
+    if (!user) {
+      return { data: false, error: null };
+    }
+
+    const isAdmin = user.role === 'admin';
+
+    return { data: isAdmin, error: null };
+  } catch (error) {
+    return {
+      data: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to check admin status",
+    };
+  }
+};
 
 export const checkUserVerificationAction = async (): Promise<
   ActionResponse<boolean>

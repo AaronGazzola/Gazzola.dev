@@ -1,5 +1,4 @@
 //-| File path: lib/auth-client.ts
-//-| Filepath: lib/auth-client.ts
 import {
   adminClient,
   genericOAuthClient,

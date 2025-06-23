@@ -1,5 +1,4 @@
 //-| File path: lib/auth.ts
-//-| Filepath: lib/auth.ts
 import { resend } from "@/lib/email/resend";
 import reactResetPasswordEmail from "@/lib/email/reset-password";
 import reactVerificationEmail from "@/lib/email/verification";

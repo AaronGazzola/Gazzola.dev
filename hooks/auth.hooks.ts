@@ -97,6 +97,7 @@ export function useSignInMutation() {
   });
 }
 
+// TODO: add a profile with the user on sign up
 export function useSignUpMutation(onNext: () => void) {
   return useMutation({
     mutationFn: (credentials: SignUpCredentials) => {
