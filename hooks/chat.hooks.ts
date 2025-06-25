@@ -1,13 +1,22 @@
-//-| Filepath: hooks/chat.hooks.ts
+//-| File path: hooks/chat.hooks.ts
 import {
   createConversationAction,
   getConversationsAction,
   sendMessageAction,
 } from "@/actions/chat.actions";
+import { useAdminStore } from "@/app/stores/admin.store";
+import { useAuthStore } from "@/stores/auth.store";
+import { useChatStore } from "@/stores/chat.store";
 import { Conversation, Message } from "@/types/chat.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 
-export const useConversations = (userId: string) => {
+export const useConversations = () => {
+  const { user, isAdmin } = useAuthStore();
+  const { users } = useAdminStore();
+  const { setTargetUser } = useChatStore();
+  const params = useParams();
+  const userId = params.userId as string;
   return useQuery({
     queryKey: ["conversations", userId],
     queryFn: async (): Promise<Conversation[]> => {
@@ -15,9 +24,19 @@ export const useConversations = (userId: string) => {
       if (result.error) {
         throw new Error(result.error);
       }
+      if (isAdmin && userId && users.length > 0) {
+        const foundUser = users.find((u) => u.id === userId);
+        setTargetUser(foundUser || null);
+      } else if (!isAdmin && user) {
+        // TODO: add an action to get the admin user data
+        setTargetUser({
+          ...user,
+          createdAt: user.createdAt,
+        });
+      }
       return result.data || [];
     },
-    enabled: !!userId,
+    enabled: !!user && !!((isAdmin && userId && users.length) || !isAdmin),
   });
 };
 

@@ -1,5 +1,6 @@
-//-| Filepath: components/Chat/ChatWindow.tsx
+//-| File path: components/Chat/ChatWindow.tsx
 "use client";
+import { useGetUsers } from "@/app/hooks/admin.hooks";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -7,12 +8,12 @@ import {
   useCreateConversation,
   useSendMessage,
 } from "@/hooks/chat.hooks";
-import { useAuthStore } from "@/stores/auth.store";
-import { Message } from "@/types/chat.types";
 import { cn } from "@/lib/tailwind.utils";
+import { useAuthStore } from "@/stores/auth.store";
+import { useChatStore } from "@/stores/chat.store";
+import { Message } from "@/types/chat.types";
 import { format } from "date-fns";
-import { Plus, Send, CircleUserRound, PersonStanding } from "lucide-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { CircleUserRound, PersonStanding, Plus, Send } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 interface ChatWindowProps {
@@ -21,26 +22,14 @@ interface ChatWindowProps {
 
 export default function ChatWindow({ className }: ChatWindowProps) {
   const { user } = useAuthStore();
-  const params = useParams();
-  const searchParams = useSearchParams();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  const userId = params.userId as string;
-  const conversationId = searchParams.get("conversationId");
-  
-  const [message, setMessage] = useState("");
-  const [targetUser, setTargetUser] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const { currentConversation, targetUser } = useChatStore();
 
-  const { data: conversations = [], isLoading } = useConversations(userId);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const { data: conversations = [], isLoading } = useConversations();
+  useGetUsers();
   const sendMessageMutation = useSendMessage();
   const createConversationMutation = useCreateConversation();
-
-  const currentConversation = conversations.find(
-    (conv) => conv.id === conversationId
-  );
 
   const messages = useMemo(
     () => currentConversation?.messages || [],
@@ -48,48 +37,38 @@ export default function ChatWindow({ className }: ChatWindowProps) {
   );
 
   useEffect(() => {
-    if (user && userId) {
-      if (user.role === "admin") {
-        setTargetUser({ id: userId, name: `User ${userId.slice(0, 8)}` });
-      } else {
-        setTargetUser({ id: "admin", name: "Admin" });
-      }
-    }
-  }, [user, userId]);
-
-  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!message.trim() || !user || !targetUser) return;
+  const handleSendMessage = async (messageContent: string) => {
+    if (!messageContent.trim() || !user || !targetUser) return;
 
-    const mostRecentConversation = conversations.length > 0 ? conversations[0] : null;
+    const mostRecentConversation =
+      conversations.length > 0 ? conversations[0] : null;
 
     try {
       await sendMessageMutation.mutateAsync({
-        content: message.trim(),
+        content: messageContent.trim(),
         senderId: user.id,
         targetUserId: targetUser.id,
         conversationId: mostRecentConversation?.id,
       });
-      setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
 
-  const handleCreateConversation = async () => {
-    if (!message.trim() || !user || !targetUser || user.role !== "admin") return;
+  const handleCreateConversation = async (messageContent: string) => {
+    if (!messageContent.trim() || !user || !targetUser || user.role !== "admin")
+      return;
 
     try {
       await createConversationMutation.mutateAsync({
-        content: message.trim(),
+        content: messageContent.trim(),
         senderId: user.id,
         targetUserId: targetUser.id,
         title: `Conversation with ${targetUser.name}`,
       });
-      setMessage("");
     } catch (error) {
       console.error("Failed to create conversation:", error);
     }
@@ -105,16 +84,11 @@ export default function ChatWindow({ className }: ChatWindowProps) {
     return senderId === user?.id;
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   if (isLoading) {
     return (
-      <div className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}>
+      <div
+        className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}
+      >
         <div className="w-full h-full flex flex-col items-left">
           <div className="grow pr-5 pt-3 space-y-4">
             {[1, 2, 3].map((i) => (
@@ -131,11 +105,11 @@ export default function ChatWindow({ className }: ChatWindowProps) {
       </div>
     );
   }
-
-  const isMessageEmpty = !message.trim();
-
+  console.log(targetUser);
   return (
-    <div className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}>
+    <div
+      className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}
+    >
       <div className="w-full h-full flex flex-col items-left">
         {targetUser && (
           <div className="p-4 border-b border-gray-700">
@@ -183,58 +157,107 @@ export default function ChatWindow({ className }: ChatWindowProps) {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="pt-4 pl-4 pr-4 pb-4 relative">
-          <div className="relative">
-            <Textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type your message..."
-              disabled={sendMessageMutation.isPending || createConversationMutation.isPending}
+        <ChatInput
+          onSendMessage={handleSendMessage}
+          onCreateConversation={handleCreateConversation}
+          isAdmin={user?.role === "admin"}
+          disabled={
+            sendMessageMutation.isPending ||
+            createConversationMutation.isPending
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+  onCreateConversation: (message: string) => void;
+  isAdmin: boolean;
+  disabled: boolean;
+}
+
+function ChatInput({
+  onSendMessage,
+  onCreateConversation,
+  isAdmin,
+  disabled,
+}: ChatInputProps) {
+  const [message, setMessage] = useState("");
+
+  const handleSendMessage = () => {
+    if (!message.trim()) return;
+    onSendMessage(message);
+    setMessage("");
+  };
+
+  const handleCreateConversation = () => {
+    if (!message.trim()) return;
+    onCreateConversation(message);
+    setMessage("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const isMessageEmpty = !message.trim();
+
+  return (
+    <div className="pt-4 pl-4 pr-4 pb-4 relative">
+      <div className="relative">
+        <Textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Type your message..."
+          disabled={disabled}
+          className={cn(
+            "min-h-[80px] resize-none border border-white/10 focus:border-white/40 pr-16"
+          )}
+        />
+        <div className="absolute right-2 bottom-2 flex flex-col gap-2">
+          <Button
+            onClick={handleSendMessage}
+            disabled={disabled || isMessageEmpty}
+            size="icon"
+            className={cn(
+              "h-8 w-8",
+              isMessageEmpty
+                ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            )}
+          >
+            <Send className="h-4 w-4" />
+            <span className="sr-only">Send message</span>
+          </Button>
+          {isAdmin && (
+            <Button
+              onClick={handleCreateConversation}
+              disabled={disabled || isMessageEmpty}
+              size="icon"
               className={cn(
-                "min-h-[80px] resize-none border border-white/10 focus:border-white/40 pr-16"
+                "h-8 w-8",
+                isMessageEmpty
+                  ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
               )}
-            />
-            <div className="absolute right-2 bottom-2 flex flex-col gap-2">
-              <Button
-                onClick={handleSendMessage}
-                disabled={sendMessageMutation.isPending || isMessageEmpty}
-                size="icon"
-                className={cn(
-                  "h-8 w-8",
-                  isMessageEmpty
-                    ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
-                )}
-              >
-                <Send className="h-4 w-4" />
-                <span className="sr-only">Send message</span>
-              </Button>
-              {user?.role === "admin" && (
-                <Button
-                  onClick={handleCreateConversation}
-                  disabled={createConversationMutation.isPending || isMessageEmpty}
-                  size="icon"
-                  className={cn(
-                    "h-8 w-8",
-                    isMessageEmpty
-                      ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
-                      : "bg-green-600 hover:bg-green-700"
-                  )}
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="sr-only">Create new conversation</span>
-                </Button>
-              )}
-            </div>
-          </div>
-          {user?.role === "admin" && (
-            <div className="text-xs text-gray-400 mt-2">
-              Use the + button to create a new conversation
-            </div>
+            >
+              <Plus className="h-4 w-4" />
+              <span className="sr-only">Create new conversation</span>
+            </Button>
           )}
         </div>
       </div>
+      {isAdmin && (
+        <div className="text-xs text-gray-400 mt-2">
+          Use the + button to create a new conversation
+        </div>
+      )}
     </div>
   );
 }

@@ -1,11 +1,12 @@
 //-| File path: app/stores/admin.store.ts
-//-| Filepath: app/stores/admin.store.ts
-import { AdminFilters } from "@/app/types/admin.types";
+import { AdminFilters, UserData } from "@/app/types/admin.types";
 import { create } from "zustand";
 
 interface AdminState {
   filters: AdminFilters;
+  users: UserData[];
   setFilters: (filters: Partial<AdminFilters>) => void;
+  setUsers: (users: UserData[]) => void;
   resetFilters: () => void;
 }
 
@@ -19,9 +20,11 @@ const initialFilters: AdminFilters = {
 
 export const useAdminStore = create<AdminState>((set, get) => ({
   filters: initialFilters,
-  
-  setFilters: (filters) => 
-    set({ filters: { ...get().filters, ...filters } }),
-  
+  users: [],
+
+  setFilters: (filters) => set({ filters: { ...get().filters, ...filters } }),
+
+  setUsers: (users) => set({ users }),
+
   resetFilters: () => set({ filters: initialFilters }),
 }));

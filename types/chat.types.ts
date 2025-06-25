@@ -1,4 +1,5 @@
 //-| File path: types/chat.types.ts
+import { UserData } from "@/app/types/admin.types";
 import {
   Contract as PrismaContract,
   Conversation as PrismaConversation,
@@ -22,10 +23,12 @@ export interface FileUpload extends PrismaFileUpload {
 export interface ChatState {
   conversations: Conversation[];
   files: FileUpload[];
-  selectedConversationId: string | null;
+  currentConversation: Conversation | null;
+  targetUser: UserData | null;
   setConversations: (conversations: Conversation[]) => void;
   setFiles: (files: FileUpload[]) => void;
-  setSelectedConversationId: (id: string | null) => void;
+  setCurrentConversation: (conversation: Conversation | null) => void;
+  setTargetUser: (user: UserData | null) => void;
   addConversation: (conversation: Conversation) => void;
   updateConversation: (
     conversationId: string,

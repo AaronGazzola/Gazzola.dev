@@ -1,4 +1,5 @@
 //-| File path: stores/chat.store.ts
+import { UserData } from "@/app/types/admin.types";
 import {
   ChatState,
   Conversation,
@@ -10,15 +11,17 @@ import { create } from "zustand";
 const initialState = {
   conversations: [],
   files: [],
-  selectedConversationId: null,
+  currentConversation: null,
+  targetUser: null,
 };
 
 export const useChatStore = create<ChatState>((set, get) => ({
   ...initialState,
   setConversations: (conversations: Conversation[]) => set({ conversations }),
   setFiles: (files: FileUpload[]) => set({ files }),
-  setSelectedConversationId: (id: string | null) =>
-    set({ selectedConversationId: id }),
+  setCurrentConversation: (conversation: Conversation | null) =>
+    set({ currentConversation: conversation }),
+  setTargetUser: (user: UserData | null) => set({ targetUser: user }),
   addConversation: (conversation: Conversation) =>
     set((state) => ({
       conversations: [conversation, ...state.conversations],
@@ -31,16 +34,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
       conversations: state.conversations.map((conv) =>
         conv.id === conversationId ? { ...conv, ...updates } : conv
       ),
+      currentConversation:
+        state.currentConversation?.id === conversationId
+          ? { ...state.currentConversation, ...updates }
+          : state.currentConversation,
     })),
   removeConversation: (conversationId: string) =>
     set((state) => ({
       conversations: state.conversations.filter(
         (conv) => conv.id !== conversationId
       ),
-      selectedConversationId:
-        state.selectedConversationId === conversationId
+      currentConversation:
+        state.currentConversation?.id === conversationId
           ? null
-          : state.selectedConversationId,
+          : state.currentConversation,
     })),
   addMessage: (conversationId: string, message: Message) =>
     set((state) => ({
@@ -53,6 +60,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
             }
           : conv
       ),
+      currentConversation:
+        state.currentConversation?.id === conversationId
+          ? {
+              ...state.currentConversation,
+              messages: [...state.currentConversation.messages, message],
+              lastMessageAt: message.createdAt,
+            }
+          : state.currentConversation,
     })),
   updateMessage: (
     conversationId: string,
@@ -70,6 +85,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
             }
           : conv
       ),
+      currentConversation:
+        state.currentConversation?.id === conversationId
+          ? {
+              ...state.currentConversation,
+              messages: state.currentConversation.messages.map((msg) =>
+                msg.id === messageId ? { ...msg, ...updates } : msg
+              ),
+            }
+          : state.currentConversation,
     })),
   removeMessage: (conversationId: string, messageId: string) =>
     set((state) => ({
@@ -81,6 +105,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
             }
           : conv
       ),
+      currentConversation:
+        state.currentConversation?.id === conversationId
+          ? {
+              ...state.currentConversation,
+              messages: state.currentConversation.messages.filter(
+                (msg) => msg.id !== messageId
+              ),
+            }
+          : state.currentConversation,
     })),
   addFile: (file: FileUpload) =>
     set((state) => ({

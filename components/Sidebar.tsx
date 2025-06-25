@@ -32,6 +32,7 @@ import { useGetContracts } from "@/hooks/contract.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
+import { useChatStore } from "@/stores/chat.store";
 import { useContractStore } from "@/stores/contract.store";
 import { Conversation } from "@/types/chat.types";
 import { format } from "date-fns";
@@ -45,7 +46,7 @@ import {
   Plus,
   User,
 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
 const SidebarSkeleton = () => {
@@ -94,20 +95,20 @@ const Sidebar = () => {
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isPending } = useGetAuth();
   const { user, isVerified, profile, isAdmin } = useAuthStore();
+  const { setCurrentConversation } = useChatStore();
   const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
   const isAuthenticated = !!user;
   const { open, isMobile, toggleSidebar } = useSidebar();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
   const params = useParams();
-  const router = useRouter();
   const userId = params.userId as string;
 
   const {
     data: conversations = [],
     isLoading: conversationsLoading,
     error: conversationsError,
-  } = useConversations(userId);
+  } = useConversations();
 
   const {
     data: contracts = [],
@@ -162,11 +163,7 @@ const Sidebar = () => {
   };
 
   const handleConversationClick = (conversation: Conversation) => {
-    router.push(`/chat/${userId}?conversationId=${conversation.id}`);
-  };
-
-  const handleNewConversation = () => {
-    router.push(`/chat/${userId}`);
+    setCurrentConversation(conversation);
   };
 
   return (

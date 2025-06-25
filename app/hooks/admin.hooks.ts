@@ -1,15 +1,14 @@
 //-| File path: app/hooks/admin.hooks.ts
-//-| Filepath: app/hooks/admin.hooks.ts
 "use client";
 
 import { getUsersAction } from "@/app/actions/admin.actions";
 import { useAdminStore } from "@/app/stores/admin.store";
-import { UserData, GetUsersParams } from "@/app/types/admin.types";
+import { GetUsersParams } from "@/app/types/admin.types";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetUsers = (params: GetUsersParams = {}) => {
-  const { filters } = useAdminStore();
-  
+  const { filters, setUsers } = useAdminStore();
+
   const mergedParams = {
     ...filters,
     ...params,
@@ -20,6 +19,7 @@ export const useGetUsers = (params: GetUsersParams = {}) => {
     queryFn: async () => {
       const { data, error } = await getUsersAction(mergedParams);
 
+      setUsers(data || []);
       if (error) throw new Error(error);
 
       return data;
@@ -31,7 +31,7 @@ export const useGetUsers = (params: GetUsersParams = {}) => {
 
 export const useRefreshUsers = () => {
   const { filters } = useAdminStore();
-  
+
   return useQuery({
     queryKey: ["admin-users", filters],
     queryFn: async () => {

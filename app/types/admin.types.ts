@@ -9,12 +9,12 @@ export interface UserData {
   email: string;
   role: string;
   createdAt: Date;
-  lastMessage: string | null;
-  lastMessageAt: Date | null;
-  contractTitle: string | null;
-  contractStatus: ProgressStatus | null;
-  contractCreatedAt: Date | null;
-  sessionCount: number;
+  lastMessage?: string | null;
+  lastMessageAt?: Date | null;
+  contractTitle?: string | null;
+  contractStatus?: ProgressStatus | null;
+  contractCreatedAt?: Date | null;
+  sessionCount?: number;
 }
 
 export interface GetUsersParams {
