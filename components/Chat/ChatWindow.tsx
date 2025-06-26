@@ -1,6 +1,7 @@
 //-| File path: components/Chat/ChatWindow.tsx
 "use client";
 import { useGetUsers } from "@/app/hooks/admin.hooks";
+import { useScrollToMessage } from "@/app/hooks/useScrollToMessage";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -14,7 +15,7 @@ import { useChatStore } from "@/stores/chat.store";
 import { Message } from "@/types/chat.types";
 import { format } from "date-fns";
 import { CircleUserRound, PersonStanding, Plus, Send } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface ChatWindowProps {
   className?: string;
@@ -23,8 +24,6 @@ interface ChatWindowProps {
 export default function ChatWindow({ className }: ChatWindowProps) {
   const { user } = useAuthStore();
   const { currentConversation, targetUser } = useChatStore();
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: conversations = [], isLoading } = useConversations();
   useGetUsers();
@@ -36,9 +35,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
     [currentConversation]
   );
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const messagesEndRef = useScrollToMessage(messages);
 
   const handleSendMessage = async (messageContent: string) => {
     if (!messageContent.trim() || !user || !targetUser) return;
