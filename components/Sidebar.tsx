@@ -27,7 +27,7 @@ import {
   useResendVerificationEmail,
   useSignOutMutation,
 } from "@/hooks/auth.hooks";
-import { useConversations } from "@/hooks/chat.hooks";
+import { useGetConversations } from "@/hooks/chat.hooks";
 import { useGetContracts } from "@/hooks/contract.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
@@ -108,7 +108,7 @@ const Sidebar = () => {
     data: conversations = [],
     isLoading: conversationsLoading,
     error: conversationsError,
-  } = useConversations();
+  } = useGetConversations();
 
   const {
     data: contracts = [],

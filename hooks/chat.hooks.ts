@@ -11,10 +11,11 @@ import { Conversation, Message } from "@/types/chat.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
-export const useConversations = () => {
+export const useGetConversations = () => {
   const { user, isAdmin } = useAuthStore();
   const { users } = useAdminStore();
-  const { setTargetUser } = useChatStore();
+  const { setTargetUser, setConversations, setCurrentConversation } =
+    useChatStore();
   const params = useParams();
   const userId = params.userId as string;
   return useQuery({
@@ -34,6 +35,9 @@ export const useConversations = () => {
           createdAt: user.createdAt,
         });
       }
+      setConversations(result.data || []);
+      setCurrentConversation(result.data?.[0] || null);
+
       return result.data || [];
     },
     enabled: !!user && !!((isAdmin && userId && users.length) || !isAdmin),

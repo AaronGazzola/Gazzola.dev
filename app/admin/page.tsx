@@ -3,9 +3,9 @@
 "use client";
 
 import { UserTable } from "@/app/components/admin/UserTable";
-import { useGetUsers } from "@/app/hooks/admin.hooks";
-import { useEffect } from "react";
+import { useGetUsers } from "@/hooks/admin.hooks";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const AdminPage = () => {
   const router = useRouter();

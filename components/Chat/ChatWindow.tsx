@@ -1,14 +1,14 @@
 //-| File path: components/Chat/ChatWindow.tsx
 "use client";
-import { useGetUsers } from "@/app/hooks/admin.hooks";
-import { useScrollToMessage } from "@/app/hooks/useScrollToMessage";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useGetUsers } from "@/hooks/admin.hooks";
 import {
-  useConversations,
   useCreateConversation,
+  useGetConversations,
   useSendMessage,
 } from "@/hooks/chat.hooks";
+import { useScrollToMessage } from "@/app/useScrollToMessage";
 import { cn } from "@/lib/tailwind.utils";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";
@@ -23,9 +23,9 @@ interface ChatWindowProps {
 
 export default function ChatWindow({ className }: ChatWindowProps) {
   const { user } = useAuthStore();
-  const { currentConversation, targetUser } = useChatStore();
+  const { currentConversation, targetUser, conversations } = useChatStore();
 
-  const { data: conversations = [], isLoading } = useConversations();
+  const { isLoading } = useGetConversations();
   useGetUsers();
   const sendMessageMutation = useSendMessage();
   const createConversationMutation = useCreateConversation();
@@ -102,7 +102,6 @@ export default function ChatWindow({ className }: ChatWindowProps) {
       </div>
     );
   }
-  console.log(targetUser);
   return (
     <div
       className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}
