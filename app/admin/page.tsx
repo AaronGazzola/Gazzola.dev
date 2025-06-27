@@ -1,25 +1,12 @@
 //-| File path: app/admin/page.tsx
-//-| Filepath: app/admin/page.tsx
 "use client";
 
 import { UserTable } from "@/component/UserTable";
-import { useGetUsers } from "@/hooks/admin.hooks";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useGetAppData } from "@/hooks/app.hooks";
 
 const AdminPage = () => {
-  const router = useRouter();
-  const { data: users, isLoading, error } = useGetUsers();
-
-  useEffect(() => {
-    if (error?.message === "Unauthorized") {
-      router.push("/");
-    }
-  }, [error, router]);
-
-  if (error?.message === "Unauthorized") {
-    return null;
-  }
+  const { data, isLoading } = useGetAppData();
+  const users = data?.users || [];
 
   return (
     <div className="container mx-auto py-10">
@@ -30,7 +17,7 @@ const AdminPage = () => {
             Manage users and monitor system activity
           </p>
         </div>
-        <UserTable users={users || []} isLoading={isLoading} />
+        <UserTable users={users} isLoading={isLoading} />
       </div>
     </div>
   );

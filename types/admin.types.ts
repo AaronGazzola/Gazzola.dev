@@ -1,6 +1,4 @@
-//-| File path: app/types/admin.types.ts
-//-| Filepath: app/types/admin.types.ts
-
+//-| File path: types/admin.types.ts
 import { ProgressStatus } from "@/generated/prisma";
 
 export interface UserData {

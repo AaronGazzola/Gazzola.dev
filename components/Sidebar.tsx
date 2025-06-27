@@ -22,13 +22,11 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useGetAppData } from "@/hooks/app.hooks";
 import {
-  useGetAuth,
   useResendVerificationEmail,
   useSignOutMutation,
 } from "@/hooks/auth.hooks";
-import { useGetConversations } from "@/hooks/chat.hooks";
-import { useGetContracts } from "@/hooks/contract.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
@@ -46,7 +44,6 @@ import {
   Plus,
   User,
 } from "lucide-react";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 
 const SidebarSkeleton = () => {
@@ -93,37 +90,28 @@ const SidebarSkeleton = () => {
 const Sidebar = () => {
   const { setSelectedContractId } = useContractStore();
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
-  const { isPending } = useGetAuth();
-  const { user, isVerified, profile, isAdmin } = useAuthStore();
+  const { data, isLoading: appDataLoading } = useGetAppData();
+  const { user, isVerified, profile } = useAuthStore();
   const { setCurrentConversation } = useChatStore();
   const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
   const isAuthenticated = !!user;
   const { open, isMobile, toggleSidebar } = useSidebar();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
-  const params = useParams();
-  const userId = params.userId as string;
 
-  const {
-    data: conversations = [],
-    isLoading: conversationsLoading,
-    error: conversationsError,
-  } = useGetConversations();
-
-  const {
-    data: contracts = [],
-    isLoading: contractsLoading,
-    error: contractsError,
-  } = useGetContracts();
+  const conversations = data?.conversations || [];
+  const contracts = data?.contracts || [];
+  const conversationsLoading = appDataLoading;
+  const contractsLoading = appDataLoading;
+  const conversationsError = null;
+  const contractsError = null;
 
   const displayName = profile
     ? `${profile.firstName} ${profile.lastName}`
     : user?.name || user?.email || "User";
   const isExpanded = isMobile || open;
 
-  if (isPending && !user) {
-    return <SidebarSkeleton />;
-  }
+  if (appDataLoading) return <SidebarSkeleton />;
 
   const getInitials = (name: string) => {
     const words = name.split(" ");

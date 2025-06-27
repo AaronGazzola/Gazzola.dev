@@ -1,14 +1,15 @@
 //-| File path: providers/Providers.tsx
 "use client";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { useGetAppData } from "@/hooks/app.hooks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
-import { useGetAuth } from "@/hooks/auth.hooks";
 
 const queryClient = new QueryClient();
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  useGetAuth();
+  useGetAppData();
   return <>{children}</>;
 };
 
@@ -17,7 +18,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Toaster />
-        {children}
+        <SidebarProvider>{children}</SidebarProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

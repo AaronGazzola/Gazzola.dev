@@ -1,4 +1,4 @@
-//-| File path: app/hooks/admin.hooks.ts
+//-| File path: hooks/admin.hooks.ts
 "use client";
 
 import { getUsersAction } from "@/actions/admin.actions";
@@ -26,21 +26,5 @@ export const useGetUsers = (params: GetUsersParams = {}) => {
     },
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
-  });
-};
-
-export const useRefreshUsers = () => {
-  const { filters } = useAdminStore();
-
-  return useQuery({
-    queryKey: ["admin-users", filters],
-    queryFn: async () => {
-      const { data, error } = await getUsersAction(filters);
-
-      if (error) throw new Error(error);
-
-      return data;
-    },
-    enabled: false,
   });
 };

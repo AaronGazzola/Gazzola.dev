@@ -1,4 +1,4 @@
-//-| Filepath: types/auth.types.ts
+//-| File path: types/auth.types.ts
 import { Contract, Profile as PrismaProfile, User } from "@/generated/prisma";
 
 export interface Profile extends PrismaProfile {
@@ -32,11 +32,29 @@ export interface SignOutParams {
 }
 
 export interface AuthState {
-  user: User | null;
+  user: {
+    id: string;
+    role: string;
+    image: string | null;
+    email: string;
+    name: string;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  } | null;
   profile: Profile | null;
   isVerified: boolean;
   isAdmin: boolean;
-  setUser: (user: User | null) => void;
+  setUser: (user: {
+    id: string;
+    role: string;
+    image: string | null;
+    email: string;
+    name: string;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  } | null) => void;
   setProfile: (profile: Profile | null) => void;
   setIsVerified: (isVerified: boolean) => void;
   setIsAdmin: (isAdmin: boolean) => void;

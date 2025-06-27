@@ -2,10 +2,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetUsers } from "@/hooks/admin.hooks";
+import { useGetAppData } from "@/hooks/app.hooks";
 import {
   useCreateConversation,
-  useGetConversations,
   useSendMessage,
 } from "@/hooks/chat.hooks";
 import { useScrollToMessage } from "@/hooks/useScrollToMessage";
@@ -25,8 +24,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
   const { user } = useAuthStore();
   const { currentConversation, targetUser, conversations } = useChatStore();
 
-  const { isLoading } = useGetConversations();
-  useGetUsers();
+  const { isLoading } = useGetAppData();
   const sendMessageMutation = useSendMessage();
   const createConversationMutation = useCreateConversation();
 
