@@ -1,11 +1,11 @@
 //-| File path: types/chat.types.ts
-import { UserData } from "@/app/types/admin.types";
 import {
   Contract as PrismaContract,
   Conversation as PrismaConversation,
   FileUpload as PrismaFileUpload,
   Message as PrismaMessage,
 } from "@/generated/prisma";
+import { UserData } from "@/types/admin.types";
 
 export interface Message extends PrismaMessage {
   files: PrismaFileUpload[];

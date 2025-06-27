@@ -2,8 +2,6 @@
 //-| Filepath: app/components/admin/UserTable.tsx
 "use client";
 
-import { useAdminStore } from "@/app/stores/admin.store";
-import { UserData } from "@/app/types/admin.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,6 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import configuration from "@/configuration";
+import { useAdminStore } from "@/stores/admin.store";
+import { UserData } from "@/types/admin.types";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -145,10 +145,10 @@ export function UserTable({ users, isLoading }: UserTableProps) {
               status === "completed"
                 ? "bg-green-100 text-green-800"
                 : status === "in_progress"
-                ? "bg-blue-100 text-blue-800"
-                : status === "cancelled"
-                ? "bg-red-100 text-red-800"
-                : "bg-gray-100 text-gray-800"
+                  ? "bg-blue-100 text-blue-800"
+                  : status === "cancelled"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-gray-100 text-gray-800"
             }`}
           >
             {status || "N/A"}

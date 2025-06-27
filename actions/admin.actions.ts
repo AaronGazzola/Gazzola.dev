@@ -1,10 +1,9 @@
 //-| File path: app/actions/admin.actions.ts
-//-| Filepath: app/actions/admin.actions.ts
 "use server";
 
-import { GetUsersParams, UserData } from "@/app/types/admin.types";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
+import { GetUsersParams, UserData } from "@/types/admin.types";
 import { ActionResponse } from "@/types/app.types";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";

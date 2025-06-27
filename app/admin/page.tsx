@@ -2,7 +2,7 @@
 //-| Filepath: app/admin/page.tsx
 "use client";
 
-import { UserTable } from "@/app/components/admin/UserTable";
+import { UserTable } from "@/component/UserTable";
 import { useGetUsers } from "@/hooks/admin.hooks";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

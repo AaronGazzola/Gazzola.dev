@@ -4,7 +4,7 @@ import {
   getConversationsAction,
   sendMessageAction,
 } from "@/actions/chat.actions";
-import { useAdminStore } from "@/app/stores/admin.store";
+import { useAdminStore } from "@/stores/admin.store";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";
 import { Conversation, Message } from "@/types/chat.types";

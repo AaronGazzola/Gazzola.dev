@@ -8,7 +8,7 @@ import {
   useGetConversations,
   useSendMessage,
 } from "@/hooks/chat.hooks";
-import { useScrollToMessage } from "@/app/useScrollToMessage";
+import { useScrollToMessage } from "@/hooks/useScrollToMessage";
 import { cn } from "@/lib/tailwind.utils";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";

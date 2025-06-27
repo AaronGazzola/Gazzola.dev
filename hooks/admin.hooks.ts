@@ -1,9 +1,9 @@
 //-| File path: app/hooks/admin.hooks.ts
 "use client";
 
-import { getUsersAction } from "@/app/actions/admin.actions";
-import { useAdminStore } from "@/app/stores/admin.store";
-import { GetUsersParams } from "@/app/types/admin.types";
+import { getUsersAction } from "@/actions/admin.actions";
+import { useAdminStore } from "@/stores/admin.store";
+import { GetUsersParams } from "@/types/admin.types";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetUsers = (params: GetUsersParams = {}) => {
