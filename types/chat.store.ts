@@ -1,10 +1,11 @@
-//-| File path: types/chat.types.ts
+//-| File path: types/chat.store.ts
+
 import {
   Contract as PrismaContract,
   Conversation as PrismaConversation,
   FileUpload as PrismaFileUpload,
   Message as PrismaMessage,
-  User as PrismaUser,
+  User,
 } from "@/generated/prisma";
 
 export interface Message extends PrismaMessage {
@@ -20,15 +21,15 @@ export interface FileUpload extends PrismaFileUpload {
   message: Message;
 }
 
-export interface ChatState {
+export interface ChatStore {
   conversations: Conversation[];
   files: FileUpload[];
   currentConversation: Conversation | null;
-  targetUser: PrismaUser | null;
+  targetUser: User | null;
   setConversations: (conversations: Conversation[]) => void;
   setFiles: (files: FileUpload[]) => void;
   setCurrentConversation: (conversation: Conversation | null) => void;
-  setTargetUser: (user: PrismaUser | null) => void;
+  setTargetUser: (user: User | null) => void;
   addConversation: (conversation: Conversation) => void;
   updateConversation: (
     conversationId: string,

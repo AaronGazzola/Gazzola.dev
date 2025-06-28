@@ -1,34 +1,24 @@
 //-| File path: actions/app.actions.ts
 "use server";
 
-import { auth } from "@/lib/auth";
+import { User as PrismaUser } from "@/generated/prisma";
+import { auth, User } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { UserData } from "@/types/admin.types";
-import { ActionResponse, AppData, AppUser } from "@/types/app.types";
+import { ActionResponse, AppData } from "@/types/app.types";
 import { Profile } from "@/types/auth.types";
 import { Conversation } from "@/types/chat.types";
 import { Contract } from "@/types/contract.types";
 import { headers } from "next/headers";
 
-async function getAuthenticatedUser(): Promise<AppUser | null> {
+async function getAuthenticatedUser(): Promise<User | null> {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (!session?.user) return null;
 
-  const user = session.user;
-
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    emailVerified: user.emailVerified,
-    image: user.image ?? null,
-    role: user.role ?? "user",
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  };
+  return session.user;
 }
 
 async function checkUserVerification(userId: string): Promise<boolean> {
@@ -128,7 +118,7 @@ async function getAllUsers(isAdmin: boolean): Promise<UserData[]> {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role || "user",
+        role: user.role,
         createdAt: user.createdAt,
         lastMessage: lastMessage?.content || null,
         lastMessageAt: lastMessage?.createdAt || null,
@@ -206,9 +196,52 @@ async function getUserContracts(
   }
 }
 
-export const getAppDataAction = async (): Promise<
-  ActionResponse<AppData | null>
+async function adminGuard(): Promise<boolean> {
+  const user = await getAuthenticatedUser();
+  return user?.role === "admin";
+}
+
+export const getTargetUserAction = async (
+  userId: string
+): Promise<
+  ActionResponse<{ user: PrismaUser; profile: Profile | null } | null>
 > => {
+  try {
+    const isAdmin = await adminGuard();
+
+    if (!isAdmin) {
+      return { data: null, error: "Unauthorized: Admin access required" };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return { data: null, error: "User not found" };
+    }
+
+    const profile = await prisma.profile.findUnique({
+      where: { userId },
+      include: {
+        user: true,
+        contracts: true,
+      },
+    });
+
+    return { data: { user, profile }, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error:
+        error instanceof Error ? error.message : "Failed to get target user",
+    };
+  }
+};
+
+export const getAppDataAction = async (
+  userId?: string
+): Promise<ActionResponse<AppData | null>> => {
   try {
     const user = await getAuthenticatedUser();
 
@@ -221,6 +254,14 @@ export const getAppDataAction = async (): Promise<
     const conversations = await getUserConversations(user.id);
     const contracts = await getUserContracts(user.id, isAdmin);
 
+    let targetUser: PrismaUser | null = null;
+    if (userId) {
+      const targetUserResult = await getTargetUserAction(userId);
+      if (targetUserResult.data) {
+        targetUser = targetUserResult.data.user;
+      }
+    }
+
     const appData: AppData = {
       user,
       profile,
@@ -229,6 +270,7 @@ export const getAppDataAction = async (): Promise<
       users,
       conversations,
       contracts,
+      targetUser,
     };
 
     return { data: appData, error: null };
@@ -242,6 +284,7 @@ export const getAppDataAction = async (): Promise<
         users: [],
         conversations: [],
         contracts: [],
+        targetUser: null,
       },
       error: error instanceof Error ? error.message : "Failed to load app data",
     };

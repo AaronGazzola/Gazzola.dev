@@ -1,5 +1,5 @@
 //-| File path: stores/chat.store.ts
-import { UserData } from "@/app/types/admin.types";
+import { User as PrismaUser } from "@/generated/prisma";
 import {
   ChatState,
   Conversation,
@@ -21,7 +21,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setFiles: (files: FileUpload[]) => set({ files }),
   setCurrentConversation: (conversation: Conversation | null) =>
     set({ currentConversation: conversation }),
-  setTargetUser: (user: UserData | null) => set({ targetUser: user }),
+  setTargetUser: (user: PrismaUser | null) => set({ targetUser: user }),
   addConversation: (conversation: Conversation) =>
     set((state) => ({
       conversations: [conversation, ...state.conversations],

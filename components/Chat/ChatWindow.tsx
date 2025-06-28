@@ -3,10 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useGetAppData } from "@/hooks/app.hooks";
-import {
-  useCreateConversation,
-  useSendMessage,
-} from "@/hooks/chat.hooks";
+import { useCreateConversation, useSendMessage } from "@/hooks/chat.hooks";
 import { useScrollToMessage } from "@/hooks/useScrollToMessage";
 import { cn } from "@/lib/tailwind.utils";
 import { useAuthStore } from "@/stores/auth.store";

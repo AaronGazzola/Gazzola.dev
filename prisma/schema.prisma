@@ -141,7 +141,7 @@ model FileUpload {
 }
 
 model Contract {
-  id String @id @default(cuid()) // or @default(uuid())
+  id String @id @default(cuid())
   title String
   description String
   startDate DateTime

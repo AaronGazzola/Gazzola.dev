@@ -1,5 +1,5 @@
 //-| File path: stores/auth.store.ts
-import { User } from "@/generated/prisma";
+import { User } from "@/lib/auth";
 import { Profile } from "@/types/auth.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
