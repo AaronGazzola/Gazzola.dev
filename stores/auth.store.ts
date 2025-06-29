@@ -2,7 +2,13 @@
 import { User } from "@/lib/auth";
 import { Profile } from "@/types/auth.types";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+
+const initialState = {
+  user: null,
+  profile: null,
+  isVerified: false,
+  isAdmin: false,
+};
 
 interface AuthState {
   user: User | null;
@@ -14,30 +20,15 @@ interface AuthState {
   setIsVerified: (isVerified: boolean) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   clearAuth: () => void;
+  reset: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      profile: null,
-      isVerified: false,
-      isAdmin: false,
-      setUser: (user) => set({ user }),
-      setProfile: (profile) => set({ profile }),
-      setIsVerified: (isVerified) => set({ isVerified }),
-      setIsAdmin: (isAdmin) => set({ isAdmin }),
-      clearAuth: () =>
-        set({ user: null, profile: null, isVerified: false, isAdmin: false }),
-    }),
-    {
-      name: "auth-storage",
-      partialize: (state) => ({
-        user: state.user,
-        profile: state.profile,
-        isVerified: state.isVerified,
-        isAdmin: state.isAdmin,
-      }),
-    }
-  )
-);
+export const useAuthStore = create<AuthState>()((set) => ({
+  ...initialState,
+  setUser: (user) => set({ user }),
+  setProfile: (profile) => set({ profile }),
+  setIsVerified: (isVerified) => set({ isVerified }),
+  setIsAdmin: (isAdmin) => set({ isAdmin }),
+  clearAuth: () => set(initialState),
+  reset: () => set(initialState),
+}));

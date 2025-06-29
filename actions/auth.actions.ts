@@ -4,10 +4,17 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";
+import { User } from "@/lib/auth";
 
 interface ActionResponse<T> {
   data: T | null;
   error: string | null;
+}
+
+interface AuthData {
+  user: User;
+  isVerified: boolean;
+  isAdmin: boolean;
 }
 
 async function getAuthenticatedUser() {
@@ -18,6 +25,36 @@ async function getAuthenticatedUser() {
   return session?.user || null;
 }
 
+export const getAuthAction = async (): Promise<ActionResponse<AuthData>> => {
+  try {
+    const user = await getAuthenticatedUser();
+
+    if (!user) {
+      return { data: null, error: null };
+    }
+
+    const { data: isVerified } = await checkUserVerificationAction();
+    const { data: isAdmin } = await isAdminAction();
+
+    return {
+      data: {
+        user,
+        isVerified: isVerified || false,
+        isAdmin: isAdmin || false,
+      },
+      error: null,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to get authentication data",
+    };
+  }
+};
+
 export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
   try {
     const user = await getAuthenticatedUser();
@@ -26,16 +63,14 @@ export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
       return { data: false, error: null };
     }
 
-    const isAdmin = user.role === 'admin';
+    const isAdmin = user.role === "admin";
 
     return { data: isAdmin, error: null };
   } catch (error) {
     return {
       data: false,
       error:
-        error instanceof Error
-          ? error.message
-          : "Failed to check admin status",
+        error instanceof Error ? error.message : "Failed to check admin status",
     };
   }
 };
@@ -80,39 +115,6 @@ export const checkUserVerificationAction = async (): Promise<
         error instanceof Error
           ? error.message
           : "Failed to check verification status",
-    };
-  }
-};
-
-export const getCurrentUserAction = async (): Promise<
-  ActionResponse<{
-    id: string;
-    email: string;
-    name: string;
-    emailVerified: boolean;
-  } | null>
-> => {
-  try {
-    const user = await getAuthenticatedUser();
-
-    if (!user) {
-      return { data: null, error: null };
-    }
-
-    return {
-      data: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        emailVerified: user.emailVerified,
-      },
-      error: null,
-    };
-  } catch (error) {
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error.message : "Failed to get current user",
     };
   }
 };
