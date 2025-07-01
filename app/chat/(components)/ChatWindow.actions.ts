@@ -1,25 +1,11 @@
 //-| Filepath: actions/chat.actions.ts
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/app/admin/page.actions";
 import { prisma } from "@/lib/prisma-client";
 import { ActionResponse } from "@/types/app.types";
 import { Conversation, Message } from "@/types/chat.types";
 import { createId } from "@paralleldrive/cuid2";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
-async function getAuthenticatedUser() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  return session.user;
-}
 
 export const getConversationsAction = async (
   userId: string
@@ -27,7 +13,7 @@ export const getConversationsAction = async (
   try {
     const currentUser = await getAuthenticatedUser();
 
-    if (currentUser.role !== "admin" && currentUser.id !== userId) {
+    if (currentUser?.role !== "admin" && currentUser?.id !== userId) {
       return { data: null, error: "Unauthorized" };
     }
 
@@ -70,7 +56,7 @@ export const sendMessageAction = async (params: {
   try {
     const currentUser = await getAuthenticatedUser();
 
-    if (currentUser.id !== params.senderId) {
+    if (currentUser?.id !== params.senderId) {
       return { data: null, error: "Unauthorized" };
     }
 
@@ -153,7 +139,7 @@ export const createConversationAction = async (params: {
   try {
     const currentUser = await getAuthenticatedUser();
 
-    if (currentUser.id !== params.senderId || currentUser.role !== "admin") {
+    if (currentUser?.id !== params.senderId || currentUser.role !== "admin") {
       return { data: null, error: "Unauthorized" };
     }
 

@@ -13,9 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { client } from "@/lib/auth-client";
 import { useAppStore } from "@/stores/app.store";
-import { AuthCredentials } from "@/types/app.types";
 import { Github } from "lucide-react";
 import { useState } from "react";
+
+interface AuthCredentials {
+  email: string;
+  password: string;
+}
 
 const AuthDialog = () => {
   const { ui, closeAuthModal } = useAppStore();

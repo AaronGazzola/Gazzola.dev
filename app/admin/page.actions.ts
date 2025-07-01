@@ -6,26 +6,25 @@ import { prisma } from "@/lib/prisma-client";
 import { GetUsersParams, UserData } from "@/types/admin.types";
 import { ActionResponse } from "@/types/app.types";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
-async function getAuthenticatedUser() {
+export async function getAuthenticatedUser() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  return session.user;
+  return session?.user;
 }
 
 export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
   try {
     const currentUser = await getAuthenticatedUser();
 
+    if (!currentUser) {
+      return { data: false, error: "Unauthorized" };
+    }
+
     const user = await prisma.user.findUnique({
-      where: { id: currentUser.id },
+      where: { id: currentUser?.id },
       select: { role: true },
     });
 

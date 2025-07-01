@@ -1,5 +1,5 @@
 //-| File path: app/layout.tsx
-import Providers from "@/providers/Providers";
+import Providers from "@/app/(providers)/Providers";
 import { inter } from "@/styles/fonts";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";

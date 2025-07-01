@@ -1,23 +1,13 @@
 //-| File path: actions/contract.actions.ts
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getAuthenticatedUser, isAdminAction } from "@/app/admin/page.actions";
 import { prisma } from "@/lib/prisma-client";
 import { Contract } from "@/types/contract.types";
-import { headers } from "next/headers";
-import { isAdminAction } from "./auth.actions";
 
 interface ActionResponse<T> {
   data: T | null;
   error: string | null;
-}
-
-async function getAuthenticatedUser() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  return session?.user || null;
 }
 
 export const getContractsAction = async (): Promise<

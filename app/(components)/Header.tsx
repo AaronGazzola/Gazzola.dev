@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Clock } from "lucide-react";
 import Image from "next/image";
 import { ScrollParallax } from "react-just-parallax";
-import { JobSuccessIcon, TopRatedIcon } from "../SVG";
+import { JobSuccessIcon, TopRatedIcon } from "./SVG";
 
 const Header = () => {
   return (

@@ -1,8 +1,8 @@
 //-| File path: hooks/app.hooks.ts
 "use client";
 
-import { getAppDataAction } from "@/actions/app.actions";
-import useParamString from "@/hooks/useParamString";
+import useParamString from "@/app/(hooks)/useParamString";
+import { getAppDataAction } from "@/app/page.actions";
 import { useAdminStore } from "@/stores/admin.store";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";
@@ -12,7 +12,8 @@ import { useQuery } from "@tanstack/react-query";
 export const useGetAppData = () => {
   const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
   const { setUsers } = useAdminStore();
-  const { setConversations, setCurrentConversation, setTargetUser } = useChatStore();
+  const { setConversations, setCurrentConversation, setTargetUser } =
+    useChatStore();
   const { setContracts } = useContractStore();
   const userId = useParamString("userId");
 

@@ -1,8 +1,8 @@
 //-| File path: app/admin/page.tsx
 "use client";
 
-import { UserTable } from "@/component/UserTable";
-import { useGetAppData } from "@/hooks/app.hooks";
+import { UserTable } from "@/app/admin/(components)/UserTable";
+import { useGetAppData } from "@/app/page.hooks";
 
 const AdminPage = () => {
   const { data, isLoading } = useGetAppData();

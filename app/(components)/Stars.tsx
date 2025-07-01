@@ -2,7 +2,7 @@
 "use client";
 
 import { ScrollParallax } from "react-just-parallax";
-import useIsMounted from "../hooks/useIsMounted";
+import useIsMounted from "../(hooks)/useIsMounted";
 
 // TOODO: Fix server conflict
 const stars = [...new Array(500)].map(() => {

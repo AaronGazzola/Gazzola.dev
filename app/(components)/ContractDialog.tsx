@@ -1,6 +1,10 @@
 //-| File path: component/ContractDialog.tsx
 "use client";
 
+import {
+  useAddContract,
+  useUpdateContract,
+} from "@/app/(components)/ContractDialog.hooks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +24,6 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useAddContract, useUpdateContract } from "@/hooks/contract.hooks";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";
 import { useContractStore } from "@/stores/contract.store";

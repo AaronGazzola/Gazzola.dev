@@ -1,5 +1,4 @@
 //-| File path: app/components/admin/UserTable.tsx
-//-| Filepath: app/components/admin/UserTable.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";

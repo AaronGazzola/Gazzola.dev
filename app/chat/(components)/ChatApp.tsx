@@ -1,11 +1,11 @@
 //-| File path: components/Chat/ChatApp.tsx
 //-| Filepath: components/Chat/ChatApp.tsx
 "use client";
-import ChatWindow from "@/components/Chat/ChatWindow";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/app/(components)/Sidebar";
+import useScreenHeight from "@/app/(hooks)/useScreenHeight";
+import ChatWindow from "@/app/chat/(components)/ChatWindow";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
-import useScreenHeight from "@/hooks/useScreenHeight";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 

@@ -1,7 +1,7 @@
 //-| File path: providers/Providers.tsx
 "use client";
+import { useGetAppData } from "@/app/page.hooks";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { useGetAppData } from "@/hooks/app.hooks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";

@@ -1,5 +1,5 @@
 //-| File path: app/chat/[userId]/page.tsx
-import ChatApp from "@/components/Chat/ChatApp";
+import ChatApp from "@/app/chat/(components)/ChatApp";
 
 const page = () => {
   return <ChatApp />;

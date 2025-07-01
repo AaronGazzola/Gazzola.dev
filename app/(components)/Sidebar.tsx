@@ -1,9 +1,14 @@
 //-| File path: components/Sidebar.tsx
 "use client";
-import AuthDialog from "@/component/AuthDialog";
-import ContractDialog from "@/component/ContractDialog";
-import ProfileDialog from "@/component/ProfileDialog";
-import SignOutConfirm from "@/component/SignOutConfirm";
+import AuthDialog from "@/app/(components)/AuthDialog";
+import ContractDialog from "@/app/(components)/ContractDialog";
+import ProfileDialog from "@/app/(components)/ProfileDialog";
+import {
+  useResendVerificationEmail,
+  useSignOutMutation,
+} from "@/app/(components)/Sidebar.hooks";
+import SignOutConfirm from "@/app/(components)/SignOutConfirm";
+import { useGetAppData } from "@/app/page.hooks";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,11 +27,6 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useGetAppData } from "@/hooks/app.hooks";
-import {
-  useResendVerificationEmail,
-  useSignOutMutation,
-} from "@/hooks/auth.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { useAppStore } from "@/stores/app.store";
 import { useAuthStore } from "@/stores/auth.store";

@@ -2,7 +2,7 @@
 import {
   createConversationAction,
   sendMessageAction,
-} from "@/actions/chat.actions";
+} from "@/app/chat/(components)/ChatWindow.actions";
 import { Conversation, Message } from "@/types/chat.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
