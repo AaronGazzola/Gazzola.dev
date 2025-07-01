@@ -1,5 +1,4 @@
-//-| File path: component/AuthDialog.tsx
-//-| Filepath: component/AuthDialog.tsx
+//-| File path: app/(components)/AuthDialog.tsx
 "use client";
 
 import { useAppStore } from "@/app/(stores)/ui.store";

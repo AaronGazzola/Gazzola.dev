@@ -1,5 +1,4 @@
 //-| File path: configuration.ts
-//-| File Path: configuration.ts
 const config = {
   // App Information
   title: "Gazzola.dev",

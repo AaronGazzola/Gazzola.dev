@@ -1,4 +1,4 @@
-//-| File path: actions/contract.actions.ts
+//-| File path: app/(components)/ContractDialog.actions.ts
 "use server";
 
 import { Contract } from "@/app/(types)/contract.types";

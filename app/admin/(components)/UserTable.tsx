@@ -1,4 +1,4 @@
-//-| File path: app/components/admin/UserTable.tsx
+//-| File path: app/admin/(components)/UserTable.tsx
 "use client";
 
 import { useAdminStore } from "@/app/admin/page.store";

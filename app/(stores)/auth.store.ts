@@ -1,4 +1,4 @@
-//-| File path: stores/auth.store.ts
+//-| File path: app/(stores)/auth.store.ts
 import { Profile } from "@/app/(types)/auth.types";
 import { User } from "@/lib/auth";
 import { create } from "zustand";

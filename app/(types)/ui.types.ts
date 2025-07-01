@@ -1,4 +1,4 @@
-//-| File path: types/app.types.ts
+//-| File path: app/(types)/ui.types.ts
 import { Profile } from "@/app/(types)/auth.types";
 import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";

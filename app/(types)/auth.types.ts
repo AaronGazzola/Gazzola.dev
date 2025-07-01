@@ -1,4 +1,4 @@
-//-| File path: types/auth.types.ts
+//-| File path: app/(types)/auth.types.ts
 import { Contract, Profile as PrismaProfile, User } from "@/generated/prisma";
 
 export interface Profile extends PrismaProfile {

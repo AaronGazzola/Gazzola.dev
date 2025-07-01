@@ -1,4 +1,4 @@
-//-| File path: hooks/useParamString.ts
+//-| File path: app/(hooks)/useParamString.ts
 import { useParams } from "next/navigation";
 export function getParamString(param?: string | string[]): string {
   if (!param) return "";

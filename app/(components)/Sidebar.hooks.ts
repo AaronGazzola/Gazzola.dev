@@ -1,4 +1,4 @@
-//-| File path: hooks/auth.hooks.ts
+//-| File path: app/(components)/Sidebar.hooks.ts
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { SignOutParams } from "@/app/(types)/auth.types";
 import config from "@/configuration";

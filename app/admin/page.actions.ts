@@ -1,4 +1,4 @@
-//-| File path: app/actions/admin.actions.ts
+//-| File path: app/admin/page.actions.ts
 "use server";
 
 import { ActionResponse } from "@/app/(types)/ui.types";

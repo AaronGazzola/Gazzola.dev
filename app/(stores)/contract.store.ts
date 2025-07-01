@@ -1,4 +1,4 @@
-//-| File path: stores/contract.store.ts
+//-| File path: app/(stores)/contract.store.ts
 import { Contract, ContractState } from "@/app/(types)/contract.types";
 import { create } from "zustand";
 

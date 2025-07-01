@@ -1,5 +1,4 @@
-//-| File path: components/Chat/ChatApp.tsx
-//-| Filepath: components/Chat/ChatApp.tsx
+//-| File path: app/chat/(components)/ChatApp.tsx
 "use client";
 import Sidebar from "@/app/(components)/Sidebar";
 import useScreenHeight from "@/app/(hooks)/useScreenHeight";

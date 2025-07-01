@@ -1,5 +1,4 @@
-//-| File path: component/SignOutConfirm.tsx
-//-| Filepath: component/SignOutConfirm.tsx
+//-| File path: app/(components)/SignOutConfirm.tsx
 "use client";
 
 import { useChatStore } from "@/app/(stores)/chat.store";

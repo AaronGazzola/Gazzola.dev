@@ -1,4 +1,4 @@
-//-| File path: hooks/useIsMounted.ts
+//-| File path: app/(hooks)/useIsMounted.ts
 import { useEffect, useState } from "react";
 
 const useIsMounted = () => {

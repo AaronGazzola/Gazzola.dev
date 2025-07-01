@@ -1,4 +1,4 @@
-//-| File path: hooks/chat.hooks.ts
+//-| File path: app/chat/(components)/ChatWindow.hooks.ts
 import { Conversation, Message } from "@/app/(types)/chat.types";
 import {
   createConversationAction,

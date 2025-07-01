@@ -1,4 +1,4 @@
-//-| File path: component/ContractDialog.tsx
+//-| File path: app/(components)/ContractDialog.tsx
 "use client";
 
 import {

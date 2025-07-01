@@ -1,4 +1,4 @@
-//-| File path: app/useScrollToMessage.ts
+//-| File path: app/(hooks)/useScrollToMessage.ts
 import { Message } from "@/app/(types)/chat.types";
 import { useEffect, useRef } from "react";
 

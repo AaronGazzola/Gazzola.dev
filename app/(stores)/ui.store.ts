@@ -1,4 +1,4 @@
-//-| File path: stores/app.store.ts
+//-| File path: app/(stores)/ui.store.ts
 import { AppState, UIState } from "@/app/(types)/ui.types";
 import { create } from "zustand";
 

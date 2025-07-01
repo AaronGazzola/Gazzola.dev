@@ -1,5 +1,4 @@
-//-| File path: component/ProfileDialog.tsx
-//-| Filepath: component/ProfileDialog.tsx
+//-| File path: app/(components)/ProfileDialog.tsx
 "use client";
 
 import { useAppStore } from "@/app/(stores)/ui.store";

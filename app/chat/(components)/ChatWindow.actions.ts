@@ -1,4 +1,4 @@
-//-| Filepath: actions/chat.actions.ts
+//-| File path: app/chat/(components)/ChatWindow.actions.ts
 "use server";
 
 import { Conversation, Message } from "@/app/(types)/chat.types";

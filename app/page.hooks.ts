@@ -1,4 +1,4 @@
-//-| File path: hooks/app.hooks.ts
+//-| File path: app/page.hooks.ts
 "use client";
 
 import useParamString from "@/app/(hooks)/useParamString";

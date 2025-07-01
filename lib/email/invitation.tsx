@@ -1,5 +1,4 @@
 //-| File path: lib/email/invitation.tsx
-//-| file path: lib/email/invitation.tsx
 import {
   Body,
   Button,

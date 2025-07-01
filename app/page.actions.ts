@@ -1,4 +1,4 @@
-//-| File path: actions/app.actions.ts
+//-| File path: app/page.actions.ts
 "use server";
 
 import { Profile } from "@/app/(types)/auth.types";

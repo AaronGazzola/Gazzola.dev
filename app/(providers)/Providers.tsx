@@ -1,4 +1,4 @@
-//-| File path: providers/Providers.tsx
+//-| File path: app/(providers)/Providers.tsx
 "use client";
 import { useGetAppData } from "@/app/page.hooks";
 import { SidebarProvider } from "@/components/ui/sidebar";

@@ -1,4 +1,4 @@
-//-| File path: components/Sidebar.tsx
+//-| File path: app/(components)/Sidebar.tsx
 "use client";
 import AuthDialog from "@/app/(components)/AuthDialog";
 import ContractDialog from "@/app/(components)/ContractDialog";

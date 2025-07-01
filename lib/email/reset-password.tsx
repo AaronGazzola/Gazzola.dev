@@ -1,5 +1,4 @@
 //-| File path: lib/email/reset-password.tsx
-//-| file path: lib/email/reset-password.tsx
 import {
   Body,
   Button,

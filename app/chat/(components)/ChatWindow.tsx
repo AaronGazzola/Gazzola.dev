@@ -1,4 +1,4 @@
-//-| File path: components/Chat/ChatWindow.tsx
+//-| File path: app/chat/(components)/ChatWindow.tsx
 "use client";
 import { useScrollToMessage } from "@/app/(hooks)/useScrollToMessage";
 import { useAuthStore } from "@/app/(stores)/auth.store";

@@ -1,4 +1,4 @@
-//-| File path: hooks/contract.hooks.ts
+//-| File path: app/(components)/ContractDialog.hooks.ts
 "use client";
 
 import {
