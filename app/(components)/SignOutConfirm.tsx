@@ -2,8 +2,9 @@
 //-| Filepath: component/SignOutConfirm.tsx
 "use client";
 
-import { useAppStore } from "@/app/(stores)/ui.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
+import { useContractStore } from "@/app/(stores)/contract.store";
+import { useAppStore } from "@/app/(stores)/ui.store";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,8 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { signOut } from "@/lib@/app/page.store
-import { useContractStore } from "@/app/(stores)/contract.store";
+import { signOut } from "@/lib/auth-client";
 
 interface SignOutConfirmProps {
   isOpen: boolean;
