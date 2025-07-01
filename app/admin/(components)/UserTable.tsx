@@ -1,6 +1,8 @@
 //-| File path: app/components/admin/UserTable.tsx
 "use client";
 
+import { useAdminStore } from "@/app/admin/page.store";
+import { UserData } from "@/app/admin/page.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,8 +15,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import configuration from "@/configuration";
-import { useAdminStore } from "@/stores/admin.store";
-import { UserData } from "@/types/admin.types";
 import {
   ColumnDef,
   ColumnFiltersState,

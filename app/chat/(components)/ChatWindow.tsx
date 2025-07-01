@@ -1,6 +1,9 @@
 //-| File path: components/Chat/ChatWindow.tsx
 "use client";
 import { useScrollToMessage } from "@/app/(hooks)/useScrollToMessage";
+import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useChatStore } from "@/app/(stores)/chat.store";
+import { Message } from "@/app/(types)/chat.types";
 import {
   useCreateConversation,
   useSendMessage,
@@ -9,9 +12,6 @@ import { useGetAppData } from "@/app/page.hooks";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/tailwind.utils";
-import { useAuthStore } from "@/stores/auth.store";
-import { useChatStore } from "@/stores/chat.store";
-import { Message } from "@/types/chat.types";
 import { format } from "date-fns";
 import { CircleUserRound, PersonStanding, Plus, Send } from "lucide-react";
 import { useMemo, useState } from "react";

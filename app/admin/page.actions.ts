@@ -1,10 +1,10 @@
 //-| File path: app/actions/admin.actions.ts
 "use server";
 
+import { ActionResponse } from "@/app/(types)/ui.types";
+import { GetUsersParams, UserData } from "@/app/admin/page.types";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
-import { GetUsersParams, UserData } from "@/types/admin.types";
-import { ActionResponse } from "@/types/app.types";
 import { headers } from "next/headers";
 
 export async function getAuthenticatedUser() {

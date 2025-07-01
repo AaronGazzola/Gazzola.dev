@@ -1,9 +1,9 @@
 //-| File path: actions/contract.actions.ts
 "use server";
 
+import { Contract } from "@/app/(types)/contract.types";
 import { getAuthenticatedUser, isAdminAction } from "@/app/admin/page.actions";
 import { prisma } from "@/lib/prisma-client";
-import { Contract } from "@/types/contract.types";
 
 interface ActionResponse<T> {
   data: T | null;

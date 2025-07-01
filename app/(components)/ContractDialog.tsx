@@ -5,6 +5,10 @@ import {
   useAddContract,
   useUpdateContract,
 } from "@/app/(components)/ContractDialog.hooks";
+import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useContractStore } from "@/app/(stores)/contract.store";
+import { useAppStore } from "@/app/(stores)/ui.store";
+import { Contract } from "@/app/(types)/contract.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,10 +28,6 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useAppStore } from "@/stores/app.store";
-import { useAuthStore } from "@/stores/auth.store";
-import { useContractStore } from "@/stores/contract.store";
-import { Contract } from "@/types/contract.types";
 import { useEffect, useState } from "react";
 
 const ContractDialog = () => {

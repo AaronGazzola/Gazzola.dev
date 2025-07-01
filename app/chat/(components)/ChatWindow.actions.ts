@@ -1,10 +1,10 @@
 //-| Filepath: actions/chat.actions.ts
 "use server";
 
+import { Conversation, Message } from "@/app/(types)/chat.types";
+import { ActionResponse } from "@/app/(types)/ui.types";
 import { getAuthenticatedUser } from "@/app/admin/page.actions";
 import { prisma } from "@/lib/prisma-client";
-import { ActionResponse } from "@/types/app.types";
-import { Conversation, Message } from "@/types/chat.types";
 import { createId } from "@paralleldrive/cuid2";
 
 export const getConversationsAction = async (

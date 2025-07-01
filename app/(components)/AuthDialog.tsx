@@ -2,6 +2,7 @@
 //-| Filepath: component/AuthDialog.tsx
 "use client";
 
+import { useAppStore } from "@/app/(stores)/ui.store";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { client } from "@/lib/auth-client";
-import { useAppStore } from "@/stores/app.store";
 import { Github } from "lucide-react";
 import { useState } from "react";
 

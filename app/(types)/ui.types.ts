@@ -1,10 +1,10 @@
 //-| File path: types/app.types.ts
+import { Profile } from "@/app/(types)/auth.types";
+import { Conversation } from "@/app/(types)/chat.types";
+import { Contract } from "@/app/(types)/contract.types";
+import { UserData } from "@/app/admin/page.types";
 import { User as PrismaUser } from "@/generated/prisma";
 import { User } from "@/lib/auth";
-import { UserData } from "@/types/admin.types";
-import { Profile } from "@/types/auth.types";
-import { Conversation } from "@/types/chat.types";
-import { Contract } from "@/types/contract.types";
 
 export interface AppData {
   user: User | null;

@@ -1,6 +1,6 @@
 //-| File path: stores/auth.store.ts
+import { Profile } from "@/app/(types)/auth.types";
 import { User } from "@/lib/auth";
-import { Profile } from "@/types/auth.types";
 import { create } from "zustand";
 
 const initialState = {

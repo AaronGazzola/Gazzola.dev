@@ -8,6 +8,11 @@ import {
   useSignOutMutation,
 } from "@/app/(components)/Sidebar.hooks";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
+import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useChatStore } from "@/app/(stores)/chat.store";
+import { useContractStore } from "@/app/(stores)/contract.store";
+import { useAppStore } from "@/app/(stores)/ui.store";
+import { Conversation } from "@/app/(types)/chat.types";
 import { useGetAppData } from "@/app/page.hooks";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -28,11 +33,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/tailwind.utils";
-import { useAppStore } from "@/stores/app.store";
-import { useAuthStore } from "@/stores/auth.store";
-import { useChatStore } from "@/stores/chat.store";
-import { useContractStore } from "@/stores/contract.store";
-import { Conversation } from "@/types/chat.types";
 import { format } from "date-fns";
 import {
   FileText,

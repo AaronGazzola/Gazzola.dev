@@ -5,7 +5,7 @@ import {
   addContractAction,
   updateContractAction,
 } from "@/app/(components)/ContractDialog.actions";
-import { Contract } from "@/types/contract.types";
+import { Contract } from "@/app/(types)/contract.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

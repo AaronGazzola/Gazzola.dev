@@ -1,5 +1,5 @@
 //-| File path: stores/app.store.ts
-import { AppState, UIState } from "@/types/app.types";
+import { AppState, UIState } from "@/app/(types)/ui.types";
 import { create } from "zustand";
 
 const initialUIState: UIState = {

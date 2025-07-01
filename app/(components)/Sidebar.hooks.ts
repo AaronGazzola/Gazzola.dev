@@ -1,8 +1,8 @@
 //-| File path: hooks/auth.hooks.ts
+import { useAuthStore } from "@/app/(stores)/auth.store";
+import { SignOutParams } from "@/app/(types)/auth.types";
 import config from "@/configuration";
 import { client, signOut } from "@/lib/auth-client";
-import { useAuthStore } from "@/stores/auth.store";
-import { SignOutParams } from "@/types/auth.types";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";

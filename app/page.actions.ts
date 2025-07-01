@@ -1,14 +1,14 @@
 //-| File path: actions/app.actions.ts
 "use server";
 
+import { Profile } from "@/app/(types)/auth.types";
+import { Conversation } from "@/app/(types)/chat.types";
+import { Contract } from "@/app/(types)/contract.types";
+import { ActionResponse, AppData } from "@/app/(types)/ui.types";
+import { UserData } from "@/app/admin/page.types";
 import { User as PrismaUser } from "@/generated/prisma";
 import { auth, User } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
-import { UserData } from "@/types/admin.types";
-import { ActionResponse, AppData } from "@/types/app.types";
-import { Profile } from "@/types/auth.types";
-import { Conversation } from "@/types/chat.types";
-import { Contract } from "@/types/contract.types";
 import { headers } from "next/headers";
 
 async function getAuthenticatedUser(): Promise<User | null> {

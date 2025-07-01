@@ -2,6 +2,8 @@
 //-| Filepath: component/ProfileDialog.tsx
 "use client";
 
+import { useAppStore } from "@/app/(stores)/ui.store";
+import { Profile } from "@/app/(types)/ui.types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,9 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAppStore } from "@/stores/app.store";
-import { Profile } from "@/types/app.types";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const ProfileDialog = () => {
   const { ui, profile, user, closeProfileModal, setProfile } = useAppStore();
@@ -97,21 +97,24 @@ const ProfileDialog = () => {
   };
 
   const handleInputChange = (field: keyof Profile, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
   return (
-    <Dialog open={ui.profileModal.isOpen} onOpenChange={() => closeProfileModal()}>
+    <Dialog
+      open={ui.profileModal.isOpen}
+      onOpenChange={() => closeProfileModal()}
+    >
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>
             {profile ? "Edit Profile" : "Create Profile"}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>

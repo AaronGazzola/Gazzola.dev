@@ -1,5 +1,5 @@
 //-| File path: lib/action.utils.ts
-import { ActionResponse } from "@/types/app.types";
+import { ActionResponse } from "@/app/(types)/ui.types";
 
 export const getActionResponse = <T>({
   data,

@@ -1,5 +1,5 @@
 //-| File path: app/useScrollToMessage.ts
-import { Message } from "@/types/chat.types";
+import { Message } from "@/app/(types)/chat.types";
 import { useEffect, useRef } from "react";
 
 export function useScrollToMessage(messages: Message[]) {

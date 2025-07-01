@@ -1,11 +1,11 @@
 //-| File path: stores/chat.store.ts
-import { User as PrismaUser } from "@/generated/prisma";
 import {
   ChatState,
   Conversation,
   FileUpload,
   Message,
-} from "@/types/chat.types";
+} from "@/app/(types)/chat.types";
+import { User as PrismaUser } from "@/generated/prisma";
 import { create } from "zustand";
 
 const initialState = {

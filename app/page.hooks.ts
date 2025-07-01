@@ -2,11 +2,11 @@
 "use client";
 
 import useParamString from "@/app/(hooks)/useParamString";
+import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useChatStore } from "@/app/(stores)/chat.store";
+import { useContractStore } from "@/app/(stores)/contract.store";
+import { useAdminStore } from "@/app/admin/page.store";
 import { getAppDataAction } from "@/app/page.actions";
-import { useAdminStore } from "@/stores/admin.store";
-import { useAuthStore } from "@/stores/auth.store";
-import { useChatStore } from "@/stores/chat.store";
-import { useContractStore } from "@/stores/contract.store";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetAppData = () => {
