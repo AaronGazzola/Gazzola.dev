@@ -8,7 +8,7 @@ import {
   useCreateConversation,
   useSendMessage,
 } from "@/app/chat/(components)/ChatWindow.hooks";
-import { useGetAppData } from "@/app/page.hooks";
+import { useGetAppData } from "@/app/layout.hooks";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/tailwind.utils";

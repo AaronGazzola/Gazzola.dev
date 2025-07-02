@@ -21,7 +21,7 @@ const Header = () => {
         </h1>
         <h2 className="text-lg font-medium">Full Stack Vibe Lead</h2>
         <h3 className="text-lg font-medium">
-          Typescript + Next.js + PostgresSQL + Shadcn
+          Typescript + Next.js + PostgresSQL
         </h3>
       </div>
       <ScrollParallax isAbsolutelyPositioned>

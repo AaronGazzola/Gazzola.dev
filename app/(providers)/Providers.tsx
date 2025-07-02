@@ -1,6 +1,7 @@
 //-| File path: app/(providers)/Providers.tsx
 "use client";
-import { useGetAppData } from "@/app/page.hooks";
+import OnboardingDialog from "@/app/(components)/OnboardingDialog";
+import { useGetAppData } from "@/app/layout.hooks";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
@@ -18,6 +19,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Toaster />
+        <OnboardingDialog />
         <SidebarProvider>{children}</SidebarProvider>
       </AuthProvider>
     </QueryClientProvider>

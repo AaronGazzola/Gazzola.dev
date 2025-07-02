@@ -1,8 +1,8 @@
 //-| File path: app/admin/page.actions.ts
 "use server";
 
-import { ActionResponse } from "@/app/(types)/ui.types";
 import { GetUsersParams, UserData } from "@/app/admin/page.types";
+import { ActionResponse } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";

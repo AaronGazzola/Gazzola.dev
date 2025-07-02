@@ -14,6 +14,9 @@ const initialUIState: UIState = {
   authModal: {
     isOpen: false,
   },
+  onboardingModal: {
+    isOpen: false,
+  },
 };
 
 const initialState = {
@@ -62,6 +65,20 @@ export const useAppStore = create<AppState>((set, get) => ({
       ui: {
         ...state.ui,
         authModal: { isOpen: false },
+      },
+    })),
+  openOnboardingModal: () =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        onboardingModal: { isOpen: true },
+      },
+    })),
+  closeOnboardingModal: () =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        onboardingModal: { isOpen: false },
       },
     })),
   reset: () => set(initialState),

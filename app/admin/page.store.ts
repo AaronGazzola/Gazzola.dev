@@ -21,10 +21,7 @@ const initialFilters: AdminFilters = {
 export const useAdminStore = create<AdminState>((set, get) => ({
   filters: initialFilters,
   users: [],
-
   setFilters: (filters) => set({ filters: { ...get().filters, ...filters } }),
-
   setUsers: (users) => set({ users }),
-
   resetFilters: () => set({ filters: initialFilters }),
 }));

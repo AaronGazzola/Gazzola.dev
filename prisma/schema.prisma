@@ -1,162 +1,163 @@
 //-| File path: prisma/schema.prisma
 generator client {
- provider = "prisma-client-js"
- output = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
- provider = "postgresql"
- url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum RefundStatus {
- pending
- approved
- denied
- completed
+  pending
+  approved
+  denied
+  completed
 }
 
 enum ProgressStatus {
- not_started
- in_progress
- completed
- cancelled
+  not_started
+  in_progress
+  completed
+  cancelled
 }
 
 model User {
- id String @id
- name String
- email String
- emailVerified Boolean
- image String?
- role String @default("user")
- createdAt DateTime
- updatedAt DateTime
- sessions Session[]
- accounts Account[]
- profile Profile?
+  id            String    @id @default(cuid())
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  role          String    @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  profile       Profile?
 
-@@unique([email])
-@@map("user")
+  @@unique([email])
+  @@map("user")
 }
 
 model Session {
- id String @id
- expiresAt DateTime
- token String
- createdAt DateTime
- updatedAt DateTime
- ipAddress String?
- userAgent String?
- userId String
- user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-@@unique([token])
-@@map("session")
+  @@unique([token])
+  @@map("session")
 }
 
 model Account {
- id String @id
- accountId String
- providerId String
- userId String
- user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- accessToken String?
- refreshToken String?
- idToken String?
- accessTokenExpiresAt DateTime?
- refreshTokenExpiresAt DateTime?
- scope String?
- password String?
- createdAt DateTime
- updatedAt DateTime
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-@@map("account")
+  @@map("account")
 }
 
 model Verification {
- id String @id
- identifier String
- value String
- expiresAt DateTime
- createdAt DateTime?
- updatedAt DateTime?
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 
-@@map("verification")
+  @@map("verification")
 }
 
 model Profile {
- id String @id
- userId String @unique
- firstName String
- lastName String
- email String
- phone String?
- company String?
- avatar String?
- createdAt DateTime
- updatedAt DateTime
- user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- contracts Contract[]
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  company   String?
+  avatar    String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contracts Contract[]
 
-@@map("profile")
+  @@map("profile")
 }
 
 model Conversation {
- id String @id
- title String?
- participants String[]
- lastMessageAt DateTime
- createdAt DateTime
- updatedAt DateTime
- messages Message[]
- contracts Contract[]
+  id            String     @id @default(cuid())
+  title         String?
+  participants  String[]
+  lastMessageAt DateTime
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  messages      Message[]
+  contracts     Contract[]
 
-@@map("conversation")
+  @@map("conversation")
 }
 
 model Message {
- id String @id
- senderId String
- content String
- createdAt DateTime
- conversationId String
- conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
- files FileUpload[]
+  id             String       @id @default(cuid())
+  senderId       String
+  content        String
+  createdAt      DateTime     @default(now())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  files          FileUpload[]
 
-@@map("message")
+  @@map("message")
 }
 
 model FileUpload {
- id String @id
- messageId String
- filename String
- url String
- size Int
- mimeType String
- createdAt DateTime
- message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  messageId String
+  filename  String
+  url       String
+  size      Int
+  mimeType  String
+  createdAt DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
-@@map("file_upload")
+  @@map("file_upload")
 }
 
 model Contract {
-  id String @id @default(cuid())
-  title String
-  description String
-  startDate DateTime
-  targetDate DateTime
-  dueDate DateTime
-  price Float
-  refundStatus RefundStatus?
-  progressStatus ProgressStatus?
-  profileId String
+  id              String          @id @default(cuid())
+  title           String
+  description     String
+  startDate       DateTime
+  targetDate      DateTime
+  dueDate         DateTime
+  price           Float
+  refundStatus    RefundStatus?
+  progressStatus  ProgressStatus?
+  profileId       String
   conversationIds String[]
-  userApproved Boolean
-  adminApproved Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  conversations Conversation[]
+  userApproved    Boolean
+  adminApproved   Boolean
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  conversations   Conversation[]
+
   @@map("contract")
 }

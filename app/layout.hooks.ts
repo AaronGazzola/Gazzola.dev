@@ -1,12 +1,13 @@
-//-| File path: app/page.hooks.ts
+//-| File path: app/layout.hooks.ts
 "use client";
 
 import useParamString from "@/app/(hooks)/useParamString";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
+import { useAppStore } from "@/app/(stores)/ui.store";
 import { useAdminStore } from "@/app/admin/page.store";
-import { getAppDataAction } from "@/app/page.actions";
+import { getAppDataAction } from "@/app/layout.actions";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetAppData = () => {
@@ -15,6 +16,7 @@ export const useGetAppData = () => {
   const { setConversations, setCurrentConversation, setTargetUser } =
     useChatStore();
   const { setContracts } = useContractStore();
+  const { openOnboardingModal } = useAppStore();
   const userId = useParamString("userId");
 
   return useQuery({
@@ -23,6 +25,7 @@ export const useGetAppData = () => {
       const { data, error } = await getAppDataAction(userId);
       if (error) throw new Error(error);
       if (!data) throw new Error("No app data received");
+      
       setUser(data.user);
       setProfile(data.profile);
       setIsVerified(data.isVerified);
@@ -34,6 +37,15 @@ export const useGetAppData = () => {
       if (data.targetUser) {
         setTargetUser(data.targetUser);
       }
+
+      const profile = data.profile;
+      const shouldShowOnboarding = !profile || 
+        (!profile.firstName && !profile.lastName && !profile.phone && !profile.company && !profile.avatar);
+
+      if (shouldShowOnboarding) {
+        openOnboardingModal();
+      }
+
       return data;
     },
     staleTime: 1000 * 60 * 5,

@@ -13,7 +13,7 @@ import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Conversation } from "@/app/(types)/chat.types";
-import { useGetAppData } from "@/app/page.hooks";
+import { useGetAppData } from "@/app/layout.hooks";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -441,10 +441,10 @@ const Sidebar = () => {
             </div>
           )}
           {!isAuthenticated && (
-            <div className="flex flex-col items-center justify-center flex-1 p-4">
+            <div className="flex flex-col justify-end border items-center flex-1 p-4">
               <Button
                 variant="default"
-                className="w-full flex items-center gap-2"
+                className="w-full flex items-center gap-2 rounded"
                 onClick={handleSignInClick}
               >
                 <LogIn className="h-4 w-4" />

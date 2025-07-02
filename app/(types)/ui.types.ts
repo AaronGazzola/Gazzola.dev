@@ -29,6 +29,9 @@ export interface UIState {
   authModal: {
     isOpen: boolean;
   };
+  onboardingModal: {
+    isOpen: boolean;
+  };
 }
 
 export interface AppState {
@@ -39,10 +42,7 @@ export interface AppState {
   closeProfileModal: () => void;
   openAuthModal: () => void;
   closeAuthModal: () => void;
+  openOnboardingModal: () => void;
+  closeOnboardingModal: () => void;
   reset: () => void;
-}
-
-export interface ActionResponse<T> {
-  data?: T | null;
-  error?: string | null;
 }

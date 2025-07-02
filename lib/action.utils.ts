@@ -1,5 +1,9 @@
 //-| File path: lib/action.utils.ts
-import { ActionResponse } from "@/app/(types)/ui.types";
+
+export interface ActionResponse<T> {
+  data?: T | null;
+  error?: string | null;
+}
 
 export const getActionResponse = <T>({
   data,
