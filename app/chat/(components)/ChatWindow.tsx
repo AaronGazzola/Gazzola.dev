@@ -6,6 +6,7 @@ import { useChatStore } from "@/app/(stores)/chat.store";
 import { Message } from "@/app/(types)/chat.types";
 import { useGetAppData } from "@/app/app.hooks";
 import ChatInput from "@/app/chat/(components)/ChatInput";
+import { useGetConversations } from "@/app/chat/(components)/ChatWindow.hooks";
 import { cn } from "@/lib/tailwind.utils";
 import { format } from "date-fns";
 import { CircleUserRound, PersonStanding } from "lucide-react";
@@ -20,6 +21,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
   const { currentConversation, targetUser } = useChatStore();
 
   const { isLoading } = useGetAppData();
+  useGetConversations();
 
   const messages = useMemo(
     () => currentConversation?.messages || [],
