@@ -29,23 +29,6 @@ export interface ChatState {
   setFiles: (files: FileUpload[]) => void;
   setCurrentConversation: (conversation: Conversation | null) => void;
   setTargetUser: (user: PrismaUser | null) => void;
-  addConversation: (conversation: Conversation) => void;
-  updateConversation: (
-    conversationId: string,
-    updates: Partial<Conversation>
-  ) => void;
-  removeConversation: (conversationId: string) => void;
-  addMessage: (conversationId: string, message: Message) => void;
-  updateMessage: (
-    conversationId: string,
-    messageId: string,
-    updates: Partial<Message>
-  ) => void;
-  removeMessage: (conversationId: string, messageId: string) => void;
-  addFile: (file: FileUpload) => void;
-  removeFile: (fileId: string) => void;
-  getConversationById: (conversationId: string) => Conversation | null;
-  getUserConversations: (userId: string) => Conversation[];
-  getMessageFiles: (messageId: string) => FileUpload[];
+
   reset: () => void;
 }
