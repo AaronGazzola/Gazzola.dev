@@ -1,5 +1,6 @@
 //-| File path: app/(components)/Header.tsx
 "use client";
+import { useAuthStore } from "@/app/(stores)/auth.store";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { Clock } from "lucide-react";
@@ -8,6 +9,8 @@ import { ScrollParallax } from "react-just-parallax";
 import { JobSuccessIcon, TopRatedIcon } from "./SVG";
 
 const Header = () => {
+  const { user } = useAuthStore();
+  if (!!user) return null;
   return (
     <div
       className={clsx(

@@ -1,8 +1,8 @@
 //-| File path: app/admin/(components)/UserTable.tsx
 "use client";
 
-import { useAdminStore } from "@/app/admin/page.store";
-import { UserData } from "@/app/admin/page.types";
+import { useAdminStore } from "@/app/admin/admin.store";
+import { UserData } from "@/app/admin/admin.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";

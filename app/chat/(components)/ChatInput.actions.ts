@@ -2,7 +2,7 @@
 "use server";
 
 import { Conversation } from "@/app/(types)/chat.types";
-import { getAuthenticatedUser } from "@/app/admin/page.actions";
+import { getAuthenticatedUser } from "@/app/admin/admin.actions";
 import { ActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 import { createId } from "@paralleldrive/cuid2";
@@ -124,6 +124,8 @@ export const sendMessageAction = async (params: {
 
     return { data: conversations, error: null };
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Failed to send message");
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to send message"
+    );
   }
 };

@@ -13,7 +13,7 @@ import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Conversation } from "@/app/(types)/chat.types";
-import { useGetAppData } from "@/app/layout.hooks";
+import { useGetAppData } from "@/app/app.hooks";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -88,19 +88,19 @@ const SidebarSkeleton = () => {
 };
 
 const Sidebar = () => {
-  const { setSelectedContractId } = useContractStore();
+  const { setSelectedContractId, contracts } = useContractStore();
+
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
-  const { data, isLoading: appDataLoading } = useGetAppData();
+  const { isLoading: appDataLoading } = useGetAppData();
   const { user, isVerified, profile } = useAuthStore();
-  const { setCurrentConversation } = useChatStore();
+  const { setCurrentConversation, conversations } = useChatStore();
+
   const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
   const isAuthenticated = !!user;
   const { open, isMobile, toggleSidebar } = useSidebar();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
 
-  const conversations = data?.conversations || [];
-  const contracts = data?.contracts || [];
   const conversationsLoading = appDataLoading;
   const contractsLoading = appDataLoading;
   const conversationsError = null;

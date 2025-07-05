@@ -2,7 +2,7 @@
 "use client";
 
 import { UserTable } from "@/app/admin/(components)/UserTable";
-import { useGetAppData } from "@/app/layout.hooks";
+import { useGetAppData } from "@/app/app.hooks";
 
 const AdminPage = () => {
   const { data, isLoading } = useGetAppData();

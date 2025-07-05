@@ -1,3 +1,4 @@
+//-| File path: components/ui/label.tsx
 "use client";
 
 import { cn } from "@/lib/tailwind.utils";

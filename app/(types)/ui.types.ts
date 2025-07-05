@@ -2,7 +2,7 @@
 import { Profile } from "@/app/(types)/auth.types";
 import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";
-import { UserData } from "@/app/admin/page.types";
+import { UserData } from "@/app/admin/admin.types";
 import { User as PrismaUser } from "@/generated/prisma";
 import { User } from "@/lib/auth";
 

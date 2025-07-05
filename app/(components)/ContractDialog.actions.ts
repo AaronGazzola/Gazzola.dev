@@ -2,7 +2,7 @@
 "use server";
 
 import { Contract } from "@/app/(types)/contract.types";
-import { getAuthenticatedUser, isAdminAction } from "@/app/admin/page.actions";
+import { getAuthenticatedUser, isAdminAction } from "@/app/admin/admin.actions";
 import { prisma } from "@/lib/prisma-client";
 
 interface ActionResponse<T> {
