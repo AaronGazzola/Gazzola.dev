@@ -3,7 +3,7 @@
 
 import { Conversation } from "@/app/(types)/chat.types";
 import { getAuthenticatedUser } from "@/app/admin/admin.actions";
-import { ActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 import { createId } from "@paralleldrive/cuid2";
 
@@ -16,17 +16,17 @@ export const sendMessageAction = async (params: {
     const currentUser = await getAuthenticatedUser();
 
     if (!currentUser) {
-      return { data: null, error: "Unauthorized" };
+      return getActionResponse({ error: "Unauthorized" });
     }
 
     const isAdminAction = currentUser.role === "admin";
 
     if (params.isNewConversation && !isAdminAction) {
-      throw new Error("Only admins can create new conversations");
+      return getActionResponse({ error: "Only admins can create new conversations" });
     }
 
     if (params.targetUserId && !isAdminAction) {
-      throw new Error("Only admins can send messages to specific users");
+      return getActionResponse({ error: "Only admins can send messages to specific users" });
     }
 
     let targetUserId = params.targetUserId;
@@ -37,7 +37,7 @@ export const sendMessageAction = async (params: {
       });
 
       if (!adminUser) {
-        throw new Error("Admin user not found");
+        return getActionResponse({ error: "Admin user not found" });
       }
 
       targetUserId = adminUser.id;
@@ -104,7 +104,7 @@ export const sendMessageAction = async (params: {
       },
     });
 
-    const conversations = await prisma.conversation.findMany({
+    const data = await prisma.conversation.findMany({
       where: {
         participants: {
           has: currentUser.id,
@@ -122,10 +122,8 @@ export const sendMessageAction = async (params: {
       orderBy: { lastMessageAt: "desc" },
     });
 
-    return { data: conversations, error: null };
+    return getActionResponse({ data });
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Failed to send message"
-    );
+    return getActionResponse({ error });
   }
 };

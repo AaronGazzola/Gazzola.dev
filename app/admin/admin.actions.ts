@@ -2,7 +2,7 @@
 "use server";
 
 import { GetUsersParams, UserData } from "@/app/admin/admin.types";
-import { ActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";
@@ -20,7 +20,7 @@ export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
     const currentUser = await getAuthenticatedUser();
 
     if (!currentUser) {
-      return { data: false, error: "Unauthorized" };
+      return getActionResponse({ data: false, error: "Unauthorized" });
     }
 
     const user = await prisma.user.findUnique({
@@ -29,18 +29,12 @@ export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
     });
 
     if (!user || user.role !== "admin") {
-      return { data: false, error: "Unauthorized" };
+      return getActionResponse({ data: false, error: "Unauthorized" });
     }
 
-    return { data: true, error: null };
+    return getActionResponse({ data: true });
   } catch (error) {
-    return {
-      data: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to verify admin status",
-    };
+    return getActionResponse({ data: false, error });
   }
 };
 
@@ -51,7 +45,7 @@ export const getUsersAction = async (
     const adminCheck = await isAdminAction();
 
     if (adminCheck.error || !adminCheck.data) {
-      return { data: null, error: "Unauthorized" };
+      return getActionResponse({ error: "Unauthorized" });
     }
 
     const {
@@ -141,11 +135,8 @@ export const getUsersAction = async (
       };
     });
 
-    return { data: userData, error: null };
+    return getActionResponse({ data: userData });
   } catch (error) {
-    return {
-      data: null,
-      error: error instanceof Error ? error.message : "Failed to fetch users",
-    };
+    return getActionResponse({ error });
   }
 };

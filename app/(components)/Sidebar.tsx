@@ -16,6 +16,7 @@ import { Conversation } from "@/app/(types)/chat.types";
 import { useGetAppData } from "@/app/app.hooks";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -93,7 +94,12 @@ const Sidebar = () => {
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isLoading: appDataLoading } = useGetAppData();
   const { user, isVerified, profile } = useAuthStore();
-  const { setCurrentConversation, conversations } = useChatStore();
+  const {
+    setCurrentConversation,
+    conversations,
+    unreadMessages,
+    markMessagesAsRead,
+  } = useChatStore();
 
   const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
@@ -119,6 +125,11 @@ const Sidebar = () => {
       return `${words[0][0]}${words[1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
+  };
+
+  const getUnreadCountForConversation = (conversationId: string) => {
+    return unreadMessages.filter((msg) => msg.conversationId === conversationId)
+      .length;
   };
 
   const handleContractClick = (contractId: string) => {
@@ -152,6 +163,7 @@ const Sidebar = () => {
 
   const handleConversationClick = (conversation: Conversation) => {
     setCurrentConversation(conversation);
+    markMessagesAsRead(conversation.id);
   };
 
   return (
@@ -251,7 +263,7 @@ const Sidebar = () => {
                   </SidebarGroupLabel>
                   <SidebarGroupContent>
                     <ScrollArea className="max-h-[33vh] overflow-auto">
-                      <div className="space-y-1">
+                      <div className="space-y-1 overflow-visible">
                         {conversationsLoading ? (
                           <div className="animate-pulse">
                             {[1, 2, 3].map((i) => (
@@ -275,38 +287,50 @@ const Sidebar = () => {
                               conversation.messages[
                                 conversation.messages.length - 1
                               ];
+                            const unreadCount = getUnreadCountForConversation(
+                              conversation.id
+                            );
                             return (
-                              <button
-                                key={conversation.id}
-                                onClick={() =>
-                                  handleConversationClick(conversation)
-                                }
-                                className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50"
-                              >
-                                <div className="flex justify-between items-start mb-1">
-                                  <h3 className="font-medium text-gray-100 truncate tracking-wider">
-                                    {conversation.title ||
-                                      `Conversation ${conversation.id.slice(0, 8)}`}
-                                  </h3>
-                                  <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
-                                    {format(
-                                      new Date(conversation.lastMessageAt),
-                                      "MMM d"
-                                    )}
-                                  </span>
-                                </div>
-                                {lastMessage && (
-                                  <p className="text-sm text-gray-300 truncate">
-                                    {lastMessage.content}
-                                  </p>
-                                )}
-                                <div className="text-xs text-gray-400 mt-1">
-                                  {conversation.messages.length} message
-                                  {conversation.messages.length !== 1
-                                    ? "s"
-                                    : ""}
-                                </div>
-                              </button>
+                              <div className="p-2" key={conversation.id}>
+                                <button
+                                  onClick={() =>
+                                    handleConversationClick(conversation)
+                                  }
+                                  className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50 relative overflow-visible"
+                                >
+                                  {unreadCount > 0 && (
+                                    <Badge
+                                      variant="destructive"
+                                      className="absolute -top-1 -left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-bold bg-red-500 hover:bg-red-500"
+                                    >
+                                      {unreadCount > 99 ? "99+" : unreadCount}
+                                    </Badge>
+                                  )}
+                                  <div className="flex justify-between items-start mb-1">
+                                    <h3 className="font-medium text-gray-100 truncate tracking-wider">
+                                      {conversation.title ||
+                                        `Conversation ${conversation.id.slice(0, 8)}`}
+                                    </h3>
+                                    <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
+                                      {format(
+                                        new Date(conversation.lastMessageAt),
+                                        "MMM d"
+                                      )}
+                                    </span>
+                                  </div>
+                                  {lastMessage && (
+                                    <p className="text-sm text-gray-300 truncate">
+                                      {lastMessage.content}
+                                    </p>
+                                  )}
+                                  <div className="text-xs text-gray-400 mt-1">
+                                    {conversation.messages.length} message
+                                    {conversation.messages.length !== 1
+                                      ? "s"
+                                      : ""}
+                                  </div>
+                                </button>
+                              </div>
                             );
                           })
                         )}

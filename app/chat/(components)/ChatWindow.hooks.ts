@@ -8,7 +8,14 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetConversations = () => {
   const { user } = useAuthStore();
-  const { setConversations, setCurrentConversation } = useChatStore();
+  const {
+    conversations,
+    unreadMessages,
+    setConversations,
+    addUnreadMessages,
+    currentConversation,
+    setCurrentConversation,
+  } = useChatStore();
 
   return useQuery({
     queryKey: ["conversations"],
@@ -16,8 +23,31 @@ export const useGetConversations = () => {
       const { data, error } = await getConversationsAction();
       if (error) throw new Error(error);
       if (data) {
+        const existingMessageIds = new Set([
+          ...conversations.flatMap((conv) =>
+            conv.messages.map((msg) => msg.id)
+          ),
+          ...unreadMessages.map((msg) => msg.id),
+        ]);
+
+        const newMessages = data.flatMap((conv) =>
+          conv.messages.filter((msg) => !existingMessageIds.has(msg.id))
+        );
+
+        if (newMessages.length) {
+          const newMessageIsInCurrentConversation =
+            currentConversation &&
+            newMessages.some(
+              (msg) => msg.conversationId === currentConversation.id
+            );
+          if (newMessageIsInCurrentConversation) {
+            setCurrentConversation(data[0]);
+          } else {
+            addUnreadMessages(newMessages);
+          }
+        }
+
         setConversations(data);
-        setCurrentConversation(data[0]);
       }
       return data;
     },

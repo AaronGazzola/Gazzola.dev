@@ -7,7 +7,7 @@ import { Contract } from "@/app/(types)/contract.types";
 import { AppData } from "@/app/(types)/ui.types";
 import { UserData } from "@/app/admin/admin.types";
 import { User as PrismaUser } from "@/generated/prisma";
-import { ActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { auth, User } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";
@@ -211,7 +211,7 @@ export const getTargetUserAction = async (
     const isAdmin = await adminGuard();
 
     if (!isAdmin) {
-      return { data: null, error: "Unauthorized: Admin access required" };
+      return getActionResponse({ error: "Unauthorized: Admin access required" });
     }
 
     const user = await prisma.user.findUnique({
@@ -219,7 +219,7 @@ export const getTargetUserAction = async (
     });
 
     if (!user) {
-      return { data: null, error: "User not found" };
+      return getActionResponse({ error: "User not found" });
     }
 
     const profile = await prisma.profile.findUnique({
@@ -230,13 +230,9 @@ export const getTargetUserAction = async (
       },
     });
 
-    return { data: { user, profile }, error: null };
+    return getActionResponse({ data: { user, profile } });
   } catch (error) {
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error.message : "Failed to get target user",
-    };
+    return getActionResponse({ error });
   }
 };
 
@@ -246,7 +242,7 @@ export const getAppDataAction = async (
   try {
     const user = await getAuthenticatedUser();
 
-    if (!user) return { data: null };
+    if (!user) return getActionResponse({ data: null });
 
     const isAdmin = user.role === "admin";
     const isVerified = await checkUserVerification(user.id);
@@ -274,9 +270,9 @@ export const getAppDataAction = async (
       targetUser,
     };
 
-    return { data: appData, error: null };
+    return getActionResponse({ data: appData });
   } catch (error) {
-    return {
+    return getActionResponse({
       data: {
         user: null,
         profile: null,
@@ -287,7 +283,7 @@ export const getAppDataAction = async (
         contracts: [],
         targetUser: null,
       },
-      error: error instanceof Error ? error.message : "Failed to load app data",
-    };
+      error
+    });
   }
 };

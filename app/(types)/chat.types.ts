@@ -25,10 +25,13 @@ export interface ChatState {
   files: FileUpload[];
   currentConversation: Conversation | null;
   targetUser: PrismaUser | null;
+  unreadMessages: Message[];
   setConversations: (conversations: Conversation[]) => void;
   setFiles: (files: FileUpload[]) => void;
   setCurrentConversation: (conversation: Conversation | null) => void;
   setTargetUser: (user: PrismaUser | null) => void;
-
+  setUnreadMessages: (unreadMessages: Message[]) => void;
+  addUnreadMessages: (messages: Message[]) => void;
+  markMessagesAsRead: (conversationId: string) => void;
   reset: () => void;
 }

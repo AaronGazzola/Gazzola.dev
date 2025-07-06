@@ -10,11 +10,13 @@ export const getActionResponse = <T>({
   error,
 }: {
   data?: T | null;
-  error?: any;
+  error?: unknown;
 }): ActionResponse<T> => {
   if (error) {
     const errorMessage =
-      error?.message || error?.toString() || "An unknown error occurred";
+      error instanceof Error
+        ? error?.message
+        : error?.toString() || "An unknown action error occurred";
     console.error("Action error:", errorMessage);
     return { data: null, error: errorMessage };
   }

@@ -3,7 +3,7 @@
 
 import { Conversation } from "@/app/(types)/chat.types";
 import { getAuthenticatedUser } from "@/app/admin/admin.actions";
-import { ActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
 export const getConversationsAction = async (): Promise<ActionResponse<Conversation[]>> => {
@@ -11,10 +11,10 @@ export const getConversationsAction = async (): Promise<ActionResponse<Conversat
     const currentUser = await getAuthenticatedUser();
 
     if (!currentUser) {
-      return { data: null, error: "Unauthorized" };
+      return getActionResponse({ error: "Unauthorized" });
     }
 
-    const conversations = await prisma.conversation.findMany({
+    const data = await prisma.conversation.findMany({
       where: {
         participants: {
           has: currentUser.id,
@@ -32,12 +32,8 @@ export const getConversationsAction = async (): Promise<ActionResponse<Conversat
       orderBy: { lastMessageAt: "desc" },
     });
 
-    return { data: conversations, error: null };
+    return getActionResponse({ data });
   } catch (error) {
-    return {
-      data: null,
-      error:
-        error instanceof Error ? error.message : "Failed to get conversations",
-    };
+    return getActionResponse({ error });
   }
 };
