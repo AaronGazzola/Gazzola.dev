@@ -1,38 +1,35 @@
 //-| File path: app/(types)/contract.types.ts
 import {
+  Conversation,
   Contract as PrismaContract,
   Profile,
-  ProgressStatus,
   RefundStatus,
+  ProgressStatus,
 } from "@/generated/prisma";
 
 export interface Contract extends PrismaContract {
   profile: Profile;
+  conversations: Conversation[];
+}
+
+export interface ContractCreateInput {
+  title: string;
+  description: string;
+  startDate: Date;
+  targetDate: Date;
+  dueDate: Date;
+  price: number;
+  refundStatus?: RefundStatus | null;
+  progressStatus?: ProgressStatus | null;
+  conversationIds: string[];
+  userApproved: boolean;
+  adminApproved: boolean;
 }
 
 export interface ContractState {
   contracts: Contract[];
-  selectedContractId: string | null;
-  filters: {
-    searchTerm: string;
-    progressStatus: ProgressStatus[];
-    refundStatus: RefundStatus[];
-  };
+  contract: Contract | null;
   setContracts: (contracts: Contract[]) => void;
-  setSelectedContractId: (id: string | null) => void;
-  setFilters: (filters: Partial<ContractState["filters"]>) => void;
-  addContract: (contract: Contract) => void;
-  updateContract: (contractId: string, updates: Partial<Contract>) => void;
-  removeContract: (contractId: string) => void;
-  addConversationToContract: (
-    contractId: string,
-    conversationId: string
-  ) => void;
-  removeConversationFromContract: (
-    contractId: string,
-    conversationId: string
-  ) => void;
-  getContractById: (contractId: string) => Contract | null;
-  getUserContracts: (userId: string) => Contract[];
+  setContract: (contract: Contract | null) => void;
   reset: () => void;
 }

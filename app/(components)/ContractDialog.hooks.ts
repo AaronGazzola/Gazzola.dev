@@ -5,12 +5,13 @@ import {
   addContractAction,
   updateContractAction,
 } from "@/app/(components)/ContractDialog.actions";
+import { useContractStore } from "@/app/(stores)/contract.store";
 import { Contract } from "@/app/(types)/contract.types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useAddContract = () => {
-  const queryClient = useQueryClient();
+  const { setContracts } = useContractStore();
 
   return useMutation({
     mutationFn: async (
@@ -24,7 +25,7 @@ export const useAddContract = () => {
     },
     onSuccess: (data) => {
       if (data) {
-        queryClient.invalidateQueries({ queryKey: ["contracts"] });
+        setContracts(data);
       }
 
       toast.success("Contract created successfully");
@@ -36,17 +37,11 @@ export const useAddContract = () => {
 };
 
 export const useUpdateContract = () => {
-  const queryClient = useQueryClient();
+  const { setContracts } = useContractStore();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      updates,
-    }: {
-      id: string;
-      updates: Partial<Contract>;
-    }) => {
-      const { data, error } = await updateContractAction(id, updates);
+    mutationFn: async ({ updates }: { updates: Partial<Contract> }) => {
+      const { data, error } = await updateContractAction(updates);
 
       if (error) throw new Error(error);
 
@@ -54,7 +49,7 @@ export const useUpdateContract = () => {
     },
     onSuccess: (data) => {
       if (data) {
-        queryClient.invalidateQueries({ queryKey: ["contracts"] });
+        setContracts(data);
       }
 
       toast.success("Contract updated successfully");

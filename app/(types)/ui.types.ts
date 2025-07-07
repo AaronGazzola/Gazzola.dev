@@ -20,7 +20,6 @@ export interface AppData {
 export interface UIState {
   contractModal: {
     isOpen: boolean;
-    contractId: string | null;
   };
   profileModal: {
     isOpen: boolean;
@@ -36,7 +35,7 @@ export interface UIState {
 
 export interface AppState {
   ui: UIState;
-  openContractModal: (contractId: string) => void;
+  openContractModal: () => void;
   closeContractModal: () => void;
   openProfileModal: (profileId?: string) => void;
   closeProfileModal: () => void;

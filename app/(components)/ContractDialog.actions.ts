@@ -1,7 +1,7 @@
 //-| File path: app/(components)/ContractDialog.actions.ts
 "use server";
 
-import { Contract } from "@/app/(types)/contract.types";
+import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";
 import { getAuthenticatedUser, isAdminAction } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
@@ -36,6 +36,7 @@ export const getContractsAction = async (): Promise<
       where: whereClause,
       include: {
         profile: true,
+        conversations: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -49,8 +50,8 @@ export const getContractsAction = async (): Promise<
 };
 
 export const addContractAction = async (
-  contractData: Omit<Contract, "id" | "createdAt" | "updatedAt" | "profile">
-): Promise<ActionResponse<Contract>> => {
+  contractData: ContractCreateInput
+): Promise<ActionResponse<Contract[]>> => {
   try {
     const user = await getAuthenticatedUser();
 
@@ -66,26 +67,32 @@ export const addContractAction = async (
       return getActionResponse({ error: "Profile not found" });
     }
 
-    const data = await prisma.contract.create({
+    const { conversationIds, ...contractCreateData } = contractData;
+
+    await prisma.contract.create({
       data: {
-        ...contractData,
+        ...contractCreateData,
         profileId: profile.id,
+        conversations: {
+          connect: conversationIds.map((id) => ({ id })),
+        },
       },
       include: {
         profile: true,
+        conversations: true,
       },
     });
 
-    return getActionResponse({ data });
+    const { data: contracts } = await getContractsAction();
+    return getActionResponse({ data: contracts });
   } catch (error) {
     return getActionResponse({ error });
   }
 };
 
 export const updateContractAction = async (
-  contractId: string,
   updates: Partial<Contract>
-): Promise<ActionResponse<Contract>> => {
+): Promise<ActionResponse<Contract[]>> => {
   try {
     const user = await getAuthenticatedUser();
 
@@ -96,7 +103,7 @@ export const updateContractAction = async (
     const { data: isAdmin } = await isAdminAction();
 
     const existingContract = await prisma.contract.findUnique({
-      where: { id: contractId },
+      where: { id: updates.id },
       include: { profile: true },
     });
 
@@ -105,20 +112,24 @@ export const updateContractAction = async (
     }
 
     if (!isAdmin && existingContract.profile.userId !== user.id) {
-      return getActionResponse({ error: "Not authorized to update this contract" });
+      return getActionResponse({
+        error: "Not authorized to update this contract",
+      });
     }
 
-    const { profile, ...updateData } = updates;
+    const { profile, conversations, ...updateData } = updates;
 
-    const data = await prisma.contract.update({
-      where: { id: contractId },
+    await prisma.contract.update({
+      where: { id: updates.id },
       data: updateData,
       include: {
         profile: true,
+        conversations: true,
       },
     });
 
-    return getActionResponse({ data });
+    const { data: contracts } = await getContractsAction();
+    return getActionResponse({ data: contracts });
   } catch (error) {
     return getActionResponse({ error });
   }

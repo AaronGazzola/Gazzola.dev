@@ -13,6 +13,7 @@ import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Conversation } from "@/app/(types)/chat.types";
+import { Contract } from "@/app/(types)/contract.types";
 import { useGetAppData } from "@/app/app.hooks";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -89,7 +90,7 @@ const SidebarSkeleton = () => {
 };
 
 const Sidebar = () => {
-  const { setSelectedContractId, contracts } = useContractStore();
+  const { contracts, setContract } = useContractStore();
 
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isLoading: appDataLoading } = useGetAppData();
@@ -132,13 +133,14 @@ const Sidebar = () => {
       .length;
   };
 
-  const handleContractClick = (contractId: string) => {
-    setSelectedContractId(contractId);
-    openContractModal(contractId);
+  const handleContractClick = (contract: Contract) => {
+    setContract(contract);
+    openContractModal();
   };
 
-  const handleCreateContract = () => {
-    openContractModal("");
+  const handleOpenContractModal = () => {
+    setContract(null);
+    openContractModal();
   };
 
   const handleProfileClick = () => {
@@ -351,7 +353,7 @@ const Sidebar = () => {
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
-                        onClick={handleCreateContract}
+                        onClick={handleOpenContractModal}
                       >
                         <Plus className="h-4 w-4" />
                         <span className="sr-only">Create contract</span>
@@ -382,7 +384,7 @@ const Sidebar = () => {
                           contracts?.map((contract) => (
                             <button
                               key={contract.id}
-                              onClick={() => handleContractClick(contract.id)}
+                              onClick={() => handleContractClick(contract)}
                               className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50"
                             >
                               <div className="text-sm font-medium text-gray-100 truncate">

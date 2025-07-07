@@ -5,7 +5,6 @@ import { create } from "zustand";
 const initialUIState: UIState = {
   contractModal: {
     isOpen: false,
-    contractId: null,
   },
   profileModal: {
     isOpen: false,
@@ -25,11 +24,11 @@ const initialState = {
 
 export const useAppStore = create<AppState>((set, get) => ({
   ...initialState,
-  openContractModal: (contractId: string) =>
+  openContractModal: () =>
     set((state) => ({
       ui: {
         ...state.ui,
-        contractModal: { isOpen: true, contractId },
+        contractModal: { isOpen: true },
       },
     })),
   closeContractModal: () =>
