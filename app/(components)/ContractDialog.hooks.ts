@@ -6,7 +6,7 @@ import {
   updateContractAction,
 } from "@/app/(components)/ContractDialog.actions";
 import { useContractStore } from "@/app/(stores)/contract.store";
-import { Contract } from "@/app/(types)/contract.types";
+import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -15,7 +15,7 @@ export const useAddContract = () => {
 
   return useMutation({
     mutationFn: async (
-      contractData: Omit<Contract, "id" | "createdAt" | "updatedAt" | "profile">
+      contractData: ContractCreateInput
     ) => {
       const { data, error } = await addContractAction(contractData);
 
@@ -31,6 +31,7 @@ export const useAddContract = () => {
       toast.success("Contract created successfully");
     },
     onError: (error) => {
+      console.error(error);
       toast.error(error.message || "Failed to create contract");
     },
   });
@@ -55,6 +56,7 @@ export const useUpdateContract = () => {
       toast.success("Contract updated successfully");
     },
     onError: (error) => {
+      console.error(error);
       toast.error(error.message || "Failed to update contract");
     },
   });

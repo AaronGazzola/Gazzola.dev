@@ -37,6 +37,7 @@ export const getContractsAction = async (): Promise<
       include: {
         profile: true,
         conversations: true,
+        tasks: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -67,7 +68,14 @@ export const addContractAction = async (
       return getActionResponse({ error: "Profile not found" });
     }
 
-    const { conversationIds, ...contractCreateData } = contractData;
+    const { conversationIds, tasks, ...contractCreateData } = contractData;
+
+    const tasksToCreate = tasks?.map((taskData) => ({
+      title: taskData.title,
+      description: taskData.description,
+      price: taskData.price,
+      progressStatus: taskData.progressStatus,
+    })) || [];
 
     await prisma.contract.create({
       data: {
@@ -76,10 +84,14 @@ export const addContractAction = async (
         conversations: {
           connect: conversationIds.map((id) => ({ id })),
         },
+        tasks: {
+          create: tasksToCreate,
+        },
       },
       include: {
         profile: true,
         conversations: true,
+        tasks: true,
       },
     });
 
@@ -117,14 +129,35 @@ export const updateContractAction = async (
       });
     }
 
-    const { profile, conversations, ...updateData } = updates;
+    const { id, profile, conversations, tasks, createdAt, updatedAt, ...updateData } = updates;
+
+    if (tasks) {
+      await prisma.task.deleteMany({
+        where: { contractId: updates.id },
+      });
+    }
+
+    const tasksToCreate = tasks?.map((taskData) => ({
+      title: taskData.title,
+      description: taskData.description,
+      price: taskData.price,
+      progressStatus: taskData.progressStatus,
+    })) || [];
 
     await prisma.contract.update({
       where: { id: updates.id },
-      data: updateData,
+      data: {
+        ...updateData,
+        ...(tasks && {
+          tasks: {
+            create: tasksToCreate,
+          },
+        }),
+      },
       include: {
         profile: true,
         conversations: true,
+        tasks: true,
       },
     });
 

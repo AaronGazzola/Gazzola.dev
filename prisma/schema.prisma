@@ -1,4 +1,5 @@
 //-| File path: prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -140,6 +141,20 @@ model FileUpload {
   @@map("file_upload")
 }
 
+model Task {
+  id             String          @id @default(cuid())
+  title          String
+  description    String
+  price          Float
+  progressStatus ProgressStatus?
+  contractId     String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  contract       Contract        @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@map("task")
+}
+
 model Contract {
   id              String          @id @default(cuid())
   title           String
@@ -158,6 +173,7 @@ model Contract {
   updatedAt       DateTime        @updatedAt
   profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
   conversations   Conversation[]
+  tasks           Task[]
 
   @@map("contract")
 }

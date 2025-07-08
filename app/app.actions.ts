@@ -185,6 +185,8 @@ async function getUserContracts(
       where: whereClause,
       include: {
         profile: true,
+        conversations: true,
+        tasks: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -211,7 +213,9 @@ export const getTargetUserAction = async (
     const isAdmin = await adminGuard();
 
     if (!isAdmin) {
-      return getActionResponse({ error: "Unauthorized: Admin access required" });
+      return getActionResponse({
+        error: "Unauthorized: Admin access required",
+      });
     }
 
     const user = await prisma.user.findUnique({
@@ -283,7 +287,7 @@ export const getAppDataAction = async (
         contracts: [],
         targetUser: null,
       },
-      error
+      error,
     });
   }
 };

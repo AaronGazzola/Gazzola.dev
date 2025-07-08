@@ -5,11 +5,15 @@ import {
   Profile,
   RefundStatus,
   ProgressStatus,
+  Task as PrismaTask,
 } from "@/generated/prisma";
+
+export interface Task extends PrismaTask {}
 
 export interface Contract extends PrismaContract {
   profile: Profile;
   conversations: Conversation[];
+  tasks: Task[];
 }
 
 export interface ContractCreateInput {
@@ -24,6 +28,14 @@ export interface ContractCreateInput {
   conversationIds: string[];
   userApproved: boolean;
   adminApproved: boolean;
+  tasks?: TaskCreateInput[];
+}
+
+export interface TaskCreateInput {
+  title: string;
+  description: string;
+  price: number;
+  progressStatus?: ProgressStatus | null;
 }
 
 export interface ContractState {
