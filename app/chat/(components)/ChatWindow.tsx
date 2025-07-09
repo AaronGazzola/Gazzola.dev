@@ -1,10 +1,10 @@
 //-| File path: app/chat/(components)/ChatWindow.tsx
 "use client";
+import { useGetAppData } from "@/app/(hooks)/app.hooks";
 import { useScrollToMessage } from "@/app/(hooks)/useScrollToMessage";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { Message } from "@/app/(types)/chat.types";
-import { useGetAppData } from "@/app/app.hooks";
 import ChatInput from "@/app/chat/(components)/ChatInput";
 import { useGetConversations } from "@/app/chat/(components)/ChatWindow.hooks";
 import { cn } from "@/lib/tailwind.utils";

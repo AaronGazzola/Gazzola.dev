@@ -6,7 +6,7 @@ import { getAuthenticatedUser, isAdminAction } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
-export const getContractsAction = async (): Promise<
+export const getContractsAction = async (userId?: string): Promise<
   ActionResponse<Contract[]>
 > => {
   try {
@@ -20,7 +20,17 @@ export const getContractsAction = async (): Promise<
 
     let whereClause = {};
 
-    if (!isAdmin) {
+    if (userId && isAdmin) {
+      const targetProfile = await prisma.profile.findUnique({
+        where: { userId },
+      });
+
+      if (!targetProfile) {
+        return getActionResponse({ data: [] });
+      }
+
+      whereClause = { profileId: targetProfile.id };
+    } else if (!isAdmin) {
       const profile = await prisma.profile.findUnique({
         where: { userId: user.id },
       });
@@ -51,7 +61,8 @@ export const getContractsAction = async (): Promise<
 };
 
 export const addContractAction = async (
-  contractData: ContractCreateInput
+  contractData: ContractCreateInput,
+  userId?: string
 ): Promise<ActionResponse<Contract[]>> => {
   try {
     const user = await getAuthenticatedUser();
@@ -60,8 +71,11 @@ export const addContractAction = async (
       return getActionResponse({ error: "User not authenticated" });
     }
 
+    const { data: isAdmin } = await isAdminAction();
+    const targetUserId = userId && isAdmin ? userId : user.id;
+
     const profile = await prisma.profile.findUnique({
-      where: { userId: user.id },
+      where: { userId: targetUserId },
     });
 
     if (!profile) {
@@ -77,9 +91,14 @@ export const addContractAction = async (
       progressStatus: taskData.progressStatus,
     })) || [];
 
+    const finalContractData = {
+      ...contractCreateData,
+      [isAdmin ? "userApproved" : "adminApproved"]: false,
+    };
+
     await prisma.contract.create({
       data: {
-        ...contractCreateData,
+        ...finalContractData,
         profileId: profile.id,
         conversations: {
           connect: conversationIds.map((id) => ({ id })),
@@ -95,7 +114,7 @@ export const addContractAction = async (
       },
     });
 
-    const { data: contracts } = await getContractsAction();
+    const { data: contracts } = await getContractsAction(userId);
     return getActionResponse({ data: contracts });
   } catch (error) {
     return getActionResponse({ error });
@@ -103,7 +122,8 @@ export const addContractAction = async (
 };
 
 export const updateContractAction = async (
-  updates: Partial<Contract>
+  updates: Partial<Contract>,
+  userId?: string
 ): Promise<ActionResponse<Contract[]>> => {
   try {
     const user = await getAuthenticatedUser();
@@ -116,7 +136,10 @@ export const updateContractAction = async (
 
     const existingContract = await prisma.contract.findUnique({
       where: { id: updates.id },
-      include: { profile: true },
+      include: { 
+        profile: true,
+        tasks: true,
+      },
     });
 
     if (!existingContract) {
@@ -129,7 +152,96 @@ export const updateContractAction = async (
       });
     }
 
-    const { id, profile, conversations, tasks, createdAt, updatedAt, ...updateData } = updates;
+    const { id, profile, conversations, tasks, createdAt, updatedAt, userApproved, adminApproved, ...updateData } = updates;
+
+    type ContractUpdateFields = {
+      title?: string;
+      description?: string;
+      startDate?: Date;
+      targetDate?: Date;
+      dueDate?: Date;
+      price?: number;
+      refundStatus?: string | null;
+      progressStatus?: string | null;
+      conversationIds?: string[];
+    };
+
+    type ExistingContractBase = {
+      title: string;
+      description: string;
+      startDate: Date;
+      targetDate: Date;
+      dueDate: Date;
+      price: number;
+      refundStatus: string | null;
+      progressStatus: string | null;
+      conversationIds: string[];
+    };
+
+    const hasNonApprovalChanges = (() => {
+      const fieldsToCheck: (keyof ContractUpdateFields)[] = [
+        'title',
+        'description',
+        'startDate',
+        'targetDate',
+        'dueDate',
+        'price',
+        'refundStatus',
+        'progressStatus',
+        'conversationIds'
+      ];
+
+      for (const field of fieldsToCheck) {
+        const updateValue = (updateData as ContractUpdateFields)[field];
+        if (updateValue !== undefined) {
+          if (field === 'startDate' || field === 'targetDate' || field === 'dueDate') {
+            const existingDate = (existingContract as ExistingContractBase)[field] ? new Date((existingContract as ExistingContractBase)[field]) : null;
+            const updateDate = updateValue ? new Date(updateValue as Date) : null;
+            if (existingDate?.getTime() !== updateDate?.getTime()) {
+              return true;
+            }
+          } else if (field === 'conversationIds') {
+            const existingIds = JSON.stringify((existingContract as ExistingContractBase)[field]?.sort() || []);
+            const updateIds = JSON.stringify((updateValue as string[])?.sort() || []);
+            if (existingIds !== updateIds) {
+              return true;
+            }
+          } else {
+            if ((existingContract as ExistingContractBase)[field] !== updateValue) {
+              return true;
+            }
+          }
+        }
+      }
+
+      if (tasks !== undefined) {
+        const existingTasks = existingContract.tasks || [];
+        const updatedTasks = tasks || [];
+        
+        if (existingTasks.length !== updatedTasks.length) {
+          return true;
+        }
+
+        const sortedExisting = [...existingTasks].sort((a, b) => a.id.localeCompare(b.id));
+        const sortedUpdated = [...updatedTasks].sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+
+        for (let i = 0; i < sortedExisting.length; i++) {
+          const existing = sortedExisting[i];
+          const updated = sortedUpdated[i];
+          
+          if (
+            existing.title !== updated.title ||
+            existing.description !== updated.description ||
+            existing.price !== updated.price ||
+            existing.progressStatus !== updated.progressStatus
+          ) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    })();
 
     if (tasks) {
       await prisma.task.deleteMany({
@@ -144,10 +256,19 @@ export const updateContractAction = async (
       progressStatus: taskData.progressStatus,
     })) || [];
 
+    const finalUpdateData = {
+      ...updateData,
+      ...(userApproved !== undefined && { userApproved }),
+      ...(adminApproved !== undefined && { adminApproved }),
+      ...(hasNonApprovalChanges && {
+        [isAdmin ? "userApproved" : "adminApproved"]: false,
+      }),
+    };
+
     await prisma.contract.update({
       where: { id: updates.id },
       data: {
-        ...updateData,
+        ...finalUpdateData,
         ...(tasks && {
           tasks: {
             create: tasksToCreate,
@@ -161,7 +282,7 @@ export const updateContractAction = async (
       },
     });
 
-    const { data: contracts } = await getContractsAction();
+    const { data: contracts } = await getContractsAction(userId);
     return getActionResponse({ data: contracts });
   } catch (error) {
     return getActionResponse({ error });

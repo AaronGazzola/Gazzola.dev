@@ -10,7 +10,16 @@ import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Contract, Task } from "@/app/(types)/contract.types";
-import { ProgressStatus } from "@/generated/prisma";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -37,26 +46,17 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ProgressStatus } from "@/generated/prisma";
 import { format } from "date-fns";
-import { 
-  ChevronDown, 
-  Loader2, 
-  Plus, 
-  Trash2,
-  Clock,
-  Play,
+import {
   CheckCircle,
-  XCircle
+  ChevronDown,
+  Clock,
+  Loader2,
+  Play,
+  Plus,
+  Trash2,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -83,7 +83,6 @@ const ContractDialog = () => {
     tasks: [],
   });
 
-  const [approved, setApproved] = useState(true);
   const [selectedConversationIds, setSelectedConversationIds] = useState<
     string[]
   >([]);
@@ -91,6 +90,10 @@ const ContractDialog = () => {
   const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null);
 
   const isEditMode = !!contract;
+
+  const approvedValue = isAdmin
+    ? formData.adminApproved
+    : formData.userApproved;
 
   useEffect(() => {
     if (contract) {
@@ -110,7 +113,6 @@ const ContractDialog = () => {
         tasks: contract.tasks || [],
       });
       setSelectedConversationIds(contract.conversationIds || []);
-      setApproved(isAdmin ? contract.adminApproved : contract.userApproved);
       return;
     }
     if (!contract) {
@@ -129,20 +131,21 @@ const ContractDialog = () => {
         tasks: [],
       });
       setSelectedConversationIds([]);
-      setApproved(true);
     }
-  }, [contract, isAdmin]);
+  }, [contract]);
 
   const handleSave = () => {
     if (!isFormValid()) return;
 
-    const totalPrice = (formData.tasks || []).reduce((sum, task) => sum + task.price, 0);
+    const totalPrice = (formData.tasks || []).reduce(
+      (sum, task) => sum + task.price,
+      0
+    );
 
     const contractData = {
       ...formData,
       price: totalPrice,
       conversationIds: selectedConversationIds,
-      [isAdmin ? "adminApproved" : "userApproved"]: approved,
     };
 
     if (isEditMode) {
@@ -184,9 +187,7 @@ const ContractDialog = () => {
   };
 
   const isFormValid = () => {
-    return (
-      formData.title && formData.description
-    );
+    return formData.title && formData.description;
   };
 
   const getStatusBadgeColor = (status: string, type: "progress" | "refund") => {
@@ -256,7 +257,9 @@ const ContractDialog = () => {
   };
 
   const deleteTask = (taskId: string) => {
-    const updatedTasks = (formData.tasks || []).filter((task) => task.id !== taskId);
+    const updatedTasks = (formData.tasks || []).filter(
+      (task) => task.id !== taskId
+    );
     handleInputChange("tasks", updatedTasks);
     setDeleteTaskId(null);
     if (expandedTaskId === taskId) {
@@ -268,8 +271,15 @@ const ContractDialog = () => {
     const task = (formData.tasks || []).find((t) => t.id === taskId);
     if (!task) return;
 
-    const progressOrder: ProgressStatus[] = ["not_started", "in_progress", "completed", "cancelled"];
-    const currentIndex = progressOrder.indexOf(task.progressStatus || "not_started");
+    const progressOrder: ProgressStatus[] = [
+      "not_started",
+      "in_progress",
+      "completed",
+      "cancelled",
+    ];
+    const currentIndex = progressOrder.indexOf(
+      task.progressStatus || "not_started"
+    );
     const nextIndex = (currentIndex + 1) % progressOrder.length;
     const nextStatus = progressOrder[nextIndex];
 
@@ -295,7 +305,10 @@ const ContractDialog = () => {
     setExpandedTaskId(expandedTaskId === taskId ? null : taskId);
   };
 
-  const totalPrice = (formData.tasks || []).reduce((sum, task) => sum + task.price, 0);
+  const totalPrice = (formData.tasks || []).reduce(
+    (sum, task) => sum + task.price,
+    0
+  );
 
   const isLoading =
     addContractMutation.isPending || updateContractMutation.isPending;
@@ -370,7 +383,10 @@ const ContractDialog = () => {
                           : ""
                       }
                       onChange={(e) =>
-                        handleInputChange("targetDate", new Date(e.target.value))
+                        handleInputChange(
+                          "targetDate",
+                          new Date(e.target.value)
+                        )
                       }
                     />
                   </div>
@@ -381,7 +397,9 @@ const ContractDialog = () => {
                       type="date"
                       value={
                         formData.dueDate
-                          ? new Date(formData.dueDate).toISOString().split("T")[0]
+                          ? new Date(formData.dueDate)
+                              .toISOString()
+                              .split("T")[0]
                           : ""
                       }
                       onChange={(e) =>
@@ -412,8 +430,12 @@ const ContractDialog = () => {
                           <SelectValue placeholder="Select progress status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="not_started">Not Started</SelectItem>
-                          <SelectItem value="in_progress">In Progress</SelectItem>
+                          <SelectItem value="not_started">
+                            Not Started
+                          </SelectItem>
+                          <SelectItem value="in_progress">
+                            In Progress
+                          </SelectItem>
                           <SelectItem value="completed">Completed</SelectItem>
                           <SelectItem value="cancelled">Cancelled</SelectItem>
                         </SelectContent>
@@ -477,9 +499,13 @@ const ContractDialog = () => {
                   </Label>
                   <Switch
                     id="approved"
-                    checked={approved}
-                    onCheckedChange={setApproved}
-                    disabled={!isEditMode}
+                    checked={approvedValue || false}
+                    onCheckedChange={(checked) =>
+                      handleInputChange(
+                        isAdmin ? "adminApproved" : "userApproved",
+                        checked
+                      )
+                    }
                   />
                 </div>
               </div>
@@ -509,7 +535,9 @@ const ContractDialog = () => {
                             onClick={() => toggleTaskProgress(task.id)}
                             className="p-1"
                           >
-                            {getProgressIcon(task.progressStatus || "not_started")}
+                            {getProgressIcon(
+                              task.progressStatus || "not_started"
+                            )}
                           </Button>
                           <Button
                             type="button"
@@ -529,7 +557,9 @@ const ContractDialog = () => {
                                 <Input
                                   value={task.title}
                                   onChange={(e) =>
-                                    updateTask(task.id, { title: e.target.value })
+                                    updateTask(task.id, {
+                                      title: e.target.value,
+                                    })
                                   }
                                   placeholder="Task title"
                                   onClick={(e) => e.stopPropagation()}
@@ -537,7 +567,9 @@ const ContractDialog = () => {
                                 <Textarea
                                   value={task.description}
                                   onChange={(e) =>
-                                    updateTask(task.id, { description: e.target.value })
+                                    updateTask(task.id, {
+                                      description: e.target.value,
+                                    })
                                   }
                                   placeholder="Task description"
                                   rows={2}
@@ -547,7 +579,9 @@ const ContractDialog = () => {
                                   type="number"
                                   value={task.price}
                                   onChange={(e) =>
-                                    updateTask(task.id, { price: Number(e.target.value) })
+                                    updateTask(task.id, {
+                                      price: Number(e.target.value),
+                                    })
                                   }
                                   placeholder="0"
                                   onClick={(e) => e.stopPropagation()}
@@ -679,9 +713,7 @@ const ContractDialog = () => {
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={
-                  !isFormValid() || (!approved && isEditMode) || isLoading
-                }
+                disabled={!isFormValid() || !approvedValue || isLoading}
               >
                 {isLoading ? (
                   <>
@@ -699,12 +731,16 @@ const ContractDialog = () => {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!deleteTaskId} onOpenChange={() => setDeleteTaskId(null)}>
+      <AlertDialog
+        open={!!deleteTaskId}
+        onOpenChange={() => setDeleteTaskId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Task</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this task? This action cannot be undone.
+              Are you sure you want to delete this task? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

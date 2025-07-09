@@ -4,20 +4,44 @@
 import {
   addContractAction,
   updateContractAction,
+  getContractsAction,
 } from "@/app/(components)/ContractDialog.actions";
+import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+export const useGetContracts = () => {
+  const { targetUser } = useChatStore();
+  const { user, isAdmin } = useAuthStore();
+  const { setContracts } = useContractStore();
+
+  return useQuery({
+    queryKey: ["contracts", targetUser?.id],
+    queryFn: async () => {
+      const { data, error } = await getContractsAction(targetUser?.id);
+      if (error) throw new Error(error);
+      if (data) {
+        setContracts(data);
+      }
+      return data;
+    },
+    enabled: !!user,
+    refetchInterval: 3000,
+  });
+};
 
 export const useAddContract = () => {
   const { setContracts } = useContractStore();
+  const { targetUser } = useChatStore();
 
   return useMutation({
     mutationFn: async (
       contractData: ContractCreateInput
     ) => {
-      const { data, error } = await addContractAction(contractData);
+      const { data, error } = await addContractAction(contractData, targetUser?.id);
 
       if (error) throw new Error(error);
 
@@ -39,10 +63,11 @@ export const useAddContract = () => {
 
 export const useUpdateContract = () => {
   const { setContracts } = useContractStore();
+  const { targetUser } = useChatStore();
 
   return useMutation({
     mutationFn: async ({ updates }: { updates: Partial<Contract> }) => {
-      const { data, error } = await updateContractAction(updates);
+      const { data, error } = await updateContractAction(updates, targetUser?.id);
 
       if (error) throw new Error(error);
 

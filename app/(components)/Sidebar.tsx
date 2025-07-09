@@ -8,13 +8,13 @@ import {
   useSignOutMutation,
 } from "@/app/(components)/Sidebar.hooks";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
+import { useGetAppData } from "@/app/(hooks)/app.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";
-import { useGetAppData } from "@/app/app.hooks";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -90,16 +90,17 @@ const SidebarSkeleton = () => {
 };
 
 const Sidebar = () => {
-  const { contracts, setContract } = useContractStore();
+  const { contracts, setContract, contract } = useContractStore();
 
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isLoading: appDataLoading } = useGetAppData();
-  const { user, isVerified, profile } = useAuthStore();
+  const { user, isVerified, profile, isAdmin } = useAuthStore();
   const {
     setCurrentConversation,
     conversations,
     unreadMessages,
     markMessagesAsRead,
+    currentConversation,
   } = useChatStore();
 
   const resendVerificationEmail = useResendVerificationEmail();
@@ -133,8 +134,16 @@ const Sidebar = () => {
       .length;
   };
 
-  const handleContractClick = (contract: Contract) => {
-    setContract(contract);
+  const isContractUnapproved = (contractItem: Contract) => {
+    if (isAdmin) {
+      return !contractItem.adminApproved;
+    } else {
+      return !contractItem.userApproved;
+    }
+  };
+
+  const handleContractClick = (contractItem: Contract) => {
+    setContract(contractItem);
     openContractModal();
   };
 
@@ -292,13 +301,20 @@ const Sidebar = () => {
                             const unreadCount = getUnreadCountForConversation(
                               conversation.id
                             );
+                            const isCurrentConversation =
+                              currentConversation?.id === conversation.id;
                             return (
                               <div className="p-2" key={conversation.id}>
                                 <button
                                   onClick={() =>
                                     handleConversationClick(conversation)
                                   }
-                                  className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50 relative overflow-visible"
+                                  className={cn(
+                                    "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50 relative overflow-visible",
+                                    isCurrentConversation
+                                      ? "border-white"
+                                      : "border-gray-700/50"
+                                  )}
                                 >
                                   {unreadCount > 0 && (
                                     <Badge
@@ -381,22 +397,46 @@ const Sidebar = () => {
                             No contracts yet
                           </p>
                         ) : (
-                          contracts?.map((contract) => (
-                            <button
-                              key={contract.id}
-                              onClick={() => handleContractClick(contract)}
-                              className="w-full text-left p-3 rounded-lg transition-colors border border-gray-700/50 hover:bg-gray-800/50"
-                            >
-                              <div className="text-sm font-medium text-gray-100 truncate">
-                                {contract.title}
+                          contracts?.map((contractItem) => {
+                            const isCurrentContract =
+                              contract?.id === contractItem.id;
+                            const isUnapproved =
+                              isContractUnapproved(contractItem);
+                            return (
+                              <div className="relative" key={contractItem.id}>
+                                <button
+                                  onClick={() =>
+                                    handleContractClick(contractItem)
+                                  }
+                                  className={cn(
+                                    "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50",
+                                    isCurrentContract
+                                      ? "border-white"
+                                      : "border-gray-700/50"
+                                  )}
+                                >
+                                  <div className="text-sm font-medium text-gray-100 truncate">
+                                    {contractItem.title}
+                                  </div>
+                                  <div className="text-xs text-gray-100">
+                                    ${contractItem.price.toLocaleString()} •{" "}
+                                    {contractItem.progressStatus?.replace(
+                                      "_",
+                                      " "
+                                    ) || "Not started"}
+                                  </div>
+                                </button>
+                                {isUnapproved && (
+                                  <Badge
+                                    variant="destructive"
+                                    className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500"
+                                  >
+                                    !
+                                  </Badge>
+                                )}
                               </div>
-                              <div className="text-xs text-gray-100">
-                                ${contract.price.toLocaleString()} •{" "}
-                                {contract.progressStatus?.replace("_", " ") ||
-                                  "Not started"}
-                              </div>
-                            </button>
-                          ))
+                            );
+                          })
                         )}
                       </div>
                     </ScrollArea>

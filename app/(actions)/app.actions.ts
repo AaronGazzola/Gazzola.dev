@@ -179,6 +179,14 @@ async function getUserContracts(
       }
 
       whereClause = { profileId: profile.id };
+    } else {
+      const profile = await prisma.profile.findUnique({
+        where: { userId },
+      });
+
+      if (profile) {
+        whereClause = { profileId: profile.id };
+      }
     }
 
     const contracts = await prisma.contract.findMany({
@@ -253,15 +261,18 @@ export const getAppDataAction = async (
     const profile = await getUserProfile(user.id);
     const users = await getAllUsers(isAdmin);
     const conversations = await getUserConversations(user.id);
-    const contracts = await getUserContracts(user.id, isAdmin);
 
     let targetUser: PrismaUser | null = null;
-    if (userId) {
+    if (userId && isAdmin) {
       const targetUserResult = await getTargetUserAction(userId);
       if (targetUserResult.data) {
         targetUser = targetUserResult.data.user;
       }
     }
+    const contracts = await getUserContracts(
+      targetUser?.id || user.id,
+      isAdmin
+    );
 
     const appData: AppData = {
       user,

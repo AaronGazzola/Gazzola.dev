@@ -13,7 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import config from "@/configuration";
 import { signOut } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 interface SignOutConfirmProps {
   isOpen: boolean;
@@ -24,6 +26,7 @@ const SignOutConfirm = ({ isOpen, onClose }: SignOutConfirmProps) => {
   const { reset: resetApp } = useAppStore();
   const { reset: resetChat } = useChatStore();
   const { reset: resetContract } = useContractStore();
+  const router = useRouter();
 
   const handleSignOut = async () => {
     resetApp();
@@ -31,6 +34,7 @@ const SignOutConfirm = ({ isOpen, onClose }: SignOutConfirmProps) => {
     resetContract();
     onClose();
     await signOut();
+    router.push(config.paths.home);
   };
 
   return (
