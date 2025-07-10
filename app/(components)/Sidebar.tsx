@@ -2,6 +2,7 @@
 "use client";
 import AuthDialog from "@/app/(components)/AuthDialog";
 import ContractDialog from "@/app/(components)/ContractDialog";
+import ActiveContractDialog from "@/app/(components)/ActiveContractDialog";
 import ProfileDialog from "@/app/(components)/ProfileDialog";
 import {
   useResendVerificationEmail,
@@ -153,7 +154,7 @@ const Sidebar = () => {
   };
 
   const handleProfileClick = () => {
-    openProfileModal(profile?.id);
+    openProfileModal();
   };
 
   const handleSignOutClick = () => {
@@ -525,6 +526,7 @@ const Sidebar = () => {
         </SidebarContent>
       </ShadcnSidebar>
       <ContractDialog />
+      <ActiveContractDialog />
       <ProfileDialog />
       <AuthDialog />
       <SignOutConfirm

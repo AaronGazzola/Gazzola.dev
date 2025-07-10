@@ -4,6 +4,7 @@
 import {
   useAddContract,
   useUpdateContract,
+  useContractPayment,
 } from "@/app/(components)/ContractDialog.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
@@ -57,6 +58,7 @@ import {
   Plus,
   Trash2,
   XCircle,
+  CreditCard,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -67,6 +69,7 @@ const ContractDialog = () => {
   const { isAdmin } = useAuthStore();
   const addContractMutation = useAddContract();
   const updateContractMutation = useUpdateContract();
+  const contractPaymentMutation = useContractPayment();
 
   const [formData, setFormData] = useState<Partial<Contract>>({
     title: "",
@@ -94,6 +97,12 @@ const ContractDialog = () => {
   const approvedValue = isAdmin
     ? formData.adminApproved
     : formData.userApproved;
+
+  const shouldShowPaymentButton = 
+    !isAdmin && 
+    formData.userApproved && 
+    formData.adminApproved && 
+    !contract?.isPaid;
 
   useEffect(() => {
     if (contract) {
@@ -173,6 +182,17 @@ const ContractDialog = () => {
           },
         }
       );
+    }
+  };
+
+  const handlePayment = () => {
+    if (contract?.id) {
+      contractPaymentMutation.mutate(contract.id, {
+        onSuccess: () => {
+          setContract(null);
+          closeContractModal();
+        },
+      });
     }
   };
 
@@ -268,6 +288,8 @@ const ContractDialog = () => {
   };
 
   const toggleTaskProgress = (taskId: string) => {
+    if (!isAdmin) return;
+    
     const task = (formData.tasks || []).find((t) => t.id === taskId);
     if (!task) return;
 
@@ -311,7 +333,9 @@ const ContractDialog = () => {
   );
 
   const isLoading =
-    addContractMutation.isPending || updateContractMutation.isPending;
+    addContractMutation.isPending || 
+    updateContractMutation.isPending || 
+    contractPaymentMutation.isPending;
 
   return (
     <>
@@ -534,6 +558,7 @@ const ContractDialog = () => {
                             size="sm"
                             onClick={() => toggleTaskProgress(task.id)}
                             className="p-1"
+                            disabled={!isAdmin}
                           >
                             {getProgressIcon(
                               task.progressStatus || "not_started"
@@ -700,32 +725,57 @@ const ContractDialog = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setContract(null);
-                  closeContractModal();
-                }}
-                disabled={isLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={!isFormValid() || !approvedValue || isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {isEditMode ? "Updating..." : "Creating..."}
-                  </>
-                ) : isEditMode ? (
-                  "Update"
-                ) : (
-                  "Create"
+            <div className="flex justify-between pt-4 border-t">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setContract(null);
+                    closeContractModal();
+                  }}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+              </div>
+              
+              <div className="flex gap-2">
+                {shouldShowPaymentButton && (
+                  <Button
+                    onClick={handlePayment}
+                    disabled={isLoading}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {contractPaymentMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        Complete Payment
+                      </>
+                    )}
+                  </Button>
                 )}
-              </Button>
+                
+                <Button
+                  onClick={handleSave}
+                  disabled={!isFormValid() || !approvedValue || isLoading}
+                >
+                  {isLoading && !contractPaymentMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {isEditMode ? "Updating..." : "Creating..."}
+                    </>
+                  ) : isEditMode ? (
+                    "Update"
+                  ) : (
+                    "Create"
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </DialogContent>

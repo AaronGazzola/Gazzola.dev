@@ -174,6 +174,7 @@ model Contract {
   profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
   conversations   Conversation[]
   tasks           Task[]
+  isPaid        Boolean         @default(false)
 
   @@map("contract")
 }

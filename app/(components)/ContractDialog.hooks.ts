@@ -5,6 +5,7 @@ import {
   addContractAction,
   getContractsAction,
   updateContractAction,
+  contractPaymentAction,
 } from "@/app/(components)/ContractDialog.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
@@ -89,6 +90,35 @@ export const useUpdateContract = () => {
     onError: (error) => {
       console.error(error);
       toast.error(error.message || "Failed to update contract");
+    },
+  });
+};
+
+export const useContractPayment = () => {
+  const { setContracts } = useContractStore();
+  const { targetUser } = useChatStore();
+
+  return useMutation({
+    mutationFn: async (contractId: string) => {
+      const { data, error } = await contractPaymentAction(
+        contractId,
+        targetUser?.id
+      );
+
+      if (error) throw new Error(error);
+
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data) {
+        setContracts(data);
+      }
+
+      toast.success("Payment completed successfully");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(error.message || "Failed to complete payment");
     },
   });
 };
