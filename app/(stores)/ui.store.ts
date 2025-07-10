@@ -8,7 +8,6 @@ const initialUIState: UIState = {
   },
   profileModal: {
     isOpen: false,
-    profileId: null,
   },
   authModal: {
     isOpen: false,
@@ -38,11 +37,11 @@ export const useAppStore = create<AppState>((set, get) => ({
         contractModal: { isOpen: false, contractId: null },
       },
     })),
-  openProfileModal: (profileId?: string) =>
+  openProfileModal: () =>
     set((state) => ({
       ui: {
         ...state.ui,
-        profileModal: { isOpen: true, profileId: profileId || null },
+        profileModal: { isOpen: true },
       },
     })),
   closeProfileModal: () =>

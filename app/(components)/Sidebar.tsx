@@ -462,14 +462,16 @@ const Sidebar = () => {
                   </PopoverTrigger>
                   <PopoverContent className="w-56 p-2" align="end">
                     <div className="space-y-1">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2"
-                        onClick={handleProfileClick}
-                      >
-                        <User className="h-4 w-4" />
-                        Profile
-                      </Button>
+                      {profile && (
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-2"
+                          onClick={handleProfileClick}
+                        >
+                          <User className="h-4 w-4" />
+                          Profile
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -486,15 +488,17 @@ const Sidebar = () => {
           )}
           {!isExpanded && isAuthenticated && isVerified && (
             <div className="flex flex-col items-center py-4 space-y-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-100 hover:text-white hover:bg-gray-800"
-                onClick={handleProfileClick}
-              >
-                <User className="h-5 w-5" />
-                <span className="sr-only">Profile</span>
-              </Button>
+              {profile && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-100 hover:text-white hover:bg-gray-800"
+                  onClick={handleProfileClick}
+                >
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Profile</span>
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="icon"

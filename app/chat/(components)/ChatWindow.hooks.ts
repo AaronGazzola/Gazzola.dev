@@ -20,6 +20,7 @@ export const useGetConversations = () => {
   return useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
+      console.log("test1");
       const { data, error } = await getConversationsAction();
       if (error) throw new Error(error);
       if (data) {
@@ -53,6 +54,7 @@ export const useGetConversations = () => {
     },
     enabled: !!user,
     refetchInterval: 3000,
+    refetchIntervalInBackground: false,
     staleTime: 0,
     gcTime: 1000 * 60 * 5,
   });

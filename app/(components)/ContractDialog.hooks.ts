@@ -3,8 +3,8 @@
 
 import {
   addContractAction,
-  updateContractAction,
   getContractsAction,
+  updateContractAction,
 } from "@/app/(components)/ContractDialog.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
@@ -21,6 +21,7 @@ export const useGetContracts = () => {
   return useQuery({
     queryKey: ["contracts", targetUser?.id],
     queryFn: async () => {
+      console.log("test2");
       const { data, error } = await getContractsAction(targetUser?.id);
       if (error) throw new Error(error);
       if (data) {
@@ -30,6 +31,7 @@ export const useGetContracts = () => {
     },
     enabled: !!user,
     refetchInterval: 3000,
+    refetchIntervalInBackground: false,
   });
 };
 
@@ -38,10 +40,11 @@ export const useAddContract = () => {
   const { targetUser } = useChatStore();
 
   return useMutation({
-    mutationFn: async (
-      contractData: ContractCreateInput
-    ) => {
-      const { data, error } = await addContractAction(contractData, targetUser?.id);
+    mutationFn: async (contractData: ContractCreateInput) => {
+      const { data, error } = await addContractAction(
+        contractData,
+        targetUser?.id
+      );
 
       if (error) throw new Error(error);
 
@@ -67,7 +70,10 @@ export const useUpdateContract = () => {
 
   return useMutation({
     mutationFn: async ({ updates }: { updates: Partial<Contract> }) => {
-      const { data, error } = await updateContractAction(updates, targetUser?.id);
+      const { data, error } = await updateContractAction(
+        updates,
+        targetUser?.id
+      );
 
       if (error) throw new Error(error);
 

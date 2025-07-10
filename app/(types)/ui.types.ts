@@ -23,7 +23,6 @@ export interface UIState {
   };
   profileModal: {
     isOpen: boolean;
-    profileId: string | null;
   };
   authModal: {
     isOpen: boolean;
@@ -37,7 +36,7 @@ export interface AppState {
   ui: UIState;
   openContractModal: () => void;
   closeContractModal: () => void;
-  openProfileModal: (profileId?: string) => void;
+  openProfileModal: () => void;
   closeProfileModal: () => void;
   openAuthModal: () => void;
   closeAuthModal: () => void;
