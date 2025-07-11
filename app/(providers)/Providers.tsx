@@ -1,8 +1,8 @@
 //-| File path: app/(providers)/Providers.tsx
 "use client";
+import { useGetContracts } from "@/app/(components)/EditContractDialog.hooks";
 import OnboardingDialog from "@/app/(components)/OnboardingDialog";
 import { useGetAppData } from "@/app/(hooks)/app.hooks";
-import { useGetContracts } from "@/app/(components)/ContractDialog.hooks";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";

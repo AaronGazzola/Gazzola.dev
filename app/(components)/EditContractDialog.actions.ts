@@ -1,4 +1,4 @@
-//-| File path: app/(components)/ContractDialog.actions.ts
+//-| File path: app/(components)/EditContractDialog.actions.ts
 "use server";
 
 import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";

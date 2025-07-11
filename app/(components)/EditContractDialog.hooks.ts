@@ -1,12 +1,12 @@
-//-| File path: app/(components)/ContractDialog.hooks.ts
+//-| File path: app/(components)/EditContractDialog.hooks.ts
 "use client";
 
 import {
   addContractAction,
+  contractPaymentAction,
   getContractsAction,
   updateContractAction,
-  contractPaymentAction,
-} from "@/app/(components)/ContractDialog.actions";
+} from "@/app/(components)/EditContractDialog.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";

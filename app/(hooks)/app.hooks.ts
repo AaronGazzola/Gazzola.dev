@@ -1,4 +1,4 @@
-//-| File path: app/app.hooks.ts
+//-| File path: app/(hooks)/app.hooks.ts
 "use client";
 
 import { getAppDataAction } from "@/app/(actions)/app.actions";

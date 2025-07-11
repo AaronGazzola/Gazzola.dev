@@ -171,10 +171,6 @@ const ActiveContractDialog = () => {
   );
 
   const isLoading = updateActiveContractMutation.isPending;
-  console.log(contract?.isPaid);
-  if (!contract?.isPaid) {
-    return null;
-  }
 
   return (
     <Dialog
@@ -192,14 +188,14 @@ const ActiveContractDialog = () => {
               <div>
                 <Label>Title</Label>
                 <div className="p-2 bg-gray-50 rounded border">
-                  {contract.title}
+                  {contract?.title}
                 </div>
               </div>
 
               <div>
                 <Label>Description</Label>
                 <div className="p-2 bg-gray-50 rounded border min-h-[100px]">
-                  {contract.description}
+                  {contract?.description}
                 </div>
               </div>
 
@@ -207,19 +203,19 @@ const ActiveContractDialog = () => {
                 <div>
                   <Label>Start Date</Label>
                   <div className="p-2 bg-gray-50 rounded border">
-                    {format(new Date(contract.startDate), "MMM d, yyyy")}
+                    {contract?.startDate && format(new Date(contract.startDate), "MMM d, yyyy")}
                   </div>
                 </div>
                 <div>
                   <Label>Target Date</Label>
                   <div className="p-2 bg-gray-50 rounded border">
-                    {format(new Date(contract.targetDate), "MMM d, yyyy")}
+                    {contract?.targetDate && format(new Date(contract.targetDate), "MMM d, yyyy")}
                   </div>
                 </div>
                 <div>
                   <Label>Due Date</Label>
                   <div className="p-2 bg-gray-50 rounded border">
-                    {format(new Date(contract.dueDate), "MMM d, yyyy")}
+                    {contract?.dueDate && format(new Date(contract.dueDate), "MMM d, yyyy")}
                   </div>
                 </div>
               </div>
@@ -275,7 +271,7 @@ const ActiveContractDialog = () => {
               )}
               {!isAdmin && (
                 <div className="grid grid-cols-2 gap-4">
-                  {contract.progressStatus && (
+                  {contract?.progressStatus && (
                     <div>
                       <Label>Progress Status</Label>
                       <div>
@@ -290,7 +286,7 @@ const ActiveContractDialog = () => {
                       </div>
                     </div>
                   )}
-                  {contract.refundStatus && (
+                  {contract?.refundStatus && (
                     <div>
                       <Label>Refund Status</Label>
                       <div>
@@ -400,57 +396,57 @@ const ActiveContractDialog = () => {
                                       </span>
                                       <span className="text-gray-400">
                                         {format(
-                                          new Date(message.createdAt),
-                                          "MMM d, HH:mm"
-                                        )}
-                                      </span>
-                                    </div>
-                                    <p className="text-gray-700">
-                                      {message.content}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            </ScrollArea>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </ScrollArea>
-              </div>
-            </div>
-          </div>
+                                         new Date(message.createdAt),
+                                         "MMM d, HH:mm"
+                                       )}
+                                     </span>
+                                   </div>
+                                   <p className="text-gray-700">
+                                     {message.content}
+                                   </p>
+                                 </div>
+                               ))}
+                             </div>
+                           </ScrollArea>
+                         </div>
+                       );
+                     })
+                   )}
+                 </div>
+               </ScrollArea>
+             </div>
+           </div>
+         </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setContract(null);
-                closeContractModal();
-              }}
-              disabled={isLoading}
-            >
-              Close
-            </Button>
+         <div className="flex justify-end gap-2 pt-4 border-t">
+           <Button
+             variant="outline"
+             onClick={() => {
+               setContract(null);
+               closeContractModal();
+             }}
+             disabled={isLoading}
+           >
+             Close
+           </Button>
 
-            {isAdmin && (
-              <Button onClick={handleSave} disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  "Update Contract"
-                )}
-              </Button>
-            )}
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+           {isAdmin && (
+             <Button onClick={handleSave} disabled={isLoading}>
+               {isLoading ? (
+                 <>
+                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                   Updating...
+                 </>
+               ) : (
+                 "Update Contract"
+               )}
+             </Button>
+           )}
+         </div>
+       </div>
+     </DialogContent>
+   </Dialog>
+ );
 };
 
 export default ActiveContractDialog;
