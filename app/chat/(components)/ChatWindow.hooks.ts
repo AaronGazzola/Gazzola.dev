@@ -20,7 +20,6 @@ export const useGetConversations = () => {
   return useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
-      console.log("test1");
       const { data, error } = await getConversationsAction();
       if (error) throw new Error(error);
       if (data) {

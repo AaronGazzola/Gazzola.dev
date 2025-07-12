@@ -1,7 +1,7 @@
 //-| File path: app/(components)/ActiveContractDialog.actions.ts
 "use server";
 
-import { getContractsAction } from "@/app/(components)/EditContractDialog.actions";
+import { getContractsAction } from "@/app/(components)/ContractDialog.actions";
 import { Contract } from "@/app/(types)/contract.types";
 import { getAuthenticatedUser, isAdminAction } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";

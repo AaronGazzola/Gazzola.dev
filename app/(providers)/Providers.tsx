@@ -1,6 +1,6 @@
 //-| File path: app/(providers)/Providers.tsx
 "use client";
-import { useGetContracts } from "@/app/(components)/EditContractDialog.hooks";
+import { useGetContracts } from "@/app/(components)/ContractDialog.hooks";
 import OnboardingDialog from "@/app/(components)/OnboardingDialog";
 import { useGetAppData } from "@/app/(hooks)/app.hooks";
 import { SidebarProvider } from "@/components/ui/sidebar";

@@ -1,28 +1,45 @@
-//-| File path: app/(components)/EditContractDialog.hooks.ts
 "use client";
-
 import {
   addContractAction,
   contractPaymentAction,
   getContractsAction,
   updateContractAction,
-} from "@/app/(components)/EditContractDialog.actions";
+} from "@/app/(components)/ContractDialog.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { isEqual } from "lodash";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 export const useGetContracts = () => {
   const { targetUser } = useChatStore();
   const { user, isAdmin } = useAuthStore();
-  const { setContracts } = useContractStore();
+  const {
+    setContracts,
+    setContract,
+    contracts,
+    contract,
+    setContractHasChanged,
+  } = useContractStore();
+
+  useEffect(() => {
+    const currentContract = contracts.find((c) => c.id === contract?.id);
+    if (currentContract?.isPaid && !isAdmin)
+      return setContract(currentContract);
+    const currentContractHasChanged = !isEqual(currentContract, contract);
+    setContractHasChanged(currentContractHasChanged);
+  }, [contract, contracts, setContract, setContractHasChanged, isAdmin]);
+
+  useEffect(() => {
+    if (!contract) setContractHasChanged(false);
+  }, [contract, setContractHasChanged]);
 
   return useQuery({
     queryKey: ["contracts", targetUser?.id],
     queryFn: async () => {
-      console.log("test2");
       const { data, error } = await getContractsAction(targetUser?.id);
       if (error) throw new Error(error);
       if (data) {
@@ -35,27 +52,22 @@ export const useGetContracts = () => {
     refetchIntervalInBackground: false,
   });
 };
-
 export const useAddContract = () => {
   const { setContracts } = useContractStore();
   const { targetUser } = useChatStore();
-
   return useMutation({
     mutationFn: async (contractData: ContractCreateInput) => {
       const { data, error } = await addContractAction(
         contractData,
         targetUser?.id
       );
-
       if (error) throw new Error(error);
-
       return data;
     },
     onSuccess: (data) => {
       if (data) {
         setContracts(data);
       }
-
       toast.success("Contract created successfully");
     },
     onError: (error) => {
@@ -64,27 +76,22 @@ export const useAddContract = () => {
     },
   });
 };
-
 export const useUpdateContract = () => {
   const { setContracts } = useContractStore();
   const { targetUser } = useChatStore();
-
   return useMutation({
     mutationFn: async ({ updates }: { updates: Partial<Contract> }) => {
       const { data, error } = await updateContractAction(
         updates,
         targetUser?.id
       );
-
       if (error) throw new Error(error);
-
       return data;
     },
     onSuccess: (data) => {
       if (data) {
         setContracts(data);
       }
-
       toast.success("Contract updated successfully");
     },
     onError: (error) => {
@@ -93,27 +100,22 @@ export const useUpdateContract = () => {
     },
   });
 };
-
 export const useContractPayment = () => {
   const { setContracts } = useContractStore();
   const { targetUser } = useChatStore();
-
   return useMutation({
     mutationFn: async (contractId: string) => {
       const { data, error } = await contractPaymentAction(
         contractId,
         targetUser?.id
       );
-
       if (error) throw new Error(error);
-
       return data;
     },
     onSuccess: (data) => {
       if (data) {
         setContracts(data);
       }
-
       toast.success("Payment completed successfully");
     },
     onError: (error) => {

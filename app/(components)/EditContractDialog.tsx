@@ -5,7 +5,7 @@ import {
   useAddContract,
   useContractPayment,
   useUpdateContract,
-} from "@/app/(components)/EditContractDialog.hooks";
+} from "@/app/(components)/ContractDialog.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
@@ -57,14 +57,17 @@ import {
   Loader2,
   Play,
   Plus,
+  RefreshCw,
   Trash2,
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { isEqual } from "lodash";
 
 const EditContractDialog = () => {
   const { ui, closeContractModal } = useAppStore();
-  const { contract, setContract } = useContractStore();
+  const { contract, setContract, contracts, contractHasChanged } =
+    useContractStore();
   const { conversations } = useChatStore();
   const { isAdmin } = useAuthStore();
   const addContractMutation = useAddContract();
@@ -98,11 +101,41 @@ const EditContractDialog = () => {
     ? formData.adminApproved
     : formData.userApproved;
 
-  const shouldShowPaymentButton =
-    !isAdmin &&
-    formData.userApproved &&
-    formData.adminApproved &&
-    !contract?.isPaid;
+  const shouldShowPaymentButton = (() => {
+    if (!contract || isAdmin || !formData.userApproved || !formData.adminApproved || contract.isPaid) {
+      return false;
+    }
+
+    // Create comparison objects excluding approval states
+    const formDataForComparison = {
+      title: formData.title,
+      description: formData.description,
+      startDate: formData.startDate,
+      targetDate: formData.targetDate,
+      dueDate: formData.dueDate,
+      price: formData.price,
+      refundStatus: formData.refundStatus,
+      progressStatus: formData.progressStatus,
+      conversationIds: selectedConversationIds,
+      tasks: formData.tasks,
+    };
+
+    const contractDataForComparison = {
+      title: contract.title,
+      description: contract.description,
+      startDate: contract.startDate,
+      targetDate: contract.targetDate,
+      dueDate: contract.dueDate,
+      price: contract.price,
+      refundStatus: contract.refundStatus,
+      progressStatus: contract.progressStatus,
+      conversationIds: contract.conversationIds,
+      tasks: contract.tasks,
+    };
+
+    // Only show payment button if the data matches (only approval states can be different)
+    return isEqual(formDataForComparison, contractDataForComparison);
+  })();
 
   useEffect(() => {
     if (contract) {
@@ -194,6 +227,11 @@ const EditContractDialog = () => {
         },
       });
     }
+  };
+
+  const handleRefresh = () => {
+    const currentContract = contracts.find((c) => c.id === contract?.id);
+    if (currentContract) setContract(currentContract);
   };
 
   const handleInputChange = (
@@ -345,9 +383,22 @@ const EditContractDialog = () => {
       >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {isEditMode ? "Edit Contract" : "Create Contract"}
-            </DialogTitle>
+            <div className="flex items-center gap-3">
+              <DialogTitle>
+                {isEditMode ? "Edit Contract" : "Create Contract"}
+              </DialogTitle>
+              {contractHasChanged && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRefresh}
+                  className="border-yellow-400 text-yellow-500 font-medium hover:bg-yellow-50/10 hover:text-yellow-200 rounded-full space-x-2"
+                >
+                  The contract has been updated, refresh to see changes
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </DialogHeader>
 
           <div className="space-y-6">

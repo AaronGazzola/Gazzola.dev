@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProgressStatus } from "@/generated/prisma";
+import { cn } from "@/lib/tailwind.utils";
 import { format } from "date-fns";
 import { CheckCircle, Clock, Loader2, Play, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -187,14 +188,12 @@ const ActiveContractDialog = () => {
             <div className="space-y-4">
               <div>
                 <Label>Title</Label>
-                <div className="p-2 bg-gray-50 rounded border">
-                  {contract?.title}
-                </div>
+                <div className="p-2  rounded border">{contract?.title}</div>
               </div>
 
               <div>
                 <Label>Description</Label>
-                <div className="p-2 bg-gray-50 rounded border min-h-[100px]">
+                <div className="p-2  rounded border min-h-[100px]">
                   {contract?.description}
                 </div>
               </div>
@@ -202,20 +201,23 @@ const ActiveContractDialog = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label>Start Date</Label>
-                  <div className="p-2 bg-gray-50 rounded border">
-                    {contract?.startDate && format(new Date(contract.startDate), "MMM d, yyyy")}
+                  <div className="p-2  rounded border">
+                    {contract?.startDate &&
+                      format(new Date(contract.startDate), "MMM d, yyyy")}
                   </div>
                 </div>
                 <div>
                   <Label>Target Date</Label>
-                  <div className="p-2 bg-gray-50 rounded border">
-                    {contract?.targetDate && format(new Date(contract.targetDate), "MMM d, yyyy")}
+                  <div className="p-2  rounded border">
+                    {contract?.targetDate &&
+                      format(new Date(contract.targetDate), "MMM d, yyyy")}
                   </div>
                 </div>
                 <div>
                   <Label>Due Date</Label>
-                  <div className="p-2 bg-gray-50 rounded border">
-                    {contract?.dueDate && format(new Date(contract.dueDate), "MMM d, yyyy")}
+                  <div className="p-2  rounded border">
+                    {contract?.dueDate &&
+                      format(new Date(contract.dueDate), "MMM d, yyyy")}
                   </div>
                 </div>
               </div>
@@ -273,12 +275,14 @@ const ActiveContractDialog = () => {
                 <div className="grid grid-cols-2 gap-4">
                   {contract?.progressStatus && (
                     <div>
-                      <Label>Progress Status</Label>
                       <div>
                         <Badge
-                          className={getStatusBadgeColor(
-                            contract.progressStatus,
-                            "progress"
+                          className={cn(
+                            "rounded-full",
+                            getStatusBadgeColor(
+                              contract.progressStatus,
+                              "progress"
+                            )
                           )}
                         >
                           {formatStatusText(contract.progressStatus)}
@@ -288,12 +292,11 @@ const ActiveContractDialog = () => {
                   )}
                   {contract?.refundStatus && (
                     <div>
-                      <Label>Refund Status</Label>
                       <div>
                         <Badge
-                          className={getStatusBadgeColor(
-                            contract.refundStatus,
-                            "refund"
+                          className={cn(
+                            "rounded-full",
+                            getStatusBadgeColor(contract.refundStatus, "refund")
                           )}
                         >
                           {formatStatusText(contract.refundStatus)}
@@ -305,9 +308,10 @@ const ActiveContractDialog = () => {
               )}
 
               <div>
-                <Label>Payment Status</Label>
                 <div>
-                  <Badge className="bg-green-100 text-green-800">Paid</Badge>
+                  <Badge className="rounded-full bg-green-100 text-green-800">
+                    Paid
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -368,7 +372,7 @@ const ActiveContractDialog = () => {
                         return (
                           <div
                             key={conversation.id}
-                            className="p-3 border rounded-lg bg-gray-50"
+                            className="p-3 border rounded-lg "
                           >
                             <div className="flex items-center justify-between mb-2">
                               <h4 className="text-sm font-medium">
@@ -396,57 +400,57 @@ const ActiveContractDialog = () => {
                                       </span>
                                       <span className="text-gray-400">
                                         {format(
-                                         new Date(message.createdAt),
-                                         "MMM d, HH:mm"
-                                       )}
-                                     </span>
-                                   </div>
-                                   <p className="text-gray-700">
-                                     {message.content}
-                                   </p>
-                                 </div>
-                               ))}
-                             </div>
-                           </ScrollArea>
-                         </div>
-                       );
-                     })
-                   )}
-                 </div>
-               </ScrollArea>
-             </div>
-           </div>
-         </div>
+                                          new Date(message.createdAt),
+                                          "MMM d, HH:mm"
+                                        )}
+                                      </span>
+                                    </div>
+                                    <p className="text-gray-700">
+                                      {message.content}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </ScrollArea>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
+          </div>
 
-         <div className="flex justify-end gap-2 pt-4 border-t">
-           <Button
-             variant="outline"
-             onClick={() => {
-               setContract(null);
-               closeContractModal();
-             }}
-             disabled={isLoading}
-           >
-             Close
-           </Button>
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setContract(null);
+                closeContractModal();
+              }}
+              disabled={isLoading}
+            >
+              Close
+            </Button>
 
-           {isAdmin && (
-             <Button onClick={handleSave} disabled={isLoading}>
-               {isLoading ? (
-                 <>
-                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                   Updating...
-                 </>
-               ) : (
-                 "Update Contract"
-               )}
-             </Button>
-           )}
-         </div>
-       </div>
-     </DialogContent>
-   </Dialog>
- );
+            {isAdmin && (
+              <Button onClick={handleSave} disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Contract"
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default ActiveContractDialog;

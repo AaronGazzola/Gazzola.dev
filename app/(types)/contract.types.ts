@@ -2,10 +2,10 @@
 import {
   Conversation,
   Contract as PrismaContract,
-  Profile,
-  RefundStatus,
-  ProgressStatus,
   Task as PrismaTask,
+  Profile,
+  ProgressStatus,
+  RefundStatus,
 } from "@/generated/prisma";
 
 export interface Task extends PrismaTask {}
@@ -41,7 +41,9 @@ export interface TaskCreateInput {
 export interface ContractState {
   contracts: Contract[];
   contract: Contract | null;
+  contractHasChanged: boolean;
   setContracts: (contracts: Contract[]) => void;
   setContract: (contract: Contract | null) => void;
   reset: () => void;
+  setContractHasChanged: (hasChanged: boolean) => void;
 }

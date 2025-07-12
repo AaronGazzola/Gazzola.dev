@@ -260,7 +260,6 @@ export function UserTable({ users, isLoading }: UserTableProps) {
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => {
-                    console.log(row.original.id);
                     router.push(configuration.paths.chat(row.original.id));
                   }}
                 >
