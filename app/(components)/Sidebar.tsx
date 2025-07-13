@@ -304,7 +304,7 @@ const Sidebar = () => {
                             const isCurrentConversation =
                               currentConversation?.id === conversation.id;
                             return (
-                              <div className="p-2" key={conversation.id}>
+                              <div className="pt-2 pl-2" key={conversation.id}>
                                 <button
                                   onClick={() =>
                                     handleConversationClick(conversation)
@@ -324,29 +324,20 @@ const Sidebar = () => {
                                       {unreadCount > 99 ? "99+" : unreadCount}
                                     </Badge>
                                   )}
-                                  <div className="flex justify-between items-start mb-1">
-                                    <h3 className="font-medium text-gray-100 truncate tracking-wider">
-                                      {conversation.title ||
-                                        `Conversation ${conversation.id.slice(0, 8)}`}
-                                    </h3>
-                                    <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
-                                      {format(
-                                        new Date(conversation.lastMessageAt),
-                                        "MMM d"
-                                      )}
-                                    </span>
-                                  </div>
+
                                   {lastMessage && (
-                                    <p className="text-sm text-gray-300 truncate">
-                                      {lastMessage.content}
-                                    </p>
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-xs text-gray-400 flex-shrink-0 ">
+                                        {format(
+                                          new Date(conversation.lastMessageAt),
+                                          "MMM d"
+                                        )}
+                                      </span>
+                                      <p className="text-sm text-gray-300 truncate">
+                                        {lastMessage.content}
+                                      </p>
+                                    </div>
                                   )}
-                                  <div className="text-xs text-gray-400 mt-1">
-                                    {conversation.messages.length} message
-                                    {conversation.messages.length !== 1
-                                      ? "s"
-                                      : ""}
-                                  </div>
                                 </button>
                               </div>
                             );

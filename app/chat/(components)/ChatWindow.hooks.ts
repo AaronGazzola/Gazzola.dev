@@ -3,6 +3,7 @@
 
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
+import { useSendMessage } from "@/app/chat/(components)/ChatInput.hooks";
 import { getConversationsAction } from "@/app/chat/(components)/ChatWindow.actions";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,6 +18,7 @@ export const useGetConversations = () => {
     setCurrentConversation,
     targetUser,
   } = useChatStore();
+  const { isPending } = useSendMessage();
 
   return useQuery({
     queryKey: ["conversations"],
@@ -52,7 +54,7 @@ export const useGetConversations = () => {
       }
       return data;
     },
-    enabled: !!user,
+    enabled: !!user && !isPending,
     refetchInterval: 3000,
     refetchIntervalInBackground: false,
     staleTime: 0,

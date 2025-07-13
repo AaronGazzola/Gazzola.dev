@@ -125,7 +125,6 @@ export const useSendMessage = () => {
           setCurrentConversation(updatedConversation);
         }
       }
-
       setConversations(optimisticConversations);
 
       const result = await sendMessageAction({
@@ -137,13 +136,14 @@ export const useSendMessage = () => {
       if (result.error) {
         throw new Error(result.error);
       }
+      if (!result.data) {
+        throw new Error("No data returned from sendMessageAction");
+      }
 
-      return result.data!;
+      return result.data;
     },
     onSuccess: (conversations) => {
       setConversations(conversations);
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
-
       if (conversations.length) setCurrentConversation(conversations[0]);
 
       toast.success("Message sent successfully");

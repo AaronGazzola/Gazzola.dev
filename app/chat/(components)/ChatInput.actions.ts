@@ -5,7 +5,6 @@ import { Conversation } from "@/app/(types)/chat.types";
 import { getAuthenticatedUser } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
-import { createId } from "@paralleldrive/cuid2";
 
 export const sendMessageAction = async (params: {
   messageContent: string;
@@ -22,11 +21,15 @@ export const sendMessageAction = async (params: {
     const isAdminAction = currentUser.role === "admin";
 
     if (params.isNewConversation && !isAdminAction) {
-      return getActionResponse({ error: "Only admins can create new conversations" });
+      return getActionResponse({
+        error: "Only admins can create new conversations",
+      });
     }
 
     if (params.targetUserId && !isAdminAction) {
-      return getActionResponse({ error: "Only admins can send messages to specific users" });
+      return getActionResponse({
+        error: "Only admins can send messages to specific users",
+      });
     }
 
     let targetUserId = params.targetUserId;
@@ -48,12 +51,9 @@ export const sendMessageAction = async (params: {
     if (params.isNewConversation) {
       const newConversation = await prisma.conversation.create({
         data: {
-          id: createId(),
           title: "New Conversation",
           participants: [currentUser.id, targetUserId],
           lastMessageAt: new Date(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       });
 
@@ -62,7 +62,7 @@ export const sendMessageAction = async (params: {
       const existingConversation = await prisma.conversation.findFirst({
         where: {
           participants: {
-            has: currentUser.id,
+            has: targetUserId || currentUser.id,
           },
         },
         orderBy: { lastMessageAt: "desc" },
@@ -71,12 +71,9 @@ export const sendMessageAction = async (params: {
       if (!existingConversation) {
         const newConversation = await prisma.conversation.create({
           data: {
-            id: createId(),
             title: "New Conversation",
             participants: [currentUser.id, targetUserId],
             lastMessageAt: new Date(),
-            createdAt: new Date(),
-            updatedAt: new Date(),
           },
         });
 
@@ -88,11 +85,9 @@ export const sendMessageAction = async (params: {
 
     await prisma.message.create({
       data: {
-        id: createId(),
         senderId: currentUser.id,
         content: params.messageContent,
         conversationId,
-        createdAt: new Date(),
       },
     });
 
@@ -107,7 +102,7 @@ export const sendMessageAction = async (params: {
     const data = await prisma.conversation.findMany({
       where: {
         participants: {
-          has: currentUser.id,
+          has: targetUserId || currentUser.id,
         },
       },
       include: {
