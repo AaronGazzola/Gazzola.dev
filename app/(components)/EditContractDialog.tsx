@@ -113,7 +113,6 @@ const EditContractDialog = () => {
       return false;
     }
 
-    // Create comparison objects excluding approval states
     const formDataForComparison = {
       title: formData.title,
       description: formData.description,
@@ -140,7 +139,6 @@ const EditContractDialog = () => {
       tasks: contract.tasks,
     };
 
-    // Only show payment button if the data matches (only approval states can be different)
     return isEqual(formDataForComparison, contractDataForComparison);
   })();
 
@@ -333,8 +331,6 @@ const EditContractDialog = () => {
   };
 
   const toggleTaskProgress = (taskId: string) => {
-    if (!isAdmin) return;
-
     const task = (formData.tasks || []).find((t) => t.id === taskId);
     if (!task) return;
 
@@ -623,7 +619,6 @@ const EditContractDialog = () => {
                             size="sm"
                             onClick={() => toggleTaskProgress(task.id)}
                             className="p-1"
-                            disabled={!isAdmin}
                           >
                             {getProgressIcon(
                               task.progressStatus || "not_started"
@@ -666,13 +661,29 @@ const EditContractDialog = () => {
                                   onClick={(e) => e.stopPropagation()}
                                 />
                                 <Input
-                                  type="number"
-                                  value={task.price}
-                                  onChange={(e) =>
-                                    updateTask(task.id, {
-                                      price: Number(e.target.value),
-                                    })
-                                  }
+                                  value={task.price === 0 ? "" : task.price}
+                                  onChange={(e) => {
+                                    const inputValue = e.target.value;
+
+                                    if (inputValue === "") {
+                                      updateTask(task.id, { price: 0 });
+                                      return;
+                                    }
+
+                                    const numericValue = inputValue.replace(
+                                      /[^0-9.]/g,
+                                      ""
+                                    );
+
+                                    if (numericValue !== inputValue) {
+                                      return;
+                                    }
+
+                                    const price = Number(numericValue);
+                                    if (!isNaN(price)) {
+                                      updateTask(task.id, { price });
+                                    }
+                                  }}
                                   placeholder="0"
                                   onClick={(e) => e.stopPropagation()}
                                 />
