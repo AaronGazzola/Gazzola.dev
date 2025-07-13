@@ -29,7 +29,8 @@ export const useGetContracts = () => {
     const currentContract = contracts.find((c) => c.id === contract?.id);
     if (currentContract?.isPaid && !isAdmin)
       return setContract(currentContract);
-    const currentContractHasChanged = !isEqual(currentContract, contract);
+    const currentContractHasChanged =
+      !!currentContract && !!contract && !isEqual(currentContract, contract);
     setContractHasChanged(currentContractHasChanged);
   }, [contract, contracts, setContract, setContractHasChanged, isAdmin]);
 

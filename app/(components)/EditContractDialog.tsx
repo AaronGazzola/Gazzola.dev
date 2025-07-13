@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -49,6 +48,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ProgressStatus } from "@/generated/prisma";
 import { format } from "date-fns";
+import { isEqual } from "lodash";
 import {
   CheckCircle,
   ChevronDown,
@@ -62,17 +62,18 @@ import {
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { isEqual } from "lodash";
 
 const EditContractDialog = () => {
   const { ui, closeContractModal } = useAppStore();
   const { contract, setContract, contracts, contractHasChanged } =
     useContractStore();
-  const { conversations } = useChatStore();
-  const { isAdmin } = useAuthStore();
+  const { conversations, targetUser } = useChatStore();
+  const { isAdmin, profile, user } = useAuthStore();
   const addContractMutation = useAddContract();
   const updateContractMutation = useUpdateContract();
   const contractPaymentMutation = useContractPayment();
+
+  const [openConversationIds, setOpenConversationIds] = useState<string[]>([]);
 
   const [formData, setFormData] = useState<Partial<Contract>>({
     title: "",
@@ -102,7 +103,13 @@ const EditContractDialog = () => {
     : formData.userApproved;
 
   const shouldShowPaymentButton = (() => {
-    if (!contract || isAdmin || !formData.userApproved || !formData.adminApproved || contract.isPaid) {
+    if (
+      !contract ||
+      isAdmin ||
+      !formData.userApproved ||
+      !formData.adminApproved ||
+      contract.isPaid
+    ) {
       return false;
     }
 
@@ -369,6 +376,13 @@ const EditContractDialog = () => {
     (sum, task) => sum + task.price,
     0
   );
+
+  const getNameFromId = (id: string) =>
+    id === user?.id
+      ? profile?.firstName || user.name || "You"
+      : isAdmin && id === targetUser?.id
+        ? targetUser.name
+        : "Az Anything";
 
   const isLoading =
     addContractMutation.isPending ||
@@ -685,7 +699,7 @@ const EditContractDialog = () => {
                   <div className="text-sm text-gray-600 mb-2">
                     Select conversations to include in this contract
                   </div>
-                  <ScrollArea className="max-h-[300px] border rounded-md p-4">
+                  <div className="border rounded-md p-4 max-h-[300px] overflow-y-auto">
                     <div className="space-y-2">
                       {conversations.length === 0 ? (
                         <p className="text-sm text-gray-500 italic">
@@ -701,10 +715,30 @@ const EditContractDialog = () => {
                             conversation.id
                           );
 
+                          const isOpen = openConversationIds.includes(
+                            conversation.id
+                          );
+
                           return (
-                            <Collapsible key={conversation.id}>
+                            <Collapsible
+                              className="border rounded-md"
+                              key={conversation.id}
+                              onOpenChange={(open) => {
+                                if (open) {
+                                  setOpenConversationIds((prev) => [
+                                    ...prev,
+                                    conversation.id,
+                                  ]);
+                                } else {
+                                  setOpenConversationIds((prev) =>
+                                    prev.filter((id) => id !== conversation.id)
+                                  );
+                                }
+                              }}
+                              open={isOpen}
+                            >
                               <CollapsibleTrigger asChild>
-                                <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50/20 cursor-pointer">
                                   <Checkbox
                                     checked={isSelected}
                                     onCheckedChange={() =>
@@ -715,55 +749,54 @@ const EditContractDialog = () => {
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between">
                                       <h4 className="text-sm font-medium truncate">
-                                        {conversation.title ||
-                                          `Conversation ${conversation.id.slice(0, 8)}`}
+                                        {lastMessage &&
+                                          format(
+                                            new Date(lastMessage.createdAt),
+                                            "MMM d, HH:mm"
+                                          )}
                                       </h4>
                                       <div className="flex items-center space-x-2">
-                                        <span className="text-xs text-gray-500">
-                                          {lastMessage &&
-                                            format(
-                                              new Date(lastMessage.createdAt),
-                                              "MMM d, HH:mm"
-                                            )}
-                                        </span>
                                         <ChevronDown className="h-4 w-4 text-gray-400" />
                                       </div>
                                     </div>
-                                    {lastMessage && (
-                                      <p className="text-xs text-gray-500 truncate mt-1">
-                                        {lastMessage.content.slice(0, 50)}...
-                                      </p>
+                                    {lastMessage && !isOpen && (
+                                      <div className="flex gap-2 items-center">
+                                        <p className="text-xs truncate mt-1">
+                                          {getNameFromId(lastMessage.senderId)}
+                                        </p>
+                                        <p className="text-xs text-gray-500 truncate mt-1">
+                                          {lastMessage.content.slice(0, 50)}...
+                                        </p>
+                                      </div>
                                     )}
                                   </div>
                                 </div>
                               </CollapsibleTrigger>
                               <CollapsibleContent>
                                 <div className="ml-6 mt-2">
-                                  <ScrollArea className="max-h-[200px] border rounded p-3 bg-gray-50">
-                                    <div className="space-y-2">
-                                      {conversation.messages.map((message) => (
-                                        <div
-                                          key={message.id}
-                                          className="text-xs p-2 border rounded bg-white"
-                                        >
-                                          <div className="flex justify-between items-start mb-1">
-                                            <span className="font-medium text-blue-600">
-                                              {message.senderId.slice(0, 8)}
-                                            </span>
-                                            <span className="text-gray-400">
-                                              {format(
-                                                new Date(message.createdAt),
-                                                "MMM d, HH:mm"
-                                              )}
-                                            </span>
-                                          </div>
-                                          <p className="text-gray-700">
-                                            {message.content}
-                                          </p>
+                                  <div className="space-y-2">
+                                    {conversation.messages.map((message) => (
+                                      <div
+                                        key={message.id}
+                                        className="text-xs p-2 "
+                                      >
+                                        <div className="flex items-start mb-1 gap-2">
+                                          <span className="text-gray-200">
+                                            {getNameFromId(message.senderId)}
+                                          </span>
+                                          <span className="text-gray-400">
+                                            {format(
+                                              new Date(message.createdAt),
+                                              "MMM d, HH:mm"
+                                            )}
+                                          </span>
                                         </div>
-                                      ))}
-                                    </div>
-                                  </ScrollArea>
+                                        <p className="text-gray-400">
+                                          {message.content}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               </CollapsibleContent>
                             </Collapsible>
@@ -771,7 +804,7 @@ const EditContractDialog = () => {
                         })
                       )}
                     </div>
-                  </ScrollArea>
+                  </div>
                 </div>
               </div>
             </div>
