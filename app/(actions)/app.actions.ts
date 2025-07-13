@@ -260,7 +260,9 @@ export const getAppDataAction = async (
     const isVerified = await checkUserVerification(user.id);
     const profile = await getUserProfile(user.id);
     const users = await getAllUsers(isAdmin);
-    const conversations = await getUserConversations(user.id);
+    const conversations = await getUserConversations(
+      isAdmin && userId ? userId : user.id
+    );
 
     let targetUser: PrismaUser | null = null;
     if (userId && isAdmin) {

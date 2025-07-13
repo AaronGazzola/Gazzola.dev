@@ -6,7 +6,9 @@ import { getAuthenticatedUser } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
-export const getConversationsAction = async (): Promise<ActionResponse<Conversation[]>> => {
+export const getConversationsAction = async (
+  targetUserId?: string
+): Promise<ActionResponse<Conversation[]>> => {
   try {
     const currentUser = await getAuthenticatedUser();
 
@@ -17,7 +19,7 @@ export const getConversationsAction = async (): Promise<ActionResponse<Conversat
     const data = await prisma.conversation.findMany({
       where: {
         participants: {
-          has: currentUser.id,
+          has: targetUserId || currentUser.id,
         },
       },
       include: {

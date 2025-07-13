@@ -15,12 +15,13 @@ export const useGetConversations = () => {
     addUnreadMessages,
     currentConversation,
     setCurrentConversation,
+    targetUser,
   } = useChatStore();
 
   return useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
-      const { data, error } = await getConversationsAction();
+      const { data, error } = await getConversationsAction(targetUser?.id);
       if (error) throw new Error(error);
       if (data) {
         const existingMessageIds = new Set([
