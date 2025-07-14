@@ -1,5 +1,4 @@
 //-| File path: prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -22,6 +21,13 @@ enum ProgressStatus {
   in_progress
   completed
   cancelled
+}
+
+enum PaymentStatus {
+  pending
+  completed
+  failed
+  refunded
 }
 
 model User {
@@ -169,12 +175,30 @@ model Contract {
   conversationIds String[]
   userApproved    Boolean
   adminApproved   Boolean
+  isPaid          Boolean         @default(false)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   profile         Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
   conversations   Conversation[]
   tasks           Task[]
-  isPaid        Boolean         @default(false)
+  payments        Payment[]
 
   @@map("contract")
+}
+
+model Payment {
+  id                     String        @id @default(cuid())
+  contractId             String
+  stripeSessionId        String        @unique
+  stripePaymentIntentId  String?
+  amount                 Float
+  currency               String        @default("usd")
+  status                 PaymentStatus @default(pending)
+  paidAt                 DateTime?
+  refundedAt             DateTime?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  contract               Contract      @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@map("payment")
 }

@@ -6,6 +6,41 @@ import { getAuthenticatedUser, isAdminAction } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
+import Stripe from "stripe";
+
+const initializeStripe = (): Stripe => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    const errorMessage =
+      "❌ STRIPE_SECRET_KEY environment variable is not defined";
+    throw new Error(errorMessage);
+  }
+
+  if (!process.env.STRIPE_SECRET_KEY.startsWith("sk_")) {
+    const errorMessage =
+      "❌ STRIPE_SECRET_KEY must start with 'sk_' (secret key prefix)";
+    throw new Error(errorMessage);
+  }
+
+  try {
+    const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      typescript: true,
+    });
+
+    return stripeClient;
+  } catch (error) {
+    throw new Error(
+      `Failed to initialize Stripe client: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+};
+
+let stripe: Stripe;
+try {
+  stripe = initializeStripe();
+} catch (error) {
+  throw error;
+}
+
 export const getContractsAction = async (
   userId?: string
 ): Promise<ActionResponse<Contract[]>> => {
@@ -326,7 +361,7 @@ export const updateContractAction = async (
 export const contractPaymentAction = async (
   contractId: string,
   userId?: string
-): Promise<ActionResponse<Contract[]>> => {
+): Promise<ActionResponse<{ url: string | null }>> => {
   try {
     const user = await getAuthenticatedUser();
 
@@ -338,7 +373,10 @@ export const contractPaymentAction = async (
 
     const existingContract = await prisma.contract.findUnique({
       where: { id: contractId },
-      include: { profile: true },
+      include: {
+        profile: true,
+        tasks: true,
+      },
     });
 
     if (!existingContract) {
@@ -351,16 +389,74 @@ export const contractPaymentAction = async (
       });
     }
 
-    await prisma.contract.update({
-      where: { id: contractId },
+    if (existingContract.isPaid) {
+      return getActionResponse({ error: "Contract is already paid" });
+    }
+
+    if (!stripe) {
+      return getActionResponse({ error: "Payment system is not available" });
+    }
+
+    if (!stripe.checkout) {
+      return getActionResponse({ error: "Checkout system is not available" });
+    }
+
+    if (!stripe.checkout.sessions) {
+      return getActionResponse({ error: "Session creation is not available" });
+    }
+
+    if (typeof stripe.checkout.sessions.create !== "function") {
+      return getActionResponse({
+        error: "Session creation method is not available",
+      });
+    }
+
+    const successUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/payment?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${process.env.NEXT_PUBLIC_APP_URL}/contracts`;
+
+    const sessionData: Stripe.Checkout.SessionCreateParams = {
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: existingContract.title,
+              description: existingContract.description,
+            },
+            unit_amount: Math.round(existingContract.price * 100),
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        contractId: contractId,
+        userId: user.id,
+      },
+    };
+
+    const session = await stripe.checkout.sessions.create(sessionData);
+
+    await prisma.payment.create({
       data: {
-        isPaid: true,
+        contractId: contractId,
+        stripeSessionId: session.id,
+        amount: existingContract.price,
+        currency: "usd",
+        status: "pending",
       },
     });
 
-    const { data: contracts } = await getContractsAction(userId);
-    return getActionResponse({ data: contracts });
+    return getActionResponse({ data: { url: session.url } });
   } catch (error) {
-    return getActionResponse({ error });
+    return getActionResponse({
+      error:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred during payment setup",
+    });
   }
 };

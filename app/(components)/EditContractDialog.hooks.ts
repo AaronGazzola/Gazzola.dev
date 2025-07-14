@@ -1,10 +1,11 @@
+//-| File path: app/(components)/EditContractDialog.hooks.ts
 "use client";
 import {
   addContractAction,
   contractPaymentAction,
   getContractsAction,
   updateContractAction,
-} from "@/app/(components)/ContractDialog.actions";
+} from "@/app/(components)/EditContractDialog.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
@@ -53,6 +54,7 @@ export const useGetContracts = () => {
     refetchIntervalInBackground: false,
   });
 };
+
 export const useAddContract = () => {
   const { setContracts } = useContractStore();
   const { targetUser } = useChatStore();
@@ -72,11 +74,11 @@ export const useAddContract = () => {
       toast.success("Contract created successfully");
     },
     onError: (error) => {
-      console.error(error);
       toast.error(error.message || "Failed to create contract");
     },
   });
 };
+
 export const useUpdateContract = () => {
   const { setContracts } = useContractStore();
   const { targetUser } = useChatStore();
@@ -96,32 +98,25 @@ export const useUpdateContract = () => {
       toast.success("Contract updated successfully");
     },
     onError: (error) => {
-      console.error(error);
       toast.error(error.message || "Failed to update contract");
     },
   });
 };
+
 export const useContractPayment = () => {
-  const { setContracts } = useContractStore();
-  const { targetUser } = useChatStore();
   return useMutation({
     mutationFn: async (contractId: string) => {
-      const { data, error } = await contractPaymentAction(
-        contractId,
-        targetUser?.id
-      );
+      const { data, error } = await contractPaymentAction(contractId);
       if (error) throw new Error(error);
       return data;
     },
     onSuccess: (data) => {
-      if (data) {
-        setContracts(data);
+      if (data?.url) {
+        window.location.href = data.url;
       }
-      toast.success("Payment completed successfully");
     },
     onError: (error) => {
-      console.error(error);
-      toast.error(error.message || "Failed to complete payment");
+      toast.error(error.message || "Failed to initiate payment");
     },
   });
 };

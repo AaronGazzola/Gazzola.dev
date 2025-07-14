@@ -5,7 +5,7 @@ import {
   useAddContract,
   useContractPayment,
   useUpdateContract,
-} from "@/app/(components)/ContractDialog.hooks";
+} from "@/app/(components)/EditContractDialog.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
@@ -102,6 +102,11 @@ const EditContractDialog = () => {
     ? formData.adminApproved
     : formData.userApproved;
 
+  const totalPrice = (formData.tasks || []).reduce(
+    (sum, task) => sum + task.price,
+    0
+  );
+
   const shouldShowPaymentButton = (() => {
     if (
       !contract ||
@@ -184,11 +189,6 @@ const EditContractDialog = () => {
   const handleSave = () => {
     if (!isFormValid()) return;
 
-    const totalPrice = (formData.tasks || []).reduce(
-      (sum, task) => sum + task.price,
-      0
-    );
-
     const contractData = {
       ...formData,
       price: totalPrice,
@@ -225,12 +225,7 @@ const EditContractDialog = () => {
 
   const handlePayment = () => {
     if (contract?.id) {
-      contractPaymentMutation.mutate(contract.id, {
-        onSuccess: () => {
-          setContract(null);
-          closeContractModal();
-        },
-      });
+      contractPaymentMutation.mutate(contract.id);
     }
   };
 
@@ -367,11 +362,6 @@ const EditContractDialog = () => {
   const expandTask = (taskId: string) => {
     setExpandedTaskId(expandedTaskId === taskId ? null : taskId);
   };
-
-  const totalPrice = (formData.tasks || []).reduce(
-    (sum, task) => sum + task.price,
-    0
-  );
 
   const getNameFromId = (id: string) =>
     id === user?.id
@@ -844,12 +834,12 @@ const EditContractDialog = () => {
                     {contractPaymentMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
+                        Redirecting to Stripe...
                       </>
                     ) : (
                       <>
                         <CreditCard className="mr-2 h-4 w-4" />
-                        Complete Payment
+                        Pay ${totalPrice.toFixed(2)} with Stripe
                       </>
                     )}
                   </Button>
