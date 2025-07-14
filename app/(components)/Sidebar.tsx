@@ -34,6 +34,12 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/tailwind.utils";
 import { format } from "date-fns";
 import {
@@ -47,7 +53,6 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-
 const SidebarSkeleton = () => {
   const { open, isMobile } = useSidebar();
   const isExpanded = isMobile || open;
@@ -88,10 +93,8 @@ const SidebarSkeleton = () => {
     </ShadcnSidebar>
   );
 };
-
 const Sidebar = () => {
   const { contracts, setContract, contract } = useContractStore();
-
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isLoading: appDataLoading } = useGetAppData();
   const { user, isVerified, profile, isAdmin } = useAuthStore();
@@ -101,26 +104,22 @@ const Sidebar = () => {
     unreadMessages,
     markMessagesAsRead,
     currentConversation,
+    targetUser,
   } = useChatStore();
-
   const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
   const isAuthenticated = !!user;
   const { open, isMobile, toggleSidebar } = useSidebar();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
-
   const conversationsLoading = appDataLoading;
   const contractsLoading = appDataLoading;
   const conversationsError = null;
   const contractsError = null;
-
   const displayName = profile
     ? `${profile.firstName} ${profile.lastName}`
     : user?.name || user?.email || "User";
   const isExpanded = isMobile || open;
-
   if (appDataLoading) return <SidebarSkeleton />;
-
   const getInitials = (name: string) => {
     const words = name.split(" ");
     if (words.length >= 2) {
@@ -128,12 +127,10 @@ const Sidebar = () => {
     }
     return name.substring(0, 2).toUpperCase();
   };
-
   const getUnreadCountForConversation = (conversationId: string) => {
     return unreadMessages.filter((msg) => msg.conversationId === conversationId)
       .length;
   };
-
   const isContractUnapproved = (contractItem: Contract) => {
     if (isAdmin) {
       return !contractItem.adminApproved;
@@ -141,44 +138,35 @@ const Sidebar = () => {
       return !contractItem.userApproved;
     }
   };
-
   const handleContractClick = (contractItem: Contract) => {
     setContract(contractItem);
     openContractModal();
   };
-
   const handleOpenContractModal = () => {
     setContract(null);
     openContractModal();
   };
-
   const handleProfileClick = () => {
     openProfileModal();
   };
-
   const handleSignOutClick = () => {
     setIsSignOutDialogOpen(true);
   };
-
   const handleSignInClick = () => {
     openAuthModal();
   };
-
   const handleResendEmail = () => {
     resendVerificationEmail.mutate();
   };
-
   const handleSignOut = () => {
     signOutMutation.mutate({});
   };
-
   const handleConversationClick = (conversation: Conversation) => {
     setCurrentConversation(conversation);
     markMessagesAsRead(conversation.id);
   };
-
   return (
-    <>
+    <TooltipProvider>
       <ShadcnSidebar collapsible="icon" className="border-r-gray-800">
         <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
           <SidebarHeader
@@ -317,14 +305,24 @@ const Sidebar = () => {
                                   )}
                                 >
                                   {unreadCount > 0 && (
-                                    <Badge
-                                      variant="destructive"
-                                      className="absolute -top-1 -left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-bold bg-red-500 hover:bg-red-500"
-                                    >
-                                      {unreadCount > 99 ? "99+" : unreadCount}
-                                    </Badge>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Badge
+                                          variant="destructive"
+                                          className="absolute -top-1 -left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-bold bg-red-500 hover:bg-red-500 cursor-help"
+                                        >
+                                          {unreadCount > 99
+                                            ? "99+"
+                                            : unreadCount}
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>
+                                          You have {unreadCount} unread messages
+                                        </p>
+                                      </TooltipContent>
+                                    </Tooltip>
                                   )}
-
                                   {lastMessage && (
                                     <div className="flex items-center gap-1">
                                       <span className="text-xs text-gray-400 flex-shrink-0 ">
@@ -393,6 +391,10 @@ const Sidebar = () => {
                               contract?.id === contractItem.id;
                             const isUnapproved =
                               isContractUnapproved(contractItem);
+                            const otherUserName =
+                              isAdmin && targetUser
+                                ? targetUser.name
+                                : "Az Anything";
                             return (
                               <div className="relative" key={contractItem.id}>
                                 <button
@@ -418,12 +420,23 @@ const Sidebar = () => {
                                   </div>
                                 </button>
                                 {isUnapproved && (
-                                  <Badge
-                                    variant="destructive"
-                                    className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500"
-                                  >
-                                    !
-                                  </Badge>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Badge
+                                        variant="destructive"
+                                        className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500 cursor-help"
+                                      >
+                                        !
+                                      </Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>
+                                        {otherUserName} has made changes to the
+                                        contract and approval or revisions are
+                                        required
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
                                 )}
                               </div>
                             );
@@ -522,8 +535,7 @@ const Sidebar = () => {
         isOpen={isSignOutDialogOpen}
         onClose={() => setIsSignOutDialogOpen(false)}
       />
-    </>
+    </TooltipProvider>
   );
 };
-
 export default Sidebar;
