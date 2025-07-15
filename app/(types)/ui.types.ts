@@ -3,8 +3,7 @@ import { Profile } from "@/app/(types)/auth.types";
 import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";
 import { UserData } from "@/app/admin/admin.types";
-import { User as PrismaUser } from "@/generated/prisma";
-import { User } from "@/lib/auth";
+import { User } from "@/generated/prisma";
 
 export interface AppData {
   user: User | null;
@@ -14,7 +13,7 @@ export interface AppData {
   users: UserData[];
   conversations: Conversation[];
   contracts: Contract[];
-  targetUser?: PrismaUser | null;
+  targetUser?: User | null;
 }
 
 export interface UIState {

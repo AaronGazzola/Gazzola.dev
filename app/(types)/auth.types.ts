@@ -32,31 +32,11 @@ export interface SignOutParams {
 }
 
 export interface AuthState {
-  user: {
-    id: string;
-    role: string;
-    image: string | null;
-    email: string;
-    name: string;
-    emailVerified: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  } | null;
+  user: User | null;
   profile: Profile | null;
   isVerified: boolean;
   isAdmin: boolean;
-  setUser: (
-    user: {
-      id: string;
-      role: string;
-      image: string | null;
-      email: string;
-      name: string;
-      emailVerified: boolean;
-      createdAt: Date;
-      updatedAt: Date;
-    } | null
-  ) => void;
+  setUser: (user: User | null) => void;
   setProfile: (profile: Profile | null) => void;
   setIsVerified: (isVerified: boolean) => void;
   setIsAdmin: (isAdmin: boolean) => void;

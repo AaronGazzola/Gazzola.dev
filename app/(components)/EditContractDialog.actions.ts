@@ -1,8 +1,9 @@
 //-| File path: app/(components)/EditContractDialog.actions.ts
 "use server";
 
+import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";
-import { getAuthenticatedUser, isAdminAction } from "@/app/admin/admin.actions";
+import { isAdminAction } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 

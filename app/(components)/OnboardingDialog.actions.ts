@@ -1,19 +1,11 @@
 //-| File path: app/(components)/OnboardingDialog.actions.ts
 "use server";
 
+import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Profile as PrismaProfile } from "@/generated/prisma";
 
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
-import { headers } from "next/headers";
-
-export async function getAuthenticatedUser() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  return session?.user;
-}
 
 interface OnboardingData {
   firstName: string;

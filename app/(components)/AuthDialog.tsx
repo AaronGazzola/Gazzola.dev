@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { client } from "@/lib/auth-client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useSignIn, useSignUp } from "./AuthDialog.hooks";
 
 interface AuthCredentials {
   email: string;
@@ -23,26 +23,27 @@ interface AuthCredentials {
 const AuthDialog = () => {
   const { ui, closeAuthModal } = useAppStore();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<AuthCredentials>({
     email: "",
     password: "",
   });
   const queryClient = useQueryClient();
 
+  const signInMutation = useSignIn();
+  const signUpMutation = useSignUp();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
       if (isSignUp) {
-        await client.signUp.email({
+        await signUpMutation.mutateAsync({
           email: formData.email,
           password: formData.password,
           name: formData.email.split("@")[0],
         });
       } else {
-        await client.signIn.email({
+        await signInMutation.mutateAsync({
           email: formData.email,
           password: formData.password,
         });
@@ -51,8 +52,6 @@ const AuthDialog = () => {
       queryClient.invalidateQueries({ queryKey: ["app-data"] });
     } catch (error) {
       console.error("Authentication error:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -66,6 +65,8 @@ const AuthDialog = () => {
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
   };
+
+  const isPending = signInMutation.isPending || signUpMutation.isPending;
 
   return (
     <Dialog open={ui.authModal.isOpen} onOpenChange={() => closeAuthModal()}>
@@ -104,9 +105,9 @@ const AuthDialog = () => {
             <Button
               type="submit"
               className="w-full rounded border"
-              disabled={isLoading}
+              disabled={isPending}
             >
-              {isLoading
+              {isPending
                 ? "Loading..."
                 : isSignUp
                   ? "Create Account"

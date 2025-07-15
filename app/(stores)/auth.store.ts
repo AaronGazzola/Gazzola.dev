@@ -1,6 +1,6 @@
 //-| File path: app/(stores)/auth.store.ts
 import { Profile } from "@/app/(types)/auth.types";
-import { User } from "@/lib/auth";
+import { User } from "@/generated/prisma";
 import { create } from "zustand";
 
 const initialState = {

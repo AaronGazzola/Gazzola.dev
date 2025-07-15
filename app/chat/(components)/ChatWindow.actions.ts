@@ -1,8 +1,8 @@
 //-| File path: app/chat/(components)/ChatWindow.actions.ts
 "use server";
 
+import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Conversation } from "@/app/(types)/chat.types";
-import { getAuthenticatedUser } from "@/app/admin/admin.actions";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 

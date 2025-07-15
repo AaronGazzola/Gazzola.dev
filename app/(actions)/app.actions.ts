@@ -6,20 +6,24 @@ import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";
 import { AppData } from "@/app/(types)/ui.types";
 import { UserData } from "@/app/admin/admin.types";
-import { User as PrismaUser } from "@/generated/prisma";
+import { User as PrismaUser, User } from "@/generated/prisma";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
-import { auth, User } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";
 
-async function getAuthenticatedUser(): Promise<User | null> {
+export async function getAuthenticatedUser(): Promise<User | null> {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (!session?.user) return null;
 
-  return session.user;
+  const prismaUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+  });
+
+  return prismaUser;
 }
 
 async function checkUserVerification(userId: string): Promise<boolean> {
