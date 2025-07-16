@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQueryClient } from "@tanstack/react-query";
+import { CyDataAttributes } from "@/types/cypress.types";
 import { useState } from "react";
 import { useSignIn, useSignUp } from "./AuthDialog.hooks";
 
@@ -27,32 +27,24 @@ const AuthDialog = () => {
     email: "",
     password: "",
   });
-  const queryClient = useQueryClient();
 
   const signInMutation = useSignIn();
   const signUpMutation = useSignUp();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      if (isSignUp) {
-        await signUpMutation.mutateAsync({
-          email: formData.email,
-          password: formData.password,
-          name: formData.email.split("@")[0],
-        });
-      } else {
-        await signInMutation.mutateAsync({
-          email: formData.email,
-          password: formData.password,
-        });
-      }
-      closeAuthModal();
-      queryClient.invalidateQueries({ queryKey: ["app-data"] });
-    } catch (error) {
-      console.error("Authentication error:", error);
-    }
+    if (isSignUp)
+      return signUpMutation.mutate({
+        email: formData.email,
+        password: formData.password,
+        name: formData.email.split("@")[0],
+      });
+
+    signInMutation.mutate({
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
   const handleInputChange = (field: keyof AuthCredentials, value: string) => {
@@ -70,7 +62,7 @@ const AuthDialog = () => {
 
   return (
     <Dialog open={ui.authModal.isOpen} onOpenChange={() => closeAuthModal()}>
-      <DialogContent className="">
+      <DialogContent className="" data-cy={CyDataAttributes.AUTH_DIALOG}>
         <DialogHeader>
           <DialogTitle>{isSignUp ? "Create Account" : "Sign In"}</DialogTitle>
         </DialogHeader>
@@ -85,6 +77,7 @@ const AuthDialog = () => {
               onChange={(e) => handleInputChange("email", e.target.value)}
               placeholder="email@example.com"
               className="rounded"
+              data-cy={CyDataAttributes.AUTH_EMAIL_INPUT}
               required
             />
           </div>
@@ -98,6 +91,7 @@ const AuthDialog = () => {
               onChange={(e) => handleInputChange("password", e.target.value)}
               placeholder="Password"
               className="rounded"
+              data-cy={CyDataAttributes.AUTH_PASSWORD_INPUT}
               required
             />
           </div>
@@ -106,6 +100,7 @@ const AuthDialog = () => {
               type="submit"
               className="w-full rounded border"
               disabled={isPending}
+              data-cy={CyDataAttributes.AUTH_SUBMIT_BUTTON}
             >
               {isPending
                 ? "Loading..."
@@ -121,6 +116,7 @@ const AuthDialog = () => {
               variant="link"
               onClick={toggleMode}
               className="text-sm rounded"
+              data-cy={CyDataAttributes.AUTH_TOGGLE_MODE_BUTTON}
             >
               {isSignUp
                 ? "Already have an account? Sign in"

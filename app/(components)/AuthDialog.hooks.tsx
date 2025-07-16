@@ -1,8 +1,13 @@
-//-| File path: app/(components)/AuthDialog.hooks.ts
+//-| File path: app/(components)/AuthDialog.hooks.tsx
 "use client";
 
+import { getAppDataAction } from "@/app/(actions)/app.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useChatStore } from "@/app/(stores)/chat.store";
+import { useContractStore } from "@/app/(stores)/contract.store";
+import { useAppStore } from "@/app/(stores)/ui.store";
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
+import { useAdminStore } from "@/app/admin/admin.store";
 import { Toast } from "@/components/shared/Toast";
 import { CyDataAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
@@ -10,26 +15,59 @@ import { toast } from "sonner";
 import { signInAction, signUpAction } from "./AuthDialog.actions";
 
 export const useSignIn = () => {
-  const { setUser, setIsVerified, setIsAdmin } = useAuthStore();
+  const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
+  const { setUsers } = useAdminStore();
+  const { setConversations, setCurrentConversation, setTargetUser } =
+    useChatStore();
+  const { setContracts } = useContractStore();
+  const { closeAuthModal, openOnboardingModal } = useAppStore();
 
   return useMutation({
     mutationFn: async (credentials: SignInCredentials) => {
       const { data, error } = await signInAction(credentials);
       if (error) throw new Error(error);
-      return data;
+
+      const appDataResult = await getAppDataAction();
+      if (appDataResult.error) throw new Error(appDataResult.error);
+
+      return appDataResult.data;
     },
     onSuccess: (data) => {
       if (data) {
-        setUser(data);
-        setIsVerified(data.emailVerified || false);
-        setIsAdmin(data.role === "admin");
+        setUser(data.user);
+        setProfile(data.profile);
+        setIsVerified(data.isVerified);
+        setIsAdmin(data.isAdmin);
+        setUsers(data.users);
+        setConversations(data.conversations);
+        setCurrentConversation(data.conversations[0]);
+        setContracts(data.contracts);
+        if (data.targetUser) {
+          setTargetUser(data.targetUser);
+        }
+
+        const profile = data.profile;
+        const shouldShowOnboarding =
+          !profile ||
+          (!profile.firstName &&
+            !profile.lastName &&
+            !profile.phone &&
+            !profile.company &&
+            !profile.avatar);
+
+        if (shouldShowOnboarding) {
+          openOnboardingModal();
+        }
       }
+
+      closeAuthModal();
+
       toast.custom(() => (
         <Toast
           variant="success"
           title="Success"
           message="Successfully signed in"
-          cy-data={CyDataAttributes.SUCCESS_AUTH_SIGN_IN}
+          data-cy={CyDataAttributes.SUCCESS_AUTH_SIGN_IN}
         />
       ));
     },
@@ -39,7 +77,7 @@ export const useSignIn = () => {
           variant="error"
           title="Error"
           message={error.message || "Failed to sign in"}
-          cy-data={CyDataAttributes.ERROR_AUTH_SIGN_IN}
+          data-cy={CyDataAttributes.ERROR_AUTH_SIGN_IN}
         />
       ));
     },
@@ -47,26 +85,59 @@ export const useSignIn = () => {
 };
 
 export const useSignUp = () => {
-  const { setUser, setIsVerified, setIsAdmin } = useAuthStore();
+  const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
+  const { setUsers } = useAdminStore();
+  const { setConversations, setCurrentConversation, setTargetUser } =
+    useChatStore();
+  const { setContracts } = useContractStore();
+  const { closeAuthModal, openOnboardingModal } = useAppStore();
 
   return useMutation({
     mutationFn: async (credentials: SignUpCredentials) => {
       const { data, error } = await signUpAction(credentials);
       if (error) throw new Error(error);
-      return data;
+
+      const appDataResult = await getAppDataAction();
+      if (appDataResult.error) throw new Error(appDataResult.error);
+
+      return appDataResult.data;
     },
     onSuccess: (data) => {
       if (data) {
-        setUser(data);
-        setIsVerified(data.emailVerified || false);
-        setIsAdmin(data.role === "admin");
+        setUser(data.user);
+        setProfile(data.profile);
+        setIsVerified(data.isVerified);
+        setIsAdmin(data.isAdmin);
+        setUsers(data.users);
+        setConversations(data.conversations);
+        setCurrentConversation(data.conversations[0]);
+        setContracts(data.contracts);
+        if (data.targetUser) {
+          setTargetUser(data.targetUser);
+        }
+
+        const profile = data.profile;
+        const shouldShowOnboarding =
+          !profile ||
+          (!profile.firstName &&
+            !profile.lastName &&
+            !profile.phone &&
+            !profile.company &&
+            !profile.avatar);
+
+        if (shouldShowOnboarding) {
+          openOnboardingModal();
+        }
       }
+
+      closeAuthModal();
+
       toast.custom(() => (
         <Toast
           variant="success"
           title="Success"
           message="Account created successfully"
-          cy-data={CyDataAttributes.SUCCESS_AUTH_SIGN_UP}
+          data-cy={CyDataAttributes.SUCCESS_AUTH_SIGN_UP}
         />
       ));
     },
@@ -76,7 +147,7 @@ export const useSignUp = () => {
           variant="error"
           title="Error"
           message={error.message || "Failed to create account"}
-          cy-data={CyDataAttributes.ERROR_AUTH_SIGN_UP}
+          data-cy={CyDataAttributes.ERROR_AUTH_SIGN_UP}
         />
       ));
     },

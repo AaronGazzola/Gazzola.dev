@@ -294,16 +294,6 @@ export const getAppDataAction = async (
     return getActionResponse({ data: appData });
   } catch (error) {
     return getActionResponse({
-      data: {
-        user: null,
-        profile: null,
-        isVerified: false,
-        isAdmin: false,
-        users: [],
-        conversations: [],
-        contracts: [],
-        targetUser: null,
-      },
       error,
     });
   }
