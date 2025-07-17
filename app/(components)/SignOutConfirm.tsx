@@ -13,9 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import config from "@/configuration";
-import { signOut } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { DataCyAttributes } from "@/types/cypress.types";
+import { useSignOut } from "./SignOutConfirm.hooks";
 
 interface SignOutConfirmProps {
   isOpen: boolean;
@@ -23,36 +22,39 @@ interface SignOutConfirmProps {
 }
 
 const SignOutConfirm = ({ isOpen, onClose }: SignOutConfirmProps) => {
-  const { reset: resetApp } = useAppStore();
-  const { reset: resetChat } = useChatStore();
-  const { reset: resetContract } = useContractStore();
-  const router = useRouter();
+  const signOutMutation = useSignOut();
 
-  const handleSignOut = async () => {
-    resetApp();
-    resetChat();
-    resetContract();
+  const handleSignOut = () => {
+    signOutMutation.mutate();
     onClose();
-    await signOut();
-    router.push(config.paths.home);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent data-cy={DataCyAttributes.SIGN_OUT_CONFIRM_DIALOG}>
         <DialogHeader>
-          <DialogTitle>Sign Out</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to sign out? This will clear all your local
-            data and you will need to sign in again.
+          <DialogTitle data-cy={DataCyAttributes.SIGN_OUT_CONFIRM_TITLE}>
+            Sign Out
+          </DialogTitle>
+          <DialogDescription data-cy={DataCyAttributes.SIGN_OUT_CONFIRM_DESCRIPTION}>
+            Are you sure you want to sign out?
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            data-cy={DataCyAttributes.SIGN_OUT_CANCEL_BUTTON}
+          >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleSignOut}>
-            Sign Out
+          <Button
+            variant="destructive"
+            onClick={handleSignOut}
+            disabled={signOutMutation.isPending}
+            data-cy={DataCyAttributes.SIGN_OUT_CONFIRM_BUTTON}
+          >
+            {signOutMutation.isPending ? "Signing out..." : "Sign Out"}
           </Button>
         </DialogFooter>
       </DialogContent>

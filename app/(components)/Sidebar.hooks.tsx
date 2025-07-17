@@ -4,7 +4,7 @@ import { SignOutParams } from "@/app/(types)/auth.types";
 import { Toast } from "@/components/shared/Toast";
 import config from "@/configuration";
 import { client, signOut } from "@/lib/auth-client";
-import { CyDataAttributes } from "@/types/cypress.types";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ export const useResendVerificationEmail = () => {
           variant="success"
           title="Success"
           message="Verification email sent!"
-          data-cy={CyDataAttributes.SUCCESS_RESEND_EMAIL}
+          data-cy={DataCyAttributes.SUCCESS_RESEND_EMAIL}
         />
       ));
     },
@@ -34,7 +34,7 @@ export const useResendVerificationEmail = () => {
           variant="error"
           title="Error"
           message={error.message || "Failed to send verification email"}
-          data-cy={CyDataAttributes.ERROR_RESEND_EMAIL}
+          data-cy={DataCyAttributes.ERROR_RESEND_EMAIL}
         />
       ));
     },
@@ -55,7 +55,7 @@ export function useSignOutMutation() {
                 variant="success"
                 title="Success"
                 message="Successfully signed out"
-                data-cy={CyDataAttributes.SUCCESS_SIGN_OUT}
+                data-cy={DataCyAttributes.SUCCESS_SIGN_OUT}
               />
             ));
             clearAuth();
@@ -67,7 +67,7 @@ export function useSignOutMutation() {
                 variant="error"
                 title="Error"
                 message={ctx.error.message || "Failed to sign out"}
-                data-cy={CyDataAttributes.ERROR_SIGN_OUT}
+                data-cy={DataCyAttributes.ERROR_SIGN_OUT}
               />
             ));
           },
@@ -80,7 +80,7 @@ export function useSignOutMutation() {
           variant="error"
           title="Error"
           message="Failed to sign out"
-          data-cy={CyDataAttributes.ERROR_SIGN_OUT}
+          data-cy={DataCyAttributes.ERROR_SIGN_OUT}
         />
       ));
     },

@@ -1,5 +1,5 @@
 //-| File path: types/cypress.types.ts
-export enum CyDataAttributes {
+export enum DataCyAttributes {
   SUCCESS_AUTH_SIGN_IN = "success-auth-sign-in",
   ERROR_AUTH_SIGN_IN = "error-auth-sign-in",
   SUCCESS_AUTH_SIGN_UP = "success-auth-sign-up",
@@ -27,4 +27,9 @@ export enum CyDataAttributes {
   PROFILE_MENU_BUTTON = "profile-menu-button",
   PROFILE_BUTTON_COLLAPSED = "profile-button-collapsed",
   SIGN_OUT_BUTTON_COLLAPSED = "sign-out-button-collapsed",
+  SIGN_OUT_CONFIRM_DIALOG = "sign-out-confirm-dialog",
+  SIGN_OUT_CONFIRM_TITLE = "sign-out-confirm-title",
+  SIGN_OUT_CONFIRM_DESCRIPTION = "sign-out-confirm-description",
+  SIGN_OUT_CANCEL_BUTTON = "sign-out-cancel-button",
+  SIGN_OUT_CONFIRM_BUTTON = "sign-out-confirm-button",
 }

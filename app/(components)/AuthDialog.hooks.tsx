@@ -9,7 +9,7 @@ import { useAppStore } from "@/app/(stores)/ui.store";
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
 import { useAdminStore } from "@/app/admin/admin.store";
 import { Toast } from "@/components/shared/Toast";
-import { CyDataAttributes } from "@/types/cypress.types";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { signInAction, signUpAction } from "./AuthDialog.actions";
@@ -67,7 +67,7 @@ export const useSignIn = () => {
           variant="success"
           title="Success"
           message="Successfully signed in"
-          data-cy={CyDataAttributes.SUCCESS_AUTH_SIGN_IN}
+          data-cy={DataCyAttributes.SUCCESS_AUTH_SIGN_IN}
         />
       ));
     },
@@ -77,7 +77,7 @@ export const useSignIn = () => {
           variant="error"
           title="Error"
           message={error.message || "Failed to sign in"}
-          data-cy={CyDataAttributes.ERROR_AUTH_SIGN_IN}
+          data-cy={DataCyAttributes.ERROR_AUTH_SIGN_IN}
         />
       ));
     },
@@ -137,7 +137,7 @@ export const useSignUp = () => {
           variant="success"
           title="Success"
           message="Account created successfully"
-          data-cy={CyDataAttributes.SUCCESS_AUTH_SIGN_UP}
+          data-cy={DataCyAttributes.SUCCESS_AUTH_SIGN_UP}
         />
       ));
     },
@@ -147,7 +147,7 @@ export const useSignUp = () => {
           variant="error"
           title="Error"
           message={error.message || "Failed to create account"}
-          data-cy={CyDataAttributes.ERROR_AUTH_SIGN_UP}
+          data-cy={DataCyAttributes.ERROR_AUTH_SIGN_UP}
         />
       ));
     },

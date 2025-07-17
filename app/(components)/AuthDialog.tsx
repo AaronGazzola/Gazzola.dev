@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CyDataAttributes } from "@/types/cypress.types";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { useState } from "react";
 import { useSignIn, useSignUp } from "./AuthDialog.hooks";
 
@@ -62,7 +62,7 @@ const AuthDialog = () => {
 
   return (
     <Dialog open={ui.authModal.isOpen} onOpenChange={() => closeAuthModal()}>
-      <DialogContent className="" data-cy={CyDataAttributes.AUTH_DIALOG}>
+      <DialogContent className="" data-cy={DataCyAttributes.AUTH_DIALOG}>
         <DialogHeader>
           <DialogTitle>{isSignUp ? "Create Account" : "Sign In"}</DialogTitle>
         </DialogHeader>
@@ -77,7 +77,7 @@ const AuthDialog = () => {
               onChange={(e) => handleInputChange("email", e.target.value)}
               placeholder="email@example.com"
               className="rounded"
-              data-cy={CyDataAttributes.AUTH_EMAIL_INPUT}
+              data-cy={DataCyAttributes.AUTH_EMAIL_INPUT}
               required
             />
           </div>
@@ -91,7 +91,7 @@ const AuthDialog = () => {
               onChange={(e) => handleInputChange("password", e.target.value)}
               placeholder="Password"
               className="rounded"
-              data-cy={CyDataAttributes.AUTH_PASSWORD_INPUT}
+              data-cy={DataCyAttributes.AUTH_PASSWORD_INPUT}
               required
             />
           </div>
@@ -100,7 +100,7 @@ const AuthDialog = () => {
               type="submit"
               className="w-full rounded border"
               disabled={isPending}
-              data-cy={CyDataAttributes.AUTH_SUBMIT_BUTTON}
+              data-cy={DataCyAttributes.AUTH_SUBMIT_BUTTON}
             >
               {isPending
                 ? "Loading..."
@@ -116,7 +116,7 @@ const AuthDialog = () => {
               variant="link"
               onClick={toggleMode}
               className="text-sm rounded"
-              data-cy={CyDataAttributes.AUTH_TOGGLE_MODE_BUTTON}
+              data-cy={DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}
             >
               {isSignUp
                 ? "Already have an account? Sign in"

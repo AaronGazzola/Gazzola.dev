@@ -41,7 +41,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/tailwind.utils";
-import { CyDataAttributes } from "@/types/cypress.types";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import {
   FileText,
@@ -205,7 +205,7 @@ const Sidebar = () => {
                       size="icon"
                       className="text-white hover:text-white hover:bg-gray-800"
                       onClick={toggleSidebar}
-                      data-cy={CyDataAttributes.TOGGLE_SIDEBAR_BUTTON}
+                      data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
                     >
                       <Menu className="h-5 w-5" />
                       <span className="sr-only">Toggle Sidebar</span>
@@ -223,7 +223,7 @@ const Sidebar = () => {
                 size="icon"
                 className="text-white hover:text-white hover:bg-gray-800"
                 onClick={toggleSidebar}
-                data-cy={CyDataAttributes.TOGGLE_SIDEBAR_BUTTON}
+                data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle Sidebar</span>
@@ -244,7 +244,7 @@ const Sidebar = () => {
                         onClick={handleResendEmail}
                         disabled={resendVerificationEmail.isPending}
                         className="text-xs"
-                        data-cy={CyDataAttributes.RESEND_EMAIL_BUTTON}
+                        data-cy={DataCyAttributes.RESEND_EMAIL_BUTTON}
                       >
                         {resendVerificationEmail.isPending
                           ? "Sending..."
@@ -256,7 +256,7 @@ const Sidebar = () => {
                         onClick={handleSignOut}
                         disabled={signOutMutation.isPending}
                         className="text-xs"
-                        data-cy={CyDataAttributes.SIGN_OUT_VERIFY_BUTTON}
+                        data-cy={DataCyAttributes.SIGN_OUT_VERIFY_BUTTON}
                       >
                         Sign Out
                       </Button>
@@ -323,7 +323,7 @@ const Sidebar = () => {
                                       ? "border-white"
                                       : "border-gray-700/50"
                                   )}
-                                  data-cy={CyDataAttributes.CONVERSATION_ITEM}
+                                  data-cy={DataCyAttributes.CONVERSATION_ITEM}
                                 >
                                   {unreadCount > 0 && (
                                     <Tooltip>
@@ -332,7 +332,7 @@ const Sidebar = () => {
                                           variant="destructive"
                                           className="absolute -top-1 -left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-bold bg-red-500 hover:bg-red-500 cursor-help"
                                           data-cy={
-                                            CyDataAttributes.UNREAD_BADGE
+                                            DataCyAttributes.UNREAD_BADGE
                                           }
                                         >
                                           {unreadCount > 99
@@ -383,7 +383,7 @@ const Sidebar = () => {
                         size="icon"
                         className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
                         onClick={handleOpenContractModal}
-                        data-cy={CyDataAttributes.CREATE_CONTRACT_BUTTON}
+                        data-cy={DataCyAttributes.CREATE_CONTRACT_BUTTON}
                       >
                         <Plus className="h-4 w-4" />
                         <span className="sr-only">Create contract</span>
@@ -432,7 +432,7 @@ const Sidebar = () => {
                                       ? "border-white"
                                       : "border-gray-700/50"
                                   )}
-                                  data-cy={CyDataAttributes.CONTRACT_ITEM}
+                                  data-cy={DataCyAttributes.CONTRACT_ITEM}
                                 >
                                   <div className="text-sm font-medium text-gray-100 truncate">
                                     {contractItem.title}
@@ -452,7 +452,7 @@ const Sidebar = () => {
                                         variant="destructive"
                                         className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500 cursor-help"
                                         data-cy={
-                                          CyDataAttributes.CONTRACT_UNAPPROVED_BADGE
+                                          DataCyAttributes.CONTRACT_UNAPPROVED_BADGE
                                         }
                                       >
                                         !
@@ -482,7 +482,7 @@ const Sidebar = () => {
                     <Button
                       variant="ghost"
                       className="w-full justify-start gap-3 p-3 h-auto text-gray-100 hover:bg-gray-800"
-                      data-cy={CyDataAttributes.PROFILE_BUTTON}
+                      data-cy={DataCyAttributes.PROFILE_BUTTON}
                     >
                       <Avatar className="h-8 w-8">
                         <AvatarFallback className="bg-gray-700 text-gray-100 text-xs">
@@ -501,7 +501,7 @@ const Sidebar = () => {
                           variant="ghost"
                           className="w-full justify-start gap-2"
                           onClick={handleProfileClick}
-                          data-cy={CyDataAttributes.PROFILE_MENU_BUTTON}
+                          data-cy={DataCyAttributes.PROFILE_MENU_BUTTON}
                         >
                           <User className="h-4 w-4" />
                           Profile
@@ -511,7 +511,7 @@ const Sidebar = () => {
                         variant="ghost"
                         className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                         onClick={handleSignOutClick}
-                        data-cy={CyDataAttributes.SIGN_OUT_BUTTON}
+                        data-cy={DataCyAttributes.SIGN_OUT_BUTTON}
                       >
                         <LogOut className="h-4 w-4" />
                         Sign Out
@@ -530,7 +530,7 @@ const Sidebar = () => {
                   size="icon"
                   className="text-gray-100 hover:text-white hover:bg-gray-800"
                   onClick={handleProfileClick}
-                  data-cy={CyDataAttributes.PROFILE_BUTTON_COLLAPSED}
+                  data-cy={DataCyAttributes.PROFILE_BUTTON_COLLAPSED}
                 >
                   <User className="h-5 w-5" />
                   <span className="sr-only">Profile</span>
@@ -541,7 +541,7 @@ const Sidebar = () => {
                 size="icon"
                 className="text-gray-100 hover:text-red-400 hover:bg-gray-800"
                 onClick={handleSignOutClick}
-                data-cy={CyDataAttributes.SIGN_OUT_BUTTON_COLLAPSED}
+                data-cy={DataCyAttributes.SIGN_OUT_BUTTON_COLLAPSED}
               >
                 <LogOut className="h-5 w-5" />
                 <span className="sr-only">Sign Out</span>
@@ -554,7 +554,7 @@ const Sidebar = () => {
                 variant="default"
                 className="w-full flex items-center gap-2 rounded"
                 onClick={handleSignInClick}
-                data-cy={CyDataAttributes.SIGN_IN_BUTTON}
+                data-cy={DataCyAttributes.SIGN_IN_BUTTON}
               >
                 <LogIn className="h-4 w-4" />
                 Sign In

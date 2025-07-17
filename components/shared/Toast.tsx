@@ -91,7 +91,7 @@ export const Toast: React.FC<ToastProps> = ({
   "data-cy": cyData = variant,
 }) => {
   return (
-    <div className={getVariantClasses(variant)} data-data-cy={cyData}>
+    <div className={getVariantClasses(variant)} data-cy={cyData}>
       {icon}
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-sm mb-1">{title}</div>
