@@ -2,7 +2,7 @@
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { SignOutParams } from "@/app/(types)/auth.types";
 import { Toast } from "@/components/shared/Toast";
-import config from "@/configuration";
+import configuration from "@/configuration";
 import { client, signOut } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
@@ -59,7 +59,7 @@ export function useSignOutMutation() {
               />
             ));
             clearAuth();
-            router.push(params?.redirectTo || config.paths.home);
+            router.push(params?.redirectTo || configuration.paths.home);
           },
           onError: (ctx) => {
             toast.custom(() => (

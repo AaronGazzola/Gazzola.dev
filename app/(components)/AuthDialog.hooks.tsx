@@ -9,8 +9,10 @@ import { useAppStore } from "@/app/(stores)/ui.store";
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
 import { useAdminStore } from "@/app/admin/admin.store";
 import { Toast } from "@/components/shared/Toast";
+import configuration from "@/configuration";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { signInAction, signUpAction } from "./AuthDialog.actions";
 
@@ -21,6 +23,7 @@ export const useSignIn = () => {
     useChatStore();
   const { setContracts } = useContractStore();
   const { closeAuthModal, openOnboardingModal } = useAppStore();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: async (credentials: SignInCredentials) => {
@@ -38,12 +41,14 @@ export const useSignIn = () => {
         setProfile(data.profile);
         setIsVerified(data.isVerified);
         setIsAdmin(data.isAdmin);
-        setUsers(data.users);
-        setConversations(data.conversations);
-        setCurrentConversation(data.conversations[0]);
-        setContracts(data.contracts);
-        if (data.targetUser) {
-          setTargetUser(data.targetUser);
+        if (!data.isAdmin) {
+          setConversations(data.conversations);
+          setCurrentConversation(data.conversations[0]);
+          setContracts(data.contracts);
+        }
+        if (data.isAdmin) {
+          setUsers(data.users);
+          if (data.targetUser) setTargetUser(data.targetUser);
         }
 
         const profile = data.profile;
@@ -61,6 +66,8 @@ export const useSignIn = () => {
       }
 
       closeAuthModal();
+
+      if (data?.isAdmin) router.push(configuration.paths.admin);
 
       toast.custom(() => (
         <Toast

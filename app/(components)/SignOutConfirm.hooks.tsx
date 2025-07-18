@@ -7,9 +7,11 @@ import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { useAdminStore } from "@/app/admin/admin.store";
 import { Toast } from "@/components/shared/Toast";
+import configuration from "@/configuration";
 import { signOut } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export const useSignOut = () => {
@@ -18,6 +20,7 @@ export const useSignOut = () => {
   const { reset: resetChat } = useChatStore();
   const { reset: resetContract } = useContractStore();
   const { reset: resetApp } = useAppStore();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: async () => {
@@ -43,6 +46,7 @@ export const useSignOut = () => {
           data-cy={DataCyAttributes.SUCCESS_SIGN_OUT}
         />
       ));
+      router.push(configuration.paths.home);
     },
     onError: (error) => {
       toast.custom(() => (

@@ -267,10 +267,10 @@ const Sidebar = () => {
             </div>
           )}
           {isExpanded && isAuthenticated && isVerified && (
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex-1 p-4 space-y-6 relative">
-                <SidebarGroup>
-                  <SidebarGroupLabel>
+            <div className="flex flex-col flex-grow relative">
+              <div className="flex-grow relative">
+                <SidebarGroup className="absolute inset-0 flex flex-col">
+                  <SidebarGroupLabel className="flex-shrink-0">
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-2">
                         <MessageCircle className="h-4 w-4 text-gray-100" />
@@ -280,8 +280,9 @@ const Sidebar = () => {
                       </div>
                     </div>
                   </SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <ScrollArea className="max-h-[33vh] overflow-auto">
+
+                  <SidebarGroupContent className="flex-grow overflow-hidden">
+                    <ScrollArea className="overflow-auto max-h-full">
                       <div className="space-y-1 overflow-visible">
                         {conversationsLoading ? (
                           <div className="animate-pulse">
@@ -369,8 +370,10 @@ const Sidebar = () => {
                     </ScrollArea>
                   </SidebarGroupContent>
                 </SidebarGroup>
-                <SidebarGroup>
-                  <SidebarGroupLabel>
+              </div>
+              <div className="flex-grow relative">
+                <SidebarGroup className="absolute inset-0 flex flex-col">
+                  <SidebarGroupLabel className="flex-shrink-0">
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-gray-100" />
@@ -390,8 +393,8 @@ const Sidebar = () => {
                       </Button>
                     </div>
                   </SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <ScrollArea className="">
+                  <SidebarGroupContent className="flex-grow overflow-hidden">
+                    <ScrollArea className="overflow-auto max-h-full">
                       <div className="space-y-1">
                         {contractsLoading ? (
                           <div className="animate-pulse">
@@ -476,7 +479,8 @@ const Sidebar = () => {
                   </SidebarGroupContent>
                 </SidebarGroup>
               </div>
-              <div className="border-t border-gray-700">
+
+              <div className="border-t border-gray-700 flex-shrink-0">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button

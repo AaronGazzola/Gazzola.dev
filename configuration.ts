@@ -1,5 +1,5 @@
 //-| File path: configuration.ts
-const config = {
+const configuration = {
   // App Information
   title: "Gazzola.dev",
   description: "Aaron Gazzola's web development consultation chat app",
@@ -17,4 +17,4 @@ const config = {
   },
 };
 
-export default config;
+export default configuration;

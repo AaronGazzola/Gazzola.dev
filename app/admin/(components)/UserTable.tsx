@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import configuration from "@/configuration";
+import { DataCyAttributes } from "@/types/cypress.types";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -67,6 +68,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2"
+            data-cy={DataCyAttributes.USER_TABLE_NAME_HEADER}
           >
             Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -83,6 +85,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2"
+            data-cy={DataCyAttributes.USER_TABLE_EMAIL_HEADER}
           >
             Email
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -93,7 +96,11 @@ export function UserTable({ users, isLoading }: UserTableProps) {
     },
     {
       accessorKey: "lastMessage",
-      header: "Recent Message",
+      header: () => (
+        <div data-cy={DataCyAttributes.USER_TABLE_MESSAGE_HEADER}>
+          Recent Message
+        </div>
+      ),
       cell: ({ row }) => {
         const message = row.getValue("lastMessage") as string;
         return (
@@ -111,6 +118,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2"
+            data-cy={DataCyAttributes.USER_TABLE_CONTRACT_TITLE_HEADER}
           >
             Contract Title
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -130,6 +138,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2"
+            data-cy={DataCyAttributes.USER_TABLE_STATUS_HEADER}
           >
             Status
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -163,6 +172,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2"
+            data-cy={DataCyAttributes.USER_TABLE_USER_CREATED_HEADER}
           >
             User Created
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -182,6 +192,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2"
+            data-cy={DataCyAttributes.USER_TABLE_CONTRACT_CREATED_HEADER}
           >
             Contract Created
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -225,6 +236,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
           value={searchInput}
           onChange={(event) => setSearchInput(event.target.value)}
           className="max-w-sm"
+          data-cy={DataCyAttributes.USER_TABLE_SEARCH_INPUT}
         />
         {isLoading && (
           <div className="ml-auto">
@@ -262,6 +274,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
                   onClick={() => {
                     router.push(configuration.paths.chat(row.original.id));
                   }}
+                  data-cy={DataCyAttributes.USER_TABLE_ROW}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -297,6 +310,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            data-cy={DataCyAttributes.USER_TABLE_PREVIOUS_BUTTON}
           >
             Previous
           </Button>
@@ -305,6 +319,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            data-cy={DataCyAttributes.USER_TABLE_NEXT_BUTTON}
           >
             Next
           </Button>

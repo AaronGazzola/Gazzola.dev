@@ -8,7 +8,7 @@ import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { useAdminStore } from "@/app/admin/admin.store";
-import config from "@/configuration";
+import configuration from "@/configuration";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -55,8 +55,8 @@ export const useGetAppData = () => {
         openOnboardingModal();
       }
 
-      if (data.isAdmin && pathname === config.paths.home)
-        router.push(config.paths.admin);
+      if (data.isAdmin && pathname === configuration.paths.home)
+        router.push(configuration.paths.admin);
 
       return data;
     },
