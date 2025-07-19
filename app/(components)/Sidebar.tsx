@@ -3,10 +3,7 @@
 import AuthDialog from "@/app/(components)/AuthDialog";
 import ContractDialog from "@/app/(components)/ContractDialog";
 import ProfileDialog from "@/app/(components)/ProfileDialog";
-import {
-  useResendVerificationEmail,
-  useSignOutMutation,
-} from "@/app/(components)/Sidebar.hooks";
+import { useSignOutMutation } from "@/app/(components)/Sidebar.hooks";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
 import { useGetAppData } from "@/app/(hooks)/app.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
@@ -15,7 +12,6 @@ import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,7 +43,6 @@ import {
   FileText,
   LogIn,
   LogOut,
-  Mail,
   Menu,
   MessageCircle,
   Plus,
@@ -109,7 +104,6 @@ const Sidebar = () => {
     currentConversation,
     targetUser,
   } = useChatStore();
-  const resendVerificationEmail = useResendVerificationEmail();
   const signOutMutation = useSignOutMutation();
   const isAuthenticated = !!user;
   const { open, isMobile, toggleSidebar } = useSidebar();
@@ -168,12 +162,8 @@ const Sidebar = () => {
     openAuthModal();
   };
 
-  const handleResendEmail = () => {
-    resendVerificationEmail.mutate();
-  };
-
   const handleSignOut = () => {
-    signOutMutation.mutate({});
+    signOutMutation.mutate();
   };
 
   const handleConversationClick = (conversation: Conversation) => {
@@ -230,42 +220,7 @@ const Sidebar = () => {
               </Button>
             )}
           </SidebarHeader>
-          {isExpanded && isAuthenticated && !isVerified && (
-            <div className="p-4">
-              <Alert className="border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
-                <Mail className="h-4 w-4 text-yellow-600" />
-                <AlertDescription className="text-yellow-800 dark:text-yellow-200">
-                  <div className="flex flex-col gap-2">
-                    <span>Verify your email to continue</span>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handleResendEmail}
-                        disabled={resendVerificationEmail.isPending}
-                        className="text-xs"
-                        data-cy={DataCyAttributes.RESEND_EMAIL_BUTTON}
-                      >
-                        {resendVerificationEmail.isPending
-                          ? "Sending..."
-                          : "Resend Email"}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handleSignOut}
-                        disabled={signOutMutation.isPending}
-                        className="text-xs"
-                        data-cy={DataCyAttributes.SIGN_OUT_VERIFY_BUTTON}
-                      >
-                        Sign Out
-                      </Button>
-                    </div>
-                  </div>
-                </AlertDescription>
-              </Alert>
-            </div>
-          )}
+
           {isExpanded && isAuthenticated && isVerified && (
             <div className="flex flex-col flex-grow relative">
               <div className="flex-grow relative">

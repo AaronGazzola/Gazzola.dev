@@ -3,6 +3,7 @@ import { DataCyAttributes } from "../../types/cypress.types";
 import {
   adminSignOut,
   signInAdmin,
+  signInUnverifiedUser,
   signInUser,
   signOut,
 } from "../support/auth.util.cy";
@@ -33,16 +34,40 @@ describe("Smoke Test", () => {
 
     signOut();
 
+    signInUnverifiedUser();
+
+    cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_DIALOG}"]`, {
+      timeout: 10000,
+    }).should("be.visible");
+
+    cy.get("body").type("{esc}");
+    cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_DIALOG}"]`).should(
+      "be.visible"
+    );
+
+    cy.get(`[data-cy="${DataCyAttributes.RESEND_EMAIL_BUTTON}"]`).click();
+    cy.get(`[data-cy="${DataCyAttributes.SUCCESS_RESEND_EMAIL}"]`, {
+      timeout: 10000,
+    }).should("exist");
+
+    cy.get(`[data-cy="${DataCyAttributes.SIGN_OUT_VERIFY_BUTTON}"]`).click();
+    cy.get(`[data-cy="${DataCyAttributes.SUCCESS_SIGN_OUT}"]`, {
+      timeout: 10000,
+    }).should("exist");
+
+    cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_DIALOG}"]`).should(
+      "not.exist"
+    );
+    cy.get(`[data-cy="${DataCyAttributes.SIGN_IN_BUTTON}"]`).should(
+      "be.visible"
+    );
+
     signInAdmin();
 
     cy.get(`[data-cy="${DataCyAttributes.USER_TABLE_ROW}"]`, {
-      timeout: 20000,
+      timeout: 30000,
     }).should("have.length.at.least", 1);
 
     adminSignOut();
-
-    // signInNewUser();
-
-    // signOut();
   });
 });

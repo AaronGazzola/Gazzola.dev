@@ -51,7 +51,7 @@ export const useGetContracts = () => {
       }
       return data;
     },
-    enabled: !!user && (!isAdmin || !!userId),
+    enabled: !!user && (!isAdmin || !!targetUser),
     refetchInterval: 3000,
     refetchIntervalInBackground: false,
   });

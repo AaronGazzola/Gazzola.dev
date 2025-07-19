@@ -41,9 +41,11 @@ export const useGetAppData = () => {
       setIsVerified(data.isVerified);
       setIsAdmin(data.isAdmin);
       if (data.isAdmin) setUsers(data.users);
-      setConversations(data.conversations);
-      setCurrentConversation(data.conversations[0]);
-      setContracts(data.contracts);
+      if (!data.isAdmin || data.targetUser) {
+        setConversations(data.conversations);
+        setCurrentConversation(data.conversations[0]);
+        setContracts(data.contracts);
+      }
       if (data.targetUser && data.isAdmin) {
         setTargetUser(data.targetUser);
       }

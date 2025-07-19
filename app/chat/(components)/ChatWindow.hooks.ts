@@ -56,7 +56,7 @@ export const useGetConversations = () => {
       }
       return data;
     },
-    enabled: !!user && !isSendingMessage && (!isAdmin || !!userId),
+    enabled: !!user && !isSendingMessage && (!isAdmin || !!targetUser),
     refetchInterval: 3000,
     refetchIntervalInBackground: false,
     staleTime: 0,
