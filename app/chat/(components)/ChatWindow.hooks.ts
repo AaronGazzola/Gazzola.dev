@@ -1,6 +1,7 @@
 //-| File path: app/chat/(components)/ChatWindow.hooks.ts
 "use client";
 
+import useParamString from "@/app/(hooks)/useParamString";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useSendMessage } from "@/app/chat/(components)/ChatInput.hooks";
@@ -8,7 +9,7 @@ import { getConversationsAction } from "@/app/chat/(components)/ChatWindow.actio
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetConversations = () => {
-  const { user } = useAuthStore();
+  const { user, isAdmin } = useAuthStore();
   const {
     conversations,
     unreadMessages,
@@ -18,7 +19,8 @@ export const useGetConversations = () => {
     setCurrentConversation,
     targetUser,
   } = useChatStore();
-  const { isPending } = useSendMessage();
+  const { isPending: isSendingMessage } = useSendMessage();
+  const userId = useParamString("userId");
 
   return useQuery({
     queryKey: ["conversations"],
@@ -54,7 +56,7 @@ export const useGetConversations = () => {
       }
       return data;
     },
-    enabled: !!user && !isPending,
+    enabled: !!user && !isSendingMessage && (!isAdmin || !!userId),
     refetchInterval: 3000,
     refetchIntervalInBackground: false,
     staleTime: 0,

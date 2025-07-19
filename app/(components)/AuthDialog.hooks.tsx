@@ -36,47 +36,45 @@ export const useSignIn = () => {
       return appDataResult.data;
     },
     onSuccess: (data) => {
+      if (data?.user)
+        toast.custom(() => (
+          <Toast
+            variant="success"
+            title="Success"
+            message="Successfully signed in"
+            data-cy={DataCyAttributes.SUCCESS_AUTH_SIGN_IN}
+          />
+        ));
+
+      const profile = data?.profile;
+      const shouldShowOnboarding =
+        !profile ||
+        (!profile.firstName &&
+          !profile.lastName &&
+          !profile.phone &&
+          !profile.company &&
+          !profile.avatar);
+
+      if (shouldShowOnboarding) openOnboardingModal();
+
+      if (data?.isAdmin) {
+        setUser(data.user);
+        setProfile(data.profile);
+        setIsVerified(data.isVerified);
+        return router.push(configuration.paths.admin);
+      }
+
       if (data) {
         setUser(data.user);
         setProfile(data.profile);
         setIsVerified(data.isVerified);
         setIsAdmin(data.isAdmin);
-        if (!data.isAdmin) {
-          setConversations(data.conversations);
-          setCurrentConversation(data.conversations[0]);
-          setContracts(data.contracts);
-        }
-        if (data.isAdmin) {
-          setUsers(data.users);
-          if (data.targetUser) setTargetUser(data.targetUser);
-        }
-
-        const profile = data.profile;
-        const shouldShowOnboarding =
-          !profile ||
-          (!profile.firstName &&
-            !profile.lastName &&
-            !profile.phone &&
-            !profile.company &&
-            !profile.avatar);
-
-        if (shouldShowOnboarding) {
-          openOnboardingModal();
-        }
+        setConversations(data.conversations);
+        setCurrentConversation(data.conversations[0]);
+        setContracts(data.contracts);
       }
 
       closeAuthModal();
-
-      if (data?.isAdmin) router.push(configuration.paths.admin);
-
-      toast.custom(() => (
-        <Toast
-          variant="success"
-          title="Success"
-          message="Successfully signed in"
-          data-cy={DataCyAttributes.SUCCESS_AUTH_SIGN_IN}
-        />
-      ));
     },
     onError: (error) => {
       toast.custom(() => (

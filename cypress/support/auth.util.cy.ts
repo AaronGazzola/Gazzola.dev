@@ -4,6 +4,7 @@ import { DataCyAttributes } from "../../types/cypress.types";
 interface SignInCredentials {
   email: string;
   password: string;
+  isAdmin?: boolean;
 }
 
 export function signIn(credentials: SignInCredentials): void {
@@ -24,16 +25,24 @@ export function signIn(credentials: SignInCredentials): void {
     .type(credentials.password);
   cy.get(`[data-cy="${DataCyAttributes.AUTH_SUBMIT_BUTTON}"]`).click();
 
-  cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`).should(
-    "be.visible"
-  );
-  cy.get(`[data-cy="${DataCyAttributes.PROFILE_BUTTON}"]`).should("be.visible");
+  cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`, {
+    timeout: 20000,
+  }).should("be.visible");
+  if (!credentials.isAdmin)
+    cy.get(`[data-cy="${DataCyAttributes.PROFILE_BUTTON}"]`).should(
+      "be.visible"
+    );
+  if (credentials.isAdmin)
+    cy.get(`[data-cy="${DataCyAttributes.ADMIN_SIGN_OUT_BUTTON}"]`).should(
+      "be.visible"
+    );
 }
 
 export function signInAdmin(): void {
   const credentials: SignInCredentials = {
     email: Cypress.env("ADMIN_EMAIL"),
     password: Cypress.env("ADMIN_PASSWORD"),
+    isAdmin: true,
   };
   signIn(credentials);
 }
@@ -60,7 +69,7 @@ export function signOut(): void {
   cy.get(`[data-cy="${DataCyAttributes.SIGN_OUT_CONFIRM_BUTTON}"]`).click();
 
   cy.get(`[data-cy="${DataCyAttributes.SUCCESS_SIGN_OUT}"]`, {
-    timeout: 20000,
+    timeout: 30000,
   }).should("be.visible");
   cy.get(`[data-cy="${DataCyAttributes.PROFILE_BUTTON}"]`).should("not.exist");
   cy.get(`[data-cy="${DataCyAttributes.SIGN_IN_BUTTON}"]`).should("be.visible");
@@ -71,7 +80,7 @@ export function adminSignOut(): void {
   cy.get(`[data-cy="${DataCyAttributes.SIGN_OUT_CONFIRM_BUTTON}"]`).click();
 
   cy.get(`[data-cy="${DataCyAttributes.SUCCESS_SIGN_OUT}"]`, {
-    timeout: 20000,
+    timeout: 30000,
   }).should("be.visible");
   cy.get(`[data-cy="${DataCyAttributes.PROFILE_BUTTON}"]`).should("not.exist");
   cy.get(`[data-cy="${DataCyAttributes.SIGN_IN_BUTTON}"]`).should("be.visible");

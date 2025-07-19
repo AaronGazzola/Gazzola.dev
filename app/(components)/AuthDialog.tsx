@@ -115,7 +115,7 @@ const AuthDialog = () => {
               type="button"
               variant="link"
               onClick={toggleMode}
-              className="text-sm rounded"
+              className="text-sm rounded  text-muted-foreground"
               data-cy={DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}
             >
               {isSignUp

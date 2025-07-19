@@ -13,7 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 
 export const useGetAppData = () => {
-  const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
+  const { setUser, setProfile, setIsVerified, setIsAdmin, user } =
+    useAuthStore();
   const { setUsers } = useAdminStore();
   const { setConversations, setCurrentConversation, setTargetUser } =
     useChatStore();
@@ -30,15 +31,20 @@ export const useGetAppData = () => {
       if (error) throw new Error(error);
       if (!data) throw new Error("No app data received");
 
+      if (data.isAdmin && !userId && pathname !== configuration.paths.admin) {
+        router.push(configuration.paths.admin);
+        return data;
+      }
+
       setUser(data.user);
       setProfile(data.profile);
       setIsVerified(data.isVerified);
       setIsAdmin(data.isAdmin);
-      setUsers(data.users);
+      if (data.isAdmin) setUsers(data.users);
       setConversations(data.conversations);
       setCurrentConversation(data.conversations[0]);
       setContracts(data.contracts);
-      if (data.targetUser) {
+      if (data.targetUser && data.isAdmin) {
         setTargetUser(data.targetUser);
       }
 
