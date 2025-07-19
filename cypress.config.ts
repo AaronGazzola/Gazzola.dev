@@ -14,6 +14,8 @@ export default defineConfig({
       USER_PASSWORD: process.env.USER_PASSWORD,
       NEW_USER_EMAIL: process.env.NEW_USER_EMAIL,
       NEW_USER_PASSWORD: process.env.NEW_USER_PASSWORD,
+      UNVERIFIED_USER_EMAIL: process.env.UNVERIFIED_USER_EMAIL,
+      UNVERIFIED_USER_PASSWORD: process.env.UNVERIFIED_USER_PASSWORD,
     },
     defaultCommandTimeout: 10000,
     requestTimeout: 10000,
