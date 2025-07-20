@@ -3,9 +3,11 @@
 import AuthDialog from "@/app/(components)/AuthDialog";
 import ContractDialog from "@/app/(components)/ContractDialog";
 import ProfileDialog from "@/app/(components)/ProfileDialog";
+import { useResetProfile } from "@/app/(components)/ProfileDialog.hooks";
 import { useSignOutMutation } from "@/app/(components)/Sidebar.hooks";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
 import { useGetAppData } from "@/app/(hooks)/app.hooks";
+import useIsTest from "@/app/(hooks)/useIsTest";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
@@ -46,6 +48,7 @@ import {
   Menu,
   MessageCircle,
   Plus,
+  RotateCcw,
   User,
 } from "lucide-react";
 import { useState } from "react";
@@ -92,6 +95,8 @@ const SidebarSkeleton = () => {
 };
 
 const Sidebar = () => {
+  const isTest = useIsTest();
+
   const { contracts, setContract, contract } = useContractStore();
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
   const { isLoading: appDataLoading } = useGetAppData();
@@ -116,6 +121,7 @@ const Sidebar = () => {
     ? `${profile.firstName} ${profile.lastName}`
     : user?.name || user?.email || "User";
   const isExpanded = isMobile || open;
+  const { mutate: resetProfile, isPending: isResetting } = useResetProfile();
 
   if (appDataLoading) return <SidebarSkeleton />;
 
@@ -164,6 +170,10 @@ const Sidebar = () => {
 
   const handleSignOut = () => {
     signOutMutation.mutate();
+  };
+
+  const handleReset = () => {
+    resetProfile(undefined, {});
   };
 
   const handleConversationClick = (conversation: Conversation) => {
@@ -455,6 +465,28 @@ const Sidebar = () => {
                   </PopoverTrigger>
                   <PopoverContent className="w-56 p-2" align="end">
                     <div className="space-y-1">
+                      {isTest && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleReset}
+                          disabled={isResetting}
+                          className="rounded"
+                          data-cy={DataCyAttributes.PROFILE_RESET_BUTTON}
+                        >
+                          {isResetting ? (
+                            <div className="flex items-center">
+                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-500 border-t-transparent mr-2" />
+                              Resetting...
+                            </div>
+                          ) : (
+                            <>
+                              <RotateCcw className="w-4 h-4 mr-1" />
+                              Reset
+                            </>
+                          )}
+                        </Button>
+                      )}
                       {profile && (
                         <Button
                           variant="ghost"

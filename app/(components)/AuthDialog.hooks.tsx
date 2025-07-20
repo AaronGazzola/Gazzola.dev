@@ -61,6 +61,7 @@ export const useSignIn = () => {
         setUser(data.user);
         setProfile(data.profile);
         setIsVerified(data.isVerified);
+        setIsAdmin(data.isAdmin);
         return router.push(configuration.paths.admin);
       }
 

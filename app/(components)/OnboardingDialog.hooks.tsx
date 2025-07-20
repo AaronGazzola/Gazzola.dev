@@ -2,6 +2,7 @@
 "use client";
 
 import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useContractStore } from "@/app/(stores)/contract.store";
 import { Toast } from "@/components/shared/Toast";
 import { client } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
@@ -18,7 +19,8 @@ interface OnboardingData {
 }
 
 export const useSaveOnboardingData = () => {
-  const { setProfile, profile } = useAuthStore();
+  const { setProfile, profile, user } = useAuthStore();
+  const { contracts } = useContractStore();
 
   return useMutation({
     mutationFn: async (formData: OnboardingData) => {
@@ -27,7 +29,9 @@ export const useSaveOnboardingData = () => {
       return data;
     },
     onSuccess: (data) => {
+      console.log(data);
       if (data && profile) setProfile({ ...profile, ...data });
+      if (data && user && !profile) setProfile({ user, contracts, ...data });
       toast.custom(() => (
         <Toast
           variant="success"

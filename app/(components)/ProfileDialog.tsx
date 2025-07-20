@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import { Save, Upload, X } from "lucide-react";
 import Image from "next/image";
@@ -56,10 +57,7 @@ const ProfileDialog = () => {
     }
   }, [profile]);
 
-  const handleInputChange = (
-    field: keyof ProfileFormData,
-    value: string
-  ) => {
+  const handleInputChange = (field: keyof ProfileFormData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -126,15 +124,18 @@ const ProfileDialog = () => {
 
   const handleSave = () => {
     if (!profile) return;
-    
-    updateProfile({
-      id: profile.id,
-      ...formData,
-    }, {
-      onSuccess: () => {
-        closeProfileModal();
+
+    updateProfile(
+      {
+        id: profile.id,
+        ...formData,
       },
-    });
+      {
+        onSuccess: () => {
+          closeProfileModal();
+        },
+      }
+    );
   };
 
   const handleClose = () => {
@@ -151,18 +152,21 @@ const ProfileDialog = () => {
     closeProfileModal();
   };
 
-  const hasChanges = profile && (
-    formData.firstName !== (profile.firstName || "") ||
-    formData.lastName !== (profile.lastName || "") ||
-    formData.email !== (profile.email || "") ||
-    formData.phone !== (profile.phone || "") ||
-    formData.company !== (profile.company || "") ||
-    formData.avatar !== (profile.avatar || "")
-  );
+  const hasChanges =
+    profile &&
+    (formData.firstName !== (profile.firstName || "") ||
+      formData.lastName !== (profile.lastName || "") ||
+      formData.email !== (profile.email || "") ||
+      formData.phone !== (profile.phone || "") ||
+      formData.company !== (profile.company || "") ||
+      formData.avatar !== (profile.avatar || ""));
 
   return (
     <Dialog open={ui.profileModal.isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        className="max-w-md max-h-[90vh] overflow-y-auto"
+        data-cy={DataCyAttributes.PROFILE_DIALOG}
+      >
         <DialogHeader>
           <DialogTitle>Profile</DialogTitle>
         </DialogHeader>
@@ -181,6 +185,7 @@ const ProfileDialog = () => {
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
+                data-cy={DataCyAttributes.PROFILE_AVATAR_UPLOAD}
               >
                 {formData.avatar ? (
                   <div className="space-y-3">
@@ -198,6 +203,7 @@ const ProfileDialog = () => {
                         size="sm"
                         onClick={() => fileInputRef.current?.click()}
                         className="rounded"
+                        data-cy={DataCyAttributes.PROFILE_AVATAR_CHANGE_BUTTON}
                       >
                         <Upload className="w-4 h-4 mr-1" />
                         Change
@@ -208,6 +214,7 @@ const ProfileDialog = () => {
                         size="sm"
                         onClick={removeAvatar}
                         className="rounded"
+                        data-cy={DataCyAttributes.PROFILE_AVATAR_REMOVE_BUTTON}
                       >
                         <X className="w-4 h-4 mr-1" />
                         Remove
@@ -224,6 +231,7 @@ const ProfileDialog = () => {
                         variant="link"
                         onClick={() => fileInputRef.current?.click()}
                         className="text-blue-600 p-0 h-auto"
+                        data-cy={DataCyAttributes.PROFILE_AVATAR_BROWSE_BUTTON}
                       >
                         browse files
                       </Button>
@@ -250,9 +258,12 @@ const ProfileDialog = () => {
                   id="firstName"
                   type="text"
                   value={formData.firstName}
-                  onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("firstName", e.target.value)
+                  }
                   placeholder="Enter your first name"
                   className="rounded"
+                  data-cy={DataCyAttributes.PROFILE_FIRST_NAME_INPUT}
                 />
               </div>
               <div>
@@ -261,9 +272,12 @@ const ProfileDialog = () => {
                   id="lastName"
                   type="text"
                   value={formData.lastName}
-                  onChange={(e) => handleInputChange("lastName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("lastName", e.target.value)
+                  }
                   placeholder="Enter your last name"
                   className="rounded"
+                  data-cy={DataCyAttributes.PROFILE_LAST_NAME_INPUT}
                 />
               </div>
             </div>
@@ -277,6 +291,7 @@ const ProfileDialog = () => {
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder="Enter your email"
                 className="rounded"
+                data-cy={DataCyAttributes.PROFILE_EMAIL_INPUT}
               />
             </div>
 
@@ -289,6 +304,7 @@ const ProfileDialog = () => {
                 onChange={(e) => handleInputChange("phone", e.target.value)}
                 placeholder="Enter your phone number"
                 className="rounded"
+                data-cy={DataCyAttributes.PROFILE_PHONE_INPUT}
               />
             </div>
 
@@ -301,6 +317,7 @@ const ProfileDialog = () => {
                 onChange={(e) => handleInputChange("company", e.target.value)}
                 placeholder="Enter your company name"
                 className="rounded"
+                data-cy={DataCyAttributes.PROFILE_COMPANY_INPUT}
               />
             </div>
 
@@ -324,14 +341,17 @@ const ProfileDialog = () => {
               variant="outline"
               onClick={handleClose}
               className="rounded"
+              data-cy={DataCyAttributes.PROFILE_CANCEL_BUTTON}
             >
               Cancel
             </Button>
+
             <Button
               type="button"
               onClick={handleSave}
               disabled={isPending || !hasChanges}
               className="rounded"
+              data-cy={DataCyAttributes.PROFILE_SAVE_BUTTON}
             >
               {isPending ? (
                 <div className="flex items-center">

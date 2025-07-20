@@ -59,3 +59,43 @@ export const updateProfileAction = async (
     return getActionResponse({ error });
   }
 };
+
+export const resetProfileAction = async (): Promise<ActionResponse<Profile | null>> => {
+  try {
+    const currentUser = await getAuthenticatedUser();
+    if (!currentUser) {
+      return getActionResponse({ error: "Unauthorized" });
+    }
+
+    const existingProfile = await prisma.profile.findFirst({
+      where: { userId: currentUser.id },
+      include: {
+        user: true,
+        contracts: true,
+      },
+    });
+
+    if (!existingProfile) {
+      return getActionResponse({ error: "Profile not found" });
+    }
+
+    const resetProfile = await prisma.profile.update({
+      where: { id: existingProfile.id },
+      data: {
+        firstName: "",
+        lastName: "",
+        phone: "",
+        company: "",
+        avatar: "",
+      },
+      include: {
+        user: true,
+        contracts: true,
+      },
+    });
+
+    return getActionResponse({ data: resetProfile });
+  } catch (error) {
+    return getActionResponse({ error });
+  }
+};
