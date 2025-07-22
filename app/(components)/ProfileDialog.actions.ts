@@ -10,10 +10,8 @@ interface ProfileUpdateData {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
   phone: string;
   company: string;
-  avatar: string;
 }
 
 export const updateProfileAction = async (
@@ -60,7 +58,9 @@ export const updateProfileAction = async (
   }
 };
 
-export const resetProfileAction = async (): Promise<ActionResponse<Profile | null>> => {
+export const resetProfileAction = async (): Promise<
+  ActionResponse<Profile | null>
+> => {
   try {
     const currentUser = await getAuthenticatedUser();
     if (!currentUser) {
@@ -86,7 +86,6 @@ export const resetProfileAction = async (): Promise<ActionResponse<Profile | nul
         lastName: "",
         phone: "",
         company: "",
-        avatar: "",
       },
       include: {
         user: true,
@@ -95,6 +94,43 @@ export const resetProfileAction = async (): Promise<ActionResponse<Profile | nul
     });
 
     return getActionResponse({ data: resetProfile });
+  } catch (error) {
+    return getActionResponse({ error });
+  }
+};
+
+export const deleteAccountAction = async (): Promise<
+  ActionResponse<boolean>
+> => {
+  try {
+    const currentUser = await getAuthenticatedUser();
+    if (!currentUser) {
+      return getActionResponse({ error: "Unauthorized" });
+    }
+
+    await prisma.user.update({
+      where: { id: currentUser.id },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+        email: null,
+        name: null,
+        image: null,
+      },
+    });
+
+    await prisma.profile.updateMany({
+      where: { userId: currentUser.id },
+      data: {
+        firstName: null,
+        lastName: null,
+        email: null,
+        phone: null,
+        company: null,
+      },
+    });
+
+    return getActionResponse({ data: true });
   } catch (error) {
     return getActionResponse({ error });
   }

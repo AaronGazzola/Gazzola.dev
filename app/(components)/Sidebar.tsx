@@ -117,9 +117,10 @@ const Sidebar = () => {
   const contractsLoading = appDataLoading;
   const conversationsError = null;
   const contractsError = null;
-  const displayName = profile
-    ? `${profile.firstName} ${profile.lastName}`
-    : user?.name || user?.email || "User";
+  const displayName =
+    profile?.firstName && profile?.lastName
+      ? `${profile.firstName} ${profile.lastName}`
+      : user?.name || user?.email || "User";
   const isExpanded = isMobile || open;
   const { mutate: resetProfile, isPending: isResetting } = useResetProfile();
 

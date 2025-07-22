@@ -3,7 +3,6 @@
 
 import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Profile as PrismaProfile } from "@/generated/prisma";
-
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
@@ -12,7 +11,6 @@ interface OnboardingData {
   lastName: string;
   phone: string;
   company: string;
-  avatar: string;
 }
 
 export const saveOnboardingDataAction = async (
@@ -38,7 +36,6 @@ export const saveOnboardingDataAction = async (
       email: currentUser.email,
       phone: onboardingData.phone || null,
       company: onboardingData.company || null,
-      avatar: onboardingData.avatar || null,
     };
 
     let data;
@@ -58,6 +55,30 @@ export const saveOnboardingDataAction = async (
     }
 
     return getActionResponse({ data });
+  } catch (error) {
+    return getActionResponse({ error });
+  }
+};
+
+export const verifyAccountAction = async (): Promise<
+  ActionResponse<boolean>
+> => {
+  try {
+    if (process.env.APP_ENV !== "test") {
+      throw new Error("This action can only be used in test environment");
+    }
+
+    const currentUser = await getAuthenticatedUser();
+    if (!currentUser) {
+      return getActionResponse({ error: "Unauthorized" });
+    }
+
+    await prisma.user.update({
+      where: { id: currentUser.id },
+      data: { emailVerified: true },
+    });
+
+    return getActionResponse({ data: true });
   } catch (error) {
     return getActionResponse({ error });
   }

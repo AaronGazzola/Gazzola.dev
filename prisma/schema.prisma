@@ -32,18 +32,19 @@ enum PaymentStatus {
 
 model User {
   id            String    @id @default(cuid())
-  name          String
-  email         String
+  name          String?
+  email         String? 
   emailVerified Boolean
   image         String?
   role          String    @default("user")
+  isDeleted     Boolean   @default(false)
+  deletedAt     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
   profile       Profile?
 
-  @@unique([email])
   @@map("user")
 }
 
@@ -95,9 +96,9 @@ model Verification {
 model Profile {
   id        String     @id @default(cuid())
   userId    String     @unique
-  firstName String
-  lastName  String
-  email     String
+  firstName String?
+  lastName  String?
+  email     String?
   phone     String?
   company   String?
   avatar    String?

@@ -4,6 +4,7 @@
 import { useSignOutMutation } from "@/app/(components)/Sidebar.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
+import useIsTest from "@/app/(hooks)/useIsTest";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,14 +23,13 @@ import {
   Mail,
   RefreshCw,
   Save,
-  Upload,
-  X,
+  CheckCircle,
 } from "lucide-react";
-import Image from "next/image";
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 import {
   useResendVerificationEmail,
   useSaveOnboardingData,
+  useVerifyAccount,
 } from "./OnboardingDialog.hooks";
 
 interface OnboardingFormData {
@@ -37,29 +37,27 @@ interface OnboardingFormData {
   lastName: string;
   phone: string;
   company: string;
-  avatar: string;
 }
 
 const OnboardingDialog = () => {
   const { isVerified, user } = useAuthStore();
   const { ui, closeOnboardingModal } = useAppStore();
+  const isTest = useIsTest();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<OnboardingFormData>({
     firstName: "",
     lastName: "",
     phone: "",
     company: "",
-    avatar: "",
   });
-  const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: saveOnboardingData, isPending } = useSaveOnboardingData();
   const { mutate: resendEmail, isPending: isResendingEmail } =
     useResendVerificationEmail();
   const { mutate: signOut, isPending: isSigningOut } = useSignOutMutation();
+  const { mutate: verifyAccount, isPending: isVerifyingAccount } = useVerifyAccount();
 
-  const totalSteps = 3;
+  const totalSteps = 2;
   const progress = (currentStep / totalSteps) * 100;
 
   const handleInputChange = (
@@ -70,64 +68,6 @@ const OnboardingDialog = () => {
       ...prev,
       [field]: value,
     }));
-  };
-
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
-  const handleFileUpload = useCallback(async (file: File) => {
-    if (file && file.type.startsWith("image/")) {
-      try {
-        const base64 = await convertToBase64(file);
-        handleInputChange("avatar", base64);
-      } catch (error) {
-        console.error("Error converting file to base64:", error);
-      }
-    }
-  }, []);
-
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback(
-    async (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setDragActive(false);
-
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        await handleFileUpload(e.dataTransfer.files[0]);
-      }
-    },
-    [handleFileUpload]
-  );
-
-  const handleFileInputChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (e.target.files && e.target.files[0]) {
-      await handleFileUpload(e.target.files[0]);
-    }
-  };
-
-  const removeAvatar = () => {
-    handleInputChange("avatar", "");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   const handleNext = () => {
@@ -157,7 +97,6 @@ const OnboardingDialog = () => {
       lastName: "",
       phone: "",
       company: "",
-      avatar: "",
     });
     closeOnboardingModal();
   };
@@ -168,6 +107,10 @@ const OnboardingDialog = () => {
 
   const handleSignOut = () => {
     signOut();
+  };
+
+  const handleVerifyAccount = () => {
+    verifyAccount();
   };
 
   const renderVerifyPage = () => {
@@ -199,6 +142,26 @@ const OnboardingDialog = () => {
               </>
             )}
           </Button>
+          {isTest && (
+            <Button
+              onClick={handleVerifyAccount}
+              disabled={isVerifyingAccount}
+              className="w-full rounded"
+              data-cy={DataCyAttributes.VERIFY_ACCOUNT_BUTTON}
+            >
+              {isVerifyingAccount ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                  Verifying...
+                </div>
+              ) : (
+                <>
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Verify Account
+                </>
+              )}
+            </Button>
+          )}
           <Button
             variant="outline"
             onClick={handleSignOut}
@@ -280,94 +243,6 @@ const OnboardingDialog = () => {
                 className="rounded"
                 data-cy={DataCyAttributes.ONBOARDING_PHONE_INPUT}
               />
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label>Avatar</Label>
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                  dragActive
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-300 hover:border-gray-400"
-                }`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                data-cy={DataCyAttributes.ONBOARDING_AVATAR_UPLOAD}
-              >
-                {formData.avatar ? (
-                  <div className="space-y-3">
-                    <Image
-                      src={formData.avatar}
-                      alt="Avatar preview"
-                      className="mx-auto w-24 h-24 rounded-full object-cover"
-                      width={96}
-                      height={96}
-                    />
-                    <div className="flex justify-center space-x-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="rounded"
-                        data-cy={
-                          DataCyAttributes.ONBOARDING_AVATAR_CHANGE_BUTTON
-                        }
-                      >
-                        <Upload className="w-4 h-4 mr-1" />
-                        Change
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={removeAvatar}
-                        className="rounded"
-                        data-cy={
-                          DataCyAttributes.ONBOARDING_AVATAR_REMOVE_BUTTON
-                        }
-                      >
-                        <X className="w-4 h-4 mr-1" />
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                    <div>
-                      <p className="text-gray-600">Drop an image here or</p>
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="text-blue-600 p-0 h-auto"
-                        data-cy={
-                          DataCyAttributes.ONBOARDING_AVATAR_BROWSE_BUTTON
-                        }
-                      >
-                        browse files
-                      </Button>
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileInputChange}
-                  className="hidden"
-                />
-              </div>
             </div>
           </div>
         );

@@ -2,6 +2,7 @@
 "use client";
 
 import { useAppStore } from "@/app/(stores)/ui.store";
+import useIsTest from "@/app/(hooks)/useIsTest";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,8 +13,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DataCyAttributes } from "@/types/cypress.types";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useSignIn, useSignUp } from "./AuthDialog.hooks";
+import { useSignIn, useSignUp, useDeleteAccount } from "./AuthDialog.hooks";
 
 interface AuthCredentials {
   email: string;
@@ -22,6 +24,7 @@ interface AuthCredentials {
 
 const AuthDialog = () => {
   const { ui, closeAuthModal } = useAppStore();
+  const isTest = useIsTest();
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState<AuthCredentials>({
     email: "",
@@ -30,6 +33,7 @@ const AuthDialog = () => {
 
   const signInMutation = useSignIn();
   const signUpMutation = useSignUp();
+  const deleteAccountMutation = useDeleteAccount();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +60,12 @@ const AuthDialog = () => {
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
+  };
+
+  const handleDeleteAccount = () => {
+    if (formData.email) {
+      deleteAccountMutation.mutate(formData.email);
+    }
   };
 
   const isPending = signInMutation.isPending || signUpMutation.isPending;
@@ -123,6 +133,31 @@ const AuthDialog = () => {
                 : "Don't have an account? Sign up"}
             </Button>
           </div>
+
+          {isTest && !isSignUp && formData.email && (
+            <div className="pt-2">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDeleteAccount}
+                disabled={deleteAccountMutation.isPending}
+                className="w-full rounded"
+                data-cy={DataCyAttributes.AUTH_DELETE_ACCOUNT_BUTTON}
+              >
+                {deleteAccountMutation.isPending ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                    Deleting...
+                  </div>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Account
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </form>
       </DialogContent>
     </Dialog>

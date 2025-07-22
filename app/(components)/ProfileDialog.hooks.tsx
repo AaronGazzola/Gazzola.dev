@@ -1,12 +1,14 @@
 //-| File path: app/(components)/ProfileDialog.hooks.tsx
 "use client";
 
+import { useSignOutMutation } from "@/app/(components)/Sidebar.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { Toast } from "@/components/shared/Toast";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  deleteAccountAction,
   resetProfileAction,
   updateProfileAction,
 } from "./ProfileDialog.actions";
@@ -15,10 +17,8 @@ interface ProfileUpdateData {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
   phone: string;
   company: string;
-  avatar: string;
 }
 
 export const useUpdateProfile = () => {
@@ -81,6 +81,39 @@ export const useResetProfile = () => {
           title="Error"
           message={error.message || "Failed to reset profile"}
           data-cy={DataCyAttributes.ERROR_PROFILE_RESET}
+        />
+      ));
+    },
+  });
+};
+
+export const useDeleteAccount = () => {
+  const signOut = useSignOutMutation();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await deleteAccountAction();
+      if (error) throw new Error(error);
+      return data;
+    },
+    onSuccess: () => {
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Account Deleted"
+          message="Your account has been permanently deleted"
+          data-cy={DataCyAttributes.SUCCESS_ACCOUNT_DELETE}
+        />
+      ));
+      signOut.mutate();
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to delete account"}
+          data-cy={DataCyAttributes.ERROR_ACCOUNT_DELETE}
         />
       ));
     },

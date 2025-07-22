@@ -7,13 +7,28 @@ interface SignInCredentials {
   isAdmin?: boolean;
 }
 
-export function signIn(credentials: SignInCredentials): void {
+export function signIn(
+  credentials: SignInCredentials,
+  expectSuccess = true,
+  expectProfile = true
+): void {
   cy.get("body").then(($body) => {
     if (
       $body.find(`[data-cy="${DataCyAttributes.AUTH_DIALOG}"]`).length === 0
     ) {
       cy.get(`[data-cy="${DataCyAttributes.SIGN_IN_BUTTON}"]`).click();
     }
+  });
+
+  cy.get(`[data-cy="${DataCyAttributes.AUTH_DIALOG}"]`).within(() => {
+    cy.get("h2").then(($title) => {
+      const titleText = $title.text();
+      if (titleText === "Create Account") {
+        cy.get(
+          `[data-cy="${DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}"]`
+        ).click();
+      }
+    });
   });
 
   cy.log(`Entering email: ${credentials.email}`);
@@ -25,14 +40,21 @@ export function signIn(credentials: SignInCredentials): void {
     .type(credentials.password);
   cy.get(`[data-cy="${DataCyAttributes.AUTH_SUBMIT_BUTTON}"]`).click();
 
+  if (!expectSuccess) {
+    cy.get(`[data-cy="${DataCyAttributes.ERROR_AUTH_SIGN_IN}"]`, {
+      timeout: 30000,
+    }).should("exist");
+    return;
+  }
+
   cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`, {
     timeout: 30000,
   }).should("exist");
-  if (!credentials.isAdmin)
+  if (!credentials.isAdmin && expectProfile)
     cy.get(`[data-cy="${DataCyAttributes.PROFILE_BUTTON}"]`).should(
       "be.visible"
     );
-  if (credentials.isAdmin)
+  if (credentials.isAdmin && expectProfile)
     cy.get(`[data-cy="${DataCyAttributes.ADMIN_SIGN_OUT_BUTTON}"]`, {
       timeout: 30000,
     }).should("be.visible");
@@ -55,12 +77,12 @@ export function signInUser(): void {
   signIn(credentials);
 }
 
-export function signInNewUser(): void {
+export function signInNewUser(expectSuccess = true): void {
   const credentials: SignInCredentials = {
     email: Cypress.env("NEW_USER_EMAIL"),
     password: Cypress.env("NEW_USER_PASSWORD"),
   };
-  signIn(credentials);
+  signIn(credentials, expectSuccess);
 }
 
 export function signInUnverifiedUser(): void {
@@ -68,35 +90,12 @@ export function signInUnverifiedUser(): void {
     email: Cypress.env("UNVERIFIED_USER_EMAIL"),
     password: Cypress.env("UNVERIFIED_USER_PASSWORD"),
   };
-
-  cy.get("body").then(($body) => {
-    if (
-      $body.find(`[data-cy="${DataCyAttributes.AUTH_DIALOG}"]`).length === 0
-    ) {
-      cy.get(`[data-cy="${DataCyAttributes.SIGN_IN_BUTTON}"]`).click();
-    }
-  });
-
-  cy.log(`Entering email: ${credentials.email}`);
-  cy.get(`[data-cy="${DataCyAttributes.AUTH_EMAIL_INPUT}"]`)
-    .clear()
-    .type(credentials.email);
-  cy.get(`[data-cy="${DataCyAttributes.AUTH_PASSWORD_INPUT}"]`)
-    .clear()
-    .type(credentials.password);
-  cy.get(`[data-cy="${DataCyAttributes.AUTH_SUBMIT_BUTTON}"]`).click();
-
-  cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`, {
-    timeout: 20000,
-  }).should("exist");
+  const expectSuccess = true;
+  const expectProfile = false;
+  signIn(credentials, expectSuccess, expectProfile);
 }
 
-export function signUpUnverifiedUser(): void {
-  const credentials = {
-    email: Cypress.env("UNVERIFIED_USER_EMAIL"),
-    password: Cypress.env("UNVERIFIED_USER_PASSWORD"),
-  };
-
+const signUp = (credentials: SignInCredentials): void => {
   cy.get("body").then(($body) => {
     if (
       $body.find(`[data-cy="${DataCyAttributes.AUTH_DIALOG}"]`).length === 0
@@ -105,7 +104,16 @@ export function signUpUnverifiedUser(): void {
     }
   });
 
-  cy.get(`[data-cy="${DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}"]`).click();
+  cy.get(`[data-cy="${DataCyAttributes.AUTH_DIALOG}"]`).within(() => {
+    cy.get("h2").then(($title) => {
+      const titleText = $title.text();
+      if (titleText === "Sign In") {
+        cy.get(
+          `[data-cy="${DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}"]`
+        ).click();
+      }
+    });
+  });
 
   cy.log(`Entering email: ${credentials.email}`);
   cy.get(`[data-cy="${DataCyAttributes.AUTH_EMAIL_INPUT}"]`)
@@ -119,6 +127,23 @@ export function signUpUnverifiedUser(): void {
   cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_UP}"]`, {
     timeout: 20000,
   }).should("exist");
+};
+
+export function signUpUnverifiedUser(): void {
+  const credentials = {
+    email: Cypress.env("UNVERIFIED_USER_EMAIL"),
+    password: Cypress.env("UNVERIFIED_USER_PASSWORD"),
+  };
+
+  signUp(credentials);
+}
+
+export function signUpNewUser(): void {
+  const credentials = {
+    email: Cypress.env("NEW_USER_EMAIL"),
+    password: Cypress.env("NEW_USER_PASSWORD"),
+  };
+  signUp(credentials);
 }
 
 export function signOut(): void {

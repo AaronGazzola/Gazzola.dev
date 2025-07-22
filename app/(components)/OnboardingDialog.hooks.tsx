@@ -8,14 +8,13 @@ import { client } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { saveOnboardingDataAction } from "./OnboardingDialog.actions";
+import { saveOnboardingDataAction, verifyAccountAction } from "./OnboardingDialog.actions";
 
 interface OnboardingData {
   firstName: string;
   lastName: string;
   phone: string;
   company: string;
-  avatar: string;
 }
 
 export const useSaveOnboardingData = () => {
@@ -82,6 +81,39 @@ export const useResendVerificationEmail = () => {
           title="Error"
           message={error.message || "Failed to send verification email"}
           data-cy={DataCyAttributes.ERROR_RESEND_EMAIL}
+        />
+      ));
+    },
+  });
+};
+
+export const useVerifyAccount = () => {
+  const { setIsVerified } = useAuthStore();
+  
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await verifyAccountAction();
+      if (error) throw new Error(error);
+      return data;
+    },
+    onSuccess: () => {
+      setIsVerified(true);
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Account verified successfully"
+          data-cy={DataCyAttributes.SUCCESS_VERIFY_ACCOUNT}
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to verify account"}
+          data-cy={DataCyAttributes.ERROR_VERIFY_ACCOUNT}
         />
       ));
     },

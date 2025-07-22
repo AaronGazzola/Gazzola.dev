@@ -14,7 +14,7 @@ import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { signInAction, signUpAction } from "./AuthDialog.actions";
+import { signInAction, signUpAction, deleteAccountAction } from "./AuthDialog.actions";
 
 export const useSignIn = () => {
   const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
@@ -154,6 +154,36 @@ export const useSignUp = () => {
           title="Error"
           message={error.message || "Failed to create account"}
           data-cy={DataCyAttributes.ERROR_AUTH_SIGN_UP}
+        />
+      ));
+    },
+  });
+};
+
+export const useDeleteAccount = () => {
+  return useMutation({
+    mutationFn: async (email?: string) => {
+      const { data, error } = await deleteAccountAction(email);
+      if (error) throw new Error(error);
+      return data;
+    },
+    onSuccess: () => {
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Account deleted successfully"
+          data-cy={DataCyAttributes.SUCCESS_DELETE_ACCOUNT}
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to delete account"}
+          data-cy={DataCyAttributes.ERROR_DELETE_ACCOUNT}
         />
       ));
     },

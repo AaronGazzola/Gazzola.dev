@@ -1,7 +1,10 @@
 //-| File path: app/(components)/ProfileDialog.tsx
 "use client";
 
-import { useUpdateProfile } from "@/app/(components)/ProfileDialog.hooks";
+import {
+  useDeleteAccount,
+  useUpdateProfile,
+} from "@/app/(components)/ProfileDialog.hooks";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Button } from "@/components/ui/button";
@@ -15,17 +18,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
-import { Save, Upload, X } from "lucide-react";
-import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Save, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ProfileFormData {
   firstName: string;
   lastName: string;
-  email: string;
   phone: string;
   company: string;
-  avatar: string;
 }
 
 const ProfileDialog = () => {
@@ -34,25 +34,22 @@ const ProfileDialog = () => {
   const [formData, setFormData] = useState<ProfileFormData>({
     firstName: "",
     lastName: "",
-    email: "",
     phone: "",
     company: "",
-    avatar: "",
   });
-  const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showDeleteSection, setShowDeleteSection] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   const { mutate: updateProfile, isPending } = useUpdateProfile();
+  const { mutate: deleteAccount, isPending: isDeleting } = useDeleteAccount();
 
   useEffect(() => {
     if (profile) {
       setFormData({
         firstName: profile.firstName || "",
         lastName: profile.lastName || "",
-        email: profile.email || "",
         phone: profile.phone || "",
         company: profile.company || "",
-        avatar: profile.avatar || "",
       });
     }
   }, [profile]);
@@ -62,64 +59,6 @@ const ProfileDialog = () => {
       ...prev,
       [field]: value,
     }));
-  };
-
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
-  const handleFileUpload = useCallback(async (file: File) => {
-    if (file && file.type.startsWith("image/")) {
-      try {
-        const base64 = await convertToBase64(file);
-        handleInputChange("avatar", base64);
-      } catch (error) {
-        console.error("Error converting file to base64:", error);
-      }
-    }
-  }, []);
-
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback(
-    async (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setDragActive(false);
-
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        await handleFileUpload(e.dataTransfer.files[0]);
-      }
-    },
-    [handleFileUpload]
-  );
-
-  const handleFileInputChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (e.target.files && e.target.files[0]) {
-      await handleFileUpload(e.target.files[0]);
-    }
-  };
-
-  const removeAvatar = () => {
-    handleInputChange("avatar", "");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   const handleSave = () => {
@@ -143,23 +82,33 @@ const ProfileDialog = () => {
       setFormData({
         firstName: profile.firstName || "",
         lastName: profile.lastName || "",
-        email: profile.email || "",
         phone: profile.phone || "",
         company: profile.company || "",
-        avatar: profile.avatar || "",
       });
     }
+    setShowDeleteSection(false);
+    setDeleteConfirmText("");
     closeProfileModal();
+  };
+
+  const handleDeleteAccount = () => {
+    if (deleteConfirmText === "delete my account") {
+      deleteAccount(undefined, {
+        onSuccess: () => {
+          closeProfileModal();
+        },
+      });
+    }
   };
 
   const hasChanges =
     profile &&
     (formData.firstName !== (profile.firstName || "") ||
       formData.lastName !== (profile.lastName || "") ||
-      formData.email !== (profile.email || "") ||
       formData.phone !== (profile.phone || "") ||
-      formData.company !== (profile.company || "") ||
-      formData.avatar !== (profile.avatar || ""));
+      formData.company !== (profile.company || ""));
+
+  const isDeleteConfirmValid = deleteConfirmText === "delete my account";
 
   return (
     <Dialog open={ui.profileModal.isOpen} onOpenChange={handleClose}>
@@ -173,84 +122,6 @@ const ProfileDialog = () => {
 
         <div className="space-y-6">
           <div className="space-y-4">
-            <div>
-              <Label>Avatar</Label>
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                  dragActive
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-300 hover:border-gray-400"
-                }`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                data-cy={DataCyAttributes.PROFILE_AVATAR_UPLOAD}
-              >
-                {formData.avatar ? (
-                  <div className="space-y-3">
-                    <Image
-                      src={formData.avatar}
-                      alt="Avatar preview"
-                      className="mx-auto w-24 h-24 rounded-full object-cover"
-                      width={96}
-                      height={96}
-                    />
-                    <div className="flex justify-center space-x-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="rounded"
-                        data-cy={DataCyAttributes.PROFILE_AVATAR_CHANGE_BUTTON}
-                      >
-                        <Upload className="w-4 h-4 mr-1" />
-                        Change
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={removeAvatar}
-                        className="rounded"
-                        data-cy={DataCyAttributes.PROFILE_AVATAR_REMOVE_BUTTON}
-                      >
-                        <X className="w-4 h-4 mr-1" />
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                    <div>
-                      <p className="text-gray-600">Drop an image here or</p>
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="text-blue-600 p-0 h-auto"
-                        data-cy={DataCyAttributes.PROFILE_AVATAR_BROWSE_BUTTON}
-                      >
-                        browse files
-                      </Button>
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileInputChange}
-                  className="hidden"
-                />
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="firstName">First Name</Label>
@@ -280,19 +151,6 @@ const ProfileDialog = () => {
                   data-cy={DataCyAttributes.PROFILE_LAST_NAME_INPUT}
                 />
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="Enter your email"
-                className="rounded"
-                data-cy={DataCyAttributes.PROFILE_EMAIL_INPUT}
-              />
             </div>
 
             <div>
@@ -331,6 +189,80 @@ const ProfileDialog = () => {
                   <span className="font-medium">Last updated:</span>{" "}
                   {format(new Date(profile.updatedAt), "PPP")}
                 </div>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="border-t border-gray-200 pt-4">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => setShowDeleteSection(!showDeleteSection)}
+                className="rounded w-full"
+                data-cy={DataCyAttributes.PROFILE_DELETE_ACCOUNT_BUTTON}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Account
+              </Button>
+            </div>
+
+            {showDeleteSection && (
+              <div className="border-2 border-red-300 rounded-lg p-4 bg-black text-white space-y-4">
+                <div className="text-sm">
+                  <p className="font-semibold text-white mb-2">
+                    Type `delete my account` to confirm:
+                  </p>
+                  <ul className="text-gray-300 space-y-1 text-xs">
+                    <li>
+                      • Your personal information (name, email, phone, profile
+                      photo) will be permanently removed
+                    </li>
+                    <li>
+                      • You will no longer be able to log in or access your
+                      account
+                    </li>
+                    <li>
+                      • Your contracts, payments, and business communications
+                      will be preserved as anonymous records for legal and
+                      financial compliance
+                    </li>
+                    <li>
+                      • Any files you uploaded will be deleted from our servers
+                    </li>
+                    <li>• This action cannot be undone</li>
+                  </ul>
+                </div>
+
+                <Input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="Type 'delete my account' to confirm"
+                  className="rounded bg-black border-gray-600 text-white placeholder-gray-400"
+                  data-cy={DataCyAttributes.PROFILE_DELETE_CONFIRM_INPUT}
+                />
+
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDeleteAccount}
+                  disabled={!isDeleteConfirmValid || isDeleting}
+                  className="rounded w-full"
+                  data-cy={DataCyAttributes.PROFILE_DELETE_CONFIRM_BUTTON}
+                >
+                  {isDeleting ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                      Deleting Account...
+                    </div>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Confirm Delete Account
+                    </>
+                  )}
+                </Button>
               </div>
             )}
           </div>

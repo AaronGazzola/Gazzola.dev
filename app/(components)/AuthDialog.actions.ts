@@ -2,11 +2,11 @@
 "use server";
 
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
+import { User } from "@/generated/prisma";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
-import { User } from "@/generated/prisma";
-import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma-client";
+import { headers } from "next/headers";
 
 export async function signInAction(
   credentials: SignInCredentials
@@ -63,4 +63,43 @@ export async function signUpAction(
   } catch (error) {
     return getActionResponse({ error: "Sign up failed" });
   }
+}
+
+export async function deleteAccountAction(
+  email?: string
+): Promise<ActionResponse<boolean>> {
+  try {
+    let userToDelete;
+
+    if (email) {
+      userToDelete = await prisma.user.findFirst({
+        where: { email },
+      });
+
+      if (!userToDelete) {
+        return getActionResponse({ data: true });
+      }
+    } else {
+      const currentUser = await getAuthenticatedUser();
+      if (!currentUser) {
+        return getActionResponse({ error: "Unauthorized" });
+      }
+      userToDelete = currentUser;
+    }
+
+    await prisma.user.delete({
+      where: { id: userToDelete.id },
+    });
+
+    return getActionResponse({ data: true });
+  } catch (error) {
+    return getActionResponse({ data: true });
+  }
+}
+
+async function getAuthenticatedUser() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  return session?.user;
 }
