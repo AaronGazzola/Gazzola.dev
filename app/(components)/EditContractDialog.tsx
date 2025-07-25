@@ -47,6 +47,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ProgressStatus } from "@/generated/prisma";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import { isEqual } from "lodash";
 import {
@@ -381,7 +382,10 @@ const EditContractDialog = () => {
         open={ui.contractModal.isOpen}
         onOpenChange={() => closeContractModal()}
       >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent
+          className="max-w-4xl max-h-[90vh] overflow-y-auto"
+          data-cy={DataCyAttributes.EDIT_CONTRACT_DIALOG}
+        >
           <DialogHeader>
             <div className="flex items-center gap-3">
               <DialogTitle>
@@ -411,6 +415,7 @@ const EditContractDialog = () => {
                     value={formData.title || ""}
                     onChange={(e) => handleInputChange("title", e.target.value)}
                     placeholder="Contract title"
+                    data-cy={DataCyAttributes.EDIT_CONTRACT_TITLE_INPUT}
                   />
                 </div>
 
@@ -424,6 +429,7 @@ const EditContractDialog = () => {
                     }
                     placeholder="Contract description"
                     rows={4}
+                    data-cy={DataCyAttributes.EDIT_CONTRACT_DESCRIPTION_INPUT}
                   />
                 </div>
 
@@ -443,6 +449,7 @@ const EditContractDialog = () => {
                       onChange={(e) =>
                         handleInputChange("startDate", new Date(e.target.value))
                       }
+                      data-cy={DataCyAttributes.EDIT_CONTRACT_START_DATE_INPUT}
                     />
                   </div>
                   <div>
@@ -463,6 +470,7 @@ const EditContractDialog = () => {
                           new Date(e.target.value)
                         )
                       }
+                      data-cy={DataCyAttributes.EDIT_CONTRACT_TARGET_DATE_INPUT}
                     />
                   </div>
                   <div>
@@ -480,6 +488,7 @@ const EditContractDialog = () => {
                       onChange={(e) =>
                         handleInputChange("dueDate", new Date(e.target.value))
                       }
+                      data-cy={DataCyAttributes.EDIT_CONTRACT_DUE_DATE_INPUT}
                     />
                   </div>
                 </div>
@@ -581,6 +590,7 @@ const EditContractDialog = () => {
                         checked
                       )
                     }
+                    data-cy={DataCyAttributes.EDIT_CONTRACT_APPROVED_SWITCH}
                   />
                 </div>
               </div>
@@ -594,6 +604,7 @@ const EditContractDialog = () => {
                       variant="outline"
                       size="sm"
                       onClick={addTask}
+                      data-cy={DataCyAttributes.EDIT_CONTRACT_ADD_TASK_BUTTON}
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Task
@@ -601,7 +612,11 @@ const EditContractDialog = () => {
                   </div>
                   <div className="space-y-2">
                     {(formData.tasks || []).map((task) => (
-                      <div key={task.id} className="border rounded-md">
+                      <div
+                        key={task.id}
+                        className="border rounded-md"
+                        data-cy={DataCyAttributes.EDIT_CONTRACT_TASK_ITEM}
+                      >
                         <div className="flex items-center p-3 space-x-2">
                           <Button
                             type="button"
@@ -609,6 +624,9 @@ const EditContractDialog = () => {
                             size="sm"
                             onClick={() => toggleTaskProgress(task.id)}
                             className="p-1"
+                            data-cy={
+                              DataCyAttributes.EDIT_CONTRACT_TASK_TOGGLE_PROGRESS_BUTTON
+                            }
                           >
                             {getProgressIcon(
                               task.progressStatus || "not_started"
@@ -620,6 +638,9 @@ const EditContractDialog = () => {
                             size="sm"
                             onClick={() => setDeleteTaskId(task.id)}
                             className="p-1 text-red-500 hover:text-red-700"
+                            data-cy={
+                              DataCyAttributes.EDIT_CONTRACT_TASK_DELETE_BUTTON
+                            }
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -638,6 +659,9 @@ const EditContractDialog = () => {
                                   }
                                   placeholder="Task title"
                                   onClick={(e) => e.stopPropagation()}
+                                  data-cy={
+                                    DataCyAttributes.EDIT_CONTRACT_TASK_TITLE_INPUT
+                                  }
                                 />
                                 <Textarea
                                   value={task.description}
@@ -649,6 +673,9 @@ const EditContractDialog = () => {
                                   placeholder="Task description"
                                   rows={2}
                                   onClick={(e) => e.stopPropagation()}
+                                  data-cy={
+                                    DataCyAttributes.EDIT_CONTRACT_TASK_DESCRIPTION_INPUT
+                                  }
                                 />
                                 <Input
                                   value={task.price === 0 ? "" : task.price}
@@ -676,6 +703,9 @@ const EditContractDialog = () => {
                                   }}
                                   placeholder="0"
                                   onClick={(e) => e.stopPropagation()}
+                                  data-cy={
+                                    DataCyAttributes.EDIT_CONTRACT_TASK_PRICE_INPUT
+                                  }
                                 />
                               </div>
                             ) : (
@@ -819,6 +849,7 @@ const EditContractDialog = () => {
                     closeContractModal();
                   }}
                   disabled={isLoading}
+                  data-cy={DataCyAttributes.EDIT_CONTRACT_CANCEL_BUTTON}
                 >
                   Cancel
                 </Button>
@@ -830,6 +861,7 @@ const EditContractDialog = () => {
                     onClick={handlePayment}
                     disabled={isLoading}
                     className="bg-green-600 hover:bg-green-700"
+                    data-cy={DataCyAttributes.EDIT_CONTRACT_PAYMENT_BUTTON}
                   >
                     {contractPaymentMutation.isPending ? (
                       <>
@@ -848,6 +880,7 @@ const EditContractDialog = () => {
                 <Button
                   onClick={handleSave}
                   disabled={!isFormValid() || !approvedValue || isLoading}
+                  data-cy={DataCyAttributes.EDIT_CONTRACT_SAVE_BUTTON}
                 >
                   {isLoading && !contractPaymentMutation.isPending ? (
                     <>

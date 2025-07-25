@@ -1,4 +1,4 @@
-//-| File path: app/(components)/EditContractDialog.hooks.ts
+//-| File path: app/(components)/EditContractDialog.hooks.tsx
 "use client";
 import {
   addContractAction,
@@ -11,6 +11,8 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";
+import { Toast } from "@/components/shared/Toast";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { isEqual } from "lodash";
 import { useEffect } from "react";
@@ -73,10 +75,24 @@ export const useAddContract = () => {
       if (data) {
         setContracts(data);
       }
-      toast.success("Contract created successfully");
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Contract created successfully"
+          data-cy={DataCyAttributes.SUCCESS_CONTRACT_CREATE}
+        />
+      ));
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create contract");
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to create contract"}
+          data-cy={DataCyAttributes.ERROR_CONTRACT_CREATE}
+        />
+      ));
     },
   });
 };
@@ -97,10 +113,24 @@ export const useUpdateContract = () => {
       if (data) {
         setContracts(data);
       }
-      toast.success("Contract updated successfully");
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Contract updated successfully"
+          data-cy={DataCyAttributes.SUCCESS_CONTRACT_UPDATE}
+        />
+      ));
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update contract");
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to update contract"}
+          data-cy={DataCyAttributes.ERROR_CONTRACT_UPDATE}
+        />
+      ));
     },
   });
 };
@@ -116,9 +146,24 @@ export const useContractPayment = () => {
       if (data?.url) {
         window.location.href = data.url;
       }
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Payment initiated successfully"
+          data-cy={DataCyAttributes.SUCCESS_CONTRACT_PAYMENT}
+        />
+      ));
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to initiate payment");
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to initiate payment"}
+          data-cy={DataCyAttributes.ERROR_CONTRACT_PAYMENT}
+        />
+      ));
     },
   });
 };

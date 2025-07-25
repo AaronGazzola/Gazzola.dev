@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { ProgressStatus } from "@/generated/prisma";
 import { cn } from "@/lib/tailwind.utils";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import { CheckCircle, Clock, Loader2, Play, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -164,293 +165,302 @@ const ActiveContractDialog = () => {
 
   const contractConversations = conversations.filter((conversation) =>
     contract?.conversationIds?.includes(conversation.id)
-  );
+ );
 
-  const totalPrice = (contract?.tasks || []).reduce(
-    (sum, task) => sum + task.price,
-    0
-  );
+ const totalPrice = (contract?.tasks || []).reduce(
+   (sum, task) => sum + task.price,
+   0
+ );
 
-  const isLoading = updateActiveContractMutation.isPending;
+ const isLoading = updateActiveContractMutation.isPending;
 
-  return (
-    <Dialog
-      open={ui.contractModal.isOpen}
-      onOpenChange={() => closeContractModal()}
-    >
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Active Contract</DialogTitle>
-        </DialogHeader>
+ return (
+   <Dialog
+     open={ui.contractModal.isOpen}
+     onOpenChange={() => closeContractModal()}
+   >
+     <DialogContent 
+       className="max-w-4xl max-h-[90vh] overflow-y-auto"
+       data-cy={DataCyAttributes.ACTIVE_CONTRACT_DIALOG}
+     >
+       <DialogHeader>
+         <DialogTitle>Active Contract</DialogTitle>
+       </DialogHeader>
 
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <Label>Title</Label>
-                <div className="p-2  rounded border">{contract?.title}</div>
-              </div>
+       <div className="space-y-6">
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+           <div className="space-y-4">
+             <div>
+               <Label>Title</Label>
+               <div className="p-2  rounded border">{contract?.title}</div>
+             </div>
 
-              <div>
-                <Label>Description</Label>
-                <div className="p-2  rounded border min-h-[100px]">
-                  {contract?.description}
-                </div>
-              </div>
+             <div>
+               <Label>Description</Label>
+               <div className="p-2  rounded border min-h-[100px]">
+                 {contract?.description}
+               </div>
+             </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Start Date</Label>
-                  <div className="p-2  rounded border">
-                    {contract?.startDate &&
-                      format(new Date(contract.startDate), "MMM d, yyyy")}
-                  </div>
-                </div>
-                <div>
-                  <Label>Target Date</Label>
-                  <div className="p-2  rounded border">
-                    {contract?.targetDate &&
-                      format(new Date(contract.targetDate), "MMM d, yyyy")}
-                  </div>
-                </div>
-                <div>
-                  <Label>Due Date</Label>
-                  <div className="p-2  rounded border">
-                    {contract?.dueDate &&
-                      format(new Date(contract.dueDate), "MMM d, yyyy")}
-                  </div>
-                </div>
-              </div>
+             <div className="grid grid-cols-3 gap-4">
+               <div>
+                 <Label>Start Date</Label>
+                 <div className="p-2  rounded border">
+                   {contract?.startDate &&
+                     format(new Date(contract.startDate), "MMM d, yyyy")}
+                 </div>
+               </div>
+               <div>
+                 <Label>Target Date</Label>
+                 <div className="p-2  rounded border">
+                   {contract?.targetDate &&
+                     format(new Date(contract.targetDate), "MMM d, yyyy")}
+                 </div>
+               </div>
+               <div>
+                 <Label>Due Date</Label>
+                 <div className="p-2  rounded border">
+                   {contract?.dueDate &&
+                     format(new Date(contract.dueDate), "MMM d, yyyy")}
+                 </div>
+               </div>
+             </div>
 
-              <div>
-                <Label>Total Price ($)</Label>
-                <div className="text-2xl font-bold text-green-600">
-                  ${totalPrice.toFixed(2)}
-                </div>
-              </div>
+             <div>
+               <Label>Total Price ($)</Label>
+               <div className="text-2xl font-bold text-green-600">
+                 ${totalPrice.toFixed(2)}
+               </div>
+             </div>
 
-              {isAdmin && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="progressStatus">Progress Status</Label>
-                    <Select
-                      value={formData.progressStatus || "not_started"}
-                      onValueChange={(value) =>
-                        handleInputChange("progressStatus", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select progress status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="not_started">Not Started</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="refundStatus">Refund Status</Label>
-                    <Select
-                      value={formData.refundStatus || "pending"}
-                      onValueChange={(value) =>
-                        handleInputChange("refundStatus", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select refund status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="denied">Denied</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              )}
-              {!isAdmin && (
-                <div className="grid grid-cols-2 gap-4">
-                  {contract?.progressStatus && (
-                    <div>
-                      <div>
-                        <Badge
-                          className={cn(
-                            "rounded-full",
-                            getStatusBadgeColor(
-                              contract.progressStatus,
-                              "progress"
-                            )
-                          )}
-                        >
-                          {formatStatusText(contract.progressStatus)}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
-                  {contract?.refundStatus && (
-                    <div>
-                      <div>
-                        <Badge
-                          className={cn(
-                            "rounded-full",
-                            getStatusBadgeColor(contract.refundStatus, "refund")
-                          )}
-                        >
-                          {formatStatusText(contract.refundStatus)}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+             {isAdmin && (
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <Label htmlFor="progressStatus">Progress Status</Label>
+                   <Select
+                     value={formData.progressStatus || "not_started"}
+                     onValueChange={(value) =>
+                       handleInputChange("progressStatus", value)
+                     }
+                   >
+                     <SelectTrigger data-cy={DataCyAttributes.ACTIVE_CONTRACT_PROGRESS_STATUS_SELECT}>
+                       <SelectValue placeholder="Select progress status" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="not_started">Not Started</SelectItem>
+                       <SelectItem value="in_progress">In Progress</SelectItem>
+                       <SelectItem value="completed">Completed</SelectItem>
+                       <SelectItem value="cancelled">Cancelled</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+                 <div>
+                   <Label htmlFor="refundStatus">Refund Status</Label>
+                   <Select
+                     value={formData.refundStatus || "pending"}
+                     onValueChange={(value) =>
+                       handleInputChange("refundStatus", value)
+                     }
+                   >
+                     <SelectTrigger data-cy={DataCyAttributes.ACTIVE_CONTRACT_REFUND_STATUS_SELECT}>
+                       <SelectValue placeholder="Select refund status" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="pending">Pending</SelectItem>
+                       <SelectItem value="approved">Approved</SelectItem>
+                       <SelectItem value="denied">Denied</SelectItem>
+                       <SelectItem value="completed">Completed</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+               </div>
+             )}
+             {!isAdmin && (
+               <div className="grid grid-cols-2 gap-4">
+                 {contract?.progressStatus && (
+                   <div>
+                     <div>
+                       <Badge
+                         className={cn(
+                           "rounded-full",
+                           getStatusBadgeColor(
+                             contract.progressStatus,
+                             "progress"
+                           )
+                         )}
+                       >
+                         {formatStatusText(contract.progressStatus)}
+                       </Badge>
+                     </div>
+                   </div>
+                 )}
+                 {contract?.refundStatus && (
+                   <div>
+                     <div>
+                       <Badge
+                         className={cn(
+                           "rounded-full",
+                           getStatusBadgeColor(contract.refundStatus, "refund")
+                         )}
+                       >
+                         {formatStatusText(contract.refundStatus)}
+                       </Badge>
+                     </div>
+                   </div>
+                 )}
+               </div>
+             )}
 
-              <div>
-                <div>
-                  <Badge className="rounded-full bg-green-100 text-green-800">
-                    Paid
-                  </Badge>
-                </div>
-              </div>
-            </div>
+             <div>
+               <div>
+                 <Badge className="rounded-full bg-green-100 text-green-800">
+                   Paid
+                 </Badge>
+               </div>
+             </div>
+           </div>
 
-            <div className="space-y-4">
-              <div>
-                <Label>Tasks</Label>
-                <div className="space-y-2">
-                  {(formData.tasks || []).map((task) => (
-                    <div key={task.id} className="border rounded-md">
-                      <div className="flex items-center p-3 space-x-2">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleTaskProgress(task.id)}
-                          className="p-1"
-                          disabled={!isAdmin}
-                        >
-                          {getProgressIcon(
-                            task.progressStatus || "not_started"
-                          )}
-                        </Button>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">
-                              {task.title || "Untitled Task"}
-                            </span>
-                            <span className="font-semibold">
-                              ${task.price.toFixed(2)}
-                            </span>
-                          </div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            {task.description}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+           <div className="space-y-4">
+             <div>
+               <Label>Tasks</Label>
+               <div className="space-y-2">
+                 {(formData.tasks || []).map((task) => (
+                   <div key={task.id} className="border rounded-md">
+                     <div className="flex items-center p-3 space-x-2">
+                       <Button
+                         type="button"
+                         variant="ghost"
+                         size="sm"
+                         onClick={() => toggleTaskProgress(task.id)}
+                         className="p-1"
+                         disabled={!isAdmin}
+                         data-cy={DataCyAttributes.ACTIVE_CONTRACT_TASK_TOGGLE_PROGRESS_BUTTON}
+                       >
+                         {getProgressIcon(
+                           task.progressStatus || "not_started"
+                         )}
+                       </Button>
+                       <div className="flex-1">
+                         <div className="flex items-center justify-between">
+                           <span className="font-medium">
+                             {task.title || "Untitled Task"}
+                           </span>
+                           <span className="font-semibold">
+                             ${task.price.toFixed(2)}
+                           </span>
+                         </div>
+                         <div className="text-sm text-gray-600 mt-1">
+                           {task.description}
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             </div>
 
-              <div>
-                <Label>Related Conversations</Label>
-                <ScrollArea className="max-h-[300px] border rounded-md p-4">
-                  <div className="space-y-2">
-                    {contractConversations.length === 0 ? (
-                      <p className="text-sm text-gray-500 italic">
-                        No conversations linked to this contract
-                      </p>
-                    ) : (
-                      contractConversations.map((conversation) => {
-                        const lastMessage =
-                          conversation.messages[
-                            conversation.messages.length - 1
-                          ];
+             <div>
+               <Label>Related Conversations</Label>
+               <ScrollArea className="max-h-[300px] border rounded-md p-4">
+                 <div className="space-y-2">
+                   {contractConversations.length === 0 ? (
+                     <p className="text-sm text-gray-500 italic">
+                       No conversations linked to this contract
+                     </p>
+                   ) : (
+                     contractConversations.map((conversation) => {
+                       const lastMessage =
+                         conversation.messages[
+                           conversation.messages.length - 1
+                         ];
 
-                        return (
-                          <div
-                            key={conversation.id}
-                            className="p-3 border rounded-lg "
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="text-sm font-medium">
-                                {conversation.title ||
-                                  `Conversation ${conversation.id.slice(0, 8)}`}
-                              </h4>
-                              <span className="text-xs text-gray-500">
-                                {lastMessage &&
-                                  format(
-                                    new Date(lastMessage.createdAt),
-                                    "MMM d, HH:mm"
-                                  )}
-                              </span>
-                            </div>
-                            <ScrollArea className="max-h-[150px]">
-                              <div className="space-y-1">
-                                {conversation.messages.map((message) => (
-                                  <div
-                                    key={message.id}
-                                    className="text-xs p-2 border rounded bg-white"
-                                  >
-                                    <div className="flex justify-between items-start mb-1">
-                                      <span className="font-medium text-blue-600">
-                                        {message.senderId.slice(0, 8)}
-                                      </span>
-                                      <span className="text-gray-400">
-                                        {format(
-                                          new Date(message.createdAt),
-                                          "MMM d, HH:mm"
-                                        )}
-                                      </span>
-                                    </div>
-                                    <p className="text-gray-700">
-                                      {message.content}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            </ScrollArea>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </ScrollArea>
-              </div>
-            </div>
-          </div>
+                       return (
+                         <div
+                           key={conversation.id}
+                           className="p-3 border rounded-lg "
+                         >
+                           <div className="flex items-center justify-between mb-2">
+                             <h4 className="text-sm font-medium">
+                               {conversation.title ||
+                                 `Conversation ${conversation.id.slice(0, 8)}`}
+                             </h4>
+                             <span className="text-xs text-gray-500">
+                               {lastMessage &&
+                                 format(
+                                   new Date(lastMessage.createdAt),
+                                   "MMM d, HH:mm"
+                                 )}
+                             </span>
+                           </div>
+                           <ScrollArea className="max-h-[150px]">
+                             <div className="space-y-1">
+                               {conversation.messages.map((message) => (
+                                 <div
+                                   key={message.id}
+                                   className="text-xs p-2 border rounded bg-white"
+                                 >
+                                   <div className="flex justify-between items-start mb-1">
+                                     <span className="font-medium text-blue-600">
+                                       {message.senderId.slice(0, 8)}
+                                     </span>
+                                     <span className="text-gray-400">
+                                       {format(
+                                         new Date(message.createdAt),
+                                         "MMM d, HH:mm"
+                                       )}
+                                     </span>
+                                   </div>
+                                   <p className="text-gray-700">
+                                     {message.content}
+                                   </p>
+                                 </div>
+                               ))}
+                             </div>
+                           </ScrollArea>
+                         </div>
+                       );
+                     })
+                   )}
+                 </div>
+               </ScrollArea>
+             </div>
+           </div>
+         </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setContract(null);
-                closeContractModal();
-              }}
-              disabled={isLoading}
-            >
-              Close
-            </Button>
+         <div className="flex justify-end gap-2 pt-4 border-t">
+           <Button
+             variant="outline"
+             onClick={() => {
+               setContract(null);
+               closeContractModal();
+             }}
+             disabled={isLoading}
+             data-cy={DataCyAttributes.ACTIVE_CONTRACT_CLOSE_BUTTON}
+           >
+             Close
+           </Button>
 
-            {isAdmin && (
-              <Button onClick={handleSave} disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  "Update Contract"
-                )}
-              </Button>
-            )}
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+           {isAdmin && (
+             <Button 
+               onClick={handleSave} 
+               disabled={isLoading}
+               data-cy={DataCyAttributes.ACTIVE_CONTRACT_UPDATE_BUTTON}
+             >
+               {isLoading ? (
+                 <>
+                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                   Updating...
+                 </>
+               ) : (
+                 "Update Contract"
+               )}
+             </Button>
+           )}
+         </div>
+       </div>
+     </DialogContent>
+   </Dialog>
+ );
 };
 
 export default ActiveContractDialog;
