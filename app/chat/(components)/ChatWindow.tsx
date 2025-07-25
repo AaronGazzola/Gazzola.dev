@@ -11,6 +11,7 @@ import { cn } from "@/lib/tailwind.utils";
 import { format } from "date-fns";
 import { CircleUserRound, PersonStanding } from "lucide-react";
 import { useMemo } from "react";
+import { DataCyAttributes } from "@/types/cypress.types";
 
 interface ChatWindowProps {
   className?: string;
@@ -38,6 +39,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
     return (
       <div
         className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}
+        data-cy={DataCyAttributes.CHAT_LOADING_STATE}
       >
         <div className="w-full h-full flex flex-col items-left">
           <div className="grow pr-5 pt-3 space-y-4">
@@ -58,24 +60,25 @@ export default function ChatWindow({ className }: ChatWindowProps) {
   return (
     <div
       className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}
+      data-cy={DataCyAttributes.CHAT_WINDOW}
     >
       <div className="w-full h-full flex flex-col items-left">
         {targetUser && (
-          <div className="p-4 border-b border-gray-700">
+          <div className="p-4 border-b border-gray-700" data-cy={DataCyAttributes.CHAT_USER_HEADER}>
             <h2 className="text-lg font-semibold text-gray-100 tracking-wider">
               Chat with {targetUser.name}
             </h2>
           </div>
         )}
 
-        <div className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-5 pt-3 space-y-2">
+        <div className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-5 pt-3 space-y-2" data-cy={DataCyAttributes.CHAT_MESSAGES_CONTAINER}>
           {messages.length === 0 ? (
-            <div className="text-center text-gray-400 py-8 italic">
+            <div className="text-center text-gray-400 py-8 italic" data-cy={DataCyAttributes.CHAT_EMPTY_STATE}>
               No messages yet. Start the conversation!
             </div>
           ) : (
             messages.map((msg: Message) => (
-              <div key={msg.id} className="w-full py-3 pl-7">
+              <div key={msg.id} className="w-full py-3 pl-7" data-cy={DataCyAttributes.CHAT_MESSAGE_ITEM}>
                 <div className="w-full">
                   <div className="flex items-center pl-1">
                     <div
@@ -109,6 +112,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
                     "font-medium tracking-wider text-gray-300 pt-1 space-y-2 py-2 px-3 pb-3 whitespace-pre-wrap bg-black/40 rounded",
                     !isUser(msg.senderId) && "text-right"
                   )}
+                  data-cy={DataCyAttributes.CHAT_WINDOW_MESSAGE}
                 >
                   {msg.content}
                 </div>

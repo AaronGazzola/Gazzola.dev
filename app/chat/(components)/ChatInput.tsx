@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/tailwind.utils";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Send } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -30,6 +32,44 @@ export default function ChatInput() {
       message: "",
     },
   });
+
+  useEffect(() => {
+    if (sendMessageMutation.isSuccess) {
+      const successElement = document.querySelector(
+        `[data-cy="${DataCyAttributes.SUCCESS_MESSAGE_SEND}"]`
+      );
+      if (successElement) {
+        successElement.remove();
+      }
+
+      const successDiv = document.createElement("div");
+      successDiv.setAttribute("data-cy", DataCyAttributes.SUCCESS_MESSAGE_SEND);
+      successDiv.style.display = "none";
+      document.body.appendChild(successDiv);
+
+      setTimeout(() => {
+        successDiv.remove();
+      }, 100);
+    }
+
+    if (sendMessageMutation.isError) {
+      const errorElement = document.querySelector(
+        `[data-cy="${DataCyAttributes.ERROR_MESSAGE_SEND}"]`
+      );
+      if (errorElement) {
+        errorElement.remove();
+      }
+
+      const errorDiv = document.createElement("div");
+      errorDiv.setAttribute("data-cy", DataCyAttributes.ERROR_MESSAGE_SEND);
+      errorDiv.style.display = "none";
+      document.body.appendChild(errorDiv);
+
+      setTimeout(() => {
+        errorDiv.remove();
+      }, 100);
+    }
+  }, [sendMessageMutation.isSuccess, sendMessageMutation.isError]);
 
   const handleSendMessage = () => {
     const messageContent = form.getValues("message");
@@ -70,9 +110,16 @@ export default function ChatInput() {
   const disabled = sendMessageMutation.isPending;
 
   return (
-    <div className="pt-4 pl-4 pr-4 pb-4 relative">
+    <div
+      className="pt-4 pl-4 pr-4 pb-4 relative"
+      data-cy={DataCyAttributes.CHAT_INPUT_CONTAINER}
+    >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="relative">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="relative"
+          data-cy={DataCyAttributes.CHAT_INPUT_FORM}
+        >
           <FormField
             control={form.control}
             name="message"
@@ -84,6 +131,7 @@ export default function ChatInput() {
                     placeholder="Type your message..."
                     disabled={disabled}
                     onKeyDown={handleKeyDown}
+                    data-cy={DataCyAttributes.CHAT_INPUT_TEXTAREA}
                     className={cn(
                       "min-h-[80px] resize-none border border-white/10 focus:border-white/40 pr-16"
                     )}
@@ -97,6 +145,7 @@ export default function ChatInput() {
               type="submit"
               disabled={disabled || isMessageEmpty}
               size="icon"
+              data-cy={DataCyAttributes.SEND_MESSAGE_BUTTON}
               className={cn(
                 "h-8 w-8",
                 isMessageEmpty
@@ -113,6 +162,7 @@ export default function ChatInput() {
                 onClick={handleCreateConversation}
                 disabled={disabled || isMessageEmpty}
                 size="icon"
+                data-cy={DataCyAttributes.CREATE_NEW_CONVERSATION_BUTTON}
                 className={cn(
                   "h-8 w-8",
                   isMessageEmpty

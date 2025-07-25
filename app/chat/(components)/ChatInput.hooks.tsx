@@ -1,12 +1,14 @@
-//-| File path: app/chat/(components)/ChatInput.hooks.ts
+//-| File path: app/chat/(components)/ChatInput.hooks.tsx
 "use client";
 
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { Conversation } from "@/app/(types)/chat.types";
 import { sendMessageAction } from "@/app/chat/(components)/ChatInput.actions";
+import { Toast } from "@/components/shared/Toast";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { createId } from "@paralleldrive/cuid2";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -19,7 +21,6 @@ export const useSendMessage = () => {
     setCurrentConversation,
   } = useChatStore();
   const { user } = useAuthStore();
-  const queryClient = useQueryClient();
   const [originalConversations, setOriginalConversations] = useState<
     Conversation[]
   >([]);
@@ -146,11 +147,25 @@ export const useSendMessage = () => {
       setConversations(conversations);
       if (conversations.length) setCurrentConversation(conversations[0]);
 
-      toast.success("Message sent successfully");
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Message sent successfully"
+          data-cy={DataCyAttributes.SUCCESS_MESSAGE_SEND}
+        />
+      ));
     },
     onError: (error) => {
       setConversations(originalConversations);
-      toast.error(error.message || "Failed to send message");
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to send message"}
+          data-cy={DataCyAttributes.ERROR_MESSAGE_SEND}
+        />
+      ));
     },
   });
 };

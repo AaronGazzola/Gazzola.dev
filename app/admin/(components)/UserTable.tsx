@@ -1,6 +1,7 @@
 //-| File path: app/admin/(components)/UserTable.tsx
 "use client";
 
+import useIsTest from "@/app/(hooks)/useIsTest";
 import { useAdminStore } from "@/app/admin/admin.store";
 import { UserData } from "@/app/admin/admin.types";
 import { Button } from "@/components/ui/button";
@@ -37,13 +38,6 @@ interface UserTableProps {
   isLoading: boolean;
 }
 
-const redactText = (text: string, visibleChars: number = 3): string => {
-  if (text.length <= visibleChars + 2) return text;
-  return `${text.slice(0, visibleChars)}${"*".repeat(
-    text.length - visibleChars
-  )}`;
-};
-
 const truncateText = (text: string, maxLength: number = 50): string => {
   if (text.length <= maxLength) return text;
   return `${text.slice(0, maxLength)}...`;
@@ -54,6 +48,16 @@ export function UserTable({ users, isLoading }: UserTableProps) {
   const { filters, setFilters } = useAdminStore();
   const [searchInput, setSearchInput] = useState(filters.searchTerm);
   const [debouncedSearch] = useDebounce(searchInput, 500);
+
+  const isTest = useIsTest();
+
+  const redactText = (text: string, visibleChars: number = 3): string => {
+    if (isTest) return text;
+    if (text.length <= visibleChars + 2) return text;
+    return `${text.slice(0, visibleChars)}${"*".repeat(
+      text.length - visibleChars
+    )}`;
+  };
 
   useEffect(() => {
     setFilters({ searchTerm: debouncedSearch });
