@@ -10,7 +10,6 @@ import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Send } from "lucide-react";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -32,44 +31,6 @@ export default function ChatInput() {
       message: "",
     },
   });
-
-  useEffect(() => {
-    if (sendMessageMutation.isSuccess) {
-      const successElement = document.querySelector(
-        `[data-cy="${DataCyAttributes.SUCCESS_MESSAGE_SEND}"]`
-      );
-      if (successElement) {
-        successElement.remove();
-      }
-
-      const successDiv = document.createElement("div");
-      successDiv.setAttribute("data-cy", DataCyAttributes.SUCCESS_MESSAGE_SEND);
-      successDiv.style.display = "none";
-      document.body.appendChild(successDiv);
-
-      setTimeout(() => {
-        successDiv.remove();
-      }, 100);
-    }
-
-    if (sendMessageMutation.isError) {
-      const errorElement = document.querySelector(
-        `[data-cy="${DataCyAttributes.ERROR_MESSAGE_SEND}"]`
-      );
-      if (errorElement) {
-        errorElement.remove();
-      }
-
-      const errorDiv = document.createElement("div");
-      errorDiv.setAttribute("data-cy", DataCyAttributes.ERROR_MESSAGE_SEND);
-      errorDiv.style.display = "none";
-      document.body.appendChild(errorDiv);
-
-      setTimeout(() => {
-        errorDiv.remove();
-      }, 100);
-    }
-  }, [sendMessageMutation.isSuccess, sendMessageMutation.isError]);
 
   const handleSendMessage = () => {
     const messageContent = form.getValues("message");

@@ -146,7 +146,7 @@ export const useSendMessage = () => {
     onSuccess: (conversations) => {
       setConversations(conversations);
       if (conversations.length) setCurrentConversation(conversations[0]);
-
+      console.log("sent");
       toast.custom(() => (
         <Toast
           variant="success"
