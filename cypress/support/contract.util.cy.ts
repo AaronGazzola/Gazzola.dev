@@ -22,16 +22,16 @@ export function createContract(contractData: ContractData): void {
     .type(contractData.description);
 
   cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_START_DATE_INPUT}"]`)
-    .clear()
-    .type(contractData.startDate);
+    .invoke('val', contractData.startDate)
+    .trigger('change');
 
   cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_TARGET_DATE_INPUT}"]`)
-    .clear()
-    .type(contractData.targetDate);
+    .invoke('val', contractData.targetDate)
+    .trigger('change');
 
   cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_DUE_DATE_INPUT}"]`)
-    .clear()
-    .type(contractData.dueDate);
+    .invoke('val', contractData.dueDate)
+    .trigger('change');
 
   cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_ADD_TASK_BUTTON}"]`)
     .click();

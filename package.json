@@ -52,6 +52,7 @@
     "next": "^15.4.0-canary.87",
     "openai": "^4.20.1",
     "react": "^19.1.0",
+    "react-day-picker": "^9.8.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.59.0",
     "react-just-parallax": "^3.1.16",

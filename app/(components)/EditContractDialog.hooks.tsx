@@ -6,6 +6,7 @@ import {
   getContractsAction,
   updateContractAction,
 } from "@/app/(components)/EditContractDialog.actions";
+import useIsTest from "@/app/(hooks)/useIsTest";
 import useParamString from "@/app/(hooks)/useParamString";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
@@ -136,16 +137,27 @@ export const useUpdateContract = () => {
 };
 
 export const useContractPayment = () => {
+  const isTest = useIsTest();
+  const { setContracts, contracts, setContract, contract } = useContractStore();
+
   return useMutation({
     mutationFn: async (contractId: string) => {
       const { data, error } = await contractPaymentAction(contractId);
       if (error) throw new Error(error);
       return data;
     },
-    onSuccess: (data) => {
-      if (data?.url) {
+    onSuccess: (data, contractId) => {
+      if (isTest) {
+        const updatedContracts = contracts.map((contract) =>
+          contract.id === contractId ? { ...contract, isPaid: true } : contract
+        );
+        setContracts(updatedContracts);
+        if (contract) setContract({ ...contract, isPaid: true });
+        return;
+      } else if (data?.url) {
         window.location.href = data.url;
       }
+
       toast.custom(() => (
         <Toast
           variant="success"

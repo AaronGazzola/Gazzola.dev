@@ -7,6 +7,10 @@ describe("Contract Management - Auth User", () => {
   it("user should create and manage contract through the full workflow", () => {
     cy.visit("/");
     signInUser();
+    cy.wait(3000);
+    cy.get(`[data-cy="${DataCyAttributes.CONTRACT_ITEM}"]`, {
+      timeout: 60000,
+    }).should("not.exist");
 
     cy.get(`[data-cy="${DataCyAttributes.CREATE_CONTRACT_BUTTON}"]`).click();
 
@@ -25,10 +29,8 @@ describe("Contract Management - Auth User", () => {
       timeout: 30000,
     }).should("exist");
 
-    cy.wait(10000);
-
     cy.get(`[data-cy="${DataCyAttributes.CONTRACT_UNAPPROVED_BADGE}"]`, {
-      timeout: 30000,
+      timeout: 60000,
     })
       .should("exist")
       .parents(`[data-cy="${DataCyAttributes.CONTRACT_ITEM}"]`)

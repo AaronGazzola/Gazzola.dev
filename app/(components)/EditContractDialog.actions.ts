@@ -394,6 +394,15 @@ export const contractPaymentAction = async (
       return getActionResponse({ error: "Contract is already paid" });
     }
 
+    if (process.env.APP_ENV === "test") {
+      await prisma.contract.update({
+        where: { id: contractId },
+        data: { isPaid: true },
+      });
+
+      return getActionResponse({ data: { url: null } });
+    }
+
     if (!stripe) {
       return getActionResponse({ error: "Payment system is not available" });
     }

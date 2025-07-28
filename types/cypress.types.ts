@@ -44,6 +44,7 @@ export enum DataCyAttributes {
   CREATE_CONTRACT_BUTTON = "create-contract-button",
   CONTRACT_ITEM = "contract-item",
   CONTRACT_UNAPPROVED_BADGE = "contract-unapproved-badge",
+  CONTRACT_PAID_BADGE = "contract-paid-badge",
   PROFILE_MENU_BUTTON = "profile-menu-button",
   PROFILE_BUTTON_COLLAPSED = "profile-button-collapsed",
   SIGN_OUT_BUTTON_COLLAPSED = "sign-out-button-collapsed",
@@ -127,4 +128,5 @@ export enum DataCyAttributes {
   ERROR_CONTRACT_PAYMENT = "error-contract-payment",
   SUCCESS_ACTIVE_CONTRACT_UPDATE = "success-active-contract-update",
   ERROR_ACTIVE_CONTRACT_UPDATE = "error-active-contract-update",
+  DELETE_CONTRACTS = "delete-contracts",
 }

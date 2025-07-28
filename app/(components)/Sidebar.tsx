@@ -4,7 +4,7 @@ import AuthDialog from "@/app/(components)/AuthDialog";
 import ContractDialog from "@/app/(components)/ContractDialog";
 import ProfileDialog from "@/app/(components)/ProfileDialog";
 import { useResetProfile } from "@/app/(components)/ProfileDialog.hooks";
-import { useSignOutMutation } from "@/app/(components)/Sidebar.hooks";
+import { useSignOutMutation, useDeleteUserContracts } from "@/app/(components)/Sidebar.hooks";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
 import { useGetAppData } from "@/app/(hooks)/app.hooks";
 import useIsTest from "@/app/(hooks)/useIsTest";
@@ -50,6 +50,8 @@ import {
   Plus,
   RotateCcw,
   User,
+  Trash2,
+  DollarSign,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -110,6 +112,7 @@ const Sidebar = () => {
     targetUser,
   } = useChatStore();
   const signOutMutation = useSignOutMutation();
+  const deleteUserContractsMutation = useDeleteUserContracts();
   const isAuthenticated = !!user;
   const { open, isMobile, toggleSidebar } = useSidebar();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
@@ -139,11 +142,12 @@ const Sidebar = () => {
       .length;
   };
 
-  const isContractUnapproved = (contractItem: Contract) => {
+  const isContractApproved = (contractItem: Contract) => {
+    if (contractItem.isPaid) return true;
     if (isAdmin) {
-      return !contractItem.adminApproved;
+      return contractItem.adminApproved;
     } else {
-      return !contractItem.userApproved;
+      return contractItem.userApproved;
     }
   };
 
@@ -180,6 +184,12 @@ const Sidebar = () => {
   const handleConversationClick = (conversation: Conversation) => {
     setCurrentConversation(conversation);
     markMessagesAsRead(conversation.id);
+  };
+
+  const handleDeleteContracts = () => {
+    if (targetUser?.id) {
+      deleteUserContractsMutation.mutate(targetUser.id);
+    }
   };
 
   return (
@@ -347,16 +357,30 @@ const Sidebar = () => {
                           Contracts
                         </span>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
-                        onClick={handleOpenContractModal}
-                        data-cy={DataCyAttributes.CREATE_CONTRACT_BUTTON}
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span className="sr-only">Create contract</span>
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        {isTest && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-100 hover:text-red-400 hover:bg-gray-800"
+                            onClick={handleDeleteContracts}
+                            data-cy={DataCyAttributes.DELETE_CONTRACTS}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Delete contracts</span>
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
+                          onClick={handleOpenContractModal}
+                          data-cy={DataCyAttributes.CREATE_CONTRACT_BUTTON}
+                        >
+                          <Plus className="h-4 w-4" />
+                          <span className="sr-only">Create contract</span>
+                        </Button>
+                      </div>
                     </div>
                   </SidebarGroupLabel>
                   <SidebarGroupContent className="flex-grow overflow-hidden">
@@ -383,8 +407,7 @@ const Sidebar = () => {
                           contracts?.map((contractItem) => {
                             const isCurrentContract =
                               contract?.id === contractItem.id;
-                            const isUnapproved =
-                              isContractUnapproved(contractItem);
+                            const isApproved = isContractApproved(contractItem);
                             const otherUserName =
                               isAdmin && targetUser
                                 ? targetUser.name
@@ -396,13 +419,52 @@ const Sidebar = () => {
                                     handleContractClick(contractItem)
                                   }
                                   className={cn(
-                                    "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50",
+                                    "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50 relative",
                                     isCurrentContract
                                       ? "border-white"
                                       : "border-gray-700/50"
                                   )}
                                   data-cy={DataCyAttributes.CONTRACT_ITEM}
                                 >
+                                  {contractItem.isPaid && (
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Badge
+                                          className="absolute bottom-1 left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-blue-500 hover:bg-blue-500 cursor-help"
+                                          data-cy={
+                                            DataCyAttributes.CONTRACT_PAID_BADGE
+                                          }
+                                        >
+                                          <DollarSign className="h-3 w-3" />
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Contract has been paid</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  )}
+                                  {!isApproved && (
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Badge
+                                          variant="destructive"
+                                          className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500 cursor-help"
+                                          data-cy={
+                                            DataCyAttributes.CONTRACT_UNAPPROVED_BADGE
+                                          }
+                                        >
+                                          !
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>
+                                          {otherUserName} has made changes to
+                                          the contract and approval or revisions
+                                          are required
+                                        </p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  )}
                                   <div className="text-sm font-medium text-gray-100 truncate">
                                     {contractItem.title}
                                   </div>
@@ -414,28 +476,6 @@ const Sidebar = () => {
                                     ) || "Not started"}
                                   </div>
                                 </button>
-                                {isUnapproved && (
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Badge
-                                        variant="destructive"
-                                        className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500 cursor-help"
-                                        data-cy={
-                                          DataCyAttributes.CONTRACT_UNAPPROVED_BADGE
-                                        }
-                                      >
-                                        !
-                                      </Badge>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>
-                                        {otherUserName} has made changes to the
-                                        contract and approval or revisions are
-                                        required
-                                      </p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                )}
                               </div>
                             );
                           })
