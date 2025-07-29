@@ -153,7 +153,6 @@ export const useContractPayment = () => {
         );
         setContracts(updatedContracts);
         if (contract) setContract({ ...contract, isPaid: true });
-        return;
       } else if (data?.url) {
         window.location.href = data.url;
       }

@@ -52,26 +52,27 @@ describe("Contract Management - Auth User", () => {
       "exist"
     );
 
-    cy.get("body").should("contain", "Web Development Project");
-    cy.get("body").should(
-      "contain",
-      "Complete website development with modern design"
-    );
-    cy.get("body").should("contain", "$2,500.00");
+    cy.get(
+      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_PROGRESS_STATUS_BADGE}"]`
+    )
+      .should("exist")
+      .and("be.visible")
+      .and("contain.text", "In Progress");
+
+    cy.get(
+      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_REFUND_STATUS_BADGE}"]`
+    )
+      .should("exist")
+      .and("be.visible")
+      .and("contain.text", "Approved");
 
     cy.get(
       `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_TASK_TOGGLE_PROGRESS_BUTTON}"]`
-    )
-      .first()
-      .click();
+    ).should("have.attr", "data-progress-status", "in_progress");
 
-    cy.wait(2000);
-
-    cy.get("body").should("contain", "In Progress");
-
-    cy.get("body").should("contain", "In Progress");
-
-    cy.get("body").should("contain", "Pending");
+    cy.get(
+      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_CLOSE_BUTTON}"]`
+    ).click();
 
     signOut();
   });

@@ -1,6 +1,6 @@
 //-| File path: cypress/e2e/contract-admin.cy.ts
 import { DataCyAttributes } from "../../types/cypress.types";
-import { adminSignOut, signInAdmin } from "../support/auth.util.cy";
+import { signInAdmin, signOut } from "../support/auth.util.cy";
 import { clickUserInTable } from "../support/chat.util.cy";
 
 describe("Contract Management - Admin User", () => {
@@ -69,13 +69,11 @@ describe("Contract Management - Admin User", () => {
 
     cy.get(
       `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_PROGRESS_STATUS_SELECT}"]`
-    ).click();
-    cy.contains("In Progress").click();
+    ).select("in_progress");
 
     cy.get(
       `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_REFUND_STATUS_SELECT}"]`
-    ).click();
-    cy.contains("Approved").click();
+    ).select("approved");
 
     cy.get(
       `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_UPDATE_BUTTON}"]`
@@ -85,6 +83,6 @@ describe("Contract Management - Admin User", () => {
       timeout: 30000,
     }).should("exist");
 
-    adminSignOut();
+    signOut();
   });
 });
