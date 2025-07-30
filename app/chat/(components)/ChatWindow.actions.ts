@@ -3,19 +3,14 @@
 
 import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Conversation } from "@/app/(types)/chat.types";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
-export const getConversationsAction = async (
+export const getConversationsAction = withAuthenticatedAction(async (
+  currentUser,
   targetUserId?: string
 ): Promise<ActionResponse<Conversation[]>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
-    }
-
     const data = await prisma.conversation.findMany({
       where: {
         participants: {
@@ -38,4 +33,4 @@ export const getConversationsAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});

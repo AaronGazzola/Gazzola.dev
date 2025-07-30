@@ -3,19 +3,15 @@
 
 import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { GetUsersParams, UserData } from "@/app/admin/admin.types";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
-export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
+export const isAdminAction = withAuthenticatedAction(async (
+  currentUser
+): Promise<ActionResponse<boolean>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-
-    if (!currentUser) {
-      return getActionResponse({ data: false, error: "Unauthorized" });
-    }
-
     const user = await prisma.user.findUnique({
-      where: { id: currentUser?.id },
+      where: { id: currentUser.id },
       select: { role: true },
     });
 
@@ -27,15 +23,14 @@ export const isAdminAction = async (): Promise<ActionResponse<boolean>> => {
   } catch (error) {
     return getActionResponse({ data: false, error });
   }
-};
+});
 
-export const getUsersAction = async (
+export const getUsersAction = withAuthenticatedAction(async (
+  currentUser,
   params: GetUsersParams = {}
 ): Promise<ActionResponse<UserData[]>> => {
   try {
-    const adminCheck = await isAdminAction();
-
-    if (adminCheck.error || !adminCheck.data) {
+    if (currentUser.role !== "admin") {
       return getActionResponse({ error: "Unauthorized" });
     }
 
@@ -113,8 +108,8 @@ export const getUsersAction = async (
 
       return {
         id: user.id,
-        name: user.name,
-        email: user.email,
+        name: user.name || "",
+        email: user.email || "",
         role: user.role,
         createdAt: user.createdAt,
         lastMessage: lastMessage?.content || null,
@@ -130,4 +125,4 @@ export const getUsersAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});

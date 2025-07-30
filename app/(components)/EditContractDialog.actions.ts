@@ -4,7 +4,7 @@
 import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Contract, ContractCreateInput } from "@/app/(types)/contract.types";
 import { isAdminAction } from "@/app/admin/admin.actions";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
 import Stripe from "stripe";
@@ -42,16 +42,11 @@ try {
   throw error;
 }
 
-export const getContractsAction = async (
+export const getContractsAction = withAuthenticatedAction(async (
+  user,
   userId?: string
 ): Promise<ActionResponse<Contract[]>> => {
   try {
-    const user = await getAuthenticatedUser();
-
-    if (!user) {
-      return getActionResponse({ error: "User not authenticated" });
-    }
-
     const { data: isAdmin } = await isAdminAction();
 
     let whereClause = {};
@@ -94,19 +89,14 @@ export const getContractsAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
 
-export const addContractAction = async (
+export const addContractAction = withAuthenticatedAction(async (
+  user,
   contractData: ContractCreateInput,
   userId?: string
 ): Promise<ActionResponse<Contract[]>> => {
   try {
-    const user = await getAuthenticatedUser();
-
-    if (!user) {
-      return getActionResponse({ error: "User not authenticated" });
-    }
-
     const { data: isAdmin } = await isAdminAction();
     const targetUserId = userId && isAdmin ? userId : user.id;
 
@@ -156,19 +146,14 @@ export const addContractAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
 
-export const updateContractAction = async (
+export const updateContractAction = withAuthenticatedAction(async (
+  user,
   updates: Partial<Contract>,
   userId?: string
 ): Promise<ActionResponse<Contract[]>> => {
   try {
-    const user = await getAuthenticatedUser();
-
-    if (!user) {
-      return getActionResponse({ error: "User not authenticated" });
-    }
-
     const { data: isAdmin } = await isAdminAction();
 
     const existingContract = await prisma.contract.findUnique({
@@ -357,19 +342,14 @@ export const updateContractAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
 
-export const contractPaymentAction = async (
+export const contractPaymentAction = withAuthenticatedAction(async (
+  user,
   contractId: string,
   userId?: string
 ): Promise<ActionResponse<{ url: string | null }>> => {
   try {
-    const user = await getAuthenticatedUser();
-
-    if (!user) {
-      return getActionResponse({ error: "User not authenticated" });
-    }
-
     const { data: isAdmin } = await isAdminAction();
 
     const existingContract = await prisma.contract.findUnique({
@@ -469,4 +449,4 @@ export const contractPaymentAction = async (
           : "An unexpected error occurred during payment setup",
     });
   }
-};
+});

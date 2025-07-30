@@ -3,7 +3,7 @@
 
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
 import { User } from "@/generated/prisma";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";
@@ -65,37 +65,46 @@ export async function signUpAction(
   }
 }
 
-export async function deleteAccountAction(
+export const deleteAccountAction = async (
   email?: string
-): Promise<ActionResponse<boolean>> {
+): Promise<ActionResponse<boolean>> => {
   try {
-    let userToDelete;
-
     if (email) {
-      userToDelete = await prisma.user.findFirst({
+      const userToDelete = await prisma.user.findFirst({
         where: { email },
       });
 
       if (!userToDelete) {
         return getActionResponse({ data: true });
       }
-    } else {
-      const currentUser = await getAuthenticatedUser();
-      if (!currentUser) {
-        return getActionResponse({ error: "Unauthorized" });
-      }
-      userToDelete = currentUser;
-    }
 
-    await prisma.user.delete({
-      where: { id: userToDelete.id },
-    });
+      await prisma.user.delete({
+        where: { id: userToDelete.id },   
+      });
+    } else {
+      // For current user deletion, we need authentication
+      return await deleteCurrentUserAction();
+    }
 
     return getActionResponse({ data: true });
   } catch (error) {
     return getActionResponse({ data: true });
   }
-}
+};
+
+export const deleteCurrentUserAction = withAuthenticatedAction(async (
+  currentUser
+): Promise<ActionResponse<boolean>> => {
+  try {
+    await prisma.user.delete({
+      where: { id: currentUser.id },
+    });
+
+    return getActionResponse({ data: true });
+  } catch (error) {
+    return getActionResponse({ data: true });
+  }  
+});
 
 async function getAuthenticatedUser() {
   const session = await auth.api.getSession({

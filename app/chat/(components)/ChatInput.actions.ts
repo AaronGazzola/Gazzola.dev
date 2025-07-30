@@ -3,20 +3,18 @@
 
 import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Conversation } from "@/app/(types)/chat.types";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
-export const sendMessageAction = async (params: {
-  messageContent: string;
-  targetUserId?: string;
-  isNewConversation: boolean;
-}): Promise<ActionResponse<Conversation[]>> => {
+export const sendMessageAction = withAuthenticatedAction(async (
+  currentUser,
+  params: {
+    messageContent: string;
+    targetUserId?: string;
+    isNewConversation: boolean;
+  }
+): Promise<ActionResponse<Conversation[]>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
-    }
 
     const isAdminAction = currentUser.role === "admin";
 
@@ -121,4 +119,4 @@ export const sendMessageAction = async (params: {
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});

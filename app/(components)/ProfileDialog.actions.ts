@@ -3,7 +3,7 @@
 
 import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Profile } from "@/app/(types)/auth.types";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
 interface ProfileUpdateData {
@@ -14,14 +14,11 @@ interface ProfileUpdateData {
   company: string;
 }
 
-export const updateProfileAction = async (
+export const updateProfileAction = withAuthenticatedAction(async (
+  currentUser,
   profileData: ProfileUpdateData
 ): Promise<ActionResponse<Profile>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
-    }
 
     const { id, ...updateData } = profileData;
 
@@ -56,16 +53,12 @@ export const updateProfileAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
 
-export const resetProfileAction = async (): Promise<
-  ActionResponse<Profile | null>
-> => {
+export const resetProfileAction = withAuthenticatedAction(async (
+  currentUser
+): Promise<ActionResponse<Profile | null>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
-    }
 
     const existingProfile = await prisma.profile.findFirst({
       where: { userId: currentUser.id },
@@ -97,16 +90,12 @@ export const resetProfileAction = async (): Promise<
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
 
-export const deleteAccountAction = async (): Promise<
-  ActionResponse<boolean>
-> => {
+export const deleteAccountAction = withAuthenticatedAction(async (
+  currentUser
+): Promise<ActionResponse<boolean>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
-    }
 
     await prisma.user.update({
       where: { id: currentUser.id },
@@ -134,4 +123,4 @@ export const deleteAccountAction = async (): Promise<
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});

@@ -2,7 +2,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 
@@ -13,15 +13,11 @@ export async function getAuthenticatedUser() {
   return session?.user;
 }
 
-export const deleteUserContractsAction = async (
+export const deleteUserContractsAction = withAuthenticatedAction(async (
+  currentUser,
   userId: string
 ): Promise<ActionResponse<{ deletedCount: number }>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
-    }
-
     if (currentUser.role !== "admin") {
       return getActionResponse({ error: "Admin access required" });
     }
@@ -51,4 +47,4 @@ export const deleteUserContractsAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});

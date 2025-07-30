@@ -7,7 +7,7 @@ import { Contract } from "@/app/(types)/contract.types";
 import { AppData } from "@/app/(types)/ui.types";
 import { UserData } from "@/app/admin/admin.types";
 import { User as PrismaUser, User } from "@/generated/prisma";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";
@@ -121,8 +121,8 @@ async function getAllUsers(isAdmin: boolean): Promise<UserData[]> {
 
       return {
         id: user.id,
-        name: user.name,
-        email: user.email,
+        name: user.name || "",
+        email: user.email || "",
         role: user.role,
         createdAt: user.createdAt,
         lastMessage: lastMessage?.content || null,
@@ -216,15 +216,14 @@ async function adminGuard(): Promise<boolean> {
   return user?.role === "admin";
 }
 
-export const getTargetUserAction = async (
+export const getTargetUserAction = withAuthenticatedAction(async (
+  currentUser: User,
   userId: string
 ): Promise<
   ActionResponse<{ user: PrismaUser; profile: Profile | null } | null>
 > => {
   try {
-    const isAdmin = await adminGuard();
-
-    if (!isAdmin) {
+    if (currentUser.role !== "admin") {
       return getActionResponse({
         error: "Unauthorized: Admin access required",
       });
@@ -250,16 +249,13 @@ export const getTargetUserAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
 
-export const getAppDataAction = async (
+export const getAppDataAction = withAuthenticatedAction(async (
+  user: User,
   userId?: string
 ): Promise<ActionResponse<AppData | null>> => {
   try {
-    const user = await getAuthenticatedUser();
-
-    if (!user) return getActionResponse({ data: null });
-
     const isAdmin = user.role === "admin";
     const isVerified = await checkUserVerification(user.id);
     const profile = await getUserProfile(user.id);
@@ -297,4 +293,4 @@ export const getAppDataAction = async (
       error,
     });
   }
-};
+});

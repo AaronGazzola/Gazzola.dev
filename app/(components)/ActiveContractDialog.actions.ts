@@ -5,20 +5,15 @@ import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { getContractsAction } from "@/app/(components)/EditContractDialog.actions";
 import { Contract } from "@/app/(types)/contract.types";
 import { isAdminAction } from "@/app/admin/admin.actions";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
-export const updateActiveContractAction = async (
+export const updateActiveContractAction = withAuthenticatedAction(async (
+  user,
   updates: Partial<Contract>,
   userId?: string
 ): Promise<ActionResponse<Contract[]>> => {
   try {
-    const user = await getAuthenticatedUser();
-
-    if (!user) {
-      return getActionResponse({ error: "User not authenticated" });
-    }
-
     const { data: isAdmin } = await isAdminAction();
 
     if (!isAdmin) {
@@ -85,4 +80,4 @@ export const updateActiveContractAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});

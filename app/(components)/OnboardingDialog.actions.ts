@@ -3,7 +3,7 @@
 
 import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Profile as PrismaProfile } from "@/generated/prisma";
-import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
 import { prisma } from "@/lib/prisma-client";
 
 interface OnboardingData {
@@ -13,14 +13,11 @@ interface OnboardingData {
   company: string;
 }
 
-export const saveOnboardingDataAction = async (
+export const saveOnboardingDataAction = withAuthenticatedAction(async (
+  currentUser,
   onboardingData: OnboardingData
 ): Promise<ActionResponse<PrismaProfile>> => {
   try {
-    const currentUser = await getAuthenticatedUser();
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
-    }
 
     const existingProfile = await prisma.profile.findUnique({
       where: { userId: currentUser.id },
@@ -58,19 +55,14 @@ export const saveOnboardingDataAction = async (
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
 
-export const verifyAccountAction = async (): Promise<
-  ActionResponse<boolean>
-> => {
+export const verifyAccountAction = withAuthenticatedAction(async (
+  currentUser
+): Promise<ActionResponse<boolean>> => {
   try {
     if (process.env.APP_ENV !== "test") {
       throw new Error("This action can only be used in test environment");
-    }
-
-    const currentUser = await getAuthenticatedUser();
-    if (!currentUser) {
-      return getActionResponse({ error: "Unauthorized" });
     }
 
     await prisma.user.update({
@@ -82,4 +74,4 @@ export const verifyAccountAction = async (): Promise<
   } catch (error) {
     return getActionResponse({ error });
   }
-};
+});
