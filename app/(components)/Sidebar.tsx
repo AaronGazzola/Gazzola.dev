@@ -364,7 +364,7 @@ const Sidebar = () => {
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-gray-100" />
-                        <span className="text-sm font-medium text-gray-100">
+                        <span className="text-sm font-medium text-gray-100" data-cy={DataCyAttributes.CONTRACTS_TITLE}>
                           Contracts
                         </span>
                       </div>
@@ -411,7 +411,7 @@ const Sidebar = () => {
                             Failed to load contracts
                           </div>
                         ) : contracts?.length === 0 ? (
-                          <p className="text-xs text-gray-200 font-medium italic p-3">
+                          <p className="text-xs text-gray-200 font-medium italic p-3" data-cy={DataCyAttributes.NO_CONTRACTS_YET}>
                             No contracts yet
                           </p>
                         ) : (

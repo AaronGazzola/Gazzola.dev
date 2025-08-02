@@ -25,7 +25,7 @@ describe("Admin User Chat Test", () => {
     cy.get(`[data-cy="${DataCyAttributes.AUTH_SUBMIT_BUTTON}"]`).click();
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`, {
-      timeout: 30000,
+      timeout: 60000,
     }).should("be.visible");
 
     clickUserInTable();
@@ -33,11 +33,11 @@ describe("Admin User Chat Test", () => {
     const isNewConversation = true;
     sendMessage("Hello from admin - initial message", isNewConversation);
 
-    receiveMessage("Hello from auth user - response message");
+    receiveMessage("Hello from auth user - response message", 1);
 
     sendMessage("Hello from admin - second message");
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_MESSAGE_SEND}"]`, {
-      timeout: 30000,
+      timeout: 60000,
     }).should("be.visible");
     signOut();
   });

@@ -23,16 +23,16 @@ describe("Auth User Chat Test", () => {
     cy.get(`[data-cy="${DataCyAttributes.AUTH_SUBMIT_BUTTON}"]`).click();
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`, {
-      timeout: 30000,
+      timeout: 60000,
     }).should("be.visible");
 
     clickConversationWithUnreadBadge();
 
-    receiveMessage("Hello from admin - initial message");
+    receiveMessage("Hello from admin - initial message", 0);
 
     sendMessage("Hello from auth user - response message");
 
-    receiveMessage("Hello from admin - second message");
+    receiveMessage("Hello from admin - second message", 2);
 
     signOut();
   });

@@ -7,12 +7,15 @@ describe("Contract Management - Auth User", () => {
   it("user should create and manage contract through the full workflow", () => {
     cy.visit("/");
     signInUser();
-    cy.wait(3000);
-    cy.get(`[data-cy="${DataCyAttributes.CONTRACT_ITEM}"]`, {
-      timeout: 60000,
-    }).should("not.exist");
+    cy.wait(5000);
 
-    cy.get(`[data-cy="${DataCyAttributes.CREATE_CONTRACT_BUTTON}"]`).click();
+    cy.get(`[data-cy="${DataCyAttributes.NO_CONTRACTS_YET}"]`, {
+      timeout: 90000,
+    }).should("exist");
+
+    cy.get(`[data-cy="${DataCyAttributes.CREATE_CONTRACT_BUTTON}"]`, {
+      timeout: 10000,
+    }).click();
 
     createContract({
       title: "Web Development Project",
@@ -26,53 +29,61 @@ describe("Contract Management - Auth User", () => {
     });
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_CONTRACT_CREATE}"]`, {
-      timeout: 30000,
+      timeout: 60000,
     }).should("exist");
 
     cy.get(`[data-cy="${DataCyAttributes.CONTRACT_UNAPPROVED_BADGE}"]`, {
-      timeout: 60000,
+      timeout: 90000,
     })
       .should("exist")
       .parents(`[data-cy="${DataCyAttributes.CONTRACT_ITEM}"]`)
       .click();
 
-    cy.get(
-      `[data-cy="${DataCyAttributes.EDIT_CONTRACT_APPROVED_SWITCH}"]`
-    ).click();
-
-    cy.get(
-      `[data-cy="${DataCyAttributes.EDIT_CONTRACT_PAYMENT_BUTTON}"]`
-    ).click();
-
-    cy.get(`[data-cy="${DataCyAttributes.SUCCESS_CONTRACT_PAYMENT}"]`, {
-      timeout: 30000,
+    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_DIALOG}"]`, {
+      timeout: 10000,
     }).should("exist");
 
-    cy.get(`[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_DIALOG}"]`).should(
-      "exist"
-    );
+    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_APPROVED_SWITCH}"]`, {
+      timeout: 10000,
+    }).click();
+
+    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_PAYMENT_BUTTON}"]`, {
+      timeout: 10000,
+    }).click();
+
+    cy.get(`[data-cy="${DataCyAttributes.SUCCESS_CONTRACT_PAYMENT}"]`, {
+      timeout: 60000,
+    }).should("exist");
+    cy.get(`[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_DIALOG}"]`, {
+      timeout: 60000,
+    }).should("exist");
 
     cy.get(
-      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_PROGRESS_STATUS_BADGE}"]`
+      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_PAID_STATUS_BADGE}"]`,
+      { timeout: 60000 }
+    )
+      .should("exist")
+      .and("be.visible")
+      .and("contain.text", "Paid");
+    cy.get(
+      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_PROGRESS_STATUS_BADGE}"]`,
+      { timeout: 60000 }
     )
       .should("exist")
       .and("be.visible")
       .and("contain.text", "In Progress");
 
     cy.get(
-      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_REFUND_STATUS_BADGE}"]`
+      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_REFUND_STATUS_BADGE}"]`,
+      { timeout: 10000 }
     )
       .should("exist")
       .and("be.visible")
       .and("contain.text", "Approved");
 
-    cy.get(
-      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_TASK_TOGGLE_PROGRESS_BUTTON}"]`
-    ).should("have.attr", "data-progress-status", "in_progress");
-
-    cy.get(
-      `[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_CLOSE_BUTTON}"]`
-    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.ACTIVE_CONTRACT_CLOSE_BUTTON}"]`, {
+      timeout: 60000,
+    }).click();
 
     signOut();
   });

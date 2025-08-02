@@ -133,4 +133,8 @@ export enum DataCyAttributes {
   SUCCESS_ACTIVE_CONTRACT_UPDATE = "success-active-contract-update",
   ERROR_ACTIVE_CONTRACT_UPDATE = "error-active-contract-update",
   DELETE_CONTRACTS = "delete-contracts",
+  NO_CONTRACTS_YET = "no-contracts-yet",
+  SUCCESS_DELETE_CONTRACTS = "success-delete-contracts",
+  ERROR_DELETE_CONTRACTS = "error-delete-contracts",
+  CONTRACTS_TITLE = "contracts-title",
 }

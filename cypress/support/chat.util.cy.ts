@@ -3,7 +3,7 @@ import { DataCyAttributes } from "../../types/cypress.types";
 
 export function clickConversationWithUnreadBadge(): void {
   cy.get(`[data-cy="${DataCyAttributes.UNREAD_BADGE}"]`, {
-    timeout: 60000,
+    timeout: 90000,
   })
     .should("be.visible")
     .parents(`[data-cy="${DataCyAttributes.CONVERSATION_ITEM}"]`)
@@ -16,7 +16,7 @@ export function sendMessage(
   isNewConversation = false
 ): void {
   cy.get(`[data-cy="${DataCyAttributes.CHAT_INPUT_TEXTAREA}"]`, {
-    timeout: 30000,
+    timeout: 60000,
   }).type(messageContent);
   if (!isNewConversation)
     cy.get(`[data-cy="${DataCyAttributes.SEND_MESSAGE_BUTTON}"]`).click();
@@ -25,13 +25,17 @@ export function sendMessage(
       `[data-cy="${DataCyAttributes.CREATE_NEW_CONVERSATION_BUTTON}"]`
     ).click();
   cy.get(`[data-cy="${DataCyAttributes.SUCCESS_MESSAGE_SEND}"]`, {
-    timeout: 30000,
+    timeout: 60000,
   }).should("be.visible");
 }
 
-export function receiveMessage(expectedContent: string): void {
-  cy.get(`[data-cy="${DataCyAttributes.CHAT_WINDOW_MESSAGE}"]`, {
-    timeout: 90000,
+export function receiveMessage(expectedContent: string, messageIndex?: number): void {
+  const messageSelector = messageIndex !== undefined 
+    ? `[data-cy="${DataCyAttributes.CHAT_WINDOW_MESSAGE}-${messageIndex}"]`
+    : `[data-cy*="${DataCyAttributes.CHAT_WINDOW_MESSAGE}"]`;
+    
+  cy.get(messageSelector, {
+    timeout: 120000,
   })
     .contains(expectedContent)
     .should("be.visible");

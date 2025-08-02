@@ -84,11 +84,11 @@ export default function ChatWindow({ className }: ChatWindowProps) {
               No messages yet. Start the conversation!
             </div>
           ) : (
-            messages.map((msg: Message) => (
+            messages.map((msg: Message, index: number) => (
               <div
                 key={msg.id}
                 className="w-full py-3 pl-7"
-                data-cy={DataCyAttributes.CHAT_MESSAGE_ITEM}
+                data-cy={`${DataCyAttributes.CHAT_MESSAGE_ITEM}-${index}`}
               >
                 <div className="w-full">
                   <div className="flex items-center pl-1">
@@ -123,7 +123,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
                     "font-medium tracking-wider text-gray-300 pt-1 space-y-2 py-2 px-3 pb-3 whitespace-pre-wrap bg-black/40 rounded",
                     !isUser(msg.senderId) && "text-right"
                   )}
-                  data-cy={DataCyAttributes.CHAT_WINDOW_MESSAGE}
+                  data-cy={`${DataCyAttributes.CHAT_WINDOW_MESSAGE}-${index}`}
                 >
                   {msg.content}
                 </div>

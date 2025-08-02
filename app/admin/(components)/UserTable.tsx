@@ -179,7 +179,7 @@ export function UserTable() {
           </Button>
         );
       },
-      cell: ({ row }) => redactText(row.getValue("name") || "N/A"),
+      cell: ({ row }) => row.getValue("name") || "N/A",
     },
     {
       accessorKey: "email",

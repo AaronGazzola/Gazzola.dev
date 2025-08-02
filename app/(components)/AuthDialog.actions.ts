@@ -3,7 +3,11 @@
 
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
 import { User } from "@/generated/prisma";
-import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
+import {
+  ActionResponse,
+  getActionResponse,
+  withAuthenticatedAction,
+} from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma-client";
 import { headers } from "next/headers";
@@ -32,7 +36,7 @@ export async function signInAction(
       data: prismaUser,
     });
   } catch (error) {
-    return getActionResponse({ error: "Sign in failed" });
+    return getActionResponse({ error });
   }
 }
 
@@ -61,7 +65,7 @@ export async function signUpAction(
       data: prismaUser,
     });
   } catch (error) {
-    return getActionResponse({ error: "Sign up failed" });
+    return getActionResponse({ error });
   }
 }
 
@@ -79,7 +83,7 @@ export const deleteAccountAction = async (
       }
 
       await prisma.user.delete({
-        where: { id: userToDelete.id },   
+        where: { id: userToDelete.id },
       });
     } else {
       // For current user deletion, we need authentication
@@ -88,23 +92,23 @@ export const deleteAccountAction = async (
 
     return getActionResponse({ data: true });
   } catch (error) {
-    return getActionResponse({ data: true });
+    return getActionResponse({ error });
   }
 };
 
-export const deleteCurrentUserAction = withAuthenticatedAction(async (
-  currentUser
-): Promise<ActionResponse<boolean>> => {
-  try {
-    await prisma.user.delete({
-      where: { id: currentUser.id },
-    });
+export const deleteCurrentUserAction = withAuthenticatedAction(
+  async (currentUser): Promise<ActionResponse<boolean>> => {
+    try {
+      await prisma.user.delete({
+        where: { id: currentUser.id },
+      });
 
-    return getActionResponse({ data: true });
-  } catch (error) {
-    return getActionResponse({ data: true });
-  }  
-});
+      return getActionResponse({ data: true });
+    } catch (error) {
+      return getActionResponse({ data: true });
+    }
+  }
+);
 
 async function getAuthenticatedUser() {
   const session = await auth.api.getSession({

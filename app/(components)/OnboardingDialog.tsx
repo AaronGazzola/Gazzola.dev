@@ -2,9 +2,9 @@
 "use client";
 
 import { useSignOutMutation } from "@/app/(components)/Sidebar.hooks";
+import useIsTest from "@/app/(hooks)/useIsTest";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
-import useIsTest from "@/app/(hooks)/useIsTest";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,11 +19,11 @@ import { DataCyAttributes } from "@/types/cypress.types";
 import {
   ArrowLeft,
   ArrowRight,
+  CheckCircle,
   LogOut,
   Mail,
   RefreshCw,
   Save,
-  CheckCircle,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -55,7 +55,8 @@ const OnboardingDialog = () => {
   const { mutate: resendEmail, isPending: isResendingEmail } =
     useResendVerificationEmail();
   const { mutate: signOut, isPending: isSigningOut } = useSignOutMutation();
-  const { mutate: verifyAccount, isPending: isVerifyingAccount } = useVerifyAccount();
+  const { mutate: verifyAccount, isPending: isVerifyingAccount } =
+    useVerifyAccount();
 
   const totalSteps = 2;
   const progress = (currentStep / totalSteps) * 100;
@@ -255,7 +256,7 @@ const OnboardingDialog = () => {
 
   return (
     <Dialog
-      open={ui.onboardingModal.isOpen || !!showVerifyPage}
+      open={!!user && (ui.onboardingModal.isOpen || !!showVerifyPage)}
       onOpenChange={handleClose}
     >
       <DialogContent

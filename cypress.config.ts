@@ -1,18 +1,13 @@
 //-| File path: cypress.config.ts
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
-import { rlsTasks } from "./cypress/support/rls-tasks";
+
 dotenv.config({ path: ".env.local" });
 
 export default defineConfig({
   e2e: {
     baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    setupNodeEvents(on, config): void {
-      // Register RLS testing tasks
-      on('task', {
-        ...rlsTasks
-      });
-    },
+    setupNodeEvents(on, config): void {},
     env: {
       ADMIN_EMAIL: process.env.ADMIN_EMAIL,
       ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,

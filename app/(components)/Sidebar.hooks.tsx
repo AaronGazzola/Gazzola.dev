@@ -69,6 +69,7 @@ export function useDeleteUserContracts() {
           variant="success"
           title="Success"
           message="User contracts deleted successfully"
+          data-cy={DataCyAttributes.SUCCESS_DELETE_CONTRACTS}
         />
       ));
     },
@@ -78,6 +79,7 @@ export function useDeleteUserContracts() {
           variant="error"
           title="Error"
           message={error.message || "Failed to delete user contracts"}
+          data-cy={DataCyAttributes.ERROR_DELETE_CONTRACTS}
         />
       ));
     },

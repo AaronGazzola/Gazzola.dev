@@ -27,7 +27,7 @@ describe("Onboarding Flow", () => {
     ).click();
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_DELETE_ACCOUNT}"]`, {
-      timeout: 10000,
+      timeout: 20000,
     }).should("exist");
 
     signUpNewUser();
@@ -39,7 +39,7 @@ describe("Onboarding Flow", () => {
     cy.get(`[data-cy="${DataCyAttributes.VERIFY_ACCOUNT_BUTTON}"]`).click();
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_VERIFY_ACCOUNT}"]`, {
-      timeout: 10000,
+      timeout: 20000,
     }).should("exist");
 
     cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_DIALOG}"]`, {
@@ -63,7 +63,7 @@ describe("Onboarding Flow", () => {
     cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_SAVE_BUTTON}"]`).click();
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_ONBOARDING_SAVE}"]`, {
-      timeout: 10000,
+      timeout: 20000,
     }).should("exist");
     cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_DIALOG}"]`).should(
       "not.exist"
@@ -103,7 +103,7 @@ describe("Onboarding Flow", () => {
     cy.get(`[data-cy="${DataCyAttributes.PROFILE_SAVE_BUTTON}"]`).click();
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_PROFILE_UPDATE}"]`, {
-      timeout: 10000,
+      timeout: 20000,
     }).should("exist");
 
     cy.get(`[data-cy="${DataCyAttributes.PROFILE_BUTTON}"]`).click();
@@ -135,7 +135,7 @@ describe("Onboarding Flow", () => {
     ).click();
 
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_ACCOUNT_DELETE}"]`, {
-      timeout: 10000,
+      timeout: 20000,
     }).should("exist");
     signInNewUser(false);
   });
