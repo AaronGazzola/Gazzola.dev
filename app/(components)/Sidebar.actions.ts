@@ -18,6 +18,10 @@ export const deleteUserContractsAction = withAuthenticatedAction(async (
   userId: string
 ): Promise<ActionResponse<{ deletedCount: number }>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
+
     if (currentUser.role !== "admin") {
       return getActionResponse({ error: "Admin access required" });
     }

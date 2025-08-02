@@ -72,7 +72,7 @@ export async function checkRLSConfiguration(): Promise<{
       SELECT EXISTS (
         SELECT 1 FROM information_schema.routines 
         WHERE routine_schema = 'public' 
-        AND routine_name = 'current_user_id'
+        AND routine_name = 'get_current_user_id'
       ) as has_auth_function
     `) as [{ has_auth_function: boolean }];
 

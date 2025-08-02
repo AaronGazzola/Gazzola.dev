@@ -18,6 +18,10 @@ export const updateActiveContractAction = withAuthenticatedAction(
     userId?: string
   ): Promise<ActionResponse<Contract[]>> => {
     try {
+      if (!user) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       const { data: isAdmin } = await isAdminAction();
 
       if (!isAdmin) {

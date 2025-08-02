@@ -222,12 +222,18 @@ async function adminGuard(): Promise<boolean> {
 
 export const getTargetUserAction = withAuthenticatedAction(
   async (
-    currentUser: User,
+    currentUser: User | null,
     userId: string
   ): Promise<
     ActionResponse<{ user: PrismaUser; profile: Profile | null } | null>
   > => {
     try {
+      if (!currentUser) {
+        return getActionResponse({
+          error: "User not authenticated",
+        });
+      }
+
       if (currentUser.role !== "admin") {
         return getActionResponse({
           error: "Unauthorized: Admin access required",
@@ -259,10 +265,14 @@ export const getTargetUserAction = withAuthenticatedAction(
 
 export const getAppDataAction = withAuthenticatedAction(
   async (
-    user: User,
+    user: User | null,
     userId?: string
   ): Promise<ActionResponse<AppData | null>> => {
     try {
+      if (!user) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       const isAdmin = user.role === "admin";
       const isVerified = await checkUserVerification(user.id);
       const profile = await getUserProfile(user.id);

@@ -19,6 +19,9 @@ export const updateProfileAction = withAuthenticatedAction(async (
   profileData: ProfileUpdateData
 ): Promise<ActionResponse<Profile>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
 
     const { id, ...updateData } = profileData;
 
@@ -59,6 +62,9 @@ export const resetProfileAction = withAuthenticatedAction(async (
   currentUser
 ): Promise<ActionResponse<Profile | null>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
 
     const existingProfile = await prisma.profile.findFirst({
       where: { userId: currentUser.id },
@@ -96,6 +102,9 @@ export const deleteAccountAction = withAuthenticatedAction(async (
   currentUser
 ): Promise<ActionResponse<boolean>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
 
     await prisma.user.update({
       where: { id: currentUser.id },

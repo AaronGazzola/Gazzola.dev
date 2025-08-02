@@ -18,6 +18,9 @@ export const saveOnboardingDataAction = withAuthenticatedAction(async (
   onboardingData: OnboardingData
 ): Promise<ActionResponse<PrismaProfile>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
 
     const existingProfile = await prisma.profile.findUnique({
       where: { userId: currentUser.id },
@@ -61,6 +64,10 @@ export const verifyAccountAction = withAuthenticatedAction(async (
   currentUser
 ): Promise<ActionResponse<boolean>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
+
     if (process.env.APP_ENV !== "test") {
       throw new Error("This action can only be used in test environment");
     }

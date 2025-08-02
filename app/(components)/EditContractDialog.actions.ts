@@ -48,6 +48,10 @@ try {
 export const getContractsAction = withAuthenticatedAction(
   async (user, userId?: string): Promise<ActionResponse<Contract[]>> => {
     try {
+      if (!user) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       const { data: isAdmin } = await isAdminAction();
 
       let whereClause = {};
@@ -100,6 +104,10 @@ export const addContractAction = withAuthenticatedAction(
     userId?: string
   ): Promise<ActionResponse<Contract[]>> => {
     try {
+      if (!user) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       const { data: isAdmin } = await isAdminAction();
       const targetUserId = userId && isAdmin ? userId : user.id;
 
@@ -159,6 +167,10 @@ export const updateContractAction = withAuthenticatedAction(
     userId?: string
   ): Promise<ActionResponse<Contract[]>> => {
     try {
+      if (!user) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       const { data: isAdmin } = await isAdminAction();
 
       const existingContract = await prisma.contract.findUnique({
@@ -358,6 +370,10 @@ export const contractPaymentAction = withAuthenticatedAction(
     userId?: string
   ): Promise<ActionResponse<{ url: string | null }>> => {
     try {
+      if (!user) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       const { data: isAdmin } = await isAdminAction();
 
       const existingContract = await prisma.contract.findUnique({

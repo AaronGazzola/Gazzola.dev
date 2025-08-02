@@ -99,6 +99,10 @@ export const deleteAccountAction = async (
 export const deleteCurrentUserAction = withAuthenticatedAction(
   async (currentUser): Promise<ActionResponse<boolean>> => {
     try {
+      if (!currentUser) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       await prisma.user.delete({
         where: { id: currentUser.id },
       });

@@ -14,6 +14,8 @@ const configuration = {
     chat: (userId?: string) => (!userId ? "/" : `/chat/${userId}`),
     admin: "/admin",
     home: "/",
+    testRls: "/test/rls",
+    testRlsApi: "/api/test/rls",
   },
 };
 

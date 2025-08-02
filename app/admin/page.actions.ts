@@ -12,6 +12,10 @@ import { prisma } from "@/lib/prisma-client";
 export const isAdminAction = withAuthenticatedAction(
   async (currentUser): Promise<ActionResponse<boolean>> => {
     try {
+      if (!currentUser) {
+        return getActionResponse({ data: false, error: "User not authenticated" });
+      }
+
       const user = await prisma.user.findUnique({
         where: { id: currentUser.id },
         select: { role: true },
@@ -34,6 +38,10 @@ export const getUsersAction = withAuthenticatedAction(
     params: GetUsersParams = {}
   ): Promise<ActionResponse<UserData[]>> => {
     try {
+      if (!currentUser) {
+        return getActionResponse({ error: "User not authenticated" });
+      }
+
       if (currentUser.role !== "admin") {
         return getActionResponse({ error: "Unauthorized" });
       }

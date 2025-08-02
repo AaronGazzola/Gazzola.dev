@@ -15,6 +15,9 @@ export const sendMessageAction = withAuthenticatedAction(async (
   }
 ): Promise<ActionResponse<Conversation[]>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
 
     const isAdminAction = currentUser.role === "admin";
 

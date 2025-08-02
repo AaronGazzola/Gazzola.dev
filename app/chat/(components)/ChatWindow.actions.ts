@@ -11,6 +11,10 @@ export const getConversationsAction = withAuthenticatedAction(async (
   targetUserId?: string
 ): Promise<ActionResponse<Conversation[]>> => {
   try {
+    if (!currentUser) {
+      return getActionResponse({ error: "User not authenticated" });
+    }
+
     const data = await prisma.conversation.findMany({
       where: {
         participants: {
