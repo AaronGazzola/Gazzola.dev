@@ -1,17 +1,14 @@
 //-| File path: app/admin/page.tsx
 "use client";
 
-import { useState } from "react";
-import { useGetAppData } from "@/app/(hooks)/app.hooks";
-import { UserTable } from "@/app/admin/(components)/UserTable";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
+import { UserTable } from "@/app/admin/(components)/UserTable";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 import { DataCyAttributes } from "@/types/cypress.types";
+import { LogOut } from "lucide-react";
+import { useState } from "react";
 
 const AdminPage = () => {
-  const { data, isLoading } = useGetAppData();
-  const users = data?.users || [];
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
 
   const handleSignOutClick = () => {
@@ -23,7 +20,9 @@ const AdminPage = () => {
       <div className="flex flex-col space-y-8">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
+            <h2 className="text-3xl font-bold tracking-tight">
+              Admin Dashboard
+            </h2>
             <p className="text-muted-foreground">
               Manage users and monitor system activity
             </p>
@@ -38,7 +37,7 @@ const AdminPage = () => {
             Sign Out
           </Button>
         </div>
-        <UserTable users={users} isLoading={isLoading} />
+        <UserTable />
       </div>
       <SignOutConfirm
         isOpen={isSignOutDialogOpen}

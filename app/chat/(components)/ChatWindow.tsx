@@ -6,12 +6,11 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { Message } from "@/app/(types)/chat.types";
 import ChatInput from "@/app/chat/(components)/ChatInput";
-import { useGetConversations } from "@/app/chat/(components)/ChatWindow.hooks";
 import { cn } from "@/lib/tailwind.utils";
+import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import { CircleUserRound, PersonStanding } from "lucide-react";
 import { useMemo } from "react";
-import { DataCyAttributes } from "@/types/cypress.types";
 
 interface ChatWindowProps {
   className?: string;
@@ -22,7 +21,6 @@ export default function ChatWindow({ className }: ChatWindowProps) {
   const { currentConversation, targetUser } = useChatStore();
 
   const { isLoading } = useGetAppData();
-  useGetConversations();
 
   const messages = useMemo(
     () => currentConversation?.messages || [],
@@ -64,21 +62,34 @@ export default function ChatWindow({ className }: ChatWindowProps) {
     >
       <div className="w-full h-full flex flex-col items-left">
         {targetUser && (
-          <div className="p-4 border-b border-gray-700" data-cy={DataCyAttributes.CHAT_USER_HEADER}>
+          <div
+            className="p-4 border-b border-gray-700"
+            data-cy={DataCyAttributes.CHAT_USER_HEADER}
+          >
             <h2 className="text-lg font-semibold text-gray-100 tracking-wider">
               Chat with {targetUser.name}
             </h2>
           </div>
         )}
 
-        <div className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-5 pt-3 space-y-2" data-cy={DataCyAttributes.CHAT_MESSAGES_CONTAINER}>
+        <div
+          className="grow scrollbar scrollbar-track scrollbar-thumb overflow-y-scroll pr-5 pt-3 space-y-2"
+          data-cy={DataCyAttributes.CHAT_MESSAGES_CONTAINER}
+        >
           {messages.length === 0 ? (
-            <div className="text-center text-gray-400 py-8 italic" data-cy={DataCyAttributes.CHAT_EMPTY_STATE}>
+            <div
+              className="text-center text-gray-400 py-8 italic"
+              data-cy={DataCyAttributes.CHAT_EMPTY_STATE}
+            >
               No messages yet. Start the conversation!
             </div>
           ) : (
             messages.map((msg: Message) => (
-              <div key={msg.id} className="w-full py-3 pl-7" data-cy={DataCyAttributes.CHAT_MESSAGE_ITEM}>
+              <div
+                key={msg.id}
+                className="w-full py-3 pl-7"
+                data-cy={DataCyAttributes.CHAT_MESSAGE_ITEM}
+              >
                 <div className="w-full">
                   <div className="flex items-center pl-1">
                     <div

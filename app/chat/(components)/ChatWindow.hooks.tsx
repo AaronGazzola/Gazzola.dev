@@ -5,11 +5,8 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useSendMessage } from "@/app/chat/(components)/ChatInput.hooks";
 import { getConversationsAction } from "@/app/chat/(components)/ChatWindow.actions";
-import { Toast } from "@/components/shared/Toast";
-import { DataCyAttributes } from "@/types/cypress.types";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export const useGetConversations = () => {
   const { user, isAdmin } = useAuthStore();
@@ -62,29 +59,13 @@ export const useGetConversations = () => {
   return useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
-      try {
-        const { data, error } = await getConversationsAction(targetUser?.id);
-        if (error) throw new Error(error);
-        if (data) {
-          setConversationsUpdated(true);
-          setConversations(data);
-        }
-        return data;
-      } catch (error) {
-        toast.custom(() => (
-          <Toast
-            variant="error"
-            title="Error"
-            message={
-              error instanceof Error
-                ? error.message
-                : "Failed to load conversations"
-            }
-            data-cy={DataCyAttributes.ERROR_GET_CONVERSATIONS}
-          />
-        ));
-        throw error;
+      const { data, error } = await getConversationsAction(targetUser?.id);
+      if (error) throw new Error(error);
+      if (data) {
+        setConversationsUpdated(true);
+        setConversations(data);
       }
+      return data;
     },
     enabled: !!user && !isSendingMessage && (!isAdmin || !!targetUser),
     refetchInterval: 3000,

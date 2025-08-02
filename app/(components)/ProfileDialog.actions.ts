@@ -102,7 +102,7 @@ export const deleteAccountAction = withAuthenticatedAction(async (
       data: {
         isDeleted: true,
         deletedAt: new Date(),
-        email: null,
+        email: Date.now().toString(),
         name: null,
         image: null,
       },

@@ -7,7 +7,6 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
-import { useAdminStore } from "@/app/admin/admin.store";
 import configuration from "@/configuration";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,7 +14,6 @@ import { usePathname, useRouter } from "next/navigation";
 export const useGetAppData = () => {
   const { setUser, setProfile, setIsVerified, setIsAdmin, user } =
     useAuthStore();
-  const { setUsers } = useAdminStore();
   const { setConversations, setCurrentConversation, setTargetUser } =
     useChatStore();
   const { setContracts } = useContractStore();
@@ -40,7 +38,6 @@ export const useGetAppData = () => {
       setProfile(data.profile);
       setIsVerified(data.isVerified);
       setIsAdmin(data.isAdmin);
-      if (data.isAdmin) setUsers(data.users);
       if (!data.isAdmin || data.targetUser) {
         setConversations(data.conversations);
         setCurrentConversation(data.conversations[0]);

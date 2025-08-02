@@ -5,7 +5,7 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
-import { useAdminStore } from "@/app/admin/admin.store";
+import { useAdminStore } from "@/app/admin/page.store";
 import { Toast } from "@/components/shared/Toast";
 import configuration from "@/configuration";
 import { signOut } from "@/lib/auth-client";

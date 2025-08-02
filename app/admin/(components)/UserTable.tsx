@@ -2,9 +2,19 @@
 "use client";
 
 import useIsTest from "@/app/(hooks)/useIsTest";
-import { useAdminStore } from "@/app/admin/admin.store";
-import { UserData } from "@/app/admin/admin.types";
+import { useGetUsers } from "@/app/admin/page.hooks";
+import { useAdminStore } from "@/app/admin/page.store";
+import { UserData } from "@/app/admin/page.types";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -33,21 +43,111 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
-interface UserTableProps {
-  users: UserData[];
-  isLoading: boolean;
-}
+const domain = process.env.NEXT_PUBLIC_DEPLOYMENT_DOMAIN;
 
 const truncateText = (text: string, maxLength: number = 50): string => {
   if (text.length <= maxLength) return text;
   return `${text.slice(0, maxLength)}...`;
 };
 
-export function UserTable({ users, isLoading }: UserTableProps) {
+interface BlurredEmailProps {
+  email: string;
+  isTest: boolean;
+  isRevealed: boolean;
+  onRevealChange?: (isRevealed: boolean) => void;
+}
+
+function BlurredEmail({
+  email,
+  isTest,
+  isRevealed,
+  onRevealChange,
+}: BlurredEmailProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
+  const shouldBlur =
+    !isTest && !email.endsWith(`@${process.env.NEXT_PUBLIC_DEPLOYMENT_DOMAIN}`);
+
+  useEffect(() => {
+    if (!shouldBlur && !isRevealed) {
+      onRevealChange?.(true);
+    }
+  }, [shouldBlur, isRevealed, onRevealChange]);
+
+  const handleBlurClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!shouldBlur) return;
+
+    if (dontShowAgain || isRevealed) {
+      onRevealChange?.(true);
+    } else {
+      setIsDialogOpen(true);
+    }
+  };
+
+  const handleConfirm = () => {
+    setIsDialogOpen(false);
+    onRevealChange?.(true);
+  };
+
+  const handleCancel = () => {
+    setIsDialogOpen(false);
+  };
+
+  if (!shouldBlur || isRevealed) {
+    return <span>{email}</span>;
+  }
+
+  return (
+    <>
+      <span
+        onClick={handleBlurClick}
+        className="relative cursor-pointer inline-block"
+      >
+        <span className="absolute inset-0 bg-gray-400 dark:bg-gray-600 backdrop-blur-sm rounded" />
+        <span className="invisible">{email}</span>
+      </span>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reveal Email Address</DialogTitle>
+            <DialogDescription>
+              This will reveal the user&apos;s email address. Are you sure you
+              want to continue?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2 py-4">
+            <Checkbox
+              id="dont-show-again"
+              checked={dontShowAgain}
+              onCheckedChange={(checked) => setDontShowAgain(!!checked)}
+            />
+            <label htmlFor="dont-show-again" className="text-sm">
+              Don&apos;t show this confirmation again
+            </label>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirm}>Reveal Email</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+export function UserTable() {
   const router = useRouter();
   const { filters, setFilters } = useAdminStore();
   const [searchInput, setSearchInput] = useState(filters.searchTerm);
   const [debouncedSearch] = useDebounce(searchInput, 500);
+  const [revealedEmails, setRevealedEmails] = useState<Set<string>>(new Set());
+  const { data: users = [], isPending: isLoading } = useGetUsers();
 
   const isTest = useIsTest();
 
@@ -96,7 +196,25 @@ export function UserTable({ users, isLoading }: UserTableProps) {
           </Button>
         );
       },
-      cell: ({ row }) => redactText(row.getValue("email") || "N/A"),
+      cell: ({ row }) => {
+        const email = row.getValue("email") as string;
+        return (
+          <BlurredEmail
+            email={email || "N/A"}
+            isTest={isTest}
+            isRevealed={revealedEmails.has(email)}
+            onRevealChange={(isRevealed) => {
+              if (isRevealed) {
+                setRevealedEmails((prev) => {
+                  const newSet = new Set(prev);
+                  newSet.add(email);
+                  return newSet;
+                });
+              }
+            }}
+          />
+        );
+      },
     },
     {
       accessorKey: "lastMessage",
@@ -276,7 +394,12 @@ export function UserTable({ users, isLoading }: UserTableProps) {
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => {
-                    router.push(configuration.paths.chat(row.original.id));
+                    const email = row.original.email;
+                    const shouldBlur = !isTest && !email.endsWith(`@${domain}`);
+
+                    if (!shouldBlur || revealedEmails.has(email)) {
+                      router.push(configuration.paths.chat(row.original.id));
+                    }
                   }}
                   data-cy={DataCyAttributes.USER_TABLE_ROW}
                 >

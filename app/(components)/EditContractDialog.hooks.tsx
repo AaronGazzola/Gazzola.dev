@@ -7,7 +7,6 @@ import {
   updateContractAction,
 } from "@/app/(components)/EditContractDialog.actions";
 import useIsTest from "@/app/(hooks)/useIsTest";
-import useParamString from "@/app/(hooks)/useParamString";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
@@ -29,7 +28,6 @@ export const useGetContracts = () => {
     contract,
     setContractHasChanged,
   } = useContractStore();
-  const userId = useParamString("userId");
 
   useEffect(() => {
     const currentContract = contracts.find((c) => c.id === contract?.id);

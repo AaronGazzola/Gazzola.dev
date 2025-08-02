@@ -9,6 +9,11 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Button } from "@/components/ui/button";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -18,8 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
-import { Save, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { ChevronDown, Save, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ProfileFormData {
   firstName: string;
@@ -37,7 +42,6 @@ const ProfileDialog = () => {
     phone: "",
     company: "",
   });
-  const [showDeleteSection, setShowDeleteSection] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   const { mutate: updateProfile, isPending } = useUpdateProfile();
@@ -86,7 +90,6 @@ const ProfileDialog = () => {
         company: profile.company || "",
       });
     }
-    setShowDeleteSection(false);
     setDeleteConfirmText("");
     closeProfileModal();
   };
@@ -195,76 +198,79 @@ const ProfileDialog = () => {
 
           <div className="space-y-4">
             <div className="border-t border-gray-200 pt-4">
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={() => setShowDeleteSection(!showDeleteSection)}
-                className="rounded w-full"
-                data-cy={DataCyAttributes.PROFILE_DELETE_ACCOUNT_BUTTON}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete Account
-              </Button>
-            </div>
-
-            {showDeleteSection && (
-              <div className="border-2 border-red-300 rounded-lg p-4 bg-black text-white space-y-4">
-                <div className="text-sm">
-                  <p className="font-semibold text-white mb-2">
-                    Type `delete my account` to confirm:
-                  </p>
-                  <ul className="text-gray-300 space-y-1 text-xs">
-                    <li>
-                      • Your personal information (name, email, phone, profile
-                      photo) will be permanently removed
-                    </li>
-                    <li>
-                      • You will no longer be able to log in or access your
-                      account
-                    </li>
-                    <li>
-                      • Your contracts, payments, and business communications
-                      will be preserved as anonymous records for legal and
-                      financial compliance
-                    </li>
-                    <li>
-                      • Any files you uploaded will be deleted from our servers
-                    </li>
-                    <li>• This action cannot be undone</li>
-                  </ul>
-                </div>
-
-                <Input
-                  type="text"
-                  value={deleteConfirmText}
-                  onChange={(e) => setDeleteConfirmText(e.target.value)}
-                  placeholder="Type 'delete my account' to confirm"
-                  className="rounded bg-black border-gray-600 text-white placeholder-gray-400"
-                  data-cy={DataCyAttributes.PROFILE_DELETE_CONFIRM_INPUT}
-                />
-
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={handleDeleteAccount}
-                  disabled={!isDeleteConfirmValid || isDeleting}
-                  className="rounded w-full"
-                  data-cy={DataCyAttributes.PROFILE_DELETE_CONFIRM_BUTTON}
-                >
-                  {isDeleting ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                      Deleting Account...
-                    </div>
-                  ) : (
-                    <>
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="rounded w-full flex items-center justify-between"
+                    data-cy={DataCyAttributes.PROFILE_DELETE_ACCOUNT_BUTTON}
+                  >
+                    <span className="flex items-center">
                       <Trash2 className="w-4 h-4 mr-2" />
-                      Confirm Delete Account
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
+                      Delete Account
+                    </span>
+                    <ChevronDown className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                  </Button>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <div className="border-2 border-red-300 rounded-lg p-4 bg-black text-white space-y-4 mt-4">
+                    <div className="text-sm">
+                      <p className="font-semibold text-white mb-2">
+                        Type `delete my account` to confirm:
+                      </p>
+                      <ul className="text-gray-300 space-y-1 text-xs">
+                        <li>
+                          • Your personal information (name, email, phone, profile
+                          photo) will be permanently removed
+                        </li>
+                        <li>
+                          • You will no longer be able to log in or access your
+                          account
+                        </li>
+                        <li>
+                          • Your contracts, payments, and business communications
+                          will be preserved as anonymous records for legal and
+                          financial compliance
+                        </li>
+                        <li>• This action cannot be undone</li>
+                      </ul>
+                    </div>
+
+                    <Input
+                      type="text"
+                      value={deleteConfirmText}
+                      onChange={(e) => setDeleteConfirmText(e.target.value)}
+                      placeholder="Type 'delete my account' to confirm"
+                      className="rounded bg-black border-gray-600 text-white placeholder-gray-400"
+                      data-cy={DataCyAttributes.PROFILE_DELETE_CONFIRM_INPUT}
+                    />
+
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleDeleteAccount}
+                      disabled={!isDeleteConfirmValid || isDeleting}
+                      className="rounded w-full"
+                      data-cy={DataCyAttributes.PROFILE_DELETE_CONFIRM_BUTTON}
+                    >
+                      {isDeleting ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                          Deleting Account...
+                        </div>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Confirm Delete Account
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           </div>
 
           <div className="flex justify-end space-x-2">

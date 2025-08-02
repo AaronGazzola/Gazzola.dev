@@ -7,7 +7,7 @@ import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
-import { useAdminStore } from "@/app/admin/admin.store";
+import { useAdminStore } from "@/app/admin/page.store";
 import { Toast } from "@/components/shared/Toast";
 import configuration from "@/configuration";
 import { DataCyAttributes } from "@/types/cypress.types";

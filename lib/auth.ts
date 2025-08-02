@@ -62,10 +62,7 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user) => {
-          const adminEmails =
-            process.env.ADMIN_EMAILS?.split(",").map((email) => email.trim()) ||
-            [];
-          if (adminEmails.includes(user.email)) {
+          if (process.env.ADMIN_EMAIL === user.email) {
             return {
               data: {
                 ...user,
@@ -76,10 +73,7 @@ export const auth = betterAuth({
           return { data: user };
         },
         after: async (user) => {
-          const adminEmails =
-            process.env.ADMIN_EMAILS?.split(",").map((email) => email.trim()) ||
-            [];
-          if (adminEmails.includes(user.email)) {
+          if (process.env.ADMIN_EMAIL === user.email) {
             await prisma.user.update({
               where: { id: user.id },
               data: { role: "admin" },

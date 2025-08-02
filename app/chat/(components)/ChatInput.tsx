@@ -94,21 +94,21 @@ export default function ChatInput() {
                     onKeyDown={handleKeyDown}
                     data-cy={DataCyAttributes.CHAT_INPUT_TEXTAREA}
                     className={cn(
-                      "min-h-[80px] resize-none border border-white/10 focus:border-white/40 pr-16"
+                      "min-h-[80px] resize-none border border-white/10 focus:border-white/40 pr-16 rounded"
                     )}
                   />
                 </FormControl>
               </FormItem>
             )}
           />
-          <div className="absolute right-2 bottom-2 flex flex-col gap-2">
+          <div className="absolute top-2 right-2 bottom-2 flex flex-col gap-2">
             <Button
               type="submit"
               disabled={disabled || isMessageEmpty}
               size="icon"
               data-cy={DataCyAttributes.SEND_MESSAGE_BUTTON}
               className={cn(
-                "h-8 w-8",
+                "h-8 w-8 rounded",
                 isMessageEmpty
                   ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
@@ -125,7 +125,7 @@ export default function ChatInput() {
                 size="icon"
                 data-cy={DataCyAttributes.CREATE_NEW_CONVERSATION_BUTTON}
                 className={cn(
-                  "h-8 w-8",
+                  "h-8 w-8 rounded",
                   isMessageEmpty
                     ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
                     : "bg-green-600 hover:bg-green-700"
@@ -138,11 +138,6 @@ export default function ChatInput() {
           </div>
         </form>
       </Form>
-      {isAdmin && (
-        <div className="text-xs text-gray-400 mt-2">
-          Use the + button to create a new conversation
-        </div>
-      )}
     </div>
   );
 }

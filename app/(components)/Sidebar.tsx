@@ -4,7 +4,10 @@ import AuthDialog from "@/app/(components)/AuthDialog";
 import ContractDialog from "@/app/(components)/ContractDialog";
 import ProfileDialog from "@/app/(components)/ProfileDialog";
 import { useResetProfile } from "@/app/(components)/ProfileDialog.hooks";
-import { useSignOutMutation, useDeleteUserContracts } from "@/app/(components)/Sidebar.hooks";
+import {
+  useDeleteUserContracts,
+  useSignOutMutation,
+} from "@/app/(components)/Sidebar.hooks";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
 import { useGetAppData } from "@/app/(hooks)/app.hooks";
 import useIsTest from "@/app/(hooks)/useIsTest";
@@ -17,6 +20,7 @@ import { Contract } from "@/app/(types)/contract.types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import configuration from "@/configuration";
 import {
   Popover,
   PopoverContent,
@@ -42,6 +46,7 @@ import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import {
+  DollarSign,
   FileText,
   LogIn,
   LogOut,
@@ -49,10 +54,11 @@ import {
   MessageCircle,
   Plus,
   RotateCcw,
-  User,
+  Settings,
   Trash2,
-  DollarSign,
+  User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const SidebarSkeleton = () => {
@@ -98,6 +104,7 @@ const SidebarSkeleton = () => {
 
 const Sidebar = () => {
   const isTest = useIsTest();
+  const router = useRouter();
 
   const { contracts, setContract, contract } = useContractStore();
   const { openContractModal, openProfileModal, openAuthModal } = useAppStore();
@@ -171,6 +178,10 @@ const Sidebar = () => {
 
   const handleSignInClick = () => {
     openAuthModal();
+  };
+
+  const handleAdminClick = () => {
+    router.push(configuration.paths.admin);
   };
 
   const handleSignOut = () => {
@@ -537,6 +548,17 @@ const Sidebar = () => {
                         >
                           <User className="h-4 w-4" />
                           Profile
+                        </Button>
+                      )}
+                      {isAdmin && (
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-2"
+                          onClick={handleAdminClick}
+                          data-cy={DataCyAttributes.ADMIN_BUTTON}
+                        >
+                          <Settings className="h-4 w-4" />
+                          Admin
                         </Button>
                       )}
                       <Button

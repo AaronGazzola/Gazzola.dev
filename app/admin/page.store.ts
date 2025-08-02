@@ -1,5 +1,5 @@
 //-| File path: app/admin/admin.store.ts
-import { AdminFilters, UserData } from "@/app/admin/admin.types";
+import { AdminFilters, UserData } from "@/app/admin/page.types";
 import { create } from "zustand";
 
 interface AdminState {
