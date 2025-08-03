@@ -16,11 +16,11 @@ import { prisma } from "../lib/prisma-client";
  */
 export async function setRLSContext(userId: string | null): Promise<void> {
   try {
-    if (userId) {
-      await prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, true)`;
+    if (userId && userId.trim() !== "") {
+      await prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, false)`;
     } else {
       // Clear the context if no user
-      await prisma.$executeRaw`SELECT set_config('app.current_user_id', '', true)`;
+      await prisma.$executeRaw`SELECT set_config('app.current_user_id', '', false)`;
     }
   } catch (error) {
     console.error("Failed to set RLS context:", error);

@@ -39,6 +39,15 @@ export interface RLSTestResults {
 
 export type RLSTestAction = keyof RLSTestResults;
 
+export class TestEnvironmentError extends Error {
+  constructor(
+    message: string = "RLS test actions can only be run in test environment"
+  ) {
+    super(message);
+    this.name = "TestEnvironmentError";
+  }
+}
+
 export interface RLSTestState {
   isRunning: boolean;
   currentAction: RLSTestAction | null;

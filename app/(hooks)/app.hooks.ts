@@ -29,7 +29,12 @@ export const useGetAppData = () => {
       if (error) throw new Error(error);
       if (!data) throw new Error("No app data received");
 
-      if (data.isAdmin && !userId && pathname !== configuration.paths.admin) {
+      if (
+        data.isAdmin &&
+        !userId &&
+        pathname !== configuration.paths.admin &&
+        pathname !== configuration.paths.testRls
+      ) {
         router.push(configuration.paths.admin);
         return data;
       }

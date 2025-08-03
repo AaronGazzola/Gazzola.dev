@@ -1,41 +1,38 @@
 //-| File path: middleware.ts
-import configuration from "@/configuration";
 import { NextRequest, NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  // const { pathname } = request.nextUrl;
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // const session = await auth.api.getSession({
+  //   headers: await headers(),
+  // });
 
-  const isAdminRoute =
-    pathname.startsWith(configuration.paths.admin) ||
-    pathname.startsWith("/chat");
-  const isHome = pathname === "/";
+  // const isAdminRoute =
+  //   pathname.startsWith(configuration.paths.admin) ||
+  //   pathname.startsWith("/chat");
+  // const isHome = pathname === "/";
 
-  if (
-    isAdminRoute &&
-    (!session ||
-      !session.user.emailVerified ||
-      session.user.role !== "admin") &&
-    !isHome
-  ) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+  // if (
+  //   isAdminRoute &&
+  //   (!session ||
+  //     !session.user.emailVerified ||
+  //     session.user.role !== "admin") &&
+  //   !isHome
+  // ) {
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
 
-  if (
-    !isAdminRoute &&
-    session?.user.role === "admin" &&
-    session.user.emailVerified
-  ) {
-    return NextResponse.redirect(
-      new URL(configuration.paths.admin, request.url)
-    );
-  }
+  // if (
+  //   !isAdminRoute &&
+  //   session?.user.role === "admin" &&
+  //   session.user.emailVerified &&
+  //   pathname !== configuration.paths.testRls
+  // ) {
+  //   return NextResponse.redirect(
+  //     new URL(configuration.paths.admin, request.url)
+  //   );
+  // }
 
   return NextResponse.next();
 }

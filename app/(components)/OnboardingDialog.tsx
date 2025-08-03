@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import configuration from "@/configuration";
 import { DataCyAttributes } from "@/types/cypress.types";
 import {
   ArrowLeft,
@@ -25,6 +26,7 @@ import {
   RefreshCw,
   Save,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   useResendVerificationEmail,
@@ -41,6 +43,7 @@ interface OnboardingFormData {
 
 const OnboardingDialog = () => {
   const { isVerified, user } = useAuthStore();
+  const pathname = usePathname();
   const { ui, closeOnboardingModal } = useAppStore();
   const isTest = useIsTest();
   const [currentStep, setCurrentStep] = useState(1);
@@ -256,7 +259,11 @@ const OnboardingDialog = () => {
 
   return (
     <Dialog
-      open={!!user && (ui.onboardingModal.isOpen || !!showVerifyPage)}
+      open={
+        !!user &&
+        pathname !== configuration.paths.testRls &&
+        (ui.onboardingModal.isOpen || !!showVerifyPage)
+      }
       onOpenChange={handleClose}
     >
       <DialogContent
