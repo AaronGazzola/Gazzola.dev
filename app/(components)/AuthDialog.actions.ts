@@ -3,13 +3,9 @@
 
 import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
 import { User } from "@/generated/prisma";
-import {
-  ActionResponse,
-  getActionResponse,
-  withAuthenticatedAction,
-} from "@/lib/action.utils";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma-client";
+import { getAuthenticatedClient } from "@/lib/auth-utils";
 import { headers } from "next/headers";
 
 export async function signInAction(
@@ -28,9 +24,12 @@ export async function signInAction(
       return getActionResponse({ error: "Invalid credentials" });
     }
 
-    const prismaUser = await prisma.user.findUnique({
+    const { db } = await getAuthenticatedClient(user);
+
+    const prismaUser = await db.user.findUnique({
       where: { id: user.id },
     });
+    console.log("sign in", prismaUser);
 
     return getActionResponse({
       data: prismaUser,
@@ -57,7 +56,9 @@ export async function signUpAction(
       return getActionResponse({ error: "Failed to create account" });
     }
 
-    const prismaUser = await prisma.user.findUnique({
+    const { db } = await getAuthenticatedClient();
+
+    const prismaUser = await db.user.findUnique({
       where: { id: user.id },
     });
 
@@ -74,7 +75,9 @@ export const deleteAccountAction = async (
 ): Promise<ActionResponse<boolean>> => {
   try {
     if (email) {
-      const userToDelete = await prisma.user.findFirst({
+      const { db } = await getAuthenticatedClient();
+
+      const userToDelete = await db.user.findFirst({
         where: { email },
       });
 
@@ -82,7 +85,7 @@ export const deleteAccountAction = async (
         return getActionResponse({ data: true });
       }
 
-      await prisma.user.delete({
+      await db.user.delete({
         where: { id: userToDelete.id },
       });
     } else {
@@ -96,23 +99,28 @@ export const deleteAccountAction = async (
   }
 };
 
-export const deleteCurrentUserAction = withAuthenticatedAction(
-  async (currentUser): Promise<ActionResponse<boolean>> => {
-    try {
-      if (!currentUser) {
-        return getActionResponse({ error: "User not authenticated" });
-      }
+export async function deleteCurrentUserAction(): Promise<
+  ActionResponse<boolean>
+> {
+  try {
+    const { db, session } = await getAuthenticatedClient();
 
-      await prisma.user.delete({
-        where: { id: currentUser.id },
+    if (!session?.user) {
+      return getActionResponse({
+        data: false,
+        error: "Unauthorized: No valid session",
       });
-
-      return getActionResponse({ data: true });
-    } catch (error) {
-      return getActionResponse({ data: true });
     }
+
+    await db.user.delete({
+      where: { id: session.user.id },
+    });
+
+    return getActionResponse({ data: true });
+  } catch (error) {
+    return getActionResponse({ data: true });
   }
-);
+}
 
 async function getAuthenticatedUser() {
   const session = await auth.api.getSession({

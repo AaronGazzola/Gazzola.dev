@@ -1,10 +1,9 @@
 //-| File path: app/(components)/ProfileDialog.actions.ts
 "use server";
 
-import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Profile } from "@/app/(types)/auth.types";
-import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
-import { prisma } from "@/lib/prisma-client";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { getAuthenticatedClient } from "@/lib/auth-utils";
 
 interface ProfileUpdateData {
   id: string;
@@ -14,18 +13,19 @@ interface ProfileUpdateData {
   company: string;
 }
 
-export const updateProfileAction = withAuthenticatedAction(async (
-  currentUser,
+export async function updateProfileAction(
   profileData: ProfileUpdateData
-): Promise<ActionResponse<Profile>> => {
+): Promise<ActionResponse<Profile>> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
     }
 
     const { id, ...updateData } = profileData;
 
-    const existingProfile = await prisma.profile.findUnique({
+    const existingProfile = await db.profile.findUnique({
       where: { id },
       include: {
         user: true,
@@ -37,13 +37,13 @@ export const updateProfileAction = withAuthenticatedAction(async (
       return getActionResponse({ error: "Profile not found" });
     }
 
-    if (existingProfile.userId !== currentUser.id) {
+    if (existingProfile.userId !== session.user.id) {
       return getActionResponse({
         error: "Unauthorized to update this profile",
       });
     }
 
-    const updatedProfile = await prisma.profile.update({
+    const updatedProfile = await db.profile.update({
       where: { id },
       data: updateData,
       include: {
@@ -56,18 +56,20 @@ export const updateProfileAction = withAuthenticatedAction(async (
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}
 
-export const resetProfileAction = withAuthenticatedAction(async (
-  currentUser
-): Promise<ActionResponse<Profile | null>> => {
+export async function resetProfileAction(): Promise<
+  ActionResponse<Profile | null>
+> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
     }
 
-    const existingProfile = await prisma.profile.findFirst({
-      where: { userId: currentUser.id },
+    const existingProfile = await db.profile.findFirst({
+      where: { userId: session.user.id },
       include: {
         user: true,
         contracts: true,
@@ -78,7 +80,7 @@ export const resetProfileAction = withAuthenticatedAction(async (
       return getActionResponse({ error: "Profile not found" });
     }
 
-    const resetProfile = await prisma.profile.update({
+    const resetProfile = await db.profile.update({
       where: { id: existingProfile.id },
       data: {
         firstName: "",
@@ -96,18 +98,18 @@ export const resetProfileAction = withAuthenticatedAction(async (
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}
 
-export const deleteAccountAction = withAuthenticatedAction(async (
-  currentUser
-): Promise<ActionResponse<boolean>> => {
+export async function deleteAccountAction(): Promise<ActionResponse<boolean>> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
     }
 
-    await prisma.user.update({
-      where: { id: currentUser.id },
+    await db.user.update({
+      where: { id: session.user.id },
       data: {
         isDeleted: true,
         deletedAt: new Date(),
@@ -117,8 +119,8 @@ export const deleteAccountAction = withAuthenticatedAction(async (
       },
     });
 
-    await prisma.profile.updateMany({
-      where: { userId: currentUser.id },
+    await db.profile.updateMany({
+      where: { userId: session.user.id },
       data: {
         firstName: null,
         lastName: null,
@@ -132,4 +134,4 @@ export const deleteAccountAction = withAuthenticatedAction(async (
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}

@@ -1,21 +1,23 @@
 //-| File path: app/chat/(components)/ChatWindow.actions.ts
 "use server";
 
-import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Conversation } from "@/app/(types)/chat.types";
-import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
-import { prisma } from "@/lib/prisma-client";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { getAuthenticatedClient } from "@/lib/auth-utils";
 
-export const getConversationsAction = withAuthenticatedAction(async (
-  currentUser,
+export async function getConversationsAction(
   targetUserId?: string
-): Promise<ActionResponse<Conversation[]>> => {
+): Promise<ActionResponse<Conversation[]>> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
     }
 
-    const data = await prisma.conversation.findMany({
+    const currentUser = session.user;
+
+    const data = await db.conversation.findMany({
       where: {
         participants: {
           has: targetUserId || currentUser.id,
@@ -37,4 +39,4 @@ export const getConversationsAction = withAuthenticatedAction(async (
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}

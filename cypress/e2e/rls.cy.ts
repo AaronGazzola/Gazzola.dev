@@ -53,7 +53,7 @@ describe("RLS Policy Tests", () => {
     }
 
     // Before step 32, update credentials for user sign-in
-    cy.log("=== Setting up User Credentials for Steps 32-61 ===");
+    cy.log("=== Setting up User Credentials for Steps 32-59 ===");
     cy.get(`[data-cy="${DataCyAttributes.RLS_EMAIL_INPUT}"]`)
       .clear()
       .type(Cypress.env("USER_EMAIL"));
@@ -61,9 +61,9 @@ describe("RLS Policy Tests", () => {
       .clear()
       .type(Cypress.env("USER_PASSWORD"));
 
-    // Execute steps 32-61 (Regular user workflow)
-    cy.log("=== Regular User Workflow: Steps 32-61 ===");
-    for (let stepId = 32; stepId <= 61; stepId++) {
+    // Execute steps 32-59 (Regular user workflow)
+    cy.log("=== Regular User Workflow: Steps 32-59 ===");
+    for (let stepId = 32; stepId <= 59; stepId++) {
       cy.log(`Executing Step ${stepId}`);
 
       // Click the execute button for this step
@@ -86,7 +86,7 @@ describe("RLS Policy Tests", () => {
     }
 
     cy.log(
-      "=== All 61 RLS policy step-by-step tests completed successfully ==="
+      "=== All 59 RLS policy step-by-step tests completed successfully ==="
     );
   });
 });

@@ -1,23 +1,23 @@
 //-| File path: app/chat/(components)/ChatInput.actions.ts
 "use server";
 
-import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Conversation } from "@/app/(types)/chat.types";
-import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
-import { prisma } from "@/lib/prisma-client";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { getAuthenticatedClient } from "@/lib/auth-utils";
 
-export const sendMessageAction = withAuthenticatedAction(async (
-  currentUser,
-  params: {
-    messageContent: string;
-    targetUserId?: string;
-    isNewConversation: boolean;
-  }
-): Promise<ActionResponse<Conversation[]>> => {
+export async function sendMessageAction(params: {
+  messageContent: string;
+  targetUserId?: string;
+  isNewConversation: boolean;
+}): Promise<ActionResponse<Conversation[]>> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
     }
+
+    const currentUser = session.user;
 
     const isAdminAction = currentUser.role === "admin";
 
@@ -36,7 +36,7 @@ export const sendMessageAction = withAuthenticatedAction(async (
     let targetUserId = params.targetUserId;
 
     if (!targetUserId) {
-      const adminUser = await prisma.user.findFirst({
+      const adminUser = await db.user.findFirst({
         where: { role: "admin" },
       });
 
@@ -50,7 +50,7 @@ export const sendMessageAction = withAuthenticatedAction(async (
     let conversationId: string;
 
     if (params.isNewConversation) {
-      const newConversation = await prisma.conversation.create({
+      const newConversation = await db.conversation.create({
         data: {
           title: "New Conversation",
           participants: [currentUser.id, targetUserId],
@@ -60,7 +60,7 @@ export const sendMessageAction = withAuthenticatedAction(async (
 
       conversationId = newConversation.id;
     } else {
-      const existingConversation = await prisma.conversation.findFirst({
+      const existingConversation = await db.conversation.findFirst({
         where: {
           participants: {
             has: targetUserId || currentUser.id,
@@ -70,7 +70,7 @@ export const sendMessageAction = withAuthenticatedAction(async (
       });
 
       if (!existingConversation) {
-        const newConversation = await prisma.conversation.create({
+        const newConversation = await db.conversation.create({
           data: {
             title: "New Conversation",
             participants: [currentUser.id, targetUserId],
@@ -84,7 +84,7 @@ export const sendMessageAction = withAuthenticatedAction(async (
       }
     }
 
-    await prisma.message.create({
+    await db.message.create({
       data: {
         senderId: currentUser.id,
         content: params.messageContent,
@@ -92,7 +92,7 @@ export const sendMessageAction = withAuthenticatedAction(async (
       },
     });
 
-    await prisma.conversation.update({
+    await db.conversation.update({
       where: { id: conversationId },
       data: {
         lastMessageAt: new Date(),
@@ -100,7 +100,7 @@ export const sendMessageAction = withAuthenticatedAction(async (
       },
     });
 
-    const data = await prisma.conversation.findMany({
+    const data = await db.conversation.findMany({
       where: {
         participants: {
           has: targetUserId || currentUser.id,
@@ -122,4 +122,4 @@ export const sendMessageAction = withAuthenticatedAction(async (
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}

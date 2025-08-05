@@ -7,13 +7,9 @@ import { Contract } from "@/app/(types)/contract.types";
 import { AppData } from "@/app/(types)/ui.types";
 import { UserData } from "@/app/admin/page.types";
 import { User as PrismaUser, User } from "@/generated/prisma";
-import {
-  ActionResponse,
-  getActionResponse,
-  withAuthenticatedAction,
-} from "@/lib/action.utils";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma-client";
+import { getAuthenticatedClient } from "@/lib/auth-utils";
 import { headers } from "next/headers";
 
 export async function getAuthenticatedUser(): Promise<User | null> {
@@ -23,7 +19,9 @@ export async function getAuthenticatedUser(): Promise<User | null> {
 
   if (!session?.user) return null;
 
-  const prismaUser = await prisma.user.findUnique({
+  const { db } = await getAuthenticatedClient();
+
+  const prismaUser = await db.user.findUnique({
     where: { id: session.user.id },
   });
 
@@ -32,7 +30,9 @@ export async function getAuthenticatedUser(): Promise<User | null> {
 
 async function checkUserVerification(userId: string): Promise<boolean> {
   try {
-    const userSignedInWithSocial = await prisma.account.findFirst({
+    const { db } = await getAuthenticatedClient();
+
+    const userSignedInWithSocial = await db.account.findFirst({
       where: {
         userId,
         providerId: {
@@ -50,7 +50,7 @@ async function checkUserVerification(userId: string): Promise<boolean> {
       },
     });
 
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: userId },
       select: { emailVerified: true },
     });
@@ -63,7 +63,9 @@ async function checkUserVerification(userId: string): Promise<boolean> {
 
 async function getUserProfile(userId: string): Promise<Profile | null> {
   try {
-    const profile = await prisma.profile.findUnique({
+    const { db } = await getAuthenticatedClient();
+
+    const profile = await db.profile.findUnique({
       where: { userId },
       include: {
         user: true,
@@ -83,7 +85,9 @@ async function getAllUsers(isAdmin: boolean): Promise<UserData[]> {
   }
 
   try {
-    const users = await prisma.user.findMany({
+    const { db } = await getAuthenticatedClient();
+
+    const users = await db.user.findMany({
       orderBy: { createdAt: "desc" },
       include: {
         profile: {
@@ -104,7 +108,7 @@ async function getAllUsers(isAdmin: boolean): Promise<UserData[]> {
 
     const userIds = users.map((user) => user.id);
 
-    const lastMessages = await prisma.message.findMany({
+    const lastMessages = await db.message.findMany({
       where: {
         senderId: { in: userIds },
       },
@@ -146,7 +150,9 @@ async function getAllUsers(isAdmin: boolean): Promise<UserData[]> {
 
 async function getUserConversations(userId: string): Promise<Conversation[]> {
   try {
-    const conversations = await prisma.conversation.findMany({
+    const { db } = await getAuthenticatedClient();
+
+    const conversations = await db.conversation.findMany({
       where: {
         participants: {
           has: userId,
@@ -175,10 +181,11 @@ async function getUserContracts(
   isAdmin: boolean
 ): Promise<Contract[]> {
   try {
+    const { db } = await getAuthenticatedClient();
     let whereClause = {};
 
     if (!isAdmin) {
-      const profile = await prisma.profile.findUnique({
+      const profile = await db.profile.findUnique({
         where: { userId },
       });
 
@@ -188,7 +195,7 @@ async function getUserContracts(
 
       whereClause = { profileId: profile.id };
     } else {
-      const profile = await prisma.profile.findUnique({
+      const profile = await db.profile.findUnique({
         where: { userId },
       });
 
@@ -197,7 +204,7 @@ async function getUserContracts(
       }
     }
 
-    const contracts = await prisma.contract.findMany({
+    const contracts = await db.contract.findMany({
       where: whereClause,
       include: {
         profile: true,
@@ -220,95 +227,94 @@ async function adminGuard(): Promise<boolean> {
   return user?.role === "admin";
 }
 
-export const getTargetUserAction = withAuthenticatedAction(
-  async (
-    currentUser: User | null,
-    userId: string
-  ): Promise<
-    ActionResponse<{ user: PrismaUser; profile: Profile | null } | null>
-  > => {
-    try {
-      if (!currentUser) {
-        return getActionResponse({
-          error: "User not authenticated",
-        });
-      }
+export async function getTargetUserAction(
+  userId: string
+): Promise<
+  ActionResponse<{ user: PrismaUser; profile: Profile | null } | null>
+> {
+  try {
+    const { db, session } = await getAuthenticatedClient();
 
-      if (currentUser.role !== "admin") {
-        return getActionResponse({
-          error: "Unauthorized: Admin access required",
-        });
-      }
-
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-
-      if (!user) {
-        return getActionResponse({ error: "User not found" });
-      }
-
-      const profile = await prisma.profile.findUnique({
-        where: { userId },
-        include: {
-          user: true,
-          contracts: true,
-        },
-      });
-
-      return getActionResponse({ data: { user, profile } });
-    } catch (error) {
-      return getActionResponse({ error });
-    }
-  }
-);
-
-export const getAppDataAction = withAuthenticatedAction(
-  async (
-    user: User | null,
-    userId?: string
-  ): Promise<ActionResponse<AppData | null>> => {
-    try {
-      if (!user) {
-        return getActionResponse({ error: "User not authenticated" });
-      }
-
-      const isAdmin = user.role === "admin";
-      const isVerified = await checkUserVerification(user.id);
-      const profile = await getUserProfile(user.id);
-      const users = await getAllUsers(isAdmin);
-      const conversations = await getUserConversations(
-        isAdmin && userId ? userId : user.id
-      );
-
-      let targetUser: PrismaUser | null = null;
-      if (userId && isAdmin) {
-        const targetUserResult = await getTargetUserAction(userId);
-        if (targetUserResult.data) {
-          targetUser = targetUserResult.data.user;
-        }
-      }
-      const contracts = await getUserContracts(
-        targetUser?.id || user.id,
-        isAdmin
-      );
-
-      const appData: AppData = {
-        user,
-        profile,
-        isVerified,
-        isAdmin,
-        users,
-        conversations,
-        contracts,
-        targetUser,
-      };
-
-      return getActionResponse({ data: appData });
-    } catch (error) {
+    if (!session?.user || session.user.role !== "admin") {
       return getActionResponse({
-        error,
+        error: "Unauthorized: Admin access required",
       });
     }
+
+    const user = await db.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return getActionResponse({ error: "User not found" });
+    }
+
+    const profile = await db.profile.findUnique({
+      where: { userId },
+      include: {
+        user: true,
+        contracts: true,
+      },
+    });
+
+    return getActionResponse({ data: { user, profile } });
+  } catch (error) {
+    return getActionResponse({ error });
   }
-);
+}
+
+export async function getAppDataAction(
+  userId?: string
+): Promise<ActionResponse<AppData | null>> {
+  try {
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
+    }
+
+    const user = await db.user.findUnique({
+      where: { id: session.user.id },
+    });
+    if (!user) {
+      return getActionResponse({ error: "User not found" });
+    }
+
+    const isAdmin = user.role === "admin";
+    const isVerified = await checkUserVerification(user.id);
+    const profile = await getUserProfile(user.id);
+    const users = await getAllUsers(isAdmin);
+    const conversations = await getUserConversations(
+      isAdmin && userId ? userId : user.id
+    );
+
+    let targetUser: PrismaUser | null = null;
+    if (userId && isAdmin) {
+      const targetUserResult = await getTargetUserAction(userId);
+      if (targetUserResult.data) {
+        targetUser = targetUserResult.data.user;
+      }
+    }
+    const contracts = await getUserContracts(
+      targetUser?.id || user.id,
+      isAdmin
+    );
+
+    const appData: AppData = {
+      user,
+      profile,
+      isVerified,
+      isAdmin,
+      users,
+      conversations,
+      contracts,
+      targetUser,
+    };
+
+    return getActionResponse({ data: appData });
+  } catch (error) {
+    return getActionResponse({
+      error,
+    });
+  }
+}

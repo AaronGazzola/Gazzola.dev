@@ -1,10 +1,10 @@
 //-| File path: app/(components)/Sidebar.actions.ts
 "use server";
 
-import { headers } from "next/headers";
-import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma-client";
+import { getAuthenticatedClient } from "@/lib/auth-utils";
+import { headers } from "next/headers";
 
 export async function getAuthenticatedUser() {
   const session = await auth.api.getSession({
@@ -13,27 +13,24 @@ export async function getAuthenticatedUser() {
   return session?.user;
 }
 
-export const deleteUserContractsAction = withAuthenticatedAction(async (
-  currentUser,
+export async function deleteUserContractsAction(
   userId: string
-): Promise<ActionResponse<{ deletedCount: number }>> => {
+): Promise<ActionResponse<{ deletedCount: number }>> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
-    }
+    const { db, session } = await getAuthenticatedClient();
 
-    if (currentUser.role !== "admin") {
+    if (!session?.user || session.user.role !== "admin") {
       return getActionResponse({ error: "Admin access required" });
     }
 
     const appEnv = process.env.APP_ENV;
     if (appEnv !== "test") {
-      return getActionResponse({ 
-        error: "Contract deletion is only allowed in test environment" 
+      return getActionResponse({
+        error: "Contract deletion is only allowed in test environment",
       });
     }
 
-    const userProfile = await prisma.profile.findFirst({
+    const userProfile = await db.profile.findFirst({
       where: { userId },
     });
 
@@ -41,14 +38,14 @@ export const deleteUserContractsAction = withAuthenticatedAction(async (
       return getActionResponse({ error: "User profile not found" });
     }
 
-    const deletedContracts = await prisma.contract.deleteMany({
+    const deletedContracts = await db.contract.deleteMany({
       where: { profileId: userProfile.id },
     });
 
-    return getActionResponse({ 
-      data: { deletedCount: deletedContracts.count }
+    return getActionResponse({
+      data: { deletedCount: deletedContracts.count },
     });
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}

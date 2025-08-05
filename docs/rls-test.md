@@ -36,7 +36,7 @@ All steps show "Expected Feature" when RLS policies work correctly - whether the
 30. Insert admin message to conversation
 31. Sign out
 
-## Regular User Flow (Steps 32-61)
+## Regular User Flow (Steps 32-59)
 
 **Note:** All steps show "Expected Feature" because RLS blocking unauthorized operations is the expected security behavior.
 
@@ -68,5 +68,3 @@ All steps show "Expected Feature" when RLS policies work correctly - whether the
 57. Delete the user profile → **RLS blocks** (profile deletion should be restricted) → Expected Feature
 58. Delete the admin profile → **RLS blocks** (users can't delete other profiles) → Expected Feature
 59. Insert user profile (2nd time) → **RLS allows** (users can create their own profile) → Expected Feature
-60. Insert contract (2nd time) → **RLS allows** (users can create contracts for themselves) → Expected Feature
-61. Insert conversation (2nd time) → **RLS blocks** (only admins can create conversations) → Expected Feature

@@ -1,10 +1,9 @@
 //-| File path: app/(components)/OnboardingDialog.actions.ts
 "use server";
 
-import { getAuthenticatedUser } from "@/app/(actions)/app.actions";
 import { Profile as PrismaProfile } from "@/generated/prisma";
-import { ActionResponse, getActionResponse, withAuthenticatedAction } from "@/lib/action.utils";
-import { prisma } from "@/lib/prisma-client";
+import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { getAuthenticatedClient } from "@/lib/auth-utils";
 
 interface OnboardingData {
   firstName: string;
@@ -13,16 +12,19 @@ interface OnboardingData {
   company: string;
 }
 
-export const saveOnboardingDataAction = withAuthenticatedAction(async (
-  currentUser,
+export async function saveOnboardingDataAction(
   onboardingData: OnboardingData
-): Promise<ActionResponse<PrismaProfile>> => {
+): Promise<ActionResponse<PrismaProfile>> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
     }
 
-    const existingProfile = await prisma.profile.findUnique({
+    const currentUser = session.user;
+
+    const existingProfile = await db.profile.findUnique({
       where: { userId: currentUser.id },
       include: {
         user: true,
@@ -41,12 +43,12 @@ export const saveOnboardingDataAction = withAuthenticatedAction(async (
     let data;
 
     if (existingProfile) {
-      data = await prisma.profile.update({
+      data = await db.profile.update({
         where: { userId: currentUser.id },
         data: profileData,
       });
     } else {
-      data = await prisma.profile.create({
+      data = await db.profile.create({
         data: {
           ...profileData,
           userId: currentUser.id,
@@ -58,22 +60,22 @@ export const saveOnboardingDataAction = withAuthenticatedAction(async (
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}
 
-export const verifyAccountAction = withAuthenticatedAction(async (
-  currentUser
-): Promise<ActionResponse<boolean>> => {
+export async function verifyAccountAction(): Promise<ActionResponse<boolean>> {
   try {
-    if (!currentUser) {
-      return getActionResponse({ error: "User not authenticated" });
-    }
-
     if (process.env.APP_ENV !== "test") {
       throw new Error("This action can only be used in test environment");
     }
 
-    await prisma.user.update({
-      where: { id: currentUser.id },
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user) {
+      return getActionResponse({ error: "Unauthorized: No valid session" });
+    }
+
+    await db.user.update({
+      where: { id: session.user.id },
       data: { emailVerified: true },
     });
 
@@ -81,4 +83,4 @@ export const verifyAccountAction = withAuthenticatedAction(async (
   } catch (error) {
     return getActionResponse({ error });
   }
-});
+}
