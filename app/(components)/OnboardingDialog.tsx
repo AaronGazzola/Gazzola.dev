@@ -261,7 +261,7 @@ const OnboardingDialog = () => {
     <Dialog
       open={
         !!user &&
-        pathname !== configuration.paths.testRls &&
+        !pathname.startsWith(configuration.paths.testRls) &&
         (ui.onboardingModal.isOpen || !!showVerifyPage)
       }
       onOpenChange={handleClose}

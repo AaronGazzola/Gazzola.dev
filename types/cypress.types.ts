@@ -283,4 +283,11 @@ export enum DataCyAttributes {
   RLS_ERROR_PAYMENT_UPDATE = "rls-error-payment-update",
   RLS_SUCCESS_PAYMENT_DELETE = "rls-success-payment-delete",
   RLS_ERROR_PAYMENT_DELETE = "rls-error-payment-delete",
+
+  // RLS Profile Test page elements
+  RLS_PROFILE_EMAIL_INPUT = "rls-profile-email-input",
+  RLS_PROFILE_PASSWORD_INPUT = "rls-profile-password-input",
+  RLS_PROFILE_SIGN_IN_BUTTON = "rls-profile-sign-in-button",
+  RLS_PROFILE_SIGN_OUT_BUTTON = "rls-profile-sign-out-button",
+  RLS_PROFILE_DELETE_ALL_DATA_BUTTON = "rls-profile-delete-all-data-button",
 }

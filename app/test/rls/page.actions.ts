@@ -17,8 +17,9 @@ export async function testProfileSelectAction(): Promise<
   try {
     const { db, session } = await getAuthenticatedClient();
     const profiles = await db.profile.findMany();
+    const expectedSuccess = profiles.length > 0;
     return getActionResponse({
-      data: { success: true, count: profiles.length },
+      data: { success: expectedSuccess, count: profiles.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -208,8 +209,9 @@ export async function testContractSelectAction(): Promise<
     const { db, session } = await getAuthenticatedClient();
 
     const contracts = await db.contract.findMany();
+    const expectedSuccess = contracts.length > 0;
     return getActionResponse({
-      data: { success: true, count: contracts.length },
+      data: { success: expectedSuccess, count: contracts.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -398,8 +400,9 @@ export async function testTaskSelectAction(): Promise<
     const { db, session } = await getAuthenticatedClient();
 
     const tasks = await db.task.findMany();
+    const expectedSuccess = tasks.length > 0;
     return getActionResponse({
-      data: { success: true, count: tasks.length },
+      data: { success: expectedSuccess, count: tasks.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -618,8 +621,9 @@ export async function testConversationSelectAction(): Promise<
     const { db, session } = await getAuthenticatedClient();
 
     const conversations = await db.conversation.findMany();
+    const expectedSuccess = conversations.length > 0;
     return getActionResponse({
-      data: { success: true, count: conversations.length },
+      data: { success: expectedSuccess, count: conversations.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -657,6 +661,7 @@ export async function testConversationInsertAction(): Promise<
       },
     });
 
+    // If we reach here, creation succeeded when it should have failed
     return getActionResponse({
       data: {
         success: false,
@@ -664,9 +669,10 @@ export async function testConversationInsertAction(): Promise<
       },
     });
   } catch (error) {
+    // For testConversationInsertAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
-        success: false,
+        success: true,
         error: error instanceof Error ? error.message : String(error),
       },
     });
@@ -779,8 +785,9 @@ export async function testMessageSelectAction(): Promise<
   const { db } = await getAuthenticatedClient();
   try {
     const messages = await db.message.findMany();
+    const expectedSuccess = messages.length > 0;
     return getActionResponse({
-      data: { success: true, count: messages.length },
+      data: { success: expectedSuccess, count: messages.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -945,8 +952,9 @@ export async function testFileUploadSelectAction(): Promise<
   const { db } = await getAuthenticatedClient();
   try {
     const fileUploads = await db.fileUpload.findMany();
+    const expectedSuccess = fileUploads.length > 0;
     return getActionResponse({
-      data: { success: true, count: fileUploads.length },
+      data: { success: expectedSuccess, count: fileUploads.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -1139,8 +1147,9 @@ export async function testPaymentSelectAction(): Promise<
   try {
     const { db } = await getAuthenticatedClient();
     const payments = await db.payment.findMany();
+    const expectedSuccess = payments.length > 0;
     return getActionResponse({
-      data: { success: true, count: payments.length },
+      data: { success: expectedSuccess, count: payments.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -1173,6 +1182,7 @@ export async function testPaymentInsertAction(): Promise<
       },
     });
 
+    // If we reach here, creation succeeded when it should have failed
     return getActionResponse({
       data: {
         success: false,
@@ -1180,9 +1190,10 @@ export async function testPaymentInsertAction(): Promise<
       },
     });
   } catch (error) {
+    // For testPaymentInsertAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
-        success: false,
+        success: true,
         error: error instanceof Error ? error.message : String(error),
       },
     });
@@ -1213,6 +1224,7 @@ export async function testPaymentUpdateAction(): Promise<
       data: { amount: existingPayment.amount },
     });
 
+    // If we reach here, update succeeded when it should have failed
     return getActionResponse({
       data: {
         success: false,
@@ -1220,9 +1232,10 @@ export async function testPaymentUpdateAction(): Promise<
       },
     });
   } catch (error) {
+    // For testPaymentUpdateAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
-        success: false,
+        success: true,
         error: error instanceof Error ? error.message : String(error),
       },
     });
@@ -1252,6 +1265,7 @@ export async function testPaymentDeleteAction(): Promise<
       where: { id: existingPayment.id },
     });
 
+    // If we reach here, deletion succeeded when it should have failed
     return getActionResponse({
       data: {
         success: false,
@@ -1259,9 +1273,10 @@ export async function testPaymentDeleteAction(): Promise<
       },
     });
   } catch (error) {
+    // For testPaymentDeleteAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
-        success: false,
+        success: true,
         error: error instanceof Error ? error.message : String(error),
       },
     });
@@ -1531,7 +1546,7 @@ export async function selectAdminProfileAction(): Promise<
     });
 
     return getActionResponse({
-      data: { success: true, count: adminProfile ? 1 : 0 },
+      data: { success: !!adminProfile, count: adminProfile ? 1 : 0 },
     });
   } catch (error) {
     return getActionResponse({
@@ -1569,7 +1584,7 @@ export async function selectUserProfileAction(): Promise<
     });
 
     return getActionResponse({
-      data: { success: true, count: userProfile ? 1 : 0 },
+      data: { success: !!userProfile, count: userProfile ? 1 : 0 },
     });
   } catch (error) {
     return getActionResponse({
@@ -1750,7 +1765,7 @@ export async function selectContractAction(): Promise<
     });
 
     return getActionResponse({
-      data: { success: true, count: contracts.length },
+      data: { success: contracts.length > 0, count: contracts.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -1819,7 +1834,7 @@ export async function selectTaskAction(): Promise<
     });
 
     return getActionResponse({
-      data: { success: true, count: tasks.length },
+      data: { success: tasks.length > 0, count: tasks.length },
     });
   } catch (error) {
     return getActionResponse({
@@ -2509,6 +2524,7 @@ export async function tryEditAdminMessageAction(): Promise<
       data: { content: "User tried to edit admin message" },
     });
 
+    // If we reach here, update succeeded when it should have failed
     return getActionResponse({
       data: {
         success: false,
@@ -2516,9 +2532,10 @@ export async function tryEditAdminMessageAction(): Promise<
       },
     });
   } catch (error) {
+    // For tryEditAdminMessageAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
-        success: false,
+        success: true,
         error: error instanceof Error ? error.message : String(error),
       },
     });
@@ -2553,6 +2570,7 @@ export async function tryDeleteAdminMessageAction(): Promise<
       where: { id: adminMessage.id },
     });
 
+    // If we reach here, deletion succeeded when it should have failed
     return getActionResponse({
       data: {
         success: false,
@@ -2560,9 +2578,10 @@ export async function tryDeleteAdminMessageAction(): Promise<
       },
     });
   } catch (error) {
+    // For tryDeleteAdminMessageAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
-        success: false,
+        success: true,
         error: error instanceof Error ? error.message : String(error),
       },
     });

@@ -16,6 +16,7 @@ const configuration = {
     home: "/",
     testRls: "/test/rls",
     testRlsApi: "/api/test/rls",
+    testRlsProfile: "/test/rls/profile",
   },
 };
 

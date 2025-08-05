@@ -30,11 +30,9 @@ All steps show "Expected Feature" when RLS policies work correctly - whether the
 24. Delete the user profile
 25. Delete the admin profile
 26. Insert admin profile (create admin profile - second time)
-27. Insert user profile (create user profile - second time)
-28. Insert contract (create contract - second time)
-29. Insert conversation (create conversation - second time)
-30. Insert admin message to conversation
-31. Sign out
+27. Insert conversation (create conversation - second time)
+28. Insert admin message to conversation
+29. Sign out
 
 ## Regular User Flow (Steps 32-59)
 

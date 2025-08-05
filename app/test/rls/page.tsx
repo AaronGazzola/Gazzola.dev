@@ -215,212 +215,201 @@ export default function RLSTestPage() {
       action: "create_admin_profile",
       description: "Create admin profile (second time)",
     },
+
     {
       id: 27,
-      name: "Insert user profile (2nd time)",
-      action: "create_user_profile",
-      description: "Create user profile (second time)",
-    },
-    {
-      id: 28,
-      name: "Insert contract (2nd time)",
-      action: "create_contract_for_user",
-      description: "Create contract (second time)",
-    },
-    {
-      id: 29,
       name: "Insert conversation (2nd time)",
       action: "create_conversation_for_user",
       description: "Create conversation (second time)",
     },
     {
-      id: 30,
+      id: 28,
       name: "Insert admin message to conversation",
       action: "insert_admin_message_to_conversation",
       description: "Add admin message to conversation",
     },
     {
-      id: 31,
+      id: 29,
       name: "Sign out",
       action: "sign_out",
       description: "Admin user signs out",
     },
     {
-      id: 32,
+      id: 30,
       name: "Sign in as regular user",
       action: "sign_in_user",
       description: "Regular user signs in",
     },
     {
-      id: 33,
+      id: 31,
       name: "Create admin profile",
       action: "create_admin_profile",
       description: "Try to create admin profile (should fail)",
     },
     {
-      id: 34,
+      id: 32,
       name: "Create user profile",
       action: "create_user_profile",
       description: "Create own profile (should succeed)",
     },
     {
-      id: 35,
+      id: 33,
       name: "Select admin profile",
       action: "select_admin_profile",
       description: "Try to view admin profile (should fail)",
     },
     {
-      id: 36,
+      id: 34,
       name: "Select user profile",
       action: "select_user_profile",
       description: "View own profile (should succeed)",
     },
     {
-      id: 37,
+      id: 35,
       name: "Edit admin profile",
       action: "edit_admin_profile",
       description: "Try to edit admin profile (should fail)",
     },
     {
-      id: 38,
+      id: 36,
       name: "Edit user profile",
       action: "edit_user_profile",
       description: "Edit own profile (should succeed)",
     },
     {
-      id: 39,
+      id: 37,
       name: "Add contract for user",
       action: "create_contract_for_user",
       description: "Create contract for self (should succeed)",
     },
     {
-      id: 40,
+      id: 38,
       name: "Select that contract",
       action: "select_contract",
       description: "View own contract (should succeed)",
     },
     {
-      id: 41,
+      id: 39,
       name: "Add task to contract",
       action: "add_task_to_contract",
       description: "Add task to own contract (should succeed)",
     },
     {
-      id: 42,
+      id: 40,
       name: "Select that task",
       action: "select_task",
       description: "View task on own contract (should succeed)",
     },
     {
-      id: 43,
+      id: 41,
       name: "Update that task",
       action: "update_task_first_time",
       description: "Update task on own contract (should succeed)",
     },
     {
-      id: 44,
+      id: 42,
       name: "Update contract to isPaid",
       action: "update_contract_to_paid",
       description: "Update unpaid contract (should succeed)",
     },
     {
-      id: 45,
+      id: 43,
       name: "Update the task (2nd time)",
       action: "update_task_second_time",
       description: "Update task (should succeed)",
     },
     {
-      id: 46,
+      id: 44,
       name: "Delete the task",
       action: "delete_task",
       description: "Try to delete task (should fail - admin only)",
     },
     {
-      id: 47,
+      id: 45,
       name: "Update the contract (2nd time)",
       action: "update_contract_second_time",
       description: "Try to update paid contract (should fail)",
     },
     {
-      id: 48,
+      id: 46,
       name: "Delete the contract",
       action: "delete_contract",
       description: "Try to delete contract (should fail - admin only)",
     },
     {
-      id: 49,
+      id: 47,
       name: "Create conversation",
       action: "create_conversation_for_user",
       description: "Try to create conversation (should fail - admin only)",
     },
     {
-      id: 50,
+      id: 48,
       name: "Add message to conversation",
       action: "add_message_to_conversation",
       description: "Try to add message (should fail - no conversation)",
     },
     {
-      id: 51,
+      id: 49,
       name: "Update that message",
       action: "update_message",
       description: "Try to update message (should fail - no message)",
     },
     {
-      id: 52,
+      id: 50,
       name: "Delete that message",
       action: "delete_message",
       description: "Try to delete message (should fail - no message)",
     },
     {
-      id: 53,
+      id: 51,
       name: "Try to select admin message",
       action: "try_select_admin_message",
       description: "Try to view admin message (should fail)",
     },
     {
-      id: 54,
+      id: 52,
       name: "Try to edit admin message",
       action: "try_edit_admin_message",
       description: "Try to edit admin message (should fail)",
     },
     {
-      id: 55,
+      id: 53,
       name: "Try to delete admin message",
       action: "try_delete_admin_message",
       description: "Try to delete admin message (should fail)",
     },
     {
-      id: 56,
+      id: 54,
       name: "Delete that conversation",
       action: "delete_conversation",
       description: "Try to delete conversation (should fail - admin only)",
     },
     {
-      id: 57,
+      id: 55,
       name: "Delete the user profile",
       action: "delete_user_profile",
       description: "Try to delete profile (should be restricted)",
     },
     {
-      id: 58,
+      id: 56,
       name: "Delete the admin profile",
       action: "delete_admin_profile",
       description: "Try to delete admin profile (should fail)",
     },
     {
-      id: 59,
+      id: 57,
       name: "Insert user profile (2nd time)",
       action: "create_user_profile",
       description: "Create own profile (should succeed)",
     },
     {
-      id: 60,
+      id: 58,
       name: "Insert contract (2nd time)",
       action: "create_contract_for_user",
       description: "Create contract for self (should succeed)",
     },
     {
-      id: 61,
+      id: 59,
       name: "Insert conversation (2nd time)",
       action: "create_conversation_for_user",
       description: "Try to create conversation (should fail - admin only)",
@@ -509,7 +498,7 @@ export default function RLSTestPage() {
       number,
       { shouldSucceed: boolean; reason: string }
     > = {
-      // Admin workflow (Steps 1-31) - all should succeed
+      // Admin workflow (Steps 1-29) - all should succeed
       1: { shouldSucceed: true, reason: "Admin sign-in should work" },
       2: { shouldSucceed: true, reason: "Admin can delete all data" },
       3: { shouldSucceed: true, reason: "Admin can create admin profiles" },
@@ -542,85 +531,83 @@ export default function RLSTestPage() {
       24: { shouldSucceed: true, reason: "Admin can delete user profiles" },
       25: { shouldSucceed: true, reason: "Admin can delete admin profiles" },
       26: { shouldSucceed: true, reason: "Admin can create admin profiles" },
-      27: { shouldSucceed: true, reason: "Admin can create user profiles" },
-      28: { shouldSucceed: true, reason: "Admin can create contracts" },
-      29: { shouldSucceed: true, reason: "Admin can create conversations" },
-      30: {
+      27: { shouldSucceed: true, reason: "Admin can create conversations" },
+      28: {
         shouldSucceed: true,
         reason: "Admin can add messages to conversations",
       },
-      31: { shouldSucceed: true, reason: "Admin sign-out should work" },
+      29: { shouldSucceed: true, reason: "Admin sign-out should work" },
 
-      // Regular user workflow (Steps 32-61)
-      32: { shouldSucceed: true, reason: "User sign-in should work" },
-      33: {
+      // Regular user workflow (Steps 30-59)
+      30: { shouldSucceed: true, reason: "User sign-in should work" },
+      31: {
         shouldSucceed: false,
         reason: "Users cannot create admin profiles",
       },
-      34: { shouldSucceed: true, reason: "Users can create their own profile" },
-      35: { shouldSucceed: false, reason: "Users cannot view admin profiles" },
-      36: { shouldSucceed: true, reason: "Users can view their own profile" },
-      37: { shouldSucceed: false, reason: "Users cannot edit admin profiles" },
-      38: { shouldSucceed: true, reason: "Users can edit their own profile" },
-      39: {
+      32: { shouldSucceed: true, reason: "Users can create their own profile" },
+      33: { shouldSucceed: false, reason: "Users cannot view admin profiles" },
+      34: { shouldSucceed: true, reason: "Users can view their own profile" },
+      35: { shouldSucceed: false, reason: "Users cannot edit admin profiles" },
+      36: { shouldSucceed: true, reason: "Users can edit their own profile" },
+      37: {
         shouldSucceed: true,
         reason: "Users can create contracts for themselves",
       },
-      40: { shouldSucceed: true, reason: "Users can view their own contracts" },
-      41: {
+      38: { shouldSucceed: true, reason: "Users can view their own contracts" },
+      39: {
         shouldSucceed: true,
         reason: "Users can add tasks to their contracts",
       },
-      42: {
+      40: {
         shouldSucceed: true,
         reason: "Users can view tasks on their contracts",
       },
-      43: {
+      41: {
         shouldSucceed: true,
         reason: "Users can update tasks on their contracts",
       },
-      44: { shouldSucceed: true, reason: "Users can update unpaid contracts" },
-      45: { shouldSucceed: true, reason: "Users can update tasks" },
-      46: { shouldSucceed: false, reason: "Only admins can delete tasks" },
-      47: {
+      42: { shouldSucceed: true, reason: "Users can update unpaid contracts" },
+      43: { shouldSucceed: true, reason: "Users can update tasks" },
+      44: { shouldSucceed: false, reason: "Only admins can delete tasks" },
+      45: {
         shouldSucceed: false,
         reason: "Users cannot update paid contracts",
       },
-      48: { shouldSucceed: false, reason: "Only admins can delete contracts" },
-      49: {
+      46: { shouldSucceed: false, reason: "Only admins can delete contracts" },
+      47: {
         shouldSucceed: false,
         reason: "Only admins can create conversations",
       },
-      50: {
+      48: {
         shouldSucceed: false,
         reason: "No conversation exists/not participant",
       },
-      51: { shouldSucceed: false, reason: "No message exists" },
-      52: { shouldSucceed: false, reason: "No message exists" },
-      53: { shouldSucceed: false, reason: "Users cannot view admin messages" },
-      54: { shouldSucceed: false, reason: "Users cannot edit admin messages" },
-      55: {
+      49: { shouldSucceed: false, reason: "No message exists" },
+      50: { shouldSucceed: false, reason: "No message exists" },
+      51: { shouldSucceed: false, reason: "Users cannot view admin messages" },
+      52: { shouldSucceed: false, reason: "Users cannot edit admin messages" },
+      53: {
         shouldSucceed: false,
         reason: "Users cannot delete admin messages",
       },
-      56: {
+      54: {
         shouldSucceed: false,
         reason: "Only admins can delete conversations",
       },
-      57: {
+      55: {
         shouldSucceed: false,
         reason: "Profile deletion should be restricted",
       },
-      58: {
+      56: {
         shouldSucceed: false,
         reason: "Users cannot delete admin profiles",
       },
-      59: { shouldSucceed: true, reason: "Users can create their own profile" },
-      60: {
+      57: { shouldSucceed: true, reason: "Users can create their own profile" },
+      58: {
         shouldSucceed: true,
         reason: "Users can create contracts for themselves",
       },
-      61: {
+      59: {
         shouldSucceed: false,
         reason: "Only admins can create conversations",
       },
