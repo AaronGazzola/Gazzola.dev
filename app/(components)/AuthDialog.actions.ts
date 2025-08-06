@@ -29,7 +29,6 @@ export async function signInAction(
     const prismaUser = await db.user.findUnique({
       where: { id: user.id },
     });
-    console.log("sign in", prismaUser);
 
     return getActionResponse({
       data: prismaUser,
@@ -41,7 +40,7 @@ export async function signInAction(
 
 export async function signUpAction(
   credentials: SignUpCredentials
-): Promise<ActionResponse<User | null>> {
+): Promise<ActionResponse<null>> {
   try {
     const { user } = await auth.api.signUpEmail({
       body: {
@@ -56,15 +55,7 @@ export async function signUpAction(
       return getActionResponse({ error: "Failed to create account" });
     }
 
-    const { db } = await getAuthenticatedClient();
-
-    const prismaUser = await db.user.findUnique({
-      where: { id: user.id },
-    });
-
-    return getActionResponse({
-      data: prismaUser,
-    });
+    return getActionResponse();
   } catch (error) {
     return getActionResponse({ error });
   }
@@ -127,4 +118,26 @@ async function getAuthenticatedUser() {
     headers: await headers(),
   });
   return session?.user;
+}
+
+export async function signOutAction(): Promise<
+  ActionResponse<{ success: boolean }>
+> {
+  try {
+    const { success } = await auth.api.signOut({
+      headers: await headers(),
+    });
+    if (!success) {
+      throw new Error("Failed to sign out");
+    }
+
+    return getActionResponse({
+      data: { success: true },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
 }

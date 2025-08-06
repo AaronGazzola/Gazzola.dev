@@ -43,6 +43,7 @@ interface OnboardingFormData {
 
 const OnboardingDialog = () => {
   const { isVerified, user } = useAuthStore();
+  console.log(user, isVerified);
   const pathname = usePathname();
   const { ui, closeOnboardingModal } = useAppStore();
   const isTest = useIsTest();
@@ -261,7 +262,7 @@ const OnboardingDialog = () => {
     <Dialog
       open={
         !!user &&
-        !pathname.startsWith(configuration.paths.testRls) &&
+        !pathname.startsWith(configuration.paths.test) &&
         (ui.onboardingModal.isOpen || !!showVerifyPage)
       }
       onOpenChange={handleClose}

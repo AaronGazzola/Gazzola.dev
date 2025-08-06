@@ -58,30 +58,8 @@ async function createRLSUser() {
     const grantSchemaUsageQuery = `GRANT USAGE ON SCHEMA public TO "${rlsUserName}";`;
     await client.query(grantSchemaUsageQuery);
 
-    // Grant select, insert, update, delete on all tables
-    const grantTablePermissionsQuery = `
-      GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO "${rlsUserName}";
-    `;
-    await client.query(grantTablePermissionsQuery);
-
-    // Grant usage on all sequences (for auto-increment fields)
-    const grantSequencePermissionsQuery = `
-      GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO "${rlsUserName}";
-    `;
-    await client.query(grantSequencePermissionsQuery);
-
-    // Grant permissions on future tables and sequences
-    const grantFutureTablesQuery = `
-      ALTER DEFAULT PRIVILEGES IN SCHEMA public 
-      GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO "${rlsUserName}";
-    `;
-    await client.query(grantFutureTablesQuery);
-
-    const grantFutureSequencesQuery = `
-      ALTER DEFAULT PRIVILEGES IN SCHEMA public 
-      GRANT USAGE, SELECT ON SEQUENCES TO "${rlsUserName}";
-    `;
-    await client.query(grantFutureSequencesQuery);
+    // Note: Table permissions will be granted via migrations
+    // This ensures proper version control and allows RLS policies to work correctly
 
     console.log('Permissions granted successfully');
     console.log(`RLS user '${rlsUserName}' is ready for use`);

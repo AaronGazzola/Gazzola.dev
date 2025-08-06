@@ -28,39 +28,6 @@ export async function getAuthenticatedUser(): Promise<User | null> {
   return prismaUser;
 }
 
-async function checkUserVerification(userId: string): Promise<boolean> {
-  try {
-    const { db } = await getAuthenticatedClient();
-
-    const userSignedInWithSocial = await db.account.findFirst({
-      where: {
-        userId,
-        providerId: {
-          in: [
-            "google",
-            "github",
-            "discord",
-            "facebook",
-            "twitter",
-            "apple",
-            "microsoft",
-            "linkedin",
-          ],
-        },
-      },
-    });
-
-    const user = await db.user.findUnique({
-      where: { id: userId },
-      select: { emailVerified: true },
-    });
-
-    return user?.emailVerified || !!userSignedInWithSocial;
-  } catch (error) {
-    return false;
-  }
-}
-
 async function getUserProfile(userId: string): Promise<Profile | null> {
   try {
     const { db } = await getAuthenticatedClient();
@@ -281,7 +248,7 @@ export async function getAppDataAction(
     }
 
     const isAdmin = user.role === "admin";
-    const isVerified = await checkUserVerification(user.id);
+    const isVerified = user.emailVerified;
     const profile = await getUserProfile(user.id);
     const users = await getAllUsers(isAdmin);
     const conversations = await getUserConversations(

@@ -33,7 +33,7 @@ export const useGetAppData = () => {
         data.isAdmin &&
         !userId &&
         pathname !== configuration.paths.admin &&
-        !pathname.startsWith(configuration.paths.testRls)
+        !pathname.startsWith(configuration.paths.test)
       ) {
         router.push(configuration.paths.admin);
         return data;

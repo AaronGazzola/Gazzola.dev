@@ -1,16 +1,14 @@
 //-| File path: app/(components)/Sidebar.hooks.tsx
+import { deleteUserContractsAction } from "@/app/(components)/Sidebar.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { Toast } from "@/components/shared/Toast";
 import { signOut } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { deleteUserContractsAction } from "@/app/(components)/Sidebar.actions";
 
 export function useSignOutMutation() {
-  const router = useRouter();
   const { clearAuth } = useAuthStore();
 
   return useMutation({

@@ -49,3 +49,25 @@ export async function deleteUserContractsAction(
     return getActionResponse({ error });
   }
 }
+
+export async function signOutAction(): Promise<
+  ActionResponse<{ success: boolean }>
+> {
+  try {
+    const { success } = await auth.api.signOut({
+      headers: await headers(),
+    });
+    if (!success) {
+      throw new Error("Failed to sign out");
+    }
+
+    return getActionResponse({
+      data: { success: true },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}

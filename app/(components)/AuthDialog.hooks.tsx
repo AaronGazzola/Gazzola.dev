@@ -105,7 +105,7 @@ export const useSignUp = () => {
 
   return useMutation({
     mutationFn: async (credentials: SignUpCredentials) => {
-      const { data, error } = await signUpAction(credentials);
+      const { error } = await signUpAction(credentials);
       if (error) throw new Error(error);
 
       const appDataResult = await getAppDataAction();

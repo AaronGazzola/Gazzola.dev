@@ -1,2589 +1,630 @@
 //-| File path: app/test/rls/page.actions.ts
 "use server";
 
-import { RLSTestResult } from "@/app/test/rls/page.types";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
+import { auth } from "@/lib/auth";
 import { getAuthenticatedClient } from "@/lib/auth-utils";
+import { headers } from "next/headers";
+import {
+  RLSActionResponse,
+  RLSAuthResponse,
+  RLSSignInCredentials,
+} from "./page.types";
 
-export async function testProfileSelectAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
+export async function rlsSignInAction(
+  credentials: RLSSignInCredentials
+): Promise<ActionResponse<RLSAuthResponse>> {
   try {
-    const { db, session } = await getAuthenticatedClient();
-    const profiles = await db.profile.findMany();
-    const expectedSuccess = profiles.length > 0;
-    return getActionResponse({
-      data: { success: expectedSuccess, count: profiles.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
+    const { user } = await auth.api.signInEmail({
+      body: {
+        email: credentials.email,
+        password: credentials.password,
       },
-    });
-  }
-}
-
-export async function testProfileInsertAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    // Find the regular user to test profile creation
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
+      headers: await headers(),
     });
 
-    if (!regularUser) {
+    if (!user) {
       return getActionResponse({
-        data: { success: false, error: "Regular user not found for testing" },
+        data: { success: false },
+        error: "Invalid credentials",
       });
     }
 
-    // Store existing profile if any (to restore later)
-    const existingProfile = await db.profile.findFirst({
-      where: { userId: regularUser.id },
-    });
-
-    // Delete existing profile temporarily if it exists
-    if (existingProfile) {
-      await db.profile.delete({
-        where: { id: existingProfile.id },
-      });
-    }
-
-    // Create a test profile (admin should be able to create profiles for anyone)
-    const testProfile = await db.profile.create({
-      data: {
-        userId: regularUser.id,
-        firstName: "Test Profile",
-        lastName: "Insert Test",
-        email: `test-profile-insert-${Date.now()}@example.com`,
-        company: "Test Insert Company",
-      },
-    });
-
-    // Clean up the test profile
-    await db.profile.delete({
-      where: { id: testProfile.id },
-    });
-
-    // Restore the original profile if it existed
-    if (existingProfile) {
-      await db.profile.create({
-        data: {
-          userId: existingProfile.userId,
-          firstName: existingProfile.firstName,
-          lastName: existingProfile.lastName,
-          email: existingProfile.email,
-          company: existingProfile.company,
-          phone: existingProfile.phone,
-        },
-      });
-    }
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testProfileUpdateAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: session.user.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "No profile found for user" },
-      });
-    }
-
-    await db.profile.update({
-      where: { id: userProfile.id },
-      data: { firstName: userProfile.firstName },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testProfileDeleteAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: session.user.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "No profile found for user" },
-      });
-    }
-
-    await db.profile.delete({
-      where: { id: userProfile.id },
-    });
-
-    return getActionResponse({
-      data: { success: false, error: "Should not be able to delete profile" },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testContractSelectAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    const contracts = await db.contract.findMany();
-    const expectedSuccess = contracts.length > 0;
-    return getActionResponse({
-      data: { success: expectedSuccess, count: contracts.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testContractInsertAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    // Use the regular user's profile to test contract creation (admin can create contracts for anyone)
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
-    });
-
-    if (!regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Regular user not found for testing" },
-      });
-    }
-
-    const regularUserProfile = await db.profile.findFirst({
-      where: { userId: regularUser.id },
-    });
-
-    if (!regularUserProfile) {
-      return getActionResponse({
-        data: { success: false, error: "No profile found for regular user" },
-      });
-    }
-
-    const newContract = await db.contract.create({
-      data: {
-        title: "Test Contract Admin Insert",
-        description: "Test contract description for admin insert test",
-        startDate: new Date(),
-        targetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        dueDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-        price: 1500,
-        profileId: regularUserProfile.id,
-        conversationIds: [],
-        userApproved: false,
-        adminApproved: false,
-      },
-    });
-
-    await db.contract.delete({
-      where: { id: newContract.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testContractUpdateAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    // Admin should be able to update any contract, so find any existing contract
-    const anyContract = await db.contract.findFirst({
-      where: { isPaid: false },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!anyContract) {
-      return getActionResponse({
-        data: {
-          success: false,
-          error: "No unpaid contract found for testing",
-        },
-      });
-    }
-
-    await db.contract.update({
-      where: { id: anyContract.id },
-      data: { title: anyContract.title + " - Admin Updated" },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testContractDeleteAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: session.user.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "No profile found for user" },
-      });
-    }
-
-    const userContract = await db.contract.findFirst({
-      where: { profileId: userProfile.id },
-    });
-
-    if (!userContract) {
-      return getActionResponse({
-        data: { success: false, error: "No contract found for user" },
-      });
-    }
-
-    await db.contract.delete({
-      where: { id: userContract.id },
-    });
-
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to delete contract as non-admin",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testTaskSelectAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    const tasks = await db.task.findMany();
-    const expectedSuccess = tasks.length > 0;
-    return getActionResponse({
-      data: { success: expectedSuccess, count: tasks.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testTaskInsertAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: session.user.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "No profile found for user" },
-      });
-    }
-
-    const userContract = await db.contract.findFirst({
-      where: { profileId: userProfile.id },
-    });
-
-    if (!userContract) {
-      return getActionResponse({
-        data: { success: false, error: "No contract found for user" },
-      });
-    }
-
-    const newTask = await db.task.create({
-      data: {
-        title: "Test Task",
-        description: "Test task description",
-        price: 500,
-        contractId: userContract.id,
-      },
-    });
-
-    await db.task.delete({
-      where: { id: newTask.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testTaskUpdateAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: session.user.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "No profile found for user" },
-      });
-    }
-
-    const userContract = await db.contract.findFirst({
-      where: { profileId: userProfile.id },
-    });
-
-    if (!userContract) {
-      return getActionResponse({
-        data: { success: false, error: "No contract found for user" },
-      });
-    }
-
-    const userTask = await db.task.findFirst({
-      where: { contractId: userContract.id },
-    });
-
-    if (!userTask) {
-      return getActionResponse({
-        data: { success: false, error: "No task found for user contract" },
-      });
-    }
-
-    await db.task.update({
-      where: { id: userTask.id },
-      data: { title: userTask.title },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testTaskDeleteAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: session.user.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "No profile found for user" },
-      });
-    }
-
-    const userContract = await db.contract.findFirst({
-      where: { profileId: userProfile.id },
-    });
-
-    if (!userContract) {
-      return getActionResponse({
-        data: { success: false, error: "No contract found for user" },
-      });
-    }
-
-    const userTask = await db.task.findFirst({
-      where: { contractId: userContract.id },
-    });
-
-    if (!userTask) {
-      return getActionResponse({
-        data: { success: false, error: "No task found for user contract" },
-      });
-    }
-
-    await db.task.delete({
-      where: { id: userTask.id },
-    });
-
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to delete task as non-admin",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testConversationSelectAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    const conversations = await db.conversation.findMany();
-    const expectedSuccess = conversations.length > 0;
-    return getActionResponse({
-      data: { success: expectedSuccess, count: conversations.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testConversationInsertAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    await db.conversation.create({
-      data: {
-        title: "Test Conversation",
-        participants: [session.user.id],
-        lastMessageAt: new Date(),
-      },
-    });
-
-    // If we reach here, creation succeeded when it should have failed
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to create conversation as non-admin",
-      },
-    });
-  } catch (error) {
-    // For testConversationInsertAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
         success: true,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testConversationUpdateAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const existingConversation = await db.conversation.findFirst({
-      where: { participants: { has: session.user.id } },
-      orderBy: { lastMessageAt: "desc" },
-    });
-
-    if (!existingConversation) {
-      return getActionResponse({
-        data: { success: false, error: "No conversation found for user" },
-      });
-    }
-
-    await db.conversation.update({
-      where: { id: existingConversation.id },
-      data: { title: existingConversation.title },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testConversationDeleteAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const existingConversation = await db.conversation.findFirst({
-      where: { participants: { has: session.user.id } },
-      orderBy: { lastMessageAt: "desc" },
-    });
-
-    if (!existingConversation) {
-      return getActionResponse({
-        data: { success: false, error: "No conversation found for user" },
-      });
-    }
-
-    await db.conversation.delete({
-      where: { id: existingConversation.id },
-    });
-
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to delete conversation as non-admin",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testMessageSelectAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  const { db } = await getAuthenticatedClient();
-  try {
-    const messages = await db.message.findMany();
-    const expectedSuccess = messages.length > 0;
-    return getActionResponse({
-      data: { success: expectedSuccess, count: messages.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testMessageInsertAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const existingConversation = await db.conversation.findFirst({
-      where: { participants: { has: session.user.id } },
-      orderBy: { lastMessageAt: "desc" },
-    });
-
-    if (!existingConversation) {
-      return getActionResponse({
-        data: { success: false, error: "No conversation found for user" },
-      });
-    }
-
-    const newMessage = await db.message.create({
-      data: {
-        senderId: session.user.id,
-        content: "Test message",
-        conversationId: existingConversation.id,
-      },
-    });
-
-    await db.message.delete({
-      where: { id: newMessage.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testMessageUpdateAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userMessage = await db.message.findFirst({
-      where: { senderId: session.user.id },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!userMessage) {
-      return getActionResponse({
-        data: { success: false, error: "No message found for user" },
-      });
-    }
-
-    await db.message.update({
-      where: { id: userMessage.id },
-      data: { content: userMessage.content },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testMessageDeleteAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userMessage = await db.message.findFirst({
-      where: { senderId: session.user.id },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!userMessage) {
-      return getActionResponse({
-        data: { success: false, error: "No message found for user" },
-      });
-    }
-
-    await db.message.delete({
-      where: { id: userMessage.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testFileUploadSelectAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  const { db } = await getAuthenticatedClient();
-  try {
-    const fileUploads = await db.fileUpload.findMany();
-    const expectedSuccess = fileUploads.length > 0;
-    return getActionResponse({
-      data: { success: expectedSuccess, count: fileUploads.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testFileUploadInsertAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userMessage = await db.message.findFirst({
-      where: { senderId: session.user.id },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!userMessage) {
-      return getActionResponse({
-        data: { success: false, error: "No message found for user" },
-      });
-    }
-
-    const newFileUpload = await db.fileUpload.create({
-      data: {
-        messageId: userMessage.id,
-        filename: "test.txt",
-        url: "http://example.com/test.txt",
-        size: 1024,
-        mimeType: "text/plain",
-      },
-    });
-
-    await db.fileUpload.delete({
-      where: { id: newFileUpload.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testFileUploadUpdateAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const userMessage = await db.message.findFirst({
-      where: { senderId: session.user.id },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!userMessage) {
-      return getActionResponse({
-        data: { success: false, error: "No message found for user" },
-      });
-    }
-
-    const userFileUpload = await db.fileUpload.findFirst({
-      where: { messageId: userMessage.id },
-    });
-
-    if (!userFileUpload) {
-      return getActionResponse({
-        data: {
-          success: false,
-          error: "No file upload found for user message",
+        user: {
+          id: user.id,
+          email: user.email,
         },
-      });
-    }
-
-    await db.fileUpload.update({
-      where: { id: userFileUpload.id },
-      data: { filename: userFileUpload.filename },
+      },
     });
-
-    return getActionResponse({ data: { success: true } });
   } catch (error) {
     return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
+      data: { success: false },
+      error,
     });
   }
 }
 
-export async function testFileUploadDeleteAction(): Promise<
-  ActionResponse<RLSTestResult>
+export async function rlsSignOutAction(): Promise<
+  ActionResponse<RLSAuthResponse>
 > {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
   try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
+    const { success } = await auth.api.signOut({
+      headers: await headers(),
+    });
+    if (!success) {
+      throw new Error("Failed to sign out");
     }
 
-    const userMessage = await db.message.findFirst({
-      where: { senderId: session.user.id },
-      orderBy: { createdAt: "desc" },
+    return getActionResponse({
+      data: { success: true },
     });
-
-    if (!userMessage) {
-      return getActionResponse({
-        data: { success: false, error: "No message found for user" },
-      });
-    }
-
-    const userFileUpload = await db.fileUpload.findFirst({
-      where: { messageId: userMessage.id },
-    });
-
-    if (!userFileUpload) {
-      return getActionResponse({
-        data: {
-          success: false,
-          error: "No file upload found for user message",
-        },
-      });
-    }
-
-    await db.fileUpload.delete({
-      where: { id: userFileUpload.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
   } catch (error) {
     return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
+      data: { success: false },
+      error,
     });
   }
 }
 
-export async function testPaymentSelectAction(): Promise<
-  ActionResponse<RLSTestResult>
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const USER_EMAIL = process.env.USER_EMAIL;
+
+export async function rlsSelectAdminUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
 > {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
   try {
     const { db } = await getAuthenticatedClient();
-    const payments = await db.payment.findMany();
-    const expectedSuccess = payments.length > 0;
-    return getActionResponse({
-      data: { success: expectedSuccess, count: payments.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testPaymentInsertAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    await db.payment.create({
-      data: {
-        contractId: "test-contract-id",
-        stripeSessionId: "test-session-id",
-        amount: 100,
-        currency: "usd",
-      },
+    const user = await db.user.findUnique({
+      where: { email: ADMIN_EMAIL },
     });
 
-    // If we reach here, creation succeeded when it should have failed
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to create payment as non-admin",
-      },
-    });
-  } catch (error) {
-    // For testPaymentInsertAction, being blocked by RLS is expected success
-    return getActionResponse({
-      data: {
-        success: true,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function testPaymentUpdateAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-    const existingPayment = await db.payment.findFirst();
-
-    if (!existingPayment) {
-      return getActionResponse({
-        data: { success: false, error: "No payment found" },
-      });
+    if (!user) {
+      throw new Error("Admin user not found");
     }
 
-    await db.payment.update({
-      where: { id: existingPayment.id },
-      data: { amount: existingPayment.amount },
-    });
-
-    // If we reach here, update succeeded when it should have failed
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to update payment as non-admin",
-      },
-    });
-  } catch (error) {
-    // For testPaymentUpdateAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
         success: true,
-        error: error instanceof Error ? error.message : String(error),
+        message: "Admin user found",
+        data: user,
       },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
     });
   }
 }
 
-export async function testPaymentDeleteAction(): Promise<
-  ActionResponse<RLSTestResult>
+export async function rlsSelectUserUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
 > {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-    const existingPayment = await db.payment.findFirst();
-
-    if (!existingPayment) {
-      return getActionResponse({
-        data: { success: false, error: "No payment found" },
-      });
-    }
-
-    await db.payment.delete({
-      where: { id: existingPayment.id },
-    });
-
-    // If we reach here, deletion succeeded when it should have failed
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to delete payment as non-admin",
-      },
-    });
-  } catch (error) {
-    // For testPaymentDeleteAction, being blocked by RLS is expected success
-    return getActionResponse({
-      data: {
-        success: true,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-// Utility Actions
-
-export async function deleteAllDataAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
   try {
     const { db } = await getAuthenticatedClient();
-    // Find the test users to scope deletions
-    const adminUser = await db.user.findFirst({
-      where: { email: process.env.ADMIN_EMAIL! },
-    });
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
+    const user = await db.user.findUnique({
+      where: { email: USER_EMAIL },
     });
 
-    if (!adminUser || !regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Test users not found" },
-      });
+    if (!user) {
+      throw new Error("User user not found");
     }
 
-    const testUserIds = [adminUser.id, regularUser.id];
-
-    // Get profiles for test users
-    const testProfiles = await db.profile.findMany({
-      where: { userId: { in: testUserIds } },
-    });
-    const testProfileIds = testProfiles.map((p) => p.id);
-
-    // Get contracts for test users only
-    const testContracts = await db.contract.findMany({
-      where: { profileId: { in: testProfileIds } },
-    });
-    const testContractIds = testContracts.map((c) => c.id);
-
-    // Get conversations for test users only
-    const testConversations = await db.conversation.findMany({
-      where: {
-        participants: {
-          hasSome: testUserIds,
-        },
-      },
-    });
-    const testConversationIds = testConversations.map((c) => c.id);
-
-    // Delete data in dependency order, scoped to test users only
-    await db.fileUpload.deleteMany({
-      where: {
-        message: {
-          conversationId: { in: testConversationIds },
-        },
-      },
-    });
-
-    await db.message.deleteMany({
-      where: { conversationId: { in: testConversationIds } },
-    });
-
-    await db.conversation.deleteMany({
-      where: { id: { in: testConversationIds } },
-    });
-
-    await db.payment.deleteMany({
-      where: { contractId: { in: testContractIds } },
-    });
-
-    await db.task.deleteMany({
-      where: { contractId: { in: testContractIds } },
-    });
-
-    await db.contract.deleteMany({
-      where: { id: { in: testContractIds } },
-    });
-
-    // Delete profiles for test users only
-    await db.profile.deleteMany({
-      where: { userId: { in: testUserIds } },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
     return getActionResponse({
       data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
+        success: true,
+        message: "User user found",
+        data: user,
       },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
     });
   }
 }
 
-// New Step-by-Step Workflow Actions
-
-export async function createAdminProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
+export async function rlsUpdateAdminUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
 > {
-  if (process.env.APP_ENV !== "test") {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const updatedName = `Updated Admin ${Date.now()}`;
+    console.log("init:", updatedName.slice(-3));
+    const user = await db.user.update({
+      where: { email: ADMIN_EMAIL },
+      data: { name: updatedName },
+    });
+
+    console.log("user:", user.name?.slice(-3));
+    const verifiedUser = await db.user.findUnique({
+      where: { email: ADMIN_EMAIL },
+    });
+    console.log("verifiedUser:", verifiedUser?.name?.slice(-3));
+
+    if (!verifiedUser || verifiedUser.name !== updatedName) {
+      throw new Error("Admin user update was not reflected in database");
+    }
+
     return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
+      data: {
+        success: true,
+        message: "Admin user updated successfully",
+        data: user,
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
     });
   }
-  try {
-    const { db, session } = await getAuthenticatedClient();
+}
 
-    const adminUser = await db.user.findFirst({
-      where: { email: process.env.ADMIN_EMAIL! },
+export async function rlsUpdateUserUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const updatedName = `Updated User ${Date.now()}`;
+    const user = await db.user.update({
+      where: { email: USER_EMAIL },
+      data: { name: updatedName },
+    });
+
+    const verifiedUser = await db.user.findUnique({
+      where: { email: USER_EMAIL },
+    });
+
+    if (!verifiedUser || verifiedUser.name !== updatedName) {
+      throw new Error("User user update was not reflected in database");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "User user updated successfully",
+        data: user,
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsDeleteAdminUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    await db.user.delete({
+      where: { email: ADMIN_EMAIL },
+    });
+
+    const deletedUser = await db.user.findUnique({
+      where: { email: ADMIN_EMAIL },
+    });
+
+    if (deletedUser) {
+      throw new Error("Admin user still exists after deletion");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "Admin user deleted successfully",
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsDeleteUserUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    await db.user.delete({
+      where: { email: USER_EMAIL },
+    });
+
+    const deletedUser = await db.user.findUnique({
+      where: { email: USER_EMAIL },
+    });
+
+    if (deletedUser) {
+      throw new Error("User user still exists after deletion");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "User user deleted successfully",
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsInsertNewUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const newUserEmail = `test-user-${Date.now()}@example.com`;
+
+    const existingUser = await db.user.findUnique({
+      where: { email: newUserEmail },
+    });
+
+    if (existingUser) {
+      throw new Error("User already exists");
+    }
+
+    const user = await db.user.create({
+      data: {
+        email: newUserEmail,
+        name: `New Test User ${Date.now()}`,
+        emailVerified: true,
+      },
+    });
+
+    const createdUser = await db.user.findUnique({
+      where: { email: newUserEmail },
+    });
+
+    if (!createdUser) {
+      throw new Error("Created user cannot be found after creation");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "New user created successfully",
+        data: user,
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsDeleteAdminProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const adminUser = await db.user.findUnique({
+      where: { email: ADMIN_EMAIL },
+    });
+
+    if (adminUser) {
+      await db.profile.deleteMany({
+        where: { userId: adminUser.id },
+      });
+
+      const remainingProfile = await db.profile.findFirst({
+        where: { userId: adminUser.id },
+      });
+
+      if (remainingProfile) {
+        throw new Error("Admin profile still exists after deletion");
+      }
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "Admin profile deleted successfully",
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsDeleteUserProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const user = await db.user.findUnique({
+      where: { email: USER_EMAIL },
+    });
+
+    if (user) {
+      await db.profile.deleteMany({
+        where: { userId: user.id },
+      });
+
+      const remainingProfile = await db.profile.findFirst({
+        where: { userId: user.id },
+      });
+
+      if (remainingProfile) {
+        throw new Error("User profile still exists after deletion");
+      }
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "User profile deleted successfully",
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsInsertAdminProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const adminUser = await db.user.findUnique({
+      where: { email: ADMIN_EMAIL },
     });
 
     if (!adminUser) {
-      return getActionResponse({
-        data: { success: false, error: "Admin user not found" },
-      });
+      throw new Error("Admin user not found");
     }
 
-    // Delete existing admin profile if it exists
-    await db.profile.deleteMany({
+    const existingProfile = await db.profile.findFirst({
       where: { userId: adminUser.id },
     });
 
-    // Attempt to create admin profile
-    await db.profile.create({
+    if (existingProfile) {
+      throw new Error("Admin profile already exists");
+    }
+
+    const profile = await db.profile.create({
       data: {
         userId: adminUser.id,
         firstName: "Admin",
-        lastName: "Test User",
-        email: adminUser.email,
-        company: "Admin Test Company",
-        phone: "555-123-4567",
+        lastName: "Profile",
+        company: "Test Company",
       },
     });
 
-    // Verify the profile was actually created
     const createdProfile = await db.profile.findFirst({
       where: { userId: adminUser.id },
     });
 
-    const actuallyCreated = createdProfile !== null;
+    if (!createdProfile) {
+      throw new Error("Created admin profile cannot be found after creation");
+    }
 
     return getActionResponse({
       data: {
-        success: actuallyCreated,
-        error: actuallyCreated
-          ? undefined
-          : "RLS policy blocked admin profile creation",
+        success: true,
+        message: "Admin profile created successfully",
+        data: profile,
       },
     });
   } catch (error) {
     return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
+      data: { success: false },
+      error,
     });
   }
 }
 
-export async function createUserProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
+export async function rlsInsertUserProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
 > {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
   try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
+    const { db } = await getAuthenticatedClient();
+    const user = await db.user.findUnique({
+      where: { email: USER_EMAIL },
     });
 
-    if (!regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Regular user not found" },
-      });
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    // Try to create profile for regular user (should succeed for admin, fail for regular user trying to create admin profile)
-    const targetUserId =
-      session.user.role === "admin" ? regularUser.id : session.user.id;
-
-    // Delete existing profile if it exists
-    await db.profile.deleteMany({
-      where: { userId: targetUserId },
+    const existingProfile = await db.profile.findFirst({
+      where: { userId: user.id },
     });
 
-    // Attempt to create user profile
-    await db.profile.create({
+    if (existingProfile) {
+      throw new Error("User profile already exists");
+    }
+
+    const profile = await db.profile.create({
       data: {
-        userId: targetUserId,
-        firstName: "Regular",
-        lastName: "Test User",
-        email: regularUser.email,
-        company: "User Test Company",
-        phone: "555-987-6543",
+        userId: user.id,
+        firstName: "User",
+        lastName: "Profile",
+        company: "Test Company",
       },
     });
 
-    // Verify the profile was actually created
     const createdProfile = await db.profile.findFirst({
-      where: { userId: targetUserId },
+      where: { userId: user.id },
     });
 
-    const actuallyCreated = createdProfile !== null;
-
-    return getActionResponse({
-      data: {
-        success: actuallyCreated,
-        error: actuallyCreated
-          ? undefined
-          : "RLS policy blocked user profile creation",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function selectAdminProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    const adminUser = await db.user.findFirst({
-      where: { email: process.env.ADMIN_EMAIL! },
-    });
-
-    if (!adminUser) {
-      return getActionResponse({
-        data: { success: false, error: "Admin user not found" },
-      });
+    if (!createdProfile) {
+      throw new Error("Created user profile cannot be found after creation");
     }
 
-    const adminProfile = await db.profile.findFirst({
-      where: { userId: adminUser.id },
-    });
-
-    return getActionResponse({
-      data: { success: !!adminProfile, count: adminProfile ? 1 : 0 },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function selectUserProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
-    });
-
-    if (!regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Regular user not found" },
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: regularUser.id },
-    });
-
-    return getActionResponse({
-      data: { success: !!userProfile, count: userProfile ? 1 : 0 },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function editAdminProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    const adminUser = await db.user.findFirst({
-      where: { email: process.env.ADMIN_EMAIL! },
-    });
-
-    if (!adminUser) {
-      return getActionResponse({
-        data: { success: false, error: "Admin user not found" },
-      });
-    }
-
-    const adminProfile = await db.profile.findFirst({
-      where: { userId: adminUser.id },
-    });
-
-    if (!adminProfile) {
-      return getActionResponse({
-        data: { success: false, error: "Admin profile not found" },
-      });
-    }
-
-    await db.profile.update({
-      where: { id: adminProfile.id },
-      data: { company: "Updated Admin Company" },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function editUserProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
-    });
-
-    if (!regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Regular user not found" },
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: regularUser.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "User profile not found" },
-      });
-    }
-
-    await db.profile.update({
-      where: { id: userProfile.id },
-      data: { company: "Updated User Company" },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function createContractForUserAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
-    });
-
-    if (!regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Regular user not found" },
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: regularUser.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "User profile not found" },
-      });
-    }
-
-    const contract = await db.contract.create({
-      data: {
-        title: "Step-by-Step Test Contract",
-        description: "Contract created for step-by-step RLS testing",
-        startDate: new Date(),
-        targetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        dueDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-        price: 2500,
-        profileId: userProfile.id,
-        conversationIds: [],
-        userApproved: false,
-        adminApproved: false,
-        isPaid: false,
-      },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function selectContractAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const contracts = await db.contract.findMany({
-      where: { title: "Step-by-Step Test Contract" },
-    });
-
-    return getActionResponse({
-      data: { success: contracts.length > 0, count: contracts.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function addTaskToContractAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const contract = await db.contract.findFirst({
-      where: { title: "Step-by-Step Test Contract" },
-    });
-
-    if (!contract) {
-      return getActionResponse({
-        data: { success: false, error: "Test contract not found" },
-      });
-    }
-
-    const task = await db.task.create({
-      data: {
-        title: "Step-by-Step Test Task",
-        description: "Task created for step-by-step RLS testing",
-        price: 1000,
-        contractId: contract.id,
-      },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function selectTaskAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const tasks = await db.task.findMany({
-      where: { title: "Step-by-Step Test Task" },
-    });
-
-    return getActionResponse({
-      data: { success: tasks.length > 0, count: tasks.length },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function updateTaskFirstTimeAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const task = await db.task.findFirst({
-      where: { title: "Step-by-Step Test Task" },
-    });
-
-    if (!task) {
-      return getActionResponse({
-        data: { success: false, error: "Test task not found" },
-      });
-    }
-
-    await db.task.update({
-      where: { id: task.id },
-      data: { description: "Updated task description - first time" },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function updateContractToPaidAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const contract = await db.contract.findFirst({
-      where: { title: "Step-by-Step Test Contract" },
-    });
-
-    if (!contract) {
-      return getActionResponse({
-        data: { success: false, error: "Test contract not found" },
-      });
-    }
-
-    await db.contract.update({
-      where: { id: contract.id },
-      data: { isPaid: true },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function updateTaskSecondTimeAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const task = await db.task.findFirst({
-      where: { title: "Step-by-Step Test Task" },
-    });
-
-    if (!task) {
-      return getActionResponse({
-        data: { success: false, error: "Test task not found" },
-      });
-    }
-
-    await db.task.update({
-      where: { id: task.id },
-      data: { description: "Updated task description - second time" },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function deleteTaskAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const task = await db.task.findFirst({
-      where: { title: "Step-by-Step Test Task" },
-    });
-
-    if (!task) {
-      return getActionResponse({
-        data: { success: false, error: "Test task not found" },
-      });
-    }
-
-    // Attempt to delete the task
-    await db.task.delete({
-      where: { id: task.id },
-    });
-
-    // Verify the task was actually deleted
-    const taskStillExists = await db.task.findFirst({
-      where: { id: task.id },
-    });
-
-    const actuallyDeleted = taskStillExists === null;
-
-    return getActionResponse({
-      data: {
-        success: actuallyDeleted,
-        error: actuallyDeleted ? undefined : "RLS policy blocked task deletion",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function updateContractSecondTimeAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const contract = await db.contract.findFirst({
-      where: { title: "Step-by-Step Test Contract" },
-    });
-
-    if (!contract) {
-      return getActionResponse({
-        data: { success: false, error: "Test contract not found" },
-      });
-    }
-
-    const newDescription = "Updated contract description - second time";
-
-    // Attempt to update the contract
-    await db.contract.update({
-      where: { id: contract.id },
-      data: { description: newDescription },
-    });
-
-    // Verify the contract was actually updated
-    const updatedContract = await db.contract.findFirst({
-      where: { id: contract.id },
-    });
-
-    const actuallyUpdated = updatedContract?.description === newDescription;
-
-    return getActionResponse({
-      data: {
-        success: actuallyUpdated,
-        error: actuallyUpdated
-          ? undefined
-          : "RLS policy blocked contract update",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function deleteContractAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const contract = await db.contract.findFirst({
-      where: { title: "Step-by-Step Test Contract" },
-    });
-
-    if (!contract) {
-      return getActionResponse({
-        data: { success: false, error: "Test contract not found" },
-      });
-    }
-
-    // Attempt to delete the contract
-    await db.contract.delete({
-      where: { id: contract.id },
-    });
-
-    // Verify the contract was actually deleted
-    const contractStillExists = await db.contract.findFirst({
-      where: { id: contract.id },
-    });
-
-    const actuallyDeleted = contractStillExists === null;
-
-    return getActionResponse({
-      data: {
-        success: actuallyDeleted,
-        error: actuallyDeleted
-          ? undefined
-          : "RLS policy blocked contract deletion",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function createConversationForUserAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
-    });
-
-    if (!regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Regular user not found" },
-      });
-    }
-
-    // Attempt to create conversation
-    await db.conversation.create({
-      data: {
-        title: "Step-by-Step Test Conversation",
-        participants: [regularUser.id],
-        lastMessageAt: new Date(),
-      },
-    });
-
-    // Verify the conversation was actually created
-    const createdConversation = await db.conversation.findFirst({
-      where: { title: "Step-by-Step Test Conversation" },
-    });
-
-    const actuallyCreated = createdConversation !== null;
-
-    return getActionResponse({
-      data: {
-        success: actuallyCreated,
-        error: actuallyCreated
-          ? undefined
-          : "RLS policy blocked conversation creation",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function addMessageToConversationAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const conversation = await db.conversation.findFirst({
-      where: { title: "Step-by-Step Test Conversation" },
-    });
-
-    if (!conversation) {
-      return getActionResponse({
-        data: { success: false, error: "Test conversation not found" },
-      });
-    }
-
-    const message = await db.message.create({
-      data: {
-        senderId: session.user.id,
-        content: "Step-by-step test message",
-        conversationId: conversation.id,
-      },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function updateMessageAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const message = await db.message.findFirst({
-      where: { content: "Step-by-step test message" },
-    });
-
-    if (!message) {
-      return getActionResponse({
-        data: { success: false, error: "Test message not found" },
-      });
-    }
-
-    await db.message.update({
-      where: { id: message.id },
-      data: { content: "Updated step-by-step test message" },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function deleteMessageAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const message = await db.message.findFirst({
-      where: { content: "Updated step-by-step test message" },
-    });
-
-    if (!message) {
-      return getActionResponse({
-        data: { success: false, error: "Updated test message not found" },
-      });
-    }
-
-    await db.message.delete({
-      where: { id: message.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function deleteConversationAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const conversation = await db.conversation.findFirst({
-      where: { title: "Step-by-Step Test Conversation" },
-    });
-
-    if (!conversation) {
-      return getActionResponse({
-        data: { success: false, error: "Test conversation not found" },
-      });
-    }
-
-    await db.conversation.delete({
-      where: { id: conversation.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function deleteUserProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const regularUser = await db.user.findFirst({
-      where: { email: process.env.USER_EMAIL! },
-    });
-
-    if (!regularUser) {
-      return getActionResponse({
-        data: { success: false, error: "Regular user not found" },
-      });
-    }
-
-    const userProfile = await db.profile.findFirst({
-      where: { userId: regularUser.id },
-    });
-
-    if (!userProfile) {
-      return getActionResponse({
-        data: { success: false, error: "User profile not found" },
-      });
-    }
-
-    await db.profile.delete({
-      where: { id: userProfile.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function deleteAdminProfileAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    const adminUser = await db.user.findFirst({
-      where: { email: process.env.ADMIN_EMAIL! },
-    });
-
-    if (!adminUser) {
-      return getActionResponse({
-        data: { success: false, error: "Admin user not found" },
-      });
-    }
-
-    const adminProfile = await db.profile.findFirst({
-      where: { userId: adminUser.id },
-    });
-
-    if (!adminProfile) {
-      return getActionResponse({
-        data: { success: false, error: "Admin profile not found" },
-      });
-    }
-
-    await db.profile.delete({
-      where: { id: adminProfile.id },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function insertAdminMessageToConversationAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db, session } = await getAuthenticatedClient();
-
-    if (!session?.user) {
-      return getActionResponse({
-        error: "Unauthorized: No valid session",
-      });
-    }
-
-    const conversation = await db.conversation.findFirst({
-      where: { title: "Step-by-Step Test Conversation" },
-    });
-
-    if (!conversation) {
-      return getActionResponse({
-        data: { success: false, error: "Test conversation not found" },
-      });
-    }
-
-    await db.message.create({
-      data: {
-        senderId: session.user.id,
-        content: "Admin message for RLS testing",
-        conversationId: conversation.id,
-      },
-    });
-
-    return getActionResponse({ data: { success: true } });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function trySelectAdminMessageAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const adminMessage = await db.message.findFirst({
-      where: { content: "Admin message for RLS testing" },
-    });
-
-    return getActionResponse({
-      data: {
-        success: adminMessage ? false : true,
-        error: adminMessage
-          ? "Should not be able to view admin message"
-          : "Admin message not found as expected",
-      },
-    });
-  } catch (error) {
-    return getActionResponse({
-      data: {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
-  }
-}
-
-export async function tryEditAdminMessageAction(): Promise<
-  ActionResponse<RLSTestResult>
-> {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
-  try {
-    const { db } = await getAuthenticatedClient();
-    const adminMessage = await db.message.findFirst({
-      where: { content: "Admin message for RLS testing" },
-    });
-
-    if (!adminMessage) {
-      return getActionResponse({
-        data: {
-          success: false,
-          error: "Admin message not found for editing test",
-        },
-      });
-    }
-
-    await db.message.update({
-      where: { id: adminMessage.id },
-      data: { content: "User tried to edit admin message" },
-    });
-
-    // If we reach here, update succeeded when it should have failed
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to edit admin message",
-      },
-    });
-  } catch (error) {
-    // For tryEditAdminMessageAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
         success: true,
-        error: error instanceof Error ? error.message : String(error),
+        message: "User profile created successfully",
+        data: profile,
       },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
     });
   }
 }
 
-export async function tryDeleteAdminMessageAction(): Promise<
-  ActionResponse<RLSTestResult>
+export async function rlsSelectAdminProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
 > {
-  if (process.env.APP_ENV !== "test") {
-    return getActionResponse({
-      error:
-        "TestEnvironmentError: RLS test actions can only be run in test environment",
-    });
-  }
   try {
     const { db } = await getAuthenticatedClient();
-    const adminMessage = await db.message.findFirst({
-      where: { content: "Admin message for RLS testing" },
+    const adminUser = await db.user.findUnique({
+      where: { email: ADMIN_EMAIL },
+      include: { profile: true },
     });
 
-    if (!adminMessage) {
-      return getActionResponse({
-        data: {
-          success: false,
-          error: "Admin message not found for deletion test",
-        },
-      });
+    if (!adminUser?.profile) {
+      throw new Error("Admin profile not found");
     }
 
-    await db.message.delete({
-      where: { id: adminMessage.id },
-    });
-
-    // If we reach here, deletion succeeded when it should have failed
-    return getActionResponse({
-      data: {
-        success: false,
-        error: "Should not be able to delete admin message",
-      },
-    });
-  } catch (error) {
-    // For tryDeleteAdminMessageAction, being blocked by RLS is expected success
     return getActionResponse({
       data: {
         success: true,
-        error: error instanceof Error ? error.message : String(error),
+        message: "Admin profile found",
+        data: adminUser.profile,
       },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsSelectUserProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const user = await db.user.findUnique({
+      where: { email: USER_EMAIL },
+      include: { profile: true },
+    });
+
+    if (!user?.profile) {
+      throw new Error("User profile not found");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "User profile found",
+        data: user.profile,
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsUpdateAdminProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const adminUser = await db.user.findUnique({
+      where: { email: ADMIN_EMAIL },
+    });
+
+    if (!adminUser) {
+      throw new Error("Admin user not found");
+    }
+
+    const updatedFirstName = `Updated Admin ${Date.now()}`;
+    const profile = await db.profile.updateMany({
+      where: { userId: adminUser.id },
+      data: { firstName: updatedFirstName },
+    });
+
+    const verifiedProfile = await db.profile.findFirst({
+      where: { userId: adminUser.id },
+    });
+
+    if (!verifiedProfile || verifiedProfile.firstName !== updatedFirstName) {
+      throw new Error("Admin profile update was not reflected in database");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "Admin profile updated successfully",
+        data: profile,
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsUpdateUserProfileAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const user = await db.user.findUnique({
+      where: { email: USER_EMAIL },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const updatedFirstName = `Updated User ${Date.now()}`;
+    const profile = await db.profile.updateMany({
+      where: { userId: user.id },
+      data: { firstName: updatedFirstName },
+    });
+
+    const verifiedProfile = await db.profile.findFirst({
+      where: { userId: user.id },
+    });
+
+    if (!verifiedProfile || verifiedProfile.firstName !== updatedFirstName) {
+      throw new Error("User profile update was not reflected in database");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "User profile updated successfully",
+        data: profile,
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
     });
   }
 }

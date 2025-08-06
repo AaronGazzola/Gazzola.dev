@@ -11,7 +11,7 @@ export const getActionResponse = <T>({
 }: {
   data?: T | null;
   error?: unknown;
-}): ActionResponse<T> => {
+} = {}): ActionResponse<T> => {
   if (error) {
     const errorMessage =
       error instanceof Error
