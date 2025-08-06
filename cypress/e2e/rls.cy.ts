@@ -1,442 +1,397 @@
-import configuration from "../../configuration";
 import { DataCyAttributes } from "../../types/cypress.types";
 
-describe("RLS Comprehensive Testing - Admin and User", () => {
-  const testPath = configuration.paths.test;
+describe("RLS (Row Level Security) Test", () => {
+  it("should test RLS policies with admin and user roles", () => {
+    // Visit the RLS test page
+    cy.visit("/test/rls");
 
-  it("should validate RLS policies by checking button states and error conditions", () => {
-    cy.visit(testPath);
-    cy.log("=== Starting Comprehensive RLS Security Tests ===");
-
-    // Verify the page loaded correctly
-    cy.get("body").should("contain", "RLS Security Testing Interface");
-    cy.get("h1").should("contain", "RLS Security Testing Interface");
-
-    // Define the test sequence with proper data dependency ordering
-    const testSequence = [
-      // User Table Tests (based on user_rls migration - only SELECT allowed)
-      { id: "select-own-user", expectedAsAdmin: true, expectedAsUser: true },
-      { id: "select-other-user", expectedAsAdmin: true, expectedAsUser: false },
-      { id: "insert-user", expectedAsAdmin: false, expectedAsUser: false },
-      { id: "update-own-user", expectedAsAdmin: false, expectedAsUser: false },
-      {
-        id: "update-other-user",
-        expectedAsAdmin: false,
-        expectedAsUser: false,
-      },
-      { id: "delete-own-user", expectedAsAdmin: false, expectedAsUser: false },
-      {
-        id: "delete-other-user",
-        expectedAsAdmin: false,
-        expectedAsUser: false,
-      },
-
-      // Profile Table Tests (foundation for contracts - must come first)
-      { id: "select-own-profile", expectedAsAdmin: true, expectedAsUser: true },
-      {
-        id: "select-other-profile",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      { id: "insert-own-profile", expectedAsAdmin: true, expectedAsUser: true },
-      {
-        id: "insert-other-profile",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      { id: "update-own-profile", expectedAsAdmin: true, expectedAsUser: true },
-      {
-        id: "update-other-profile",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-
-      // Contract Table Tests (foundation for tasks/payments)
-      {
-        id: "select-own-contract",
-        expectedAsAdmin: true,
-        expectedAsUser: true,
-      },
-      {
-        id: "select-other-contract",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      {
-        id: "insert-own-contract",
-        expectedAsAdmin: true,
-        expectedAsUser: true,
-      },
-      {
-        id: "insert-other-contract",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-
-      // Contract isPaid Tests (test unpaid contracts first)
-      {
-        id: "update-own-contract-unpaid",
-        expectedAsAdmin: true,
-        expectedAsUser: true,
-      },
-      {
-        id: "update-other-contract-unpaid",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-
-      // Mark contracts as paid (changes state for next tests)
-      {
-        id: "mark-own-contract-paid",
-        expectedAsAdmin: true,
-        expectedAsUser: true,
-      },
-      {
-        id: "mark-other-contract-paid",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-
-      // Test paid contract updates (should fail for users)
-      {
-        id: "update-own-contract-paid",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      {
-        id: "update-other-contract-paid",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-
-      // Task Table Tests (depend on contracts existing)
-      { id: "select-own-task", expectedAsAdmin: true, expectedAsUser: true },
-      { id: "select-other-task", expectedAsAdmin: true, expectedAsUser: false },
-      { id: "insert-own-task", expectedAsAdmin: true, expectedAsUser: true },
-      { id: "insert-other-task", expectedAsAdmin: true, expectedAsUser: false },
-      { id: "update-own-task", expectedAsAdmin: true, expectedAsUser: true },
-      { id: "update-other-task", expectedAsAdmin: true, expectedAsUser: false },
-      { id: "delete-own-task", expectedAsAdmin: true, expectedAsUser: false },
-      { id: "delete-other-task", expectedAsAdmin: true, expectedAsUser: false },
-
-      // Payment Table Tests (depend on contracts existing)
-      { id: "select-own-payment", expectedAsAdmin: true, expectedAsUser: true },
-      {
-        id: "select-other-payment",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      { id: "insert-own-payment", expectedAsAdmin: true, expectedAsUser: true },
-      {
-        id: "insert-other-payment",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      { id: "update-own-payment", expectedAsAdmin: true, expectedAsUser: true },
-      {
-        id: "update-other-payment",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      {
-        id: "delete-own-payment",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      {
-        id: "delete-other-payment",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-
-      // Profile Delete Tests (at end to avoid breaking dependencies)
-      {
-        id: "delete-own-profile",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-      {
-        id: "delete-other-profile",
-        expectedAsAdmin: true,
-        expectedAsUser: false,
-      },
-    ];
-
-    // Helper function to validate button state
-    const validateButtonState = (
-      testId: string,
-      expectedSuccess: boolean,
-      userRole: string
-    ) => {
-      cy.log(
-        `Validating ${testId} for ${userRole} - Expected: ${expectedSuccess ? "SUCCESS" : "BLOCKED"}`
-      );
-
-      // Find the button
-      cy.get(`[data-cy*="${testId}"]`, { timeout: 10000 })
-        .first()
-        .as("testButton");
-
-      // Check the button's visual state indicates success/failure correctly
-      cy.get("@testButton", { timeout: 10000 }).should(($button) => {
-        const buttonClasses = $button.attr("class") || "";
-        const hasGreenBorder = buttonClasses.includes("border-green-400");
-        const hasRedBorder = buttonClasses.includes("border-red-400");
-        const hasPendingState =
-          buttonClasses.includes("animate-pulse") ||
-          buttonClasses.includes("border-yellow-400");
-
-        // Button should not be in pending state
-        expect(hasPendingState, `Button ${testId} should not be pending`).to.be
-          .false;
-
-        if (expectedSuccess) {
-          // Should be green (success)
-          expect(
-            hasGreenBorder,
-            `Button ${testId} should be green (success) for ${userRole}`
-          ).to.be.true;
-          expect(
-            hasRedBorder,
-            `Button ${testId} should not be red when expected to succeed`
-          ).to.be.false;
-        } else {
-          // Should be red (failure)
-          expect(
-            hasRedBorder,
-            `Button ${testId} should be red (blocked) for ${userRole}`
-          ).to.be.true;
-          expect(
-            hasGreenBorder,
-            `Button ${testId} should not be green when expected to be blocked`
-          ).to.be.false;
-        }
-      });
-
-      // Check button text indicates the correct result
-      cy.get("@testButton", { timeout: 10000 }).within(() => {
-        if (expectedSuccess) {
-          cy.contains("✓ Success", { timeout: 5000 }).should("exist");
-        } else {
-          // Should show either "✗ Failed" or "✗ Error"
-          cy.get("div", { timeout: 5000 }).should("contain.text", "✗");
-        }
-      });
-    };
-
-    // Helper function to run a test and validate the result
-    const runAndValidateTest = (
-      testId: string,
-      expectedSuccess: boolean,
-      userRole: string
-    ) => {
-      cy.log(`Running and validating test: ${testId} as ${userRole}`);
-
-      // Click the test button
-      cy.get(`[data-cy*="${testId}"]`).first().click();
-
-      // Wait for test to complete (no longer pending)
-      cy.get(`[data-cy*="${testId}"]`, { timeout: 10000 })
-        .first()
-        .should("not.have.class", "animate-pulse");
-      cy.get(`[data-cy*="${testId}"]`, { timeout: 10000 })
-        .first()
-        .should("not.contain.class", "border-yellow-400");
-
-      // Validate the final button state
-      validateButtonState(testId, expectedSuccess, userRole);
-
-      // If test was expected to succeed but appears to have failed, check for error dialog
-      if (expectedSuccess) {
-        cy.get(`[data-cy*="${testId}"]`)
-          .first()
-          .should(($button) => {
-            const hasRedBorder = ($button.attr("class") || "").includes(
-              "border-red-400"
-            );
-            if (hasRedBorder) {
-              // Test failed when it should have succeeded - check for error dialog
-              cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_DIALOG}"]`).should(
-                "exist"
-              );
-              cy.log(
-                `ERROR: Test ${testId} failed unexpectedly for ${userRole}`
-              );
-              throw new Error(
-                `Test ${testId} failed unexpectedly for ${userRole} - check error dialog`
-              );
-            }
-          });
-      }
-    };
-
-    // ============================================================================
-    // PHASE 1: ADMIN USER TESTING
-    // ============================================================================
-    cy.log("=== Phase 1: Admin User Testing ===");
-
-    // Fill in admin credentials for manual sign-in
-    cy.get('[data-cy="rls-test-email-input"]')
-      .clear()
-      .type(Cypress.env("ADMIN_EMAIL"));
-    cy.get('[data-cy="rls-test-password-input"]')
-      .clear()
-      .type(Cypress.env("ADMIN_PASSWORD"));
-
-    // Verify initial state shows not signed in
-    cy.get("body").should("contain", "Not signed in");
-
-    // Sign in as admin user
-    cy.get('[data-cy="rls-test-manual-sign-in-button"]').click();
-
-    // Wait for sign-in and verify success toast
-    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SIGN_IN_ADMIN}"]`, {
-      timeout: 20000,
+    // Step 1-11: Sign in as admin
+    cy.get(`[data-cy="${DataCyAttributes.RLS_EMAIL_INPUT}"]`).type(
+      Cypress.env("ADMIN_EMAIL")
+    );
+    cy.get(`[data-cy="${DataCyAttributes.RLS_PASSWORD_INPUT}"]`).type(
+      Cypress.env("ADMIN_PASSWORD")
+    );
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SIGN_IN_BUTTON}"]`).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SIGN_IN_USER}"]`, {
+      timeout: 30000,
     }).should("exist");
 
-    // Verify admin is signed in
-    cy.get("body").should("contain", "Admin");
-    cy.get("body").should("contain", "Role: Admin");
+    // Step 12: Insert new user (should fail - no INSERT policy on user table, even for admin)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_NEW_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_INSERT_NEW_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Execute and validate each test in the admin phase
-    testSequence.forEach((test, index) => {
-      cy.log(`Admin Test ${index + 1}: ${test.id}`);
-      runAndValidateTest(test.id, test.expectedAsAdmin, "Admin");
-    });
+    // Step 13: Update user user (should fail - no UPDATE policy on user table, even for admin)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_UPDATE_USER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Verify admin test phase completion
-    cy.get("body").should("contain", "Test Results Summary");
-    cy.log("=== Admin Testing Phase Completed ===");
+    // Step 14: Update admin user (should fail - no UPDATE policy on user table, even for admin)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_ADMIN_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_UPDATE_ADMIN_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Verify expected results counter shows correct number of passed tests
-    cy.get("body").then(($body) => {
-      const expectedPassCount = testSequence.filter(
-        (test) => test.expectedAsAdmin
-      ).length;
-      cy.contains(`${expectedPassCount}`).should("exist");
-      cy.contains("Expected Results").should("exist");
-    });
+    // Step 15: Delete user user (should fail - no DELETE policy on user table, even for admin)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_DELETE_USER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // ============================================================================
-    // PHASE 2: TRANSITION TO REGULAR USER
-    // ============================================================================
-    cy.log("=== Phase 2: Switching to Regular User ===");
+    // Step 16: Delete admin user (should fail - no DELETE policy on user table, even for admin)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_ADMIN_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_DELETE_ADMIN_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Sign out admin user
-    cy.get('[data-cy="rls-test-sign-out-button"]').click();
+    // Step 17: Select admin user
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_SELECT_ADMIN_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SELECT_ADMIN_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Verify sign out success
-    cy.get("body", { timeout: 8000 }).should("contain", "Not signed in");
+    // Step 18: Select user user
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_SELECT_USER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SELECT_USER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Clear and fill in regular user credentials
-    cy.get('[data-cy="rls-test-email-input"]')
+    // Step 19: Delete admin profile
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_ADMIN_PROFILE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_DELETE_ADMIN_PROFILE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 20: Insert admin profile
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_ADMIN_PROFILE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_INSERT_ADMIN_PROFILE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 21: Delete all user tasks
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_TASKS_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_TASK_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 22: Delete all user messages
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_MESSAGES_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_MESSAGE_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 23: Delete all user conversations
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_CONVERSATIONS_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONVERSATION_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 24: Delete all user contracts
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_CONTRACTS_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONTRACT_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 25: Delete user profile
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_PROFILE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_DELETE_USER_PROFILE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 26: Insert user conversation
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_CONVERSATION_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONVERSATION_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+    // Step 26b: Insert user conversation
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_ADMIN_CONVERSATION_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONVERSATION_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 27: Insert admin message
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_ADMIN_MESSAGE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_MESSAGE_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 28: Sign out
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SIGN_OUT_BUTTON}"]`).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SIGN_OUT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 29-34: Sign in as user
+    cy.get(`[data-cy="${DataCyAttributes.RLS_EMAIL_INPUT}"]`)
       .clear()
       .type(Cypress.env("USER_EMAIL"));
-    cy.get('[data-cy="rls-test-password-input"]')
+    cy.get(`[data-cy="${DataCyAttributes.RLS_PASSWORD_INPUT}"]`)
       .clear()
       .type(Cypress.env("USER_PASSWORD"));
-
-    // Sign in as regular user
-    cy.get('[data-cy="rls-test-manual-sign-in-button"]').click();
-
-    // Wait for sign-in and verify success toast
-    cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`, {
-      timeout: 20000,
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SIGN_IN_BUTTON}"]`).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SIGN_IN_USER}"]`, {
+      timeout: 30000,
     }).should("exist");
 
-    // Verify regular user is signed in
-    cy.get("body").should("contain", "Role: User");
-    cy.get("body").should("not.contain", "Role: Admin");
+    // Step 35: Insert new user (should fail - no INSERT policy on user table)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_NEW_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_INSERT_NEW_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // ============================================================================
-    // PHASE 3: REGULAR USER TESTING
-    // ============================================================================
-    cy.log("=== Phase 3: Regular User Testing ===");
+    // Step 36: Update user user (should fail - no UPDATE policy on user table)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_UPDATE_USER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Execute and validate the same test sequence as regular user
-    testSequence.forEach((test, index) => {
-      // Skip delete-all-data for regular user as it should fail and we already tested it
-      if (test.id === "delete-all-data") {
-        cy.log(
-          `Skipping User Test ${index + 1}: ${test.id} (admin-only operation)`
-        );
-        return;
-      }
+    // Step 37: Update admin user (should fail - no UPDATE policy on user table)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_ADMIN_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_UPDATE_ADMIN_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-      cy.log(`User Test ${index + 1}: ${test.id}`);
-      runAndValidateTest(test.id, test.expectedAsUser, "User");
-    });
+    // Step 38: Delete user user (should fail - no DELETE policy on user table)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_DELETE_USER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // ============================================================================
-    // PHASE 4: FINAL VERIFICATION
-    // ============================================================================
-    cy.log("=== Phase 4: Final Verification ===");
+    // Step 39: Delete admin user (should fail - no DELETE policy on user table)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_ADMIN_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_DELETE_ADMIN_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Verify test results summary shows successful completion
-    cy.get("body").should("contain", "Test Results Summary");
+    // Step 40: Select admin user (should fail - user can only select own user)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_SELECT_ADMIN_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_SELECT_ADMIN_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Check that we have completed the expected number of tests
-    cy.get("body").then(($body) => {
-      const bodyText = $body.text();
-      const totalTests = testSequence.length * 2 - 1; // -1 because we skip delete-all-data for user
+    // Step 41: Select user user (should succeed - selecting own user)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_SELECT_USER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SELECT_USER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-      // Should have completed all tests
-      expect(bodyText).to.match(/\d+.*Tests Run/);
-      expect(bodyText).to.match(/\d+.*Expected Results/);
-      expect(bodyText).to.match(/\d+.*Unexpected Results/);
+    // Step 42: Insert user profile (should succeed - creating own profile)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_PROFILE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_INSERT_USER_PROFILE}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-      cy.log(`Total tests expected: ${totalTests}`);
-      cy.log(`Total tests in sequence: ${testSequence.length}`);
-    });
+    // Step 43: Update user profile (should succeed - updating own profile)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_PROFILE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_UPDATE_USER_PROFILE}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Verify that all buttons show final states (no pending animations)
-    cy.get('[class*="animate-pulse"]', { timeout: 10000 }).should("not.exist");
-    cy.get('[class*="border-yellow-400"]', { timeout: 10000 }).should(
-      "not.exist"
-    );
+    // Step 44: Delete user profile (should fail - only admin can delete profiles)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_PROFILE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_DELETE_USER_PROFILE}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Count green (success) and red (failure) buttons to verify they match expectations
-    testSequence.forEach((test) => {
-      if (test.id === "delete-all-data") return; // Skip for user phase
+    // Step 45: Insert conversation (should fail - only admin can insert conversations)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_CONVERSATION_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_CONVERSATION_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-      cy.get(`[data-cy*="${test.id}"]`, { timeout: 10000 })
-        .first()
-        .should(($button) => {
-          const buttonClasses = $button.attr("class") || "";
-          const hasGreenBorder = buttonClasses.includes("border-green-400");
-          const hasRedBorder = buttonClasses.includes("border-red-400");
+    // Step 46: Update conversation (should succeed - user can update conversations they participate in)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_CONVERSATION_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONVERSATION_UPDATE}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-          // Every button should be either green or red (not waiting or pending)
-          expect(
-            hasGreenBorder || hasRedBorder,
-            `Button ${test.id} should have final state`
-          ).to.be.true;
-        });
-    });
+    // Step 47: Delete conversation (should fail - only admin can delete conversations)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_CONVERSATION_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_CONVERSATION_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Verify that unexpected results count is 0 (all tests behaved as expected)
-    cy.contains("0").parent().should("contain", "Unexpected Results");
+    // Step 48: Insert message (should succeed - user can insert messages in conversations they participate in)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_MESSAGE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_MESSAGE_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Check that no error dialog is currently open
-    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_DIALOG}"]`).should(
-      "not.exist"
-    );
+    // Step 49: Update message (should fail - only admin can update messages, per migration line 100-101)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_MESSAGE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_MESSAGE_UPDATE}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Final verification that user testing phase completed
-    cy.get("body").should("contain", "Role: User"); // Still signed in as user
+    // Step 50: Delete message (should fail - only admin can delete messages, per migration line 103-104)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_MESSAGE_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_MESSAGE_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
 
-    // Log comprehensive test completion
-    cy.log("=== RLS Comprehensive Testing Sequence Completed Successfully ===");
-    cy.log(
-      "✓ Admin phase: All tests executed and validated against expected RLS behavior"
-    );
-    cy.log(
-      "✓ User phase: All tests executed and validated against expected RLS behavior"
-    );
-    cy.log(
-      "✓ Button states (green/red) correctly reflect RLS policy enforcement"
-    );
-    cy.log("✓ Error conditions properly detected and reported");
-    cy.log("✓ No unexpected test failures detected");
+    // Step 51: Create contract (should succeed - user can create contract for own profile)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_CONTRACT_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONTRACT_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 52: Insert task (should succeed - user can insert task for own contract when unpaid)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_TASK_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_TASK_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 53: Update task (should succeed - user can update task for own contract when unpaid)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_TASK_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_TASK_UPDATE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 54: Delete task (should succeed - user can delete task for own contract when unpaid)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_TASK_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_TASK_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 55: Insert task again (to have a task for the next steps)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_TASK_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_TASK_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 56: Update contract (this sets isPaid to true, affecting subsequent task operations)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_CONTRACT_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONTRACT_UPDATE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 56.5: Pay contract (confirming success after contract update)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_PAY_USER_CONTRACT_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_PAY_USER_CONTRACT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 57: Update task (should fail - users can't mutate tasks when contract isPaid=true, per migration line 166-176)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_TASK_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_TASK_UPDATE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 58: Delete task (should fail - users can't mutate tasks when contract isPaid=true, per migration line 178-188)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_TASK_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_TASK_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 58.5: Try to insert new task on paid contract (should fail - users can't insert tasks when contract isPaid=true, per migration line 154-164)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_TASK_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_TASK_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 59: Update contract (should fail - user cannot update paid contract per migration line 127-137)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_CONTRACT_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_CONTRACT_UPDATE}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 60: Delete contract (should fail - only admin can delete contracts)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_DELETE_USER_CONTRACT_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_CONTRACT_DELETE}"]`, {
+      timeout: 30000,
+    }).should("exist");
   });
 });

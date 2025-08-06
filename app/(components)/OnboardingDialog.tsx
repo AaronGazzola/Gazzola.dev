@@ -43,7 +43,6 @@ interface OnboardingFormData {
 
 const OnboardingDialog = () => {
   const { isVerified, user } = useAuthStore();
-  console.log(user, isVerified);
   const pathname = usePathname();
   const { ui, closeOnboardingModal } = useAppStore();
   const isTest = useIsTest();

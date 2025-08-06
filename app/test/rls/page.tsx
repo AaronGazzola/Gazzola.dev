@@ -24,6 +24,43 @@ import {
   useUpdateAdminUser,
   useUpdateUserProfile,
   useUpdateUserUser,
+  useSelectAdminContract,
+  useSelectUserContract,
+  useInsertAdminContract,
+  useInsertUserContract,
+  useUpdateAdminContract,
+  useUpdateUserContract,
+  useDeleteAdminContract,
+  useDeleteUserContract,
+  useDeleteAllUserContracts,
+  useSelectAdminTask,
+  useSelectUserTask,
+  useInsertAdminTask,
+  useInsertUserTask,
+  useUpdateAdminTask,
+  useUpdateUserTask,
+  useDeleteAdminTask,
+  useDeleteUserTask,
+  useDeleteAllUserTasks,
+  useSelectAdminConversation,
+  useSelectUserConversation,
+  useInsertAdminConversation,
+  useInsertUserConversation,
+  useUpdateAdminConversation,
+  useUpdateUserConversation,
+  useDeleteAdminConversation,
+  useDeleteUserConversation,
+  useDeleteAllUserConversations,
+  useSelectAdminMessage,
+  useSelectUserMessage,
+  useInsertAdminMessage,
+  useInsertUserMessage,
+  useUpdateAdminMessage,
+  useUpdateUserMessage,
+  useDeleteAdminMessage,
+  useDeleteUserMessage,
+  useDeleteAllUserMessages,
+  usePayUserContract,
 } from "./page.hooks";
 
 export default function RLSTestPage() {
@@ -49,6 +86,49 @@ export default function RLSTestPage() {
   const selectUserProfileMutation = useSelectUserProfile();
   const updateAdminProfileMutation = useUpdateAdminProfile();
   const updateUserProfileMutation = useUpdateUserProfile();
+
+  const selectAdminContractMutation = useSelectAdminContract();
+  const selectUserContractMutation = useSelectUserContract();
+  const insertAdminContractMutation = useInsertAdminContract();
+  const insertUserContractMutation = useInsertUserContract();
+  const updateAdminContractMutation = useUpdateAdminContract();
+  const updateUserContractMutation = useUpdateUserContract();
+  const deleteAdminContractMutation = useDeleteAdminContract();
+  const deleteUserContractMutation = useDeleteUserContract();
+  const deleteAllUserContractsMutation = useDeleteAllUserContracts();
+
+  const selectAdminTaskMutation = useSelectAdminTask();
+  const selectUserTaskMutation = useSelectUserTask();
+  const insertAdminTaskMutation = useInsertAdminTask();
+  const insertUserTaskMutation = useInsertUserTask();
+  const updateAdminTaskMutation = useUpdateAdminTask();
+  const updateUserTaskMutation = useUpdateUserTask();
+  const deleteAdminTaskMutation = useDeleteAdminTask();
+  const deleteUserTaskMutation = useDeleteUserTask();
+  const deleteAllUserTasksMutation = useDeleteAllUserTasks();
+
+  const selectAdminConversationMutation = useSelectAdminConversation();
+  const selectUserConversationMutation = useSelectUserConversation();
+  const insertAdminConversationMutation = useInsertAdminConversation();
+  const insertUserConversationMutation = useInsertUserConversation();
+  const updateAdminConversationMutation = useUpdateAdminConversation();
+  const updateUserConversationMutation = useUpdateUserConversation();
+  const deleteAdminConversationMutation = useDeleteAdminConversation();
+  const deleteUserConversationMutation = useDeleteUserConversation();
+  const deleteAllUserConversationsMutation = useDeleteAllUserConversations();
+
+  const selectAdminMessageMutation = useSelectAdminMessage();
+  const selectUserMessageMutation = useSelectUserMessage();
+  const insertAdminMessageMutation = useInsertAdminMessage();
+  const insertUserMessageMutation = useInsertUserMessage();
+  const updateAdminMessageMutation = useUpdateAdminMessage();
+  const updateUserMessageMutation = useUpdateUserMessage();
+  const deleteAdminMessageMutation = useDeleteAdminMessage();
+  const deleteUserMessageMutation = useDeleteUserMessage();
+  const deleteAllUserMessagesMutation = useDeleteAllUserMessages();
+
+  const payUserContractMutation = usePayUserContract();
+
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,6 +381,413 @@ export default function RLSTestPage() {
             </Button>
           </div>
         </div>
+
+        {/* Contract Actions */}
+        <div className="bg-black border border-white rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white">
+            Contract Actions
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button
+              onClick={() => selectAdminContractMutation.mutate()}
+              disabled={selectAdminContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_ADMIN_CONTRACT_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectAdminContractMutation.isPending
+                ? "Loading..."
+                : "Select Admin Contract"}
+            </Button>
+            <Button
+              onClick={() => selectUserContractMutation.mutate()}
+              disabled={selectUserContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_USER_CONTRACT_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectUserContractMutation.isPending
+                ? "Loading..."
+                : "Select User Contract"}
+            </Button>
+            <Button
+              onClick={() => insertAdminContractMutation.mutate()}
+              disabled={insertAdminContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_ADMIN_CONTRACT_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertAdminContractMutation.isPending
+                ? "Loading..."
+                : "Insert Admin Contract"}
+            </Button>
+            <Button
+              onClick={() => insertUserContractMutation.mutate()}
+              disabled={insertUserContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_USER_CONTRACT_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertUserContractMutation.isPending
+                ? "Loading..."
+                : "Insert User Contract"}
+            </Button>
+            <Button
+              onClick={() => updateAdminContractMutation.mutate()}
+              disabled={updateAdminContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_ADMIN_CONTRACT_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateAdminContractMutation.isPending
+                ? "Loading..."
+                : "Update Admin Contract"}
+            </Button>
+            <Button
+              onClick={() => updateUserContractMutation.mutate()}
+              disabled={updateUserContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_USER_CONTRACT_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateUserContractMutation.isPending
+                ? "Loading..."
+                : "Update User Contract"}
+            </Button>
+            <Button
+              onClick={() => deleteAdminContractMutation.mutate()}
+              disabled={deleteAdminContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ADMIN_CONTRACT_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteAdminContractMutation.isPending
+                ? "Loading..."
+                : "Delete Admin Contract"}
+            </Button>
+            <Button
+              onClick={() => deleteUserContractMutation.mutate()}
+              disabled={deleteUserContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_USER_CONTRACT_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteUserContractMutation.isPending
+                ? "Loading..."
+                : "Delete User Contract"}
+            </Button>
+            <Button
+              onClick={() => deleteAllUserContractsMutation.mutate()}
+              disabled={deleteAllUserContractsMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ALL_USER_CONTRACTS_BUTTON}
+              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600"
+            >
+              {deleteAllUserContractsMutation.isPending
+                ? "Loading..."
+                : "Delete All User Contracts"}
+            </Button>
+            <Button
+              onClick={() => payUserContractMutation.mutate()}
+              disabled={payUserContractMutation.isPending}
+              data-cy={DataCyAttributes.RLS_PAY_USER_CONTRACT_BUTTON}
+              className="bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600"
+            >
+              {payUserContractMutation.isPending
+                ? "Loading..."
+                : "Pay User Contract"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Task Actions */}
+        <div className="bg-black border border-white rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white">
+            Task Actions
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button
+              onClick={() => selectAdminTaskMutation.mutate()}
+              disabled={selectAdminTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_ADMIN_TASK_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectAdminTaskMutation.isPending
+                ? "Loading..."
+                : "Select Admin Task"}
+            </Button>
+            <Button
+              onClick={() => selectUserTaskMutation.mutate()}
+              disabled={selectUserTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_USER_TASK_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectUserTaskMutation.isPending
+                ? "Loading..."
+                : "Select User Task"}
+            </Button>
+            <Button
+              onClick={() => insertAdminTaskMutation.mutate()}
+              disabled={insertAdminTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_ADMIN_TASK_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertAdminTaskMutation.isPending
+                ? "Loading..."
+                : "Insert Admin Task"}
+            </Button>
+            <Button
+              onClick={() => insertUserTaskMutation.mutate()}
+              disabled={insertUserTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_USER_TASK_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertUserTaskMutation.isPending
+                ? "Loading..."
+                : "Insert User Task"}
+            </Button>
+            <Button
+              onClick={() => updateAdminTaskMutation.mutate()}
+              disabled={updateAdminTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_ADMIN_TASK_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateAdminTaskMutation.isPending
+                ? "Loading..."
+                : "Update Admin Task"}
+            </Button>
+            <Button
+              onClick={() => updateUserTaskMutation.mutate()}
+              disabled={updateUserTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_USER_TASK_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateUserTaskMutation.isPending
+                ? "Loading..."
+                : "Update User Task"}
+            </Button>
+            <Button
+              onClick={() => deleteAdminTaskMutation.mutate()}
+              disabled={deleteAdminTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ADMIN_TASK_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteAdminTaskMutation.isPending
+                ? "Loading..."
+                : "Delete Admin Task"}
+            </Button>
+            <Button
+              onClick={() => deleteUserTaskMutation.mutate()}
+              disabled={deleteUserTaskMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_USER_TASK_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteUserTaskMutation.isPending
+                ? "Loading..."
+                : "Delete User Task"}
+            </Button>
+            <Button
+              onClick={() => deleteAllUserTasksMutation.mutate()}
+              disabled={deleteAllUserTasksMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ALL_USER_TASKS_BUTTON}
+              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600"
+            >
+              {deleteAllUserTasksMutation.isPending
+                ? "Loading..."
+                : "Delete All User Tasks"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Conversation Actions */}
+        <div className="bg-black border border-white rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white">
+            Conversation Actions
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button
+              onClick={() => selectAdminConversationMutation.mutate()}
+              disabled={selectAdminConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_ADMIN_CONVERSATION_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectAdminConversationMutation.isPending
+                ? "Loading..."
+                : "Select Admin Conversation"}
+            </Button>
+            <Button
+              onClick={() => selectUserConversationMutation.mutate()}
+              disabled={selectUserConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_USER_CONVERSATION_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectUserConversationMutation.isPending
+                ? "Loading..."
+                : "Select User Conversation"}
+            </Button>
+            <Button
+              onClick={() => insertAdminConversationMutation.mutate()}
+              disabled={insertAdminConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_ADMIN_CONVERSATION_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertAdminConversationMutation.isPending
+                ? "Loading..."
+                : "Insert Admin Conversation"}
+            </Button>
+            <Button
+              onClick={() => insertUserConversationMutation.mutate()}
+              disabled={insertUserConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_USER_CONVERSATION_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertUserConversationMutation.isPending
+                ? "Loading..."
+                : "Insert User Conversation"}
+            </Button>
+            <Button
+              onClick={() => updateAdminConversationMutation.mutate()}
+              disabled={updateAdminConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_ADMIN_CONVERSATION_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateAdminConversationMutation.isPending
+                ? "Loading..."
+                : "Update Admin Conversation"}
+            </Button>
+            <Button
+              onClick={() => updateUserConversationMutation.mutate()}
+              disabled={updateUserConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_USER_CONVERSATION_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateUserConversationMutation.isPending
+                ? "Loading..."
+                : "Update User Conversation"}
+            </Button>
+            <Button
+              onClick={() => deleteAdminConversationMutation.mutate()}
+              disabled={deleteAdminConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ADMIN_CONVERSATION_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteAdminConversationMutation.isPending
+                ? "Loading..."
+                : "Delete Admin Conversation"}
+            </Button>
+            <Button
+              onClick={() => deleteUserConversationMutation.mutate()}
+              disabled={deleteUserConversationMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_USER_CONVERSATION_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteUserConversationMutation.isPending
+                ? "Loading..."
+                : "Delete User Conversation"}
+            </Button>
+            <Button
+              onClick={() => deleteAllUserConversationsMutation.mutate()}
+              disabled={deleteAllUserConversationsMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ALL_USER_CONVERSATIONS_BUTTON}
+              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600"
+            >
+              {deleteAllUserConversationsMutation.isPending
+                ? "Loading..."
+                : "Delete All User Conversations"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Message Actions */}
+        <div className="bg-black border border-white rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white">
+            Message Actions
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button
+              onClick={() => selectAdminMessageMutation.mutate()}
+              disabled={selectAdminMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_ADMIN_MESSAGE_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectAdminMessageMutation.isPending
+                ? "Loading..."
+                : "Select Admin Message"}
+            </Button>
+            <Button
+              onClick={() => selectUserMessageMutation.mutate()}
+              disabled={selectUserMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_USER_MESSAGE_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectUserMessageMutation.isPending
+                ? "Loading..."
+                : "Select User Message"}
+            </Button>
+            <Button
+              onClick={() => insertAdminMessageMutation.mutate()}
+              disabled={insertAdminMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_ADMIN_MESSAGE_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertAdminMessageMutation.isPending
+                ? "Loading..."
+                : "Insert Admin Message"}
+            </Button>
+            <Button
+              onClick={() => insertUserMessageMutation.mutate()}
+              disabled={insertUserMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_INSERT_USER_MESSAGE_BUTTON}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600"
+            >
+              {insertUserMessageMutation.isPending
+                ? "Loading..."
+                : "Insert User Message"}
+            </Button>
+            <Button
+              onClick={() => updateAdminMessageMutation.mutate()}
+              disabled={updateAdminMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_ADMIN_MESSAGE_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateAdminMessageMutation.isPending
+                ? "Loading..."
+                : "Update Admin Message"}
+            </Button>
+            <Button
+              onClick={() => updateUserMessageMutation.mutate()}
+              disabled={updateUserMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_UPDATE_USER_MESSAGE_BUTTON}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+            >
+              {updateUserMessageMutation.isPending
+                ? "Loading..."
+                : "Update User Message"}
+            </Button>
+            <Button
+              onClick={() => deleteAdminMessageMutation.mutate()}
+              disabled={deleteAdminMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ADMIN_MESSAGE_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteAdminMessageMutation.isPending
+                ? "Loading..."
+                : "Delete Admin Message"}
+            </Button>
+            <Button
+              onClick={() => deleteUserMessageMutation.mutate()}
+              disabled={deleteUserMessageMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_USER_MESSAGE_BUTTON}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            >
+              {deleteUserMessageMutation.isPending
+                ? "Loading..."
+                : "Delete User Message"}
+            </Button>
+            <Button
+              onClick={() => deleteAllUserMessagesMutation.mutate()}
+              disabled={deleteAllUserMessagesMutation.isPending}
+              data-cy={DataCyAttributes.RLS_DELETE_ALL_USER_MESSAGES_BUTTON}
+              className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600"
+            >
+              {deleteAllUserMessagesMutation.isPending
+                ? "Loading..."
+                : "Delete All User Messages"}
+            </Button>
+          </div>
+        </div>
+
       </div>
     </div>
   );
