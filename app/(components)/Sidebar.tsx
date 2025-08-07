@@ -6,6 +6,7 @@ import ProfileDialog from "@/app/(components)/ProfileDialog";
 import { useResetProfile } from "@/app/(components)/ProfileDialog.hooks";
 import {
   useDeleteUserContracts,
+  useDeleteUserConversations,
   useSignOutMutation,
 } from "@/app/(components)/Sidebar.hooks";
 import SignOutConfirm from "@/app/(components)/SignOutConfirm";
@@ -120,6 +121,7 @@ const Sidebar = () => {
   } = useChatStore();
   const signOutMutation = useSignOutMutation();
   const deleteUserContractsMutation = useDeleteUserContracts();
+  const deleteUserConversationsMutation = useDeleteUserConversations();
   const isAuthenticated = !!user;
   const { open, isMobile, toggleSidebar } = useSidebar();
   const [isSignOutDialogOpen, setIsSignOutDialogOpen] = useState(false);
@@ -203,6 +205,12 @@ const Sidebar = () => {
     }
   };
 
+  const handleDeleteConversations = () => {
+    if (targetUser?.id) {
+      deleteUserConversationsMutation.mutate(targetUser.id);
+    }
+  };
+
   return (
     <TooltipProvider>
       <ShadcnSidebar collapsible="icon" className="border-r-gray-800">
@@ -265,6 +273,20 @@ const Sidebar = () => {
                           Conversations
                         </span>
                       </div>
+                      <div className="flex items-center gap-1">
+                        {isTest && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-100 hover:text-red-400 hover:bg-gray-800"
+                            onClick={handleDeleteConversations}
+                            data-cy={DataCyAttributes.DELETE_CONVERSATIONS}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Delete conversations</span>
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </SidebarGroupLabel>
 
@@ -285,7 +307,7 @@ const Sidebar = () => {
                             Failed to load conversations
                           </div>
                         ) : conversations.length === 0 ? (
-                          <p className="text-xs text-gray-200 font-medium italic p-3">
+                          <p className="text-xs text-gray-200 font-medium italic p-3" data-cy={DataCyAttributes.NO_CONVERSATIONS_YET}>
                             No conversations yet
                           </p>
                         ) : (

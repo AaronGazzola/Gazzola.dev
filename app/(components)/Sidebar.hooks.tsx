@@ -1,5 +1,5 @@
 //-| File path: app/(components)/Sidebar.hooks.tsx
-import { deleteUserContractsAction } from "@/app/(components)/Sidebar.actions";
+import { deleteUserContractsAction, deleteUserConversationsAction } from "@/app/(components)/Sidebar.actions";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { Toast } from "@/components/shared/Toast";
@@ -78,6 +78,36 @@ export function useDeleteUserContracts() {
           title="Error"
           message={error.message || "Failed to delete user contracts"}
           data-cy={DataCyAttributes.ERROR_DELETE_CONTRACTS}
+        />
+      ));
+    },
+  });
+}
+
+export function useDeleteUserConversations() {
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await deleteUserConversationsAction(userId);
+      if (error) throw new Error(error);
+      return data;
+    },
+    onSuccess: () => {
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="User conversations deleted successfully"
+          data-cy={DataCyAttributes.SUCCESS_DELETE_CONVERSATIONS}
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to delete user conversations"}
+          data-cy={DataCyAttributes.ERROR_DELETE_CONVERSATIONS}
         />
       ));
     },

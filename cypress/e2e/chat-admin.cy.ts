@@ -11,9 +11,7 @@ describe("Admin User Chat Test", () => {
   it("should complete admin user chat flow", () => {
     const ADMIN_EMAIL = Cypress.env("ADMIN_EMAIL");
     const ADMIN_PASSWORD = Cypress.env("ADMIN_PASSWORD");
-
-    cy.visit("/admin");
-
+    cy.visit("/");
     cy.get(`[data-cy="${DataCyAttributes.SIGN_IN_BUTTON}"]`).click();
 
     cy.get(`[data-cy="${DataCyAttributes.AUTH_EMAIL_INPUT}"]`).type(
@@ -29,6 +27,28 @@ describe("Admin User Chat Test", () => {
     }).should("be.visible");
 
     clickUserInTable();
+
+    cy.get("body").then(($body) => {
+      if (
+        $body.find(`[data-cy="${DataCyAttributes.NO_CONVERSATIONS_YET}"]`)
+          .length === 0 ||
+        !$body
+          .find(`[data-cy="${DataCyAttributes.NO_CONVERSATIONS_YET}"]`)
+          .is(":visible")
+      ) {
+        cy.get(`[data-cy="${DataCyAttributes.DELETE_CONVERSATIONS}"]`, {
+          timeout: 30000,
+        }).click();
+
+        cy.get(`[data-cy="${DataCyAttributes.SUCCESS_DELETE_CONVERSATIONS}"]`, {
+          timeout: 60000,
+        }).should("exist");
+
+        cy.get(`[data-cy="${DataCyAttributes.NO_CONVERSATIONS_YET}"]`, {
+          timeout: 30000,
+        }).should("be.visible");
+      }
+    });
 
     const isNewConversation = true;
     sendMessage("Hello from admin - initial message", isNewConversation);

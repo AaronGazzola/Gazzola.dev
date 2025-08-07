@@ -50,6 +50,39 @@ export async function deleteUserContractsAction(
   }
 }
 
+export async function deleteUserConversationsAction(
+  userId: string
+): Promise<ActionResponse<{ deletedCount: number }>> {
+  try {
+    const { db, session } = await getAuthenticatedClient();
+
+    if (!session?.user || session.user.role !== "admin") {
+      return getActionResponse({ error: "Admin access required" });
+    }
+
+    const appEnv = process.env.APP_ENV;
+    if (appEnv !== "test") {
+      return getActionResponse({
+        error: "Conversation deletion is only allowed in test environment",
+      });
+    }
+
+    const deletedConversations = await db.conversation.deleteMany({
+      where: {
+        participants: {
+          has: userId,
+        },
+      },
+    });
+
+    return getActionResponse({
+      data: { deletedCount: deletedConversations.count },
+    });
+  } catch (error) {
+    return getActionResponse({ error });
+  }
+}
+
 export async function signOutAction(): Promise<
   ActionResponse<{ success: boolean }>
 > {

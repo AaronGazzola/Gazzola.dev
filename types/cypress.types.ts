@@ -137,6 +137,10 @@ export enum DataCyAttributes {
   SUCCESS_DELETE_CONTRACTS = "success-delete-contracts",
   ERROR_DELETE_CONTRACTS = "error-delete-contracts",
   CONTRACTS_TITLE = "contracts-title",
+  DELETE_CONVERSATIONS = "delete-conversations",
+  SUCCESS_DELETE_CONVERSATIONS = "success-delete-conversations",
+  ERROR_DELETE_CONVERSATIONS = "error-delete-conversations",
+  NO_CONVERSATIONS_YET = "no-conversations-yet",
 
   // RLS Test page elements
   RLS_TEST_RESULT = "rls-test-result",

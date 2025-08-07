@@ -3,6 +3,7 @@
 
 import { getAppDataAction } from "@/app/(actions)/app.actions";
 import useParamString from "@/app/(hooks)/useParamString";
+import useIsTest from "@/app/(hooks)/useIsTest";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
@@ -21,23 +22,14 @@ export const useGetAppData = () => {
   const userId = useParamString("userId");
   const pathname = usePathname();
   const router = useRouter();
+  const isTest = useIsTest();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ["app-data", userId],
     queryFn: async () => {
       const { data, error } = await getAppDataAction(userId);
       if (error) throw new Error(error);
       if (!data) throw new Error("No app data received");
-
-      if (
-        data.isAdmin &&
-        !userId &&
-        pathname !== configuration.paths.admin &&
-        !pathname.startsWith(configuration.paths.test)
-      ) {
-        router.push(configuration.paths.admin);
-        return data;
-      }
 
       setUser(data.user);
       setProfile(data.profile);
@@ -65,8 +57,41 @@ export const useGetAppData = () => {
         openOnboardingModal();
       }
 
-      if (data.isAdmin && pathname === configuration.paths.home)
+      // Handle routing logic
+      const isAdminRoute =
+        pathname.startsWith(configuration.paths.admin) ||
+        pathname.startsWith("/chat");
+      const isHome = pathname === "/";
+
+      // Redirect non-admin users away from admin routes (unless on home)
+      if (
+        isAdminRoute &&
+        (!data.isVerified || data.user?.role !== "admin") &&
+        !isHome
+      ) {
+        router.push(configuration.paths.home);
+        return data;
+      }
+
+      // Redirect admin users to admin area if not already there
+      if (
+        !isAdminRoute &&
+        data.user?.role === "admin" &&
+        data.isVerified &&
+        !pathname.startsWith(configuration.paths.test)
+      ) {
         router.push(configuration.paths.admin);
+        return data;
+      }
+
+      // Handle test route restrictions
+      if (
+        pathname.startsWith(configuration.paths.test) &&
+        !isTest
+      ) {
+        router.push(configuration.paths.home);
+        return data;
+      }
 
       return data;
     },
@@ -74,4 +99,6 @@ export const useGetAppData = () => {
     gcTime: 1000 * 60 * 10,
     retry: 2,
   });
+
+  return query;
 };
