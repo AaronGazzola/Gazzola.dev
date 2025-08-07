@@ -87,7 +87,7 @@ const EditContractDialog = () => {
     progressStatus: null,
     conversationIds: [],
     userApproved: true,
-    adminApproved: false,
+    adminApproved: true,
     tasks: [],
   });
 
@@ -180,7 +180,7 @@ const EditContractDialog = () => {
         progressStatus: null,
         conversationIds: [],
         userApproved: true,
-        adminApproved: false,
+        adminApproved: true,
         tasks: [],
       });
       setSelectedConversationIds([]);

@@ -2,6 +2,7 @@
 import { DataCyAttributes } from "../../types/cypress.types";
 import { signInAdmin, signOut } from "../support/auth.util.cy";
 import { clickUserInTable } from "../support/chat.util.cy";
+import { createContract } from "../support/contract.util.cy";
 
 describe("Contract Management - Admin User", () => {
   it("admin should manage contracts through the full workflow", () => {
@@ -16,8 +17,13 @@ describe("Contract Management - Admin User", () => {
     cy.wait(3000);
 
     cy.get("body").then(($body) => {
-      if ($body.find(`[data-cy="${DataCyAttributes.NO_CONTRACTS_YET}"]`).length === 0 || 
-          !$body.find(`[data-cy="${DataCyAttributes.NO_CONTRACTS_YET}"]`).is(":visible")) {
+      if (
+        $body.find(`[data-cy="${DataCyAttributes.NO_CONTRACTS_YET}"]`)
+          .length === 0 ||
+        !$body
+          .find(`[data-cy="${DataCyAttributes.NO_CONTRACTS_YET}"]`)
+          .is(":visible")
+      ) {
         cy.get(`[data-cy="${DataCyAttributes.DELETE_CONTRACTS}"]`, {
           timeout: 30000,
         }).click();
@@ -32,6 +38,27 @@ describe("Contract Management - Admin User", () => {
       }
     });
 
+    // Create initial contract
+    cy.get(`[data-cy="${DataCyAttributes.CREATE_CONTRACT_BUTTON}"]`, {
+      timeout: 10000,
+    }).click();
+
+    createContract({
+      title: "Admin Initial Contract",
+      description: "Initial contract created by admin",
+      startDate: "2025-08-01",
+      targetDate: "2025-09-01",
+      dueDate: "2025-09-15",
+      taskTitle: "Initial Task",
+      taskDescription: "Initial task description",
+      taskPrice: "2000",
+    });
+
+    cy.get(`[data-cy="${DataCyAttributes.SUCCESS_CONTRACT_CREATE}"]`, {
+      timeout: 60000,
+    }).should("exist");
+
+    // Approve and submit the initial contract
     cy.get(`[data-cy="${DataCyAttributes.CONTRACT_UNAPPROVED_BADGE}"]`, {
       timeout: 120000,
     })
@@ -39,36 +66,6 @@ describe("Contract Management - Admin User", () => {
       .parents(`[data-cy="${DataCyAttributes.CONTRACT_ITEM}"]`)
       .first()
       .click();
-
-    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_TITLE_INPUT}"]`, {
-      timeout: 10000,
-    })
-      .clear()
-      .type("Updated Admin Contract Title");
-
-    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_DESCRIPTION_INPUT}"]`, {
-      timeout: 10000,
-    })
-      .clear()
-      .type("Updated admin contract description with full details");
-
-    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_START_DATE_INPUT}"]`, {
-      timeout: 10000,
-    })
-      .invoke("val", "2025-08-01")
-      .trigger("change");
-
-    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_TARGET_DATE_INPUT}"]`, {
-      timeout: 10000,
-    })
-      .invoke("val", "2025-09-01")
-      .trigger("change");
-
-    cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_DUE_DATE_INPUT}"]`, {
-      timeout: 10000,
-    })
-      .invoke("val", "2025-09-15")
-      .trigger("change");
 
     cy.get(`[data-cy="${DataCyAttributes.EDIT_CONTRACT_APPROVED_SWITCH}"]`, {
       timeout: 10000,

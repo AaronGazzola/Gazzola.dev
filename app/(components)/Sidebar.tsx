@@ -47,6 +47,7 @@ import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import {
+  Check,
   DollarSign,
   FileText,
   LogIn,
@@ -473,6 +474,26 @@ const Sidebar = () => {
                                       </TooltipTrigger>
                                       <TooltipContent>
                                         <p>Contract has been paid</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  )}
+                                  {!isAdmin && 
+                                    contractItem.adminApproved && 
+                                    contractItem.userApproved && 
+                                    !contractItem.isPaid && (
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Badge
+                                          className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-green-500 hover:bg-green-500 cursor-help text-white"
+                                          data-cy={
+                                            DataCyAttributes.CONTRACT_APPROVED_BADGE
+                                          }
+                                        >
+                                          <Check className="h-3 w-3" />
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Contract approved, please complete payment</p>
                                       </TooltipContent>
                                     </Tooltip>
                                   )}

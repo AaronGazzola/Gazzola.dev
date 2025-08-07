@@ -45,6 +45,7 @@ export enum DataCyAttributes {
   CONTRACT_ITEM = "contract-item",
   CONTRACT_UNAPPROVED_BADGE = "contract-unapproved-badge",
   CONTRACT_PAID_BADGE = "contract-paid-badge",
+  CONTRACT_APPROVED_BADGE = "contract-approved-badge",
   PROFILE_MENU_BUTTON = "profile-menu-button",
   ADMIN_BUTTON = "admin-button",
   PROFILE_BUTTON_COLLAPSED = "profile-button-collapsed",
