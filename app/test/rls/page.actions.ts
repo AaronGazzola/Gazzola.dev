@@ -71,6 +71,7 @@ export async function rlsSignOutAction(): Promise<
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const USER_EMAIL = process.env.USER_EMAIL;
+const UNVERIFIED_USER_EMAIL = process.env.UNVERIFIED_USER_EMAIL;
 
 export async function rlsSelectAdminUserAction(): Promise<
   ActionResponse<RLSActionResponse>
@@ -117,6 +118,34 @@ export async function rlsSelectUserUserAction(): Promise<
       data: {
         success: true,
         message: "User user found",
+        data: user,
+      },
+    });
+  } catch (error) {
+    return getActionResponse({
+      data: { success: false },
+      error,
+    });
+  }
+}
+
+export async function rlsSelectOtherUserAction(): Promise<
+  ActionResponse<RLSActionResponse>
+> {
+  try {
+    const { db } = await getAuthenticatedClient();
+    const user = await db.user.findUnique({
+      where: { email: UNVERIFIED_USER_EMAIL },
+    });
+
+    if (!user) {
+      throw new Error("Other user not found");
+    }
+
+    return getActionResponse({
+      data: {
+        success: true,
+        message: "Other user found",
         data: user,
       },
     });

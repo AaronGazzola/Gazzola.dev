@@ -11,6 +11,7 @@ import {
   rlsSignOutAction,
   rlsSelectAdminUserAction,
   rlsSelectUserUserAction,
+  rlsSelectOtherUserAction,
   rlsUpdateAdminUserAction,
   rlsUpdateUserUserAction,
   rlsDeleteAdminUserAction,
@@ -185,6 +186,38 @@ export const useSelectUserUser = () => {
           title="Error"
           message={error.message || "Failed to select user user"}
           data-cy={DataCyAttributes.RLS_ERROR_SELECT_USER_USER}
+        />
+      ));
+    },
+  });
+};
+
+export const useSelectOtherUser = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await rlsSelectOtherUserAction();
+      if (error) throw new Error(error);
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast.custom(() => (
+          <Toast
+            variant="success"
+            title="Success"
+            message={data.message || "Other user selected successfully"}
+            data-cy={DataCyAttributes.RLS_SUCCESS_SELECT_OTHER_USER}
+          />
+        ));
+      }
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to select other user"}
+          data-cy={DataCyAttributes.RLS_ERROR_SELECT_OTHER_USER}
         />
       ));
     },

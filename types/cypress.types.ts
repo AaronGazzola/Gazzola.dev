@@ -305,6 +305,7 @@ export enum DataCyAttributes {
   // RLS User Action Buttons
   RLS_SELECT_ADMIN_USER_BUTTON = "rls-select-admin-user-button",
   RLS_SELECT_USER_USER_BUTTON = "rls-select-user-user-button",
+  RLS_SELECT_OTHER_USER_BUTTON = "rls-select-other-user-button",
   RLS_UPDATE_ADMIN_USER_BUTTON = "rls-update-admin-user-button",
   RLS_UPDATE_USER_USER_BUTTON = "rls-update-user-user-button",
   RLS_DELETE_ADMIN_USER_BUTTON = "rls-delete-admin-user-button",
@@ -326,6 +327,8 @@ export enum DataCyAttributes {
   RLS_ERROR_SELECT_ADMIN_USER = "rls-error-select-admin-user",
   RLS_SUCCESS_SELECT_USER_USER = "rls-success-select-user-user",
   RLS_ERROR_SELECT_USER_USER = "rls-error-select-user-user",
+  RLS_SUCCESS_SELECT_OTHER_USER = "rls-success-select-other-user",
+  RLS_ERROR_SELECT_OTHER_USER = "rls-error-select-other-user",
   RLS_SUCCESS_UPDATE_ADMIN_USER = "rls-success-update-admin-user",
   RLS_ERROR_UPDATE_ADMIN_USER = "rls-error-update-admin-user",
   RLS_SUCCESS_UPDATE_USER_USER = "rls-success-update-user-user",

@@ -73,6 +73,14 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
+    // Step 18.5: Select other user (should succeed - admin can see all users)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_SELECT_OTHER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SELECT_OTHER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
     // Step 19: Delete admin profile
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ADMIN_PROFILE_BUTTON}"]`
@@ -210,11 +218,11 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 40: Select admin user (should fail - user can only select own user)
+    // Step 40: Select admin user (should succeed - users can select admin user id)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_SELECT_ADMIN_USER_BUTTON}"]`
     ).click();
-    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_SELECT_ADMIN_USER}"]`, {
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SELECT_ADMIN_USER}"]`, {
       timeout: 30000,
     }).should("exist");
 
@@ -223,6 +231,14 @@ describe("RLS (Row Level Security) Test", () => {
       `[data-cy="${DataCyAttributes.RLS_SELECT_USER_USER_BUTTON}"]`
     ).click();
     cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SELECT_USER_USER}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 41.5: Select other user (should fail - user can only select own user)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_SELECT_OTHER_USER_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_ERROR_SELECT_OTHER_USER}"]`, {
       timeout: 30000,
     }).should("exist");
 

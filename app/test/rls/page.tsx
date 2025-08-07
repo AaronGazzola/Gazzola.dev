@@ -18,6 +18,7 @@ import {
   useRLSSignOut,
   useSelectAdminProfile,
   useSelectAdminUser,
+  useSelectOtherUser,
   useSelectUserProfile,
   useSelectUserUser,
   useUpdateAdminProfile,
@@ -72,6 +73,7 @@ export default function RLSTestPage() {
 
   const selectAdminUserMutation = useSelectAdminUser();
   const selectUserUserMutation = useSelectUserUser();
+  const selectOtherUserMutation = useSelectOtherUser();
   const updateAdminUserMutation = useUpdateAdminUser();
   const updateUserUserMutation = useUpdateUserUser();
   const deleteAdminUserMutation = useDeleteAdminUser();
@@ -239,6 +241,16 @@ export default function RLSTestPage() {
               {selectUserUserMutation.isPending
                 ? "Loading..."
                 : "Select User User"}
+            </Button>
+            <Button
+              onClick={() => selectOtherUserMutation.mutate()}
+              disabled={selectOtherUserMutation.isPending}
+              data-cy={DataCyAttributes.RLS_SELECT_OTHER_USER_BUTTON}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+            >
+              {selectOtherUserMutation.isPending
+                ? "Loading..."
+                : "Select Other User"}
             </Button>
             <Button
               onClick={() => updateAdminUserMutation.mutate()}
