@@ -486,7 +486,7 @@ export default function RLSTestPage() {
             >
               {payUserContractMutation.isPending
                 ? "Loading..."
-                : "Pay User Contract"}
+                : "Pay for Contract"}
             </Button>
           </div>
         </div>

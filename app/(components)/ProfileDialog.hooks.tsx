@@ -8,8 +8,8 @@ import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  deleteAccountAction,
   resetProfileAction,
+  softDeleteAccountAction,
   updateProfileAction,
 } from "./ProfileDialog.actions";
 
@@ -92,7 +92,7 @@ export const useDeleteAccount = () => {
 
   return useMutation({
     mutationFn: async () => {
-      const { data, error } = await deleteAccountAction();
+      const { data, error } = await softDeleteAccountAction();
       if (error) throw new Error(error);
       return data;
     },

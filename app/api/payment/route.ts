@@ -42,25 +42,15 @@ export async function GET(request: NextRequest) {
 
     if (session.payment_status === "paid" && session.metadata?.contractId) {
       await prisma.$transaction(async (tx) => {
-        await tx.payment.update({
-          where: {
-            id: payment.id,
-          },
-          data: {
-            status: "completed",
-            stripePaymentIntentId: session.payment_intent as string,
-            paidAt: new Date(),
-          },
-        });
-
-        await tx.contract.update({
-          where: {
-            id: session.metadata?.contractId,
-          },
-          data: {
-            isPaid: true,
-          },
-        });
+        // Use secure payment processing function with validation
+        await tx.$executeRaw`
+          SELECT process_payment_securely(
+            ${sessionId}::TEXT,
+            ${session.payment_intent as string}::TEXT,
+            ${payment.amount}::DECIMAL,
+            ${session.metadata?.contractId}::TEXT
+          )
+        `;
       });
 
       return NextResponse.redirect(new URL("/?payment=success", request.url));

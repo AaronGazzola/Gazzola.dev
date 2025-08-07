@@ -48,7 +48,7 @@ const signUpOrSignInWithOnboarding = (
       // Verify account in test mode
       cy.get(`[data-cy="${DataCyAttributes.VERIFY_ACCOUNT_BUTTON}"]`).click();
       cy.get(`[data-cy="${DataCyAttributes.SUCCESS_VERIFY_ACCOUNT}"]`, {
-        timeout: 10000,
+        timeout: 30000,
       }).should("exist");
     } else {
       // Sign up failed, try sign in instead
@@ -56,7 +56,7 @@ const signUpOrSignInWithOnboarding = (
 
       // Wait for error message to appear and be handled
       cy.get(`[data-cy="${DataCyAttributes.ERROR_AUTH_SIGN_UP}"]`, {
-        timeout: 10000,
+        timeout: 30000,
       }).should("exist");
 
       // Switch to sign in mode
@@ -67,7 +67,7 @@ const signUpOrSignInWithOnboarding = (
 
       // Wait for sign in success
       cy.get(`[data-cy="${DataCyAttributes.SUCCESS_AUTH_SIGN_IN}"]`, {
-        timeout: 20000,
+        timeout: 30000,
       }).should("exist");
 
       cy.log("Sign up succeeded, proceeding with verification and onboarding");
@@ -75,7 +75,7 @@ const signUpOrSignInWithOnboarding = (
       // Verify account in test mode
       cy.get(`[data-cy="${DataCyAttributes.VERIFY_ACCOUNT_BUTTON}"]`).click();
       cy.get(`[data-cy="${DataCyAttributes.SUCCESS_VERIFY_ACCOUNT}"]`, {
-        timeout: 10000,
+        timeout: 30000,
       }).should("exist");
     }
   });

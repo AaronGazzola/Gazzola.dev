@@ -100,7 +100,9 @@ export async function resetProfileAction(): Promise<
   }
 }
 
-export async function deleteAccountAction(): Promise<ActionResponse<boolean>> {
+export async function softDeleteAccountAction(): Promise<
+  ActionResponse<boolean>
+> {
   try {
     const { db, session } = await getAuthenticatedClient();
 
@@ -108,27 +110,10 @@ export async function deleteAccountAction(): Promise<ActionResponse<boolean>> {
       return getActionResponse({ error: "Unauthorized: No valid session" });
     }
 
-    await db.user.update({
-      where: { id: session.user.id },
-      data: {
-        isDeleted: true,
-        deletedAt: new Date(),
-        email: Date.now().toString(),
-        name: null,
-        image: null,
-      },
-    });
-
-    await db.profile.updateMany({
-      where: { userId: session.user.id },
-      data: {
-        firstName: null,
-        lastName: null,
-        email: null,
-        phone: null,
-        company: null,
-      },
-    });
+    await db.$transaction([
+      db.$executeRaw`SELECT set_config('app.current_user_id', ${session.user.id}, TRUE)`,
+      db.$executeRaw`SELECT soft_delete_user(${session.user.id}::TEXT)`
+    ]);
 
     return getActionResponse({ data: true });
   } catch (error) {

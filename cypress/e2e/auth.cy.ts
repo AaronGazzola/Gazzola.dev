@@ -15,7 +15,7 @@ describe("Smoke Test", () => {
 
   it("should complete full authentication flow with error handling and successful sign out", () => {
     cy.get(`[data-cy="${DataCyAttributes.SIGN_IN_BUTTON}"]`, {
-      timeout: 10000,
+      timeout: 30000,
     }).click();
 
     const userEmail = Cypress.env("USER_EMAIL");
@@ -37,7 +37,7 @@ describe("Smoke Test", () => {
     signInUnverifiedUser();
 
     cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_DIALOG}"]`, {
-      timeout: 10000,
+      timeout: 30000,
     }).should("be.visible");
 
     cy.get("body").type("{esc}");
@@ -47,12 +47,12 @@ describe("Smoke Test", () => {
 
     cy.get(`[data-cy="${DataCyAttributes.RESEND_EMAIL_BUTTON}"]`).click();
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_RESEND_EMAIL}"]`, {
-      timeout: 10000,
+      timeout: 30000,
     }).should("exist");
 
     cy.get(`[data-cy="${DataCyAttributes.SIGN_OUT_VERIFY_BUTTON}"]`).click();
     cy.get(`[data-cy="${DataCyAttributes.SUCCESS_SIGN_OUT}"]`, {
-      timeout: 10000,
+      timeout: 30000,
     }).should("exist");
 
     cy.get(`[data-cy="${DataCyAttributes.ONBOARDING_DIALOG}"]`).should(

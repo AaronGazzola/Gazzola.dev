@@ -346,7 +346,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 56.5: Pay contract (confirming success after contract update)
+    // Step 56.5: Pay contract using secure payment processing (should succeed)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_PAY_USER_CONTRACT_BUTTON}"]`
     ).click();

@@ -2349,7 +2349,7 @@ export async function rlsDeleteAllUserMessagesAction(): Promise<
   }
 }
 
-// Pay User Contract Action
+// Pay User Contract Action (using secure payment processing)
 export async function rlsPayUserContractAction(): Promise<
   ActionResponse<RLSActionResponse>
 > {
@@ -2377,32 +2377,46 @@ export async function rlsPayUserContractAction(): Promise<
       throw new Error("Payment for user contract already exists");
     }
 
+    // Generate unique identifiers for test payment
+    const stripeSessionId = `session_user_${Date.now()}`;
+    const stripePaymentIntentId = `pi_user_${Date.now()}`;
+
+    // First create the payment record in pending status
     const payment = await db.payment.create({
       data: {
         contractId: contract.id,
-        stripeSessionId: `session_user_${Date.now()}`,
-        stripePaymentIntentId: `pi_user_${Date.now()}`,
+        stripeSessionId: stripeSessionId,
         amount: contract.price,
         currency: "usd",
-        status: "completed",
+        status: "pending",
       },
     });
 
-    const createdPayment = await db.payment.findUnique({
+    // Use the secure payment processing function to complete the payment
+    await db.$executeRaw`
+      SELECT process_payment_securely(
+        ${stripeSessionId}::TEXT,
+        ${stripePaymentIntentId}::TEXT,
+        ${contract.price}::DECIMAL,
+        ${contract.id}::TEXT
+      )
+    `;
+
+    const completedPayment = await db.payment.findUnique({
       where: { id: payment.id },
     });
 
-    if (!createdPayment) {
+    if (!completedPayment) {
       throw new Error(
-        "Created user contract payment cannot be found after creation"
+        "Created user contract payment cannot be found after processing"
       );
     }
 
     return getActionResponse({
       data: {
         success: true,
-        message: "Payment for user contract created successfully",
-        data: payment,
+        message: "Payment for user contract processed successfully",
+        data: completedPayment,
       },
     });
   } catch (error) {

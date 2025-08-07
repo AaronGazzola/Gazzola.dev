@@ -104,11 +104,6 @@ export async function getUsersAction(
             },
           },
         },
-        _count: {
-          select: {
-            sessions: true,
-          },
-        },
       },
     });
 
@@ -144,7 +139,6 @@ export async function getUsersAction(
         contractTitle: latestContract?.title || null,
         contractStatus: latestContract?.progressStatus || null,
         contractCreatedAt: latestContract?.createdAt || null,
-        sessionCount: user._count.sessions,
       };
     });
 

@@ -1763,7 +1763,7 @@ export const useDeleteAllUserMessages = () => {
   });
 };
 
-// Pay User Contract hook
+// Pay User Contract hook (using secure payment processing)
 export const usePayUserContract = () => {
   return useMutation({
     mutationFn: async () => {
@@ -1777,7 +1777,7 @@ export const usePayUserContract = () => {
           <Toast
             variant="success"
             title="Success"
-            message={data.message || "User contract payment created successfully"}
+            message={data.message || "User contract payment processed successfully"}
             data-cy={DataCyAttributes.RLS_SUCCESS_PAY_USER_CONTRACT}
           />
         ));
@@ -1788,7 +1788,7 @@ export const usePayUserContract = () => {
         <Toast
           variant="error"
           title="Error"
-          message={error.message || "Failed to create payment for user contract"}
+          message={error.message || "Failed to process user contract payment"}
           data-cy={DataCyAttributes.RLS_ERROR_PAY_USER_CONTRACT}
         />
       ));

@@ -74,10 +74,7 @@ export async function verifyAccountAction(): Promise<ActionResponse<boolean>> {
       return getActionResponse({ error: "Unauthorized: No valid session" });
     }
 
-    await db.user.update({
-      where: { id: session.user.id },
-      data: { emailVerified: true },
-    });
+    await db.$executeRaw`SELECT verify_user_email(${session.user.id})`;
 
     return getActionResponse({ data: true });
   } catch (error) {

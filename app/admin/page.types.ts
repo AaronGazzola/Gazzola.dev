@@ -12,7 +12,6 @@ export interface UserData {
   contractTitle?: string | null;
   contractStatus?: ProgressStatus | null;
   contractCreatedAt?: Date | null;
-  sessionCount?: number;
 }
 
 export interface GetUsersParams {
