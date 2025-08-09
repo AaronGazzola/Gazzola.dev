@@ -1,8 +1,9 @@
 //-| File path: app/(components)/AuthDialog.tsx
 "use client";
 
-import { useAppStore } from "@/app/(stores)/ui.store";
 import useIsTest from "@/app/(hooks)/useIsTest";
+import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useAppStore } from "@/app/(stores)/ui.store";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,8 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
-import { useSignIn, useSignUp, useDeleteAccount } from "./AuthDialog.hooks";
+import { useEffect, useState } from "react";
+import { useDeleteAccount, useSignIn, useSignUp } from "./AuthDialog.hooks";
 
 interface AuthCredentials {
   email: string;
@@ -23,6 +24,7 @@ interface AuthCredentials {
 }
 
 const AuthDialog = () => {
+  const { user } = useAuthStore();
   const { ui, closeAuthModal } = useAppStore();
   const isTest = useIsTest();
   const [isSignUp, setIsSignUp] = useState(false);
@@ -50,6 +52,14 @@ const AuthDialog = () => {
       password: formData.password,
     });
   };
+
+  useEffect(() => {
+    if (user)
+      setFormData({
+        email: "",
+        password: "",
+      });
+  }, [user]);
 
   const handleInputChange = (field: keyof AuthCredentials, value: string) => {
     setFormData((prev) => ({

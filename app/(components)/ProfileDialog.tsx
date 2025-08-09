@@ -48,14 +48,20 @@ const ProfileDialog = () => {
   const { mutate: deleteAccount, isPending: isDeleting } = useDeleteAccount();
 
   useEffect(() => {
-    if (profile) {
+    if (profile)
       setFormData({
         firstName: profile.firstName || "",
         lastName: profile.lastName || "",
         phone: profile.phone || "",
         company: profile.company || "",
       });
-    }
+    if (!profile)
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        company: "",
+      });
   }, [profile]);
 
   const handleInputChange = (field: keyof ProfileFormData, value: string) => {
@@ -222,17 +228,17 @@ const ProfileDialog = () => {
                       </p>
                       <ul className="text-gray-300 space-y-1 text-xs">
                         <li>
-                          • Your personal information (name, email, phone, profile
-                          photo) will be permanently removed
+                          • Your personal information (name, email, phone,
+                          profile photo) will be permanently removed
                         </li>
                         <li>
                           • You will no longer be able to log in or access your
                           account
                         </li>
                         <li>
-                          • Your contracts, payments, and business communications
-                          will be preserved as anonymous records for legal and
-                          financial compliance
+                          • Your contracts, payments, and business
+                          communications will be preserved as anonymous records
+                          for legal and financial compliance
                         </li>
                         <li>• This action cannot be undone</li>
                       </ul>
