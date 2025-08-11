@@ -1,10 +1,13 @@
 //-| File path: app/(components)/Header.tsx
 "use client";
 import { useAuthStore } from "@/app/(stores)/auth.store";
+import { Button } from "@/components/ui/button";
+import configuration from "@/configuration";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { Clock } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { ScrollParallax } from "react-just-parallax";
 import { JobSuccessIcon, TopRatedIcon } from "./SVG";
 
@@ -15,9 +18,20 @@ const Header = () => {
     <div
       className={clsx(
         sourceCodePro.className,
-        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center h-screen"
+        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center h-screen "
       )}
     >
+      <Link
+        href={configuration.paths.about}
+        className="absolute top-6 right-6 z-30"
+      >
+        <Button
+          variant="outline"
+          className="border-gray-400 text-gray-300 hover:bg-gray-800 rounded"
+        >
+          About
+        </Button>
+      </Link>
       <div className="px-5 sm:px-10">
         <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
           AARON GAZZOLA
