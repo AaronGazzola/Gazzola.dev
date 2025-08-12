@@ -21,7 +21,7 @@ const Stars = () => {
   const isMounted = useIsMounted();
   if (!isMounted) return <></>;
   return (
-    <div className="absolute inset-0 -z-20 overflow-hidden">
+    <div className="fixed inset-0 -z-20 overflow-hidden">
       {stars.map((star, i) => {
         const strength = (i / stars.length) * 0.2;
         return (
