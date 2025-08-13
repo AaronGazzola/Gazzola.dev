@@ -5,7 +5,7 @@ describe("RLS (Row Level Security) Test", () => {
     // Visit the RLS test page
     cy.visit("/test/rls");
 
-    // Step 1-11: Sign in as admin
+    // Step 1-5: Sign in as admin
     cy.get(`[data-cy="${DataCyAttributes.RLS_EMAIL_INPUT}"]`).type(
       Cypress.env("ADMIN_EMAIL")
     );
@@ -17,7 +17,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 12: Insert new user (should fail - no INSERT policy on user table, even for admin)
+    // Step 6: Admin attempts to insert new user (error - no INSERT policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_NEW_USER_BUTTON}"]`
     ).click();
@@ -25,7 +25,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 13: Update user user (should fail - no UPDATE policy on user table, even for admin)
+    // Step 7: Admin attempts to update user user (error - no UPDATE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_USER_BUTTON}"]`
     ).click();
@@ -33,7 +33,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 14: Update admin user (should fail - no UPDATE policy on user table, even for admin)
+    // Step 8: Admin attempts to update admin user (error - no UPDATE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_ADMIN_USER_BUTTON}"]`
     ).click();
@@ -41,7 +41,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 15: Delete user user (should fail - no DELETE policy on user table, even for admin)
+    // Step 9: Admin attempts to delete user user (error - no DELETE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_USER_BUTTON}"]`
     ).click();
@@ -49,7 +49,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 16: Delete admin user (should fail - no DELETE policy on user table, even for admin)
+    // Step 10: Admin attempts to delete admin user (error - no DELETE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ADMIN_USER_BUTTON}"]`
     ).click();
@@ -57,7 +57,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 17: Select admin user
+    // Step 11: Admin selects admin user
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_SELECT_ADMIN_USER_BUTTON}"]`
     ).click();
@@ -65,7 +65,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 18: Select user user
+    // Step 12: Admin selects user user
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_SELECT_USER_USER_BUTTON}"]`
     ).click();
@@ -73,7 +73,8 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 18.5: Select other user (should succeed - admin can see all users)
+
+    // Step 13: Admin selects other user (success - admin can see all users)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_SELECT_OTHER_USER_BUTTON}"]`
     ).click();
@@ -81,7 +82,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 19: Delete admin profile
+    // Step 14: Admin deletes admin profile
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ADMIN_PROFILE_BUTTON}"]`
     ).click();
@@ -89,7 +90,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 20: Insert admin profile
+    // Step 15: Admin inserts admin profile
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_ADMIN_PROFILE_BUTTON}"]`
     ).click();
@@ -97,7 +98,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 21: Delete all user tasks
+    // Step 16: Admin deletes all user tasks
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_TASKS_BUTTON}"]`
     ).click();
@@ -105,7 +106,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 22: Delete all user messages
+    // Step 17: Admin deletes all user messages
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_MESSAGES_BUTTON}"]`
     ).click();
@@ -113,7 +114,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 23: Delete all user conversations
+    // Step 18: Admin deletes all user conversations
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_CONVERSATIONS_BUTTON}"]`
     ).click();
@@ -121,7 +122,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 24: Delete all user contracts
+    // Step 19: Admin deletes all user contracts
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ALL_USER_CONTRACTS_BUTTON}"]`
     ).click();
@@ -129,7 +130,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 25: Delete user profile
+    // Step 20: Admin deletes user profile
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_PROFILE_BUTTON}"]`
     ).click();
@@ -137,36 +138,16 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 26: Insert user conversation
-    cy.get(
-      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_CONVERSATION_BUTTON}"]`
-    ).click();
-    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONVERSATION_INSERT}"]`, {
-      timeout: 30000,
-    }).should("exist");
-    // Step 26b: Insert user conversation
-    cy.get(
-      `[data-cy="${DataCyAttributes.RLS_INSERT_ADMIN_CONVERSATION_BUTTON}"]`
-    ).click();
-    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONVERSATION_INSERT}"]`, {
-      timeout: 30000,
-    }).should("exist");
-
-    // Step 27: Insert admin message
-    cy.get(
-      `[data-cy="${DataCyAttributes.RLS_INSERT_ADMIN_MESSAGE_BUTTON}"]`
-    ).click();
-    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_MESSAGE_INSERT}"]`, {
-      timeout: 30000,
-    }).should("exist");
-
-    // Step 28: Sign out
+    // Step 21: Admin signs out
     cy.get(`[data-cy="${DataCyAttributes.RLS_SIGN_OUT_BUTTON}"]`).click();
     cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_SIGN_OUT}"]`, {
       timeout: 30000,
     }).should("exist");
 
-    // Step 29-34: Sign in as user
+    // Step 22: Enter user email (success)
+    // Step 23: Enter user password (success)  
+    // Step 24: Click sign in button (success)
+    // Step 25: Verify user sign in successful (success)
     cy.get(`[data-cy="${DataCyAttributes.RLS_EMAIL_INPUT}"]`)
       .clear()
       .type(Cypress.env("USER_EMAIL"));
@@ -178,7 +159,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 35: Insert new user (should fail - no INSERT policy on user table)
+    // Step 26: User attempts to insert new user (error - no INSERT policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_NEW_USER_BUTTON}"]`
     ).click();
@@ -186,7 +167,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 36: Update user user (should fail - no UPDATE policy on user table)
+    // Step 27: User attempts to update user user (error - no UPDATE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_USER_BUTTON}"]`
     ).click();
@@ -194,7 +175,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 37: Update admin user (should fail - no UPDATE policy on user table)
+    // Step 28: User attempts to update admin user (error - no UPDATE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_ADMIN_USER_BUTTON}"]`
     ).click();
@@ -202,7 +183,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 38: Delete user user (should fail - no DELETE policy on user table)
+    // Step 29: User attempts to delete user user (error - no DELETE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_USER_BUTTON}"]`
     ).click();
@@ -210,7 +191,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 39: Delete admin user (should fail - no DELETE policy on user table)
+    // Step 30: User attempts to delete admin user (error - no DELETE policy on user table)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_ADMIN_USER_BUTTON}"]`
     ).click();
@@ -218,7 +199,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 40: Select admin user (should succeed - users can select admin user id)
+    // Step 31: User selects admin user (success - users can select admin user id)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_SELECT_ADMIN_USER_BUTTON}"]`
     ).click();
@@ -226,7 +207,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 41: Select user user (should succeed - selecting own user)
+    // Step 32: User selects user user (success - selecting own user)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_SELECT_USER_USER_BUTTON}"]`
     ).click();
@@ -234,7 +215,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 41.5: Select other user (should fail - user can only select own user)
+    // Step 33: User attempts to select other user (error - user can only select own user)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_SELECT_OTHER_USER_BUTTON}"]`
     ).click();
@@ -242,7 +223,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 42: Insert user profile (should succeed - creating own profile)
+    // Step 34: User inserts user profile (success - creating own profile)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_USER_PROFILE_BUTTON}"]`
     ).click();
@@ -250,7 +231,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 43: Update user profile (should succeed - updating own profile)
+    // Step 35: User updates user profile (success - updating own profile)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_PROFILE_BUTTON}"]`
     ).click();
@@ -258,7 +239,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 44: Delete user profile (should fail - only admin can delete profiles)
+    // Step 36: User attempts to delete user profile (error - only admin can delete profiles)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_PROFILE_BUTTON}"]`
     ).click();
@@ -266,7 +247,15 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 45: Insert conversation (should fail - only admin can insert conversations)
+    // Step 37: User attempts to insert conversation (success)
+    cy.get(
+      `[data-cy="${DataCyAttributes.RLS_INSERT_USER_CONVERSATION_BUTTON}"]`
+    ).click();
+    cy.get(`[data-cy="${DataCyAttributes.RLS_SUCCESS_CONVERSATION_INSERT}"]`, {
+      timeout: 30000,
+    }).should("exist");
+
+    // Step 38: User attempts to insert conversation (error - users can only insert the initial conversation)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_USER_CONVERSATION_BUTTON}"]`
     ).click();
@@ -274,7 +263,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 46: Update conversation (should succeed - user can update conversations they participate in)
+    // Step 39: User updates conversation (success - user can update conversations they participate in)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_CONVERSATION_BUTTON}"]`
     ).click();
@@ -282,7 +271,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 47: Delete conversation (should fail - only admin can delete conversations)
+    // Step 40: User attempts to delete conversation (error - only admin can delete conversations)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_CONVERSATION_BUTTON}"]`
     ).click();
@@ -290,7 +279,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 48: Insert message (should succeed - user can insert messages in conversations they participate in)
+    // Step 41: User inserts message (success - user can insert messages in conversations they participate in)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_USER_MESSAGE_BUTTON}"]`
     ).click();
@@ -298,7 +287,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 49: Update message (should fail - only admin can update messages, per migration line 100-101)
+    // Step 42: User attempts to update message (error - only admin can update messages)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_MESSAGE_BUTTON}"]`
     ).click();
@@ -306,7 +295,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 50: Delete message (should fail - only admin can delete messages, per migration line 103-104)
+    // Step 43: User attempts to delete message (error - only admin can delete messages)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_MESSAGE_BUTTON}"]`
     ).click();
@@ -314,7 +303,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 51: Create contract (should succeed - user can create contract for own profile)
+    // Step 44: User creates contract (success - user can create contract for own profile)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_USER_CONTRACT_BUTTON}"]`
     ).click();
@@ -322,7 +311,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 52: Insert task (should succeed - user can insert task for own contract when unpaid)
+    // Step 45: User inserts task (success - user can insert task for own contract when unpaid)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_USER_TASK_BUTTON}"]`
     ).click();
@@ -330,7 +319,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 53: Update task (should succeed - user can update task for own contract when unpaid)
+    // Step 46: User updates task (success - user can update task for own contract when unpaid)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_TASK_BUTTON}"]`
     ).click();
@@ -338,7 +327,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 54: Delete task (should succeed - user can delete task for own contract when unpaid)
+    // Step 47: User deletes task (success - user can delete task for own contract when unpaid)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_TASK_BUTTON}"]`
     ).click();
@@ -346,7 +335,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 55: Insert task again (to have a task for the next steps)
+    // Step 48: User inserts task again (success - to have a task for next steps)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_USER_TASK_BUTTON}"]`
     ).click();
@@ -354,7 +343,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 56: Update contract (this sets isPaid to true, affecting subsequent task operations)
+    // Step 49: User updates contract (success - this sets isPaid to true)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_CONTRACT_BUTTON}"]`
     ).click();
@@ -362,7 +351,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 56.5: Pay contract using secure payment processing (should succeed)
+    // Step 50: User pays contract using secure payment processing (success)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_PAY_USER_CONTRACT_BUTTON}"]`
     ).click();
@@ -370,7 +359,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 57: Update task (should fail - users can't mutate tasks when contract isPaid=true, per migration line 166-176)
+    // Step 51: User attempts to update task (error - users can't mutate tasks when contract isPaid=true)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_TASK_BUTTON}"]`
     ).click();
@@ -378,7 +367,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 58: Delete task (should fail - users can't mutate tasks when contract isPaid=true, per migration line 178-188)
+    // Step 52: User attempts to delete task (error - users can't mutate tasks when contract isPaid=true)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_TASK_BUTTON}"]`
     ).click();
@@ -386,7 +375,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 58.5: Try to insert new task on paid contract (should fail - users can't insert tasks when contract isPaid=true, per migration line 154-164)
+    // Step 53: User attempts to insert new task on paid contract (error - users can't insert tasks when contract isPaid=true)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_INSERT_USER_TASK_BUTTON}"]`
     ).click();
@@ -394,7 +383,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 59: Update contract (should fail - user cannot update paid contract per migration line 127-137)
+    // Step 54: User attempts to update paid contract (error - user cannot update paid contract)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_UPDATE_USER_CONTRACT_BUTTON}"]`
     ).click();
@@ -402,7 +391,7 @@ describe("RLS (Row Level Security) Test", () => {
       timeout: 30000,
     }).should("exist");
 
-    // Step 60: Delete contract (should fail - only admin can delete contracts)
+    // Step 55: User attempts to delete contract (error - only admin can delete contracts)
     cy.get(
       `[data-cy="${DataCyAttributes.RLS_DELETE_USER_CONTRACT_BUTTON}"]`
     ).click();
