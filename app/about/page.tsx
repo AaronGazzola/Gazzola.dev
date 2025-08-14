@@ -3,7 +3,14 @@ import Stars from "@/app/(components)/Stars";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowDown, BookOpen, Briefcase, GraduationCap, Microscope } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowRight,
+  BookOpen,
+  Briefcase,
+  GraduationCap,
+  Microscope,
+} from "lucide-react";
 import Image from "next/image";
 
 const careerSteps = [
@@ -21,8 +28,7 @@ const careerSteps = [
   },
   {
     title: "Learning Development",
-    description:
-      "Self-taught full stack web development over 2 years while working part-time",
+    description: "Self-taught full stack web development over 2 years",
     icon: BookOpen,
     duration: "2 years",
   },
@@ -52,7 +58,7 @@ const page = () => {
           <h2 className="text-lg font-medium mb-8">Full Stack Vibe Lead</h2>
 
           {/* Profile Image with Radial Gradient Fade */}
-          <div className="relative w-96 h-96 mx-auto ">
+          <div className="relative w-64 h-64 sm:w-96 sm:h-96  mx-auto">
             <Image
               src="/Astronaut on laptop.png"
               alt="Aaron Gazzola - Astronaut on laptop"
@@ -83,9 +89,9 @@ const page = () => {
 
           <div className="max-w-6xl mx-auto">
             {/* Desktop Layout */}
-            <div className="hidden md:flex items-center justify-center relative">
+            <div className="hidden md:flex items-start justify-center relative">
               {careerSteps.map((step, index) => (
-                <div key={index} className="flex items-center">
+                <div key={index} className="flex items-start">
                   <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -102,7 +108,7 @@ const page = () => {
                     {/* Content */}
                     <div className="text-center max-w-[250px]">
                       <h4 className="text-lg font-bold mb-2">{step.title}</h4>
-                      <p className="text-sm text-gray-300 mb-2">
+                      <p className="text-sm font-medium mb-2">
                         {step.description}
                       </p>
                     </div>
@@ -114,11 +120,15 @@ const page = () => {
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 1.0 + index * 0.2 }}
-                      className="mx-8 flex items-center"
+                      className="mx-8 h-32 flex items-center"
                     >
-                      <ArrowRight className="w-8 h-8 text-gradient-to-r from-blue-500 via-purple-500 to-green-500" style={{ 
-                        filter: 'drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))'
-                      }} />
+                      <ArrowRight
+                        className="w-8 h-8 text-gradient-to-r from-blue-500 via-purple-500 to-green-500"
+                        style={{
+                          filter:
+                            "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                        }}
+                      />
                     </motion.div>
                   )}
                 </div>
@@ -128,15 +138,15 @@ const page = () => {
             {/* Mobile Layout */}
             <div className="md:hidden">
               {careerSteps.map((step, index) => (
-                <div key={index} className="flex flex-col items-center">
+                <div key={index} className="flex flex-col items-start">
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
-                    className="flex items-center space-x-4 w-full mb-4"
+                    className="flex items-start space-x-4 w-full mb-4 justify-start"
                   >
                     {/* Circle with Icon */}
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-green-500 p-1 flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-green-500 p-0.5 flex-shrink-0">
                       <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
                         <step.icon className="w-6 h-6 text-white" />
                       </div>
@@ -145,12 +155,9 @@ const page = () => {
                     {/* Content */}
                     <div className="flex-1">
                       <h4 className="text-lg font-bold mb-1">{step.title}</h4>
-                      <p className="text-sm text-gray-300 mb-1">
+                      <p className="text-sm font-medium mb-1">
                         {step.description}
                       </p>
-                      <span className="text-xs text-blue-400 font-medium">
-                        {step.duration}
-                      </span>
                     </div>
                   </motion.div>
 
@@ -160,11 +167,15 @@ const page = () => {
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 1.0 + index * 0.2 }}
-                      className="mb-4 flex justify-center"
+                      className="mb-4 flex justify-center w-16"
                     >
-                      <ArrowDown className="w-6 h-6 text-purple-400" style={{ 
-                        filter: 'drop-shadow(0 0 6px rgba(147, 51, 234, 0.5))'
-                      }} />
+                      <ArrowDown
+                        className="w-6 h-6 text-white"
+                        style={{
+                          filter:
+                            "drop-shadow(0 0 6px rgba(147, 51, 234, 0.5))",
+                        }}
+                      />
                     </motion.div>
                   )}
                 </div>

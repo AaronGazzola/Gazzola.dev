@@ -2,24 +2,34 @@
 "use client";
 
 import { ScrollParallax } from "react-just-parallax";
+import { useMemo } from "react";
 import useIsMounted from "../(hooks)/useIsMounted";
+import { useBreakpoints } from "../(hooks)/use-media-query";
 
-// TOODO: Fix server conflict
-const stars = [...new Array(500)].map(() => {
-  return {
+const generateStars = (count: number) => {
+  return [...new Array(count)].map(() => ({
     x: `${Math.random() * 100}%`,
     y: `${Math.random() * 100}%`,
     size: `${Math.random() * 8}px`,
     opacity: Math.random() * 0.6 + 0.1,
     color: ["#3B4CCA", "#7B6BFF", "#A3B3FF", "#D7E1FF", "#A600FF", "#2ae5fa"][
-      Math.floor(Math.random() * 4)
+      Math.floor(Math.random() * 6)
     ],
-  };
-});
+  }));
+};
 
 const Stars = () => {
   const isMounted = useIsMounted();
+  const { isMd, isLg } = useBreakpoints();
+  
+  const stars = useMemo(() => {
+    if (!isMd) return generateStars(200);
+    if (isMd && !isLg) return generateStars(300);
+    return generateStars(500);
+  }, [isMd, isLg]);
+
   if (!isMounted) return <></>;
+  
   return (
     <div className="fixed inset-0 -z-20 overflow-hidden">
       {stars.map((star, i) => {
