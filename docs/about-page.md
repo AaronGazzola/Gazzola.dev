@@ -15,8 +15,8 @@ Full stack Typescript + SQL development
 - Shadcn + TailwindCss
 - Prisma ORM
 - Better-Auth
-- PostgreSQL
-- Cypress test suite
+- PostgreSQL/Supabase
+- Cypress/Playwright
 
 # Services
 

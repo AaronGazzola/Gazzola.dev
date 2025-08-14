@@ -4,14 +4,24 @@ import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import {
+  Activity,
   ArrowDown,
   ArrowRight,
-  BookOpen,
+  BrainCog,
   Briefcase,
   GraduationCap,
-  Microscope,
+  Plus,
 } from "lucide-react";
 import Image from "next/image";
+import {
+  SiCypress,
+  SiNextdotjs,
+  SiPostgresql,
+  SiPrisma,
+  SiSupabase,
+  SiTailwindcss,
+  SiTypescript,
+} from "react-icons/si";
 
 const careerSteps = [
   {
@@ -23,13 +33,13 @@ const careerSteps = [
   {
     title: "Science Career",
     description: "5 years experience working as a scientist",
-    icon: Microscope,
+    icon: Activity,
     duration: "5 years",
   },
   {
     title: "Learning Development",
     description: "Self-taught full stack web development over 2 years",
-    icon: BookOpen,
+    icon: BrainCog,
     duration: "2 years",
   },
   {
@@ -37,6 +47,39 @@ const careerSteps = [
     description: "4 years full-time freelance development on Upwork",
     icon: Briefcase,
     duration: "4 years",
+  },
+];
+
+const techStack = [
+  {
+    title: "Next.js",
+    description: "React framework for production web applications",
+    icons: [SiNextdotjs],
+  },
+  {
+    title: "Shadcn + TailwindCSS",
+    description: "Modern UI components and utility-first styling",
+    icons: [SiTailwindcss],
+  },
+  {
+    title: "Prisma ORM",
+    description: "Type-safe database client and query builder",
+    icons: [SiPrisma],
+  },
+  {
+    title: "Better-Auth",
+    description: "Authentication and authorization system",
+    icons: [SiTypescript],
+  },
+  {
+    title: "PostgreSQL/Supabase",
+    description: "Database and backend services platform",
+    icons: [SiPostgresql, SiSupabase],
+  },
+  {
+    title: "Cypress/Playwright",
+    description: "End-to-end testing frameworks for reliability",
+    icons: [SiCypress],
   },
 ];
 
@@ -77,15 +120,16 @@ const page = () => {
         </motion.div>
 
         {/* Career Transition Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="px-5 sm:px-10"
-        >
-          <h3 className="text-2xl font-bold text-center mb-16">
+        <motion.div className="px-5 sm:px-10">
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-2xl font-bold text-center mb-16"
+          >
             Education & Career Transition
-          </h3>
+          </motion.h3>
 
           <div className="max-w-6xl mx-auto">
             {/* Desktop Layout */}
@@ -94,15 +138,37 @@ const page = () => {
                 <div key={index} className="flex items-start">
                   <motion.div
                     initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    viewport={{ once: true }}
                     className="flex flex-col items-center relative z-10 bg-black"
                   >
-                    {/* Circle with Icon */}
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-green-500 p-0.5 mb-4">
-                      <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
-                        <step.icon className="w-12 h-12 text-white" />
-                      </div>
+                    {/* Icon with Gradient */}
+                    <div className="mb-4 relative">
+                      <svg
+                        className="w-20 h-20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`gradient-desktop-${index}`}
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                          >
+                            <stop offset="0%" stopColor="#3b82f6" />
+                            <stop offset="50%" stopColor="#a855f7" />
+                            <stop offset="100%" stopColor="#10b981" />
+                          </linearGradient>
+                        </defs>
+                        <step.icon
+                          className="w-20 h-20 stroke-1"
+                          stroke={`url(#gradient-desktop-${index})`}
+                          fill="none"
+                        />
+                      </svg>
                     </div>
 
                     {/* Content */}
@@ -118,8 +184,9 @@ const page = () => {
                   {index < careerSteps.length - 1 && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4, delay: 1.0 + index * 0.2 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                      viewport={{ once: true }}
                       className="mx-8 h-32 flex items-center"
                     >
                       <ArrowRight
@@ -141,15 +208,37 @@ const page = () => {
                 <div key={index} className="flex flex-col items-start">
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    viewport={{ once: true }}
                     className="flex items-start space-x-4 w-full mb-4 justify-start"
                   >
-                    {/* Circle with Icon */}
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-green-500 p-0.5 flex-shrink-0">
-                      <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
-                        <step.icon className="w-6 h-6 text-white" />
-                      </div>
+                    {/* Icon with Gradient */}
+                    <div className="flex-shrink-0 relative">
+                      <svg
+                        className="w-12 h-12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`gradient-mobile-${index}`}
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                          >
+                            <stop offset="0%" stopColor="#3b82f6" />
+                            <stop offset="50%" stopColor="#a855f7" />
+                            <stop offset="100%" stopColor="#10b981" />
+                          </linearGradient>
+                        </defs>
+                        <step.icon
+                          className="w-12 h-12"
+                          stroke={`url(#gradient-mobile-${index})`}
+                          strokeWidth={2}
+                        />
+                      </svg>
                     </div>
 
                     {/* Content */}
@@ -165,8 +254,9 @@ const page = () => {
                   {index < careerSteps.length - 1 && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4, delay: 1.0 + index * 0.2 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                      viewport={{ once: true }}
                       className="mb-4 flex justify-center w-16"
                     >
                       <ArrowDown
@@ -179,6 +269,119 @@ const page = () => {
                     </motion.div>
                   )}
                 </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Tech Stack Section */}
+        <motion.div className="px-5 sm:px-10 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h3 className="text-2xl font-bold mb-4">Tech Stack</h3>
+            <p className="text-lg">
+              Full stack{" "}
+              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-bold">
+                Typescript
+              </span>{" "}
+              +{" "}
+              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-bold">
+                SQL
+              </span>{" "}
+              development
+            </p>
+          </motion.div>
+
+          <div className="max-w-6xl mx-auto">
+            {/* Large screens - 3x2 grid */}
+            <div className="hidden lg:grid lg:grid-cols-3 lg:grid-rows-2 gap-8">
+              {techStack.map((tech, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex flex-col items-center text-center p-6 rounded-lg bg-white bg-opacity-5"
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    {tech.icons.map((Icon, iconIndex) => (
+                      <div key={iconIndex} className="flex items-center">
+                        <Icon className="w-12 h-12 text-white" />
+                        {iconIndex < tech.icons.length - 1 && (
+                          <Plus className="w-4 h-4 text-gray-400 mx-2" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <h4 className="text-lg font-bold mb-2">{tech.title}</h4>
+                  <p className="text-sm font-semibold text-white">
+                    {tech.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Medium screens - 2x3 grid */}
+            <div className="hidden md:grid md:grid-cols-2 md:grid-rows-3 lg:hidden gap-6">
+              {techStack.map((tech, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex flex-col items-center text-center p-5 rounded-lg bg-white bg-opacity-5"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    {tech.icons.map((Icon, iconIndex) => (
+                      <div key={iconIndex} className="flex items-center">
+                        <Icon className="w-10 h-10 text-white" />
+                        {iconIndex < tech.icons.length - 1 && (
+                          <Plus className="w-3 h-3 text-gray-400 mx-1" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <h4 className="text-base font-bold mb-2">{tech.title}</h4>
+                  <p className="text-sm font-semibold text-white">
+                    {tech.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Small screens - 1x6 grid */}
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+              {techStack.map((tech, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex flex-col items-center text-center p-4 rounded-lg bg-white bg-opacity-5"
+                >
+                  <div className="flex items-center gap-1 mb-3">
+                    {tech.icons.map((Icon, iconIndex) => (
+                      <div key={iconIndex} className="flex items-center">
+                        <Icon className="w-8 h-8 text-white" />
+                        {iconIndex < tech.icons.length - 1 && (
+                          <Plus className="w-3 h-3 text-gray-400 mx-1" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <h4 className="text-base font-bold mb-2">{tech.title}</h4>
+                  <p className="text-xs font-semibold text-white">
+                    {tech.description}
+                  </p>
+                </motion.div>
               ))}
             </div>
           </div>
