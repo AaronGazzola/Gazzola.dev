@@ -1,18 +1,23 @@
 "use client";
 import Stars from "@/app/(components)/Stars";
+import { Button } from "@/components/ui/button";
+import configuration from "@/configuration";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import {
   Activity,
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   BrainCog,
   Briefcase,
   GraduationCap,
   Plus,
+  Rocket,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   SiCypress,
   SiNextdotjs,
@@ -20,21 +25,57 @@ import {
   SiPrisma,
   SiSupabase,
   SiTailwindcss,
-  SiTypescript,
 } from "react-icons/si";
+
+// Custom SVG Icons
+const BetterAuthIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 500 500"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="69" y="121" width="86.9879" height="259" fill="white" />
+    <rect x="337.575" y="121" width="92.4247" height="259" fill="white" />
+    <rect
+      x="427.282"
+      y="121"
+      width="83.4555"
+      height="174.52"
+      transform="rotate(90 427.282 121)"
+      fill="white"
+    />
+    <rect
+      x="430"
+      y="296.544"
+      width="83.4555"
+      height="177.238"
+      transform="rotate(90 430 296.544)"
+      fill="white"
+    />
+    <rect
+      x="252.762"
+      y="204.455"
+      width="92.0888"
+      height="96.7741"
+      transform="rotate(90 252.762 204.455)"
+      fill="white"
+    />
+  </svg>
+);
 
 const careerSteps = [
   {
     title: "Education",
-    description: "First Class Honours degree in Science",
+    description: "First Class Honours degree in Biology and Physiology",
     icon: GraduationCap,
-    duration: "University",
+    duration: "4 Years",
   },
   {
     title: "Science Career",
-    description: "5 years experience working as a scientist",
+    description: "4 years experience working as a scientist",
     icon: Activity,
-    duration: "5 years",
+    duration: "4 years",
   },
   {
     title: "Learning Development",
@@ -69,7 +110,7 @@ const techStack = [
   {
     title: "Better-Auth",
     description: "Authentication and authorization system",
-    icons: [SiTypescript],
+    icons: [BetterAuthIcon],
   },
   {
     title: "PostgreSQL/Supabase",
@@ -87,18 +128,34 @@ const page = () => {
   return (
     <>
       <div className={clsx(sourceCodePro.className, "min-h-screen relative")}>
-        <Stars />
+        <Stars smStars={75} mdStars={100} lgStars={175} />
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="absolute top-6 left-6 z-30"
+        >
+          <Link href={configuration.paths.home}>
+            <Button
+              variant="outline"
+              className="border border-transparent  bg-transparent text-gray-300 hover:bg-gray-800 rounded font-semibold flex items-center gap-2 hover:border-gray-400"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Button>
+          </Link>
+        </motion.div>
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col items-center text-center py-20 px-5 sm:px-10"
+          className="flex flex-col items-center text-center py-10 sm:py-20 px-5 sm:px-10"
         >
-          <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
+          <h1 className="text-[36px] sm:text-[48px] tracking-[1.1rem] text-center my-4 leading-[3rem] sm:leading-[3.5rem] font-light">
             AARON GAZZOLA
           </h1>
-          <h2 className="text-lg font-medium mb-8">Full Stack Vibe Lead</h2>
+          <h1 className="text-2xl sm:text-3xl mb-8">Full Stack Vibe Lead</h1>
 
           {/* Profile Image with Radial Gradient Fade */}
           <div className="relative w-64 h-64 sm:w-96 sm:h-96  mx-auto">
@@ -121,15 +178,15 @@ const page = () => {
 
         {/* Career Transition Section */}
         <motion.div className="px-5 sm:px-10">
-          <motion.h3
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-2xl font-bold text-center mb-16"
+            className="text-2xl sm:text-3xl font-medium text-center mb-16"
           >
             Education & Career Transition
-          </motion.h3>
+          </motion.h2>
 
           <div className="max-w-6xl mx-auto">
             {/* Desktop Layout */}
@@ -173,8 +230,8 @@ const page = () => {
 
                     {/* Content */}
                     <div className="text-center max-w-[250px]">
-                      <h4 className="text-lg font-bold mb-2">{step.title}</h4>
-                      <p className="text-sm font-medium mb-2">
+                      <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                      <p className="text-base font-semibold mb-2">
                         {step.description}
                       </p>
                     </div>
@@ -187,7 +244,7 @@ const page = () => {
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
                       viewport={{ once: true }}
-                      className="mx-8 h-32 flex items-center"
+                      className="mx-8 h-20 flex items-center"
                     >
                       <ArrowRight
                         className="w-8 h-8 text-gradient-to-r from-blue-500 via-purple-500 to-green-500"
@@ -211,7 +268,7 @@ const page = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.2 }}
                     viewport={{ once: true }}
-                    className="flex items-start space-x-4 w-full mb-4 justify-start"
+                    className="flex items-center space-x-4 w-full mb-4 justify-start"
                   >
                     {/* Icon with Gradient */}
                     <div className="flex-shrink-0 relative">
@@ -243,8 +300,8 @@ const page = () => {
 
                     {/* Content */}
                     <div className="flex-1">
-                      <h4 className="text-lg font-bold mb-1">{step.title}</h4>
-                      <p className="text-sm font-medium mb-1">
+                      <h3 className="text-xl font-bold mb-1">{step.title}</h3>
+                      <p className="text-base font-semibold mb-1">
                         {step.description}
                       </p>
                     </div>
@@ -257,7 +314,7 @@ const page = () => {
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
                       viewport={{ once: true }}
-                      className="mb-4 flex justify-center w-16"
+                      className="mb-4 flex justify-center w-12"
                     >
                       <ArrowDown
                         className="w-6 h-6 text-white"
@@ -283,18 +340,17 @@ const page = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h3 className="text-2xl font-bold mb-4">Tech Stack</h3>
-            <p className="text-lg">
+            <h2 className="text-2xl sm:text-3xl mb-4">
               Full stack{" "}
-              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-bold">
+              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-black">
                 Typescript
               </span>{" "}
               +{" "}
-              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-bold">
+              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-black">
                 SQL
               </span>{" "}
               development
-            </p>
+            </h2>
           </motion.div>
 
           <div className="max-w-6xl mx-auto">
@@ -307,7 +363,7 @@ const page = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="flex flex-col items-center text-center p-6 rounded-lg bg-white bg-opacity-5"
+                  className="flex flex-col items-center text-center p-6 rounded-lg bg-black bg-opacity-50"
                 >
                   <div className="flex items-center gap-2 mb-4">
                     {tech.icons.map((Icon, iconIndex) => (
@@ -319,8 +375,8 @@ const page = () => {
                       </div>
                     ))}
                   </div>
-                  <h4 className="text-lg font-bold mb-2">{tech.title}</h4>
-                  <p className="text-sm font-semibold text-white">
+                  <h3 className="text-xl font-bold mb-2">{tech.title}</h3>
+                  <p className="text-base font-semibold text-white">
                     {tech.description}
                   </p>
                 </motion.div>
@@ -348,8 +404,8 @@ const page = () => {
                       </div>
                     ))}
                   </div>
-                  <h4 className="text-base font-bold mb-2">{tech.title}</h4>
-                  <p className="text-sm font-semibold text-white">
+                  <h3 className="text-lg font-bold mb-2">{tech.title}</h3>
+                  <p className="text-base font-semibold text-white">
                     {tech.description}
                   </p>
                 </motion.div>
@@ -377,14 +433,115 @@ const page = () => {
                       </div>
                     ))}
                   </div>
-                  <h4 className="text-base font-bold mb-2">{tech.title}</h4>
-                  <p className="text-xs font-semibold text-white">
+                  <h3 className="text-lg font-bold mb-2">{tech.title}</h3>
+                  <p className="text-base font-semibold text-white">
                     {tech.description}
                   </p>
                 </motion.div>
               ))}
             </div>
           </div>
+        </motion.div>
+
+        {/* What now? Section */}
+        <motion.div className="px-5 sm:px-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-2xl sm:text-3xl mb-4">Ok... What now?</h2>
+          </motion.div>
+
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="flex flex-col items-center text-center p-6 rounded-lg bg-black bg-opacity-50"
+              >
+                <div className="mb-6 relative">
+                  <span className="text-[56px] sm:text-[72px] font-light bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent mb-4 block">
+                    1
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold mb-2">
+                  Sign up for free to chat with me!
+                </h3>
+                <p className="text-base font-semibold text-white">
+                  I&apos;m interested to learn about your project and provide
+                  free advice and guidance
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="flex flex-col items-center text-center p-6 rounded-lg bg-black bg-opacity-50"
+              >
+                <div className="mb-6 relative">
+                  <span className="text-[56px] sm:text-[72px] font-light bg-gradient-to-r from-purple-500 to-green-500 bg-clip-text text-transparent mb-4 block">
+                    2
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold mb-2">
+                  Propose a fixed price contract
+                </h3>
+                <p className="text-base font-semibold text-white">
+                  Tasks can include: Code review, repo refactoring, general
+                  consultation or complete web app construction.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="flex flex-col items-center text-center p-6 rounded-lg bg-black bg-opacity-50"
+              >
+                <div className="mb-6 relative">
+                  <span className="text-[56px] sm:text-[72px] font-light bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent mb-4 block">
+                    3
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold mb-2">
+                  Follow along with my process
+                </h3>
+                <p className="text-base font-semibold text-white">
+                  Track the process as tasks are completed and receive frequent
+                  updates on my progress
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Get Started CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="flex justify-center py-20 px-5 sm:px-10"
+        >
+          <Link href={configuration.paths.home}>
+            <div className="rounded group bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 p-[1px]">
+              <Button
+                variant="outline"
+                className="border border-transparent bg-transparent text-gray-300 bg-black rounded font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
+              >
+                Get Started
+                <Rocket className="!w-7 !h-7" />
+              </Button>
+            </div>
+          </Link>
         </motion.div>
       </div>
     </>

@@ -1,10 +1,10 @@
 //-| File path: app/(components)/Stars.tsx
 "use client";
 
-import { ScrollParallax } from "react-just-parallax";
 import { useMemo } from "react";
-import useIsMounted from "../(hooks)/useIsMounted";
+import { ScrollParallax } from "react-just-parallax";
 import { useBreakpoints } from "../(hooks)/use-media-query";
+import useIsMounted from "../(hooks)/useIsMounted";
 
 const generateStars = (count: number) => {
   return [...new Array(count)].map(() => ({
@@ -18,18 +18,26 @@ const generateStars = (count: number) => {
   }));
 };
 
-const Stars = () => {
+const Stars = ({
+  smStars = 200,
+  mdStars = 300,
+  lgStars = 500,
+}: {
+  smStars?: number;
+  mdStars?: number;
+  lgStars?: number;
+}) => {
   const isMounted = useIsMounted();
   const { isMd, isLg } = useBreakpoints();
-  
+
   const stars = useMemo(() => {
-    if (!isMd) return generateStars(200);
-    if (isMd && !isLg) return generateStars(300);
-    return generateStars(500);
-  }, [isMd, isLg]);
+    if (!isMd) return generateStars(smStars);
+    if (isMd && !isLg) return generateStars(mdStars);
+    return generateStars(lgStars);
+  }, [isMd, smStars, isLg, mdStars, lgStars]);
 
   if (!isMounted) return <></>;
-  
+
   return (
     <div className="fixed inset-0 -z-20 overflow-hidden">
       {stars.map((star, i) => {

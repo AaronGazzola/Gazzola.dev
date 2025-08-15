@@ -18,13 +18,11 @@ Full stack Typescript + SQL development
 - PostgreSQL/Supabase
 - Cypress/Playwright
 
-# Services
+# Ok... What now?
 
-- Greenfield projects
-- AI-generated project refactoring
-- Mentorship and development guidance
-
-# Pricing
-
-- Fixed priced contracts for predefined tasks
-- External services costs not included (web and database hosting, AI feature integrations, email delivery)
+1. Sign up for free to chat with me!
+   - I'm interested to learn about your project and provide free advice and guidance
+2. Propose a fixed price contract
+   - Tasks can include: Code review, repo refactoring, general consultation or complete web app construction.
+3. Follow along with my process
+   - Track the process as tasks are completed and receive frequent updates on my progress
