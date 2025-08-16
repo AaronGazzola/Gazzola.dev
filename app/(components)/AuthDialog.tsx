@@ -82,93 +82,106 @@ const AuthDialog = () => {
 
   return (
     <Dialog open={ui.authModal.isOpen} onOpenChange={() => closeAuthModal()}>
-      <DialogContent className="" data-cy={DataCyAttributes.AUTH_DIALOG}>
-        <DialogHeader>
-          <DialogTitle>{isSignUp ? "Create Account" : "Sign In"}</DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 p-[1px]"
+        style={{
+          borderRadius: ".5rem",
+        }}
+        data-cy={DataCyAttributes.AUTH_DIALOG}
+      >
+        <div
+          className="bg-black border-transparent p-5 px-6"
+          style={{
+            borderRadius: ".5rem",
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle>{isSignUp ? "Create Account" : "Sign In"}</DialogTitle>
+          </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 my-2">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              placeholder="email@example.com"
-              className="rounded"
-              data-cy={DataCyAttributes.AUTH_EMAIL_INPUT}
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-5 my-2">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                placeholder="email@example.com"
+                className="rounded"
+                data-cy={DataCyAttributes.AUTH_EMAIL_INPUT}
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              placeholder="Password"
-              className="rounded"
-              data-cy={DataCyAttributes.AUTH_PASSWORD_INPUT}
-              required
-            />
-          </div>
-          <div className="pt-2">
-            <Button
-              type="submit"
-              className="w-full rounded border"
-              disabled={isPending}
-              data-cy={DataCyAttributes.AUTH_SUBMIT_BUTTON}
-            >
-              {isPending
-                ? "Loading..."
-                : isSignUp
-                  ? "Create Account"
-                  : "Sign In"}
-            </Button>
-          </div>
-
-          <div className="text-center">
-            <Button
-              type="button"
-              variant="link"
-              onClick={toggleMode}
-              className="text-sm rounded  text-muted-foreground"
-              data-cy={DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}
-            >
-              {isSignUp
-                ? "Already have an account? Sign in"
-                : "Don't have an account? Sign up"}
-            </Button>
-          </div>
-
-          {isTest && !isSignUp && formData.email && (
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                placeholder="Password"
+                className="rounded"
+                data-cy={DataCyAttributes.AUTH_PASSWORD_INPUT}
+                required
+              />
+            </div>
             <div className="pt-2">
               <Button
-                type="button"
-                variant="destructive"
-                onClick={handleDeleteAccount}
-                disabled={deleteAccountMutation.isPending}
-                className="w-full rounded"
-                data-cy={DataCyAttributes.AUTH_DELETE_ACCOUNT_BUTTON}
+                type="submit"
+                className="w-full rounded border"
+                disabled={isPending}
+                data-cy={DataCyAttributes.AUTH_SUBMIT_BUTTON}
               >
-                {deleteAccountMutation.isPending ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Deleting...
-                  </div>
-                ) : (
-                  <>
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Account
-                  </>
-                )}
+                {isPending
+                  ? "Loading..."
+                  : isSignUp
+                    ? "Create Account"
+                    : "Sign In"}
               </Button>
             </div>
-          )}
-        </form>
+
+            <div className="text-center">
+              <Button
+                type="button"
+                variant="link"
+                onClick={toggleMode}
+                className="text-sm rounded  text-muted-foreground"
+                data-cy={DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}
+              >
+                {isSignUp
+                  ? "Already have an account? Sign in"
+                  : "Don't have an account? Sign up"}
+              </Button>
+            </div>
+
+            {isTest && !isSignUp && formData.email && (
+              <div className="pt-2">
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDeleteAccount}
+                  disabled={deleteAccountMutation.isPending}
+                  className="w-full rounded"
+                  data-cy={DataCyAttributes.AUTH_DELETE_ACCOUNT_BUTTON}
+                >
+                  {deleteAccountMutation.isPending ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                      Deleting...
+                    </div>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Account
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

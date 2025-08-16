@@ -2,6 +2,7 @@
 "use client";
 
 import { useAuthStore } from "@/app/(stores)/auth.store";
+import { useAppStore } from "@/app/(stores)/ui.store";
 import { useSendMessage } from "@/app/chat/(components)/ChatInput.hooks";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -9,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Send } from "lucide-react";
+import { LogIn, Plus, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,9 +22,11 @@ type ChatFormValues = z.infer<typeof chatFormSchema>;
 
 export default function ChatInput() {
   const { user } = useAuthStore();
+  const { openAuthModal } = useAppStore();
   const sendMessageMutation = useSendMessage();
 
   const isAdmin = user?.role === "admin";
+  const isAuthenticated = !!user;
 
   const form = useForm<ChatFormValues>({
     resolver: zodResolver(chatFormSchema),
@@ -56,6 +59,10 @@ export default function ChatInput() {
     form.reset();
   };
 
+  const handleSignInClick = () => {
+    openAuthModal();
+  };
+
   const onSubmit = (data: ChatFormValues) => {
     handleSendMessage();
   };
@@ -63,7 +70,11 @@ export default function ChatInput() {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      form.handleSubmit(onSubmit)();
+      if (!isAuthenticated) {
+        handleSignInClick();
+      } else {
+        form.handleSubmit(onSubmit)();
+      }
     }
   };
 
@@ -102,21 +113,36 @@ export default function ChatInput() {
             )}
           />
           <div className="absolute top-2 right-2 bottom-2 flex flex-col gap-2">
-            <Button
-              type="submit"
-              disabled={disabled || isMessageEmpty}
-              size="icon"
-              data-cy={DataCyAttributes.SEND_MESSAGE_BUTTON}
-              className={cn(
-                "h-8 w-8 rounded",
-                isMessageEmpty
-                  ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
-              )}
-            >
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send message</span>
-            </Button>
+            {isAuthenticated ? (
+              <Button
+                type="submit"
+                disabled={disabled || isMessageEmpty}
+                size="icon"
+                data-cy={DataCyAttributes.SEND_MESSAGE_BUTTON}
+                className={cn(
+                  "h-8 w-8 rounded",
+                  isMessageEmpty
+                    ? "bg-gray-600 hover:bg-gray-600 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                )}
+              >
+                <Send className="h-4 w-4" />
+                <span className="sr-only">Send message</span>
+              </Button>
+            ) : (
+              <div className="rounded group bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 p-[1px]">
+                <Button
+                  type="button"
+                  onClick={handleSignInClick}
+                  data-cy={DataCyAttributes.SIGN_IN_BUTTON}
+                  variant="outline"
+                  className="h-8 px-3 border border-transparent bg-transparent text-gray-300 bg-black rounded font-semibold flex items-center gap-2 group-hover:border-transparent"
+                >
+                  <span className="text-sm font-medium">Sign In</span>
+                  <LogIn className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
             {isAdmin && (
               <Button
                 type="button"

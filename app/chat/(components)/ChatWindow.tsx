@@ -6,6 +6,8 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { Message } from "@/app/(types)/chat.types";
 import ChatInput from "@/app/chat/(components)/ChatInput";
+import ChatWindowSkeleton from "@/app/chat/(components)/ChatWindow.skeleton";
+import AdminWelcomeMessages from "@/app/chat/(components)/AdminWelcomeMessages";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
@@ -34,26 +36,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
   };
 
   if (isLoading) {
-    return (
-      <div
-        className={`grow rounded border border-b-gray-900 border-r-gray-800 border-t-gray-600 border-l-gray-700 w-full flex flex-col items-center pr-2 pt-4 max-w-[650px] h-full ${className}`}
-        data-cy={DataCyAttributes.CHAT_LOADING_STATE}
-      >
-        <div className="w-full h-full flex flex-col items-left">
-          <div className="grow pr-5 pt-3 space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="space-y-2">
-                <div className="h-4 bg-gray-700 rounded animate-pulse w-1/4" />
-                <div className="h-16 bg-gray-700 rounded animate-pulse" />
-              </div>
-            ))}
-          </div>
-          <div className="pt-4 pl-4 pr-4 pb-4">
-            <div className="h-20 bg-gray-700 rounded animate-pulse" />
-          </div>
-        </div>
-      </div>
-    );
+    return <ChatWindowSkeleton className={className} />;
   }
   return (
     <div
@@ -77,12 +60,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
           data-cy={DataCyAttributes.CHAT_MESSAGES_CONTAINER}
         >
           {messages.length === 0 ? (
-            <div
-              className="text-center text-gray-400 py-8 italic"
-              data-cy={DataCyAttributes.CHAT_EMPTY_STATE}
-            >
-              No messages yet. Start the conversation!
-            </div>
+            <AdminWelcomeMessages />
           ) : (
             messages.map((msg: Message, index: number) => (
               <div
