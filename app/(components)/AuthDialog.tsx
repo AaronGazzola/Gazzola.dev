@@ -24,7 +24,7 @@ import { sourceCodePro } from "@/styles/fonts";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { Eye, EyeOff, Info, Loader2, Rocket, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useDeleteAccount, useSignIn, useSignUp } from "./AuthDialog.hooks";
+import { useDeleteAccount, useForgotPassword, useSignIn, useSignUp } from "./AuthDialog.hooks";
 
 interface AuthCredentials {
   email: string;
@@ -63,6 +63,7 @@ const AuthDialog = () => {
   const signInMutation = useSignIn();
   const signUpMutation = useSignUp();
   const deleteAccountMutation = useDeleteAccount();
+  const forgotPasswordMutation = useForgotPassword();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,6 +192,12 @@ const AuthDialog = () => {
   const handleDeleteAccount = () => {
     if (formData.email) {
       deleteAccountMutation.mutate(formData.email);
+    }
+  };
+
+  const handleForgotPassword = () => {
+    if (formData.email && !validateEmail(formData.email)) {
+      forgotPasswordMutation.mutate(formData.email);
     }
   };
 
@@ -346,6 +353,28 @@ const AuthDialog = () => {
                   </Button>
                 </div>
               </div>
+
+              {!isSignUp && (
+                <div className="text-center">
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={handleForgotPassword}
+                    disabled={
+                      forgotPasswordMutation.isPending ||
+                      !formData.email ||
+                      !!validateEmail(formData.email)
+                    }
+                    className="text-sm rounded text-muted-foreground flex items-center justify-center gap-2"
+                    data-cy={DataCyAttributes.AUTH_FORGOT_PASSWORD_BUTTON}
+                  >
+                    {forgotPasswordMutation.isPending && (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    )}
+                    Forgot password?
+                  </Button>
+                </div>
+              )}
 
               <div className="text-center">
                 <Button

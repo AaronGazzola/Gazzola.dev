@@ -10,6 +10,7 @@ import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
 import { useAdminStore } from "@/app/admin/page.store";
 import { Toast } from "@/components/shared/Toast";
 import configuration from "@/configuration";
+import { client } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -189,6 +190,39 @@ export const useDeleteAccount = () => {
           title="Error"
           message={error.message || "Failed to delete account"}
           data-cy={DataCyAttributes.ERROR_DELETE_ACCOUNT}
+        />
+      ));
+    },
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const { data, error } = await client.requestPasswordReset({
+        email,
+        redirectTo: `${window.location.origin}?reset-password=true`,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Password reset email sent! Check your inbox."
+          data-cy={DataCyAttributes.SUCCESS_FORGOT_PASSWORD}
+        />
+      ));
+    },
+    onError: (error: Error) => {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to send password reset email"}
+          data-cy={DataCyAttributes.ERROR_FORGOT_PASSWORD}
         />
       ));
     },

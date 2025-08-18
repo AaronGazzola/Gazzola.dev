@@ -1,6 +1,6 @@
 //-| File path: lib/auth.ts
 import { resend } from "@/lib/email/resend";
-import reactResetPasswordEmail from "@/lib/email/reset-password";
+import reactForgotPasswordEmail from "@/lib/email/forgot-password";
 import reactVerificationEmail from "@/lib/email/verification";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -37,8 +37,8 @@ export const auth = betterAuth({
       await resend.emails.send({
         from,
         to: user.email,
-        subject: "Reset your password",
-        react: reactResetPasswordEmail({
+        subject: "Forgot your password?",
+        react: reactForgotPasswordEmail({
           username: user.email,
           resetLink: url,
         }),
