@@ -6,14 +6,15 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
-import { SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
+import { ResetPasswordCredentials, SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
 import { useAdminStore } from "@/app/admin/page.store";
 import { Toast } from "@/components/shared/Toast";
 import configuration from "@/configuration";
-import { client } from "@/lib/auth-client";
+import { client, resetPassword } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { toast } from "sonner";
 import {
   deleteAccountAction,
@@ -201,7 +202,7 @@ export const useForgotPassword = () => {
     mutationFn: async (email: string) => {
       const { data, error } = await client.requestPasswordReset({
         email,
-        redirectTo: `${window.location.origin}?reset-password=true`,
+        redirectTo: `${window.location.origin}?form=reset-password`,
       });
       if (error) throw error;
       return data;
@@ -223,6 +224,42 @@ export const useForgotPassword = () => {
           title="Error"
           message={error.message || "Failed to send password reset email"}
           data-cy={DataCyAttributes.ERROR_FORGOT_PASSWORD}
+        />
+      ));
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  const [, setForm] = useQueryState("form");
+
+  return useMutation({
+    mutationFn: async (credentials: ResetPasswordCredentials) => {
+      const { data, error } = await resetPassword({
+        newPassword: credentials.password,
+        token: credentials.token,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      setForm("sign-in");
+      toast.custom(() => (
+        <Toast
+          variant="success"
+          title="Success"
+          message="Password reset successfully! You can now sign in."
+          data-cy={DataCyAttributes.SUCCESS_RESET_PASSWORD}
+        />
+      ));
+    },
+    onError: (error: Error) => {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Error"
+          message={error.message || "Failed to reset password"}
+          data-cy={DataCyAttributes.ERROR_RESET_PASSWORD}
         />
       ));
     },

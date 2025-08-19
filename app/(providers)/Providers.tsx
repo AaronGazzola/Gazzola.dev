@@ -6,6 +6,7 @@ import { useGetAppData } from "@/app/(hooks)/app.hooks";
 import { useGetConversations } from "@/app/chat/(components)/ChatWindow.hooks";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
 
@@ -20,13 +21,15 @@ const QueryHookProvider = ({ children }: { children: ReactNode }) => {
 
 const Providers = ({ children }: { children: ReactNode }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <QueryHookProvider>
-        <Toaster />
-        <OnboardingDialog />
-        <SidebarProvider>{children}</SidebarProvider>
-      </QueryHookProvider>
-    </QueryClientProvider>
+    <NuqsAdapter>
+      <QueryClientProvider client={queryClient}>
+        <QueryHookProvider>
+          <Toaster />
+          <OnboardingDialog />
+          <SidebarProvider>{children}</SidebarProvider>
+        </QueryHookProvider>
+      </QueryClientProvider>
+    </NuqsAdapter>
   );
 };
 

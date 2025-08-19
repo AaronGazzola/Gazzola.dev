@@ -22,6 +22,11 @@ export interface SignUpCredentials {
   name?: string;
 }
 
+export interface ResetPasswordCredentials {
+  password: string;
+  token: string;
+}
+
 export interface SocialSignInParams {
   provider: "google";
   callbackURL?: string;

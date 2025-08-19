@@ -23,8 +23,16 @@ import { cn } from "@/lib/tailwind.utils";
 import { sourceCodePro } from "@/styles/fonts";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { Eye, EyeOff, Info, Loader2, Rocket, Trash2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { useEffect, useRef, useState } from "react";
-import { useDeleteAccount, useForgotPassword, useSignIn, useSignUp } from "./AuthDialog.hooks";
+import {
+  useDeleteAccount,
+  useForgotPassword,
+  useResetPassword,
+  useSignIn,
+  useSignUp,
+} from "./AuthDialog.hooks";
 
 interface AuthCredentials {
   email: string;
@@ -33,9 +41,9 @@ interface AuthCredentials {
 
 const AuthDialog = () => {
   const { user } = useAuthStore();
-  const { ui, closeAuthModal } = useAppStore();
+  const { ui, closeAuthModal, openAuthModal } = useAppStore();
   const isTest = useIsTest();
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [form, setForm] = useQueryState("form", { defaultValue: "sign-in" });
   const [formData, setFormData] = useState<AuthCredentials>({
     email: "",
     password: "",
@@ -64,15 +72,24 @@ const AuthDialog = () => {
   const signUpMutation = useSignUp();
   const deleteAccountMutation = useDeleteAccount();
   const forgotPasswordMutation = useForgotPassword();
+  const resetPasswordMutation = useResetPassword();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isSignUp)
+    if (form === "sign-up")
       return signUpMutation.mutate({
         email: formData.email,
         password: formData.password,
         name: formData.email.split("@")[0],
+      });
+
+    if (form === "reset-password" && token)
+      return resetPasswordMutation.mutate({
+        password: formData.password,
+        token,
       });
 
     signInMutation.mutate({
@@ -88,6 +105,12 @@ const AuthDialog = () => {
         password: "",
       });
   }, [user]);
+
+  useEffect(() => {
+    if (form === "reset-password" && !ui.authModal.isOpen) {
+      openAuthModal();
+    }
+  }, [form, ui.authModal.isOpen, openAuthModal]);
 
   useEffect(() => {
     Object.entries(tooltipOpen).forEach(([field, isOpen]) => {
@@ -186,7 +209,7 @@ const AuthDialog = () => {
   };
 
   const toggleMode = () => {
-    setIsSignUp(!isSignUp);
+    setForm(form === "sign-in" ? "sign-up" : "sign-in");
   };
 
   const handleDeleteAccount = () => {
@@ -201,17 +224,33 @@ const AuthDialog = () => {
     }
   };
 
-  const isPending = signInMutation.isPending || signUpMutation.isPending;
+  const isPending =
+    signInMutation.isPending ||
+    signUpMutation.isPending ||
+    resetPasswordMutation.isPending;
 
   // Check if form is valid
   const isFormValid =
-    !validateEmail(formData.email) &&
-    !validatePassword(formData.password) &&
-    formData.email.trim() !== "" &&
-    formData.password.trim() !== "";
+    form === "reset-password"
+      ? !validatePassword(formData.password) &&
+        formData.password.trim() !== "" &&
+        !!token
+      : !validateEmail(formData.email) &&
+        !validatePassword(formData.password) &&
+        formData.email.trim() !== "" &&
+        formData.password.trim() !== "";
+
+  const handleDialogOpenChange = (open: boolean) => {
+    if (!open) {
+      closeAuthModal();
+      if (form === "reset-password") {
+        setForm(null);
+      }
+    }
+  };
 
   return (
-    <Dialog open={ui.authModal.isOpen} onOpenChange={() => closeAuthModal()}>
+    <Dialog open={ui.authModal.isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 p-[1px]"
         style={{
@@ -226,43 +265,51 @@ const AuthDialog = () => {
           }}
         >
           <DialogHeader>
-            <DialogTitle>{isSignUp ? "Create Account" : "Sign In"}</DialogTitle>
+            <DialogTitle>
+              {form === "sign-up"
+                ? "Create Account"
+                : form === "reset-password"
+                  ? "Reset Password"
+                  : "Sign In"}
+            </DialogTitle>
           </DialogHeader>
 
           <TooltipProvider>
             <form onSubmit={handleSubmit} className="space-y-5 my-2">
-              <div>
-                <div className="flex items-center gap-2 mt-6 mb-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Tooltip
-                    onOpenChange={() =>
-                      setTooltipOpen((prev) => ({
-                        ...prev,
-                        email: !prev.email,
-                      }))
-                    }
-                    open={tooltipOpen.email}
-                  >
-                    <TooltipTrigger asChild>
-                      <Info className="w-4 h-4 text-gray-400 hover:text-gray-300 cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Please enter a valid email address</p>
-                    </TooltipContent>
-                  </Tooltip>
+              {form !== "reset-password" && (
+                <div>
+                  <div className="flex items-center gap-2 mt-6 mb-3">
+                    <Label htmlFor="email">Email</Label>
+                    <Tooltip
+                      onOpenChange={() =>
+                        setTooltipOpen((prev) => ({
+                          ...prev,
+                          email: !prev.email,
+                        }))
+                      }
+                      open={tooltipOpen.email}
+                    >
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-gray-400 hover:text-gray-300 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Please enter a valid email address</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    onBlur={() => handleInputBlur("email")}
+                    placeholder="email@example.com"
+                    className={`rounded ${fieldErrors.email ? "border-red-500" : ""}`}
+                    data-cy={DataCyAttributes.AUTH_EMAIL_INPUT}
+                    required
+                  />
                 </div>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  onBlur={() => handleInputBlur("email")}
-                  placeholder="email@example.com"
-                  className={`rounded ${fieldErrors.email ? "border-red-500" : ""}`}
-                  data-cy={DataCyAttributes.AUTH_EMAIL_INPUT}
-                  required
-                />
-              </div>
+              )}
 
               <div>
                 <div className="flex items-center gap-2 mt-6 mb-3">
@@ -300,9 +347,15 @@ const AuthDialog = () => {
                       handleInputChange("password", e.target.value)
                     }
                     onBlur={() => handleInputBlur("password")}
-                    placeholder="Password"
+                    placeholder={
+                      form === "reset-password" ? "New Password" : "Password"
+                    }
                     className={`rounded pr-10 ${fieldErrors.password ? "border-red-500" : ""}`}
-                    data-cy={DataCyAttributes.AUTH_PASSWORD_INPUT}
+                    data-cy={
+                      form === "reset-password"
+                        ? DataCyAttributes.AUTH_RESET_PASSWORD_INPUT
+                        : DataCyAttributes.AUTH_PASSWORD_INPUT
+                    }
                     required
                   />
                   <button
@@ -318,6 +371,27 @@ const AuthDialog = () => {
                   </button>
                 </div>
               </div>
+              <div className="text-center">
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={form === "reset-password" ? () => setForm("sign-in") : handleForgotPassword}
+                  disabled={
+                    form === "reset-password" ? false : (
+                      forgotPasswordMutation.isPending ||
+                      !formData.email ||
+                      !!validateEmail(formData.email)
+                    )
+                  }
+                  className="text-sm rounded text-muted-foreground flex items-center justify-center gap-2"
+                  data-cy={DataCyAttributes.AUTH_FORGOT_PASSWORD_BUTTON}
+                >
+                  {forgotPasswordMutation.isPending && form !== "reset-password" && (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  )}
+                  {form === "reset-password" ? "Back to sign in" : "Forgot password?"}
+                </Button>
+              </div>
               <div className="pt-2">
                 <div
                   className={`rounded group ${isFormValid ? "bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-green-500/50 p-[1px]" : ""} ${isFormValid && !isPending ? "hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]" : ""}`}
@@ -326,22 +400,29 @@ const AuthDialog = () => {
                     type="submit"
                     className={cn(
                       "w-full rounded font-normal relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed text-lg border border-transparent transition-all",
-                      isFormValid &&
-                        "text-white bg-black/70 hover:bg-black/50",
+                      isFormValid && "text-white bg-black/70 hover:bg-black/50",
 
                       sourceCodePro.className
                     )}
                     disabled={isPending || !isFormValid}
-                    data-cy={DataCyAttributes.AUTH_SUBMIT_BUTTON}
+                    data-cy={
+                      form === "reset-password"
+                        ? DataCyAttributes.AUTH_RESET_PASSWORD_SUBMIT_BUTTON
+                        : DataCyAttributes.AUTH_SUBMIT_BUTTON
+                    }
                   >
                     <span className="flex items-center justify-center gap-2 transition-all duration-300 uppercase">
                       {isPending
-                        ? isSignUp
+                        ? form === "sign-up"
                           ? "Creating account..."
-                          : "Signing in..."
-                        : isSignUp
+                          : form === "reset-password"
+                            ? "Resetting password..."
+                            : "Signing in..."
+                        : form === "sign-up"
                           ? "Create Account"
-                          : "Sign In"}
+                          : form === "reset-password"
+                            ? "Reset Password"
+                            : "Sign In"}
                       {isPending ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
                       ) : (
@@ -354,43 +435,23 @@ const AuthDialog = () => {
                 </div>
               </div>
 
-              {!isSignUp && (
+              {form !== "reset-password" && (
                 <div className="text-center">
                   <Button
                     type="button"
                     variant="link"
-                    onClick={handleForgotPassword}
-                    disabled={
-                      forgotPasswordMutation.isPending ||
-                      !formData.email ||
-                      !!validateEmail(formData.email)
-                    }
-                    className="text-sm rounded text-muted-foreground flex items-center justify-center gap-2"
-                    data-cy={DataCyAttributes.AUTH_FORGOT_PASSWORD_BUTTON}
+                    onClick={toggleMode}
+                    className="text-sm rounded  text-muted-foreground"
+                    data-cy={DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}
                   >
-                    {forgotPasswordMutation.isPending && (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    )}
-                    Forgot password?
+                    {form === "sign-up"
+                      ? "Already have an account? Sign in"
+                      : "Don't have an account? Sign up"}
                   </Button>
                 </div>
               )}
 
-              <div className="text-center">
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={toggleMode}
-                  className="text-sm rounded  text-muted-foreground"
-                  data-cy={DataCyAttributes.AUTH_TOGGLE_MODE_BUTTON}
-                >
-                  {isSignUp
-                    ? "Already have an account? Sign in"
-                    : "Don't have an account? Sign up"}
-                </Button>
-              </div>
-
-              {isTest && !isSignUp && formData.email && (
+              {isTest && form === "sign-in" && formData.email && (
                 <div className="pt-2">
                   <Button
                     type="button"
