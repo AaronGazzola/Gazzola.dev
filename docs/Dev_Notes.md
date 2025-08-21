@@ -17,12 +17,13 @@
 
 ## Active tasks
 
-- [ ] Add a reset password input to the profile dialog
+- [ ] Update sidebar
 - [ ] Add feature to allow users to select if their conversations can be on stream
 
 ## Pending tasks
 
 - [ ] Fix the loading state and times
+- [ ] Add a reset password input to the profile dialog
 - [ ] Add email notifications for new message/contract update
 - [ ] Improve contract dialog UX
 - [ ] Improve loading times

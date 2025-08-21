@@ -21,7 +21,6 @@ import { Contract } from "@/app/(types)/contract.types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import configuration from "@/configuration";
 import {
   Popover,
   PopoverContent,
@@ -43,6 +42,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import configuration from "@/configuration";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
@@ -212,43 +212,13 @@ const Sidebar = () => {
     }
   };
 
-  return (
-    <TooltipProvider>
-      <ShadcnSidebar collapsible="icon" className="border-r-gray-800">
-        <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
-          <SidebarHeader
-            className={cn(isExpanded && "pt-8 p-6", "border-b border-gray-700")}
-          >
-            <div
-              className={cn(
-                "flex items-center",
-                isExpanded ? "justify-between" : "justify-center"
-              )}
-            >
-              {isExpanded && (
-                <div className="flex flex-col">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-bold text-white">
-                      Gazzola.dev
-                    </h1>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-white hover:text-white hover:bg-gray-800"
-                      onClick={toggleSidebar}
-                      data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
-                    >
-                      <Menu className="h-5 w-5" />
-                      <span className="sr-only">Toggle Sidebar</span>
-                    </Button>
-                  </div>
-                  <p className="text-sm text-white font-medium mt-1">
-                    Aaron Gazzola&apos;s web development consultation chat app
-                  </p>
-                </div>
-              )}
-            </div>
-            {!isExpanded && (
+  const expandedContent = (
+    <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
+      <SidebarHeader className="pt-8 p-6 border-b border-gray-700">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between">
+              <h1 className="text-xl font-bold text-white">Gazzola.dev</h1>
               <Button
                 variant="ghost"
                 size="icon"
@@ -259,407 +229,457 @@ const Sidebar = () => {
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
-            )}
-          </SidebarHeader>
+            </div>
+            <p className="text-sm text-white font-medium mt-1">
+              Aaron Gazzola&apos;s web development consultation chat app
+            </p>
+          </div>
+        </div>
+      </SidebarHeader>
 
-          {isExpanded && isAuthenticated && isVerified && (
-            <div className="flex flex-col flex-grow relative">
-              <div className="flex-grow relative">
-                <SidebarGroup className="absolute inset-0 flex flex-col">
-                  <SidebarGroupLabel className="flex-shrink-0">
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <MessageCircle className="h-4 w-4 text-gray-100" />
-                        <span className="text-sm font-medium text-gray-100">
-                          Conversations
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {isTest && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 text-gray-100 hover:text-red-400 hover:bg-gray-800"
-                            onClick={handleDeleteConversations}
-                            data-cy={DataCyAttributes.DELETE_CONVERSATIONS}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Delete conversations</span>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </SidebarGroupLabel>
-
-                  <SidebarGroupContent className="flex-grow overflow-hidden">
-                    <ScrollArea className="overflow-auto max-h-full">
-                      <div className="space-y-1 overflow-visible">
-                        {conversationsLoading ? (
-                          <div className="animate-pulse">
-                            {[1, 2, 3].map((i) => (
-                              <div
-                                key={i}
-                                className="h-16 bg-gray-700 rounded mb-2"
-                              />
-                            ))}
-                          </div>
-                        ) : conversationsError ? (
-                          <div className="text-red-400 text-sm p-3">
-                            Failed to load conversations
-                          </div>
-                        ) : conversations.length === 0 ? (
-                          <p className="text-xs text-gray-200 font-medium italic p-3" data-cy={DataCyAttributes.NO_CONVERSATIONS_YET}>
-                            No conversations yet
-                          </p>
-                        ) : (
-                          conversations.map((conversation) => {
-                            const lastMessage =
-                              conversation.messages[
-                                conversation.messages.length - 1
-                              ];
-                            const unreadCount = getUnreadCountForConversation(
-                              conversation.id
-                            );
-                            const isCurrentConversation =
-                              currentConversation?.id === conversation.id;
-                            return (
-                              <div className="pt-2 pl-2" key={conversation.id}>
-                                <button
-                                  onClick={() =>
-                                    handleConversationClick(conversation)
-                                  }
-                                  className={cn(
-                                    "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50 relative overflow-visible",
-                                    isCurrentConversation
-                                      ? "border-white"
-                                      : "border-gray-700/50"
-                                  )}
-                                  data-cy={DataCyAttributes.CONVERSATION_ITEM}
-                                >
-                                  {unreadCount > 0 && (
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Badge
-                                          variant="destructive"
-                                          className="absolute -top-1 -left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-bold bg-red-500 hover:bg-red-500 cursor-help"
-                                          data-cy={
-                                            DataCyAttributes.UNREAD_BADGE
-                                          }
-                                        >
-                                          {unreadCount > 99
-                                            ? "99+"
-                                            : unreadCount}
-                                        </Badge>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        <p>
-                                          You have {unreadCount} unread messages
-                                        </p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  )}
-                                  {lastMessage && (
-                                    <div className="flex items-center gap-1">
-                                      <span className="text-xs text-gray-400 flex-shrink-0 ">
-                                        {format(
-                                          new Date(conversation.lastMessageAt),
-                                          "MMM d"
-                                        )}
-                                      </span>
-                                      <p className="text-sm text-gray-300 truncate">
-                                        {lastMessage.content}
-                                      </p>
-                                    </div>
-                                  )}
-                                </button>
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-                    </ScrollArea>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </div>
-              <div className="flex-grow relative">
-                <SidebarGroup className="absolute inset-0 flex flex-col">
-                  <SidebarGroupLabel className="flex-shrink-0">
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-gray-100" />
-                        <span className="text-sm font-medium text-gray-100" data-cy={DataCyAttributes.CONTRACTS_TITLE}>
-                          Contracts
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {isTest && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 text-gray-100 hover:text-red-400 hover:bg-gray-800"
-                            onClick={handleDeleteContracts}
-                            data-cy={DataCyAttributes.DELETE_CONTRACTS}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Delete contracts</span>
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
-                          onClick={handleOpenContractModal}
-                          data-cy={DataCyAttributes.CREATE_CONTRACT_BUTTON}
-                        >
-                          <Plus className="h-4 w-4" />
-                          <span className="sr-only">Create contract</span>
-                        </Button>
-                      </div>
-                    </div>
-                  </SidebarGroupLabel>
-                  <SidebarGroupContent className="flex-grow overflow-hidden">
-                    <ScrollArea className="overflow-auto max-h-full">
-                      <div className="space-y-1">
-                        {contractsLoading ? (
-                          <div className="animate-pulse">
-                            {[1, 2].map((i) => (
-                              <div
-                                key={i}
-                                className="h-16 bg-gray-700 rounded mb-2"
-                              />
-                            ))}
-                          </div>
-                        ) : contractsError ? (
-                          <div className="text-red-400 text-sm p-3">
-                            Failed to load contracts
-                          </div>
-                        ) : contracts?.length === 0 ? (
-                          <p className="text-xs text-gray-200 font-medium italic p-3" data-cy={DataCyAttributes.NO_CONTRACTS_YET}>
-                            No contracts yet
-                          </p>
-                        ) : (
-                          contracts?.map((contractItem) => {
-                            const isCurrentContract =
-                              contract?.id === contractItem.id;
-                            const isApproved = isContractApproved(contractItem);
-                            const otherUserName =
-                              isAdmin && targetUser
-                                ? targetUser.name
-                                : "Az Anything";
-                            return (
-                              <div className="relative" key={contractItem.id}>
-                                <button
-                                  onClick={() =>
-                                    handleContractClick(contractItem)
-                                  }
-                                  className={cn(
-                                    "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50 relative",
-                                    isCurrentContract
-                                      ? "border-white"
-                                      : "border-gray-700/50"
-                                  )}
-                                  data-cy={DataCyAttributes.CONTRACT_ITEM}
-                                >
-                                  {contractItem.isPaid && (
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Badge
-                                          className="absolute bottom-1 left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-blue-500 hover:bg-blue-500 cursor-help"
-                                          data-cy={
-                                            DataCyAttributes.CONTRACT_PAID_BADGE
-                                          }
-                                        >
-                                          <DollarSign className="h-3 w-3" />
-                                        </Badge>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        <p>Contract has been paid</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  )}
-                                  {!isAdmin && 
-                                    contractItem.adminApproved && 
-                                    contractItem.userApproved && 
-                                    !contractItem.isPaid && (
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Badge
-                                          className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-green-500 hover:bg-green-500 cursor-help text-white"
-                                          data-cy={
-                                            DataCyAttributes.CONTRACT_APPROVED_BADGE
-                                          }
-                                        >
-                                          <Check className="h-3 w-3" />
-                                        </Badge>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        <p>Contract approved, please complete payment</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  )}
-                                  {!isApproved && (
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Badge
-                                          variant="destructive"
-                                          className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500 cursor-help"
-                                          data-cy={
-                                            DataCyAttributes.CONTRACT_UNAPPROVED_BADGE
-                                          }
-                                        >
-                                          !
-                                        </Badge>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        <p>
-                                          {otherUserName} has made changes to
-                                          the contract and approval or revisions
-                                          are required
-                                        </p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  )}
-                                  <div className="text-sm font-medium text-gray-100 truncate">
-                                    {contractItem.title}
-                                  </div>
-                                  <div className="text-xs text-gray-100">
-                                    ${contractItem.price.toLocaleString()} •{" "}
-                                    {contractItem.progressStatus?.replace(
-                                      "_",
-                                      " "
-                                    ) || "Not started"}
-                                  </div>
-                                </button>
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-                    </ScrollArea>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </div>
-
-              <div className="border-t border-gray-700 flex-shrink-0">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start gap-3 p-3 h-auto text-gray-100 hover:bg-gray-800"
-                      data-cy={DataCyAttributes.PROFILE_BUTTON}
-                    >
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-gray-700 text-gray-100 text-xs">
-                          {getInitials(displayName)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium truncate">
-                        {displayName}
-                      </span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-56 p-2" align="end">
-                    <div className="space-y-1">
-                      {isTest && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={handleReset}
-                          disabled={isResetting}
-                          className="rounded"
-                          data-cy={DataCyAttributes.PROFILE_RESET_BUTTON}
-                        >
-                          {isResetting ? (
-                            <div className="flex items-center">
-                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-500 border-t-transparent mr-2" />
-                              Resetting...
-                            </div>
-                          ) : (
-                            <>
-                              <RotateCcw className="w-4 h-4 mr-1" />
-                              Reset
-                            </>
-                          )}
-                        </Button>
-                      )}
-                      {profile && (
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start gap-2"
-                          onClick={handleProfileClick}
-                          data-cy={DataCyAttributes.PROFILE_MENU_BUTTON}
-                        >
-                          <User className="h-4 w-4" />
-                          Profile
-                        </Button>
-                      )}
-                      {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start gap-2"
-                          onClick={handleAdminClick}
-                          data-cy={DataCyAttributes.ADMIN_BUTTON}
-                        >
-                          <Settings className="h-4 w-4" />
-                          Admin
-                        </Button>
-                      )}
+      {isAuthenticated && isVerified && (
+        <div className="flex flex-col flex-grow relative">
+          <div className="flex-grow relative">
+            <SidebarGroup className="absolute inset-0 flex flex-col">
+              <SidebarGroupLabel className="flex-shrink-0">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4 text-gray-100" />
+                    <span className="text-sm font-medium text-gray-100">
+                      Conversations
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {isTest && (
                       <Button
                         variant="ghost"
-                        className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                        onClick={handleSignOutClick}
-                        data-cy={DataCyAttributes.SIGN_OUT_BUTTON}
+                        size="icon"
+                        className="h-6 w-6 text-gray-100 hover:text-red-400 hover:bg-gray-800"
+                        onClick={handleDeleteConversations}
+                        data-cy={DataCyAttributes.DELETE_CONVERSATIONS}
                       >
-                        <LogOut className="h-4 w-4" />
-                        Sign Out
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete conversations</span>
                       </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          )}
-          {!isExpanded && isAuthenticated && isVerified && (
-            <div className="flex flex-col items-center py-4 space-y-4">
-              {profile && (
+                    )}
+                  </div>
+                </div>
+              </SidebarGroupLabel>
+
+              <SidebarGroupContent className="flex-grow overflow-hidden">
+                <ScrollArea className="overflow-auto max-h-full">
+                  <div className="space-y-1 overflow-visible">
+                    {conversationsLoading ? (
+                      <div className="animate-pulse">
+                        {[1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className="h-16 bg-gray-700 rounded mb-2"
+                          />
+                        ))}
+                      </div>
+                    ) : conversationsError ? (
+                      <div className="text-red-400 text-sm p-3">
+                        Failed to load conversations
+                      </div>
+                    ) : conversations.length === 0 ? (
+                      <p
+                        className="text-xs text-gray-200 font-medium italic p-3"
+                        data-cy={DataCyAttributes.NO_CONVERSATIONS_YET}
+                      >
+                        No conversations yet
+                      </p>
+                    ) : (
+                      conversations.map((conversation) => {
+                        const lastMessage =
+                          conversation.messages[
+                            conversation.messages.length - 1
+                          ];
+                        const unreadCount = getUnreadCountForConversation(
+                          conversation.id
+                        );
+                        const isCurrentConversation =
+                          currentConversation?.id === conversation.id;
+                        return (
+                          <div className="pt-2 pl-2" key={conversation.id}>
+                            <button
+                              onClick={() =>
+                                handleConversationClick(conversation)
+                              }
+                              className={cn(
+                                "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50 relative overflow-visible",
+                                isCurrentConversation
+                                  ? "border-white"
+                                  : "border-gray-700/50"
+                              )}
+                              data-cy={DataCyAttributes.CONVERSATION_ITEM}
+                            >
+                              {unreadCount > 0 && (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Badge
+                                      variant="destructive"
+                                      className="absolute -top-1 -left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-bold bg-red-500 hover:bg-red-500 cursor-help"
+                                      data-cy={DataCyAttributes.UNREAD_BADGE}
+                                    >
+                                      {unreadCount > 99 ? "99+" : unreadCount}
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>
+                                      You have {unreadCount} unread messages
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                              {lastMessage && (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs text-gray-400 flex-shrink-0 ">
+                                    {format(
+                                      new Date(conversation.lastMessageAt),
+                                      "MMM d"
+                                    )}
+                                  </span>
+                                  <p className="text-sm text-gray-300 truncate">
+                                    {lastMessage.content}
+                                  </p>
+                                </div>
+                              )}
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </ScrollArea>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </div>
+          <div className="flex-grow relative">
+            <SidebarGroup className="absolute inset-0 flex flex-col">
+              <SidebarGroupLabel className="flex-shrink-0">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-gray-100" />
+                    <span
+                      className="text-sm font-medium text-gray-100"
+                      data-cy={DataCyAttributes.CONTRACTS_TITLE}
+                    >
+                      Contracts
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {isTest && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-100 hover:text-red-400 hover:bg-gray-800"
+                        onClick={handleDeleteContracts}
+                        data-cy={DataCyAttributes.DELETE_CONTRACTS}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete contracts</span>
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-gray-100 hover:text-white hover:bg-gray-800"
+                      onClick={handleOpenContractModal}
+                      data-cy={DataCyAttributes.CREATE_CONTRACT_BUTTON}
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span className="sr-only">Create contract</span>
+                    </Button>
+                  </div>
+                </div>
+              </SidebarGroupLabel>
+              <SidebarGroupContent className="flex-grow overflow-hidden">
+                <ScrollArea className="overflow-auto max-h-full">
+                  <div className="space-y-1">
+                    {contractsLoading ? (
+                      <div className="animate-pulse">
+                        {[1, 2].map((i) => (
+                          <div
+                            key={i}
+                            className="h-16 bg-gray-700 rounded mb-2"
+                          />
+                        ))}
+                      </div>
+                    ) : contractsError ? (
+                      <div className="text-red-400 text-sm p-3">
+                        Failed to load contracts
+                      </div>
+                    ) : contracts?.length === 0 ? (
+                      <p
+                        className="text-xs text-gray-200 font-medium italic p-3"
+                        data-cy={DataCyAttributes.NO_CONTRACTS_YET}
+                      >
+                        No contracts yet
+                      </p>
+                    ) : (
+                      contracts?.map((contractItem) => {
+                        const isCurrentContract =
+                          contract?.id === contractItem.id;
+                        const isApproved = isContractApproved(contractItem);
+                        const otherUserName =
+                          isAdmin && targetUser
+                            ? targetUser.name
+                            : "Az Anything";
+                        return (
+                          <div className="relative" key={contractItem.id}>
+                            <button
+                              onClick={() => handleContractClick(contractItem)}
+                              className={cn(
+                                "w-full text-left p-3 rounded-lg transition-colors border hover:bg-gray-800/50 relative",
+                                isCurrentContract
+                                  ? "border-white"
+                                  : "border-gray-700/50"
+                              )}
+                              data-cy={DataCyAttributes.CONTRACT_ITEM}
+                            >
+                              {contractItem.isPaid && (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Badge
+                                      className="absolute bottom-1 left-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-blue-500 hover:bg-blue-500 cursor-help"
+                                      data-cy={
+                                        DataCyAttributes.CONTRACT_PAID_BADGE
+                                      }
+                                    >
+                                      <DollarSign className="h-3 w-3" />
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Contract has been paid</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                              {!isAdmin &&
+                                contractItem.adminApproved &&
+                                contractItem.userApproved &&
+                                !contractItem.isPaid && (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Badge
+                                        className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-green-500 hover:bg-green-500 cursor-help text-white"
+                                        data-cy={
+                                          DataCyAttributes.CONTRACT_APPROVED_BADGE
+                                        }
+                                      >
+                                        <Check className="h-3 w-3" />
+                                      </Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>
+                                        Contract approved, please complete
+                                        payment
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              {!isApproved && (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Badge
+                                      variant="destructive"
+                                      className="absolute bottom-1 right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-sm font-bold bg-red-500 hover:bg-red-500 cursor-help"
+                                      data-cy={
+                                        DataCyAttributes.CONTRACT_UNAPPROVED_BADGE
+                                      }
+                                    >
+                                      !
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>
+                                      {otherUserName} has made changes to the
+                                      contract and approval or revisions are
+                                      required
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                              <div className="text-sm font-medium text-gray-100 truncate">
+                                {contractItem.title}
+                              </div>
+                              <div className="text-xs text-gray-100">
+                                ${contractItem.price.toLocaleString()} •{" "}
+                                {contractItem.progressStatus?.replace(
+                                  "_",
+                                  " "
+                                ) || "Not started"}
+                              </div>
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </ScrollArea>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </div>
+
+          <div className="border-t border-gray-700 flex-shrink-0">
+            <Popover>
+              <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="text-gray-100 hover:text-white hover:bg-gray-800"
-                  onClick={handleProfileClick}
-                  data-cy={DataCyAttributes.PROFILE_BUTTON_COLLAPSED}
+                  className="w-full justify-start gap-3 p-3 h-auto text-gray-100 hover:bg-gray-800"
+                  data-cy={DataCyAttributes.PROFILE_BUTTON}
                 >
-                  <User className="h-5 w-5" />
-                  <span className="sr-only">Profile</span>
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-gray-700 text-gray-100 text-xs">
+                      {getInitials(displayName)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium truncate">
+                    {displayName}
+                  </span>
                 </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-100 hover:text-red-400 hover:bg-gray-800"
-                onClick={handleSignOutClick}
-                data-cy={DataCyAttributes.SIGN_OUT_BUTTON_COLLAPSED}
-              >
-                <LogOut className="h-5 w-5" />
-                <span className="sr-only">Sign Out</span>
-              </Button>
-            </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2" align="end">
+                <div className="space-y-1">
+                  {isTest && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleReset}
+                      disabled={isResetting}
+                      className="rounded"
+                      data-cy={DataCyAttributes.PROFILE_RESET_BUTTON}
+                    >
+                      {isResetting ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-500 border-t-transparent mr-2" />
+                          Resetting...
+                        </div>
+                      ) : (
+                        <>
+                          <RotateCcw className="w-4 h-4 mr-1" />
+                          Reset
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {profile && (
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-2"
+                      onClick={handleProfileClick}
+                      data-cy={DataCyAttributes.PROFILE_MENU_BUTTON}
+                    >
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Button>
+                  )}
+                  {isAdmin && (
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-2"
+                      onClick={handleAdminClick}
+                      data-cy={DataCyAttributes.ADMIN_BUTTON}
+                    >
+                      <Settings className="h-4 w-4" />
+                      Admin
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={handleSignOutClick}
+                    data-cy={DataCyAttributes.SIGN_OUT_BUTTON}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+      )}
+      {!isAuthenticated && (
+        <div className="flex flex-col justify-end border items-center flex-1 p-4">
+          <Button
+            variant="default"
+            className="w-full flex items-center gap-2 rounded"
+            onClick={handleSignInClick}
+            data-cy={DataCyAttributes.SIGN_IN_BUTTON}
+          >
+            <LogIn className="h-4 w-4" />
+            Sign In
+          </Button>
+        </div>
+      )}
+    </SidebarContent>
+  );
+
+  const collapsedContent = (
+    <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
+      <SidebarHeader className="border-b border-gray-700">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:text-white hover:bg-gray-800"
+          onClick={toggleSidebar}
+          data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle Sidebar</span>
+        </Button>
+      </SidebarHeader>
+
+      {isAuthenticated && isVerified && (
+        <div className="flex flex-col items-center py-4 space-y-4">
+          {profile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-gray-100 hover:text-white hover:bg-gray-800"
+              onClick={handleProfileClick}
+              data-cy={DataCyAttributes.PROFILE_BUTTON_COLLAPSED}
+            >
+              <User className="h-5 w-5" />
+              <span className="sr-only">Profile</span>
+            </Button>
           )}
-          {!isAuthenticated && (
-            <div className="flex flex-col justify-end border items-center flex-1 p-4">
-              <Button
-                variant="default"
-                className="w-full flex items-center gap-2 rounded"
-                onClick={handleSignInClick}
-                data-cy={DataCyAttributes.SIGN_IN_BUTTON}
-              >
-                <LogIn className="h-4 w-4" />
-                Sign In
-              </Button>
-            </div>
-          )}
-        </SidebarContent>
-      </ShadcnSidebar>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-100 hover:text-red-400 hover:bg-gray-800"
+            onClick={handleSignOutClick}
+            data-cy={DataCyAttributes.SIGN_OUT_BUTTON_COLLAPSED}
+          >
+            <LogOut className="h-5 w-5" />
+            <span className="sr-only">Sign Out</span>
+          </Button>
+        </div>
+      )}
+      {!isAuthenticated && (
+        <div className="flex flex-col justify-end border items-center flex-1 p-4">
+          <Button
+            variant="default"
+            className="w-full flex items-center gap-2 rounded"
+            onClick={handleSignInClick}
+            data-cy={DataCyAttributes.SIGN_IN_BUTTON}
+          >
+            <LogIn className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+    </SidebarContent>
+  );
+
+  return (
+    <TooltipProvider>
+      <ShadcnSidebar
+        collapsible="icon"
+        className="border-r-gray-800"
+        expandedContent={expandedContent}
+        collapsedContent={collapsedContent}
+      />
       <ContractDialog />
       <ProfileDialog />
       <AuthDialog />

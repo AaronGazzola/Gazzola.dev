@@ -3,9 +3,7 @@
 import Sidebar from "@/app/(components)/Sidebar";
 import useScreenHeight from "@/app/(hooks)/useScreenHeight";
 import ChatWindow from "@/app/chat/(components)/ChatWindow";
-import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Menu } from "lucide-react";
 import Image from "next/image";
 
 const ChatApp = () => {
@@ -17,18 +15,6 @@ const ChatApp = () => {
       <Sidebar />
 
       <div className="flex flex-col flex-1 px-5 sm:px-10 items-center relative overflow-hidden">
-        {isMobile && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-5 left-5 z-20 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white border border-gray-700"
-            onClick={toggleSidebar}
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle Sidebar</span>
-          </Button>
-        )}
-
         <div className="absolute inset-5 bottom-16 sm:bottom-10 flex items-center gap-4 flex-col">
           <ChatWindow />
         </div>
