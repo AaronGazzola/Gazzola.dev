@@ -14,11 +14,17 @@
   - [x] Add reset password email
   - [x] Add a query param to open the AuthDialog to the reset password page
   - [x] Pass the reset-password query param in the redirect url of the forgotPassword method.
+- [x] Update sidebar
+- [x] DOM model diagram and example for @Parulvatss
 
 ## Active tasks
 
-- [ ] Update sidebar
-- [ ] Add feature to allow users to select if their conversations can be on stream
+- [ ] complete "/terms" page
+- [ ] Improve onboarding dialog styling
+- [ ] Improve sidebar loading skeleton
+- [ ] Improve loading times
+- [-] Add feature to allow users to select if their conversations can be on stream
+- [ ] Make the "work in progress" message closable
 
 ## Pending tasks
 

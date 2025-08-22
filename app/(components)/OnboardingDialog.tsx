@@ -6,6 +6,7 @@ import useIsTest from "@/app/(hooks)/useIsTest";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle,
+  ExternalLink,
   LogOut,
   Mail,
   RefreshCw,
@@ -39,6 +41,9 @@ interface OnboardingFormData {
   lastName: string;
   phone: string;
   company: string;
+  acceptTerms: boolean;
+  acceptPrivacy: boolean;
+  shareContent: boolean;
 }
 
 const OnboardingDialog = () => {
@@ -52,6 +57,9 @@ const OnboardingDialog = () => {
     lastName: "",
     phone: "",
     company: "",
+    acceptTerms: false,
+    acceptPrivacy: false,
+    shareContent: false,
   });
 
   const { mutate: saveOnboardingData, isPending } = useSaveOnboardingData();
@@ -61,12 +69,12 @@ const OnboardingDialog = () => {
   const { mutate: verifyAccount, isPending: isVerifyingAccount } =
     useVerifyAccount();
 
-  const totalSteps = 2;
+  const totalSteps = 3;
   const progress = (currentStep / totalSteps) * 100;
 
   const handleInputChange = (
     field: keyof OnboardingFormData,
-    value: string
+    value: string | boolean
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -101,6 +109,9 @@ const OnboardingDialog = () => {
       lastName: "",
       phone: "",
       company: "",
+      acceptTerms: false,
+      acceptPrivacy: false,
+      shareContent: false,
     });
     closeOnboardingModal();
   };
@@ -250,6 +261,61 @@ const OnboardingDialog = () => {
             </div>
           </div>
         );
+      case 3:
+        return (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="acceptTerms"
+                  checked={formData.acceptTerms}
+                  onCheckedChange={(checked) =>
+                    handleInputChange("acceptTerms", !!checked)
+                  }
+                  data-cy={DataCyAttributes.ONBOARDING_TERMS_CHECKBOX}
+                />
+                <Label htmlFor="acceptTerms" className="text-sm font-medium">
+                  I accept the Terms and Conditions *
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="acceptPrivacy"
+                  checked={formData.acceptPrivacy}
+                  onCheckedChange={(checked) =>
+                    handleInputChange("acceptPrivacy", !!checked)
+                  }
+                  data-cy={DataCyAttributes.ONBOARDING_PRIVACY_CHECKBOX}
+                />
+                <Label htmlFor="acceptPrivacy" className="text-sm font-medium">
+                  I accept the Privacy Policy *
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="shareContent"
+                  checked={formData.shareContent}
+                  onCheckedChange={(checked) =>
+                    handleInputChange("shareContent", !!checked)
+                  }
+                  data-cy={DataCyAttributes.ONBOARDING_SHARE_CONTENT_CHECKBOX}
+                />
+                <Label htmlFor="shareContent" className="text-sm font-medium">
+                  Share content on live streams
+                </Label>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => window.open(configuration.paths.terms, "_blank")}
+              className="w-full rounded"
+              data-cy={DataCyAttributes.ONBOARDING_TERMS_LINK}
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Terms and Policies
+            </Button>
+          </div>
+        );
       default:
         return null;
     }
@@ -309,7 +375,7 @@ const OnboardingDialog = () => {
                 <Button
                   type="button"
                   onClick={handleSave}
-                  disabled={isPending}
+                  disabled={isPending || !formData.acceptTerms || !formData.acceptPrivacy}
                   className="rounded"
                   data-cy={DataCyAttributes.ONBOARDING_SAVE_BUTTON}
                 >

@@ -17,6 +17,7 @@ const configuration = {
     about: "/about",
     test: "/test",
     testRls: "/test/rls",
+    terms: "/terms",
   },
 };
 
