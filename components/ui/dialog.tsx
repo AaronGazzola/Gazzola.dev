@@ -38,13 +38,24 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
+      style={{
+        borderRadius: ".5rem",
+      }}
       className={cn(
         "overflow-y-auto overflow-x-hidden fixed left-1/2 top-1/2 max-w-xl w-full max-h-[calc(100vh-32px)] -translate-x-1/2 -translate-y-1/2 z-50 grid gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        "bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 p-[1px]",
         className
       )}
       {...props}
     >
-      {children}
+      <div
+        className="bg-black border-transparent p-5 px-6"
+        style={{
+          borderRadius: ".5rem",
+        }}
+      >
+        {children}
+      </div>
       <DialogPrimitive.Close className="fixed right-12 top-8 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>

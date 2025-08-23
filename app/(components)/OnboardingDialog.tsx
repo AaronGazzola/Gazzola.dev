@@ -17,16 +17,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import configuration from "@/configuration";
+import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import {
   ArrowLeft,
-  ArrowRight,
   CheckCircle,
   ExternalLink,
   LogOut,
   Mail,
   RefreshCw,
-  Save,
+  Rocket,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -206,7 +206,7 @@ const OnboardingDialog = () => {
       case 1:
         return (
           <div className="space-y-4">
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input
                 id="firstName"
@@ -218,7 +218,7 @@ const OnboardingDialog = () => {
                 data-cy={DataCyAttributes.ONBOARDING_FIRST_NAME_INPUT}
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="lastName">Last Name</Label>
               <Input
                 id="lastName"
@@ -235,7 +235,7 @@ const OnboardingDialog = () => {
       case 2:
         return (
           <div className="space-y-4">
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="company">Company</Label>
               <Input
                 id="company"
@@ -247,7 +247,7 @@ const OnboardingDialog = () => {
                 data-cy={DataCyAttributes.ONBOARDING_COMPANY_INPUT}
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
@@ -264,7 +264,7 @@ const OnboardingDialog = () => {
       case 3:
         return (
           <div className="space-y-6">
-            <div className="space-y-4">
+            <div className="space-y-4 pt-8">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="acceptTerms"
@@ -305,13 +305,14 @@ const OnboardingDialog = () => {
                 </Label>
               </div>
             </div>
+
             <Button
-              variant="outline"
+              variant="link"
               onClick={() => window.open(configuration.paths.terms, "_blank")}
-              className="w-full rounded"
+              className="rounded text-white"
               data-cy={DataCyAttributes.ONBOARDING_TERMS_LINK}
             >
-              <ExternalLink className="w-4 h-4 mr-2" />
+              <ExternalLink className="w-3 h-3 mr-2" />
               View Terms and Policies
             </Button>
           </div>
@@ -322,6 +323,9 @@ const OnboardingDialog = () => {
   };
 
   const showVerifyPage = user && !isVerified;
+  
+  const isNextButtonValid = isVerified && !(currentStep === 1 && !formData.firstName.trim());
+  const isSaveButtonValid = !isPending && formData.acceptTerms && formData.acceptPrivacy;
 
   return (
     <Dialog
@@ -346,17 +350,13 @@ const OnboardingDialog = () => {
           renderVerifyPage()
         ) : (
           <div className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm text-gray-600">
-                <span>
-                  Step {currentStep} of {totalSteps}
-                </span>
-                <span>{Math.round(progress)}%</span>
-              </div>
-              <Progress value={progress} className="w-full" />
+            <div className="min-h-[180px] flex flex-col justify-center gap-2">
+              {renderStep()}
             </div>
 
-            <div className="min-h-[200px]">{renderStep()}</div>
+            <div className="space-y-2">
+              <Progress value={progress} className="w-full" />
+            </div>
 
             <div className="flex justify-between">
               <Button
@@ -372,36 +372,54 @@ const OnboardingDialog = () => {
               </Button>
 
               {currentStep === totalSteps ? (
-                <Button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={isPending || !formData.acceptTerms || !formData.acceptPrivacy}
-                  className="rounded"
-                  data-cy={DataCyAttributes.ONBOARDING_SAVE_BUTTON}
+                <div
+                  className={`rounded group ${isSaveButtonValid ? "bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-green-500/50 p-[1px]" : ""} ${isSaveButtonValid && !isPending ? "hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]" : ""}`}
                 >
-                  {isPending ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                      Saving...
-                    </div>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4 mr-1" />
-                      Save
-                    </>
-                  )}
-                </Button>
+                  <Button
+                    type="button"
+                    onClick={handleSave}
+                    className={cn(
+                      "rounded relative overflow-hidden group disabled:cursor-not-allowed border border-transparent transition-all bg-transparent",
+                      isSaveButtonValid && "text-white bg-black/70 hover:bg-black/50"
+                    )}
+                    disabled={!isSaveButtonValid}
+                    data-cy={DataCyAttributes.ONBOARDING_SAVE_BUTTON}
+                  >
+                    <span className="flex items-center justify-center gap-2 transition-all duration-300">
+                      {isPending ? (
+                        <>
+                          Saving...
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                        </>
+                      ) : (
+                        <>
+                          Save
+                          <Rocket className={`w-5 h-5 translate-x-0 group-hover:scale-110 transition-all duration-300 ${isSaveButtonValid ? "opacity-100" : "opacity-0"}`} />
+                        </>
+                      )}
+                    </span>
+                  </Button>
+                </div>
               ) : (
-                <Button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={!isVerified}
-                  className="rounded"
-                  data-cy={DataCyAttributes.ONBOARDING_NEXT_BUTTON}
+                <div
+                  className={`rounded group ${isNextButtonValid ? "bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-green-500/50 p-[1px]" : ""} ${isNextButtonValid ? "hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]" : ""}`}
                 >
-                  Next
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
+                  <Button
+                    type="button"
+                    onClick={handleNext}
+                    className={cn(
+                      "rounded relative overflow-hidden group disabled:cursor-not-allowed border border-transparent transition-all bg-transparent",
+                      isNextButtonValid && "text-white bg-black/70 hover:bg-black/50"
+                    )}
+                    disabled={!isNextButtonValid}
+                    data-cy={DataCyAttributes.ONBOARDING_NEXT_BUTTON}
+                  >
+                    <span className="flex items-center justify-center gap-2 transition-all duration-300">
+                      Next
+                      <Rocket className={`w-5 h-5 translate-x-0 group-hover:scale-110 transition-all duration-300 ${isNextButtonValid ? "opacity-100" : "opacity-0"}`} />
+                    </span>
+                  </Button>
+                </div>
               )}
             </div>
           </div>

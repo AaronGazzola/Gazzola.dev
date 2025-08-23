@@ -15,15 +15,16 @@
   - [x] Add a query param to open the AuthDialog to the reset password page
   - [x] Pass the reset-password query param in the redirect url of the forgotPassword method.
 - [x] Update sidebar
-- [x] DOM model diagram and example for @Parulvatss
+- [x] DOM diagram and example for @Parulvatss
+- [x] complete "/terms" page
+- [x] Improve onboarding dialog checkbox styling
 
 ## Active tasks
 
-- [ ] complete "/terms" page
-- [ ] Improve onboarding dialog styling
-- [ ] Improve sidebar loading skeleton
+- [ ] Add a "show content on stream" checkbox to the profile dialog
 - [ ] Improve loading times
-- [-] Add feature to allow users to select if their conversations can be on stream
+- [ ] Apply the AuthDialog button styling to an additional variant of the base shadcn button component
+- [ ] Improve sidebar loading skeleton
 - [ ] Make the "work in progress" message closable
 
 ## Pending tasks
