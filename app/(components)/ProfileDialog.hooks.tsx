@@ -13,12 +13,13 @@ import {
   updateProfileAction,
 } from "./ProfileDialog.actions";
 
-interface ProfileUpdateData {
+export interface ProfileUpdateData {
   id: string;
   firstName: string;
   lastName: string;
   phone: string;
   company: string;
+  shareConversations: boolean;
 }
 
 export const useUpdateProfile = () => {

@@ -18,10 +18,10 @@
 - [x] DOM diagram and example for @Parulvatss
 - [x] complete "/terms" page
 - [x] Improve onboarding dialog checkbox styling
+- [x] Add a "show content on stream" switch to the profile dialog
 
 ## Active tasks
 
-- [ ] Add a "show content on stream" checkbox to the profile dialog
 - [ ] Improve loading times
 - [ ] Apply the AuthDialog button styling to an additional variant of the base shadcn button component
 - [ ] Improve sidebar loading skeleton

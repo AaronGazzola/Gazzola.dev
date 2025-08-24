@@ -1,16 +1,10 @@
 //-| File path: app/(components)/OnboardingDialog.actions.ts
 "use server";
 
+import { OnboardingData } from "@/app/(components)/OnboardingDialog.hooks";
 import { Profile as PrismaProfile } from "@/generated/prisma";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { getAuthenticatedClient } from "@/lib/auth-utils";
-
-interface OnboardingData {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  company: string;
-}
 
 export async function saveOnboardingDataAction(
   onboardingData: OnboardingData
@@ -38,6 +32,7 @@ export async function saveOnboardingDataAction(
       email: currentUser.email,
       phone: onboardingData.phone || null,
       company: onboardingData.company || null,
+      shareConversations: onboardingData.shareContent || false,
     };
 
     let data;

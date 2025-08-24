@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
 import { ChevronDown, Save, Trash2 } from "lucide-react";
@@ -31,6 +32,7 @@ interface ProfileFormData {
   lastName: string;
   phone: string;
   company: string;
+  shareConversations: boolean;
 }
 
 const ProfileDialog = () => {
@@ -41,6 +43,7 @@ const ProfileDialog = () => {
     lastName: "",
     phone: "",
     company: "",
+    shareConversations: false,
   });
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
@@ -54,6 +57,7 @@ const ProfileDialog = () => {
         lastName: profile.lastName || "",
         phone: profile.phone || "",
         company: profile.company || "",
+        shareConversations: profile.shareConversations || false,
       });
     if (!profile)
       setFormData({
@@ -61,10 +65,11 @@ const ProfileDialog = () => {
         lastName: "",
         phone: "",
         company: "",
+        shareConversations: false,
       });
   }, [profile]);
 
-  const handleInputChange = (field: keyof ProfileFormData, value: string) => {
+  const handleInputChange = (field: keyof ProfileFormData, value: string | boolean) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -94,6 +99,7 @@ const ProfileDialog = () => {
         lastName: profile.lastName || "",
         phone: profile.phone || "",
         company: profile.company || "",
+        shareConversations: profile.shareConversations || false,
       });
     }
     setDeleteConfirmText("");
@@ -115,7 +121,8 @@ const ProfileDialog = () => {
     (formData.firstName !== (profile.firstName || "") ||
       formData.lastName !== (profile.lastName || "") ||
       formData.phone !== (profile.phone || "") ||
-      formData.company !== (profile.company || ""));
+      formData.company !== (profile.company || "") ||
+      formData.shareConversations !== (profile.shareConversations || false));
 
   const isDeleteConfirmValid = deleteConfirmText === "delete my account";
 
@@ -186,6 +193,20 @@ const ProfileDialog = () => {
                 className="rounded"
                 data-cy={DataCyAttributes.PROFILE_COMPANY_INPUT}
               />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="shareConversations"
+                checked={formData.shareConversations}
+                onCheckedChange={(checked) =>
+                  handleInputChange("shareConversations", !!checked)
+                }
+                data-cy={DataCyAttributes.PROFILE_SHARE_CONVERSATIONS_SWITCH}
+              />
+              <Label htmlFor="shareConversations" className="text-sm font-medium">
+                Share content on live streams
+              </Label>
             </div>
 
             {profile && (

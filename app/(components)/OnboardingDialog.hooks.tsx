@@ -8,13 +8,17 @@ import { client } from "@/lib/auth-client";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { saveOnboardingDataAction, verifyAccountAction } from "./OnboardingDialog.actions";
+import {
+  saveOnboardingDataAction,
+  verifyAccountAction,
+} from "./OnboardingDialog.actions";
 
-interface OnboardingData {
+export interface OnboardingData {
   firstName: string;
   lastName: string;
   phone: string;
   company: string;
+  shareContent: boolean;
 }
 
 export const useSaveOnboardingData = () => {
@@ -89,7 +93,7 @@ export const useResendVerificationEmail = () => {
 
 export const useVerifyAccount = () => {
   const { setIsVerified } = useAuthStore();
-  
+
   return useMutation({
     mutationFn: async () => {
       const { data, error } = await verifyAccountAction();

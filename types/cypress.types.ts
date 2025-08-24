@@ -84,6 +84,7 @@ export enum DataCyAttributes {
   PROFILE_EMAIL_INPUT = "profile-email-input",
   PROFILE_PHONE_INPUT = "profile-phone-input",
   PROFILE_COMPANY_INPUT = "profile-company-input",
+  PROFILE_SHARE_CONVERSATIONS_SWITCH = "profile-share-conversations-switch",
   PROFILE_CANCEL_BUTTON = "profile-cancel-button",
   PROFILE_SAVE_BUTTON = "profile-save-button",
   PROFILE_RESET_BUTTON = "profile-reset-button",

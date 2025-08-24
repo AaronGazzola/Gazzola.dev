@@ -1,17 +1,10 @@
 //-| File path: app/(components)/ProfileDialog.actions.ts
 "use server";
 
+import { ProfileUpdateData } from "@/app/(components)/ProfileDialog.hooks";
 import { Profile } from "@/app/(types)/auth.types";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { getAuthenticatedClient } from "@/lib/auth-utils";
-
-interface ProfileUpdateData {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  company: string;
-}
 
 export async function updateProfileAction(
   profileData: ProfileUpdateData
@@ -112,7 +105,7 @@ export async function softDeleteAccountAction(): Promise<
 
     await db.$transaction([
       db.$executeRaw`SELECT set_config('app.current_user_id', ${session.user.id}, TRUE)`,
-      db.$executeRaw`SELECT soft_delete_user(${session.user.id}::TEXT)`
+      db.$executeRaw`SELECT soft_delete_user(${session.user.id}::TEXT)`,
     ]);
 
     return getActionResponse({ data: true });

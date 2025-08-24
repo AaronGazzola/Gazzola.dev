@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
 import configuration from "@/configuration";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
@@ -292,7 +293,7 @@ const OnboardingDialog = () => {
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox
+                <Switch
                   id="shareContent"
                   checked={formData.shareContent}
                   onCheckedChange={(checked) =>
@@ -323,9 +324,11 @@ const OnboardingDialog = () => {
   };
 
   const showVerifyPage = user && !isVerified;
-  
-  const isNextButtonValid = isVerified && !(currentStep === 1 && !formData.firstName.trim());
-  const isSaveButtonValid = !isPending && formData.acceptTerms && formData.acceptPrivacy;
+
+  const isNextButtonValid =
+    isVerified && !(currentStep === 1 && !formData.firstName.trim());
+  const isSaveButtonValid =
+    !isPending && formData.acceptTerms && formData.acceptPrivacy;
 
   return (
     <Dialog
@@ -380,7 +383,8 @@ const OnboardingDialog = () => {
                     onClick={handleSave}
                     className={cn(
                       "rounded relative overflow-hidden group disabled:cursor-not-allowed border border-transparent transition-all bg-transparent",
-                      isSaveButtonValid && "text-white bg-black/70 hover:bg-black/50"
+                      isSaveButtonValid &&
+                        "text-white bg-black/70 hover:bg-black/50"
                     )}
                     disabled={!isSaveButtonValid}
                     data-cy={DataCyAttributes.ONBOARDING_SAVE_BUTTON}
@@ -394,7 +398,9 @@ const OnboardingDialog = () => {
                       ) : (
                         <>
                           Save
-                          <Rocket className={`w-5 h-5 translate-x-0 group-hover:scale-110 transition-all duration-300 ${isSaveButtonValid ? "opacity-100" : "opacity-0"}`} />
+                          <Rocket
+                            className={`w-5 h-5 translate-x-0 group-hover:scale-110 transition-all duration-300 ${isSaveButtonValid ? "opacity-100" : "opacity-0"}`}
+                          />
                         </>
                       )}
                     </span>
@@ -409,14 +415,17 @@ const OnboardingDialog = () => {
                     onClick={handleNext}
                     className={cn(
                       "rounded relative overflow-hidden group disabled:cursor-not-allowed border border-transparent transition-all bg-transparent",
-                      isNextButtonValid && "text-white bg-black/70 hover:bg-black/50"
+                      isNextButtonValid &&
+                        "text-white bg-black/70 hover:bg-black/50"
                     )}
                     disabled={!isNextButtonValid}
                     data-cy={DataCyAttributes.ONBOARDING_NEXT_BUTTON}
                   >
                     <span className="flex items-center justify-center gap-2 transition-all duration-300">
                       Next
-                      <Rocket className={`w-5 h-5 translate-x-0 group-hover:scale-110 transition-all duration-300 ${isNextButtonValid ? "opacity-100" : "opacity-0"}`} />
+                      <Rocket
+                        className={`w-5 h-5 translate-x-0 group-hover:scale-110 transition-all duration-300 ${isNextButtonValid ? "opacity-100" : "opacity-0"}`}
+                      />
                     </span>
                   </Button>
                 </div>
