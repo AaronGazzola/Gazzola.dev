@@ -5,9 +5,9 @@ import { useScrollToMessage } from "@/app/(hooks)/useScrollToMessage";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { Message } from "@/app/(types)/chat.types";
+import AdminWelcomeMessages from "@/app/chat/(components)/AdminWelcomeMessages";
 import ChatInput from "@/app/chat/(components)/ChatInput";
 import ChatWindowSkeleton from "@/app/chat/(components)/ChatWindow.skeleton";
-import AdminWelcomeMessages from "@/app/chat/(components)/AdminWelcomeMessages";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { format } from "date-fns";
@@ -35,7 +35,7 @@ export default function ChatWindow({ className }: ChatWindowProps) {
     return senderId === user?.id;
   };
 
-  if (isLoading) {
+  if (!user) {
     return <ChatWindowSkeleton className={className} />;
   }
   return (

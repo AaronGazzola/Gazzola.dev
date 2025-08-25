@@ -2,8 +2,8 @@
 "use client";
 
 import { getAppDataAction } from "@/app/(actions)/app.actions";
-import useParamString from "@/app/(hooks)/useParamString";
 import useIsTest from "@/app/(hooks)/useIsTest";
+import useParamString from "@/app/(hooks)/useParamString";
 import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
@@ -13,21 +13,20 @@ import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 
 export const useGetAppData = () => {
-  const { setUser, setProfile, setIsVerified, setIsAdmin, user } =
-    useAuthStore();
+  const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
   const { setConversations, setCurrentConversation, setTargetUser } =
     useChatStore();
   const { setContracts } = useContractStore();
   const { openOnboardingModal } = useAppStore();
-  const userId = useParamString("userId");
+  const targetUserId = useParamString("userId");
   const pathname = usePathname();
   const router = useRouter();
   const isTest = useIsTest();
 
   const query = useQuery({
-    queryKey: ["app-data", userId],
+    queryKey: ["app-data", targetUserId],
     queryFn: async () => {
-      const { data, error } = await getAppDataAction(userId);
+      const { data, error } = await getAppDataAction(targetUserId);
       if (error) throw new Error(error);
       if (!data) throw new Error("No app data received");
 
@@ -85,10 +84,7 @@ export const useGetAppData = () => {
       }
 
       // Handle test route restrictions
-      if (
-        pathname.startsWith(configuration.paths.test) &&
-        !isTest
-      ) {
+      if (pathname.startsWith(configuration.paths.test) && !isTest) {
         router.push(configuration.paths.home);
         return data;
       }

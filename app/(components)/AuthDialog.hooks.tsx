@@ -6,8 +6,11 @@ import { useAuthStore } from "@/app/(stores)/auth.store";
 import { useChatStore } from "@/app/(stores)/chat.store";
 import { useContractStore } from "@/app/(stores)/contract.store";
 import { useAppStore } from "@/app/(stores)/ui.store";
-import { ResetPasswordCredentials, SignInCredentials, SignUpCredentials } from "@/app/(types)/auth.types";
-import { useAdminStore } from "@/app/admin/page.store";
+import {
+  ResetPasswordCredentials,
+  SignInCredentials,
+  SignUpCredentials,
+} from "@/app/(types)/auth.types";
 import { Toast } from "@/components/shared/Toast";
 import configuration from "@/configuration";
 import { client, resetPassword } from "@/lib/auth-client";
@@ -24,7 +27,6 @@ import {
 
 export const useSignIn = () => {
   const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
-  const { setUsers } = useAdminStore();
   const { setConversations, setCurrentConversation, setTargetUser } =
     useChatStore();
   const { setContracts } = useContractStore();
@@ -99,7 +101,6 @@ export const useSignIn = () => {
 
 export const useSignUp = () => {
   const { setUser, setProfile, setIsVerified, setIsAdmin } = useAuthStore();
-  const { setUsers } = useAdminStore();
   const { setConversations, setCurrentConversation, setTargetUser } =
     useChatStore();
   const { setContracts } = useContractStore();
@@ -121,7 +122,6 @@ export const useSignUp = () => {
         setProfile(data.profile);
         setIsVerified(data.isVerified);
         setIsAdmin(data.isAdmin);
-        setUsers(data.users);
         setConversations(data.conversations);
         setCurrentConversation(data.conversations[0]);
         setContracts(data.contracts);

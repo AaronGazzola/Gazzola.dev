@@ -23,6 +23,7 @@
 ## Active tasks
 
 - [ ] Improve loading times
+- [ ] Admin create contract error
 - [ ] Apply the AuthDialog button styling to an additional variant of the base shadcn button component
 - [ ] Improve sidebar loading skeleton
 - [ ] Make the "work in progress" message closable

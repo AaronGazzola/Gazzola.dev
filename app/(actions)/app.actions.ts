@@ -5,7 +5,6 @@ import { Profile } from "@/app/(types)/auth.types";
 import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";
 import { AppData } from "@/app/(types)/ui.types";
-import { UserData } from "@/app/admin/page.types";
 import { User as PrismaUser, User } from "@/generated/prisma";
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { auth } from "@/lib/auth";
@@ -28,171 +27,7 @@ export async function getAuthenticatedUser(): Promise<User | null> {
   return prismaUser;
 }
 
-async function getUserProfile(userId: string): Promise<Profile | null> {
-  try {
-    const { db } = await getAuthenticatedClient();
 
-    const profile = await db.profile.findUnique({
-      where: { userId },
-      include: {
-        user: true,
-        contracts: true,
-      },
-    });
-
-    return profile;
-  } catch (error) {
-    return null;
-  }
-}
-
-async function getAllUsers(isAdmin: boolean): Promise<UserData[]> {
-  if (!isAdmin) {
-    return [];
-  }
-
-  try {
-    const { db } = await getAuthenticatedClient();
-
-    const users = await db.user.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        profile: {
-          include: {
-            contracts: {
-              orderBy: { createdAt: "desc" },
-              take: 1,
-            },
-          },
-        },
-        _count: {
-          select: {
-            sessions: true,
-          },
-        },
-      },
-    });
-
-    const userIds = users.map((user) => user.id);
-
-    const lastMessages = await db.message.findMany({
-      where: {
-        senderId: { in: userIds },
-      },
-      orderBy: { createdAt: "desc" },
-      distinct: ["senderId"],
-      select: {
-        senderId: true,
-        content: true,
-        createdAt: true,
-      },
-    });
-
-    const messageMap = new Map(lastMessages.map((msg) => [msg.senderId, msg]));
-
-    const userData: UserData[] = users.map((user) => {
-      const lastMessage = messageMap.get(user.id);
-      const latestContract = user.profile?.contracts[0];
-
-      return {
-        id: user.id,
-        name: user.name || "",
-        email: user.email || "",
-        role: user.role,
-        createdAt: user.createdAt,
-        lastMessage: lastMessage?.content || null,
-        lastMessageAt: lastMessage?.createdAt || null,
-        contractTitle: latestContract?.title || null,
-        contractStatus: latestContract?.progressStatus || null,
-        contractCreatedAt: latestContract?.createdAt || null,
-        sessionCount: user._count.sessions,
-      };
-    });
-
-    return userData;
-  } catch (error) {
-    return [];
-  }
-}
-
-async function getUserConversations(userId: string): Promise<Conversation[]> {
-  try {
-    const { db } = await getAuthenticatedClient();
-
-    const conversations = await db.conversation.findMany({
-      where: {
-        participants: {
-          has: userId,
-        },
-      },
-      include: {
-        messages: {
-          orderBy: { createdAt: "asc" },
-          include: {
-            files: true,
-          },
-        },
-        contracts: true,
-      },
-      orderBy: { lastMessageAt: "desc" },
-    });
-
-    return conversations;
-  } catch (error) {
-    return [];
-  }
-}
-
-async function getUserContracts(
-  userId: string,
-  isAdmin: boolean
-): Promise<Contract[]> {
-  try {
-    const { db } = await getAuthenticatedClient();
-    let whereClause = {};
-
-    if (!isAdmin) {
-      const profile = await db.profile.findUnique({
-        where: { userId },
-      });
-
-      if (!profile) {
-        return [];
-      }
-
-      whereClause = { profileId: profile.id };
-    } else {
-      const profile = await db.profile.findUnique({
-        where: { userId },
-      });
-
-      if (profile) {
-        whereClause = { profileId: profile.id };
-      }
-    }
-
-    const contracts = await db.contract.findMany({
-      where: whereClause,
-      include: {
-        profile: true,
-        conversations: true,
-        tasks: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    return contracts;
-  } catch (error) {
-    return [];
-  }
-}
-
-async function adminGuard(): Promise<boolean> {
-  const user = await getAuthenticatedUser();
-  return user?.role === "admin";
-}
 
 export async function getTargetUserAction(
   userId: string
@@ -210,28 +45,44 @@ export async function getTargetUserAction(
 
     const user = await db.user.findUnique({
       where: { id: userId },
+      include: {
+        profile: {
+          include: {
+            user: true,
+            contracts: true,
+          },
+        },
+      },
     });
 
     if (!user) {
       return getActionResponse({ error: "User not found" });
     }
 
-    const profile = await db.profile.findUnique({
-      where: { userId },
-      include: {
-        user: true,
-        contracts: true,
-      },
+    return getActionResponse({ 
+      data: { 
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          emailVerified: user.emailVerified,
+          image: user.image,
+          role: user.role,
+          isDeleted: user.isDeleted,
+          deletedAt: user.deletedAt,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        }, 
+        profile: user.profile 
+      } 
     });
-
-    return getActionResponse({ data: { user, profile } });
   } catch (error) {
     return getActionResponse({ error });
   }
 }
 
 export async function getAppDataAction(
-  userId?: string
+  targetUserId?: string
 ): Promise<ActionResponse<AppData | null>> {
   try {
     const { db, session } = await getAuthenticatedClient();
@@ -242,37 +93,108 @@ export async function getAppDataAction(
 
     const user = await db.user.findUnique({
       where: { id: session.user.id },
+      include: {
+        profile: {
+          include: {
+            user: true,
+            contracts: {
+              include: {
+                profile: true,
+                conversations: true,
+                tasks: true,
+              },
+              orderBy: {
+                createdAt: "desc",
+              },
+            },
+          },
+        },
+      },
     });
+
     if (!user) {
       return getActionResponse({ error: "User not found" });
     }
 
     const isAdmin = user.role === "admin";
     const isVerified = user.emailVerified;
-    const profile = await getUserProfile(user.id);
-    const users = await getAllUsers(isAdmin);
-    const conversations = await getUserConversations(
-      isAdmin && userId ? userId : user.id
-    );
+    const profile = user.profile;
 
     let targetUser: PrismaUser | null = null;
-    if (userId && isAdmin) {
-      const targetUserResult = await getTargetUserAction(userId);
-      if (targetUserResult.data) {
-        targetUser = targetUserResult.data.user;
+    let targetContracts: Contract[] = [];
+
+    if (targetUserId && isAdmin) {
+      if (targetUserId !== user.id) {
+        const targetUserData = await db.user.findUnique({
+          where: { id: targetUserId },
+          include: {
+            profile: {
+              include: {
+                user: true,
+                contracts: {
+                  include: {
+                    profile: true,
+                    conversations: true,
+                    tasks: true,
+                  },
+                  orderBy: {
+                    createdAt: "desc",
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        if (!targetUserData) {
+          return getActionResponse({ error: "Target user not found" });
+        }
+
+        targetUser = {
+          id: targetUserData.id,
+          name: targetUserData.name,
+          email: targetUserData.email,
+          emailVerified: targetUserData.emailVerified,
+          image: targetUserData.image,
+          role: targetUserData.role,
+          isDeleted: targetUserData.isDeleted,
+          deletedAt: targetUserData.deletedAt,
+          createdAt: targetUserData.createdAt,
+          updatedAt: targetUserData.updatedAt,
+        };
+        targetContracts = targetUserData.profile?.contracts || [];
+      } else {
+        targetUser = user;
+        targetContracts = profile?.contracts || [];
       }
     }
-    const contracts = await getUserContracts(
-      targetUser?.id || user.id,
-      isAdmin
-    );
+
+    const conversationUserId = isAdmin && targetUserId ? targetUserId : user.id;
+    const conversations = await db.conversation.findMany({
+      where: {
+        participants: {
+          has: conversationUserId,
+        },
+      },
+      include: {
+        messages: {
+          orderBy: { createdAt: "asc" },
+          include: {
+            files: true,
+          },
+        },
+        contracts: true,
+      },
+      orderBy: { lastMessageAt: "desc" },
+    });
+
+    const contracts = targetUser ? targetContracts : (profile?.contracts || []);
 
     const appData: AppData = {
       user,
       profile,
       isVerified,
       isAdmin,
-      users,
       conversations,
       contracts,
       targetUser,

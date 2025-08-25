@@ -2,7 +2,6 @@
 import { Profile } from "@/app/(types)/auth.types";
 import { Conversation } from "@/app/(types)/chat.types";
 import { Contract } from "@/app/(types)/contract.types";
-import { UserData } from "@/app/admin/page.types";
 import { User } from "@/generated/prisma";
 
 export interface AppData {
@@ -10,7 +9,6 @@ export interface AppData {
   profile: Profile | null;
   isVerified: boolean;
   isAdmin: boolean;
-  users: UserData[];
   conversations: Conversation[];
   contracts: Contract[];
   targetUser?: User | null;
