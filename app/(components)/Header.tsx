@@ -1,6 +1,5 @@
 //-| File path: app/(components)/Header.tsx
 "use client";
-import { useAuthStore } from "@/app/(stores)/auth.store";
 import { Button } from "@/components/ui/button";
 import configuration from "@/configuration";
 import { sourceCodePro } from "@/styles/fonts";
@@ -14,15 +13,13 @@ import { useYouTubeSubscriberCount } from "./Header.hooks";
 import { JobSuccessIcon, TopRatedIcon } from "./SVG";
 
 const Header = () => {
-  const { user } = useAuthStore();
   const { data: subscriberData, isLoading } = useYouTubeSubscriberCount();
 
-  if (!!user) return null;
   return (
     <div
       className={clsx(
         sourceCodePro.className,
-        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center h-screen "
+        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center h-screen"
       )}
     >
       <Button
@@ -40,7 +37,7 @@ const Header = () => {
           <span className="">@AzAnything</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="">Subs:</span>
+          <span className="">Anyones:</span>
           <span className="">
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

@@ -1,19 +1,20 @@
 //-| File path: app/layout.tsx
-import Providers from "@/app/(providers)/Providers";
+import Providers from "@/app/layout.providers";
 import { inter } from "@/styles/fonts";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import type { Metadata } from "next";
-import "swiper/css";
 
 export const metadata: Metadata = {
-  title: "Gazzola Development",
-  description: "Aaron Gazzola's web development consultation chat app",
+  title: "Gazzola Web App Roadmap Maker",
+  description:
+    "A platform for generating full-stack web app roadmaps. Design and download comprehensive and detailed step-by-step instructions for you and your AI to vibe code your custom web app.",
   metadataBase: new URL("https://gazzola.dev"),
   openGraph: {
-    title: "Gazzola Development",
-    description: "Aaron Gazzola's web development consultation chat app",
+    title: "Gazzola Web App Roadmap Maker",
+    description:
+      "A platform for generating full-stack web app roadmaps. Design and download comprehensive and detailed step-by-step instructions for you and your AI to vibe code your custom web app.",
     images: [
       {
         url: "/GazzolaLogo.png",
