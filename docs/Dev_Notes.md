@@ -18,7 +18,8 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 - [ ] Add the navigation buttons to the sidebar
   - [-] Standardize the outline button in the shadcn component
+- [-] Update about page content
+  - [ ] Add step 4 - download roadmap
 - [ ] Create a theme selection UX
-- [ ] Update about page content
 
 ## Pending tasks
