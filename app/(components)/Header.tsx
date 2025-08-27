@@ -25,7 +25,7 @@ const Header = () => {
       <div className="absolute top-6 left-6 z-30">
         <Button
           variant="outline"
-          className="text-gray-300 rounded flex flex-col items-center p-3 min-w-[100px] h-auto font-bold group"
+          className="text-gray-300 flex flex-col items-center p-3 min-w-[100px] h-auto font-bold group"
           onClick={() =>
             window.open("https://www.youtube.com/@AzAnything/streams", "_blank")
           }
@@ -53,7 +53,7 @@ const Header = () => {
         href={configuration.paths.about}
         className="absolute top-6 right-6 z-30"
       >
-        <Button variant="outline" className=" text-gray-300  rounded font-bold">
+        <Button variant="outline" className=" text-gray-300  font-bold">
           About
           <ArrowRight className="w-4 h-4" />
         </Button>

@@ -6,7 +6,7 @@ import * as React from "react";
 import { cn } from "@/lib/tailwind.utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[0.375rem] text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "shadow-sm hover:bg-accent hover:text-accent-foreground border border-transparent text-gray-300 bg-black rounded font-semibold flex items-center gap-4 group-hover:border-transparent px-10 py-8",
+          "shadow-sm text-gray-300 bg-black font-semibold flex items-center gap-4  px-10 py-8 hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground bg-black",
@@ -50,7 +50,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     if (variant === "outline" || (variant === "ghost" && isActive))
       return (
-        <div className="rounded group bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 p-[1px]">
+        <div className="relative">
+          <div
+            className={cn(
+              "group bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 absolute -z-10",
+              isActive ? "inset-0" : "-inset-[1px]"
+            )}
+            style={{
+              borderRadius: "0.375rem",
+            }}
+          />
           <Comp
             className={cn(
               buttonVariants({ variant, size, className }),

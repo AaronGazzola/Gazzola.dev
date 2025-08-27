@@ -138,7 +138,7 @@ const page = () => {
           <Link href={configuration.paths.roadmap}>
             <Button
               variant="outline"
-              className="border border-transparent   text-gray-300 hover:bg-gray-800 rounded font-semibold flex items-center gap-2 hover:border-gray-400"
+              className="border border-transparent   text-gray-300 hover:bg-gray-800 font-semibold flex items-center gap-2 hover:border-gray-400"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -525,7 +525,7 @@ const page = () => {
           <Link href={configuration.paths.roadmap}>
             <Button
               variant="outline"
-              className="border border-transparent bg-transparent text-gray-300 bg-black rounded font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
+              className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
             >
               Get Started
               <Rocket className="!w-7 !h-7" />
