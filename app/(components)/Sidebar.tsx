@@ -47,8 +47,7 @@ const Sidebar = () => {
               </Button>
             </div>
             <p className="text-sm text-white font-medium mt-1">
-              A platform for generating full-stack web app roadmaps by Aaron
-              Gazzola
+              A platform for generating full-stack web app roadmaps
             </p>
           </div>
         </div>
@@ -73,7 +72,8 @@ const Sidebar = () => {
               variant="outline"
               className={cn(
                 "w-full text-white border-gray-600 gap-1.5 px-3",
-                !isActive(configuration.paths.UI) && "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                !isActive(configuration.paths.UI) &&
+                  "hover:bg-gray-800 hover:text-white hover:border-gray-500"
               )}
               isActive={isActive(configuration.paths.UI)}
             >
@@ -86,7 +86,8 @@ const Sidebar = () => {
               variant="outline"
               className={cn(
                 "w-full text-white border-gray-600 gap-1.5 px-3",
-                !isActive(configuration.paths.UX) && "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                !isActive(configuration.paths.UX) &&
+                  "hover:bg-gray-800 hover:text-white hover:border-gray-500"
               )}
               isActive={isActive(configuration.paths.UX)}
             >
@@ -99,7 +100,8 @@ const Sidebar = () => {
               variant="outline"
               className={cn(
                 "w-full text-white border-gray-600 gap-1.5 px-3",
-                !isActive(configuration.paths.DB) && "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                !isActive(configuration.paths.DB) &&
+                  "hover:bg-gray-800 hover:text-white hover:border-gray-500"
               )}
               isActive={isActive(configuration.paths.DB)}
             >
@@ -133,7 +135,8 @@ const Sidebar = () => {
               <Button
                 className={cn(
                   "w-full text-white border-gray-600",
-                  !isActive(configuration.paths.roadmap) && "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                  !isActive(configuration.paths.roadmap) &&
+                    "hover:bg-gray-800 hover:text-white hover:border-gray-500"
                 )}
                 size="icon"
                 variant="ghost"
@@ -154,7 +157,8 @@ const Sidebar = () => {
               <Button
                 className={cn(
                   "w-full text-white border-gray-600",
-                  !isActive(configuration.paths.UI) && "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                  !isActive(configuration.paths.UI) &&
+                    "hover:bg-gray-800 hover:text-white hover:border-gray-500"
                 )}
                 size="icon"
                 variant="ghost"
@@ -177,7 +181,8 @@ const Sidebar = () => {
                 size="icon"
                 className={cn(
                   "w-full text-white border-gray-600",
-                  !isActive(configuration.paths.UX) && "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                  !isActive(configuration.paths.UX) &&
+                    "hover:bg-gray-800 hover:text-white hover:border-gray-500"
                 )}
                 isActive={isActive(configuration.paths.UX)}
               >
@@ -198,7 +203,8 @@ const Sidebar = () => {
                 size="icon"
                 className={cn(
                   "w-full text-white border-gray-600",
-                  !isActive(configuration.paths.DB) && "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                  !isActive(configuration.paths.DB) &&
+                    "hover:bg-gray-800 hover:text-white hover:border-gray-500"
                 )}
                 isActive={isActive(configuration.paths.DB)}
               >
