@@ -135,10 +135,10 @@ const page = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="absolute top-6 left-6 z-30"
         >
-          <Link href={configuration.paths.home}>
+          <Link href={configuration.paths.roadmap}>
             <Button
               variant="outline"
-              className="border border-transparent  bg-transparent text-gray-300 hover:bg-gray-800 rounded font-semibold flex items-center gap-2 hover:border-gray-400"
+              className="border border-transparent   text-gray-300 hover:bg-gray-800 rounded font-semibold flex items-center gap-2 hover:border-gray-400"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -469,12 +469,9 @@ const page = () => {
                     1
                   </span>
                 </div>
-                <h3 className="text-xl font-bold mb-2">
-                  Sign up for free to chat with me!
-                </h3>
+                <h3 className="text-xl font-bold mb-2">Build your UI</h3>
                 <p className="text-base font-semibold text-white">
-                  I&apos;m interested to learn about your project and provide
-                  free advice and guidance
+                  Design your theme and your custom components
                 </p>
               </motion.div>
 
@@ -490,12 +487,9 @@ const page = () => {
                     2
                   </span>
                 </div>
-                <h3 className="text-xl font-bold mb-2">
-                  Propose a fixed price contract
-                </h3>
+                <h3 className="text-xl font-bold mb-2">Map your UX</h3>
                 <p className="text-base font-semibold text-white">
-                  Tasks can include: Code review, repo refactoring, general
-                  consultation or complete web app construction.
+                  Create a user journey map to visualize the user experience
                 </p>
               </motion.div>
 
@@ -511,12 +505,9 @@ const page = () => {
                     3
                   </span>
                 </div>
-                <h3 className="text-xl font-bold mb-2">
-                  Follow along with my process
-                </h3>
+                <h3 className="text-xl font-bold mb-2">Design your Database</h3>
                 <p className="text-base font-semibold text-white">
-                  Track the process as tasks are completed and receive frequent
-                  updates on my progress
+                  Define the structure and security for your app data
                 </p>
               </motion.div>
             </div>
@@ -531,16 +522,14 @@ const page = () => {
           viewport={{ once: true }}
           className="flex justify-center py-20 px-5 sm:px-10"
         >
-          <Link href={configuration.paths.home}>
-            <div className="rounded group bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 p-[1px]">
-              <Button
-                variant="outline"
-                className="border border-transparent bg-transparent text-gray-300 bg-black rounded font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
-              >
-                Get Started
-                <Rocket className="!w-7 !h-7" />
-              </Button>
-            </div>
+          <Link href={configuration.paths.roadmap}>
+            <Button
+              variant="outline"
+              className="border border-transparent bg-transparent text-gray-300 bg-black rounded font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
+            >
+              Get Started
+              <Rocket className="!w-7 !h-7" />
+            </Button>
           </Link>
         </motion.div>
       </div>

@@ -11,13 +11,11 @@ const configuration = {
 
   // Routes
   paths: {
-    chat: (userId?: string) => (!userId ? "/" : `/chat/${userId}`),
-    admin: "/admin",
-    home: "/",
     about: "/about",
-    test: "/test",
-    testRls: "/test/rls",
-    terms: "/terms",
+    roadmap: "/",
+    UI: "/ui",
+    UX: "/ux",
+    DB: "/db",
   },
 };
 

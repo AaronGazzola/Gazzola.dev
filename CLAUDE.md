@@ -5,61 +5,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # General rules:
 
 - Don't include any comments in any files.
-- Import "cn" from "@/lib/shadcn.utils" to concatinate classes.
+- Import "cn" from ""@/lib/tailwind.utils" to concatinate classes.
 - All console.logs should be stringified and minified.
 
 ### Tech Stack
 
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: Better Auth with role-based access
+- **Framework**: Next.js 15 with App Router and Typescript
 - **State Management**: Zustand with React Query
 - **UI**: Tailwind CSS with shadcn/ui components
-- **Email**: Resend with React Email
-- **Payments**: Stripe integration
-- **Testing**: Cypress for e2e tests
-
-### Database Architecture
-
-- **Users**: Authentication with role-based access (admin/user)
-- **Profiles**: Extended user information
-- **Conversations**: Chat conversations with participants
-- **Messages**: Chat messages with file attachments
-- **Contracts**: Business contracts with tasks and payments
-- **Payments**: Stripe payment tracking
-
-Key relationships:
-
-- User (1) ↔ (1) Profile
-- User (1) ↔ (N) Conversations
-- Contract (N) ↔ (N) Conversations
-- Conversation (1) ↔ (N) Messages
 
 # File Organization and Naming Conventions
 
 - Types and store files alongside anscenstor files
 - Actions and hooks files alongside descendent files
 
-```txt
-app/
-├── layout.tsx
-├── layout.providers.tsx
-├── layout.types.ts
-├── layout.store.ts ◄─── useAppStore
-└── (dashboard)/
-    ├── layout.tsx
-    ├── layout.skeleton.tsx
-    ├── layout.store.tsx ◄─── useDashboardStore
-    ├── page.tsx              ─┐
-    ├── page.hooks.tsx         ├────► useAppStore
-    ├── Component.tsx          ├────► useDashboardStore
-    ├── Component.hooks.tsx   ─┘
-    ├── page.actions.ts
-    └── Component.actions.ts
-```
-
-# Hook, action, store and type patterns
+## Hook, action, store and type patterns
 
 - Better-auth client methods are called directly in the react-query hooks.
 - Prisma client queries are called in actions via getAuthenticatedClient.
@@ -68,7 +28,7 @@ app/
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All db types should be defined from `"@prisma/client"`
 
-## Types file example:
+### Types file example:
 
 ```typescript
 import { User } from "@prisma/client";
@@ -87,7 +47,7 @@ export interface SignInData {
 }
 ```
 
-## Store file example:
+### Store file example:
 
 ```typescript
 import { create } from "zustand";
@@ -113,7 +73,7 @@ export const useAppStore = create<AppState>()(
 );
 ```
 
-## Actions file example:
+### Actions file example:
 
 ```typescript
 "use server";
@@ -145,7 +105,7 @@ export const getUserAction = async (): Promise<ActionResponse<User | null>> => {
 };
 ```
 
-# Hooks file example
+### Hooks file example
 
 ```typescript
 "use client";

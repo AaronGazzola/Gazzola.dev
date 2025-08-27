@@ -4,16 +4,21 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 - complete redesign -> web app roadmap editor
   - users don't sign in
-  - they design their UI, route map, database, rls and all UX pathways.
+  - they design their UI, database + rls, route map and all UX pathways.
   - pay(?) to export the project files
 
 # Tasks
 
 ## Completed tasks
 
+- [x] Delete all UX except for the hero, sidebar and about page
+- [x] Add a permanently open dialog that will display a "coming soon" message
+
 ## Active tasks
 
-- [ ] Delete all UX except for the hero, sidebar and about page
-- [ ] Add a permanently open dialog that will display a "coming soon" message
+- [ ] Add the navigation buttons to the sidebar
+  - [-] Standardize the outline button in the shadcn component
+- [ ] Create a theme selection UX
+- [ ] Update about page content
 
 ## Pending tasks

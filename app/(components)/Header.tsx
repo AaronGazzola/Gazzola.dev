@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import configuration from "@/configuration";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
-import { Clock, Loader2 } from "lucide-react";
+import { ArrowRight, Clock, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiYoutube } from "react-icons/si";
@@ -22,40 +22,40 @@ const Header = () => {
         "flex flex-col justify-between w-full items-center relative overflow-hidden text-center h-screen"
       )}
     >
-      <Button
-        variant="outline"
-        className="absolute top-6 left-6 z-30 border-gray-400 text-gray-300 bg-transparent hover:bg-gray-800 rounded flex flex-col items-center p-3 min-w-[100px] h-auto font-bold group"
-        onClick={() =>
-          window.open("https://www.youtube.com/@AzAnything/streams", "_blank")
-        }
-      >
-        <SiYoutube
-          style={{ width: 30, height: 30 }}
-          className="w-36 h-36 stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none"
-        />
-        <div className="flex items-center gap-1 mb-1">
-          <span className="">@AzAnything</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="">Anyones:</span>
-          <span className="">
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              subscriberData?.subscriberCount?.toLocaleString() || "..."
-            )}
-          </span>
-        </div>
-      </Button>
+      <div className="absolute top-6 left-6 z-30">
+        <Button
+          variant="outline"
+          className="text-gray-300 rounded flex flex-col items-center p-3 min-w-[100px] h-auto font-bold group"
+          onClick={() =>
+            window.open("https://www.youtube.com/@AzAnything/streams", "_blank")
+          }
+        >
+          <SiYoutube
+            style={{ width: 30, height: 30 }}
+            className="w-36 h-36 stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none"
+          />
+          <div className="flex items-center gap-1 mb-1">
+            <span className="">@AzAnything</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="">Anyones:</span>
+            <span className="">
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                subscriberData?.subscriberCount?.toLocaleString() || "..."
+              )}
+            </span>
+          </div>
+        </Button>
+      </div>
       <Link
         href={configuration.paths.about}
         className="absolute top-6 right-6 z-30"
       >
-        <Button
-          variant="outline"
-          className="border-gray-400 bg-transparent text-gray-300 hover:bg-gray-800 rounded font-bold"
-        >
+        <Button variant="outline" className=" text-gray-300  rounded font-bold">
           About
+          <ArrowRight className="w-4 h-4" />
         </Button>
       </Link>
       <div className="px-5 sm:px-10">
