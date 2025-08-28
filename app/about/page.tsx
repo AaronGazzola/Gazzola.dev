@@ -486,7 +486,7 @@ const page = () => {
             {/* Desktop Layout */}
             <div className="hidden md:flex items-start justify-center relative">
               {nextSteps.map((step, index) => (
-                <div key={index} className="flex items-start">
+                <div key={index} className="flex items-center">
                   <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
