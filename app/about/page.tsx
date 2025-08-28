@@ -10,11 +10,15 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  BookDown,
   BrainCog,
   Briefcase,
+  Database,
   GraduationCap,
+  MonitorStop,
   Plus,
   Rocket,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -88,6 +92,29 @@ const careerSteps = [
     description: "4 years full-time freelance development on Upwork",
     icon: Briefcase,
     duration: "4 years",
+  },
+];
+
+const nextSteps = [
+  {
+    title: "Build your UI",
+    description: "Design your theme and your custom components",
+    icon: MonitorStop,
+  },
+  {
+    title: "Map your UX",
+    description: "Create a user journey map to visualize the user experience",
+    icon: Users,
+  },
+  {
+    title: "Design your Database",
+    description: "Define the structure and security for your app data",
+    icon: Database,
+  },
+  {
+    title: "Download your roadmap",
+    description: "Export your documentation and start building!",
+    icon: BookDown,
   },
 ];
 
@@ -445,71 +472,171 @@ const page = () => {
 
         {/* What now? Section */}
         <motion.div className="px-5 sm:px-10">
-          <motion.div
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-2xl sm:text-3xl font-medium text-center mb-16"
           >
-            <h2 className="text-2xl sm:text-3xl mb-4">Ok... What now?</h2>
-          </motion.div>
+            Next steps
+          </motion.h2>
 
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="flex flex-col items-center text-center p-6 rounded-lg bg-black bg-opacity-50"
-              >
-                <div className="mb-6 relative">
-                  <span className="text-[56px] sm:text-[72px] font-light bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent mb-4 block">
-                    1
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold mb-2">Build your UI</h3>
-                <p className="text-base font-semibold text-white">
-                  Design your theme and your custom components
-                </p>
-              </motion.div>
+            {/* Desktop Layout */}
+            <div className="hidden md:flex items-start justify-center relative">
+              {nextSteps.map((step, index) => (
+                <div key={index} className="flex items-start">
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    className="flex flex-col items-center relative z-10 bg-black"
+                  >
+                    {/* Number */}
+                    <div className="mb-2 relative">
+                      <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent block">
+                        {index + 1}
+                      </span>
+                    </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="flex flex-col items-center text-center p-6 rounded-lg bg-black bg-opacity-50"
-              >
-                <div className="mb-6 relative">
-                  <span className="text-[56px] sm:text-[72px] font-light bg-gradient-to-r from-purple-500 to-green-500 bg-clip-text text-transparent mb-4 block">
-                    2
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold mb-2">Map your UX</h3>
-                <p className="text-base font-semibold text-white">
-                  Create a user journey map to visualize the user experience
-                </p>
-              </motion.div>
+                    {/* Icon with Gradient */}
+                    <div className="mb-4 relative">
+                      <svg
+                        className="w-20 h-20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`gradient-next-desktop-${index}`}
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                          >
+                            <stop offset="0%" stopColor="#3b82f6" />
+                            <stop offset="50%" stopColor="#a855f7" />
+                            <stop offset="100%" stopColor="#10b981" />
+                          </linearGradient>
+                        </defs>
+                        <step.icon
+                          className="w-20 h-20 stroke-1"
+                          stroke={`url(#gradient-next-desktop-${index})`}
+                          fill="none"
+                        />
+                      </svg>
+                    </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="flex flex-col items-center text-center p-6 rounded-lg bg-black bg-opacity-50"
-              >
-                <div className="mb-6 relative">
-                  <span className="text-[56px] sm:text-[72px] font-light bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent mb-4 block">
-                    3
-                  </span>
+                    {/* Content */}
+                    <div className="text-center max-w-[250px]">
+                      <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                      <p className="text-base font-semibold mb-2">
+                        {step.description}
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  {/* Arrow pointing right (except for last item) */}
+                  {index < nextSteps.length - 1 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="mx-8 h-20 flex items-center"
+                    >
+                      <ArrowRight
+                        className="w-8 h-8 text-gradient-to-r from-blue-500 via-purple-500 to-green-500"
+                        style={{
+                          filter:
+                            "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                        }}
+                      />
+                    </motion.div>
+                  )}
                 </div>
-                <h3 className="text-xl font-bold mb-2">Design your Database</h3>
-                <p className="text-base font-semibold text-white">
-                  Define the structure and security for your app data
-                </p>
-              </motion.div>
+              ))}
+            </div>
+
+            {/* Mobile Layout */}
+            <div className="md:hidden">
+              {nextSteps.map((step, index) => (
+                <div key={index} className="flex flex-col items-start">
+                  <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    className="flex items-center space-x-4 w-full mb-4 justify-start"
+                  >
+                    <div className="flex flex-col items-center">
+                      {/* Number */}
+                      <div className="mb-2 relative">
+                        <span className="text-[40px] font-light bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent block">
+                          {index + 1}
+                        </span>
+                      </div>
+
+                      {/* Icon with Gradient */}
+                      <div className="flex-shrink-0 relative">
+                        <svg
+                          className="w-12 h-12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <defs>
+                            <linearGradient
+                              id={`gradient-next-mobile-${index}`}
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="100%"
+                            >
+                              <stop offset="0%" stopColor="#3b82f6" />
+                              <stop offset="50%" stopColor="#a855f7" />
+                              <stop offset="100%" stopColor="#10b981" />
+                            </linearGradient>
+                          </defs>
+                          <step.icon
+                            className="w-12 h-12"
+                            stroke={`url(#gradient-next-mobile-${index})`}
+                            strokeWidth={2}
+                          />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 ml-4">
+                      <h3 className="text-xl font-bold mb-1">{step.title}</h3>
+                      <p className="text-base font-semibold mb-1">
+                        {step.description}
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  {/* Arrow pointing down (except for last item) */}
+                  {index < nextSteps.length - 1 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="mb-4 flex justify-start w-12 ml-6"
+                    >
+                      <ArrowDown
+                        className="w-6 h-6 text-white"
+                        style={{
+                          filter:
+                            "drop-shadow(0 0 6px rgba(147, 51, 234, 0.5))",
+                        }}
+                      />
+                    </motion.div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </motion.div>

@@ -13,15 +13,14 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 - [x] Delete all UX except for the hero, sidebar and about page
 - [x] Add a permanently open dialog that will display a "coming soon" message
+- [x] Add the navigation buttons to the sidebar
+- [x] Standardize the outline button in the shadcn component
+- [x] Update Next steps section of about page
+  - [x] Make flow diagram with icons
+  - [x] Add step 4 - download roadmap
 
 ## Active tasks
 
-- [ ] Add the navigation buttons to the sidebar
-  - [-] Standardize the outline button in the shadcn component
-- [-] Update about page content
-  - [ ] Add step 4 - test test test
-  - [ ] Add step 5 - download roadmap
-  - [ ] Make flow diagram with icons for roadmap creation
 - [ ] Create a theme selection UX
 - [ ] fix Header responsive design
 
