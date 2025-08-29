@@ -1,0 +1,20 @@
+
+Diagram characters:
+
+corners:
+└ ┘ ┌ ┐
+
+T-junctions:
+├ ┤ ┬ ┴
+
+cross:
+┼
+
+lines:
+── │ ╱ ╲
+
+with arrows:
+─► ◄─ ▲ ▼ ↗ ↘ ↙ ↖
+
+Brackets:
+⎡ ⎤ ⎣ ⎦

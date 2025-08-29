@@ -21,7 +21,42 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 ## Active tasks
 
+- [ ] Add a theme control panel to set the colors for the app
+- [ ] Sidebar route navigation
 - [ ] Create a theme selection UX
 - [ ] fix Header responsive design
+- [ ] Add a download button that will open an optional donate dialog to download the roadmap and optionally donate.
 
 ## Pending tasks
+
+Roadmap sidebar navigation:
+
+- Configuration
+  - CLAUDE.md (page)
+- Styles
+  - global.css (page)
+  - fonts.tsx (page)
+
+UI sidebar navigation:
+
+- Forms
+  - Buttons (page)
+  - Authentication pathway (page)
+
+UX sidebar navigation
+
+- [ ] Roadmap navigation (added as required):
+  - Installation guide
+    - CLAUDE.md or similar
+    - Tech stack installation
+  - App Directory map
+    - File names and locations
+  - Styling files
+    - global.css
+    - font files
+  - File storage
+  - Edge functions
+  - Webhooks
+  - File management
+  - Payments
+  - Subscriptions
