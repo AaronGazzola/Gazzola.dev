@@ -4,49 +4,73 @@
 import * as SwitchPrimitives from "@radix-ui/react-switch";
 import * as React from "react";
 
+import { useThemeStore } from "@/app/layout.stores";
 import { cn } from "@/lib/tailwind.utils";
 
 const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
->(({ className, ...props }, ref) => (
-  <div
-    className={cn(
-      "bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 h-5 w-9 relative ",
-      className
-    )}
-    style={{
-      borderRadius: "1.25rem",
-    }}
-  >
-    <SwitchPrimitives.Root
-      className={cn(
-        "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-500 data-[state=checked]:via-purple-500 data-[state=checked]:to-green-500 data-[state=unchecked]:bg-background absolute inset-[1px]"
-      )}
+>(({ className, checked, ...props }, ref) => {
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+  const getBackgroundStyle = () => {
+    if (gradientEnabled) {
+      return {
+        background: `linear-gradient(to right, ${gradientColors.join(", ")})`,
+      };
+    }
+    return {
+      background: singleColor,
+    };
+  };
+  return (
+    <div
+      className={cn("h-5 w-9 relative", className)}
       style={{
         borderRadius: "1.25rem",
+        ...getBackgroundStyle(),
       }}
-      {...props}
-      ref={ref}
     >
-      <SwitchPrimitives.Thumb
+      <SwitchPrimitives.Root
         className={cn(
-          "data-[state=unchecked]:bg-gradient-to-r data-[state=unchecked]:from-blue-500 data-[state=unchecked]:via-purple-500 data-[state=unchecked]:to-green-500 data-[state=checked]:bg-black h-4 w-4 relative transform transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0",
-          className
+          "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=unchecked]:bg-background absolute inset-[1px]"
         )}
         style={{
-          borderRadius: "100%",
+          borderRadius: "1.25rem",
+          background: checked
+            ? gradientEnabled
+              ? `linear-gradient(to right, ${gradientColors.join(", ")})`
+              : singleColor
+            : undefined,
         }}
+        checked={checked}
+        {...props}
+        ref={ref}
       >
-        <div
+        <SwitchPrimitives.Thumb
           className={cn(
-            "pointer-events-none block rounded-full bg-background shadow-lg ring-0 absolute inset-[1px]"
+            "data-[state=checked]:bg-black h-4 w-4 relative transform transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0",
+            className
           )}
-        />
-      </SwitchPrimitives.Thumb>
-    </SwitchPrimitives.Root>
-  </div>
-));
+          style={{
+            borderRadius: "100%",
+            background: !checked
+              ? gradientEnabled
+                ? `linear-gradient(to right, ${gradientColors.join(", ")})`
+                : singleColor
+              : undefined,
+          }}
+        >
+          <div
+            className={cn(
+              "pointer-events-none block rounded-full bg-background shadow-lg ring-0 absolute inset-[1px]"
+            )}
+          />
+        </SwitchPrimitives.Thumb>
+      </SwitchPrimitives.Root>
+    </div>
+  );
+});
 Switch.displayName = SwitchPrimitives.Root.displayName;
 
 export { Switch };

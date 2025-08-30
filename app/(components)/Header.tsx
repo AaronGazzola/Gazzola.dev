@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import configuration from "@/configuration";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
-import { ArrowRight, Clock, Loader2 } from "lucide-react";
+import { ArrowRight, Clock, Loader2, Palette } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiYoutube } from "react-icons/si";
 import { ScrollParallax } from "react-just-parallax";
 import { useYouTubeSubscriberCount } from "./Header.hooks";
 import { JobSuccessIcon, TopRatedIcon } from "./SVG";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import ThemeControlPanel from "./ThemeControlPanel";
 
 const Header = () => {
   const { data: subscriberData, isLoading } = useYouTubeSubscriberCount();
@@ -49,15 +51,24 @@ const Header = () => {
           </div>
         </Button>
       </div>
-      <Link
-        href={configuration.paths.about}
-        className="absolute top-6 right-6 z-30"
-      >
-        <Button variant="outline" className=" text-gray-300  font-bold">
-          About
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </Link>
+      <div className="absolute top-6 right-6 z-30 flex gap-2">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon" className="text-gray-300">
+              <Palette className="w-4 h-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="p-0">
+            <ThemeControlPanel />
+          </PopoverContent>
+        </Popover>
+        <Link href={configuration.paths.about}>
+          <Button variant="outline" className=" text-gray-300  font-bold">
+            About
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </Link>
+      </div>
       <div className="px-5 sm:px-10">
         <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
           AARON GAZZOLA

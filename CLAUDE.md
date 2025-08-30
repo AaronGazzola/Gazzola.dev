@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # File Organization and Naming Conventions
 
-- Types and store files alongside anscenstor files
+- Types and stores files alongside anscenstor files
 - Actions and hooks files alongside descendent files
 
 ## Hook, action, store and type patterns
@@ -47,7 +47,7 @@ export interface SignInData {
 }
 ```
 
-### Store file example:
+### Stores file example:
 
 ```typescript
 import { create } from "zustand";
@@ -115,7 +115,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import { Toast } from "@/app/(components)/Toast";
-import { useAppStore } from "@/app/layout.store";
+import { useAppStore } from "@/app/layout.stores";
 import { SignInData } from "@/app/layout.types";
 import { signIn } from "@/lib/auth-client";
 import { CypressDataAttributes } from "@/types/cypress.types";

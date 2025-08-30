@@ -21,7 +21,12 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 ## Active tasks
 
-- [ ] Add a theme control panel to set the colors for the app
+- [ ] Catch all nested navigation route
+- [ ] Add a theme control panel
+  - [ ] Colors
+  - [ ] number, density, size of stars
+  - [ ] Chat can choose the theme
+  - [ ] Make header collapsible
 - [ ] Sidebar route navigation
 - [ ] Create a theme selection UX
 - [ ] fix Header responsive design

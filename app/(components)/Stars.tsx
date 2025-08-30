@@ -5,16 +5,15 @@ import { useMemo } from "react";
 import { ScrollParallax } from "react-just-parallax";
 import { useBreakpoints } from "../(hooks)/use-media-query";
 import useIsMounted from "../(hooks)/useIsMounted";
+import { useThemeStore } from "../layout.stores";
 
-const generateStars = (count: number) => {
+const generateStars = (count: number, colors: string[], sizeMultiplier: number) => {
   return [...new Array(count)].map(() => ({
     x: `${Math.random() * 100}%`,
     y: `${Math.random() * 100}%`,
-    size: `${Math.random() * 8}px`,
+    size: `${Math.random() * sizeMultiplier}px`,
     opacity: Math.random() * 0.6 + 0.1,
-    color: ["#3B4CCA", "#7B6BFF", "#A3B3FF", "#D7E1FF", "#A600FF", "#2ae5fa"][
-      Math.floor(Math.random() * 6)
-    ],
+    color: colors[Math.floor(Math.random() * colors.length)],
   }));
 };
 
@@ -29,14 +28,34 @@ const Stars = ({
 }) => {
   const isMounted = useIsMounted();
   const { isMd, isLg } = useBreakpoints();
+  const { starNumber, starSize, starColors, starsEnabled } = useThemeStore();
+
+  const calculateStarCount = (baseCount: number, percentage: number): number => {
+    const low = baseCount * 0.25;
+    const high = baseCount * 0.75;
+    return Math.round(low + (percentage / 100) * (high - low));
+  };
+
+  const calculateSizeMultiplier = (percentage: number): number => {
+    return 4 + (percentage / 100) * 156;
+  };
 
   const stars = useMemo(() => {
-    if (!isMd) return generateStars(smStars);
-    if (isMd && !isLg) return generateStars(mdStars);
-    return generateStars(lgStars);
-  }, [isMd, smStars, isLg, mdStars, lgStars]);
+    const sizeMultiplier = calculateSizeMultiplier(starSize);
+    
+    if (!isMd) {
+      const count = calculateStarCount(smStars, starNumber);
+      return generateStars(count, starColors, sizeMultiplier);
+    }
+    if (isMd && !isLg) {
+      const count = calculateStarCount(mdStars, starNumber);
+      return generateStars(count, starColors, sizeMultiplier);
+    }
+    const count = calculateStarCount(lgStars, starNumber);
+    return generateStars(count, starColors, sizeMultiplier);
+  }, [isMd, isLg, starNumber, starSize, starColors, smStars, mdStars, lgStars]);
 
-  if (!isMounted) return <></>;
+  if (!isMounted || !starsEnabled) return <></>;
 
   return (
     <div className="fixed inset-0 -z-20 overflow-hidden">

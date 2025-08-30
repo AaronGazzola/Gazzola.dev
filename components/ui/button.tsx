@@ -4,6 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/tailwind.utils";
+import { useThemeStore } from "@/app/layout.stores";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[0.375rem] text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -47,17 +48,30 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const Comp = asChild ? Slot : "button";
+    const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+    const getBackgroundStyle = () => {
+      if (gradientEnabled) {
+        return {
+          background: `linear-gradient(to right, ${gradientColors.join(", ")})`,
+        };
+      }
+      return {
+        background: singleColor,
+      };
+    };
 
     if (variant === "outline" || (variant === "ghost" && isActive))
       return (
         <div className="relative">
           <div
             className={cn(
-              "group bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 absolute -z-10",
+              "group absolute -z-10",
               isActive ? "inset-0" : "-inset-[1px]"
             )}
             style={{
               borderRadius: "0.375rem",
+              ...getBackgroundStyle(),
             }}
           />
           <Comp
