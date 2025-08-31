@@ -1,4 +1,5 @@
 "use client";
+import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -24,10 +25,9 @@ import {
   ChevronDown,
   ChevronRight,
   Database,
-  File,
   Map,
   Menu,
-  Monitor,
+  MonitorStop,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -41,7 +41,7 @@ interface NavigationItem {
 }
 
 const navigationData: Record<string, NavigationItem[]> = {
-  "/": [
+  "/roadmap": [
     {
       name: "planning",
       type: "directory",
@@ -251,33 +251,94 @@ const navigationData: Record<string, NavigationItem[]> = {
 interface TreeItemProps {
   item: NavigationItem;
   level: number;
-  showFileIcons?: boolean;
   expandedItems: Set<string>;
   onToggleExpansion: (itemPath: string) => void;
   parentPath?: string;
+  basePath?: string;
+  rootIcon?: React.ComponentType<{
+    className?: string;
+    style?: React.CSSProperties;
+  }>;
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({
   item,
   level,
-  showFileIcons,
   expandedItems,
   onToggleExpansion,
   parentPath = "",
+  basePath = "",
+  rootIcon: RootIcon,
 }) => {
+  const pathname = usePathname();
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const itemPath = parentPath ? `${parentPath}/${item.name}` : item.name;
   const isOpen = expandedItems.has(itemPath);
 
+  const generateSlug = (name: string) => {
+    return name.toLowerCase().replace(/\s+/g, "-");
+  };
+
+  const buildLinkPath = () => {
+    if (!basePath) return "#";
+    const pathSegments = itemPath.split("/").map(generateSlug);
+    return `${basePath}/${pathSegments.join("/")}`;
+  };
+
+  const isItemActive =
+    pathname === buildLinkPath() || pathname.startsWith(buildLinkPath() + "/");
+  const gradientId = `gradient-sidebar-${itemPath.replace(/[^a-zA-Z0-9]/g, "-")}`;
+
   if (item.type === "file") {
     return (
-      <Button
-        variant="ghost"
-        className="w-full justify-start text-white hover:bg-gray-800 h-8 px-2"
-        style={{ paddingLeft: `${(level + 1) * 12 + 8}px` }}
-      >
-        {showFileIcons && <File className="h-3 w-3 mr-2" />}
-        {item.name}
-      </Button>
+      <Link href={buildLinkPath()}>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-white hover:bg-gray-800 h-8 px-2"
+          style={{ paddingLeft: `${(level + 1) * 12 + 8}px` }}
+        >
+          {isItemActive && RootIcon && (
+            <div className="relative">
+              <svg
+                className="absolute inset-0 h-3 w-3"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <defs>
+                  <linearGradient
+                    id={gradientId}
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    {gradientEnabled ? (
+                      gradientColors.map((color, colorIndex) => (
+                        <stop
+                          key={colorIndex}
+                          offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                          stopColor={color}
+                        />
+                      ))
+                    ) : (
+                      <stop offset="0%" stopColor={singleColor} />
+                    )}
+                  </linearGradient>
+                </defs>
+              </svg>
+              <RootIcon
+                className="h-4 w-4"
+                style={{
+                  stroke: `url(#${gradientId})`,
+                  fill: "none",
+                  strokeWidth: 2,
+                }}
+              />
+            </div>
+          )}
+          <div className="flex items-center">{item.name}</div>
+        </Button>
+      </Link>
     );
   }
 
@@ -303,10 +364,11 @@ const TreeItem: React.FC<TreeItemProps> = ({
             key={index}
             item={child}
             level={level + 1}
-            showFileIcons={showFileIcons}
             expandedItems={expandedItems}
             onToggleExpansion={onToggleExpansion}
             parentPath={itemPath}
+            basePath={basePath}
+            rootIcon={RootIcon}
           />
         ))}
       </CollapsibleContent>
@@ -320,7 +382,7 @@ const Sidebar = () => {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const isActive = (href: string) => {
-    return pathname === href;
+    return pathname === href || pathname.startsWith(href + "/");
   };
 
   const handleToggleExpansion = (itemPath: string) => {
@@ -413,7 +475,7 @@ const Sidebar = () => {
               )}
               isActive={isActive(configuration.paths.UI)}
             >
-              <Monitor className="h-4 w-4" />
+              <MonitorStop className="h-4 w-4" />
               UI
             </Button>
           </Link>
@@ -448,20 +510,42 @@ const Sidebar = () => {
         </div>
         <div className="pb-4 flex-grow flex flex-col relative">
           <div className=" border-gray-700 pt-4 border-t absolute inset-0 overflow-auto">
-            {navigationData[pathname] && (
-              <div className="space-y-1">
-                {navigationData[pathname].map((item, index) => (
-                  <TreeItem
-                    key={index}
-                    item={item}
-                    level={0}
-                    showFileIcons={pathname === "/"}
-                    expandedItems={expandedItems}
-                    onToggleExpansion={handleToggleExpansion}
-                  />
-                ))}
-              </div>
-            )}
+            {Object.entries(navigationData).map(([basePath, data]) => {
+              const shouldShowNavigation =
+                pathname === basePath || pathname.startsWith(basePath + "/");
+              if (!shouldShowNavigation) return null;
+
+              const getRootIcon = (path: string) => {
+                switch (path) {
+                  case "/roadmap":
+                    return Map;
+                  case "/ui":
+                    return MonitorStop;
+                  case "/ux":
+                    return Users;
+                  case "/db":
+                    return Database;
+                  default:
+                    return undefined;
+                }
+              };
+
+              return (
+                <div key={basePath} className="space-y-1">
+                  {data.map((item, index) => (
+                    <TreeItem
+                      key={index}
+                      item={item}
+                      level={0}
+                      expandedItems={expandedItems}
+                      onToggleExpansion={handleToggleExpansion}
+                      basePath={basePath}
+                      rootIcon={getRootIcon(basePath)}
+                    />
+                  ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -518,7 +602,7 @@ const Sidebar = () => {
                 variant="ghost"
                 isActive={isActive(configuration.paths.UI)}
               >
-                <Monitor className="h-4 w-4" />
+                <MonitorStop className="h-4 w-4" />
                 <span className="sr-only">UI</span>
               </Button>
             </Link>
@@ -571,7 +655,10 @@ const Sidebar = () => {
             <p>DB</p>
           </TooltipContent>
         </Tooltip>
-        {navigationData[pathname] && (
+        {Object.keys(navigationData).some(
+          (basePath) =>
+            pathname === basePath || pathname.startsWith(basePath + "/")
+        ) && (
           <div className="border-t border-gray-700 pt-2">
             <div className="w-full h-2 bg-gray-800 rounded-full mx-2">
               <div className="h-full w-3/4 bg-gray-600 rounded-full"></div>

@@ -25,6 +25,7 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 ## Active tasks
 
+- [ ] Look into claude code with vibe kanban
 - [ ] Catch all nested navigation route
 - [ ] Sidebar route navigation
 - [ ] Create a theme selection UX

@@ -12,7 +12,7 @@ const configuration = {
   // Routes
   paths: {
     about: "/about",
-    roadmap: "/",
+    roadmap: "/roadmap",
     UI: "/ui",
     UX: "/ux",
     DB: "/db",
