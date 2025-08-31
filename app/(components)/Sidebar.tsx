@@ -27,7 +27,7 @@ import {
   Database,
   Map,
   Menu,
-  MonitorStop,
+  Monitor,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -476,7 +476,7 @@ const Sidebar = () => {
                 )}
                 isActive={isActive(configuration.paths.UI)}
               >
-                <MonitorStop className="h-4 w-4" />
+                <Monitor className="h-4 w-4" />
                 UI
               </Button>
             </Link>
@@ -522,7 +522,7 @@ const Sidebar = () => {
                   case "/roadmap":
                     return Map;
                   case "/ui":
-                    return MonitorStop;
+                    return Monitor;
                   case "/ux":
                     return Users;
                   case "/db":
@@ -604,7 +604,7 @@ const Sidebar = () => {
                 variant="ghost"
                 isActive={isActive(configuration.paths.UI)}
               >
-                <MonitorStop className="h-4 w-4" />
+                <Monitor className="h-4 w-4" />
                 <span className="sr-only">UI</span>
               </Button>
             </Link>

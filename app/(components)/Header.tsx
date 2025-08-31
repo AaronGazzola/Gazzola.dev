@@ -126,12 +126,12 @@ const Header = () => {
       <div className="px-5 sm:px-10">
         {!headerIsCollapsed && (
           <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
-            AARON GAZZOLA
+            AZ GAZZOLA
           </h1>
         )}
-        <h2 className="text-lg font-medium">Full Stack Vibe Lead</h2>
+        <h2 className="text-lg font-medium">Full Stack Web App Development</h2>
         <h3 className="text-lg font-medium">
-          Typescript + Next.js + PostgresSQL
+          Typescript + Next.js + PostgresSQL + Supabase
         </h3>
       </div>
       {!headerIsCollapsed && (
