@@ -1,17 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ColorPicker } from "@/components/ui/color-picker";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/tailwind.utils";
-import { Moon, Sun } from "lucide-react";
 import { useThemeStore } from "../layout.stores";
 
 const ThemeControlPanel = () => {
   const {
-    isDarkMode,
-    setIsDarkMode,
     gradientEnabled,
     setGradientEnabled,
     starsEnabled,
@@ -26,6 +23,7 @@ const ThemeControlPanel = () => {
     setStarSize,
     starNumber,
     setStarNumber,
+    reset,
   } = useThemeStore();
 
   const handleGradientColorChange = (index: number, color: string) => {
@@ -42,10 +40,10 @@ const ThemeControlPanel = () => {
 
   return (
     <div className="w-80 p-4 space-y-6">
-      <div className="flex items-center justify-around">
-        <Sun className="w-5 h-5 text-yellow-500" />
-        <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} />
-        <Moon className="w-5 h-5 text-blue-500" />
+      <div className="flex justify-end">
+        <Button variant="outline" onClick={reset}>
+          Reset
+        </Button>
       </div>
 
       <div className="space-y-4">
@@ -58,44 +56,19 @@ const ThemeControlPanel = () => {
         </div>
 
         {!gradientEnabled ? (
-          <Button
-            variant="outline"
-            className="w-full h-12 p-1"
-            style={{ backgroundColor: singleColor }}
-            onClick={() =>
-              document.getElementById("single-color-picker")?.click()
-            }
-          >
-            <Input
-              id="single-color-picker"
-              type="color"
-              value={singleColor}
-              onChange={(e) => setSingleColor(e.target.value)}
-              className="opacity-0 w-0 h-0 absolute"
-            />
-          </Button>
+          <ColorPicker
+            value={singleColor}
+            onChange={setSingleColor}
+            className="w-full"
+          />
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {gradientColors.map((color, index) => (
-              <Button
+              <ColorPicker
                 key={index}
-                variant="outline"
-                className="h-12 w-full p-1"
-                style={{ backgroundColor: color }}
-                onClick={() =>
-                  document.getElementById(`gradient-color-${index}`)?.click()
-                }
-              >
-                <Input
-                  id={`gradient-color-${index}`}
-                  type="color"
-                  value={color}
-                  onChange={(e) =>
-                    handleGradientColorChange(index, e.target.value)
-                  }
-                  className="opacity-0 w-0 h-0 absolute"
-                />
-              </Button>
+                value={color}
+                onChange={(newColor) => handleGradientColorChange(index, newColor)}
+              />
             ))}
           </div>
         )}
@@ -109,28 +82,13 @@ const ThemeControlPanel = () => {
 
         <div className="grid grid-cols-3 gap-2">
           {starColors.map((color, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className={cn(
-                "h-10 w-full p-1",
-                !starsEnabled && "opacity-50 cursor-not-allowed"
-              )}
-              style={{ backgroundColor: color }}
-              disabled={!starsEnabled}
-              onClick={() =>
-                starsEnabled &&
-                document.getElementById(`star-color-${index}`)?.click()
-              }
-            >
-              <Input
-                id={`star-color-${index}`}
-                type="color"
+            <div key={index} className={cn(!starsEnabled && "opacity-50")}>
+              <ColorPicker
                 value={color}
-                onChange={(e) => handleStarColorChange(index, e.target.value)}
-                className="opacity-0 w-0 h-0 absolute"
+                onChange={(newColor) => starsEnabled && handleStarColorChange(index, newColor)}
+                className={cn(!starsEnabled && "pointer-events-none")}
               />
-            </Button>
+            </div>
           ))}
         </div>
 

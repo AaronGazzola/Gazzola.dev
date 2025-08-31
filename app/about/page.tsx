@@ -5,6 +5,7 @@ import configuration from "@/configuration";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { motion } from "framer-motion";
+import { useThemeStore } from "@/app/layout.stores";
 import {
   Activity,
   ArrowDown,
@@ -16,6 +17,7 @@ import {
   Database,
   GraduationCap,
   MonitorStop,
+  Palette,
   Plus,
   Rocket,
   Users,
@@ -30,6 +32,8 @@ import {
   SiSupabase,
   SiTailwindcss,
 } from "react-icons/si";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import ThemeControlPanel from "@/app/(components)/ThemeControlPanel";
 
 // Custom SVG Icons
 const BetterAuthIcon = ({ className }: { className?: string }) => (
@@ -151,7 +155,34 @@ const techStack = [
   },
 ];
 
-const page = () => {
+const Page = () => {
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+  const getGradientStyle = () => {
+    if (gradientEnabled) {
+      return `linear-gradient(to right, ${gradientColors.join(", ")})`;
+    }
+    return singleColor;
+  };
+
+  const getTextGradientClasses = () => {
+    if (gradientEnabled) {
+      return "bg-gradient-to-r bg-clip-text text-transparent font-black";
+    }
+    return "font-black";
+  };
+
+  const getTextGradientStyle = () => {
+    if (gradientEnabled) {
+      return {
+        backgroundImage: `linear-gradient(to right, ${gradientColors.join(", ")})`,
+      };
+    }
+    return {
+      color: singleColor,
+    };
+  };
+
   return (
     <>
       <div className={clsx(sourceCodePro.className, "min-h-screen relative")}>
@@ -171,6 +202,24 @@ const page = () => {
               Back
             </Button>
           </Link>
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="absolute top-6 right-6 z-30"
+        >
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-gray-300">
+                <Palette className="w-4 h-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="p-0">
+              <ThemeControlPanel />
+            </PopoverContent>
+          </Popover>
         </motion.div>
         {/* Header Section */}
         <motion.div
@@ -242,9 +291,17 @@ const page = () => {
                             x2="100%"
                             y2="100%"
                           >
-                            <stop offset="0%" stopColor="#3b82f6" />
-                            <stop offset="50%" stopColor="#a855f7" />
-                            <stop offset="100%" stopColor="#10b981" />
+                            {gradientEnabled ? (
+                              gradientColors.map((color, colorIndex) => (
+                                <stop 
+                                  key={colorIndex}
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
+                                  stopColor={color} 
+                                />
+                              ))
+                            ) : (
+                              <stop offset="0%" stopColor={singleColor} />
+                            )}
                           </linearGradient>
                         </defs>
                         <step.icon
@@ -312,9 +369,17 @@ const page = () => {
                             x2="100%"
                             y2="100%"
                           >
-                            <stop offset="0%" stopColor="#3b82f6" />
-                            <stop offset="50%" stopColor="#a855f7" />
-                            <stop offset="100%" stopColor="#10b981" />
+                            {gradientEnabled ? (
+                              gradientColors.map((color, colorIndex) => (
+                                <stop 
+                                  key={colorIndex}
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
+                                  stopColor={color} 
+                                />
+                              ))
+                            ) : (
+                              <stop offset="0%" stopColor={singleColor} />
+                            )}
                           </linearGradient>
                         </defs>
                         <step.icon
@@ -369,11 +434,11 @@ const page = () => {
           >
             <h2 className="text-2xl sm:text-3xl mb-4">
               Full stack{" "}
-              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-black">
+              <span className={getTextGradientClasses()} style={getTextGradientStyle()}>
                 Typescript
               </span>{" "}
               +{" "}
-              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent font-black">
+              <span className={getTextGradientClasses()} style={getTextGradientStyle()}>
                 SQL
               </span>{" "}
               development
@@ -496,7 +561,7 @@ const page = () => {
                   >
                     {/* Number */}
                     <div className="mb-2 relative">
-                      <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent block">
+                      <span className={`text-2xl sm:text-3xl font-bold block ${getTextGradientClasses()}`} style={getTextGradientStyle()}>
                         {index + 1}
                       </span>
                     </div>
@@ -516,9 +581,17 @@ const page = () => {
                             x2="100%"
                             y2="100%"
                           >
-                            <stop offset="0%" stopColor="#3b82f6" />
-                            <stop offset="50%" stopColor="#a855f7" />
-                            <stop offset="100%" stopColor="#10b981" />
+                            {gradientEnabled ? (
+                              gradientColors.map((color, colorIndex) => (
+                                <stop 
+                                  key={colorIndex}
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
+                                  stopColor={color} 
+                                />
+                              ))
+                            ) : (
+                              <stop offset="0%" stopColor={singleColor} />
+                            )}
                           </linearGradient>
                         </defs>
                         <step.icon
@@ -574,7 +647,7 @@ const page = () => {
                     <div className="flex flex-col items-center">
                       {/* Number */}
                       <div className="mb-2 relative">
-                        <span className="text-[40px] font-light bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 bg-clip-text text-transparent block">
+                        <span className={`text-[40px] font-light block ${getTextGradientClasses()}`} style={getTextGradientStyle()}>
                           {index + 1}
                         </span>
                       </div>
@@ -594,9 +667,17 @@ const page = () => {
                               x2="100%"
                               y2="100%"
                             >
-                              <stop offset="0%" stopColor="#3b82f6" />
-                              <stop offset="50%" stopColor="#a855f7" />
-                              <stop offset="100%" stopColor="#10b981" />
+                              {gradientEnabled ? (
+                                gradientColors.map((color, colorIndex) => (
+                                  <stop 
+                                    key={colorIndex}
+                                    offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
+                                    stopColor={color} 
+                                  />
+                                ))
+                              ) : (
+                                <stop offset="0%" stopColor={singleColor} />
+                              )}
                             </linearGradient>
                           </defs>
                           <step.icon
@@ -664,4 +745,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

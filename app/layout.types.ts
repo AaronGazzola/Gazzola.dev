@@ -1,6 +1,4 @@
 export interface ThemeState {
-  isDarkMode: boolean;
-  setIsDarkMode: (isDarkMode: boolean) => void;
   gradientEnabled: boolean;
   setGradientEnabled: (gradientEnabled: boolean) => void;
   starsEnabled: boolean;
@@ -15,5 +13,7 @@ export interface ThemeState {
   setStarSize: (starSize: number) => void;
   starNumber: number;
   setStarNumber: (starNumber: number) => void;
+  headerIsCollapsed: boolean;
+  setHeaderIsCollapsed: (headerIsCollapsed: boolean) => void;
   reset: () => void;
 }

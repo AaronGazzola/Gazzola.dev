@@ -3,21 +3,27 @@ import { persist } from "zustand/middleware";
 import { ThemeState } from "./layout.types";
 
 const initialState = {
-  isDarkMode: false,
-  gradientEnabled: false,
-  starsEnabled: false,
+  gradientEnabled: true,
+  starsEnabled: true,
   singleColor: "#3b82f6",
   gradientColors: ["#3b82f6", "#8b5cf6", "#10b981"],
-  starColors: ["#ffffff", "#ffff00", "#ff6b6b", "#4ecdc4", "#45b7d1", "#f9ca24"],
-  starSize: 50,
-  starNumber: 75,
+  starColors: [
+    "#3b82f6",
+    "#5a92f7",
+    "#8b5cf6",
+    "#a478f7",
+    "#10b981",
+    "#2bc891",
+  ],
+  starSize: 5,
+  starNumber: 15,
+  headerIsCollapsed: false,
 };
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       ...initialState,
-      setIsDarkMode: (isDarkMode) => set({ isDarkMode }),
       setGradientEnabled: (gradientEnabled) => set({ gradientEnabled }),
       setStarsEnabled: (starsEnabled) => set({ starsEnabled }),
       setSingleColor: (singleColor) => set({ singleColor }),
@@ -25,6 +31,7 @@ export const useThemeStore = create<ThemeState>()(
       setStarColors: (starColors) => set({ starColors }),
       setStarSize: (starSize) => set({ starSize }),
       setStarNumber: (starNumber) => set({ starNumber }),
+      setHeaderIsCollapsed: (headerIsCollapsed) => set({ headerIsCollapsed }),
       reset: () => set(initialState),
     }),
     {

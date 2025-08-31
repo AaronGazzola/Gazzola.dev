@@ -1,45 +1,71 @@
 //-| File path: app/(components)/Header.tsx
 "use client";
+import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import configuration from "@/configuration";
+import { cn } from "@/lib/tailwind.utils";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
-import { ArrowRight, Clock, Loader2, Palette } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Loader2,
+  Palette,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiYoutube } from "react-icons/si";
 import { ScrollParallax } from "react-just-parallax";
 import { useYouTubeSubscriberCount } from "./Header.hooks";
 import { JobSuccessIcon, TopRatedIcon } from "./SVG";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import ThemeControlPanel from "./ThemeControlPanel";
 
 const Header = () => {
   const { data: subscriberData, isLoading } = useYouTubeSubscriberCount();
+  const { headerIsCollapsed, setHeaderIsCollapsed } = useThemeStore();
 
   return (
     <div
       className={clsx(
         sourceCodePro.className,
-        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center h-screen"
+        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center",
+        headerIsCollapsed ? "h-auto py-6" : "h-screen"
       )}
     >
       <div className="absolute top-6 left-6 z-30">
         <Button
           variant="outline"
-          className="text-gray-300 flex flex-col items-center p-3 min-w-[100px] h-auto font-bold group"
+          className={cn(
+            "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group",
+            headerIsCollapsed ? "p-2" : "p-3"
+          )}
           onClick={() =>
             window.open("https://www.youtube.com/@AzAnything/streams", "_blank")
           }
         >
-          <SiYoutube
-            style={{ width: 30, height: 30 }}
-            className="w-36 h-36 stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none"
-          />
-          <div className="flex items-center gap-1 mb-1">
-            <span className="">@AzAnything</span>
+          <div className="relative h-3 w-8 mt-2 ">
+            <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
           </div>
-          <div className="flex items-center gap-1">
+          {!headerIsCollapsed && (
+            <div className="flex items-center gap-1">
+              <span className="">@AzAnything</span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-1 -mt-2">
             <span className="">Anyones:</span>
             <span className="">
               {isLoading ? (
@@ -52,16 +78,44 @@ const Header = () => {
         </Button>
       </div>
       <div className="absolute top-6 right-6 z-30 flex gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-gray-300">
-              <Palette className="w-4 h-4" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent align="end" className="p-0">
-            <ThemeControlPanel />
-          </PopoverContent>
-        </Popover>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-300"
+                onClick={() => setHeaderIsCollapsed(!headerIsCollapsed)}
+              >
+                {headerIsCollapsed ? (
+                  <ChevronUp className="w-5 h-5" />
+                ) : (
+                  <ChevronDown className="w-5 h-5" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Collapse header</p>
+            </TooltipContent>
+          </Tooltip>
+          <Popover>
+            <Tooltip>
+              <PopoverTrigger asChild>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-gray-300">
+                    <Palette className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="p-0">
+                <ThemeControlPanel />
+              </PopoverContent>
+              <TooltipContent>
+                <p>Theme options</p>
+              </TooltipContent>
+            </Tooltip>
+          </Popover>
+        </TooltipProvider>
         <Link href={configuration.paths.about}>
           <Button variant="outline" className=" text-gray-300  font-bold">
             About
@@ -70,49 +124,59 @@ const Header = () => {
         </Link>
       </div>
       <div className="px-5 sm:px-10">
-        <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
-          AARON GAZZOLA
-        </h1>
+        {!headerIsCollapsed && (
+          <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
+            AARON GAZZOLA
+          </h1>
+        )}
         <h2 className="text-lg font-medium">Full Stack Vibe Lead</h2>
         <h3 className="text-lg font-medium">
           Typescript + Next.js + PostgresSQL
         </h3>
       </div>
-      <ScrollParallax isAbsolutelyPositioned>
-        <div className="absolute top-[60%] sm:top-[40%] left-2/3 z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
-          <TopRatedIcon
-            className="w-7 h-7 mr-1.5"
-            path1ClassName="fill-gray-900 stroke-white"
-            path2ClassName="stroke-white"
-          />
-          Top Rated Plus
-        </div>
-      </ScrollParallax>
-      <ScrollParallax isAbsolutelyPositioned>
-        <div className="absolute top-[45%] sm:top-[30%] left-1/3 z-20 bg-black p-2 rounded-lg shadow shadow-gray-500 -translate-x-1/2 whitespace-nowrap space-x-10 flex items-center">
-          <div className="border rounded-full p-0.5 mr-1.5 bg-gray-900">
-            <JobSuccessIcon className="w-5 h-5" path1ClassName="stroke-white" />
-          </div>
-          100% Job Success
-        </div>
-      </ScrollParallax>
-      <ScrollParallax isAbsolutelyPositioned>
-        <div className="absolute top-[80%] sm:top-[70%] left-[40%] z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
-          <Clock className="w-7 h-7 mr-1.5 stroke-[1px]" />6 years of experience
-        </div>
-      </ScrollParallax>
+      {!headerIsCollapsed && (
+        <>
+          <ScrollParallax isAbsolutelyPositioned>
+            <div className="absolute top-[60%] sm:top-[40%] left-2/3 z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
+              <TopRatedIcon
+                className="w-7 h-7 mr-1.5"
+                path1ClassName="fill-gray-900 stroke-white"
+                path2ClassName="stroke-white"
+              />
+              Top Rated Plus
+            </div>
+          </ScrollParallax>
+          <ScrollParallax isAbsolutelyPositioned>
+            <div className="absolute top-[45%] sm:top-[30%] left-1/3 z-20 bg-black p-2 rounded-lg shadow shadow-gray-500 -translate-x-1/2 whitespace-nowrap space-x-10 flex items-center">
+              <div className="border rounded-full p-0.5 mr-1.5 bg-gray-900">
+                <JobSuccessIcon
+                  className="w-5 h-5"
+                  path1ClassName="stroke-white"
+                />
+              </div>
+              100% Job Success
+            </div>
+          </ScrollParallax>
+          <ScrollParallax isAbsolutelyPositioned>
+            <div className="absolute top-[80%] sm:top-[70%] left-[40%] z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
+              <Clock className="w-7 h-7 mr-1.5 stroke-[1px]" />6 years of
+              experience
+            </div>
+          </ScrollParallax>
 
-      <Image
-        className="object-cover w-[150%] max-w-[1000px] mt-12"
-        src="/Space suit bust portrait.png"
-        alt="Space suit with programming code reflected in visor"
-        width={2912}
-        height={1664}
-        quality={100}
-        placeholder="blur"
-        blurDataURL={headerImagePreloader}
-      />
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-24 z-10 bottom-vignette w-full max-w-[1000px]" />
+          <Image
+            className="object-cover w-[150%] max-w-[1000px] mt-12"
+            src="/Space suit bust portrait.png"
+            alt="Space suit with programming code reflected in visor"
+            width={2912}
+            height={1664}
+            quality={100}
+            placeholder="blur"
+            blurDataURL={headerImagePreloader}
+          />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-24 z-10 bottom-vignette w-full max-w-[1000px]" />
+        </>
+      )}
     </div>
   );
 };
