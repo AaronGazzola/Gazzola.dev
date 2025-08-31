@@ -1,9 +1,10 @@
 interface PageProps {
-  params: { segments: string[] };
+  params: Promise<{ segments: string[] }>;
 }
 
-const page = ({ params }: PageProps) => {
-  const lastSegment = params.segments[params.segments.length - 1];
+const page = async ({ params }: PageProps) => {
+  const { segments } = await params;
+  const lastSegment = segments[segments.length - 1];
   return <div>{lastSegment}</div>;
 };
 

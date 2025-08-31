@@ -428,7 +428,7 @@ const Sidebar = () => {
 
   const expandedContent = (
     <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
-      <SidebarHeader className="pt-8 p-6 border-b border-gray-700">
+      <SidebarHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
@@ -450,66 +450,68 @@ const Sidebar = () => {
           </div>
         </div>
       </SidebarHeader>
-      <div className="p-4 space-y-4 flex-grow flex flex-col">
-        <Link href={configuration.paths.roadmap}>
-          <Button
-            variant="outline"
-            className={cn(
-              "w-full text-white",
-              !isActive(configuration.paths.roadmap) && "hover:bg-gray-800"
-            )}
-            isActive={isActive(configuration.paths.roadmap)}
-          >
-            <Map className="h-4 w-4 mr-2" />
-            Roadmap
-          </Button>
-        </Link>
-        <div className="flex gap-2">
-          <Link href={configuration.paths.UI} className="flex-1">
+      <div className="p-0 space-y-4 flex-grow flex flex-col">
+        <div className="w-full p-3 pb-0 flex flex-col gap-3">
+          <Link href={configuration.paths.roadmap}>
             <Button
               variant="outline"
               className={cn(
-                "w-full text-white border-gray-600 gap-1.5 px-3",
-                !isActive(configuration.paths.UI) &&
-                  "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                "w-full text-white",
+                !isActive(configuration.paths.roadmap) && "hover:bg-gray-800"
               )}
-              isActive={isActive(configuration.paths.UI)}
+              isActive={isActive(configuration.paths.roadmap)}
             >
-              <MonitorStop className="h-4 w-4" />
-              UI
+              <Map className="h-4 w-4 mr-2" />
+              Roadmap
             </Button>
           </Link>
-          <Link href={configuration.paths.UX} className="flex-1">
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full text-white border-gray-600 gap-1.5 px-3",
-                !isActive(configuration.paths.UX) &&
-                  "hover:bg-gray-800 hover:text-white hover:border-gray-500"
-              )}
-              isActive={isActive(configuration.paths.UX)}
-            >
-              <Users className="h-4 w-4" />
-              UX
-            </Button>
-          </Link>
-          <Link href={configuration.paths.DB} className="flex-1">
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full text-white border-gray-600 gap-1.5 px-3",
-                !isActive(configuration.paths.DB) &&
-                  "hover:bg-gray-800 hover:text-white hover:border-gray-500"
-              )}
-              isActive={isActive(configuration.paths.DB)}
-            >
-              <Database className="h-4 w-4" />
-              DB
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href={configuration.paths.UI} className="flex-1">
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full text-white border-gray-600 gap-1.5 px-3",
+                  !isActive(configuration.paths.UI) &&
+                    "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                )}
+                isActive={isActive(configuration.paths.UI)}
+              >
+                <MonitorStop className="h-4 w-4" />
+                UI
+              </Button>
+            </Link>
+            <Link href={configuration.paths.UX} className="flex-1">
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full text-white border-gray-600 gap-1.5 px-3",
+                  !isActive(configuration.paths.UX) &&
+                    "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                )}
+                isActive={isActive(configuration.paths.UX)}
+              >
+                <Users className="h-4 w-4" />
+                UX
+              </Button>
+            </Link>
+            <Link href={configuration.paths.DB} className="flex-1">
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full text-white border-gray-600 gap-1.5 px-3",
+                  !isActive(configuration.paths.DB) &&
+                    "hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                )}
+                isActive={isActive(configuration.paths.DB)}
+              >
+                <Database className="h-4 w-4" />
+                DB
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="pb-4 flex-grow flex flex-col relative">
-          <div className=" border-gray-700 pt-4 border-t absolute inset-0 overflow-auto">
+        <div className="flex-grow flex flex-col relative">
+          <div className="absolute inset-0 overflow-auto px-3">
             {Object.entries(navigationData).map(([basePath, data]) => {
               const shouldShowNavigation =
                 pathname === basePath || pathname.startsWith(basePath + "/");
