@@ -49,23 +49,28 @@ const Header = () => {
         <Button
           variant="outline"
           className={cn(
-            "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group",
-            headerIsCollapsed ? "p-2" : "p-3"
+            "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group p-3"
           )}
           onClick={() =>
             window.open("https://www.youtube.com/@AzAnything/streams", "_blank")
           }
         >
-          <div className="relative h-3 w-8 mt-2 ">
-            <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
-          </div>
           {!headerIsCollapsed && (
-            <div className="flex items-center gap-1">
-              <span className="">@AzAnything</span>
+            <div className="relative h-3 w-8 mt-2 ">
+              <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
             </div>
           )}
 
-          <div className="flex items-center gap-1 -mt-2">
+          <div className="flex items-center gap-1">
+            <span className="">@AzAnything</span>
+          </div>
+
+          <div
+            className={cn(
+              "flex items-center gap-1",
+              headerIsCollapsed ? "-mt-3" : "-mt-2"
+            )}
+          >
             <span className="">Anyones:</span>
             <span className="">
               {isLoading ? (
