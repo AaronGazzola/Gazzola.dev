@@ -18,14 +18,14 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - [x] Update Next steps section of about page
   - [x] Make flow diagram with icons
   - [x] Add step 4 - download roadmap
+- [x] Add a theme control panel
+  - [x] Colors
+  - [x] number, density, size of stars
+  - [x] Make header collapsible
 
 ## Active tasks
 
 - [ ] Catch all nested navigation route
-- [-] Add a theme control panel
-  - [x] Colors
-  - [x] number, density, size of stars
-  - [ ] Make header collapsible
 - [ ] Sidebar route navigation
 - [ ] Create a theme selection UX
 - [ ] fix Header responsive design

@@ -15,7 +15,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "shadow-sm text-gray-300 bg-black font-semibold flex items-center gap-4  px-10 py-8 hover:text-accent-foreground",
+          "shadow-sm text-gray-300 bg-black hover:bg-black/80 font-semibold flex items-center gap-4  px-10 py-8 hover:text-accent-foreground ",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground bg-black",
