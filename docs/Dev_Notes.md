@@ -22,13 +22,13 @@ A platform for generating full-stack web app roadmaps. Design and download compr
   - [x] Colors
   - [x] number, density, size of stars
   - [x] Make header collapsible
+- [x] Catch all nested navigation route
+- [x] Sidebar route navigation
+- [x] Create a theme selection UX
 
 ## Active tasks
 
-- [ ] Look into claude code with vibe kanban
-- [ ] Catch all nested navigation route
-- [ ] Sidebar route navigation
-- [ ] Create a theme selection UX
+- [ ] Add prompt configuration file to roadmap pages
 - [ ] fix Header responsive design
 - [ ] Add a download button that will open an optional donate dialog to download the roadmap and optionally donate.
 
