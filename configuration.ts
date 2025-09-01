@@ -35,9 +35,9 @@ export const navigationData: Record<string, NavigationItem[]> = {
   ],
   "/ui": [
     {
-      name: "navigation",
+      name: "playgrounds",
       type: "segment",
-      children: [{ name: "Breadcrumb", type: "page" }],
+      children: [{ name: "authentication", type: "page" }],
     },
   ],
   "/ux": [
