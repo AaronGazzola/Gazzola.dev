@@ -42,7 +42,7 @@ const Header = () => {
       className={clsx(
         sourceCodePro.className,
         "flex flex-col justify-between w-full items-center relative overflow-hidden text-center",
-        headerIsCollapsed ? "h-auto py-6" : "h-screen"
+        headerIsCollapsed ? "h-[100px] py-6" : "h-screen"
       )}
     >
       <div className="absolute top-6 left-6 z-30">

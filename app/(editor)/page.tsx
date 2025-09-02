@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 const page = () => {
-  redirect("/roadmap");
+  redirect("/welcome");
 };
 
 export default page;
