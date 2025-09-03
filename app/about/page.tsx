@@ -1,11 +1,17 @@
 "use client";
 import Stars from "@/app/(components)/Stars";
+import ThemeControlPanel from "@/app/(components)/ThemeControlPanel";
+import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import configuration from "@/configuration";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { useThemeStore } from "@/app/layout.stores";
 import {
   Activity,
   ArrowDown,
@@ -32,8 +38,6 @@ import {
   SiSupabase,
   SiTailwindcss,
 } from "react-icons/si";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import ThemeControlPanel from "@/app/(components)/ThemeControlPanel";
 
 // Custom SVG Icons
 const BetterAuthIcon = ({ className }: { className?: string }) => (
@@ -193,7 +197,7 @@ const Page = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="absolute top-6 left-6 z-30"
         >
-          <Link href={configuration.paths.roadmap}>
+          <Link href={configuration.paths.home}>
             <Button
               variant="outline"
               className="border border-transparent   text-gray-300 hover:bg-gray-800 font-semibold flex items-center gap-2 hover:border-gray-400"
@@ -203,7 +207,7 @@ const Page = () => {
             </Button>
           </Link>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -293,10 +297,10 @@ const Page = () => {
                           >
                             {gradientEnabled ? (
                               gradientColors.map((color, colorIndex) => (
-                                <stop 
+                                <stop
                                   key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
-                                  stopColor={color} 
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                  stopColor={color}
                                 />
                               ))
                             ) : (
@@ -371,10 +375,10 @@ const Page = () => {
                           >
                             {gradientEnabled ? (
                               gradientColors.map((color, colorIndex) => (
-                                <stop 
+                                <stop
                                   key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
-                                  stopColor={color} 
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                  stopColor={color}
                                 />
                               ))
                             ) : (
@@ -434,11 +438,17 @@ const Page = () => {
           >
             <h2 className="text-2xl sm:text-3xl mb-4">
               Full stack{" "}
-              <span className={getTextGradientClasses()} style={getTextGradientStyle()}>
+              <span
+                className={getTextGradientClasses()}
+                style={getTextGradientStyle()}
+              >
                 Typescript
               </span>{" "}
               +{" "}
-              <span className={getTextGradientClasses()} style={getTextGradientStyle()}>
+              <span
+                className={getTextGradientClasses()}
+                style={getTextGradientStyle()}
+              >
                 SQL
               </span>{" "}
               development
@@ -561,7 +571,10 @@ const Page = () => {
                   >
                     {/* Number */}
                     <div className="mb-2 relative">
-                      <span className={`text-2xl sm:text-3xl font-bold block ${getTextGradientClasses()}`} style={getTextGradientStyle()}>
+                      <span
+                        className={`text-2xl sm:text-3xl font-bold block ${getTextGradientClasses()}`}
+                        style={getTextGradientStyle()}
+                      >
                         {index + 1}
                       </span>
                     </div>
@@ -583,10 +596,10 @@ const Page = () => {
                           >
                             {gradientEnabled ? (
                               gradientColors.map((color, colorIndex) => (
-                                <stop 
+                                <stop
                                   key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
-                                  stopColor={color} 
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                  stopColor={color}
                                 />
                               ))
                             ) : (
@@ -647,7 +660,10 @@ const Page = () => {
                     <div className="flex flex-col items-center">
                       {/* Number */}
                       <div className="mb-2 relative">
-                        <span className={`text-[40px] font-light block ${getTextGradientClasses()}`} style={getTextGradientStyle()}>
+                        <span
+                          className={`text-[40px] font-light block ${getTextGradientClasses()}`}
+                          style={getTextGradientStyle()}
+                        >
                           {index + 1}
                         </span>
                       </div>
@@ -669,10 +685,10 @@ const Page = () => {
                             >
                               {gradientEnabled ? (
                                 gradientColors.map((color, colorIndex) => (
-                                  <stop 
+                                  <stop
                                     key={colorIndex}
-                                    offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`} 
-                                    stopColor={color} 
+                                    offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                    stopColor={color}
                                   />
                                 ))
                               ) : (
@@ -730,7 +746,7 @@ const Page = () => {
           viewport={{ once: true }}
           className="flex justify-center py-20 px-5 sm:px-10"
         >
-          <Link href={configuration.paths.roadmap}>
+          <Link href={configuration.paths.home}>
             <Button
               variant="outline"
               className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"

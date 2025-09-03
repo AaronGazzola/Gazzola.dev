@@ -10,14 +10,32 @@ const configuration = {
   appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   paths: {
     about: "/about",
+    home: "/",
   },
 };
 
 export const navigationData: NavigationItem[] = [
   {
-    name: "prompt",
+    name: "welcome",
+    type: "page",
+  },
+  {
+    name: "installation",
     type: "segment",
-    children: [{ name: "prompt.config", type: "page" }],
+    children: [
+      {
+        name: "IDE",
+        type: "page",
+      },
+      {
+        name: "Next.js",
+        type: "page",
+      },
+      {
+        name: "Essentials",
+        type: "page",
+      },
+    ],
   },
 ];
 

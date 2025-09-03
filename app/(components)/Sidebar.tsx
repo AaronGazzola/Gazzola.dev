@@ -11,19 +11,12 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { NavigationItem, navigationData } from "@/configuration";
 import { DataCyAttributes } from "@/types/cypress.types";
-import {
-  ChevronDown,
-  ChevronRight,
-  Menu,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
 
 interface TreeItemProps {
   item: NavigationItem;
@@ -206,13 +199,6 @@ const Sidebar = () => {
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
       </SidebarHeader>
-      <div className="p-2">
-        <div className="border-t border-gray-700 pt-2">
-          <div className="w-full h-2 bg-gray-800 rounded-full mx-2">
-            <div className="h-full w-3/4 bg-gray-600 rounded-full"></div>
-          </div>
-        </div>
-      </div>
     </SidebarContent>
   );
 
