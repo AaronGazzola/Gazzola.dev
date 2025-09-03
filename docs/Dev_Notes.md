@@ -25,10 +25,11 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - [x] Catch all nested navigation route
 - [x] Sidebar route navigation
 - [x] Create a theme selection UX
+- [x] Add theme configuration page
 
 ## Active tasks
 
-- [ ] Add prompt configuration file to roadmap pages
+- [ ] Add rich text editor to display markdown instruction files.
 - [ ] fix Header responsive design
 - [ ] Add a download button that will open an optional donate dialog to download the roadmap and optionally donate.
 

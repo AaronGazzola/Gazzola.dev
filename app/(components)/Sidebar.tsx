@@ -24,7 +24,6 @@ interface TreeItemProps {
   expandedItems: Set<string>;
   onToggleExpansion: (itemPath: string) => void;
   parentPath?: string;
-  basePath?: string;
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({
@@ -33,7 +32,6 @@ const TreeItem: React.FC<TreeItemProps> = ({
   expandedItems,
   onToggleExpansion,
   parentPath = "",
-  basePath = "",
 }) => {
   const itemPath = parentPath ? `${parentPath}/${item.name}` : item.name;
   const isOpen = expandedItems.has(itemPath);
@@ -43,9 +41,8 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   const buildLinkPath = () => {
-    if (!basePath) return "#";
     const pathSegments = itemPath.split("/").map(generateSlug);
-    return `${basePath}/${pathSegments.join("/")}`;
+    return `/${pathSegments.join("/")}`;
   };
 
   if (item.type === "page") {
@@ -87,7 +84,6 @@ const TreeItem: React.FC<TreeItemProps> = ({
             expandedItems={expandedItems}
             onToggleExpansion={onToggleExpansion}
             parentPath={itemPath}
-            basePath={basePath}
           />
         ))}
       </CollapsibleContent>
@@ -175,7 +171,6 @@ const Sidebar = () => {
                   level={0}
                   expandedItems={expandedItems}
                   onToggleExpansion={handleToggleExpansion}
-                  basePath="/roadmap"
                 />
               ))}
             </div>
