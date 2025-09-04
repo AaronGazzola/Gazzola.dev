@@ -14,29 +14,4 @@ const configuration = {
   },
 };
 
-export const navigationData: NavigationItem[] = [
-  {
-    name: "welcome",
-    type: "page",
-  },
-  {
-    name: "installation",
-    type: "segment",
-    children: [
-      {
-        name: "IDE",
-        type: "page",
-      },
-      {
-        name: "Next.js",
-        type: "page",
-      },
-      {
-        name: "Essentials",
-        type: "page",
-      },
-    ],
-  },
-];
-
 export default configuration;

@@ -1,4 +1,5 @@
 "use client";
+import { navigationData } from "@/app/(editor)/layout.data";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -12,7 +13,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { NavigationItem, navigationData } from "@/configuration";
+import { NavigationItem } from "@/configuration";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import Link from "next/link";

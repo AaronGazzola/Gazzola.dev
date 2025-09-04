@@ -20,86 +20,52 @@ import { EditorState } from "lexical";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
-import { DocumentKey } from "../layout.types";
+import { ContentPath, urlToContentPathMapping } from "../layout.data";
 
 const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
-  const {
-    welcome,
-    installationIDE,
-    installationNextjs,
-    installationEssentials,
-    setWelcome,
-    setInstallationIDE,
-    setInstallationNextjs,
-    setInstallationEssentials,
-  } = useEditorStore();
+  const { getContent, setContent } = useEditorStore();
 
   useEffect(() => {
     useEditorStore.persist.rehydrate();
     setMounted(true);
   }, []);
 
-  const documentKey = useMemo((): DocumentKey => {
+  const contentPath = useMemo((): ContentPath => {
     const segments = params.segments as string[] | undefined;
 
     if (!segments || segments.length === 0) {
       return "welcome";
     }
 
-    if (segments[0] === "installation") {
-      if (segments[1] === "ide") return "installationIDE";
-      if (segments[1] === "next.js") return "installationNextjs";
-      if (segments[1] === "Essentials") return "installationEssentials";
+    const firstSegment = segments[0].toLowerCase();
+    
+    if (segments.length === 1) {
+      const mapping = (urlToContentPathMapping as any)[firstSegment];
+      if (typeof mapping === 'string') {
+        return mapping as ContentPath;
+      }
+    } else if (segments.length === 2) {
+      const secondSegment = segments[1].toLowerCase();
+      const mapping = (urlToContentPathMapping as any)[firstSegment];
+      if (typeof mapping === 'object' && mapping[secondSegment]) {
+        return mapping[secondSegment] as ContentPath;
+      }
     }
 
     return "welcome";
   }, [params]);
 
   const currentContent = useMemo(() => {
-    switch (documentKey) {
-      case "welcome":
-        return welcome;
-      case "installationIDE":
-        return installationIDE;
-      case "installationNextjs":
-        return installationNextjs;
-      case "installationEssentials":
-        return installationEssentials;
-      default:
-        return welcome;
-    }
-  }, [
-    documentKey,
-    welcome,
-    installationIDE,
-    installationNextjs,
-    installationEssentials,
-  ]);
+    return getContent(contentPath);
+  }, [contentPath, getContent]);
 
   const setCurrentContent = useCallback(
     (content: string) => {
-      switch (documentKey) {
-        case "welcome":
-          return setWelcome(content);
-        case "installationIDE":
-          return setInstallationIDE(content);
-        case "installationNextjs":
-          return setInstallationNextjs(content);
-        case "installationEssentials":
-          return setInstallationEssentials(content);
-        default:
-          return setWelcome(content);
-      }
+      setContent(contentPath, content);
     },
-    [
-      documentKey,
-      setWelcome,
-      setInstallationIDE,
-      setInstallationNextjs,
-      setInstallationEssentials,
-    ]
+    [contentPath, setContent]
   );
 
   const initialConfig = useMemo(() => {
