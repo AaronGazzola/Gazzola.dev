@@ -1,14 +1,6 @@
 import { NavigationItem } from "@/configuration";
 
 export const markdownContent = {
-  anothertest: {
-    boo: `# scared ya
-`
-  },
-  batman: {
-    clipanna: `# You're saying it wrong
-`
-  },
   installation: {
     essentials: `# Essential Tools and Libraries
 
@@ -152,8 +144,8 @@ const nextConfig = {
 module.exports = nextConfig
 \`\`\``
   },
-  test: {
-    hello: `# Hello
+  new: {
+    hello: `# Hello MD Explains!
 `
   },
   welcome: `# Welcome
@@ -176,26 +168,6 @@ Start editing to see the live preview functionality.`
 
 export const navigationData: NavigationItem[] = [
   {
-    "name": "anotherTest",
-    "type": "segment",
-    "children": [
-      {
-        "name": "boo",
-        "type": "page"
-      }
-    ]
-  },
-  {
-    "name": "batman",
-    "type": "segment",
-    "children": [
-      {
-        "name": "clipanna",
-        "type": "page"
-      }
-    ]
-  },
-  {
     "name": "installation",
     "type": "segment",
     "children": [
@@ -214,7 +186,7 @@ export const navigationData: NavigationItem[] = [
     ]
   },
   {
-    "name": "test",
+    "name": "new",
     "type": "segment",
     "children": [
       {
@@ -230,58 +202,46 @@ export const navigationData: NavigationItem[] = [
 ];
 
 export const urlToContentPathMapping = {
-  "anothertest": {
-    "boo": "anothertest.boo"
-  },
-  "batman": {
-    "clipanna": "batman.clipanna"
-  },
   "installation": {
     "essentials": "installation.essentials",
     "ide": "installation.ide",
     "next.js": "installation.nextjs"
   },
-  "test": {
-    "hello": "test.hello"
+  "new": {
+    "hello": "new.hello"
   },
   "welcome": "welcome"
 };
 
 export interface EditorState {
-  anothertest: {
-    boo: string;
-  };
-  batman: {
-    clipanna: string;
-  };
   installation: {
     essentials: string;
     ide: string;
     nextjs: string;
   };
-  test: {
+  new: {
     hello: string;
   };
   welcome: string;
+  darkMode: boolean;
+  refreshKey: number;
   setContent: (path: ContentPath, content: string) => void;
   getContent: (path: ContentPath) => string;
+  setDarkMode: (darkMode: boolean) => void;
   reset: () => void;
+  forceRefresh: () => void;
 }
 
 export type ContentPath =
-  | "anothertest.boo"
-  | "batman.clipanna"
   | "installation.essentials"
   | "installation.ide"
   | "installation.nextjs"
-  | "test.hello"
+  | "new.hello"
   | "welcome";
 
 export type DocumentKey =
-  | "anothertestBoo"
-  | "batmanClipanna"
   | "installationEssentials"
   | "installationIde"
   | "installationNextjs"
-  | "testHello"
+  | "newHello"
   | "welcome";

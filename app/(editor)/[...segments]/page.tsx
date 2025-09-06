@@ -21,11 +21,12 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
 import { ContentPath, urlToContentPathMapping } from "../layout.data";
+import { Toolbar } from "../components/Toolbar";
 
 const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
-  const { getContent, setContent } = useEditorStore();
+  const { getContent, setContent, darkMode, refreshKey } = useEditorStore();
 
   useEffect(() => {
     useEditorStore.persist.rehydrate();
@@ -107,16 +108,24 @@ const Page = () => {
         text: {
           bold: "font-bold",
           italic: "italic",
-          code: "bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono text-sm",
+          code: darkMode 
+            ? "bg-gray-800 text-gray-200 px-1 py-0.5 rounded font-mono text-sm"
+            : "bg-gray-100 text-gray-800 px-1 py-0.5 rounded font-mono text-sm",
         },
-        code: "bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm overflow-x-auto block mb-4",
+        code: darkMode
+          ? "bg-gray-800 text-gray-200 p-4 rounded-lg font-mono text-sm overflow-x-auto block mb-4"
+          : "bg-gray-100 text-gray-800 p-4 rounded-lg font-mono text-sm overflow-x-auto block mb-4",
         list: {
           ul: "list-disc pl-6 mb-4",
           ol: "list-decimal pl-6 mb-4",
           listitem: "mb-1",
         },
-        link: "text-blue-600 hover:text-blue-800 underline",
-        quote: "border-l-4 border-gray-300 pl-4 italic mb-4",
+        link: darkMode
+          ? "text-blue-400 hover:text-blue-300 underline"
+          : "text-blue-600 hover:text-blue-800 underline",
+        quote: darkMode
+          ? "border-l-4 border-gray-600 pl-4 italic mb-4"
+          : "border-l-4 border-gray-300 pl-4 italic mb-4",
       },
       onError: (error: Error) => {
         console.log(JSON.stringify({ error: error.message }, null, 0));
@@ -124,7 +133,7 @@ const Page = () => {
       editorState: () =>
         $convertFromMarkdownString(currentContent, TRANSFORMERS),
     };
-  }, [mounted, currentContent]);
+  }, [mounted, currentContent, darkMode]);
 
   const onChange = useCallback(
     (editorState: EditorState) => {
@@ -145,18 +154,19 @@ const Page = () => {
   }
 
   return (
-    <div className="w-full h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <LexicalComposer initialConfig={initialConfig}>
+    <div className={`w-full h-full ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+      <LexicalComposer key={refreshKey} initialConfig={initialConfig}>
         <div className="relative h-full flex flex-col">
+          <Toolbar currentContentPath={contentPath} />
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className="w-full h-full p-6 outline-none resize-none overflow-auto"
-                style={{ minHeight: "100%" }}
+                className="w-full flex-1 p-6 outline-none resize-none overflow-auto"
+                style={{ minHeight: "0" }}
               />
             }
             placeholder={
-              <div className="absolute top-6 left-6 text-gray-400 pointer-events-none">
+              <div className={`absolute top-6 left-6 pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                 Start typing your markdown content...
               </div>
             }

@@ -3,7 +3,11 @@ import { persist } from "zustand/middleware";
 
 import { ContentPath, EditorState, markdownContent } from "./layout.data";
 
-const initialState = markdownContent;
+const initialState = {
+  ...markdownContent,
+  darkMode: false,
+  refreshKey: 0,
+};
 
 export const useEditorStore = create<EditorState>()(
   persist(
@@ -38,7 +42,19 @@ export const useEditorStore = create<EditorState>()(
 
         return "";
       },
-      reset: () => set(initialState),
+      setDarkMode: (darkMode: boolean) => set({ darkMode }),
+      reset: () => {
+        const currentState = get();
+        set({
+          ...initialState,
+          darkMode: currentState.darkMode, // Preserve the current theme
+          refreshKey: currentState.refreshKey + 1, // Increment to force refresh
+        });
+      },
+      forceRefresh: () => {
+        const currentState = get();
+        set({ refreshKey: currentState.refreshKey + 1 });
+      },
     }),
     {
       name: "editor-store",
