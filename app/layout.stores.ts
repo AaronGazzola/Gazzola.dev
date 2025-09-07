@@ -17,7 +17,7 @@ const initialState = {
   ],
   starSize: 5,
   starNumber: 15,
-  headerIsCollapsed: false,
+  headerIsCollapsed: true,
 };
 
 export const useThemeStore = create<ThemeState>()(
