@@ -1,5 +1,11 @@
 "use client";
-import { navigationData } from "@/app/(editor)/layout.data";
+import {
+  ContentPath,
+  navigationData,
+  urlToContentPathMapping,
+} from "@/app/(editor)/layout.data";
+import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -14,10 +20,12 @@ import {
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NavigationItem } from "@/configuration";
+import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 interface TreeItemProps {
   item: NavigationItem;
@@ -25,6 +33,8 @@ interface TreeItemProps {
   expandedItems: Set<string>;
   onToggleExpansion: (itemPath: string) => void;
   parentPath?: string;
+  isPageVisited: (path: ContentPath) => boolean;
+  currentPath: ContentPath;
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({
@@ -33,9 +43,24 @@ const TreeItem: React.FC<TreeItemProps> = ({
   expandedItems,
   onToggleExpansion,
   parentPath = "",
+  isPageVisited,
+  currentPath,
 }) => {
   const itemPath = parentPath ? `${parentPath}/${item.name}` : item.name;
   const isOpen = expandedItems.has(itemPath);
+
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+  const getBackgroundStyle = () => {
+    if (gradientEnabled) {
+      return {
+        background: `linear-gradient(to right, ${gradientColors.join(", ")})`,
+      };
+    }
+    return {
+      background: singleColor,
+    };
+  };
 
   const generateSlug = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, "-");
@@ -46,18 +71,62 @@ const TreeItem: React.FC<TreeItemProps> = ({
     return `/${pathSegments.join("/")}`;
   };
 
+  const getContentPath = () => {
+    if (item.type === "page") {
+      if (parentPath) {
+        const childNameLower = item.name.toLowerCase();
+        const pathSuffix =
+          childNameLower === "next.js" ? "nextjs" : childNameLower;
+        return `${parentPath}.${pathSuffix}`;
+      } else {
+        return item.name;
+      }
+    }
+    return null;
+  };
+
   if (item.type === "page") {
+    const contentPath = getContentPath();
+    if (!contentPath || !isPageVisited(contentPath as ContentPath)) {
+      return null;
+    }
+
+    const isActive = currentPath === contentPath;
+
     return (
       <Link href={buildLinkPath()}>
         <Button
           variant="ghost"
-          className="w-full justify-start text-white hover:bg-gray-800 h-8 px-2"
-          style={{ paddingLeft: `${(level + 1) * 12 + 8}px` }}
+          className={cn(
+            "w-full justify-start text-white hover:bg-gray-800 h-8 px-2 relative"
+          )}
+          style={{
+            paddingLeft: `${(level + 1) * 12 + 8}px`,
+          }}
         >
+          <div
+            className="absolute opacity-30 inset-0 rounded"
+            style={isActive ? getBackgroundStyle() : undefined}
+          ></div>
           <div className="flex items-center">{item.name}</div>
         </Button>
       </Link>
     );
+  }
+
+  const hasVisitedChildren = item.children?.some((child) => {
+    if (child.type === "page") {
+      const childNameLower = child.name.toLowerCase();
+      const pathSuffix =
+        childNameLower === "next.js" ? "nextjs" : childNameLower;
+      const childContentPath = `${item.name}.${pathSuffix}` as ContentPath;
+      return isPageVisited(childContentPath);
+    }
+    return false;
+  });
+
+  if (!hasVisitedChildren) {
+    return null;
   }
 
   return (
@@ -85,6 +154,8 @@ const TreeItem: React.FC<TreeItemProps> = ({
             expandedItems={expandedItems}
             onToggleExpansion={onToggleExpansion}
             parentPath={itemPath}
+            isPageVisited={isPageVisited}
+            currentPath={currentPath}
           />
         ))}
       </CollapsibleContent>
@@ -94,7 +165,49 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
 const Sidebar = () => {
   const { toggleSidebar } = useSidebar();
+  const { isPageVisited } = useEditorStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const params = useParams();
+
+  const currentPath = useMemo((): ContentPath => {
+    const segments = params.segments as string[] | undefined;
+
+    if (!segments || segments.length === 0) {
+      return "welcome";
+    }
+
+    const firstSegment = segments[0].toLowerCase();
+
+    if (segments.length === 1) {
+      const mapping = (urlToContentPathMapping as any)[firstSegment];
+      if (typeof mapping === "string") {
+        return mapping as ContentPath;
+      }
+    } else if (segments.length === 2) {
+      const secondSegment = segments[1].toLowerCase();
+      const mapping = (urlToContentPathMapping as any)[firstSegment];
+      if (typeof mapping === "object" && mapping[secondSegment]) {
+        return mapping[secondSegment] as ContentPath;
+      }
+    }
+
+    return "welcome";
+  }, [params]);
+
+  useEffect(() => {
+    const expandParentSegments = () => {
+      if (currentPath.includes(".")) {
+        const parentSegment = currentPath.split(".")[0];
+        setExpandedItems((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(parentSegment);
+          return newSet;
+        });
+      }
+    };
+
+    expandParentSegments();
+  }, [currentPath]);
 
   const handleToggleExpansion = (itemPath: string) => {
     setExpandedItems((prev) => {
@@ -172,6 +285,8 @@ const Sidebar = () => {
                   level={0}
                   expandedItems={expandedItems}
                   onToggleExpansion={handleToggleExpansion}
+                  isPageVisited={isPageVisited}
+                  currentPath={currentPath}
                 />
               ))}
             </div>

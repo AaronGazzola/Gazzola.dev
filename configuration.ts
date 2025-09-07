@@ -2,6 +2,7 @@ export interface NavigationItem {
   name: string;
   type: "page" | "segment";
   children?: NavigationItem[];
+  order?: number;
 }
 
 //-| File path: configuration.ts

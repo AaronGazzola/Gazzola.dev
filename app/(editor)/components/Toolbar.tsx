@@ -10,12 +10,29 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import configuration from "@/configuration";
 import { cn } from "@/lib/tailwind.utils";
-import { ChevronLeft, ChevronRight, ListRestart, Moon, RotateCcw, Sun } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ListRestart,
+  Moon,
+  RotateCcw,
+  Sun,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ContentPath, markdownContent, navigationData } from "../layout.data";
+import {
+  ContentPath,
+  getAllPagesInOrder,
+  markdownContent,
+} from "../layout.data";
 import { useEditorStore } from "../layout.stores";
 
 interface ToolbarProps {
@@ -30,19 +47,28 @@ interface IconButtonProps {
   darkMode: boolean;
 }
 
-const IconButton = ({ onClick, disabled = false, children, tooltip, darkMode }: IconButtonProps) => (
+const IconButton = ({
+  onClick,
+  disabled = false,
+  children,
+  tooltip,
+  darkMode,
+}: IconButtonProps) => (
   <Tooltip>
     <TooltipTrigger asChild>
       <button
         onClick={onClick}
         disabled={disabled}
+        style={{
+          borderRadius: "3px",
+        }}
         className={cn(
-          "h-8 w-8 rounded-md flex items-center justify-center transition-colors",
+          "h-8 w-8 flex items-center justify-center transition-colors",
           disabled
             ? "opacity-50 cursor-not-allowed"
             : darkMode
-            ? "hover:bg-gray-700 text-gray-300 hover:text-gray-100"
-            : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
+              ? "hover:bg-gray-700 text-gray-300 hover:text-gray-100"
+              : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
         )}
       >
         {children}
@@ -56,52 +82,37 @@ const IconButton = ({ onClick, disabled = false, children, tooltip, darkMode }: 
 
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
-  const { darkMode, setDarkMode, reset, setContent, forceRefresh } = useEditorStore();
+  const {
+    darkMode,
+    setDarkMode,
+    reset,
+    setContent,
+    forceRefresh,
+    markPageVisited,
+    getNextUnvisitedPage,
+    isPageVisited,
+  } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
 
   const allPages = useMemo(() => {
-    const pages: { path: ContentPath; url: string; title: string }[] = [];
-
-    const flattenNavigation = (items: typeof navigationData) => {
-      items.forEach((item) => {
-        if (item.type === "page") {
-          pages.push({
-            path: item.name as ContentPath,
-            url: `/${item.name}`,
-            title: item.name.charAt(0).toUpperCase() + item.name.slice(1)
-          });
-        } else if (item.type === "segment" && item.children) {
-          item.children.forEach((child) => {
-            if (child.type === "page") {
-              const childNameLower = child.name.toLowerCase();
-              const pathSuffix = childNameLower === "next.js" ? "nextjs" : childNameLower;
-              const path = `${item.name}.${pathSuffix}` as ContentPath;
-              const url = `/${item.name}/${childNameLower}`;
-              pages.push({
-                path,
-                url,
-                title: child.name
-              });
-            }
-          });
-        }
-      });
-    };
-
-    flattenNavigation(navigationData);
-    return pages;
+    return getAllPagesInOrder();
   }, []);
 
   const currentPageIndex = useMemo(() => {
     return allPages.findIndex((page) => page.path === currentContentPath);
   }, [allPages, currentContentPath]);
 
+  const nextUnvisitedPath = getNextUnvisitedPage(currentContentPath);
+  const nextPage = nextUnvisitedPath
+    ? allPages.find((p) => p.path === nextUnvisitedPath)
+    : null;
+
   const canGoBack = currentPageIndex > 0;
-  const canGoNext = currentPageIndex < allPages.length - 1;
-  
-  const prevPageTitle = canGoBack ? allPages[currentPageIndex - 1]?.title : '';
-  const nextPageTitle = canGoNext ? allPages[currentPageIndex + 1]?.title : '';
+  const canGoNext = Boolean(nextPage);
+
+  const prevPageTitle = canGoBack ? allPages[currentPageIndex - 1]?.title : "";
+  const nextPageTitle = nextPage?.title || "";
 
   const handleBack = () => {
     if (canGoBack) {
@@ -111,8 +122,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleNext = () => {
-    if (canGoNext) {
-      const nextPage = allPages[currentPageIndex + 1];
+    if (nextPage) {
+      markPageVisited(nextPage.path);
       router.push(nextPage.url);
     }
   };
@@ -133,20 +144,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleResetAll = () => {
-    reset(); // This already includes forceRefresh via refreshKey increment
+    reset();
     setResetAllDialogOpen(false);
+    router.push(configuration.paths.home);
   };
 
   const progressInfo = useMemo(() => {
     const currentStep = currentPageIndex + 1;
     const totalSteps = allPages.length;
     const progressValue = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
-    
+
     return {
       currentStep,
       totalSteps,
       progressValue,
-      currentTitle: allPages[currentPageIndex]?.title || 'Unknown'
+      currentTitle: allPages[currentPageIndex]?.title || "Unknown",
     };
   }, [allPages, currentPageIndex]);
 
@@ -158,11 +170,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="w-full">
-              <Progress value={progressInfo.progressValue} className="h-1 w-full rounded-none" />
+              <Progress
+                value={progressInfo.progressValue}
+                className="h-1 w-full rounded-none"
+              />
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{progressInfo.currentTitle} ({progressInfo.currentStep} of {progressInfo.totalSteps})</p>
+            <p>
+              {progressInfo.currentTitle} ({progressInfo.currentStep} of{" "}
+              {progressInfo.totalSteps})
+            </p>
           </TooltipContent>
         </Tooltip>
 
@@ -171,7 +189,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             <IconButton
               onClick={handleBack}
               disabled={!canGoBack}
-              tooltip={canGoBack ? `Previous: ${prevPageTitle}` : "No previous page"}
+              tooltip={
+                canGoBack ? `Previous: ${prevPageTitle}` : "No previous page"
+              }
               darkMode={darkMode}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -283,7 +303,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           <div className="flex items-center gap-2">
             <IconButton
               onClick={() => setDarkMode(!darkMode)}
-              tooltip={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              tooltip={
+                darkMode ? "Switch to light mode" : "Switch to dark mode"
+              }
               darkMode={darkMode}
             >
               {darkMode ? (
@@ -293,14 +315,31 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               )}
             </IconButton>
 
-            <IconButton
-              onClick={handleNext}
-              disabled={!canGoNext}
-              tooltip={canGoNext ? `Next: ${nextPageTitle}` : "No next page"}
-              darkMode={darkMode}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </IconButton>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleNext}
+                  disabled={!canGoNext}
+                  style={{
+                    borderRadius: "3px",
+                  }}
+                  className={cn(
+                    "px-3 py-1 flex items-center gap-2 font-medium transition-colors border",
+                    !canGoNext
+                      ? "opacity-50 cursor-not-allowed border-gray-300"
+                      : darkMode
+                        ? "border-gray-400 text-gray-200 hover:border-white hover:text-white"
+                        : "border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700"
+                  )}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{canGoNext ? `Next: ${nextPageTitle}` : "No next page"}</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>

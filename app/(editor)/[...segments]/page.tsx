@@ -16,12 +16,14 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { EditorState } from "lexical";
+import { EditorState, $createParagraphNode, $getRoot, $insertNodes } from "lexical";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
-import { ContentPath, urlToContentPathMapping } from "../layout.data";
+import { ContentPath, urlToContentPathMapping, dynamicComponents } from "../layout.data";
 import { Toolbar } from "../components/Toolbar";
+import { DynamicComponentNode, $createDynamicComponentNode } from "../components/DynamicComponentNode";
+import { DYNAMIC_COMPONENT_TRANSFORMER } from "../components/DynamicComponentTransformer";
 
 const Page = () => {
   const [mounted, setMounted] = useState(false);
@@ -69,6 +71,66 @@ const Page = () => {
     [contentPath, setContent]
   );
 
+  const createEditorStateWithDynamicComponents = useCallback((content: string, contentPath: ContentPath) => {
+    const pageComponents = dynamicComponents[contentPath] || [];
+    
+    if (pageComponents.length > 0) {
+      console.log(JSON.stringify({ 
+        info: `Processing ${pageComponents.length} dynamic components for ${contentPath}`,
+        components: pageComponents.map(c => ({ id: c.id, type: c.type, optionCount: Object.keys(c.options).length }))
+      }, null, 0));
+    }
+
+    return () => {
+      // First convert markdown to lexical nodes
+      $convertFromMarkdownString(content, TRANSFORMERS);
+      
+      // Then manually insert dynamic components
+      if (pageComponents.length > 0) {
+        const root = $getRoot();
+        const children = root.getChildren();
+        
+        // Find HTML comment patterns and replace with dynamic components
+        children.forEach((child) => {
+          if (child.getTextContent) {
+            const text = child.getTextContent();
+            const htmlCommentMatch = text.match(/<!--\s*select:options:\s*(\{[^}]+\})\s*-->/);
+            
+            if (htmlCommentMatch) {
+              try {
+                console.log(JSON.stringify({ 
+                  debug: "Found HTML comment in text node",
+                  text,
+                  match: htmlCommentMatch[0]
+                }, null, 0));
+                
+                const optionsJson = htmlCommentMatch[1];
+                const options = JSON.parse(optionsJson);
+                
+                // Find matching component from pageComponents
+                const matchingComponent = pageComponents.find(c => 
+                  JSON.stringify(c.options) === JSON.stringify(options)
+                );
+                
+                if (matchingComponent) {
+                  console.log(JSON.stringify({ 
+                    debug: "Creating dynamic component node",
+                    componentId: matchingComponent.id
+                  }, null, 0));
+                  
+                  const dynamicComponentNode = $createDynamicComponentNode(matchingComponent);
+                  child.replace(dynamicComponentNode);
+                }
+              } catch (error) {
+                console.log(JSON.stringify({ error: `Failed to process dynamic component: ${error}` }, null, 0));
+              }
+            }
+          }
+        });
+      }
+    };
+  }, []);
+
   const initialConfig = useMemo(() => {
     if (!mounted) {
       return {
@@ -79,6 +141,7 @@ const Page = () => {
           ListNode,
           ListItemNode,
           CodeNode,
+          DynamicComponentNode,
         ],
         namespace: "markdown-editor",
         theme: {},
@@ -96,6 +159,7 @@ const Page = () => {
         ListNode,
         ListItemNode,
         CodeNode,
+        DynamicComponentNode,
       ],
       namespace: "markdown-editor",
       theme: {
@@ -128,17 +192,21 @@ const Page = () => {
           : "border-l-4 border-gray-300 pl-4 italic mb-4",
       },
       onError: (error: Error) => {
-        console.log(JSON.stringify({ error: error.message }, null, 0));
+        console.log(JSON.stringify({ 
+          error: `Lexical editor error: ${error.message}`,
+          stack: error.stack,
+          contentPath,
+          componentCount: (dynamicComponents[contentPath] || []).length
+        }, null, 0));
       },
-      editorState: () =>
-        $convertFromMarkdownString(currentContent, TRANSFORMERS),
+      editorState: createEditorStateWithDynamicComponents(currentContent, contentPath),
     };
-  }, [mounted, currentContent, darkMode]);
+  }, [mounted, currentContent, darkMode, contentPath, createEditorStateWithDynamicComponents]);
 
   const onChange = useCallback(
     (editorState: EditorState) => {
       editorState.read(() => {
-        const markdown = $convertToMarkdownString(TRANSFORMERS);
+        const markdown = $convertToMarkdownString([...TRANSFORMERS, DYNAMIC_COMPONENT_TRANSFORMER]);
         setCurrentContent(markdown);
       });
     },
@@ -174,7 +242,7 @@ const Page = () => {
           />
           <OnChangePlugin onChange={onChange} />
           <HistoryPlugin />
-          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+          <MarkdownShortcutPlugin transformers={[...TRANSFORMERS, DYNAMIC_COMPONENT_TRANSFORMER]} />
         </div>
       </LexicalComposer>
     </div>

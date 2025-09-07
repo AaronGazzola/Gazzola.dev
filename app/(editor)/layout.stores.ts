@@ -1,18 +1,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { ContentPath, EditorState, markdownContent } from "./layout.data";
+import {
+  ContentPath,
+  EditorState,
+  getAllPagesInOrder,
+  markdownContent,
+} from "./layout.data";
 
-const initialState = {
-  ...markdownContent,
-  darkMode: false,
-  refreshKey: 0,
-};
+const initialState = markdownContent;
 
 export const useEditorStore = create<EditorState>()(
   persist(
     (set, get) => ({
       ...initialState,
+      darkMode: false,
+      refreshKey: 0,
+      visitedPages: ["welcome" as ContentPath],
       setContent: (path: ContentPath, content: string) => {
         set((state) => {
           const newState = { ...state };
@@ -43,12 +47,35 @@ export const useEditorStore = create<EditorState>()(
         return "";
       },
       setDarkMode: (darkMode: boolean) => set({ darkMode }),
+      markPageVisited: (path: ContentPath) => {
+        set((state) => ({
+          visitedPages: state.visitedPages.includes(path)
+            ? state.visitedPages
+            : [...state.visitedPages, path],
+        }));
+      },
+      isPageVisited: (path: ContentPath): boolean => {
+        const state = get();
+        return state.visitedPages.includes(path);
+      },
+      getNextUnvisitedPage: (currentPath: ContentPath): ContentPath | null => {
+        const allPages = getAllPagesInOrder();
+        const currentIndex = allPages.findIndex(
+          (page) => page.path === currentPath
+        );
+        if (currentIndex === -1 || currentIndex >= allPages.length - 1)
+          return null;
+
+        const nextPage = allPages[currentIndex + 1];
+        return nextPage.path;
+      },
       reset: () => {
         const currentState = get();
         set({
           ...initialState,
-          darkMode: currentState.darkMode, // Preserve the current theme
-          refreshKey: currentState.refreshKey + 1, // Increment to force refresh
+          darkMode: currentState.darkMode,
+          refreshKey: currentState.refreshKey + 1,
+          visitedPages: ["welcome" as ContentPath],
         });
       },
       forceRefresh: () => {

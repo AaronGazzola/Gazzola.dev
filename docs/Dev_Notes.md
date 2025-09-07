@@ -32,8 +32,10 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 ## Active tasks
 
-- [ ] Add a download button to download files
+- [ ] Improve progress tracking
+- [ ] Improve sidebar navigation
 - [ ] Add dynamic content to the markdown files using HTML comments
+- [ ] Add a download button to download files
 - [ ] Add donate button to download UX
 - [ ] Add donation goal tracking
 - [ ] fix Header responsive design
