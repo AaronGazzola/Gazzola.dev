@@ -233,7 +233,7 @@ const Page = () => {
           className="flex flex-col items-center text-center py-10 sm:py-20 px-5 sm:px-10"
         >
           <h1 className="text-[36px] sm:text-[48px] tracking-[1.1rem] text-center my-4 leading-[3rem] sm:leading-[3.5rem] font-light">
-            AARON GAZZOLA
+            AZ GAZZOLA
           </h1>
           <h1 className="text-2xl sm:text-3xl mb-8">Full Stack Vibe Lead</h1>
 
