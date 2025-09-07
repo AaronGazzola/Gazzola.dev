@@ -14,7 +14,7 @@ export const useEditorStore = create<EditorState>()(
   persist(
     (set, get) => ({
       ...initialState,
-      darkMode: false,
+      darkMode: true,
       refreshKey: 0,
       visitedPages: ["welcome" as ContentPath],
       setContent: (path: ContentPath, content: string) => {
