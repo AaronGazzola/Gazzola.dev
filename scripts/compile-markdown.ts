@@ -10,54 +10,14 @@ const STORE_FILE = path.join(
   "layout.stores.ts"
 );
 
-interface DynamicComponent {
-  id: string;
-  type: "select";
-  options: Record<string, string>;
-  position: number;
-}
 
 interface FileInfo {
   path: string;
   content: string;
   displayName: string;
   order?: number;
-  dynamicComponents?: DynamicComponent[];
 }
 
-function parseDynamicComponents(content: string): {
-  content: string;
-  components: DynamicComponent[];
-} {
-  const components: DynamicComponent[] = [];
-  const commentRegex = /<!--\s*select:options:\s*(\{[^}]+\})\s*-->/g;
-  let match;
-  let componentId = 0;
-
-  while ((match = commentRegex.exec(content)) !== null) {
-    try {
-      const optionsJson = match[1];
-      const options = JSON.parse(optionsJson);
-
-      components.push({
-        id: `dynamic-${componentId++}`,
-        type: "select",
-        options,
-        position: match.index,
-      });
-    } catch (error) {
-      console.log(
-        JSON.stringify(
-          { warning: `Invalid JSON in dynamic component: ${match[1]}` },
-          null,
-          0
-        )
-      );
-    }
-  }
-
-  return { content, components };
-}
 
 function escapeForJavaScript(content: string): string {
   return content
@@ -77,10 +37,62 @@ function sanitizeFileName(fileName: string): string {
   return name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 }
 
+function extractOptionsFromSection(content: string): Record<string, string> {
+  const options: Record<string, string> = {};
+  const optionRegex = /<!-- option-(\d+) -->([\s\S]*?)<!-- \/option-\1 -->/g;
+  let match;
+
+  while ((match = optionRegex.exec(content)) !== null) {
+    const optionNumber = match[1];
+    const optionContent = match[2].trim();
+    options[`option${optionNumber}`] = optionContent;
+  }
+
+  return options;
+}
+
+function processSectionFiles(): Record<string, Record<string, Record<string, string>>> {
+  const sections: Record<string, Record<string, Record<string, string>>> = {};
+
+  function walkSectionDirectory(dir: string, relativePath = ""): void {
+    const items = fs.readdirSync(dir, { withFileTypes: true });
+
+    for (const item of items) {
+      const fullPath = path.join(dir, item.name);
+      const itemRelativePath = path.join(relativePath, item.name);
+
+      if (item.isDirectory()) {
+        walkSectionDirectory(fullPath, itemRelativePath);
+      } else if (item.isFile() && item.name.includes(".section") && item.name.endsWith(".md")) {
+        const sectionMatch = item.name.match(/^(\d+)-(.+)\.section-(\d+)\.md$/);
+        if (sectionMatch) {
+          const [, , baseName, sectionNumber] = sectionMatch;
+          const sanitizedBaseName = sanitizeFileName(baseName);
+          const sectionKey = `section${sectionNumber}`;
+
+          const content = fs.readFileSync(fullPath, "utf8");
+          const options = extractOptionsFromSection(content);
+
+          if (!sections[sanitizedBaseName]) {
+            sections[sanitizedBaseName] = {};
+          }
+          sections[sanitizedBaseName][sectionKey] = options;
+
+          console.log(`Processed section file ${item.name} -> ${sanitizedBaseName}.${sectionKey} with ${Object.keys(options).length} options`);
+        }
+      }
+    }
+  }
+
+  walkSectionDirectory(MARKDOWN_DIR);
+  return sections;
+}
+
 function buildNestedStructure(): {
   structure: Record<string, any>;
   navigationData: any[];
   fileInfos: FileInfo[];
+  sections: Record<string, Record<string, Record<string, string>>>;
 } {
   const structure: Record<string, any> = {};
   const fileInfos: FileInfo[] = [];
@@ -94,7 +106,7 @@ function buildNestedStructure(): {
 
       if (item.isDirectory()) {
         walkDirectory(fullPath, itemRelativePath);
-      } else if (item.isFile() && item.name.endsWith(".md")) {
+      } else if (item.isFile() && item.name.endsWith(".md") && !item.name.includes(".section")) {
         const pathParts = itemRelativePath.split(path.sep);
         const sanitizedFileName = sanitizeFileName(pathParts.pop()!);
         const fileName = item.name.replace(/\.md$/, "");
@@ -111,8 +123,7 @@ function buildNestedStructure(): {
           current = current[dirName];
         }
 
-        const rawContent = fs.readFileSync(fullPath, "utf8");
-        const { content, components } = parseDynamicComponents(rawContent);
+        const content = fs.readFileSync(fullPath, "utf8");
         current[sanitizedFileName] = escapeForJavaScript(content);
 
         fileInfos.push({
@@ -120,7 +131,6 @@ function buildNestedStructure(): {
           content: content,
           displayName: displayName,
           order: order,
-          dynamicComponents: components.length > 0 ? components : undefined,
         });
 
         console.log(
@@ -133,8 +143,9 @@ function buildNestedStructure(): {
   walkDirectory(MARKDOWN_DIR);
 
   const navigationData = generateNavigationFromFiles(fileInfos);
+  const sections = processSectionFiles();
 
-  return { structure, navigationData, fileInfos };
+  return { structure, navigationData, fileInfos, sections };
 }
 
 function generateNavigationFromFiles(fileInfos: FileInfo[]): any[] {
@@ -202,10 +213,11 @@ function readMarkdownFiles(): {
   markdownContent: Record<string, any>;
   navigationData: any[];
   fileInfos: FileInfo[];
+  sections: Record<string, Record<string, Record<string, string>>>;
 } {
   console.log("Building nested markdown structure...");
-  const { structure, navigationData, fileInfos } = buildNestedStructure();
-  return { markdownContent: structure, navigationData, fileInfos };
+  const { structure, navigationData, fileInfos, sections } = buildNestedStructure();
+  return { markdownContent: structure, navigationData, fileInfos, sections };
 }
 
 function generateEditorStateInterface(
@@ -291,7 +303,7 @@ function generateDataFile(
   markdownContent: Record<string, any>,
   navigationData: any[],
   urlMapping: Record<string, any>,
-  fileInfos: FileInfo[]
+  sections: Record<string, Record<string, Record<string, string>>>
 ): string {
   function serializeObject(obj: any, indent = 2): string {
     const spaces = " ".repeat(indent);
@@ -306,42 +318,17 @@ function generateDataFile(
     return entries.join(",\n");
   }
 
-  const componentsMapping: Record<string, DynamicComponent[]> = {};
-  fileInfos.forEach((fileInfo) => {
-    if (fileInfo.dynamicComponents) {
-      const pathParts = fileInfo.path.split(path.sep);
-      const fileName = pathParts.pop()!.replace(/\.md$/, "");
-
-      if (pathParts.length === 0) {
-        const sanitizedName = sanitizeFileName(fileName);
-        componentsMapping[sanitizedName] = fileInfo.dynamicComponents;
-      } else {
-        const dirName = pathParts[0];
-        const sanitizedDirName = sanitizeFileName(dirName);
-        const sanitizedFileName = sanitizeFileName(fileName);
-        const contentPath = `${sanitizedDirName}.${sanitizedFileName}`;
-        componentsMapping[contentPath] = fileInfo.dynamicComponents;
-      }
-    }
-  });
 
   const serializedContent = serializeObject(markdownContent);
   const serializedNavigation = JSON.stringify(navigationData, null, 2);
   const serializedUrlMapping = JSON.stringify(urlMapping, null, 2);
-  const serializedComponents = JSON.stringify(componentsMapping, null, 2);
+  const serializedSections = JSON.stringify(sections, null, 2);
 
   const editorStateInterface = generateEditorStateInterface(markdownContent);
   const contentPaths = generateContentPaths(markdownContent);
   const documentKeys = generateDocumentKeys(markdownContent);
 
   return `import { NavigationItem } from "@/configuration";
-
-export interface DynamicComponent {
-  id: string;
-  type: 'select';
-  options: Record<string, string>;
-  position: number;
-}
 
 export const markdownContent = {
 ${serializedContent}
@@ -351,10 +338,11 @@ export const navigationData: NavigationItem[] = ${serializedNavigation};
 
 export const urlToContentPathMapping = ${serializedUrlMapping};
 
-export const dynamicComponents: Record<string, DynamicComponent[]> = ${serializedComponents};
+export const sections = ${serializedSections};
 
 export interface EditorState {
 ${editorStateInterface}
+  sections: Record<string, Record<string, Record<string, string>>>;
   darkMode: boolean;
   refreshKey: number;
   visitedPages: ContentPath[];
@@ -426,24 +414,33 @@ function updateStoreFile(): void {
   if (!updatedContent.includes("import { markdownContent }")) {
     updatedContent = updatedContent.replace(
       'import { EditorState } from "./layout.types";',
-      'import { EditorState } from "./layout.types";\nimport { markdownContent } from "./layout.data";'
+      'import { EditorState } from "./layout.types";\nimport { markdownContent, sections } from "./layout.data";'
+    );
+  } else if (!updatedContent.includes("sections")) {
+    updatedContent = updatedContent.replace(
+      'import { markdownContent } from "./layout.data";',
+      'import { markdownContent, sections } from "./layout.data";'
     );
   }
 
-  if (!updatedContent.includes("const initialState = markdownContent;")) {
-    const initialStateRegex = /const initialState = \{[\s\S]*?\};/;
+  if (!updatedContent.includes("const initialState = { ...markdownContent, sections };")) {
+    const initialStateRegex = /const initialState = markdownContent;/;
 
     if (initialStateRegex.test(updatedContent)) {
       updatedContent = updatedContent.replace(
         initialStateRegex,
-        "const initialState = markdownContent;"
+        "const initialState = { ...markdownContent, sections };"
       );
-    } else if (
-      updatedContent.includes("const initialState = markdownContent;")
-    ) {
-      console.log("Store file already uses markdownContent");
     } else {
-      throw new Error("Could not find initialState in store file");
+      const fallbackRegex = /const initialState = \{[\s\S]*?\};/;
+      if (fallbackRegex.test(updatedContent)) {
+        updatedContent = updatedContent.replace(
+          fallbackRegex,
+          "const initialState = { ...markdownContent, sections };"
+        );
+      } else {
+        console.log("Store file already uses correct initial state");
+      }
     }
   }
 
@@ -456,13 +453,13 @@ function main(): void {
   console.log("Compiling markdown files to store initial state...");
 
   try {
-    const { markdownContent, navigationData, fileInfos } = readMarkdownFiles();
+    const { markdownContent, navigationData, fileInfos, sections } = readMarkdownFiles();
     const urlMapping = generateUrlMapping(fileInfos);
     const dataFileContent = generateDataFile(
       markdownContent,
       navigationData,
       urlMapping,
-      fileInfos
+      sections
     );
     createDataFile(dataFileContent);
     updateStoreFile();

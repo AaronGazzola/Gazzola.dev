@@ -29,47 +29,17 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - [x] Add rich text editor to display markdown instruction files.
 - [x] Refactor away from hard coded documents
 - [x] Add a toolbar with progress tracking and reset functionality
+- [x] Improve progress tracking
+- [x] Improve sidebar navigation
 
 ## Active tasks
 
-- [ ] Improve progress tracking
-- [ ] Improve sidebar navigation
-- [ ] Add dynamic content to the markdown files using HTML comments
+- [ ] refactor to use dynamic sections.
+  - [ ] Dynamic editor state and types to store the markdown source in object structure for editor state access.
+- [ ] Add dynamic component example elements
 - [ ] Add a download button to download files
 - [ ] Add donate button to download UX
 - [ ] Add donation goal tracking
 - [ ] fix Header responsive design
 
 ## Pending tasks
-
-Roadmap sidebar navigation:
-
-- Configuration
-  - CLAUDE.md (page)
-- Styles
-  - global.css (page)
-  - fonts.tsx (page)
-
-UI sidebar navigation:
-
-- Forms
-  - Buttons (page)
-  - Authentication pathway (page)
-
-UX sidebar navigation
-
-- [ ] Roadmap navigation (added as required):
-  - Installation guide
-    - CLAUDE.md or similar
-    - Tech stack installation
-  - App Directory map
-    - File names and locations
-  - Styling files
-    - global.css
-    - font files
-  - File storage
-  - Edge functions
-  - Webhooks
-  - File management
-  - Payments
-  - Subscriptions

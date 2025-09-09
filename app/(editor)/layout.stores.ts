@@ -6,9 +6,10 @@ import {
   EditorState,
   getAllPagesInOrder,
   markdownContent,
+  sections,
 } from "./layout.data";
 
-const initialState = markdownContent;
+const initialState = { ...markdownContent, sections };
 
 export const useEditorStore = create<EditorState>()(
   persist(
@@ -81,6 +82,35 @@ export const useEditorStore = create<EditorState>()(
       forceRefresh: () => {
         const currentState = get();
         set({ refreshKey: currentState.refreshKey + 1 });
+      },
+      getSectionOptions: (sectionKey: string): string[] => {
+        const state = get();
+        const pageKey = "welcome";
+        const sectionData = state.sections[pageKey]?.[sectionKey];
+        return sectionData ? Object.keys(sectionData) : [];
+      },
+      getSectionContent: (sectionKey: string, option: string): string => {
+        const state = get();
+        const pageKey = "welcome";
+        return state.sections[pageKey]?.[sectionKey]?.[option] || "";
+      },
+      setSectionContent: (sectionKey: string, option: string, content: string): void => {
+        set((state) => {
+          const pageKey = "welcome";
+          return {
+            ...state,
+            sections: {
+              ...state.sections,
+              [pageKey]: {
+                ...state.sections[pageKey],
+                [sectionKey]: {
+                  ...state.sections[pageKey]?.[sectionKey],
+                  [option]: content,
+                },
+              },
+            },
+          };
+        });
       },
     }),
     {

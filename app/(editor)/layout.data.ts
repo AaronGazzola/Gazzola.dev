@@ -1,37 +1,15 @@
 import { NavigationItem } from "@/configuration";
 
-export interface DynamicComponent {
-  id: string;
-  type: 'select';
-  options: Record<string, string>;
-  position: number;
-}
-
 export const markdownContent = {
   welcome: `# Welcome
 
-Welcome to the documentation system. This is a powerful markdown editor built with Lexical.
+This is your custom web app road map. You can edit the files directly and it will be automatically saved to your browser.
 
-## Getting Started
+## Dynamic content:
 
-This editor supports full markdown syntax including:
+Follow the walkthrough to select your preferences and requirements and download your light-weight, comprehensive development guide
 
-- **Bold text**
-- _Italic text_
-- \`Inline code\`
-- Lists
-- Links
-- And much more!
-
-Start editing to see the live preview functionality.
-
-## Interactive Components
-
-This editor also supports dynamic components! Try the example below:
-
-<!-- select:options:{"Getting Started":"<strong>Getting Started</strong><br/>Begin your journey with this powerful markdown editor. Learn the basics of editing, formatting, and using advanced features.","Features":"<strong>Editor Features</strong><br/>• Live markdown preview<br/>• Dynamic components<br/>• Syntax highlighting<br/>• Theme switching","Tips":"<strong>Pro Tips</strong><br/>Use Ctrl+Z for undo, Ctrl+Y for redo. The editor supports all standard markdown shortcuts and auto-formatting."} -->
-
-The select component above demonstrates how you can create interactive content within your markdown documents. Users can choose different options to see relevant information displayed dynamically.
+<!-- section-1 -->
 `,
   installation: {
     ide: `# IDE Setup
@@ -216,19 +194,13 @@ export const urlToContentPathMapping = {
   }
 };
 
-export const dynamicComponents: Record<string, DynamicComponent[]> = {
-  "welcome": [
-    {
-      "id": "dynamic-0",
-      "type": "select",
-      "options": {
-        "Getting Started": "<strong>Getting Started</strong><br/>Begin your journey with this powerful markdown editor. Learn the basics of editing, formatting, and using advanced features.",
-        "Features": "<strong>Editor Features</strong><br/>• Live markdown preview<br/>• Dynamic components<br/>• Syntax highlighting<br/>• Theme switching",
-        "Tips": "<strong>Pro Tips</strong><br/>Use Ctrl+Z for undo, Ctrl+Y for redo. The editor supports all standard markdown shortcuts and auto-formatting."
-      },
-      "position": 411
+export const sections = {
+  "welcome": {
+    "section1": {
+      "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+      "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
     }
-  ]
+  }
 };
 
 export interface EditorState {
@@ -238,6 +210,7 @@ export interface EditorState {
     nextjs: string;
     essentials: string;
   };
+  sections: Record<string, Record<string, Record<string, string>>>;
   darkMode: boolean;
   refreshKey: number;
   visitedPages: ContentPath[];
@@ -247,6 +220,9 @@ export interface EditorState {
   markPageVisited: (path: ContentPath) => void;
   isPageVisited: (path: ContentPath) => boolean;
   getNextUnvisitedPage: (currentPath: ContentPath) => ContentPath | null;
+  getSectionOptions: (sectionKey: string) => string[];
+  getSectionContent: (sectionKey: string, option: string) => string;
+  setSectionContent: (sectionKey: string, option: string, content: string) => void;
   reset: () => void;
   forceRefresh: () => void;
 }
