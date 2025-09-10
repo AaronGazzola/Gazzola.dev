@@ -34,6 +34,7 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 ## Active tasks
 
+- [ ] app dir config UI -> output route structure
 - [ ] refactor to use dynamic sections.
   - [ ] Dynamic editor state and types to store the markdown source in object structure for editor state access.
 - [ ] Add dynamic component example elements
@@ -43,3 +44,8 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - [ ] fix Header responsive design
 
 ## Pending tasks
+
+- To vibe or not to vibe
+- Unicorns everywhere
+- Red queen hypothesis
+- Aliens conspiracy theories

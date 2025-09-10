@@ -1,9 +1,8 @@
 # Welcome
 
-This is your custom web app road map. You can edit the files directly and it will be automatically saved to your browser.
+This is your custom web app road map. Follow the walkthrough to select your preferences and configure your application. You will be presented with options that will determine which content is included in your documentation, you can also edit the files directly - all changes are saved immediately.
+Click the button at the bottom of the sidebar at any time to download your light-weight, comprehensive web app development instructions manual.
 
-## Dynamic content:
-
-Follow the walkthrough to select your preferences and requirements and download your light-weight, comprehensive development guide
+## What kind of web app are you making?
 
 <!-- section-1 -->
