@@ -45,7 +45,12 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 ## Pending tasks
 
+# Topics
+
 - To vibe or not to vibe
+  - Comment by @SilySlashLeon:
+    i understand the desire to "vibe code" in a language like JS, i agree with your sentiments regarding lowering the general input from other sources when it comes to software development. Do you get a feeling of satisfaction when following this methodology for coding? I use AI for help with tools, however as you have displayed in this video the tools are not up to standard for projects which require any sort of larger input, is the whole goal to just not write any lines of code? it would seem that editing your code from that results produced would actually work out quicker?
+    I apologise if I am just out of the loop and this is a "vibe coding" challenge or something like that.....
 - Unicorns everywhere
 - Red queen hypothesis
 - Aliens conspiracy theories
