@@ -3,13 +3,20 @@ import { NavigationItem } from "@/configuration";
 export const markdownContent = {
   welcome: `# Welcome
 
-This is your custom web app road map. You can edit the files directly and it will be automatically saved to your browser.
+This is your custom web app road map. Follow the walkthrough to select your preferences and configure your application. You will be presented with options that will determine which content is included in your documentation, you can also edit the files directly - all changes are saved immediately.
+Click the button at the bottom of the sidebar at any time to download your light-weight, comprehensive web app development instructions manual.
 
-## Dynamic content:
+## What kind of web app are you making?
 
-Follow the walkthrough to select your preferences and requirements and download your light-weight, comprehensive development guide
+<!-- component-FullStackOrFrontEnd -->
 
 <!-- section-1 -->
+
+## App directory structure
+
+Your app directory structure determines your route structure. Add or remove directories and files to determine the segments and paths that will be used to navigate your application
+
+<!-- component-AppStructure -->
 `,
   installation: {
     ide: `# IDE Setup
@@ -211,6 +218,7 @@ export interface EditorState {
     essentials: string;
   };
   sections: Record<string, Record<string, Record<string, string>>>;
+  sectionSelections: Record<string, string>;
   darkMode: boolean;
   refreshKey: number;
   visitedPages: ContentPath[];
@@ -220,11 +228,13 @@ export interface EditorState {
   markPageVisited: (path: ContentPath) => void;
   isPageVisited: (path: ContentPath) => boolean;
   getNextUnvisitedPage: (currentPath: ContentPath) => ContentPath | null;
+  reset: () => void;
+  forceRefresh: () => void;
   getSectionOptions: (sectionKey: string) => string[];
   getSectionContent: (sectionKey: string, option: string) => string;
   setSectionContent: (sectionKey: string, option: string, content: string) => void;
-  reset: () => void;
-  forceRefresh: () => void;
+  setSectionSelection: (sectionKey: string, option: string) => void;
+  getSectionSelection: (sectionKey: string) => string | null;
 }
 
 export type ContentPath =

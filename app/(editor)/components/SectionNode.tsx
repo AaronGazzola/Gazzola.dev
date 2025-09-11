@@ -2,13 +2,6 @@
 
 import { DecoratorNode, NodeKey, LexicalNode, SerializedLexicalNode, Spread } from "lexical";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -121,33 +114,25 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
   const { 
     getSectionOptions, 
     getSectionContent, 
-    setSectionContent, 
+    setSectionContent,
+    getSectionSelection, 
     darkMode 
   } = useEditorStore();
   
   const [mounted, setMounted] = useState(false);
   const sectionKey = node.getSectionKey();
-  const [selectedOption, setSelectedOption] = useState<string | null>(node.getSelectedOption());
+  const selectedOption = getSectionSelection(sectionKey);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const sectionOptions = useMemo(() => {
-    const options = getSectionOptions(sectionKey);
-    console.log(JSON.stringify({ sectionKey, options }, null, 0));
-    return options;
-  }, [getSectionOptions, sectionKey]);
 
   const selectedContent = useMemo(() => {
     if (!selectedOption) return "";
     return getSectionContent(sectionKey, selectedOption);
   }, [getSectionContent, sectionKey, selectedOption]);
 
-  const handleOptionChange = useCallback((value: string) => {
-    setSelectedOption(value);
-    node.setSelectedOption(value);
-  }, [node]);
 
   const handleContentChange = useCallback(
     (editorState: EditorState) => {
@@ -220,50 +205,44 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     );
   }
 
+  if (!selectedOption) {
+    return (
+      <div className={`w-full mb-6 p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <div className="flex items-center justify-center">
+          <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
+          <span className={`px-4 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+            pending selection
+          </span>
+          <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`w-full mb-6 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-      <div className="mb-4">
-        <div className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-          Section: {sectionKey}
-        </div>
-        <Select value={selectedOption || ""} onValueChange={handleOptionChange}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select an option..." />
-          </SelectTrigger>
-          <SelectContent>
-            {sectionOptions.map((option: string) => (
-              <SelectItem key={option} value={option}>
-                {option.charAt(0).toUpperCase() + option.slice(1).replace(/-/g, " ")}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className={`w-full rounded-md ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+        <LexicalComposer key={`${sectionKey}-${selectedOption}`} initialConfig={editorConfig}>
+          <div className="relative">
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable
+                  className="w-full p-4 outline-none resize-none min-h-[200px]"
+                />
+              }
+              placeholder={
+                <div className={`absolute top-4 left-4 pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                  Edit the content for this section...
+                </div>
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+            <OnChangePlugin onChange={handleContentChange} />
+            <HistoryPlugin />
+            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+          </div>
+        </LexicalComposer>
       </div>
-      
-      {selectedOption && (
-        <div className={`w-full rounded-md ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-          <LexicalComposer key={`${sectionKey}-${selectedOption}`} initialConfig={editorConfig}>
-            <div className="relative">
-              <RichTextPlugin
-                contentEditable={
-                  <ContentEditable
-                    className="w-full p-4 outline-none resize-none min-h-[200px]"
-                  />
-                }
-                placeholder={
-                  <div className={`absolute top-4 left-4 pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Edit the content for this section...
-                  </div>
-                }
-                ErrorBoundary={LexicalErrorBoundary}
-              />
-              <OnChangePlugin onChange={handleContentChange} />
-              <HistoryPlugin />
-              <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-            </div>
-          </LexicalComposer>
-        </div>
-      )}
     </div>
   );
 }

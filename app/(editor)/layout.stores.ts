@@ -9,7 +9,7 @@ import {
   sections,
 } from "./layout.data";
 
-const initialState = { ...markdownContent, sections };
+const initialState = { ...markdownContent, sections, sectionSelections: {} };
 
 export const useEditorStore = create<EditorState>()(
   persist(
@@ -77,6 +77,7 @@ export const useEditorStore = create<EditorState>()(
           darkMode: currentState.darkMode,
           refreshKey: currentState.refreshKey + 1,
           visitedPages: ["welcome" as ContentPath],
+          sectionSelections: {},
         });
       },
       forceRefresh: () => {
@@ -111,6 +112,19 @@ export const useEditorStore = create<EditorState>()(
             },
           };
         });
+      },
+      setSectionSelection: (sectionKey: string, option: string): void => {
+        set((state) => ({
+          ...state,
+          sectionSelections: {
+            ...state.sectionSelections,
+            [sectionKey]: option,
+          },
+        }));
+      },
+      getSectionSelection: (sectionKey: string): string | null => {
+        const state = get();
+        return state.sectionSelections?.[sectionKey] || null;
       },
     }),
     {

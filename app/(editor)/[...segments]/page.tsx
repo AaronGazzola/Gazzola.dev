@@ -24,6 +24,8 @@ import { ContentPath, urlToContentPathMapping } from "../layout.data";
 import { Toolbar } from "../components/Toolbar";
 import { SectionNode } from "../components/SectionNode";
 import { SECTION_TRANSFORMER } from "../components/SectionTransformer";
+import { ComponentNode } from "../components/ComponentNode";
+import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
 
 const Page = () => {
   const [mounted, setMounted] = useState(false);
@@ -83,6 +85,7 @@ const Page = () => {
           ListItemNode,
           CodeNode,
           SectionNode,
+          ComponentNode,
         ],
         namespace: "markdown-editor",
         theme: {},
@@ -101,6 +104,7 @@ const Page = () => {
         ListItemNode,
         CodeNode,
         SectionNode,
+        ComponentNode,
       ],
       namespace: "markdown-editor",
       theme: {
@@ -139,14 +143,14 @@ const Page = () => {
           contentPath
         }, null, 0));
       },
-      editorState: () => $convertFromMarkdownString(currentContent, [...TRANSFORMERS, SECTION_TRANSFORMER]),
+      editorState: () => $convertFromMarkdownString(currentContent, [...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER]),
     };
   }, [mounted, currentContent, darkMode, contentPath]);
 
   const onChange = useCallback(
     (editorState: EditorState) => {
       editorState.read(() => {
-        const markdown = $convertToMarkdownString([...TRANSFORMERS, SECTION_TRANSFORMER]);
+        const markdown = $convertToMarkdownString([...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER]);
         setCurrentContent(markdown);
       });
     },
@@ -182,7 +186,7 @@ const Page = () => {
           />
           <OnChangePlugin onChange={onChange} />
           <HistoryPlugin />
-          <MarkdownShortcutPlugin transformers={[...TRANSFORMERS, SECTION_TRANSFORMER]} />
+          <MarkdownShortcutPlugin transformers={[...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER]} />
         </div>
       </LexicalComposer>
     </div>
