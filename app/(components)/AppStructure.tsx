@@ -512,7 +512,7 @@ export const AppStructure = () => {
     });
   };
 
-  const routes = generateRoutesFromFileSystem(fileSystem);
+  const routes = generateRoutesFromFileSystem(fileSystem, "", true);
 
   return (
     <div
