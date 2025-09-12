@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { FileSystemEntry } from "@/app/(editor)/layout.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/tailwind.utils";
@@ -14,16 +15,7 @@ import {
   SquareStack,
   Trash2,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-
-type FileSystemEntry = {
-  id: string;
-  name: string;
-  type: "file" | "directory";
-  children?: FileSystemEntry[];
-  isExpanded?: boolean;
-  isEditing?: boolean;
-};
+import { useEffect, useRef } from "react";
 
 type RouteEntry = {
   path: string;
@@ -184,7 +176,6 @@ const TreeNode = ({
   onAddFile: (parentId: string) => void;
   onAddDirectory: (parentId: string) => void;
 }) => {
-  const [localName, setLocalName] = useState(node.name);
   const inputRef = useRef<HTMLInputElement>(null);
   const { darkMode } = useEditorStore();
 
@@ -195,21 +186,19 @@ const TreeNode = ({
     }
   }, [node.isEditing]);
 
-  const handleNameSubmit = () => {
-    if (localName.trim()) {
-      onUpdate(node.id, { name: localName.trim(), isEditing: false });
+  const handleNameSubmit = (newName: string) => {
+    if (newName.trim()) {
+      onUpdate(node.id, { name: newName.trim(), isEditing: false });
     } else {
-      setLocalName(node.name);
       onUpdate(node.id, { isEditing: false });
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleNameSubmit();
+      handleNameSubmit(e.currentTarget.value);
     }
     if (e.key === "Escape") {
-      setLocalName(node.name);
       onUpdate(node.id, { isEditing: false });
     }
   };
@@ -270,9 +259,8 @@ const TreeNode = ({
           {node.isEditing ? (
             <Input
               ref={inputRef}
-              value={localName}
-              onChange={(e) => setLocalName(e.target.value)}
-              onBlur={handleNameSubmit}
+              defaultValue={node.name}
+              onBlur={(e) => handleNameSubmit(e.target.value)}
               onKeyDown={handleKeyDown}
               className="h-6 px-2 py-0 text-sm"
               onClick={(e) => e.stopPropagation()}
@@ -343,115 +331,21 @@ const TreeNode = ({
 };
 
 export const AppStructure = () => {
-  const { darkMode } = useEditorStore();
-  const [fileSystem, setFileSystem] = useState<FileSystemEntry[]>([
-    {
-      id: generateId(),
-      name: "app",
-      type: "directory",
-      isExpanded: true,
-      children: [
-        {
-          id: generateId(),
-          name: "(auth)",
-          type: "directory",
-          isExpanded: false,
-          children: [
-            {
-              id: generateId(),
-              name: "login",
-              type: "directory",
-              isExpanded: false,
-              children: [{ id: generateId(), name: "page.tsx", type: "file" }],
-            },
-            {
-              id: generateId(),
-              name: "register",
-              type: "directory",
-              isExpanded: false,
-              children: [{ id: generateId(), name: "page.tsx", type: "file" }],
-            },
-          ],
-        },
-        {
-          id: generateId(),
-          name: "api",
-          type: "directory",
-          isExpanded: false,
-          children: [],
-        },
-        { id: generateId(), name: "layout.tsx", type: "file" },
-        { id: generateId(), name: "page.tsx", type: "file" },
-      ],
-    },
-  ]);
-
-  const updateNode = (
-    nodes: FileSystemEntry[],
-    id: string,
-    updates: Partial<FileSystemEntry>
-  ): FileSystemEntry[] => {
-    return nodes.map((node) => {
-      if (node.id === id) {
-        return { ...node, ...updates };
-      }
-      if (node.children) {
-        return {
-          ...node,
-          children: updateNode(node.children, id, updates),
-        };
-      }
-      return node;
-    });
-  };
-
-  const deleteNode = (
-    nodes: FileSystemEntry[],
-    id: string
-  ): FileSystemEntry[] => {
-    return nodes
-      .filter((node) => node.id !== id)
-      .map((node) => {
-        if (node.children) {
-          return {
-            ...node,
-            children: deleteNode(node.children, id),
-          };
-        }
-        return node;
-      });
-  };
-
-  const addNode = (
-    nodes: FileSystemEntry[],
-    parentId: string,
-    newNode: FileSystemEntry
-  ): FileSystemEntry[] => {
-    return nodes.map((node) => {
-      if (node.id === parentId) {
-        const children = node.children || [];
-        return {
-          ...node,
-          children: [...children, newNode],
-          isExpanded: true,
-        };
-      }
-      if (node.children) {
-        return {
-          ...node,
-          children: addNode(node.children, parentId, newNode),
-        };
-      }
-      return node;
-    });
-  };
+  const { 
+    darkMode, 
+    appStructure, 
+    updateAppStructureNode, 
+    deleteAppStructureNode, 
+    addAppStructureNode,
+    setAppStructure 
+  } = useEditorStore();
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
-    setFileSystem((prev) => updateNode(prev, id, updates));
+    updateAppStructureNode(id, updates);
   };
 
   const handleDelete = (id: string) => {
-    setFileSystem((prev) => deleteNode(prev, id));
+    deleteAppStructureNode(id);
   };
 
   const handleAddFile = (parentId: string) => {
@@ -461,7 +355,7 @@ export const AppStructure = () => {
       type: "file",
       isEditing: true,
     };
-    setFileSystem((prev) => addNode(prev, parentId, newFile));
+    addAppStructureNode(parentId, newFile);
   };
 
   const handleAddDirectory = (parentId: string) => {
@@ -473,7 +367,7 @@ export const AppStructure = () => {
       children: [],
       isExpanded: false,
     };
-    setFileSystem((prev) => addNode(prev, parentId, newDir));
+    addAppStructureNode(parentId, newDir);
   };
 
   const collapseAll = (nodes: FileSystemEntry[]): FileSystemEntry[] => {
@@ -512,7 +406,7 @@ export const AppStructure = () => {
     });
   };
 
-  const routes = generateRoutesFromFileSystem(fileSystem, "", true);
+  const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
   return (
     <div
@@ -534,16 +428,16 @@ export const AppStructure = () => {
           variant="ghost"
           size="icon"
           onClick={() => {
-            const isExpanded = hasExpandedDirectories(fileSystem);
+            const isExpanded = hasExpandedDirectories(appStructure);
             if (isExpanded) {
-              setFileSystem(collapseAll(fileSystem));
+              setAppStructure(collapseAll(appStructure));
             } else {
-              setFileSystem(expandAll(fileSystem));
+              setAppStructure(expandAll(appStructure));
             }
           }}
-          title={hasExpandedDirectories(fileSystem) ? "Collapse all" : "Expand all"}
+          title={hasExpandedDirectories(appStructure) ? "Collapse all" : "Expand all"}
         >
-          {hasExpandedDirectories(fileSystem) ? (
+          {hasExpandedDirectories(appStructure) ? (
             <FoldVertical className="h-4 w-4" />
           ) : (
             <SquareStack className="h-4 w-4" />
@@ -558,18 +452,18 @@ export const AppStructure = () => {
           "p-3 rounded overflow-x-auto"
         )}
       >
-        {fileSystem.map((node, index) => (
+        {appStructure.map((node, index) => (
           <TreeNode
             key={node.id}
             node={node}
-            isLast={index === fileSystem.length - 1}
+            isLast={index === appStructure.length - 1}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
             onAddFile={handleAddFile}
             onAddDirectory={handleAddDirectory}
           />
         ))}
-        {fileSystem.length === 0 && (
+        {appStructure.length === 0 && (
           <div
             className={cn(
               "text-center py-8",

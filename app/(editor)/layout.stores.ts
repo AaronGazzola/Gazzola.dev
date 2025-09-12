@@ -1,7 +1,111 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { markdownData } from "./layout.data";
-import { EditorState, MarkdownData } from "./layout.types";
+import { EditorState, FileSystemEntry } from "./layout.types";
+
+const generateId = () => Math.random().toString(36).substring(2, 11);
+
+const defaultAppStructure: FileSystemEntry[] = [
+  {
+    id: generateId(),
+    name: "app",
+    type: "directory",
+    isExpanded: true,
+    children: [
+      {
+        id: generateId(),
+        name: "(auth)",
+        type: "directory",
+        isExpanded: false,
+        children: [
+          {
+            id: generateId(),
+            name: "login",
+            type: "directory",
+            isExpanded: false,
+            children: [{ id: generateId(), name: "page.tsx", type: "file" }],
+          },
+          {
+            id: generateId(),
+            name: "register",
+            type: "directory",
+            isExpanded: false,
+            children: [{ id: generateId(), name: "page.tsx", type: "file" }],
+          },
+        ],
+      },
+      {
+        id: generateId(),
+        name: "api",
+        type: "directory",
+        isExpanded: false,
+        children: [],
+      },
+      { id: generateId(), name: "layout.tsx", type: "file" },
+      { id: generateId(), name: "page.tsx", type: "file" },
+    ],
+  },
+];
+
+const updateNode = (
+  nodes: FileSystemEntry[],
+  id: string,
+  updates: Partial<FileSystemEntry>
+): FileSystemEntry[] => {
+  return nodes.map((node) => {
+    if (node.id === id) {
+      return { ...node, ...updates };
+    }
+    if (node.children) {
+      return {
+        ...node,
+        children: updateNode(node.children, id, updates),
+      };
+    }
+    return node;
+  });
+};
+
+const deleteNode = (
+  nodes: FileSystemEntry[],
+  id: string
+): FileSystemEntry[] => {
+  return nodes
+    .filter((node) => node.id !== id)
+    .map((node) => {
+      if (node.children) {
+        return {
+          ...node,
+          children: deleteNode(node.children, id),
+        };
+      }
+      return node;
+    });
+};
+
+const addNode = (
+  nodes: FileSystemEntry[],
+  parentId: string,
+  newNode: FileSystemEntry
+): FileSystemEntry[] => {
+  return nodes.map((node) => {
+    if (node.id === parentId) {
+      const children = node.children || [];
+      return {
+        ...node,
+        children: [...children, newNode],
+        isExpanded: true,
+      };
+    }
+    if (node.children) {
+      return {
+        ...node,
+        children: addNode(node.children, parentId, newNode),
+      };
+    }
+    return node;
+  });
+};
 
 const initialState = {
   data: markdownData,
@@ -9,6 +113,7 @@ const initialState = {
   refreshKey: 0,
   visitedPages: ["welcome"],
   sectionSelections: {},
+  appStructure: defaultAppStructure,
 };
 
 export const useEditorStore = create<EditorState>()(
@@ -106,6 +211,23 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         return state.sectionSelections[sectionId] || null;
       },
+      setAppStructure: (appStructure: FileSystemEntry[]) =>
+        set({ appStructure }),
+      updateAppStructureNode: (id: string, updates: Partial<FileSystemEntry>) => {
+        set((state) => ({
+          appStructure: updateNode(state.appStructure, id, updates),
+        }));
+      },
+      deleteAppStructureNode: (id: string) => {
+        set((state) => ({
+          appStructure: deleteNode(state.appStructure, id),
+        }));
+      },
+      addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => {
+        set((state) => ({
+          appStructure: addNode(state.appStructure, parentId, newNode),
+        }));
+      },
       reset: () => set(initialState),
       forceRefresh: () =>
         set((state) => ({ refreshKey: state.refreshKey + 1 })),
@@ -117,6 +239,7 @@ export const useEditorStore = create<EditorState>()(
         darkMode: state.darkMode,
         visitedPages: state.visitedPages,
         sectionSelections: state.sectionSelections,
+        appStructure: state.appStructure,
       }),
     }
   )

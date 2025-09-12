@@ -48,6 +48,7 @@ export interface EditorState {
   refreshKey: number;
   visitedPages: string[];
   sectionSelections: Record<string, string>;
+  appStructure: FileSystemEntry[];
   updateContent: (path: string, content: string) => void;
   setContent: (path: string, content: string) => void;
   getNode: (path: string) => MarkdownNode | null;
@@ -60,6 +61,10 @@ export interface EditorState {
   setSectionContent: (sectionId: string, optionId: string, content: string) => void;
   setSectionSelection: (sectionId: string, optionId: string) => void;
   getSectionSelection: (sectionId: string) => string | null;
+  setAppStructure: (appStructure: FileSystemEntry[]) => void;
+  updateAppStructureNode: (id: string, updates: Partial<FileSystemEntry>) => void;
+  deleteAppStructureNode: (id: string) => void;
+  addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => void;
   reset: () => void;
   forceRefresh: () => void;
 }
@@ -76,4 +81,13 @@ export interface MarkdownDocument {
   id: string;
   path: string;
   content: string;
+}
+
+export interface FileSystemEntry {
+  id: string;
+  name: string;
+  type: "file" | "directory";
+  children?: FileSystemEntry[];
+  isExpanded?: boolean;
+  isEditing?: boolean;
 }

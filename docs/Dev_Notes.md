@@ -37,10 +37,11 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - [x] refactor to use dynamic sections.
   - [x] Dynamic editor state and types to store the markdown source in object structure for editor state access.
 - [x] rename compile to parse
+- [x] Refactor markdown parsing and editor data management
+- [x] Update the user input storage method
 
 ## Active tasks
 
-- [ ] Refactor markdown parsing and editor data management
 - [ ] Add a download button to download files
 - [ ] Add dynamic component example elements
 - [ ] Add a download button to download files
