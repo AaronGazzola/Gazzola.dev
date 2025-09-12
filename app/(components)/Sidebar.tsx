@@ -1,10 +1,7 @@
 "use client";
-import {
-  ContentPath,
-  navigationData,
-  urlToContentPathMapping,
-} from "@/app/(editor)/layout.data";
+import { markdownData, navigationData } from "@/app/(editor)/layout.data";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +16,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { NavigationItem } from "@/configuration";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
@@ -33,8 +29,8 @@ interface TreeItemProps {
   expandedItems: Set<string>;
   onToggleExpansion: (itemPath: string) => void;
   parentPath?: string;
-  isPageVisited: (path: ContentPath) => boolean;
-  currentPath: ContentPath;
+  isPageVisited: (path: string) => boolean;
+  currentPath: string;
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({
@@ -42,11 +38,10 @@ const TreeItem: React.FC<TreeItemProps> = ({
   level,
   expandedItems,
   onToggleExpansion,
-  parentPath = "",
   isPageVisited,
   currentPath,
 }) => {
-  const itemPath = parentPath ? `${parentPath}/${item.name}` : item.name;
+  const itemPath = item.path || item.name;
   const isOpen = expandedItems.has(itemPath);
 
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
@@ -62,36 +57,22 @@ const TreeItem: React.FC<TreeItemProps> = ({
     };
   };
 
-  const generateSlug = (name: string) => {
-    return name.toLowerCase().replace(/\s+/g, "-");
-  };
-
   const buildLinkPath = () => {
-    const pathSegments = itemPath.split("/").map(generateSlug);
-    return `/${pathSegments.join("/")}`;
-  };
-
-  const getContentPath = () => {
-    if (item.type === "page") {
-      if (parentPath) {
-        const childNameLower = item.name.toLowerCase();
-        const pathSuffix =
-          childNameLower === "next.js" ? "nextjs" : childNameLower;
-        return `${parentPath}.${pathSuffix}`;
-      } else {
-        return item.name;
-      }
+    const node = markdownData.flatIndex[itemPath];
+    if (node && node.type === "file") {
+      return node.urlPath;
+    } else if (node && node.type === "directory") {
+      return node.urlPath;
     }
-    return null;
+    return "/";
   };
 
   if (item.type === "page") {
-    const contentPath = getContentPath();
-    if (!contentPath || !isPageVisited(contentPath as ContentPath)) {
+    if (!item.path || !isPageVisited(item.path)) {
       return null;
     }
 
-    const isActive = currentPath === contentPath;
+    const isActive = currentPath === item.path;
 
     return (
       <Link href={buildLinkPath()}>
@@ -115,12 +96,8 @@ const TreeItem: React.FC<TreeItemProps> = ({
   }
 
   const hasVisitedChildren = item.children?.some((child) => {
-    if (child.type === "page") {
-      const childNameLower = child.name.toLowerCase();
-      const pathSuffix =
-        childNameLower === "next.js" ? "nextjs" : childNameLower;
-      const childContentPath = `${item.name}.${pathSuffix}` as ContentPath;
-      return isPageVisited(childContentPath);
+    if (child.type === "page" && child.path) {
+      return isPageVisited(child.path);
     }
     return false;
   });
@@ -169,25 +146,18 @@ const Sidebar = () => {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const params = useParams();
 
-  const currentPath = useMemo((): ContentPath => {
+  const currentPath = useMemo((): string => {
     const segments = params.segments as string[] | undefined;
 
     if (!segments || segments.length === 0) {
       return "welcome";
     }
 
-    const firstSegment = segments[0].toLowerCase();
-
-    if (segments.length === 1) {
-      const mapping = (urlToContentPathMapping as any)[firstSegment];
-      if (typeof mapping === "string") {
-        return mapping as ContentPath;
-      }
-    } else if (segments.length === 2) {
-      const secondSegment = segments[1].toLowerCase();
-      const mapping = (urlToContentPathMapping as any)[firstSegment];
-      if (typeof mapping === "object" && mapping[secondSegment]) {
-        return mapping[secondSegment] as ContentPath;
+    const urlPath = "/" + segments.join("/");
+    
+    for (const [path, node] of Object.entries(markdownData.flatIndex)) {
+      if (node.type === "file" && node.urlPath === urlPath) {
+        return path;
       }
     }
 
@@ -216,32 +186,32 @@ const Sidebar = () => {
       if (prev.has(itemPath)) {
         newSet.delete(itemPath);
         const pathsToRemove = Array.from(prev).filter((path) =>
-          path.startsWith(itemPath + "/")
+          path.startsWith(itemPath + ".")
         );
         pathsToRemove.forEach((path) => newSet.delete(path));
       } else {
-        const pathParts = itemPath.split("/");
+        const pathParts = itemPath.split(".");
         const currentLevel = pathParts.length;
 
         const siblingsAtSameLevel = Array.from(prev).filter((path) => {
-          const siblingParts = path.split("/");
+          const siblingParts = path.split(".");
           return (
             siblingParts.length === currentLevel &&
-            siblingParts.slice(0, -1).join("/") ===
-              pathParts.slice(0, -1).join("/")
+            siblingParts.slice(0, -1).join(".") ===
+              pathParts.slice(0, -1).join(".")
           );
         });
 
         siblingsAtSameLevel.forEach((siblingPath) => {
           newSet.delete(siblingPath);
           const childPathsToRemove = Array.from(prev).filter((path) =>
-            path.startsWith(siblingPath + "/")
+            path.startsWith(siblingPath + ".")
           );
           childPathsToRemove.forEach((path) => newSet.delete(path));
         });
 
         for (let i = 1; i <= pathParts.length; i++) {
-          const parentPath = pathParts.slice(0, i).join("/");
+          const parentPath = pathParts.slice(0, i).join(".");
           newSet.add(parentPath);
         }
       }

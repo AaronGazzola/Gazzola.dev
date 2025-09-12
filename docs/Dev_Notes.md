@@ -32,14 +32,16 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - [x] Improve progress tracking
 - [x] Improve sidebar navigation
 - [x] Add buttons to control section content
+- [x] Add a dynamic route map generator
+  - [x] app dir config UI -> output route structure
+- [x] refactor to use dynamic sections.
+  - [x] Dynamic editor state and types to store the markdown source in object structure for editor state access.
+- [x] rename compile to parse
 
 ## Active tasks
 
-- [ ] rename compile
-- [ ] Add a dynamic route map generator
-  - [ ] app dir config UI -> output route structure
-- [ ] refactor to use dynamic sections.
-  - [ ] Dynamic editor state and types to store the markdown source in object structure for editor state access.
+- [ ] Refactor markdown parsing and editor data management
+- [ ] Add a download button to download files
 - [ ] Add dynamic component example elements
 - [ ] Add a download button to download files
 - [ ] Add donate button to download UX
@@ -53,5 +55,3 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - Unicorns everywhere
 - Red queen hypothesis
 - Aliens conspiracy theories
-
-- Primeagen

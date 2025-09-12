@@ -1,134 +1,123 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { markdownData } from "./layout.data";
+import { EditorState, MarkdownData } from "./layout.types";
 
-import {
-  ContentPath,
-  EditorState,
-  getAllPagesInOrder,
-  markdownContent,
-  sections,
-} from "./layout.data";
-
-const initialState = { ...markdownContent, sections, sectionSelections: {} };
+const initialState = {
+  data: markdownData,
+  darkMode: false,
+  refreshKey: 0,
+  visitedPages: ["welcome"],
+  sectionSelections: {},
+};
 
 export const useEditorStore = create<EditorState>()(
   persist(
     (set, get) => ({
       ...initialState,
-      darkMode: true,
-      refreshKey: 0,
-      visitedPages: ["welcome" as ContentPath],
-      setContent: (path: ContentPath, content: string) => {
+      updateContent: (path: string, content: string) => {
         set((state) => {
-          const newState = { ...state };
-          const pathParts = path.split(".");
-
-          if (pathParts.length === 1) {
-            (newState as any)[pathParts[0]] = content;
-          } else if (pathParts.length === 2) {
-            (newState as any)[pathParts[0]] = {
-              ...(newState as any)[pathParts[0]],
-              [pathParts[1]]: content,
-            };
+          const node = state.data.flatIndex[path];
+          if (node && node.type === "file") {
+            node.content = content;
           }
-
-          return newState;
+          return { data: { ...state.data } };
         });
       },
-      getContent: (path: ContentPath): string => {
-        const state = get();
-        const pathParts = path.split(".");
-
-        if (pathParts.length === 1) {
-          return (state as any)[pathParts[0]] || "";
-        } else if (pathParts.length === 2) {
-          return (state as any)[pathParts[0]]?.[pathParts[1]] || "";
-        }
-
-        return "";
+      setContent: (path: string, content: string) => {
+        set((state) => {
+          const node = state.data.flatIndex[path];
+          if (node && node.type === "file") {
+            node.content = content;
+          }
+          return { data: { ...state.data } };
+        });
       },
-      setDarkMode: (darkMode: boolean) => set({ darkMode }),
-      markPageVisited: (path: ContentPath) => {
+      getNode: (path: string) => {
+        const state = get();
+        return state.data.flatIndex[path] || null;
+      },
+      setDarkMode: (darkMode) => set({ darkMode }),
+      markPageVisited: (path) =>
         set((state) => ({
           visitedPages: state.visitedPages.includes(path)
             ? state.visitedPages
             : [...state.visitedPages, path],
-        }));
-      },
-      isPageVisited: (path: ContentPath): boolean => {
+        })),
+      isPageVisited: (path) => {
         const state = get();
         return state.visitedPages.includes(path);
       },
-      getNextUnvisitedPage: (currentPath: ContentPath): ContentPath | null => {
-        const allPages = getAllPagesInOrder();
-        const currentIndex = allPages.findIndex(
-          (page) => page.path === currentPath
-        );
-        if (currentIndex === -1 || currentIndex >= allPages.length - 1)
-          return null;
+      getNextUnvisitedPage: (currentPath) => {
+        const state = get();
+        const pages = Object.values(state.data.flatIndex)
+          .filter((node) => node.type === "file")
+          .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-        const nextPage = allPages[currentIndex + 1];
-        return nextPage.path;
+        const currentIndex = pages.findIndex((p) => p.path === currentPath);
+        for (let i = currentIndex + 1; i < pages.length; i++) {
+          if (!state.visitedPages.includes(pages[i].path)) {
+            return pages[i].path;
+          }
+        }
+        return null;
       },
-      reset: () => {
-        const currentState = get();
-        set({
-          ...initialState,
-          darkMode: currentState.darkMode,
-          refreshKey: currentState.refreshKey + 1,
-          visitedPages: ["welcome" as ContentPath],
-          sectionSelections: {},
-        });
-      },
-      forceRefresh: () => {
-        const currentState = get();
-        set({ refreshKey: currentState.refreshKey + 1 });
-      },
-      getSectionOptions: (sectionKey: string): string[] => {
+      getSectionOptions: (sectionId: string) => {
         const state = get();
-        const pageKey = "welcome";
-        const sectionData = state.sections[pageKey]?.[sectionKey];
-        return sectionData ? Object.keys(sectionData) : [];
+        const welcomeNode = state.data.flatIndex["welcome"];
+        if (welcomeNode && welcomeNode.type === "file") {
+          return welcomeNode.sections[sectionId] || {};
+        }
+        return {};
       },
-      getSectionContent: (sectionKey: string, option: string): string => {
+      getSectionContent: (sectionId: string, optionId: string) => {
         const state = get();
-        const pageKey = "welcome";
-        return state.sections[pageKey]?.[sectionKey]?.[option] || "";
+        const welcomeNode = state.data.flatIndex["welcome"];
+        if (welcomeNode && welcomeNode.type === "file") {
+          return welcomeNode.sections[sectionId]?.[optionId] || "";
+        }
+        return "";
       },
-      setSectionContent: (sectionKey: string, option: string, content: string): void => {
+      setSectionContent: (
+        sectionId: string,
+        optionId: string,
+        content: string
+      ) => {
         set((state) => {
-          const pageKey = "welcome";
-          return {
-            ...state,
-            sections: {
-              ...state.sections,
-              [pageKey]: {
-                ...state.sections[pageKey],
-                [sectionKey]: {
-                  ...state.sections[pageKey]?.[sectionKey],
-                  [option]: content,
-                },
-              },
-            },
-          };
+          const welcomeNode = state.data.flatIndex["welcome"];
+          if (welcomeNode && welcomeNode.type === "file") {
+            if (!welcomeNode.sections[sectionId]) {
+              welcomeNode.sections[sectionId] = {};
+            }
+            welcomeNode.sections[sectionId][optionId] = content;
+          }
+          return { data: { ...state.data } };
         });
       },
-      setSectionSelection: (sectionKey: string, option: string): void => {
+      setSectionSelection: (sectionId: string, optionId: string) => {
         set((state) => ({
-          ...state,
           sectionSelections: {
             ...state.sectionSelections,
-            [sectionKey]: option,
+            [sectionId]: optionId,
           },
         }));
       },
-      getSectionSelection: (sectionKey: string): string | null => {
+      getSectionSelection: (sectionId: string) => {
         const state = get();
-        return state.sectionSelections?.[sectionKey] || null;
+        return state.sectionSelections[sectionId] || null;
       },
+      reset: () => set(initialState),
+      forceRefresh: () =>
+        set((state) => ({ refreshKey: state.refreshKey + 1 })),
     }),
     {
-      name: "editor-store",
+      name: "editor-storage",
+      partialize: (state) => ({
+        data: state.data,
+        darkMode: state.darkMode,
+        visitedPages: state.visitedPages,
+        sectionSelections: state.sectionSelections,
+      }),
     }
   )
 );

@@ -29,14 +29,13 @@ import {
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
-  ContentPath,
   getAllPagesInOrder,
-  markdownContent,
+  markdownData,
 } from "../layout.data";
 import { useEditorStore } from "../layout.stores";
 
 interface ToolbarProps {
-  currentContentPath: ContentPath;
+  currentContentPath: string;
 }
 
 interface IconButtonProps {
@@ -129,15 +128,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleResetPage = () => {
-    const pathParts = currentContentPath.split(".");
-    if (pathParts.length === 1) {
-      const originalContent = (markdownContent as any)[pathParts[0]];
-      setContent(currentContentPath, originalContent || "");
-    } else if (pathParts.length === 2) {
-      const originalContent = (markdownContent as any)[pathParts[0]]?.[
-        pathParts[1]
-      ];
-      setContent(currentContentPath, originalContent || "");
+    const node = markdownData.flatIndex[currentContentPath];
+    if (node && node.type === "file") {
+      const originalContent = node.content.replace(/\\n/g, '\n').replace(/\\`/g, '`').replace(/\\\$/g, '$').replace(/\\\\/g, '\\');
+      setContent(currentContentPath, originalContent);
     }
     forceRefresh(); // Force editor refresh to display updated content
     setResetPageDialogOpen(false);

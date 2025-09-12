@@ -20,7 +20,7 @@ import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeNode } from "@lexical/code";
 import { EditorState } from "lexical";
 import { useEditorStore } from "../layout.stores";
-import { ContentPath } from "../layout.data";
+// Import removed - ContentPath no longer exists
 
 export interface SerializedSectionNode extends Spread<
   {

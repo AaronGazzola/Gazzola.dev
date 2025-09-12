@@ -16,11 +16,11 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { EditorState, $createParagraphNode, $getRoot, $insertNodes } from "lexical";
+import { EditorState } from "lexical";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
-import { ContentPath, urlToContentPathMapping } from "../layout.data";
+import { markdownData } from "../layout.data";
 import { Toolbar } from "../components/Toolbar";
 import { SectionNode } from "../components/SectionNode";
 import { SECTION_TRANSFORMER } from "../components/SectionTransformer";
@@ -30,32 +30,25 @@ import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
 const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
-  const { getContent, setContent, darkMode, refreshKey } = useEditorStore();
+  const { updateContent, getNode, darkMode, refreshKey } = useEditorStore();
 
   useEffect(() => {
     useEditorStore.persist.rehydrate();
     setMounted(true);
   }, []);
 
-  const contentPath = useMemo((): ContentPath => {
+  const contentPath = useMemo((): string => {
     const segments = params.segments as string[] | undefined;
 
     if (!segments || segments.length === 0) {
       return "welcome";
     }
 
-    const firstSegment = segments[0].toLowerCase();
+    const urlPath = "/" + segments.join("/");
     
-    if (segments.length === 1) {
-      const mapping = (urlToContentPathMapping as any)[firstSegment];
-      if (typeof mapping === 'string') {
-        return mapping as ContentPath;
-      }
-    } else if (segments.length === 2) {
-      const secondSegment = segments[1].toLowerCase();
-      const mapping = (urlToContentPathMapping as any)[firstSegment];
-      if (typeof mapping === 'object' && mapping[secondSegment]) {
-        return mapping[secondSegment] as ContentPath;
+    for (const [path, node] of Object.entries(markdownData.flatIndex)) {
+      if (node.type === "file" && node.urlPath === urlPath) {
+        return path;
       }
     }
 
@@ -63,16 +56,19 @@ const Page = () => {
   }, [params]);
 
   const currentContent = useMemo(() => {
-    return getContent(contentPath);
-  }, [contentPath, getContent]);
+    const node = getNode(contentPath);
+    if (node && node.type === "file") {
+      return node.content.replace(/\\n/g, '\n').replace(/\\`/g, '`').replace(/\\\$/g, '$').replace(/\\\\/g, '\\');
+    }
+    return "";
+  }, [contentPath, getNode]);
 
   const setCurrentContent = useCallback(
     (content: string) => {
-      setContent(contentPath, content);
+      updateContent(contentPath, content);
     },
-    [contentPath, setContent]
+    [contentPath, updateContent]
   );
-
 
   const initialConfig = useMemo(() => {
     if (!mounted) {

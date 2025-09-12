@@ -11,7 +11,7 @@
     "start": "next start",
     "lint": "next lint",
     "dev:test": "APP_ENV=test next dev",
-    "compile-markdown": "npx tsx scripts/compile-markdown.ts"
+    "parse-markdown": "npx tsx scripts/parse-markdown.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

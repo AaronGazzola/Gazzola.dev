@@ -1,165 +1,404 @@
-import { NavigationItem } from "@/configuration";
+import {
+  MarkdownData,
+  NavigationItem,
+} from "./layout.types";
 
-export const markdownContent = {
-  welcome: `# Welcome
-
-This is your custom web app road map. Follow the walkthrough to select your preferences and configure your application. You will be presented with options that will determine which content is included in your documentation, you can also edit the files directly - all changes are saved immediately.
-Click the button at the bottom of the sidebar at any time to download your light-weight, comprehensive web app development instructions manual.
-
-## What kind of web app are you making?
-
-<!-- component-FullStackOrFrontEnd -->
-
-<!-- section-1 -->
-
-## App directory structure
-
-Your app directory structure determines your route structure. Add or remove directories and files to determine the segments and paths that will be used to navigate your application
-
-<!-- component-AppStructure -->
-`,
-  installation: {
-    ide: `# IDE Setup
-
-Setting up your Integrated Development Environment for optimal development experience.
-
-## Recommended IDEs
-
-### Visual Studio Code
-- **Download**: [VS Code](https://code.visualstudio.com/)
-- **Extensions**: 
-  - TypeScript and JavaScript Language Features
-  - ES7+ React/Redux/React-Native snippets
-  - Tailwind CSS IntelliSense
-  - Prettier - Code formatter
-
-### WebStorm
-- **Download**: [WebStorm](https://www.jetbrains.com/webstorm/)
-- Built-in TypeScript and React support
-- Excellent refactoring tools
-
-## Configuration
-
-\`\`\`json
-{
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  }
-}
-\`\`\``,
-    nextjs: `# Next.js Installation
-
-Learn how to install and configure Next.js for your project.
-
-## Prerequisites
-
-Make sure you have the following installed:
-- **Node.js** (version 18.x or higher)
-- **npm** or **yarn** package manager
-
-## Installation
-
-### Create a new Next.js app
-
-\`\`\`bash
-npx create-next-app@latest my-app
-cd my-app
-npm run dev
-\`\`\`
-
-### Manual Installation
-
-\`\`\`bash
-npm install next@latest react@latest react-dom@latest
-\`\`\`
-
-## Project Structure
-
-\`\`\`
-my-app/
-├── app/
-│   ├── layout.tsx
-│   ├── page.tsx
-├── public/
-├── package.json
-└── next.config.js
-\`\`\`
-
-## Configuration
-
-### next.config.js
-
-\`\`\`javascript
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    appDir: true
-  }
-}
-
-module.exports = nextConfig
-\`\`\``,
-    essentials: `# Essential Tools and Libraries
-
-Essential development tools and libraries to enhance your development workflow.
-
-## Package Managers
-
-### npm
-\`\`\`bash
-npm install package-name
-npm install -g package-name
-npm run script-name
-\`\`\`
-
-### Yarn
-\`\`\`bash
-yarn add package-name
-yarn global add package-name
-yarn script-name
-\`\`\`
-
-### pnpm
-\`\`\`bash
-pnpm add package-name
-pnpm add -g package-name
-pnpm run script-name
-\`\`\`
-
-## Development Tools
-
-### ESLint
-\`\`\`bash
-npm install -D eslint
-npx eslint --init
-\`\`\`
-
-### Prettier
-\`\`\`bash
-npm install -D prettier
-echo "{}" > .prettierrc.json
-\`\`\`
-
-### TypeScript
-\`\`\`bash
-npm install -D typescript @types/node @types/react @types/react-dom
-npx tsc --init
-\`\`\`
-
-## UI Libraries
-
-### Tailwind CSS
-\`\`\`bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-\`\`\`
-
-### Shadcn/ui
-\`\`\`bash
-npx shadcn-ui@latest init
-npx shadcn-ui@latest add button
-\`\`\``
+export const markdownData: MarkdownData = {
+  "root": {
+    "id": "root",
+    "name": "root",
+    "displayName": "Root",
+    "type": "directory",
+    "path": "",
+    "urlPath": "/",
+    "children": [
+      {
+        "id": "welcome",
+        "name": "welcome",
+        "displayName": "welcome",
+        "type": "file",
+        "order": 1,
+        "path": "welcome",
+        "urlPath": "/welcome",
+        "content": "# Welcome\n\nThis is your custom web app road map. Follow the walkthrough to select your preferences and configure your application. You will be presented with options that will determine which content is included in your documentation, you can also edit the files directly - all changes are saved immediately.\nClick the button at the bottom of the sidebar at any time to download your light-weight, comprehensive web app development instructions manual.\n\n## What kind of web app are you making?\n\n<!-- component-FullStackOrFrontEnd -->\n\n<!-- section-1 -->\n\n## App directory structure\n\nYour app directory structure determines your route structure. Add or remove directories and files to determine the segments and paths that will be used to navigate your application\n\n<!-- component-AppStructure -->\n",
+        "segments": [
+          {
+            "id": "welcome-section1",
+            "name": "section1",
+            "displayName": "Section 1",
+            "type": "segment",
+            "path": "welcome.section1",
+            "urlPath": "",
+            "content": "<!-- option-1 -->\n\n# Full stack web app\n\nThis app will include full stack features that require database integration\n\n<!-- /option-1 -->\n\n<!-- option-2 -->\n\n# Front end web app\n\nThis app will be a front-end user experience, without a database\n\n<!-- /option-2 -->\n",
+            "sectionId": "section1",
+            "options": {
+              "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+              "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+            }
+          }
+        ],
+        "components": [
+          {
+            "id": "component-FullStackOrFrontEnd",
+            "name": "FullStackOrFrontEnd",
+            "displayName": "FullStackOrFrontEnd",
+            "type": "component",
+            "path": "welcome.component.FullStackOrFrontEnd",
+            "urlPath": "",
+            "componentId": "FullStackOrFrontEnd"
+          },
+          {
+            "id": "component-AppStructure",
+            "name": "AppStructure",
+            "displayName": "AppStructure",
+            "type": "component",
+            "path": "welcome.component.AppStructure",
+            "urlPath": "",
+            "componentId": "AppStructure"
+          }
+        ],
+        "sections": {
+          "section1": {
+            "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+            "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+          }
+        }
+      },
+      {
+        "id": "installation",
+        "name": "installation",
+        "displayName": "installation",
+        "type": "directory",
+        "path": "installation",
+        "urlPath": "/installation",
+        "children": [
+          {
+            "id": "installation.ide",
+            "name": "ide",
+            "displayName": "IDE",
+            "type": "file",
+            "order": 2,
+            "path": "installation.ide",
+            "urlPath": "/installation/ide",
+            "content": "# IDE Setup\n\nSetting up your Integrated Development Environment for optimal development experience.\n\n## Recommended IDEs\n\n### Visual Studio Code\n- **Download**: [VS Code](https://code.visualstudio.com/)\n- **Extensions**: \n  - TypeScript and JavaScript Language Features\n  - ES7+ React/Redux/React-Native snippets\n  - Tailwind CSS IntelliSense\n  - Prettier - Code formatter\n\n### WebStorm\n- **Download**: [WebStorm](https://www.jetbrains.com/webstorm/)\n- Built-in TypeScript and React support\n- Excellent refactoring tools\n\n## Configuration\n\n\\`\\`\\`json\n{\n  \"editor.formatOnSave\": true,\n  \"editor.codeActionsOnSave\": {\n    \"source.fixAll.eslint\": true\n  }\n}\n\\`\\`\\`",
+            "segments": [],
+            "components": [],
+            "sections": {}
+          },
+          {
+            "id": "installation.nextjs",
+            "name": "nextjs",
+            "displayName": "Next.js",
+            "type": "file",
+            "order": 3,
+            "path": "installation.nextjs",
+            "urlPath": "/installation/next.js",
+            "content": "# Next.js Installation\n\nLearn how to install and configure Next.js for your project.\n\n## Prerequisites\n\nMake sure you have the following installed:\n- **Node.js** (version 18.x or higher)\n- **npm** or **yarn** package manager\n\n## Installation\n\n### Create a new Next.js app\n\n\\`\\`\\`bash\nnpx create-next-app@latest my-app\ncd my-app\nnpm run dev\n\\`\\`\\`\n\n### Manual Installation\n\n\\`\\`\\`bash\nnpm install next@latest react@latest react-dom@latest\n\\`\\`\\`\n\n## Project Structure\n\n\\`\\`\\`\nmy-app/\n├── app/\n│   ├── layout.tsx\n│   ├── page.tsx\n├── public/\n├── package.json\n└── next.config.js\n\\`\\`\\`\n\n## Configuration\n\n### next.config.js\n\n\\`\\`\\`javascript\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    appDir: true\n  }\n}\n\nmodule.exports = nextConfig\n\\`\\`\\`",
+            "segments": [],
+            "components": [],
+            "sections": {}
+          },
+          {
+            "id": "installation.essentials",
+            "name": "essentials",
+            "displayName": "Essentials",
+            "type": "file",
+            "order": 4,
+            "path": "installation.essentials",
+            "urlPath": "/installation/essentials",
+            "content": "# Essential Tools and Libraries\n\nEssential development tools and libraries to enhance your development workflow.\n\n## Package Managers\n\n### npm\n\\`\\`\\`bash\nnpm install package-name\nnpm install -g package-name\nnpm run script-name\n\\`\\`\\`\n\n### Yarn\n\\`\\`\\`bash\nyarn add package-name\nyarn global add package-name\nyarn script-name\n\\`\\`\\`\n\n### pnpm\n\\`\\`\\`bash\npnpm add package-name\npnpm add -g package-name\npnpm run script-name\n\\`\\`\\`\n\n## Development Tools\n\n### ESLint\n\\`\\`\\`bash\nnpm install -D eslint\nnpx eslint --init\n\\`\\`\\`\n\n### Prettier\n\\`\\`\\`bash\nnpm install -D prettier\necho \"{}\" > .prettierrc.json\n\\`\\`\\`\n\n### TypeScript\n\\`\\`\\`bash\nnpm install -D typescript @types/node @types/react @types/react-dom\nnpx tsc --init\n\\`\\`\\`\n\n## UI Libraries\n\n### Tailwind CSS\n\\`\\`\\`bash\nnpm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n\\`\\`\\`\n\n### Shadcn/ui\n\\`\\`\\`bash\nnpx shadcn-ui@latest init\nnpx shadcn-ui@latest add button\n\\`\\`\\`",
+            "segments": [],
+            "components": [],
+            "sections": {}
+          }
+        ]
+      }
+    ]
+  },
+  "flatIndex": {
+    "": {
+      "id": "root",
+      "name": "root",
+      "displayName": "Root",
+      "type": "directory",
+      "path": "",
+      "urlPath": "/",
+      "children": [
+        {
+          "id": "welcome",
+          "name": "welcome",
+          "displayName": "welcome",
+          "type": "file",
+          "order": 1,
+          "path": "welcome",
+          "urlPath": "/welcome",
+          "content": "# Welcome\n\nThis is your custom web app road map. Follow the walkthrough to select your preferences and configure your application. You will be presented with options that will determine which content is included in your documentation, you can also edit the files directly - all changes are saved immediately.\nClick the button at the bottom of the sidebar at any time to download your light-weight, comprehensive web app development instructions manual.\n\n## What kind of web app are you making?\n\n<!-- component-FullStackOrFrontEnd -->\n\n<!-- section-1 -->\n\n## App directory structure\n\nYour app directory structure determines your route structure. Add or remove directories and files to determine the segments and paths that will be used to navigate your application\n\n<!-- component-AppStructure -->\n",
+          "segments": [
+            {
+              "id": "welcome-section1",
+              "name": "section1",
+              "displayName": "Section 1",
+              "type": "segment",
+              "path": "welcome.section1",
+              "urlPath": "",
+              "content": "<!-- option-1 -->\n\n# Full stack web app\n\nThis app will include full stack features that require database integration\n\n<!-- /option-1 -->\n\n<!-- option-2 -->\n\n# Front end web app\n\nThis app will be a front-end user experience, without a database\n\n<!-- /option-2 -->\n",
+              "sectionId": "section1",
+              "options": {
+                "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+                "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+              }
+            }
+          ],
+          "components": [
+            {
+              "id": "component-FullStackOrFrontEnd",
+              "name": "FullStackOrFrontEnd",
+              "displayName": "FullStackOrFrontEnd",
+              "type": "component",
+              "path": "welcome.component.FullStackOrFrontEnd",
+              "urlPath": "",
+              "componentId": "FullStackOrFrontEnd"
+            },
+            {
+              "id": "component-AppStructure",
+              "name": "AppStructure",
+              "displayName": "AppStructure",
+              "type": "component",
+              "path": "welcome.component.AppStructure",
+              "urlPath": "",
+              "componentId": "AppStructure"
+            }
+          ],
+          "sections": {
+            "section1": {
+              "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+              "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+            }
+          }
+        },
+        {
+          "id": "installation",
+          "name": "installation",
+          "displayName": "installation",
+          "type": "directory",
+          "path": "installation",
+          "urlPath": "/installation",
+          "children": [
+            {
+              "id": "installation.ide",
+              "name": "ide",
+              "displayName": "IDE",
+              "type": "file",
+              "order": 2,
+              "path": "installation.ide",
+              "urlPath": "/installation/ide",
+              "content": "# IDE Setup\n\nSetting up your Integrated Development Environment for optimal development experience.\n\n## Recommended IDEs\n\n### Visual Studio Code\n- **Download**: [VS Code](https://code.visualstudio.com/)\n- **Extensions**: \n  - TypeScript and JavaScript Language Features\n  - ES7+ React/Redux/React-Native snippets\n  - Tailwind CSS IntelliSense\n  - Prettier - Code formatter\n\n### WebStorm\n- **Download**: [WebStorm](https://www.jetbrains.com/webstorm/)\n- Built-in TypeScript and React support\n- Excellent refactoring tools\n\n## Configuration\n\n\\`\\`\\`json\n{\n  \"editor.formatOnSave\": true,\n  \"editor.codeActionsOnSave\": {\n    \"source.fixAll.eslint\": true\n  }\n}\n\\`\\`\\`",
+              "segments": [],
+              "components": [],
+              "sections": {}
+            },
+            {
+              "id": "installation.nextjs",
+              "name": "nextjs",
+              "displayName": "Next.js",
+              "type": "file",
+              "order": 3,
+              "path": "installation.nextjs",
+              "urlPath": "/installation/next.js",
+              "content": "# Next.js Installation\n\nLearn how to install and configure Next.js for your project.\n\n## Prerequisites\n\nMake sure you have the following installed:\n- **Node.js** (version 18.x or higher)\n- **npm** or **yarn** package manager\n\n## Installation\n\n### Create a new Next.js app\n\n\\`\\`\\`bash\nnpx create-next-app@latest my-app\ncd my-app\nnpm run dev\n\\`\\`\\`\n\n### Manual Installation\n\n\\`\\`\\`bash\nnpm install next@latest react@latest react-dom@latest\n\\`\\`\\`\n\n## Project Structure\n\n\\`\\`\\`\nmy-app/\n├── app/\n│   ├── layout.tsx\n│   ├── page.tsx\n├── public/\n├── package.json\n└── next.config.js\n\\`\\`\\`\n\n## Configuration\n\n### next.config.js\n\n\\`\\`\\`javascript\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    appDir: true\n  }\n}\n\nmodule.exports = nextConfig\n\\`\\`\\`",
+              "segments": [],
+              "components": [],
+              "sections": {}
+            },
+            {
+              "id": "installation.essentials",
+              "name": "essentials",
+              "displayName": "Essentials",
+              "type": "file",
+              "order": 4,
+              "path": "installation.essentials",
+              "urlPath": "/installation/essentials",
+              "content": "# Essential Tools and Libraries\n\nEssential development tools and libraries to enhance your development workflow.\n\n## Package Managers\n\n### npm\n\\`\\`\\`bash\nnpm install package-name\nnpm install -g package-name\nnpm run script-name\n\\`\\`\\`\n\n### Yarn\n\\`\\`\\`bash\nyarn add package-name\nyarn global add package-name\nyarn script-name\n\\`\\`\\`\n\n### pnpm\n\\`\\`\\`bash\npnpm add package-name\npnpm add -g package-name\npnpm run script-name\n\\`\\`\\`\n\n## Development Tools\n\n### ESLint\n\\`\\`\\`bash\nnpm install -D eslint\nnpx eslint --init\n\\`\\`\\`\n\n### Prettier\n\\`\\`\\`bash\nnpm install -D prettier\necho \"{}\" > .prettierrc.json\n\\`\\`\\`\n\n### TypeScript\n\\`\\`\\`bash\nnpm install -D typescript @types/node @types/react @types/react-dom\nnpx tsc --init\n\\`\\`\\`\n\n## UI Libraries\n\n### Tailwind CSS\n\\`\\`\\`bash\nnpm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n\\`\\`\\`\n\n### Shadcn/ui\n\\`\\`\\`bash\nnpx shadcn-ui@latest init\nnpx shadcn-ui@latest add button\n\\`\\`\\`",
+              "segments": [],
+              "components": [],
+              "sections": {}
+            }
+          ]
+        }
+      ]
+    },
+    "welcome": {
+      "id": "welcome",
+      "name": "welcome",
+      "displayName": "welcome",
+      "type": "file",
+      "order": 1,
+      "path": "welcome",
+      "urlPath": "/welcome",
+      "content": "# Welcome\n\nThis is your custom web app road map. Follow the walkthrough to select your preferences and configure your application. You will be presented with options that will determine which content is included in your documentation, you can also edit the files directly - all changes are saved immediately.\nClick the button at the bottom of the sidebar at any time to download your light-weight, comprehensive web app development instructions manual.\n\n## What kind of web app are you making?\n\n<!-- component-FullStackOrFrontEnd -->\n\n<!-- section-1 -->\n\n## App directory structure\n\nYour app directory structure determines your route structure. Add or remove directories and files to determine the segments and paths that will be used to navigate your application\n\n<!-- component-AppStructure -->\n",
+      "segments": [
+        {
+          "id": "welcome-section1",
+          "name": "section1",
+          "displayName": "Section 1",
+          "type": "segment",
+          "path": "welcome.section1",
+          "urlPath": "",
+          "content": "<!-- option-1 -->\n\n# Full stack web app\n\nThis app will include full stack features that require database integration\n\n<!-- /option-1 -->\n\n<!-- option-2 -->\n\n# Front end web app\n\nThis app will be a front-end user experience, without a database\n\n<!-- /option-2 -->\n",
+          "sectionId": "section1",
+          "options": {
+            "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+            "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "component-FullStackOrFrontEnd",
+          "name": "FullStackOrFrontEnd",
+          "displayName": "FullStackOrFrontEnd",
+          "type": "component",
+          "path": "welcome.component.FullStackOrFrontEnd",
+          "urlPath": "",
+          "componentId": "FullStackOrFrontEnd"
+        },
+        {
+          "id": "component-AppStructure",
+          "name": "AppStructure",
+          "displayName": "AppStructure",
+          "type": "component",
+          "path": "welcome.component.AppStructure",
+          "urlPath": "",
+          "componentId": "AppStructure"
+        }
+      ],
+      "sections": {
+        "section1": {
+          "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+          "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+        }
+      }
+    },
+    "welcome.section1": {
+      "id": "welcome-section1",
+      "name": "section1",
+      "displayName": "Section 1",
+      "type": "segment",
+      "path": "welcome.section1",
+      "urlPath": "",
+      "content": "<!-- option-1 -->\n\n# Full stack web app\n\nThis app will include full stack features that require database integration\n\n<!-- /option-1 -->\n\n<!-- option-2 -->\n\n# Front end web app\n\nThis app will be a front-end user experience, without a database\n\n<!-- /option-2 -->\n",
+      "sectionId": "section1",
+      "options": {
+        "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
+        "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+      }
+    },
+    "welcome.component.FullStackOrFrontEnd": {
+      "id": "component-FullStackOrFrontEnd",
+      "name": "FullStackOrFrontEnd",
+      "displayName": "FullStackOrFrontEnd",
+      "type": "component",
+      "path": "welcome.component.FullStackOrFrontEnd",
+      "urlPath": "",
+      "componentId": "FullStackOrFrontEnd"
+    },
+    "welcome.component.AppStructure": {
+      "id": "component-AppStructure",
+      "name": "AppStructure",
+      "displayName": "AppStructure",
+      "type": "component",
+      "path": "welcome.component.AppStructure",
+      "urlPath": "",
+      "componentId": "AppStructure"
+    },
+    "installation": {
+      "id": "installation",
+      "name": "installation",
+      "displayName": "installation",
+      "type": "directory",
+      "path": "installation",
+      "urlPath": "/installation",
+      "children": [
+        {
+          "id": "installation.ide",
+          "name": "ide",
+          "displayName": "IDE",
+          "type": "file",
+          "order": 2,
+          "path": "installation.ide",
+          "urlPath": "/installation/ide",
+          "content": "# IDE Setup\n\nSetting up your Integrated Development Environment for optimal development experience.\n\n## Recommended IDEs\n\n### Visual Studio Code\n- **Download**: [VS Code](https://code.visualstudio.com/)\n- **Extensions**: \n  - TypeScript and JavaScript Language Features\n  - ES7+ React/Redux/React-Native snippets\n  - Tailwind CSS IntelliSense\n  - Prettier - Code formatter\n\n### WebStorm\n- **Download**: [WebStorm](https://www.jetbrains.com/webstorm/)\n- Built-in TypeScript and React support\n- Excellent refactoring tools\n\n## Configuration\n\n\\`\\`\\`json\n{\n  \"editor.formatOnSave\": true,\n  \"editor.codeActionsOnSave\": {\n    \"source.fixAll.eslint\": true\n  }\n}\n\\`\\`\\`",
+          "segments": [],
+          "components": [],
+          "sections": {}
+        },
+        {
+          "id": "installation.nextjs",
+          "name": "nextjs",
+          "displayName": "Next.js",
+          "type": "file",
+          "order": 3,
+          "path": "installation.nextjs",
+          "urlPath": "/installation/next.js",
+          "content": "# Next.js Installation\n\nLearn how to install and configure Next.js for your project.\n\n## Prerequisites\n\nMake sure you have the following installed:\n- **Node.js** (version 18.x or higher)\n- **npm** or **yarn** package manager\n\n## Installation\n\n### Create a new Next.js app\n\n\\`\\`\\`bash\nnpx create-next-app@latest my-app\ncd my-app\nnpm run dev\n\\`\\`\\`\n\n### Manual Installation\n\n\\`\\`\\`bash\nnpm install next@latest react@latest react-dom@latest\n\\`\\`\\`\n\n## Project Structure\n\n\\`\\`\\`\nmy-app/\n├── app/\n│   ├── layout.tsx\n│   ├── page.tsx\n├── public/\n├── package.json\n└── next.config.js\n\\`\\`\\`\n\n## Configuration\n\n### next.config.js\n\n\\`\\`\\`javascript\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    appDir: true\n  }\n}\n\nmodule.exports = nextConfig\n\\`\\`\\`",
+          "segments": [],
+          "components": [],
+          "sections": {}
+        },
+        {
+          "id": "installation.essentials",
+          "name": "essentials",
+          "displayName": "Essentials",
+          "type": "file",
+          "order": 4,
+          "path": "installation.essentials",
+          "urlPath": "/installation/essentials",
+          "content": "# Essential Tools and Libraries\n\nEssential development tools and libraries to enhance your development workflow.\n\n## Package Managers\n\n### npm\n\\`\\`\\`bash\nnpm install package-name\nnpm install -g package-name\nnpm run script-name\n\\`\\`\\`\n\n### Yarn\n\\`\\`\\`bash\nyarn add package-name\nyarn global add package-name\nyarn script-name\n\\`\\`\\`\n\n### pnpm\n\\`\\`\\`bash\npnpm add package-name\npnpm add -g package-name\npnpm run script-name\n\\`\\`\\`\n\n## Development Tools\n\n### ESLint\n\\`\\`\\`bash\nnpm install -D eslint\nnpx eslint --init\n\\`\\`\\`\n\n### Prettier\n\\`\\`\\`bash\nnpm install -D prettier\necho \"{}\" > .prettierrc.json\n\\`\\`\\`\n\n### TypeScript\n\\`\\`\\`bash\nnpm install -D typescript @types/node @types/react @types/react-dom\nnpx tsc --init\n\\`\\`\\`\n\n## UI Libraries\n\n### Tailwind CSS\n\\`\\`\\`bash\nnpm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n\\`\\`\\`\n\n### Shadcn/ui\n\\`\\`\\`bash\nnpx shadcn-ui@latest init\nnpx shadcn-ui@latest add button\n\\`\\`\\`",
+          "segments": [],
+          "components": [],
+          "sections": {}
+        }
+      ]
+    },
+    "installation.ide": {
+      "id": "installation.ide",
+      "name": "ide",
+      "displayName": "IDE",
+      "type": "file",
+      "order": 2,
+      "path": "installation.ide",
+      "urlPath": "/installation/ide",
+      "content": "# IDE Setup\n\nSetting up your Integrated Development Environment for optimal development experience.\n\n## Recommended IDEs\n\n### Visual Studio Code\n- **Download**: [VS Code](https://code.visualstudio.com/)\n- **Extensions**: \n  - TypeScript and JavaScript Language Features\n  - ES7+ React/Redux/React-Native snippets\n  - Tailwind CSS IntelliSense\n  - Prettier - Code formatter\n\n### WebStorm\n- **Download**: [WebStorm](https://www.jetbrains.com/webstorm/)\n- Built-in TypeScript and React support\n- Excellent refactoring tools\n\n## Configuration\n\n\\`\\`\\`json\n{\n  \"editor.formatOnSave\": true,\n  \"editor.codeActionsOnSave\": {\n    \"source.fixAll.eslint\": true\n  }\n}\n\\`\\`\\`",
+      "segments": [],
+      "components": [],
+      "sections": {}
+    },
+    "installation.nextjs": {
+      "id": "installation.nextjs",
+      "name": "nextjs",
+      "displayName": "Next.js",
+      "type": "file",
+      "order": 3,
+      "path": "installation.nextjs",
+      "urlPath": "/installation/next.js",
+      "content": "# Next.js Installation\n\nLearn how to install and configure Next.js for your project.\n\n## Prerequisites\n\nMake sure you have the following installed:\n- **Node.js** (version 18.x or higher)\n- **npm** or **yarn** package manager\n\n## Installation\n\n### Create a new Next.js app\n\n\\`\\`\\`bash\nnpx create-next-app@latest my-app\ncd my-app\nnpm run dev\n\\`\\`\\`\n\n### Manual Installation\n\n\\`\\`\\`bash\nnpm install next@latest react@latest react-dom@latest\n\\`\\`\\`\n\n## Project Structure\n\n\\`\\`\\`\nmy-app/\n├── app/\n│   ├── layout.tsx\n│   ├── page.tsx\n├── public/\n├── package.json\n└── next.config.js\n\\`\\`\\`\n\n## Configuration\n\n### next.config.js\n\n\\`\\`\\`javascript\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    appDir: true\n  }\n}\n\nmodule.exports = nextConfig\n\\`\\`\\`",
+      "segments": [],
+      "components": [],
+      "sections": {}
+    },
+    "installation.essentials": {
+      "id": "installation.essentials",
+      "name": "essentials",
+      "displayName": "Essentials",
+      "type": "file",
+      "order": 4,
+      "path": "installation.essentials",
+      "urlPath": "/installation/essentials",
+      "content": "# Essential Tools and Libraries\n\nEssential development tools and libraries to enhance your development workflow.\n\n## Package Managers\n\n### npm\n\\`\\`\\`bash\nnpm install package-name\nnpm install -g package-name\nnpm run script-name\n\\`\\`\\`\n\n### Yarn\n\\`\\`\\`bash\nyarn add package-name\nyarn global add package-name\nyarn script-name\n\\`\\`\\`\n\n### pnpm\n\\`\\`\\`bash\npnpm add package-name\npnpm add -g package-name\npnpm run script-name\n\\`\\`\\`\n\n## Development Tools\n\n### ESLint\n\\`\\`\\`bash\nnpm install -D eslint\nnpx eslint --init\n\\`\\`\\`\n\n### Prettier\n\\`\\`\\`bash\nnpm install -D prettier\necho \"{}\" > .prettierrc.json\n\\`\\`\\`\n\n### TypeScript\n\\`\\`\\`bash\nnpm install -D typescript @types/node @types/react @types/react-dom\nnpx tsc --init\n\\`\\`\\`\n\n## UI Libraries\n\n### Tailwind CSS\n\\`\\`\\`bash\nnpm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n\\`\\`\\`\n\n### Shadcn/ui\n\\`\\`\\`bash\nnpx shadcn-ui@latest init\nnpx shadcn-ui@latest add button\n\\`\\`\\`",
+      "segments": [],
+      "components": [],
+      "sections": {}
+    }
   }
 };
 
@@ -167,119 +406,59 @@ export const navigationData: NavigationItem[] = [
   {
     "name": "welcome",
     "type": "page",
-    "order": 1
+    "order": 1,
+    "path": "welcome"
   },
   {
     "name": "installation",
     "type": "segment",
+    "path": "installation",
     "children": [
       {
         "name": "IDE",
         "type": "page",
-        "order": 2
+        "order": 2,
+        "path": "installation.ide"
       },
       {
         "name": "Next.js",
         "type": "page",
-        "order": 3
+        "order": 3,
+        "path": "installation.nextjs"
       },
       {
         "name": "Essentials",
         "type": "page",
-        "order": 4
+        "order": 4,
+        "path": "installation.essentials"
       }
     ]
   }
 ];
 
-export const urlToContentPathMapping = {
-  "welcome": "welcome",
-  "installation": {
-    "ide": "installation.ide",
-    "next.js": "installation.nextjs",
-    "essentials": "installation.essentials"
-  }
-};
-
-export const sections = {
-  "welcome": {
-    "section1": {
-      "option1": "# Full stack web app\n\nThis app will include full stack features that require database integration",
-      "option2": "# Front end web app\n\nThis app will be a front-end user experience, without a database"
+export const getAllPagesInOrder = (): { path: string; url: string; title: string; order: number }[] => {
+  const pages: { path: string; url: string; title: string; order: number }[] = [];
+  
+  const extractPages = (node: any, parentUrl = ""): void => {
+    if (node.type === "file") {
+      pages.push({
+        path: node.path,
+        url: node.urlPath,
+        title: node.displayName,
+        order: node.order || 0,
+      });
+    } else if (node.type === "directory" && node.children) {
+      for (const child of node.children) {
+        extractPages(child, node.urlPath);
+      }
+    }
+  };
+  
+  if (markdownData.root && markdownData.root.children) {
+    for (const child of markdownData.root.children) {
+      extractPages(child);
     }
   }
-};
-
-export interface EditorState {
-  welcome: string;
-  installation: {
-    ide: string;
-    nextjs: string;
-    essentials: string;
-  };
-  sections: Record<string, Record<string, Record<string, string>>>;
-  sectionSelections: Record<string, string>;
-  darkMode: boolean;
-  refreshKey: number;
-  visitedPages: ContentPath[];
-  setContent: (path: ContentPath, content: string) => void;
-  getContent: (path: ContentPath) => string;
-  setDarkMode: (darkMode: boolean) => void;
-  markPageVisited: (path: ContentPath) => void;
-  isPageVisited: (path: ContentPath) => boolean;
-  getNextUnvisitedPage: (currentPath: ContentPath) => ContentPath | null;
-  reset: () => void;
-  forceRefresh: () => void;
-  getSectionOptions: (sectionKey: string) => string[];
-  getSectionContent: (sectionKey: string, option: string) => string;
-  setSectionContent: (sectionKey: string, option: string, content: string) => void;
-  setSectionSelection: (sectionKey: string, option: string) => void;
-  getSectionSelection: (sectionKey: string) => string | null;
-}
-
-export type ContentPath =
-  | "welcome"
-  | "installation.ide"
-  | "installation.nextjs"
-  | "installation.essentials";
-
-export type DocumentKey =
-  | "welcome"
-  | "installationIde"
-  | "installationNextjs"
-  | "installationEssentials";
-
-export const getAllPagesInOrder = (): { path: ContentPath; url: string; title: string; order: number }[] => {
-  const pages: { path: ContentPath; url: string; title: string; order: number }[] = [];
-
-  const flattenNavigation = (items: NavigationItem[]) => {
-    items.forEach((item) => {
-      if (item.type === "page") {
-        pages.push({
-          path: item.name as ContentPath,
-          url: `/${item.name}`,
-          title: item.name.charAt(0).toUpperCase() + item.name.slice(1),
-          order: item.order || 0
-        });
-      } else if (item.type === "segment" && item.children) {
-        item.children.forEach((child) => {
-          if (child.type === "page") {
-            const childNameLower = child.name.toLowerCase();
-            const pathSuffix = childNameLower === "next.js" ? "nextjs" : childNameLower;
-            const path = `${item.name}.${pathSuffix}` as ContentPath;
-            const url = `/${item.name}/${childNameLower}`;
-            pages.push({
-              path,
-              url,
-              title: child.name,
-              order: child.order || 0
-            });
-          }
-        });
-      }
-    });
-  };
-
-  flattenNavigation(navigationData);
+  
   return pages.sort((a, b) => a.order - b.order);
 };
