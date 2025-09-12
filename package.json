@@ -48,6 +48,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.0",
     "framer-motion": "^12.23.12",
+    "jszip": "^3.10.1",
     "lexical": "^0.34.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.512.0",

@@ -16,9 +16,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { generateAndDownloadZip } from "@/lib/download.utils";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
-import { ChevronDown, ChevronRight, Menu } from "lucide-react";
+import { ChevronDown, ChevronRight, Download, Menu } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -142,7 +143,8 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
 const Sidebar = () => {
   const { toggleSidebar } = useSidebar();
-  const { isPageVisited } = useEditorStore();
+  const { isPageVisited, data, sectionSelections, appStructure, getSectionContent } =
+    useEditorStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const params = useParams();
 
@@ -154,7 +156,7 @@ const Sidebar = () => {
     }
 
     const urlPath = "/" + segments.join("/");
-    
+
     for (const [path, node] of Object.entries(markdownData.flatIndex)) {
       if (node.type === "file" && node.urlPath === urlPath) {
         return path;
@@ -220,8 +222,16 @@ const Sidebar = () => {
     });
   };
 
+  const handleDownload = async () => {
+    try {
+      await generateAndDownloadZip(data, sectionSelections, getSectionContent, appStructure);
+    } catch (error) {
+      console.error("Error generating download:", error);
+    }
+  };
+
   const expandedContent = (
-    <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
+    <SidebarContent className="flex-grow bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
       <SidebarHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -245,8 +255,8 @@ const Sidebar = () => {
         </div>
       </SidebarHeader>
       <div className="p-0 space-y-4 flex-grow flex flex-col">
-        <div className="flex-grow flex flex-col relative">
-          <div className="absolute inset-0 overflow-auto px-3">
+        <div className="flex-grow flex flex-col relative ">
+          <div className="absolute inset-0 overflow-auto px-3 flex flex-col justify-between">
             <div className="space-y-1">
               {navigationData.map((item, index) => (
                 <TreeItem
@@ -259,6 +269,16 @@ const Sidebar = () => {
                   currentPath={currentPath}
                 />
               ))}
+            </div>
+            <div className="p-3  mt-auto">
+              <Button
+                variant="outline"
+                className="w-full text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500"
+                onClick={handleDownload}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
             </div>
           </div>
         </div>
@@ -287,7 +307,7 @@ const Sidebar = () => {
     <TooltipProvider>
       <ShadcnSidebar
         collapsible="icon"
-        className="border-r-gray-800"
+        className="border-r-gray-800 h-full"
         expandedContent={expandedContent}
         collapsedContent={collapsedContent}
       />
