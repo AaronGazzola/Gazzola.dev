@@ -1,7 +1,7 @@
 "use client";
-import { markdownData, navigationData } from "@/app/(editor)/layout.data";
+import { markdownData } from "@/app/(editor)/layout.data";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { NavigationItem } from "@/app/(editor)/layout.types";
+import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +23,33 @@ import { ChevronDown, ChevronRight, Download, Menu } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+
+const generateNavigationFromMarkdownData = (nodes: MarkdownNode[]): NavigationItem[] => {
+  const items: NavigationItem[] = [];
+
+  for (const node of nodes) {
+    if (node.type === "directory") {
+      items.push({
+        name: node.displayName,
+        type: "segment",
+        order: node.order,
+        path: node.path,
+        include: node.include,
+        children: generateNavigationFromMarkdownData(node.children),
+      });
+    } else if (node.type === "file") {
+      items.push({
+        name: node.displayName,
+        type: "page",
+        order: node.order,
+        path: node.path,
+        include: node.include,
+      });
+    }
+  }
+
+  return items;
+};
 
 interface TreeItemProps {
   item: NavigationItem;
@@ -96,12 +123,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
     );
   }
 
-  const hasVisitedChildren = item.children?.some((child) => {
-    if (child.type === "page" && child.path) {
-      return isPageVisited(child.path);
-    }
-    return false;
-  });
+  const hasVisitedChildren = item.children
+    ?.filter((child) => child.include !== false)
+    .some((child) => {
+      if (child.type === "page" && child.path) {
+        return isPageVisited(child.path);
+      }
+      return false;
+    });
 
   if (!hasVisitedChildren) {
     return null;
@@ -124,18 +153,20 @@ const TreeItem: React.FC<TreeItemProps> = ({
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        {item.children?.map((child, index) => (
-          <TreeItem
-            key={index}
-            item={child}
-            level={level + 1}
-            expandedItems={expandedItems}
-            onToggleExpansion={onToggleExpansion}
-            parentPath={itemPath}
-            isPageVisited={isPageVisited}
-            currentPath={currentPath}
-          />
-        ))}
+        {item.children
+          ?.filter((child) => child.include !== false)
+          .map((child, index) => (
+            <TreeItem
+              key={index}
+              item={child}
+              level={level + 1}
+              expandedItems={expandedItems}
+              onToggleExpansion={onToggleExpansion}
+              parentPath={itemPath}
+              isPageVisited={isPageVisited}
+              currentPath={currentPath}
+            />
+          ))}
       </CollapsibleContent>
     </Collapsible>
   );
@@ -147,6 +178,11 @@ const Sidebar = () => {
     useEditorStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const params = useParams();
+
+  const navigationData = useMemo(
+    () => generateNavigationFromMarkdownData(data.root.children),
+    [data]
+  );
 
   const currentPath = useMemo((): string => {
     const segments = params.segments as string[] | undefined;
@@ -258,17 +294,19 @@ const Sidebar = () => {
         <div className="flex-grow flex flex-col relative ">
           <div className="absolute inset-0 overflow-auto px-3 flex flex-col justify-between">
             <div className="space-y-1">
-              {navigationData.map((item, index) => (
-                <TreeItem
-                  key={index}
-                  item={item}
-                  level={0}
-                  expandedItems={expandedItems}
-                  onToggleExpansion={handleToggleExpansion}
-                  isPageVisited={isPageVisited}
-                  currentPath={currentPath}
-                />
-              ))}
+              {navigationData
+                .filter((item) => item.include !== false)
+                .map((item, index) => (
+                  <TreeItem
+                    key={index}
+                    item={item}
+                    level={0}
+                    expandedItems={expandedItems}
+                    onToggleExpansion={handleToggleExpansion}
+                    isPageVisited={isPageVisited}
+                    currentPath={currentPath}
+                  />
+                ))}
             </div>
             <div className="p-3  mt-auto">
               <Button

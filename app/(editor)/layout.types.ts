@@ -8,6 +8,7 @@ export interface BaseNode {
   order?: number;
   path: string;
   urlPath: string;
+  include: boolean;
 }
 
 export interface DirectoryNode extends BaseNode {
@@ -65,6 +66,7 @@ export interface EditorState {
   updateAppStructureNode: (id: string, updates: Partial<FileSystemEntry>) => void;
   deleteAppStructureNode: (id: string) => void;
   addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => void;
+  updateInclusionRules: (inclusionConfig: Record<string, boolean>) => void;
   reset: () => void;
   forceRefresh: () => void;
 }
@@ -74,6 +76,7 @@ export interface NavigationItem {
   type: "page" | "segment";
   order?: number;
   path?: string;
+  include?: boolean;
   children?: NavigationItem[];
 }
 

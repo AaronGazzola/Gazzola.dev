@@ -5,24 +5,27 @@ import { cn } from "@/lib/tailwind.utils";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 
 export const FullStackOrFrontEnd = () => {
-  const { getSectionOptions, getSectionContent, setSectionSelection, getSectionSelection, darkMode } = useEditorStore();
+  const { getSectionOptions, getSectionContent, setSectionSelection, getSectionSelection, darkMode, updateInclusionRules } = useEditorStore();
   const [isFullStack, setIsFullStack] = useState<boolean | null>(null);
   
   useEffect(() => {
     const currentSelection = getSectionSelection("section1");
     if (currentSelection === "option1") {
       setIsFullStack(true);
+      updateInclusionRules({ "database": true });
     } else if (currentSelection === "option2") {
       setIsFullStack(false);
+      updateInclusionRules({ "database": false });
     }
-  }, [getSectionSelection]);
+  }, [getSectionSelection, updateInclusionRules]);
 
   const handleToggle = useCallback(() => {
     const newValue = !isFullStack;
     setIsFullStack(newValue);
     const option = newValue ? "option1" : "option2";
     setSectionSelection("section1", option);
-  }, [isFullStack, setSectionSelection]);
+    updateInclusionRules({ "database": newValue });
+  }, [isFullStack, setSectionSelection, updateInclusionRules]);
 
   return (
     <div className={cn(

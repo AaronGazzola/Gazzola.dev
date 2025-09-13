@@ -6,7 +6,6 @@ import {
   FileNode,
   MarkdownData,
   MarkdownNode,
-  NavigationItem,
   SegmentNode,
 } from "../app/(editor)/layout.types";
 
@@ -46,7 +45,8 @@ function generateUrlPath(relativePath: string): string {
 
 function extractSectionsAndComponents(
   content: string,
-  filePath: string
+  filePath: string,
+  include: boolean = true
 ): {
   segments: SegmentNode[];
   components: ComponentRef[];
@@ -84,6 +84,7 @@ function extractSectionsAndComponents(
         content: sectionContent,
         sectionId: sectionId,
         options: options,
+        include: include,
       });
     }
     sectionIndex++;
@@ -102,6 +103,7 @@ function extractSectionsAndComponents(
       path: `${sanitizeFileName(path.basename(filePath))}.component.${componentId}`,
       urlPath: "",
       componentId: componentId,
+      include: include,
     });
   }
 
@@ -122,19 +124,24 @@ function extractOptionsFromSection(content: string): Record<string, string> {
   return options;
 }
 
-function parseMarkdownFile(filePath: string, relativePath: string): FileNode {
+function parseMarkdownFile(filePath: string, relativePath: string, parentInclude: boolean = true): FileNode {
   const content = fs.readFileSync(filePath, "utf8");
   const fileName = path.basename(filePath);
   const orderMatch = fileName.match(/^(\d+)-(.+)\.md$/);
   const order = orderMatch ? parseInt(orderMatch[1], 10) : undefined;
-  const displayName = orderMatch
+  let displayName = orderMatch
     ? orderMatch[2]
     : fileName.replace(/\.md$/, "");
+  displayName = displayName.replace(/\*/g, '');
   const sanitizedName = sanitizeFileName(fileName);
+
+  const hasAsterisk = fileName.includes("*");
+  const include = !hasAsterisk && parentInclude;
 
   const { segments, components, sections } = extractSectionsAndComponents(
     content,
-    filePath
+    filePath,
+    include
   );
 
   return {
@@ -149,13 +156,15 @@ function parseMarkdownFile(filePath: string, relativePath: string): FileNode {
     segments: segments,
     components: components,
     sections: sections,
+    include: include,
   };
 }
 
 function buildMarkdownTree(
   dir: string,
   relativePath = "",
-  parentPath = ""
+  parentPath = "",
+  parentInclude: boolean = true
 ): MarkdownNode[] {
   const nodes: MarkdownNode[] = [];
   const items = fs.readdirSync(dir, { withFileTypes: true });
@@ -168,11 +177,15 @@ function buildMarkdownTree(
       const dirName = item.name;
       const orderMatch = dirName.match(/^(\d+)-(.+)$/);
       const order = orderMatch ? parseInt(orderMatch[1], 10) : undefined;
-      const displayName = orderMatch ? orderMatch[2] : dirName;
+      let displayName = orderMatch ? orderMatch[2] : dirName;
+      displayName = displayName.replace(/\*/g, '');
       const sanitizedName = sanitizeFileName(dirName);
       const nodePath = parentPath
         ? `${parentPath}.${sanitizedName}`
         : sanitizedName;
+
+      const hasAsterisk = dirName.includes("*");
+      const include = !hasAsterisk && parentInclude;
 
       const directoryNode: DirectoryNode = {
         id: nodePath,
@@ -182,7 +195,8 @@ function buildMarkdownTree(
         order: order,
         path: nodePath,
         urlPath: generateUrlPath(itemRelativePath),
-        children: buildMarkdownTree(fullPath, itemRelativePath, nodePath),
+        include: include,
+        children: buildMarkdownTree(fullPath, itemRelativePath, nodePath, include),
       };
 
       nodes.push(directoryNode);
@@ -191,7 +205,7 @@ function buildMarkdownTree(
       item.name.endsWith(".md") &&
       !item.name.includes(".section")
     ) {
-      const fileNode = parseMarkdownFile(fullPath, itemRelativePath);
+      const fileNode = parseMarkdownFile(fullPath, itemRelativePath, parentInclude);
       fileNode.path = parentPath
         ? `${parentPath}.${fileNode.name}`
         : fileNode.name;
@@ -234,51 +248,25 @@ function buildFlatIndex(
   return index;
 }
 
-function generateNavigationFromTree(nodes: MarkdownNode[]): NavigationItem[] {
-  const items: NavigationItem[] = [];
 
-  for (const node of nodes) {
-    if (node.type === "directory") {
-      items.push({
-        name: node.displayName,
-        type: "segment",
-        order: node.order,
-        path: node.path,
-        children: generateNavigationFromTree(node.children),
-      });
-    } else if (node.type === "file") {
-      items.push({
-        name: node.displayName,
-        type: "page",
-        order: node.order,
-        path: node.path,
-      });
-    }
-  }
-
-  return items;
-}
-
-function generateDataFile(
-  data: MarkdownData,
-  navigation: NavigationItem[]
-): string {
+function generateDataFile(data: MarkdownData): string {
   const serializedData = JSON.stringify(data, null, 2);
-  const serializedNavigation = JSON.stringify(navigation, null, 2);
 
   return `import {
   MarkdownData,
-  NavigationItem,
 } from "./layout.types";
 
 export const markdownData: MarkdownData = ${serializedData};
 
-export const navigationData: NavigationItem[] = ${serializedNavigation};
-
 export const getAllPagesInOrder = (): { path: string; url: string; title: string; order: number }[] => {
   const pages: { path: string; url: string; title: string; order: number }[] = [];
-  
+
   const extractPages = (node: any, parentUrl = ""): void => {
+    // Skip nodes with include: false
+    if (node.include === false) {
+      return;
+    }
+
     if (node.type === "file") {
       pages.push({
         path: node.path,
@@ -292,13 +280,13 @@ export const getAllPagesInOrder = (): { path: string; url: string; title: string
       }
     }
   };
-  
+
   if (markdownData.root && markdownData.root.children) {
     for (const child of markdownData.root.children) {
       extractPages(child);
     }
   }
-  
+
   return pages.sort((a, b) => a.order - b.order);
 };
 `;
@@ -369,7 +357,7 @@ function updateStoreFile(): void {
       getNextUnvisitedPage: (currentPath) => {
         const state = get();
         const pages = Object.values(state.data.flatIndex)
-          .filter((node) => node.type === "file")
+          .filter((node) => node.type === "file" && node.include !== false)
           .sort((a, b) => (a.order || 0) - (b.order || 0));
         
         const currentIndex = pages.findIndex((p) => p.path === currentPath);
@@ -412,6 +400,7 @@ function main(): void {
       type: "directory",
       path: "",
       urlPath: "/",
+      include: true,
       children: children,
     };
 
@@ -422,9 +411,7 @@ function main(): void {
       flatIndex: flatIndex,
     };
 
-    const navigation = generateNavigationFromTree(children);
-
-    const dataFileContent = generateDataFile(data, navigation);
+    const dataFileContent = generateDataFile(data);
     fs.writeFileSync(DATA_FILE, dataFileContent, "utf8");
     console.log("Successfully created layout.data.ts with unified structure");
 
@@ -432,7 +419,6 @@ function main(): void {
 
     console.log("Markdown parsing completed successfully!");
     console.log("Generated nodes:", Object.keys(flatIndex).length);
-    console.log("Generated navigation items:", navigation.length);
   } catch (error) {
     console.error("Error during markdown parsing:", error);
     process.exit(1);

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { markdownData } from "./layout.data";
-import { EditorState, FileSystemEntry } from "./layout.types";
+import { EditorState, FileSystemEntry, MarkdownData } from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -64,6 +64,19 @@ const updateNode = (
     }
     return node;
   });
+};
+
+const updateNodeIncludeRecursively = (
+  node: any,
+  include: boolean
+): any => {
+  const updated = { ...node, include };
+  if (node.children) {
+    updated.children = node.children.map((child: any) =>
+      updateNodeIncludeRecursively(child, include)
+    );
+  }
+  return updated;
 };
 
 const deleteNode = (
@@ -156,7 +169,7 @@ export const useEditorStore = create<EditorState>()(
       getNextUnvisitedPage: (currentPath) => {
         const state = get();
         const pages = Object.values(state.data.flatIndex)
-          .filter((node) => node.type === "file")
+          .filter((node) => node.type === "file" && node.include !== false)
           .sort((a, b) => (a.order || 0) - (b.order || 0));
 
         const currentIndex = pages.findIndex((p) => p.path === currentPath);
@@ -227,6 +240,45 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({
           appStructure: addNode(state.appStructure, parentId, newNode),
         }));
+      },
+      updateInclusionRules: (inclusionConfig: Record<string, boolean>) => {
+        set((state) => {
+          let newFlatIndex = { ...state.data.flatIndex };
+          let newRoot = { ...state.data.root };
+
+          const updateFlatIndexRecursively = (node: any) => {
+            newFlatIndex[node.path] = node;
+            if (node.children) {
+              node.children.forEach(updateFlatIndexRecursively);
+            }
+          };
+
+          const updateRootChildren = (children: any[]): any[] => {
+            return children.map((child) => {
+              if (inclusionConfig.hasOwnProperty(child.path)) {
+                const updatedChild = updateNodeIncludeRecursively(child, inclusionConfig[child.path]);
+                updateFlatIndexRecursively(updatedChild);
+                return updatedChild;
+              }
+              return child;
+            });
+          };
+
+          newRoot = {
+            ...newRoot,
+            children: updateRootChildren(newRoot.children),
+          };
+
+          newFlatIndex[""] = newRoot;
+
+          return {
+            data: {
+              ...state.data,
+              root: newRoot,
+              flatIndex: newFlatIndex,
+            },
+          };
+        });
       },
       reset: () => set(initialState),
       forceRefresh: () =>

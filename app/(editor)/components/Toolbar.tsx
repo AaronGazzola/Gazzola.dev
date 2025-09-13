@@ -28,10 +28,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import {
-  getAllPagesInOrder,
-  markdownData,
-} from "../layout.data";
 import { useEditorStore } from "../layout.stores";
 
 interface ToolbarProps {
@@ -88,23 +84,49 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setContent,
     forceRefresh,
     markPageVisited,
-    getNextUnvisitedPage,
     isPageVisited,
+    data,
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
 
   const allPages = useMemo(() => {
-    return getAllPagesInOrder();
-  }, []);
+    const pages: { path: string; url: string; title: string; order: number }[] = [];
+
+    const extractPages = (node: any, parentUrl = ""): void => {
+      if (node.include === false) {
+        return;
+      }
+
+      if (node.type === "file") {
+        pages.push({
+          path: node.path,
+          url: node.urlPath,
+          title: node.displayName,
+          order: node.order || 0,
+        });
+      } else if (node.type === "directory" && node.children) {
+        for (const child of node.children) {
+          extractPages(child, node.urlPath);
+        }
+      }
+    };
+
+    if (data.root && data.root.children) {
+      for (const child of data.root.children) {
+        extractPages(child);
+      }
+    }
+
+    return pages.sort((a, b) => a.order - b.order);
+  }, [data]);
 
   const currentPageIndex = useMemo(() => {
     return allPages.findIndex((page) => page.path === currentContentPath);
   }, [allPages, currentContentPath]);
 
-  const nextUnvisitedPath = getNextUnvisitedPage(currentContentPath);
-  const nextPage = nextUnvisitedPath
-    ? allPages.find((p) => p.path === nextUnvisitedPath)
+  const nextPage = currentPageIndex < allPages.length - 1
+    ? allPages[currentPageIndex + 1]
     : null;
 
   const canGoBack = currentPageIndex > 0;
@@ -128,7 +150,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleResetPage = () => {
-    const node = markdownData.flatIndex[currentContentPath];
+    const node = data.flatIndex[currentContentPath];
     if (node && node.type === "file") {
       const originalContent = node.content.replace(/\\n/g, '\n').replace(/\\`/g, '`').replace(/\\\$/g, '$').replace(/\\\\/g, '\\');
       setContent(currentContentPath, originalContent);
