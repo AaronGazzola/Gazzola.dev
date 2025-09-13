@@ -2,6 +2,13 @@
 
 A platform for generating full-stack web app roadmaps. Design and download comprehensive and detailed step-by-step instructions for you and your AI to vibe code your custom web app.
 
+## Tech to integrate
+
+- [ ] payload cms
+  - [ ] https://payloadcms.com/get-started
+- [ ] playright mcp (needs policy change to change setting)
+  - [ ] https://playwright.dev/agents
+
 # Tasks
 
 ## Active tasks
