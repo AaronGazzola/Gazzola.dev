@@ -4,13 +4,18 @@
   - [ ] https://payloadcms.com/get-started
 - [ ] playright mcp (needs policy change to change setting)
   - [ ] https://playwright.dev/agents
+- [ ] augment code
+- [ ] warp ai
+- [ ] Sean kochle "my new method"
 
 # Tasks
 
 ## Active tasks
 
+- [ ] Update the claude document
 - [ ] Add UX for configuring the app structure with nested layouts
 - [ ] Remove asterix ("\*") from paths
+- [ ] Default to dark theme
 - [ ] Remove excluded content from downloaded files
 - [ ] Fix editor comment transform error
 - [ ] Make section selection agnostic (currently hard coded to "welcome")
