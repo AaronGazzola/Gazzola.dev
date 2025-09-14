@@ -1,7 +1,3 @@
-# Notes
-
-A platform for generating full-stack web app roadmaps. Design and download comprehensive and detailed step-by-step instructions for you and your AI to vibe code your custom web app.
-
 ## Tech to integrate
 
 - [ ] payload cms
@@ -14,6 +10,10 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 ## Active tasks
 
 - [ ] Add UX for configuring the app structure with nested layouts
+- [ ] Remove asterix ("\*") from paths
+- [ ] Remove excluded content from downloaded files
+- [ ] Fix editor comment transform error
+- [ ] Make section selection agnostic (currently hard coded to "welcome")
 - [ ] Add shadcn variants for the editor components
 - [ ] Add dynamic component example elements
 - [ ] Add donate UX on download
