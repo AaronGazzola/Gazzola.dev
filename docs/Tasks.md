@@ -12,7 +12,6 @@
 
 ## Active tasks
 
-- [ ] Add UX for configuring the app structure with nested layouts
 - [ ] Update the claude document
 - [ ] Remove asterix ("\*") from paths
 - [ ] Default to dark theme
@@ -27,6 +26,7 @@
 
 ## Completed tasks
 
+- [x] Add UX for configuring the app structure with nested layouts
 - [x] Refactor data management to include/exclude files/directories
 - [x] Add a download button to download files
 - [x] Delete all UX except for the hero, sidebar and about page
