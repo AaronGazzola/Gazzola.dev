@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "dev:test": "APP_ENV=test next dev",
     "parse-markdown": "npx tsx scripts/parse-markdown.ts"
   },

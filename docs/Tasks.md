@@ -12,8 +12,8 @@
 
 ## Active tasks
 
-- [ ] Update the claude document
 - [ ] Add UX for configuring the app structure with nested layouts
+- [ ] Update the claude document
 - [ ] Remove asterix ("\*") from paths
 - [ ] Default to dark theme
 - [ ] Remove excluded content from downloaded files
