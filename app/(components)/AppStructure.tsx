@@ -473,6 +473,104 @@ const findExistingRouteInStructure = (
   return null;
 };
 
+const findBestParentForRoute = (
+  entries: FileSystemEntry[],
+  targetRoutePath: string,
+  currentRoutePath: string = "",
+  isRoot: boolean = false
+): { parentEntry: FileSystemEntry; remainingSegments: string[] } | null => {
+  const normalizedTarget =
+    targetRoutePath.endsWith("/") && targetRoutePath !== "/"
+      ? targetRoutePath.slice(0, -1)
+      : targetRoutePath;
+
+  const targetSegments = normalizedTarget === "/" ? [] : normalizedTarget.slice(1).split("/");
+
+  for (const entry of entries) {
+    if (entry.name === "app" && isRoot) {
+      if (entry.children) {
+        const result = findBestParentForRoute(
+          entry.children,
+          normalizedTarget,
+          "",
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+      if (entry.children) {
+        const result = findBestParentForRoute(
+          entry.children,
+          normalizedTarget,
+          currentRoutePath,
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.type === "directory" && entry.children) {
+      const routePath = currentRoutePath
+        ? `${currentRoutePath}/${entry.name}`
+        : `/${entry.name}`;
+
+      const currentSegments = routePath === "/" ? [] : routePath.slice(1).split("/");
+
+      if (targetSegments.length > currentSegments.length) {
+        let matches = true;
+        for (let i = 0; i < currentSegments.length; i++) {
+          if (currentSegments[i] !== targetSegments[i]) {
+            matches = false;
+            break;
+          }
+        }
+
+        if (matches) {
+          const hasPageFile = entry.children.some(
+            (child) => child.type === "file" && child.name === "page.tsx"
+          );
+
+          if (hasPageFile) {
+            const remainingSegments = targetSegments.slice(currentSegments.length);
+            if (remainingSegments.length > 0) {
+              const deeperResult = findBestParentForRoute(
+                entry.children,
+                normalizedTarget,
+                routePath,
+                false
+              );
+
+              if (deeperResult) {
+                return deeperResult;
+              } else {
+                return {
+                  parentEntry: entry,
+                  remainingSegments: remainingSegments
+                };
+              }
+            }
+          }
+        }
+      }
+
+      if (normalizedTarget.startsWith(routePath + "/")) {
+        const result = findBestParentForRoute(
+          entry.children,
+          normalizedTarget,
+          routePath,
+          false
+        );
+        if (result) return result;
+      }
+    }
+  }
+  return null;
+};
+
 const createRouteFromPath = (
   entries: FileSystemEntry[],
   routePath: string,
@@ -606,6 +704,84 @@ const createRouteFromPath = (
 
     if (existingRoute) {
       return addPageToExistingEntry(existingRoute.entry, entries);
+    }
+
+    const bestParent = findBestParentForRoute(
+      entries,
+      normalizedPath,
+      "",
+      true
+    );
+
+    if (bestParent) {
+      const addSegmentsToParent = (
+        targetEntry: FileSystemEntry,
+        entryList: FileSystemEntry[],
+        segments: string[]
+      ): FileSystemEntry[] => {
+        return entryList.map((entry) => {
+          if (entry.id === targetEntry.id) {
+            let updatedChildren = [...(entry.children || [])];
+
+            for (let i = 0; i < segments.length; i++) {
+              const segment = segments[i];
+              let targetContainer = updatedChildren;
+
+              for (let j = 0; j < i; j++) {
+                const previousSegment = segments[j];
+                const parentDir = targetContainer.find(
+                  (child) => child.type === "directory" && child.name === previousSegment
+                );
+                if (parentDir?.children) {
+                  targetContainer = parentDir.children;
+                }
+              }
+
+              const existingSegment = targetContainer.find(
+                (child) => child.type === "directory" && child.name === segment
+              );
+
+              if (!existingSegment) {
+                const newSegment: FileSystemEntry = {
+                  id: generateId(),
+                  name: segment,
+                  type: "directory",
+                  isExpanded: true,
+                  children: i === segments.length - 1
+                    ? [{ id: generateId(), name: "page.tsx", type: "file" }]
+                    : [],
+                };
+
+                targetContainer.push(newSegment);
+              } else if (i === segments.length - 1) {
+                const hasPageFile = existingSegment.children?.some(
+                  (child) => child.type === "file" && child.name === "page.tsx"
+                );
+                if (!hasPageFile && existingSegment.children) {
+                  existingSegment.children.push({
+                    id: generateId(),
+                    name: "page.tsx",
+                    type: "file"
+                  });
+                }
+              }
+            }
+
+            return { ...entry, children: updatedChildren, isExpanded: true };
+          }
+
+          if (entry.children) {
+            return {
+              ...entry,
+              children: addSegmentsToParent(targetEntry, entry.children, segments),
+            };
+          }
+
+          return entry;
+        });
+      };
+
+      return addSegmentsToParent(bestParent.parentEntry, entries, bestParent.remainingSegments);
     }
 
     if (normalizedPath === "/" || pathSegments.length === 0) {
