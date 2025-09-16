@@ -23,14 +23,14 @@ import { useEditorStore } from "../layout.stores";
 import { markdownData, getFirstPagePath } from "../layout.data";
 import { Toolbar } from "../components/Toolbar";
 import { SectionNode } from "../components/SectionNode";
-import { SECTION_TRANSFORMER } from "../components/SectionTransformer";
+import { SECTION_TRANSFORMER, setSectionTransformerContext } from "../components/SectionTransformer";
 import { ComponentNode } from "../components/ComponentNode";
 import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
 
 const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
-  const { updateContent, getNode, darkMode, refreshKey } = useEditorStore();
+  const { updateContent, getNode, darkMode, refreshKey, getSectionOptions } = useEditorStore();
 
   useEffect(() => {
     useEditorStore.persist.rehydrate();
@@ -54,6 +54,20 @@ const Page = () => {
 
     return getFirstPagePath();
   }, [params]);
+
+  // Set transformer context when contentPath changes
+  useEffect(() => {
+    console.log(JSON.stringify({
+      settingTransformerContext: true,
+      contentPath,
+      hasSectionOptions: !!getSectionOptions
+    }, null, 0));
+
+    setSectionTransformerContext({
+      currentFilePath: contentPath,
+      getSectionOptions: getSectionOptions
+    });
+  }, [contentPath, getSectionOptions]);
 
   const currentContent = useMemo(() => {
     const node = getNode(contentPath);

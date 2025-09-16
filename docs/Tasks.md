@@ -66,3 +66,4 @@
 - [ ] ~~augment code~~ (context and collab features aren't required for my use)
 - [ ] ~~warp ai~~ (cannot use claude plan)
 - [x] Sean kochle "my new method"
+- [ ] AGENTS.md

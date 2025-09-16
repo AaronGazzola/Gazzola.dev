@@ -52,7 +52,6 @@ function extractSectionsAndComponents(
 
   const sectionRegex = /<!-- section-(\d+) -->/g;
   let sectionMatch;
-  let sectionIndex = 0;
 
   while ((sectionMatch = sectionRegex.exec(content)) !== null) {
     const sectionId = `section${sectionMatch[1]}`;
@@ -67,21 +66,7 @@ function extractSectionsAndComponents(
       const options = extractOptionsFromSection(sectionContent);
 
       sections[sectionId] = options;
-
-      segments.push({
-        id: `${sanitizeFileName(path.basename(filePath))}-${sectionId}`,
-        name: sectionId,
-        displayName: `Section ${sectionNumber}`,
-        type: "segment",
-        path: `${sanitizeFileName(path.basename(filePath))}.${sectionId}`,
-        urlPath: "",
-        content: sectionContent,
-        sectionId: sectionId,
-        options: options,
-        include: include,
-      });
     }
-    sectionIndex++;
   }
 
   const componentRegex = /<!-- component-(\w+) -->/g;
@@ -135,7 +120,7 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
   const hasAsterisk = fileName.includes("*");
   const include = !hasAsterisk && parentInclude;
 
-  const { segments, components, sections } = extractSectionsAndComponents(
+  const { components, sections } = extractSectionsAndComponents(
     content,
     filePath,
     include
@@ -150,7 +135,6 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     path: sanitizedName,
     urlPath: generateUrlPath(relativePath),
     content: escapeForJavaScript(content),
-    segments: segments,
     components: components,
     sections: sections,
     include: include,
@@ -233,9 +217,6 @@ function buildFlatIndex(
     if (node.type === "directory") {
       buildFlatIndex(node.children, index);
     } else if (node.type === "file") {
-      for (const segment of node.segments) {
-        index[segment.path] = segment;
-      }
       for (const component of node.components) {
         index[component.path] = component;
       }

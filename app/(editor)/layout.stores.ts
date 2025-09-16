@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { markdownData, getFirstPagePath } from "./layout.data";
-import { EditorState, MarkdownData, FileSystemEntry } from "./layout.types";
+import { getFirstPagePath, markdownData } from "./layout.data";
+import { EditorState, FileSystemEntry } from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -126,14 +126,14 @@ const migrateSections = (data: any): any => {
 
   Object.values(migratedData.flatIndex).forEach((node: any) => {
     if (node.type === "file" && node.sections) {
-      Object.keys(node.sections).forEach(sectionId => {
+      Object.keys(node.sections).forEach((sectionId) => {
         const section = node.sections[sectionId];
-        Object.keys(section).forEach(optionId => {
+        Object.keys(section).forEach((optionId) => {
           const option = section[optionId];
           if (typeof option === "string") {
             section[optionId] = {
               content: option,
-              include: false
+              include: false,
             };
           }
         });
@@ -141,12 +141,12 @@ const migrateSections = (data: any): any => {
     }
 
     if (node.type === "segment" && node.options) {
-      Object.keys(node.options).forEach(optionId => {
+      Object.keys(node.options).forEach((optionId) => {
         const option = node.options[optionId];
         if (typeof option === "string") {
           node.options[optionId] = {
             content: option,
-            include: false
+            include: false,
           };
         }
       });
@@ -159,7 +159,7 @@ const migrateSections = (data: any): any => {
 const initialState = {
   version: STORE_VERSION,
   data: markdownData,
-  darkMode: false,
+  darkMode: true,
   refreshKey: 0,
   visitedPages: [getFirstPagePath()],
   appStructure: defaultAppStructure,
@@ -249,7 +249,10 @@ export const useEditorStore = create<EditorState>()(
               targetNode.sections[sectionId] = {};
             }
             if (!targetNode.sections[sectionId][optionId]) {
-              targetNode.sections[sectionId][optionId] = { content: "", include: false };
+              targetNode.sections[sectionId][optionId] = {
+                content: "",
+                include: false,
+              };
             }
             targetNode.sections[sectionId][optionId].content = content;
           }
@@ -269,14 +272,21 @@ export const useEditorStore = create<EditorState>()(
               targetNode.sections[sectionId] = {};
             }
             if (!targetNode.sections[sectionId][optionId]) {
-              targetNode.sections[sectionId][optionId] = { content: "", include: false };
+              targetNode.sections[sectionId][optionId] = {
+                content: "",
+                include: false,
+              };
             }
             targetNode.sections[sectionId][optionId].include = include;
           }
           return { data: { ...state.data } };
         });
       },
-      getSectionInclude: (filePath: string, sectionId: string, optionId: string) => {
+      getSectionInclude: (
+        filePath: string,
+        sectionId: string,
+        optionId: string
+      ) => {
         const state = get();
         const targetNode = state.data.flatIndex[filePath];
         if (targetNode && targetNode.type === "file") {
@@ -368,7 +378,9 @@ export const useEditorStore = create<EditorState>()(
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {
-          const migratedData = migrateSections(persistedState.data || markdownData);
+          const migratedData = migrateSections(
+            persistedState.data || markdownData
+          );
           return {
             ...persistedState,
             version: STORE_VERSION,
