@@ -326,26 +326,22 @@ export const useEditorStore = create<EditorState>()(
             }
           };
 
-          const updateRootChildren = (children: any[]): any[] => {
-            return children.map((child) => {
-              if (inclusionConfig.hasOwnProperty(child.path)) {
-                const updatedChild = updateNodeIncludeRecursively(
-                  child,
-                  inclusionConfig[child.path]
-                );
-                updateFlatIndexRecursively(updatedChild);
-                return updatedChild;
-              }
-              return child;
-            });
+          const updateTreeRecursively = (node: any): any => {
+            let updatedNode = { ...node };
+
+            if (inclusionConfig.hasOwnProperty(node.path)) {
+              updatedNode.include = inclusionConfig[node.path];
+            }
+
+            if (node.children) {
+              updatedNode.children = node.children.map(updateTreeRecursively);
+            }
+
+            return updatedNode;
           };
 
-          newRoot = {
-            ...newRoot,
-            children: updateRootChildren(newRoot.children),
-          };
-
-          newFlatIndex[""] = newRoot;
+          newRoot = updateTreeRecursively(newRoot);
+          updateFlatIndexRecursively(newRoot);
 
           return {
             data: {

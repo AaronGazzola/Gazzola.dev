@@ -32,7 +32,8 @@ function generateUrlPath(relativePath: string): string {
   const parts = relativePath.split(path.sep);
   const cleanParts = parts.map((part) => {
     const orderMatch = part.match(/^(\d+)-(.+)$/);
-    return orderMatch ? orderMatch[2].toLowerCase() : part.toLowerCase();
+    const cleanPart = orderMatch ? orderMatch[2].toLowerCase() : part.toLowerCase();
+    return cleanPart.replace(/\*/g, '');
   });
   return "/" + cleanParts.join("/").replace(/\.md$/, "");
 }

@@ -18,7 +18,7 @@ export const markdownData: MarkdownData = {
         "displayName": "Database",
         "type": "directory",
         "path": "database",
-        "urlPath": "/database*",
+        "urlPath": "/database",
         "include": false,
         "children": [
           {
@@ -28,7 +28,7 @@ export const markdownData: MarkdownData = {
             "type": "file",
             "order": 5,
             "path": "database.installation",
-            "urlPath": "/database*/installation",
+            "urlPath": "/database/installation",
             "content": "installation\n",
             "components": [],
             "sections": {},
@@ -41,7 +41,7 @@ export const markdownData: MarkdownData = {
             "type": "file",
             "order": 6,
             "path": "database.schema",
-            "urlPath": "/database*/schema",
+            "urlPath": "/database/schema",
             "content": "schema\n",
             "components": [],
             "sections": {},
@@ -54,7 +54,7 @@ export const markdownData: MarkdownData = {
             "type": "file",
             "order": 7,
             "path": "database.rls",
-            "urlPath": "/database*/rls",
+            "urlPath": "/database/rls",
             "content": "rls\n",
             "components": [],
             "sections": {},
@@ -143,11 +143,11 @@ export const markdownData: MarkdownData = {
               "section1": {
                 "option1": {
                   "content": "# Full stack web app\n\nThis app will include full stack features that require database integration",
-                  "include": true
+                  "include": false
                 },
                 "option2": {
                   "content": "# Front end web app\n\nThis app will be a front-end user experience, without a database",
-                  "include": true
+                  "include": false
                 }
               }
             },
@@ -208,7 +208,7 @@ export const markdownData: MarkdownData = {
           "displayName": "Database",
           "type": "directory",
           "path": "database",
-          "urlPath": "/database*",
+          "urlPath": "/database",
           "include": false,
           "children": [
             {
@@ -218,7 +218,7 @@ export const markdownData: MarkdownData = {
               "type": "file",
               "order": 5,
               "path": "database.installation",
-              "urlPath": "/database*/installation",
+              "urlPath": "/database/installation",
               "content": "installation\n",
               "components": [],
               "sections": {},
@@ -231,7 +231,7 @@ export const markdownData: MarkdownData = {
               "type": "file",
               "order": 6,
               "path": "database.schema",
-              "urlPath": "/database*/schema",
+              "urlPath": "/database/schema",
               "content": "schema\n",
               "components": [],
               "sections": {},
@@ -244,7 +244,7 @@ export const markdownData: MarkdownData = {
               "type": "file",
               "order": 7,
               "path": "database.rls",
-              "urlPath": "/database*/rls",
+              "urlPath": "/database/rls",
               "content": "rls\n",
               "components": [],
               "sections": {},
@@ -388,7 +388,7 @@ export const markdownData: MarkdownData = {
       "displayName": "Database",
       "type": "directory",
       "path": "database",
-      "urlPath": "/database*",
+      "urlPath": "/database",
       "include": false,
       "children": [
         {
@@ -398,7 +398,7 @@ export const markdownData: MarkdownData = {
           "type": "file",
           "order": 5,
           "path": "database.installation",
-          "urlPath": "/database*/installation",
+          "urlPath": "/database/installation",
           "content": "installation\n",
           "components": [],
           "sections": {},
@@ -411,7 +411,7 @@ export const markdownData: MarkdownData = {
           "type": "file",
           "order": 6,
           "path": "database.schema",
-          "urlPath": "/database*/schema",
+          "urlPath": "/database/schema",
           "content": "schema\n",
           "components": [],
           "sections": {},
@@ -424,7 +424,7 @@ export const markdownData: MarkdownData = {
           "type": "file",
           "order": 7,
           "path": "database.rls",
-          "urlPath": "/database*/rls",
+          "urlPath": "/database/rls",
           "content": "rls\n",
           "components": [],
           "sections": {},
@@ -439,7 +439,7 @@ export const markdownData: MarkdownData = {
       "type": "file",
       "order": 5,
       "path": "database.installation",
-      "urlPath": "/database*/installation",
+      "urlPath": "/database/installation",
       "content": "installation\n",
       "components": [],
       "sections": {},
@@ -452,7 +452,7 @@ export const markdownData: MarkdownData = {
       "type": "file",
       "order": 6,
       "path": "database.schema",
-      "urlPath": "/database*/schema",
+      "urlPath": "/database/schema",
       "content": "schema\n",
       "components": [],
       "sections": {},
@@ -465,7 +465,7 @@ export const markdownData: MarkdownData = {
       "type": "file",
       "order": 7,
       "path": "database.rls",
-      "urlPath": "/database*/rls",
+      "urlPath": "/database/rls",
       "content": "rls\n",
       "components": [],
       "sections": {},

@@ -2,11 +2,7 @@
 
 ## Active tasks
 
-- [ ] Add section selection menu to the editor Toolbar
-- [ ] Remove asterix ("\*") from paths
-- [ ] Default to dark theme
 - [ ] Remove excluded content from downloaded files
-- [ ] Fix editor comment transform error
 - [ ] Update the claude document
 - [ ] Add shadcn variants for the editor components
 - [ ] Add dynamic component example elements
@@ -16,6 +12,7 @@
 
 ## Completed tasks
 
+- [x] Default to dark theme
 - [x] Make section selection agnostic (currently hard coded to "welcome")
 - [x] Add UX for configuring the app structure with nested layouts
 - [x] Refactor data management to include/exclude files/directories
@@ -48,6 +45,9 @@
 - [x] rename compile to parse
 - [x] Refactor markdown parsing and editor data management
 - [x] Update the user input storage method
+- [x] Fix editor comment transform error
+- [x] Add section selection menu to the editor Toolbar
+- [x] Remove asterix ("\*") from paths
 
 ## Pending tasks
 
