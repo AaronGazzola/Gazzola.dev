@@ -12,7 +12,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "dev:test": "APP_ENV=test next dev",
-    "parse-markdown": "npx tsx scripts/parse-markdown.ts"
+    "parse": "npx tsx scripts/parse-markdown.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

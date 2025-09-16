@@ -1,23 +1,13 @@
-## Tech to integrate
-
-- [ ] payload cms
-  - [ ] https://payloadcms.com/get-started
-- [ ] playright mcp (needs policy change to change setting)
-  - [ ] https://playwright.dev/agents
-- [ ] augment code
-- [ ] warp ai
-- [ ] Sean kochle "my new method"
-
 # Tasks
 
 ## Active tasks
 
-- [ ] Update the claude document
+- [ ] Add section selection menu to the editor Toolbar
 - [ ] Remove asterix ("\*") from paths
 - [ ] Default to dark theme
 - [ ] Remove excluded content from downloaded files
 - [ ] Fix editor comment transform error
-- [ ] Make section selection agnostic (currently hard coded to "welcome")
+- [ ] Update the claude document
 - [ ] Add shadcn variants for the editor components
 - [ ] Add dynamic component example elements
 - [ ] Add donate UX on download
@@ -26,6 +16,7 @@
 
 ## Completed tasks
 
+- [x] Make section selection agnostic (currently hard coded to "welcome")
 - [x] Add UX for configuring the app structure with nested layouts
 - [x] Refactor data management to include/exclude files/directories
 - [x] Add a download button to download files
@@ -65,3 +56,13 @@
 - Unicorns everywhere
 - Red queen hypothesis
 - How's my driving?
+
+## Tech to integrate
+
+- [ ] payload cms
+  - [ ] https://payloadcms.com/get-started
+- [ ] playright mcp (needs policy change to change setting)
+  - [ ] https://playwright.dev/agents
+- [ ] ~~augment code~~ (context and collab features aren't required for my use)
+- [ ] ~~warp ai~~ (cannot use claude plan)
+- [x] Sean kochle "my new method"

@@ -4,11 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/tailwind.utils";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 
-export const FullStackOrFrontEnd = () => {
-  const { getSectionOptions, getSectionContent, setSectionInclude, getSectionInclude, darkMode, updateInclusionRules } = useEditorStore();
-  const [isFullStack, setIsFullStack] = useState<boolean | null>(null);
+export const HelloSwitch = () => {
+  const { getSectionInclude, setSectionInclude, darkMode } = useEditorStore();
+  const [isGreeting, setIsGreeting] = useState<boolean | null>(null);
 
-  const targetFile = "welcome.intro";
+  const targetFile = "welcome.hello";
   const targetSection = "section1";
 
   useEffect(() => {
@@ -16,28 +16,24 @@ export const FullStackOrFrontEnd = () => {
     const option2Include = getSectionInclude(targetFile, targetSection, "option2");
 
     if (option1Include) {
-      setIsFullStack(true);
-      updateInclusionRules({ "database": true });
+      setIsGreeting(false);
     } else if (option2Include) {
-      setIsFullStack(false);
-      updateInclusionRules({ "database": false });
+      setIsGreeting(true);
     }
-  }, [getSectionInclude, updateInclusionRules]);
+  }, [getSectionInclude]);
 
   const handleToggle = useCallback(() => {
-    const newValue = !isFullStack;
-    setIsFullStack(newValue);
+    const newValue = !isGreeting;
+    setIsGreeting(newValue);
 
     if (newValue) {
-      setSectionInclude(targetFile, targetSection, "option1", true);
-      setSectionInclude(targetFile, targetSection, "option2", false);
-    } else {
       setSectionInclude(targetFile, targetSection, "option1", false);
       setSectionInclude(targetFile, targetSection, "option2", true);
+    } else {
+      setSectionInclude(targetFile, targetSection, "option1", true);
+      setSectionInclude(targetFile, targetSection, "option2", false);
     }
-
-    updateInclusionRules({ "database": newValue });
-  }, [isFullStack, setSectionInclude, updateInclusionRules]);
+  }, [isGreeting, setSectionInclude]);
 
   return (
     <div className={cn(
@@ -48,40 +44,40 @@ export const FullStackOrFrontEnd = () => {
         "text-sm font-medium",
         darkMode ? "text-gray-300" : "text-gray-700"
       )}>
-        Frontend
+        Hello there
       </span>
-      
+
       <button
         onClick={handleToggle}
         className={cn(
           "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-          isFullStack === null 
+          isGreeting === null
             ? darkMode ? "bg-gray-600" : "bg-gray-300"
-            : isFullStack 
-            ? "bg-blue-600" 
+            : isGreeting
+            ? "bg-blue-600"
             : darkMode ? "bg-gray-600" : "bg-gray-400",
           darkMode && "focus:ring-offset-gray-900"
         )}
         role="switch"
-        aria-checked={isFullStack ?? false}
+        aria-checked={isGreeting ?? false}
       >
         <span
           className={cn(
             "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-            isFullStack === null
+            isGreeting === null
               ? "translate-x-2.5"
-              : isFullStack 
-              ? "translate-x-5" 
+              : isGreeting
+              ? "translate-x-5"
               : "translate-x-0"
           )}
         />
       </button>
-      
+
       <span className={cn(
         "text-sm font-medium",
         darkMode ? "text-gray-300" : "text-gray-700"
       )}>
-        Full Stack
+        Greetings
       </span>
     </div>
   );

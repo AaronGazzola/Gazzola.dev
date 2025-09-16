@@ -111,39 +111,93 @@ interface SectionNodeComponentProps {
 }
 
 function SectionNodeComponent({ node }: SectionNodeComponentProps) {
-  const { 
-    getSectionOptions, 
-    getSectionContent, 
+  const {
+    getSectionOptions,
+    getSectionContent,
     setSectionContent,
-    getSectionSelection, 
-    darkMode 
+    getSectionInclude,
+    darkMode,
+    data
   } = useEditorStore();
   
   const [mounted, setMounted] = useState(false);
   const sectionKey = node.getSectionKey();
-  const selectedOption = getSectionSelection(sectionKey);
+
+  // Find the parent file that contains this section
+  const [sectionId, filePath] = useMemo(() => {
+    // First try: direct lookup in flatIndex
+    const segmentNode = data.flatIndex[sectionKey];
+    if (segmentNode && segmentNode.type === "segment") {
+      // Find the parent file by looking for files that contain this segment
+      const parentFile = Object.values(data.flatIndex).find((node) =>
+        node.type === "file" &&
+        node.segments &&
+        node.segments.some((segment: any) => segment.path === sectionKey)
+      );
+
+      if (parentFile) {
+        return [segmentNode.sectionId, parentFile.path];
+      }
+    }
+
+    // Second try: if sectionKey is just "section1", look for files with sections containing this ID
+    const filesWithSection = Object.values(data.flatIndex).filter((node) =>
+      node.type === "file" &&
+      node.sections &&
+      node.sections[sectionKey]
+    );
+
+    // Try to find from URL or other context clues
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      const matchingFile = filesWithSection.find((file: any) =>
+        currentPath.includes(file.name) || currentPath.includes(file.path.split('.').pop())
+      );
+
+      if (matchingFile) {
+        return [sectionKey, matchingFile.path];
+      }
+    }
+
+    // Fallback to first file that has this section
+    if (filesWithSection.length > 0) {
+      return [sectionKey, filesWithSection[0].path];
+    }
+
+    return [sectionKey, sectionKey]; // ultimate fallback
+  }, [sectionKey, data]);
+
+  const includedOptions = useMemo(() => {
+    const options = getSectionOptions(filePath, sectionId);
+    const included: { optionId: string; content: string }[] = [];
+
+    Object.entries(options).forEach(([optionId, optionData]) => {
+      if (optionData.include) {
+        included.push({
+          optionId,
+          content: optionData.content
+        });
+      }
+    });
+
+    return included;
+  }, [getSectionOptions, filePath, sectionId, data]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-
-  const selectedContent = useMemo(() => {
-    if (!selectedOption) return "";
-    return getSectionContent(sectionKey, selectedOption);
-  }, [getSectionContent, sectionKey, selectedOption]);
+  const combinedContent = useMemo(() => {
+    return includedOptions.map(option => option.content).join('\n\n');
+  }, [includedOptions]);
 
 
   const handleContentChange = useCallback(
     (editorState: EditorState) => {
-      if (!selectedOption) return;
-      
-      editorState.read(() => {
-        const markdown = $convertToMarkdownString(TRANSFORMERS);
-        setSectionContent(sectionKey, selectedOption, markdown);
-      });
+      // Content changes are handled by the individual toggle components
+      // This editor displays the combined included content for reference
     },
-    [sectionKey, selectedOption, setSectionContent]
+    []
   );
 
   const editorConfig = useMemo(() => ({
@@ -186,16 +240,16 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
         : "border-l-4 border-gray-300 pl-4 italic mb-4",
     },
     onError: (error: Error) => {
-      console.log(JSON.stringify({ 
+      console.log(JSON.stringify({
         error: `Section editor error: ${error.message}`,
         sectionKey,
-        selectedOption 
+        includedOptionsCount: includedOptions.length
       }, null, 0));
     },
-    editorState: selectedOption && selectedContent 
-      ? () => $convertFromMarkdownString(selectedContent, TRANSFORMERS)
+    editorState: combinedContent
+      ? () => $convertFromMarkdownString(combinedContent, TRANSFORMERS)
       : undefined,
-  }), [darkMode, sectionKey, selectedOption, selectedContent]);
+  }), [darkMode, sectionKey, combinedContent, includedOptions, data]);
 
   if (!mounted) {
     return (
@@ -205,13 +259,13 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     );
   }
 
-  if (!selectedOption) {
+  if (includedOptions.length === 0) {
     return (
       <div className={`w-full mb-6 p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
         <div className="flex items-center justify-center">
           <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
           <span className={`px-4 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-            pending selection
+            no options selected
           </span>
           <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
         </div>
@@ -222,7 +276,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
   return (
     <div className={`w-full mb-6 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
       <div className={`w-full rounded-md ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <LexicalComposer key={`${sectionKey}-${selectedOption}`} initialConfig={editorConfig}>
+        <LexicalComposer key={`${sectionKey}-${includedOptions.map(o => o.optionId).join('-')}`} initialConfig={editorConfig}>
           <div className="relative">
             <RichTextPlugin
               contentEditable={

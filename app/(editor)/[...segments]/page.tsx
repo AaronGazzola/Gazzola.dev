@@ -20,7 +20,7 @@ import { EditorState } from "lexical";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
-import { markdownData } from "../layout.data";
+import { markdownData, getFirstPagePath } from "../layout.data";
 import { Toolbar } from "../components/Toolbar";
 import { SectionNode } from "../components/SectionNode";
 import { SECTION_TRANSFORMER } from "../components/SectionTransformer";
@@ -41,18 +41,18 @@ const Page = () => {
     const segments = params.segments as string[] | undefined;
 
     if (!segments || segments.length === 0) {
-      return "welcome";
+      return getFirstPagePath();
     }
 
     const urlPath = "/" + segments.join("/");
-    
+
     for (const [path, node] of Object.entries(markdownData.flatIndex)) {
       if (node.type === "file" && node.urlPath === urlPath) {
         return path;
       }
     }
 
-    return "welcome";
+    return getFirstPagePath();
   }, [params]);
 
   const currentContent = useMemo(() => {

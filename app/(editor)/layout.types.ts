@@ -16,19 +16,24 @@ export interface DirectoryNode extends BaseNode {
   children: MarkdownNode[];
 }
 
+export interface SectionOption {
+  content: string;
+  include: boolean;
+}
+
 export interface FileNode extends BaseNode {
   type: "file";
   content: string;
   segments: SegmentNode[];
   components: ComponentRef[];
-  sections: Record<string, Record<string, string>>;
+  sections: Record<string, Record<string, SectionOption>>;
 }
 
 export interface SegmentNode extends BaseNode {
   type: "segment";
   content: string;
   sectionId: string;
-  options?: Record<string, string>;
+  options?: Record<string, SectionOption>;
 }
 
 export interface ComponentRef extends BaseNode {
@@ -44,11 +49,11 @@ export interface MarkdownData {
 }
 
 export interface EditorState {
+  version: number;
   data: MarkdownData;
   darkMode: boolean;
   refreshKey: number;
   visitedPages: string[];
-  sectionSelections: Record<string, string>;
   appStructure: FileSystemEntry[];
   updateContent: (path: string, content: string) => void;
   setContent: (path: string, content: string) => void;
@@ -57,17 +62,18 @@ export interface EditorState {
   markPageVisited: (path: string) => void;
   isPageVisited: (path: string) => boolean;
   getNextUnvisitedPage: (currentPath: string) => string | null;
-  getSectionOptions: (sectionId: string) => Record<string, string>;
-  getSectionContent: (sectionId: string, optionId: string) => string;
-  setSectionContent: (sectionId: string, optionId: string, content: string) => void;
-  setSectionSelection: (sectionId: string, optionId: string) => void;
-  getSectionSelection: (sectionId: string) => string | null;
+  getSectionOptions: (filePath: string, sectionId: string) => Record<string, SectionOption>;
+  getSectionContent: (filePath: string, sectionId: string, optionId: string) => string;
+  setSectionContent: (filePath: string, sectionId: string, optionId: string, content: string) => void;
+  setSectionInclude: (filePath: string, sectionId: string, optionId: string, include: boolean) => void;
+  getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean;
   setAppStructure: (appStructure: FileSystemEntry[]) => void;
   updateAppStructureNode: (id: string, updates: Partial<FileSystemEntry>) => void;
   deleteAppStructureNode: (id: string) => void;
   addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => void;
   updateInclusionRules: (inclusionConfig: Record<string, boolean>) => void;
   reset: () => void;
+  resetToLatestData: () => void;
   forceRefresh: () => void;
 }
 
