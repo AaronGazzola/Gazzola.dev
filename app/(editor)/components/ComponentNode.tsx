@@ -30,6 +30,11 @@ const componentMap: Record<string, any> = {
       default: m.AppStructure,
     }))
   ),
+  HelloSwitch: lazy(() =>
+    import("@/app/(components)/HelloSwitch").then((m) => ({
+      default: m.HelloSwitch,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

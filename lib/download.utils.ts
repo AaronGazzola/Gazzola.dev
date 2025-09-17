@@ -148,20 +148,25 @@ export const generateRouteMapAscii = (appStructure: FileSystemEntry[]): string =
 
 export const processContent = (
   content: string,
-  sectionSelections: Record<string, string>,
-  getSectionContent: (sectionId: string, optionId: string) => string,
+  filePath: string,
+  getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean,
+  getSectionContent: (filePath: string, sectionId: string, optionId: string) => string,
   appStructure: FileSystemEntry[]
 ): string => {
   let processedContent = content;
 
   processedContent = processedContent.replace(/<!-- section-(\d+) -->/g, (match, sectionNum) => {
     const sectionId = `section${sectionNum}`;
-    const selectedOption = sectionSelections[sectionId];
-    
-    if (selectedOption) {
-      return getSectionContent(sectionId, selectedOption);
+
+    const option1Include = getSectionInclude(filePath, sectionId, "option1");
+    const option2Include = getSectionInclude(filePath, sectionId, "option2");
+
+    if (option1Include) {
+      return getSectionContent(filePath, sectionId, "option1");
+    } else if (option2Include) {
+      return getSectionContent(filePath, sectionId, "option2");
     }
-    
+
     return "";
   });
 
@@ -183,21 +188,22 @@ const processNode = (
   node: MarkdownNode,
   zip: JSZip,
   currentFolder: JSZip,
-  sectionSelections: Record<string, string>,
-  getSectionContent: (sectionId: string, optionId: string) => string,
+  getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean,
+  getSectionContent: (filePath: string, sectionId: string, optionId: string) => string,
   appStructure: FileSystemEntry[]
 ): void => {
   if (node.type === "directory") {
     const folder = currentFolder.folder(node.name);
     if (folder && node.children) {
       node.children.forEach(child => {
-        processNode(child, zip, folder, sectionSelections, getSectionContent, appStructure);
+        processNode(child, zip, folder, getSectionInclude, getSectionContent, appStructure);
       });
     }
   } else if (node.type === "file") {
     const processedContent = processContent(
       node.content,
-      sectionSelections,
+      node.path,
+      getSectionInclude,
       getSectionContent,
       appStructure
     );
@@ -213,15 +219,15 @@ const processNode = (
 
 export const generateAndDownloadZip = async (
   markdownData: MarkdownData,
-  sectionSelections: Record<string, string>,
-  getSectionContent: (sectionId: string, optionId: string) => string,
+  getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean,
+  getSectionContent: (filePath: string, sectionId: string, optionId: string) => string,
   appStructure: FileSystemEntry[]
 ): Promise<void> => {
   const zip = new JSZip();
 
   if (markdownData.root && markdownData.root.children) {
     markdownData.root.children.forEach(child => {
-      processNode(child, zip, zip, sectionSelections, getSectionContent, appStructure);
+      processNode(child, zip, zip, getSectionInclude, getSectionContent, appStructure);
     });
   }
 

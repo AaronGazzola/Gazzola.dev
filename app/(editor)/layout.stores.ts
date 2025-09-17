@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { markdownData } from "./layout.data";
-import { EditorState, FileSystemEntry, MarkdownData } from "./layout.types";
+import { getFirstPagePath, markdownData } from "./layout.data";
+import { EditorState, FileSystemEntry } from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -66,10 +66,7 @@ const updateNode = (
   });
 };
 
-const updateNodeIncludeRecursively = (
-  node: any,
-  include: boolean
-): any => {
+const updateNodeIncludeRecursively = (node: any, include: boolean): any => {
   const updated = { ...node, include };
   if (node.children) {
     updated.children = node.children.map((child: any) =>
@@ -120,12 +117,51 @@ const addNode = (
   });
 };
 
+const STORE_VERSION = 2;
+
+const migrateSections = (data: any): any => {
+  if (!data || !data.flatIndex) return data;
+
+  const migratedData = JSON.parse(JSON.stringify(data));
+
+  Object.values(migratedData.flatIndex).forEach((node: any) => {
+    if (node.type === "file" && node.sections) {
+      Object.keys(node.sections).forEach((sectionId) => {
+        const section = node.sections[sectionId];
+        Object.keys(section).forEach((optionId) => {
+          const option = section[optionId];
+          if (typeof option === "string") {
+            section[optionId] = {
+              content: option,
+              include: false,
+            };
+          }
+        });
+      });
+    }
+
+    if (node.type === "segment" && node.options) {
+      Object.keys(node.options).forEach((optionId) => {
+        const option = node.options[optionId];
+        if (typeof option === "string") {
+          node.options[optionId] = {
+            content: option,
+            include: false,
+          };
+        }
+      });
+    }
+  });
+
+  return migratedData;
+};
+
 const initialState = {
+  version: STORE_VERSION,
   data: markdownData,
-  darkMode: false,
+  darkMode: true,
   refreshKey: 0,
-  visitedPages: ["welcome"],
-  sectionSelections: {},
+  visitedPages: [getFirstPagePath()],
   appStructure: defaultAppStructure,
 };
 
@@ -180,53 +216,90 @@ export const useEditorStore = create<EditorState>()(
         }
         return null;
       },
-      getSectionOptions: (sectionId: string) => {
+      getSectionOptions: (filePath: string, sectionId: string) => {
         const state = get();
-        const welcomeNode = state.data.flatIndex["welcome"];
-        if (welcomeNode && welcomeNode.type === "file") {
-          return welcomeNode.sections[sectionId] || {};
+        const targetNode = state.data.flatIndex[filePath];
+        if (targetNode && targetNode.type === "file") {
+          return targetNode.sections[sectionId] || {};
         }
         return {};
       },
-      getSectionContent: (sectionId: string, optionId: string) => {
+      getSectionContent: (
+        filePath: string,
+        sectionId: string,
+        optionId: string
+      ) => {
         const state = get();
-        const welcomeNode = state.data.flatIndex["welcome"];
-        if (welcomeNode && welcomeNode.type === "file") {
-          return welcomeNode.sections[sectionId]?.[optionId] || "";
+        const targetNode = state.data.flatIndex[filePath];
+        if (targetNode && targetNode.type === "file") {
+          return targetNode.sections[sectionId]?.[optionId]?.content || "";
         }
         return "";
       },
       setSectionContent: (
+        filePath: string,
         sectionId: string,
         optionId: string,
         content: string
       ) => {
         set((state) => {
-          const welcomeNode = state.data.flatIndex["welcome"];
-          if (welcomeNode && welcomeNode.type === "file") {
-            if (!welcomeNode.sections[sectionId]) {
-              welcomeNode.sections[sectionId] = {};
+          const targetNode = state.data.flatIndex[filePath];
+          if (targetNode && targetNode.type === "file") {
+            if (!targetNode.sections[sectionId]) {
+              targetNode.sections[sectionId] = {};
             }
-            welcomeNode.sections[sectionId][optionId] = content;
+            if (!targetNode.sections[sectionId][optionId]) {
+              targetNode.sections[sectionId][optionId] = {
+                content: "",
+                include: false,
+              };
+            }
+            targetNode.sections[sectionId][optionId].content = content;
           }
           return { data: { ...state.data } };
         });
       },
-      setSectionSelection: (sectionId: string, optionId: string) => {
-        set((state) => ({
-          sectionSelections: {
-            ...state.sectionSelections,
-            [sectionId]: optionId,
-          },
-        }));
+      setSectionInclude: (
+        filePath: string,
+        sectionId: string,
+        optionId: string,
+        include: boolean
+      ) => {
+        set((state) => {
+          const targetNode = state.data.flatIndex[filePath];
+          if (targetNode && targetNode.type === "file") {
+            if (!targetNode.sections[sectionId]) {
+              targetNode.sections[sectionId] = {};
+            }
+            if (!targetNode.sections[sectionId][optionId]) {
+              targetNode.sections[sectionId][optionId] = {
+                content: "",
+                include: false,
+              };
+            }
+            targetNode.sections[sectionId][optionId].include = include;
+          }
+          return { data: { ...state.data } };
+        });
       },
-      getSectionSelection: (sectionId: string) => {
+      getSectionInclude: (
+        filePath: string,
+        sectionId: string,
+        optionId: string
+      ) => {
         const state = get();
-        return state.sectionSelections[sectionId] || null;
+        const targetNode = state.data.flatIndex[filePath];
+        if (targetNode && targetNode.type === "file") {
+          return targetNode.sections[sectionId]?.[optionId]?.include || false;
+        }
+        return false;
       },
       setAppStructure: (appStructure: FileSystemEntry[]) =>
         set({ appStructure }),
-      updateAppStructureNode: (id: string, updates: Partial<FileSystemEntry>) => {
+      updateAppStructureNode: (
+        id: string,
+        updates: Partial<FileSystemEntry>
+      ) => {
         set((state) => ({
           appStructure: updateNode(state.appStructure, id, updates),
         }));
@@ -253,23 +326,22 @@ export const useEditorStore = create<EditorState>()(
             }
           };
 
-          const updateRootChildren = (children: any[]): any[] => {
-            return children.map((child) => {
-              if (inclusionConfig.hasOwnProperty(child.path)) {
-                const updatedChild = updateNodeIncludeRecursively(child, inclusionConfig[child.path]);
-                updateFlatIndexRecursively(updatedChild);
-                return updatedChild;
-              }
-              return child;
-            });
+          const updateTreeRecursively = (node: any): any => {
+            let updatedNode = { ...node };
+
+            if (inclusionConfig.hasOwnProperty(node.path)) {
+              updatedNode.include = inclusionConfig[node.path];
+            }
+
+            if (node.children) {
+              updatedNode.children = node.children.map(updateTreeRecursively);
+            }
+
+            return updatedNode;
           };
 
-          newRoot = {
-            ...newRoot,
-            children: updateRootChildren(newRoot.children),
-          };
-
-          newFlatIndex[""] = newRoot;
+          newRoot = updateTreeRecursively(newRoot);
+          updateFlatIndexRecursively(newRoot);
 
           return {
             data: {
@@ -281,18 +353,38 @@ export const useEditorStore = create<EditorState>()(
         });
       },
       reset: () => set(initialState),
+      resetToLatestData: () => {
+        set({
+          ...initialState,
+          data: markdownData,
+        });
+      },
       forceRefresh: () =>
         set((state) => ({ refreshKey: state.refreshKey + 1 })),
     }),
     {
       name: "editor-storage",
+      version: STORE_VERSION,
       partialize: (state) => ({
+        version: state.version,
         data: state.data,
         darkMode: state.darkMode,
         visitedPages: state.visitedPages,
-        sectionSelections: state.sectionSelections,
         appStructure: state.appStructure,
       }),
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2) {
+          const migratedData = migrateSections(
+            persistedState.data || markdownData
+          );
+          return {
+            ...persistedState,
+            version: STORE_VERSION,
+            data: migratedData,
+          };
+        }
+        return persistedState;
+      },
     }
   )
 );

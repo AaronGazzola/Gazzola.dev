@@ -15,7 +15,7 @@ import {
   SquareStack,
   Trash2,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type RouteEntry = {
   path: string;
@@ -95,17 +95,800 @@ const generateRoutesFromFileSystem = (
   return routes;
 };
 
+const findFileSystemEntryForPath = (
+  entries: FileSystemEntry[],
+  targetPath: string,
+  currentPath: string = "",
+  isRoot: boolean = false
+): { entry: FileSystemEntry; segmentIndex: number } | null => {
+  for (const entry of entries) {
+    if (entry.name === "app" && isRoot) {
+      if (entry.children) {
+        const result = findFileSystemEntryForPath(
+          entry.children,
+          targetPath,
+          "",
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+      if (entry.children) {
+        const result = findFileSystemEntryForPath(
+          entry.children,
+          targetPath,
+          currentPath,
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.type === "directory" && entry.children) {
+      const newPath = currentPath
+        ? `${currentPath}/${entry.name}`
+        : `/${entry.name}`;
+
+      if (targetPath === newPath || targetPath.startsWith(newPath + "/")) {
+        const currentSegments = newPath.split("/").filter(Boolean);
+
+        if (targetPath === newPath) {
+          return { entry, segmentIndex: currentSegments.length - 1 };
+        }
+
+        const result = findFileSystemEntryForPath(
+          entry.children,
+          targetPath,
+          newPath,
+          false
+        );
+        if (result) return result;
+      }
+    }
+  }
+  return null;
+};
+
+const updateFileSystemEntryName = (
+  entries: FileSystemEntry[],
+  targetEntry: FileSystemEntry,
+  newName: string
+): FileSystemEntry[] => {
+  return entries.map((entry) => {
+    if (entry.id === targetEntry.id) {
+      return { ...entry, name: newName };
+    }
+    if (entry.children) {
+      return {
+        ...entry,
+        children: updateFileSystemEntryName(
+          entry.children,
+          targetEntry,
+          newName
+        ),
+      };
+    }
+    return entry;
+  });
+};
+
+const isDirectoryEmpty = (entry: FileSystemEntry): boolean => {
+  if (entry.type !== "directory" || !entry.children) {
+    return false;
+  }
+
+  if (entry.children.length === 0) {
+    return true;
+  }
+
+  return entry.children.every(
+    (child) => child.type === "directory" && isDirectoryEmpty(child)
+  );
+};
+
+const deleteRouteFromFileSystem = (
+  entries: FileSystemEntry[],
+  targetPath: string,
+  currentPath: string = "",
+  isRoot: boolean = false
+): FileSystemEntry[] => {
+  return entries
+    .map((entry) => {
+      if (entry.name === "app" && isRoot) {
+        if (entry.children) {
+          if (targetPath === "/") {
+            const updatedChildren = entry.children.filter(
+              (child) => !(child.type === "file" && child.name === "page.tsx")
+            );
+            return { ...entry, children: updatedChildren };
+          } else {
+            const updatedChildren = deleteRouteFromFileSystem(
+              entry.children,
+              targetPath,
+              "",
+              false
+            );
+            return { ...entry, children: updatedChildren };
+          }
+        }
+        return entry;
+      }
+
+      if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+        if (entry.children) {
+          const updatedChildren = deleteRouteFromFileSystem(
+            entry.children,
+            targetPath,
+            currentPath,
+            false
+          );
+          return { ...entry, children: updatedChildren };
+        }
+        return entry;
+      }
+
+      if (entry.type === "directory" && entry.children) {
+        const newPath = currentPath
+          ? `${currentPath}/${entry.name}`
+          : `/${entry.name}`;
+
+        if (targetPath === newPath) {
+          const updatedChildren = entry.children.filter(
+            (child) => !(child.type === "file" && child.name === "page.tsx")
+          );
+
+          const updatedEntry = { ...entry, children: updatedChildren };
+
+          if (isDirectoryEmpty(updatedEntry)) {
+            return null;
+          }
+
+          return updatedEntry;
+        }
+
+        const updatedChildren = deleteRouteFromFileSystem(
+          entry.children,
+          targetPath,
+          newPath,
+          false
+        );
+        const updatedEntry = { ...entry, children: updatedChildren };
+
+        if (isDirectoryEmpty(updatedEntry)) {
+          return null;
+        }
+
+        return updatedEntry;
+      }
+
+      return entry;
+    })
+    .filter(Boolean) as FileSystemEntry[];
+};
+
+const addRouteSegment = (
+  entries: FileSystemEntry[],
+  parentPath: string,
+  segmentName: string,
+  currentPath: string = "",
+  isRoot: boolean = false
+): FileSystemEntry[] => {
+  return entries.map((entry) => {
+    if (entry.name === "app" && isRoot) {
+      if (entry.children) {
+        return {
+          ...entry,
+          children: addRouteSegment(
+            entry.children,
+            parentPath,
+            segmentName,
+            "",
+            false
+          ),
+        };
+      }
+      return entry;
+    }
+
+    if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+      if (entry.children) {
+        return {
+          ...entry,
+          children: addRouteSegment(
+            entry.children,
+            parentPath,
+            segmentName,
+            currentPath,
+            false
+          ),
+        };
+      }
+      return entry;
+    }
+
+    if (entry.type === "directory" && entry.children) {
+      const newPath = currentPath
+        ? `${currentPath}/${entry.name}`
+        : `/${entry.name}`;
+
+      if (parentPath === newPath) {
+        const newSegment: FileSystemEntry = {
+          id: generateId(),
+          name: segmentName,
+          type: "directory",
+          isExpanded: true,
+          children: [{ id: generateId(), name: "page.tsx", type: "file" }],
+        };
+
+        return {
+          ...entry,
+          children: [...(entry.children || []), newSegment],
+          isExpanded: true,
+        };
+      }
+
+      return {
+        ...entry,
+        children: addRouteSegment(
+          entry.children,
+          parentPath,
+          segmentName,
+          newPath,
+          false
+        ),
+      };
+    }
+
+    return entry;
+  });
+};
+
+const validateSegmentName = (
+  name: string
+): { valid: boolean; error?: string } => {
+  if (!name || name.trim().length === 0) {
+    return { valid: false, error: "Segment name cannot be empty" };
+  }
+
+  const trimmedName = name.trim();
+
+  if (!/^[a-zA-Z0-9-_]+$/.test(trimmedName)) {
+    return {
+      valid: false,
+      error: "Only letters, numbers, hyphens, and underscores are allowed",
+    };
+  }
+
+  if (trimmedName.length > 50) {
+    return { valid: false, error: "Segment name cannot exceed 50 characters" };
+  }
+
+  return { valid: true };
+};
+
+const validateRoutePath = (
+  path: string
+): { valid: boolean; error?: string } => {
+  if (!path || path.trim().length === 0) {
+    return { valid: false, error: "Route path cannot be empty" };
+  }
+
+  const trimmedPath = path.trim();
+
+  if (!trimmedPath.startsWith("/")) {
+    return { valid: false, error: "Route path must start with /" };
+  }
+
+  if (trimmedPath !== "/" && trimmedPath.endsWith("/")) {
+    const segments = trimmedPath.slice(1, -1).split("/");
+    for (const segment of segments) {
+      const validation = validateSegmentName(segment);
+      if (!validation.valid) {
+        return {
+          valid: false,
+          error: `Invalid segment "${segment}": ${validation.error}`,
+        };
+      }
+    }
+  } else if (trimmedPath !== "/") {
+    const segments = trimmedPath.slice(1).split("/");
+    for (const segment of segments) {
+      const validation = validateSegmentName(segment);
+      if (!validation.valid) {
+        return {
+          valid: false,
+          error: `Invalid segment "${segment}": ${validation.error}`,
+        };
+      }
+    }
+  }
+
+  return { valid: true };
+};
+
+const findExistingRouteInStructure = (
+  entries: FileSystemEntry[],
+  targetRoutePath: string,
+  currentRoutePath: string = "",
+  isRoot: boolean = false
+): { entry: FileSystemEntry; segments: string[] } | null => {
+  const normalizedTarget =
+    targetRoutePath.endsWith("/") && targetRoutePath !== "/"
+      ? targetRoutePath.slice(0, -1)
+      : targetRoutePath;
+
+  for (const entry of entries) {
+    if (entry.name === "app" && isRoot) {
+      if (entry.children) {
+        const result = findExistingRouteInStructure(
+          entry.children,
+          normalizedTarget,
+          "",
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+      if (entry.children) {
+        const result = findExistingRouteInStructure(
+          entry.children,
+          normalizedTarget,
+          currentRoutePath,
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.type === "directory" && entry.children) {
+      const routePath = currentRoutePath
+        ? `${currentRoutePath}/${entry.name}`
+        : `/${entry.name}`;
+
+      if (normalizedTarget === routePath) {
+        const routeSegments =
+          routePath === "/" ? [] : routePath.slice(1).split("/");
+        return { entry, segments: routeSegments };
+      }
+
+      if (normalizedTarget.startsWith(routePath + "/")) {
+        const result = findExistingRouteInStructure(
+          entry.children,
+          normalizedTarget,
+          routePath,
+          false
+        );
+        if (result) return result;
+      }
+    }
+  }
+  return null;
+};
+
+const findBestParentForRoute = (
+  entries: FileSystemEntry[],
+  targetRoutePath: string,
+  currentRoutePath: string = "",
+  isRoot: boolean = false
+): { parentEntry: FileSystemEntry; remainingSegments: string[] } | null => {
+  const normalizedTarget =
+    targetRoutePath.endsWith("/") && targetRoutePath !== "/"
+      ? targetRoutePath.slice(0, -1)
+      : targetRoutePath;
+
+  const targetSegments = normalizedTarget === "/" ? [] : normalizedTarget.slice(1).split("/");
+
+  for (const entry of entries) {
+    if (entry.name === "app" && isRoot) {
+      if (entry.children) {
+        const result = findBestParentForRoute(
+          entry.children,
+          normalizedTarget,
+          "",
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+      if (entry.children) {
+        const result = findBestParentForRoute(
+          entry.children,
+          normalizedTarget,
+          currentRoutePath,
+          false
+        );
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.type === "directory" && entry.children) {
+      const routePath = currentRoutePath
+        ? `${currentRoutePath}/${entry.name}`
+        : `/${entry.name}`;
+
+      const currentSegments = routePath === "/" ? [] : routePath.slice(1).split("/");
+
+      if (targetSegments.length > currentSegments.length) {
+        let matches = true;
+        for (let i = 0; i < currentSegments.length; i++) {
+          if (currentSegments[i] !== targetSegments[i]) {
+            matches = false;
+            break;
+          }
+        }
+
+        if (matches) {
+          const hasPageFile = entry.children.some(
+            (child) => child.type === "file" && child.name === "page.tsx"
+          );
+
+          if (hasPageFile) {
+            const remainingSegments = targetSegments.slice(currentSegments.length);
+            if (remainingSegments.length > 0) {
+              const deeperResult = findBestParentForRoute(
+                entry.children,
+                normalizedTarget,
+                routePath,
+                false
+              );
+
+              if (deeperResult) {
+                return deeperResult;
+              } else {
+                return {
+                  parentEntry: entry,
+                  remainingSegments: remainingSegments
+                };
+              }
+            }
+          }
+        }
+      }
+
+      if (normalizedTarget.startsWith(routePath + "/")) {
+        const result = findBestParentForRoute(
+          entry.children,
+          normalizedTarget,
+          routePath,
+          false
+        );
+        if (result) return result;
+      }
+    }
+  }
+  return null;
+};
+
+const createRouteFromPath = (
+  entries: FileSystemEntry[],
+  routePath: string,
+  currentPath: string = "",
+  isRoot: boolean = false
+): FileSystemEntry[] => {
+  const normalizedPath =
+    routePath.endsWith("/") && routePath !== "/"
+      ? routePath.slice(0, -1)
+      : routePath;
+
+  const pathSegments =
+    normalizedPath === "/" ? [] : normalizedPath.slice(1).split("/");
+
+  const addPageToExistingEntry = (
+    targetEntry: FileSystemEntry,
+    entryList: FileSystemEntry[]
+  ): FileSystemEntry[] => {
+    return entryList.map((entry) => {
+      if (entry.id === targetEntry.id) {
+        const hasPageFile = entry.children?.some(
+          (child) => child.type === "file" && child.name === "page.tsx"
+        );
+
+        if (!hasPageFile) {
+          const updatedChildren = [
+            ...(entry.children || []),
+            {
+              id: generateId(),
+              name: "page.tsx",
+              type: "file" as const,
+            },
+          ];
+          return { ...entry, children: updatedChildren, isExpanded: true };
+        }
+        return entry;
+      }
+
+      if (entry.children) {
+        return {
+          ...entry,
+          children: addPageToExistingEntry(targetEntry, entry.children),
+        };
+      }
+
+      return entry;
+    });
+  };
+
+  const createMissingStructure = (
+    currentEntries: FileSystemEntry[],
+    segments: string[],
+    segmentIndex: number = 0
+  ): FileSystemEntry[] => {
+    if (segmentIndex >= segments.length) {
+      return currentEntries;
+    }
+
+    const segment = segments[segmentIndex];
+    const existingEntry = currentEntries.find(
+      (entry) => entry.type === "directory" && entry.name === segment
+    );
+
+    if (existingEntry) {
+      const finalChildren = createMissingStructure(
+        existingEntry.children || [],
+        segments,
+        segmentIndex + 1
+      );
+
+      let updatedChildren = finalChildren;
+
+      if (segmentIndex === segments.length - 1) {
+        const hasPageFile = finalChildren.some(
+          (child) => child.type === "file" && child.name === "page.tsx"
+        );
+
+        if (!hasPageFile) {
+          updatedChildren = [
+            ...finalChildren,
+            {
+              id: generateId(),
+              name: "page.tsx",
+              type: "file" as const,
+            },
+          ];
+        }
+      }
+
+      return currentEntries.map((entry) =>
+        entry.id === existingEntry.id
+          ? { ...entry, children: updatedChildren, isExpanded: true }
+          : entry
+      );
+    } else {
+      const newSegment: FileSystemEntry = {
+        id: generateId(),
+        name: segment,
+        type: "directory" as const,
+        isExpanded: true,
+        children: [],
+      };
+
+      if (segmentIndex === segments.length - 1) {
+        newSegment.children = [
+          {
+            id: generateId(),
+            name: "page.tsx",
+            type: "file" as const,
+          },
+        ];
+      } else {
+        newSegment.children = createMissingStructure(
+          [],
+          segments,
+          segmentIndex + 1
+        );
+      }
+
+      return [...currentEntries, newSegment];
+    }
+  };
+
+  if (isRoot) {
+    const existingRoute = findExistingRouteInStructure(
+      entries,
+      normalizedPath,
+      "",
+      true
+    );
+
+    if (existingRoute) {
+      return addPageToExistingEntry(existingRoute.entry, entries);
+    }
+
+    const bestParent = findBestParentForRoute(
+      entries,
+      normalizedPath,
+      "",
+      true
+    );
+
+    if (bestParent) {
+      const addSegmentsToParent = (
+        targetEntry: FileSystemEntry,
+        entryList: FileSystemEntry[],
+        segments: string[]
+      ): FileSystemEntry[] => {
+        return entryList.map((entry) => {
+          if (entry.id === targetEntry.id) {
+            let updatedChildren = [...(entry.children || [])];
+
+            for (let i = 0; i < segments.length; i++) {
+              const segment = segments[i];
+              let targetContainer = updatedChildren;
+
+              for (let j = 0; j < i; j++) {
+                const previousSegment = segments[j];
+                const parentDir = targetContainer.find(
+                  (child) => child.type === "directory" && child.name === previousSegment
+                );
+                if (parentDir?.children) {
+                  targetContainer = parentDir.children;
+                }
+              }
+
+              const existingSegment = targetContainer.find(
+                (child) => child.type === "directory" && child.name === segment
+              );
+
+              if (!existingSegment) {
+                const newSegment: FileSystemEntry = {
+                  id: generateId(),
+                  name: segment,
+                  type: "directory",
+                  isExpanded: true,
+                  children: i === segments.length - 1
+                    ? [{ id: generateId(), name: "page.tsx", type: "file" }]
+                    : [],
+                };
+
+                targetContainer.push(newSegment);
+              } else if (i === segments.length - 1) {
+                const hasPageFile = existingSegment.children?.some(
+                  (child) => child.type === "file" && child.name === "page.tsx"
+                );
+                if (!hasPageFile && existingSegment.children) {
+                  existingSegment.children.push({
+                    id: generateId(),
+                    name: "page.tsx",
+                    type: "file"
+                  });
+                }
+              }
+            }
+
+            return { ...entry, children: updatedChildren, isExpanded: true };
+          }
+
+          if (entry.children) {
+            return {
+              ...entry,
+              children: addSegmentsToParent(targetEntry, entry.children, segments),
+            };
+          }
+
+          return entry;
+        });
+      };
+
+      return addSegmentsToParent(bestParent.parentEntry, entries, bestParent.remainingSegments);
+    }
+
+    if (normalizedPath === "/" || pathSegments.length === 0) {
+      return entries.map((entry) => {
+        if (entry.name === "app") {
+          const hasRootPage = entry.children?.some(
+            (child) => child.type === "file" && child.name === "page.tsx"
+          );
+
+          if (!hasRootPage && entry.children) {
+            return {
+              ...entry,
+              children: [
+                ...entry.children,
+                {
+                  id: generateId(),
+                  name: "page.tsx",
+                  type: "file" as const,
+                },
+              ],
+              isExpanded: true,
+            };
+          }
+        }
+        return entry;
+      });
+    }
+
+    return entries.map((entry) => {
+      if (entry.name === "app" && entry.children) {
+        return {
+          ...entry,
+          children: createMissingStructure(entry.children, pathSegments),
+          isExpanded: true,
+        };
+      }
+      return entry;
+    });
+  }
+
+  return entries.map((entry) => {
+    if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+      if (entry.children) {
+        return {
+          ...entry,
+          children: createRouteFromPath(
+            entry.children,
+            routePath,
+            currentPath,
+            false
+          ),
+        };
+      }
+      return entry;
+    }
+
+    if (entry.type === "directory" && entry.children) {
+      const newPath = currentPath
+        ? `${currentPath}/${entry.name}`
+        : `/${entry.name}`;
+      return {
+        ...entry,
+        children: createRouteFromPath(
+          entry.children,
+          routePath,
+          newPath,
+          false
+        ),
+      };
+    }
+
+    return entry;
+  });
+};
+
 const SiteMapNode = ({
   route,
   depth = 0,
   isLast = false,
   darkMode,
+  appStructure,
+  onUpdateAppStructure,
+  onDeleteRoute,
+  onAddSegment,
 }: {
   route: RouteEntry;
   depth?: number;
   isLast?: boolean;
   darkMode: boolean;
+  appStructure: FileSystemEntry[];
+  onUpdateAppStructure: (id: string, updates: Partial<FileSystemEntry>) => void;
+  onDeleteRoute: (routePath: string) => void;
+  onAddSegment: (parentPath: string) => void;
 }) => {
+  const [editingSegmentIndex, setEditingSegmentIndex] = useState<number | null>(
+    null
+  );
+  const [tempValue, setTempValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editingSegmentIndex !== null && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editingSegmentIndex]);
+
   const getTreeChar = () => {
     if (depth === 0) return "";
     return isLast ? "└" : "├";
@@ -120,25 +903,143 @@ const SiteMapNode = ({
     return lines.join("");
   };
 
+  const pathSegments =
+    route.path === "/" ? ["/"] : route.path.split("/").filter(Boolean);
+
+  const handleSegmentClick = (segmentIndex: number) => {
+    if (route.path === "/") return;
+
+    setEditingSegmentIndex(segmentIndex);
+    setTempValue(pathSegments[segmentIndex]);
+  };
+
+  const handleSegmentSubmit = () => {
+    if (editingSegmentIndex === null) {
+      setEditingSegmentIndex(null);
+      return;
+    }
+
+    const validation = validateSegmentName(tempValue);
+    if (!validation.valid) {
+      console.error("Invalid segment name:", validation.error);
+      setEditingSegmentIndex(null);
+      return;
+    }
+
+    const targetPath =
+      "/" + pathSegments.slice(0, editingSegmentIndex + 1).join("/");
+    const result = findFileSystemEntryForPath(
+      appStructure,
+      targetPath,
+      "",
+      true
+    );
+
+    if (result) {
+      onUpdateAppStructure(result.entry.id, { name: tempValue.trim() });
+    } else {
+      console.error("Could not find filesystem entry for path:", targetPath);
+    }
+
+    setEditingSegmentIndex(null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSegmentSubmit();
+    }
+    if (e.key === "Escape") {
+      setEditingSegmentIndex(null);
+    }
+  };
+
+  const renderPathSegments = () => {
+    if (route.path === "/") {
+      return <span className="text-sm font-mono">/</span>;
+    }
+
+    return (
+      <div className="flex items-center">
+        <span className="text-sm font-mono text-gray-500">/</span>
+        {pathSegments.map((segment, index) => (
+          <div key={index} className="flex items-center">
+            {editingSegmentIndex === index ? (
+              <Input
+                ref={inputRef}
+                value={tempValue}
+                onChange={(e) => setTempValue(e.target.value)}
+                onBlur={handleSegmentSubmit}
+                onKeyDown={handleKeyDown}
+                className="h-6 px-2 py-0 text-sm w-20 min-w-fit"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span
+                className="text-sm font-mono cursor-pointer hover:bg-accent/50 px-1 py-0.5 rounded"
+                onClick={() => handleSegmentClick(index)}
+              >
+                {segment}
+              </span>
+            )}
+            {index < pathSegments.length - 1 && (
+              <span className="text-sm font-mono text-gray-500">/</span>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleDeleteRoute = () => {
+    onDeleteRoute(route.path);
+  };
+
+  const handleAddSegment = () => {
+    onAddSegment(route.path);
+  };
+
   return (
     <>
       <div
         className={cn(
-          "flex items-center gap-1",
+          "group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1 py-0.5",
           darkMode ? "text-gray-300" : "text-gray-700"
         )}
       >
-        <span
-          className={cn(
-            "font-mono text-sm select-none",
-            darkMode ? "text-gray-500" : "text-gray-400"
-          )}
-        >
-          {getLinePrefix()}
-          {getTreeChar()}
-          {depth > 0 && "─ "}
-        </span>
-        <span className="text-sm font-mono">{route.path}</span>
+        <div className="flex items-center gap-1">
+          <span
+            className={cn(
+              "font-mono text-sm select-none",
+              darkMode ? "text-gray-500" : "text-gray-400"
+            )}
+          >
+            {getLinePrefix()}
+            {getTreeChar()}
+            {depth > 0 && "─ "}
+          </span>
+          {renderPathSegments()}
+        </div>
+
+        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={handleAddSegment}
+            title="Add segment"
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={handleDeleteRoute}
+            title="Delete route"
+          >
+            <Trash2 className="h-3 w-3 text-red-500" />
+          </Button>
+        </div>
       </div>
       {route.children && route.children.length > 0 && (
         <>
@@ -149,6 +1050,10 @@ const SiteMapNode = ({
               depth={depth + 1}
               isLast={index === route.children!.length - 1}
               darkMode={darkMode}
+              appStructure={appStructure}
+              onUpdateAppStructure={onUpdateAppStructure}
+              onDeleteRoute={onDeleteRoute}
+              onAddSegment={onAddSegment}
             />
           ))}
         </>
@@ -331,14 +1236,17 @@ const TreeNode = ({
 };
 
 export const AppStructure = () => {
-  const { 
-    darkMode, 
-    appStructure, 
-    updateAppStructureNode, 
-    deleteAppStructureNode, 
+  const {
+    darkMode,
+    appStructure,
+    updateAppStructureNode,
+    deleteAppStructureNode,
     addAppStructureNode,
-    setAppStructure 
+    setAppStructure,
   } = useEditorStore();
+
+  const [routeInputValue, setRouteInputValue] = useState("");
+  const routeInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -368,6 +1276,51 @@ export const AppStructure = () => {
       isExpanded: false,
     };
     addAppStructureNode(parentId, newDir);
+  };
+
+  const handleDeleteRoute = (routePath: string) => {
+    const updatedStructure = deleteRouteFromFileSystem(
+      appStructure,
+      routePath,
+      "",
+      true
+    );
+    setAppStructure(updatedStructure);
+  };
+
+  const handleAddSegment = (parentPath: string) => {
+    const segmentName = "new-segment";
+    const updatedStructure = addRouteSegment(
+      appStructure,
+      parentPath,
+      segmentName,
+      "",
+      true
+    );
+    setAppStructure(updatedStructure);
+  };
+
+  const handleRouteSubmit = () => {
+    const path = routeInputValue.trim();
+
+    const validation = validateRoutePath(path);
+    if (!validation.valid) {
+      console.error("Invalid route path:", validation.error);
+      return;
+    }
+
+    const updatedStructure = createRouteFromPath(appStructure, path, "", true);
+    setAppStructure(updatedStructure);
+    setRouteInputValue("");
+  };
+
+  const handleRouteKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleRouteSubmit();
+    }
+    if (e.key === "Escape") {
+      setRouteInputValue("");
+    }
   };
 
   const collapseAll = (nodes: FileSystemEntry[]): FileSystemEntry[] => {
@@ -435,7 +1388,9 @@ export const AppStructure = () => {
               setAppStructure(expandAll(appStructure));
             }
           }}
-          title={hasExpandedDirectories(appStructure) ? "Collapse all" : "Expand all"}
+          title={
+            hasExpandedDirectories(appStructure) ? "Collapse all" : "Expand all"
+          }
         >
           {hasExpandedDirectories(appStructure) ? (
             <FoldVertical className="h-4 w-4" />
@@ -501,8 +1456,24 @@ export const AppStructure = () => {
                 route={route}
                 isLast={index === routes.length - 1}
                 darkMode={darkMode}
+                appStructure={appStructure}
+                onUpdateAppStructure={handleUpdate}
+                onDeleteRoute={handleDeleteRoute}
+                onAddSegment={handleAddSegment}
               />
             ))}
+
+            <div className="mt-2 flex items-center gap-2 rounded dark:border-gray-700 ">
+              <Input
+                ref={routeInputRef}
+                value={routeInputValue}
+                onChange={(e) => setRouteInputValue(e.target.value)}
+                onKeyDown={handleRouteKeyDown}
+                onBlur={handleRouteSubmit}
+                placeholder="Enter route path (e.g., /register/)"
+                className="h-6 px-2 py-0 text-sm flex-1 font-mono"
+              />
+            </div>
           </div>
         </>
       )}

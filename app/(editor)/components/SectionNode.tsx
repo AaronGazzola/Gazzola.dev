@@ -25,38 +25,34 @@ import { useEditorStore } from "../layout.stores";
 export interface SerializedSectionNode extends Spread<
   {
     sectionKey: string;
-    selectedOption: string | null;
   },
   SerializedLexicalNode
 > {}
 
 export class SectionNode extends DecoratorNode<ReactNode> {
   __sectionKey: string;
-  __selectedOption: string | null;
 
   static getType(): string {
     return "section";
   }
 
   static clone(node: SectionNode): SectionNode {
-    return new SectionNode(node.__sectionKey, node.__selectedOption, node.__key);
+    return new SectionNode(node.__sectionKey, node.__key);
   }
 
-  constructor(sectionKey: string, selectedOption: string | null = null, key?: NodeKey) {
+  constructor(sectionKey: string, key?: NodeKey) {
     super(key);
     this.__sectionKey = sectionKey;
-    this.__selectedOption = selectedOption;
   }
 
   static importJSON(serializedNode: SerializedSectionNode): SectionNode {
-    const { sectionKey, selectedOption } = serializedNode;
-    return $createSectionNode(sectionKey, selectedOption);
+    const { sectionKey } = serializedNode;
+    return $createSectionNode(sectionKey);
   }
 
   exportJSON(): SerializedSectionNode {
     return {
       sectionKey: this.__sectionKey,
-      selectedOption: this.__selectedOption,
       type: "section",
       version: 1,
     };
@@ -64,15 +60,6 @@ export class SectionNode extends DecoratorNode<ReactNode> {
 
   getSectionKey(): string {
     return this.__sectionKey;
-  }
-
-  getSelectedOption(): string | null {
-    return this.__selectedOption;
-  }
-
-  setSelectedOption(option: string | null): void {
-    const writable = this.getWritable();
-    writable.__selectedOption = option;
   }
 
   createDOM(): HTMLElement {
@@ -98,8 +85,8 @@ export class SectionNode extends DecoratorNode<ReactNode> {
   }
 }
 
-export function $createSectionNode(sectionKey: string, selectedOption: string | null = null): SectionNode {
-  return new SectionNode(sectionKey, selectedOption);
+export function $createSectionNode(sectionKey: string): SectionNode {
+  return new SectionNode(sectionKey);
 }
 
 export function $isSectionNode(node: LexicalNode | null | undefined): node is SectionNode {
@@ -111,42 +98,72 @@ interface SectionNodeComponentProps {
 }
 
 function SectionNodeComponent({ node }: SectionNodeComponentProps) {
-  const { 
-    getSectionOptions, 
-    getSectionContent, 
+  const {
+    getSectionOptions,
+    getSectionContent,
     setSectionContent,
-    getSectionSelection, 
-    darkMode 
+    darkMode,
+    data
   } = useEditorStore();
-  
+
   const [mounted, setMounted] = useState(false);
   const sectionKey = node.getSectionKey();
-  const selectedOption = getSectionSelection(sectionKey);
+
+  console.log(JSON.stringify({
+    sectionNodeComponent: true,
+    sectionKey
+  }, null, 0));
+
+  // Find the parent file that contains this section
+  const filePath = useMemo(() => {
+    // Look for files with sections containing this section ID
+    const filesWithSection = Object.values(data.flatIndex).filter((node) =>
+      node.type === "file" &&
+      node.sections &&
+      node.sections[sectionKey]
+    );
+
+    // Try to find from URL or other context clues
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      const matchingFile = filesWithSection.find((file: any) =>
+        currentPath.includes(file.name) || currentPath.includes(file.path.split('.').pop())
+      );
+
+      if (matchingFile) {
+        return matchingFile.path;
+      }
+    }
+
+    // Fallback to first file that has this section
+    if (filesWithSection.length > 0) {
+      return filesWithSection[0].path;
+    }
+
+    return sectionKey; // ultimate fallback
+  }, [sectionKey, data]);
+
+  const includedOptions = useMemo(() => {
+    const options = getSectionOptions(filePath, sectionKey);
+    const included: { optionId: string; content: string }[] = [];
+
+    Object.entries(options).forEach(([optionId, optionData]) => {
+      if (optionData.include) {
+        included.push({
+          optionId,
+          content: optionData.content
+        });
+      }
+    });
+
+    return included;
+  }, [getSectionOptions, filePath, sectionKey, data]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-
-  const selectedContent = useMemo(() => {
-    if (!selectedOption) return "";
-    return getSectionContent(sectionKey, selectedOption);
-  }, [getSectionContent, sectionKey, selectedOption]);
-
-
-  const handleContentChange = useCallback(
-    (editorState: EditorState) => {
-      if (!selectedOption) return;
-      
-      editorState.read(() => {
-        const markdown = $convertToMarkdownString(TRANSFORMERS);
-        setSectionContent(sectionKey, selectedOption, markdown);
-      });
-    },
-    [sectionKey, selectedOption, setSectionContent]
-  );
-
-  const editorConfig = useMemo(() => ({
+  const createEditorConfig = useCallback((optionId: string, content: string) => ({
     nodes: [
       HeadingNode,
       QuoteNode,
@@ -155,7 +172,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
       ListItemNode,
       CodeNode,
     ],
-    namespace: `section-editor-${sectionKey}`,
+    namespace: `section-editor-${sectionKey}-${optionId}`,
     theme: {
       paragraph: "mb-4",
       heading: {
@@ -166,7 +183,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
       text: {
         bold: "font-bold",
         italic: "italic",
-        code: darkMode 
+        code: darkMode
           ? "bg-gray-800 text-gray-200 px-1 py-0.5 rounded font-mono text-sm"
           : "bg-gray-100 text-gray-800 px-1 py-0.5 rounded font-mono text-sm",
       },
@@ -186,16 +203,25 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
         : "border-l-4 border-gray-300 pl-4 italic mb-4",
     },
     onError: (error: Error) => {
-      console.log(JSON.stringify({ 
+      console.log(JSON.stringify({
         error: `Section editor error: ${error.message}`,
         sectionKey,
-        selectedOption 
+        optionId
       }, null, 0));
     },
-    editorState: selectedOption && selectedContent 
-      ? () => $convertFromMarkdownString(selectedContent, TRANSFORMERS)
+    editorState: content
+      ? () => $convertFromMarkdownString(content, TRANSFORMERS)
       : undefined,
-  }), [darkMode, sectionKey, selectedOption, selectedContent]);
+  }), [darkMode, sectionKey]);
+
+  const createHandleContentChange = useCallback((optionId: string) =>
+    (editorState: EditorState) => {
+      editorState.read(() => {
+        const markdown = $convertToMarkdownString(TRANSFORMERS);
+        setSectionContent(filePath, sectionKey, optionId, markdown);
+      });
+    }, [setSectionContent, filePath, sectionKey]
+  );
 
   if (!mounted) {
     return (
@@ -205,13 +231,13 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     );
   }
 
-  if (!selectedOption) {
+  if (includedOptions.length === 0) {
     return (
       <div className={`w-full mb-6 p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
         <div className="flex items-center justify-center">
           <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
           <span className={`px-4 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-            pending selection
+            no sections selected
           </span>
           <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
         </div>
@@ -220,29 +246,38 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
   }
 
   return (
-    <div className={`w-full mb-6 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-      <div className={`w-full rounded-md ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <LexicalComposer key={`${sectionKey}-${selectedOption}`} initialConfig={editorConfig}>
-          <div className="relative">
-            <RichTextPlugin
-              contentEditable={
-                <ContentEditable
-                  className="w-full p-4 outline-none resize-none min-h-[200px]"
-                />
-              }
-              placeholder={
-                <div className={`absolute top-4 left-4 pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  Edit the content for this section...
-                </div>
-              }
-              ErrorBoundary={LexicalErrorBoundary}
-            />
-            <OnChangePlugin onChange={handleContentChange} />
-            <HistoryPlugin />
-            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+    <div className={`w-full mb-6 space-y-4`}>
+      {includedOptions.map(({ optionId, content }) => (
+        <div key={optionId} className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+          <div className="mb-2">
+            <span className={`text-xs px-2 py-1 rounded ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+              {sectionKey} - {optionId}
+            </span>
           </div>
-        </LexicalComposer>
-      </div>
+          <div className={`w-full rounded-md ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+            <LexicalComposer key={`${sectionKey}-${optionId}`} initialConfig={createEditorConfig(optionId, content)}>
+              <div className="relative">
+                <RichTextPlugin
+                  contentEditable={
+                    <ContentEditable
+                      className="w-full p-4 outline-none resize-none min-h-[100px]"
+                    />
+                  }
+                  placeholder={
+                    <div className={`absolute top-4 left-4 pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      Edit the content for {optionId}...
+                    </div>
+                  }
+                  ErrorBoundary={LexicalErrorBoundary}
+                />
+                <OnChangePlugin onChange={createHandleContentChange(optionId)} />
+                <HistoryPlugin />
+                <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+              </div>
+            </LexicalComposer>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

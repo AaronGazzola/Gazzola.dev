@@ -11,12 +11,6 @@ import {
 
 const MARKDOWN_DIR = path.join(process.cwd(), "data", "markdown");
 const DATA_FILE = path.join(process.cwd(), "app", "(editor)", "layout.data.ts");
-const STORE_FILE = path.join(
-  process.cwd(),
-  "app",
-  "(editor)",
-  "layout.stores.ts"
-);
 
 function escapeForJavaScript(content: string): string {
   return content
@@ -38,7 +32,8 @@ function generateUrlPath(relativePath: string): string {
   const parts = relativePath.split(path.sep);
   const cleanParts = parts.map((part) => {
     const orderMatch = part.match(/^(\d+)-(.+)$/);
-    return orderMatch ? orderMatch[2].toLowerCase() : part.toLowerCase();
+    const cleanPart = orderMatch ? orderMatch[2].toLowerCase() : part.toLowerCase();
+    return cleanPart.replace(/\*/g, '');
   });
   return "/" + cleanParts.join("/").replace(/\.md$/, "");
 }
@@ -50,15 +45,14 @@ function extractSectionsAndComponents(
 ): {
   segments: SegmentNode[];
   components: ComponentRef[];
-  sections: Record<string, Record<string, string>>;
+  sections: Record<string, Record<string, { content: string; include: boolean }>>;
 } {
   const segments: SegmentNode[] = [];
   const components: ComponentRef[] = [];
-  const sections: Record<string, Record<string, string>> = {};
+  const sections: Record<string, Record<string, { content: string; include: boolean }>> = {};
 
   const sectionRegex = /<!-- section-(\d+) -->/g;
   let sectionMatch;
-  let sectionIndex = 0;
 
   while ((sectionMatch = sectionRegex.exec(content)) !== null) {
     const sectionId = `section${sectionMatch[1]}`;
@@ -73,21 +67,7 @@ function extractSectionsAndComponents(
       const options = extractOptionsFromSection(sectionContent);
 
       sections[sectionId] = options;
-
-      segments.push({
-        id: `${sanitizeFileName(path.basename(filePath))}-${sectionId}`,
-        name: sectionId,
-        displayName: `Section ${sectionNumber}`,
-        type: "segment",
-        path: `${sanitizeFileName(path.basename(filePath))}.${sectionId}`,
-        urlPath: "",
-        content: sectionContent,
-        sectionId: sectionId,
-        options: options,
-        include: include,
-      });
     }
-    sectionIndex++;
   }
 
   const componentRegex = /<!-- component-(\w+) -->/g;
@@ -110,15 +90,18 @@ function extractSectionsAndComponents(
   return { segments, components, sections };
 }
 
-function extractOptionsFromSection(content: string): Record<string, string> {
-  const options: Record<string, string> = {};
+function extractOptionsFromSection(content: string): Record<string, { content: string; include: boolean }> {
+  const options: Record<string, { content: string; include: boolean }> = {};
   const optionRegex = /<!-- option-(\d+) -->([\s\S]*?)<!-- \/option-\1 -->/g;
   let match;
 
   while ((match = optionRegex.exec(content)) !== null) {
     const optionNumber = match[1];
     const optionContent = match[2].trim();
-    options[`option${optionNumber}`] = optionContent;
+    options[`option${optionNumber}`] = {
+      content: optionContent,
+      include: false
+    };
   }
 
   return options;
@@ -138,7 +121,7 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
   const hasAsterisk = fileName.includes("*");
   const include = !hasAsterisk && parentInclude;
 
-  const { segments, components, sections } = extractSectionsAndComponents(
+  const { components, sections } = extractSectionsAndComponents(
     content,
     filePath,
     include
@@ -153,7 +136,6 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     path: sanitizedName,
     urlPath: generateUrlPath(relativePath),
     content: escapeForJavaScript(content),
-    segments: segments,
     components: components,
     sections: sections,
     include: include,
@@ -236,9 +218,6 @@ function buildFlatIndex(
     if (node.type === "directory") {
       buildFlatIndex(node.children, index);
     } else if (node.type === "file") {
-      for (const segment of node.segments) {
-        index[segment.path] = segment;
-      }
       for (const component of node.components) {
         index[component.path] = component;
       }
@@ -289,103 +268,25 @@ export const getAllPagesInOrder = (): { path: string; url: string; title: string
 
   return pages.sort((a, b) => a.order - b.order);
 };
+
+export const getFirstPagePath = (): string => {
+  const pages = Object.values(markdownData.flatIndex)
+    .filter((node) => node.type === "file" && node.include !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  return pages.length > 0 ? pages[0].path : "";
+};
+
+export const getFirstPageUrl = (): string => {
+  const pages = Object.values(markdownData.flatIndex)
+    .filter((node) => node.type === "file" && node.include !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  return pages.length > 0 ? pages[0].urlPath : "/";
+};
 `;
 }
 
-function updateStoreFile(): void {
-  const storeContent = fs.readFileSync(STORE_FILE, "utf8");
-
-  let updatedContent = storeContent;
-
-  updatedContent = updatedContent.replace(
-    /import \{[^}]+\} from "\.\/layout\.types";/,
-    'import { EditorState, MarkdownData } from "./layout.types";'
-  );
-
-  updatedContent = updatedContent.replace(
-    /import \{[^}]+\} from "\.\/layout\.data";/g,
-    'import { markdownData } from "./layout.data";'
-  );
-
-  const initialStateRegex = /const initialState[^;]+;/;
-  if (initialStateRegex.test(updatedContent)) {
-    updatedContent = updatedContent.replace(
-      initialStateRegex,
-      `const initialState = {
-  data: markdownData,
-  darkMode: false,
-  refreshKey: 0,
-  visitedPages: ["welcome"],
-  sectionSelections: {},
-};`
-    );
-  }
-
-  const createStoreRegex =
-    /export const useEditorStore = create[^(]+\([^)]+\)[^{]+\{[\s\S]*?\}\)/;
-  if (createStoreRegex.test(updatedContent)) {
-    updatedContent = updatedContent.replace(
-      createStoreRegex,
-      `export const useEditorStore = create<EditorState>()(
-  persist(
-    (set, get) => ({
-      ...initialState,
-      updateContent: (path: string, content: string) => {
-        set((state) => {
-          const node = state.data.flatIndex[path];
-          if (node && node.type === "file") {
-            node.content = content;
-          }
-          return { data: { ...state.data } };
-        });
-      },
-      getNode: (path: string) => {
-        const state = get();
-        return state.data.flatIndex[path] || null;
-      },
-      setDarkMode: (darkMode) => set({ darkMode }),
-      markPageVisited: (path) =>
-        set((state) => ({
-          visitedPages: state.visitedPages.includes(path)
-            ? state.visitedPages
-            : [...state.visitedPages, path],
-        })),
-      isPageVisited: (path) => {
-        const state = get();
-        return state.visitedPages.includes(path);
-      },
-      getNextUnvisitedPage: (currentPath) => {
-        const state = get();
-        const pages = Object.values(state.data.flatIndex)
-          .filter((node) => node.type === "file" && node.include !== false)
-          .sort((a, b) => (a.order || 0) - (b.order || 0));
-        
-        const currentIndex = pages.findIndex((p) => p.path === currentPath);
-        for (let i = currentIndex + 1; i < pages.length; i++) {
-          if (!state.visitedPages.includes(pages[i].path)) {
-            return pages[i].path;
-          }
-        }
-        return null;
-      },
-      reset: () => set(initialState),
-      forceRefresh: () => set((state) => ({ refreshKey: state.refreshKey + 1 })),
-    }),
-    {
-      name: "editor-storage",
-      partialize: (state) => ({
-        data: state.data,
-        darkMode: state.darkMode,
-        visitedPages: state.visitedPages,
-      }),
-    }
-  )`
-    );
-  }
-
-  fs.writeFileSync(STORE_FILE, updatedContent, "utf8");
-  console.log("Successfully updated layout.stores.ts");
-}
 
 function main(): void {
   console.log("Parsing markdown files with unified structure...");
@@ -414,8 +315,6 @@ function main(): void {
     const dataFileContent = generateDataFile(data);
     fs.writeFileSync(DATA_FILE, dataFileContent, "utf8");
     console.log("Successfully created layout.data.ts with unified structure");
-
-    updateStoreFile();
 
     console.log("Markdown parsing completed successfully!");
     console.log("Generated nodes:", Object.keys(flatIndex).length);

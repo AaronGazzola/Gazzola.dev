@@ -1,19 +1,9 @@
-# Notes
-
-A platform for generating full-stack web app roadmaps. Design and download comprehensive and detailed step-by-step instructions for you and your AI to vibe code your custom web app.
-
-## Tech to integrate
-
-- [ ] payload cms
-  - [ ] https://payloadcms.com/get-started
-- [ ] playright mcp (needs policy change to change setting)
-  - [ ] https://playwright.dev/agents
-
 # Tasks
 
 ## Active tasks
 
-- [ ] Add UX for configuring the app structure with nested layouts
+- [ ] Remove excluded content from downloaded files
+- [ ] Update the claude document
 - [ ] Add shadcn variants for the editor components
 - [ ] Add dynamic component example elements
 - [ ] Add donate UX on download
@@ -22,6 +12,9 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 
 ## Completed tasks
 
+- [x] Default to dark theme
+- [x] Make section selection agnostic (currently hard coded to "welcome")
+- [x] Add UX for configuring the app structure with nested layouts
 - [x] Refactor data management to include/exclude files/directories
 - [x] Add a download button to download files
 - [x] Delete all UX except for the hero, sidebar and about page
@@ -52,6 +45,9 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - [x] rename compile to parse
 - [x] Refactor markdown parsing and editor data management
 - [x] Update the user input storage method
+- [x] Fix editor comment transform error
+- [x] Add section selection menu to the editor Toolbar
+- [x] Remove asterix ("\*") from paths
 
 ## Pending tasks
 
@@ -60,3 +56,14 @@ A platform for generating full-stack web app roadmaps. Design and download compr
 - Unicorns everywhere
 - Red queen hypothesis
 - How's my driving?
+
+## Tech to integrate
+
+- [ ] payload cms
+  - [ ] https://payloadcms.com/get-started
+- [ ] playright mcp (needs policy change to change setting)
+  - [ ] https://playwright.dev/agents
+- [ ] ~~augment code~~ (context and collab features aren't required for my use)
+- [ ] ~~warp ai~~ (cannot use claude plan)
+- [x] Sean kochle "my new method"
+- [ ] AGENTS.md

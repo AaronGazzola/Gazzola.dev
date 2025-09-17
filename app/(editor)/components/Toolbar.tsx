@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import {
   Tooltip,
@@ -21,9 +27,13 @@ import { cn } from "@/lib/tailwind.utils";
 import {
   ChevronLeft,
   ChevronRight,
+  File,
+  Files,
+  Folder,
   ListRestart,
   Moon,
   RotateCcw,
+  Settings,
   Sun,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -84,11 +94,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setContent,
     forceRefresh,
     markPageVisited,
-    isPageVisited,
     data,
+    getSectionInclude,
+    setSectionInclude,
+    updateInclusionRules,
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
+  const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
+  const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] = [];
@@ -119,6 +133,73 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     }
 
     return pages.sort((a, b) => a.order - b.order);
+  }, [data]);
+
+  const sectionsData = useMemo(() => {
+    const filesWithSections: {
+      filePath: string;
+      fileName: string;
+      sections: {
+        sectionId: string;
+        options: { optionId: string; include: boolean }[];
+      }[];
+    }[] = [];
+
+    Object.values(data.flatIndex).forEach((node) => {
+      if (node.type === "file" && node.sections && Object.keys(node.sections).length > 0) {
+        const sections = Object.entries(node.sections).map(([sectionId, sectionOptions]) => ({
+          sectionId,
+          options: Object.entries(sectionOptions).map(([optionId, option]) => ({
+            optionId,
+            include: option.include,
+          })),
+        }));
+
+        filesWithSections.push({
+          filePath: node.path,
+          fileName: node.displayName,
+          sections,
+        });
+      }
+    });
+
+    return filesWithSections;
+  }, [data]);
+
+  const fileTreeData = useMemo(() => {
+    const treeItems: {
+      path: string;
+      name: string;
+      type: "directory" | "file";
+      include: boolean;
+      level: number;
+    }[] = [];
+
+    const processNode = (node: any, level: number = 0): void => {
+      if (node.type === "directory" || node.type === "file") {
+        treeItems.push({
+          path: node.path,
+          name: node.displayName,
+          type: node.type,
+          include: node.include,
+          level,
+        });
+
+        if (node.type === "directory" && node.children) {
+          for (const child of node.children) {
+            processNode(child, level + 1);
+          }
+        }
+      }
+    };
+
+    if (data.root && data.root.children) {
+      for (const child of data.root.children) {
+        processNode(child, 0);
+      }
+    }
+
+    return treeItems;
   }, [data]);
 
   const currentPageIndex = useMemo(() => {
@@ -314,6 +395,150 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+
+            <Popover
+              open={sectionsPopoverOpen}
+              onOpenChange={setSectionsPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <div>
+                  <IconButton
+                    onClick={() => setSectionsPopoverOpen(true)}
+                    tooltip="Manage sections"
+                    darkMode={darkMode}
+                  >
+                    <Settings className="h-4 w-4" />
+                  </IconButton>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent
+                className={cn(
+                  "w-80 max-h-96 overflow-y-auto",
+                  darkMode ? "bg-gray-800 border-gray-600" : "bg-white border-gray-200"
+                )}
+                align="center"
+              >
+                <div className="space-y-4">
+                  <div className="font-semibold text-sm">Section Options</div>
+                  {sectionsData.length === 0 ? (
+                    <div className="text-sm text-gray-500">No sections found</div>
+                  ) : (
+                    sectionsData.map((file) => (
+                      <div key={file.filePath} className="space-y-3">
+                        <div className="font-medium text-sm border-b pb-1">
+                          {file.fileName}
+                        </div>
+                        {file.sections.map((section) => (
+                          <div key={section.sectionId} className="ml-2 space-y-2">
+                            <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                              {section.sectionId}
+                            </div>
+                            {section.options.map((option) => (
+                              <div
+                                key={option.optionId}
+                                className="flex items-center space-x-2 ml-4"
+                              >
+                                <Checkbox
+                                  checked={getSectionInclude(
+                                    file.filePath,
+                                    section.sectionId,
+                                    option.optionId
+                                  )}
+                                  onCheckedChange={(checked) =>
+                                    setSectionInclude(
+                                      file.filePath,
+                                      section.sectionId,
+                                      option.optionId,
+                                      checked as boolean
+                                    )
+                                  }
+                                />
+                                <label
+                                  className="text-sm cursor-pointer"
+                                  onClick={() =>
+                                    setSectionInclude(
+                                      file.filePath,
+                                      section.sectionId,
+                                      option.optionId,
+                                      !getSectionInclude(
+                                        file.filePath,
+                                        section.sectionId,
+                                        option.optionId
+                                      )
+                                    )
+                                  }
+                                >
+                                  {option.optionId}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Popover
+              open={fileTreePopoverOpen}
+              onOpenChange={setFileTreePopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <div>
+                  <IconButton
+                    onClick={() => setFileTreePopoverOpen(true)}
+                    tooltip="Manage file inclusion"
+                    darkMode={darkMode}
+                  >
+                    <Files className="h-4 w-4" />
+                  </IconButton>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent
+                className={cn(
+                  "w-80 max-h-96 overflow-y-auto",
+                  darkMode ? "bg-gray-800 border-gray-600" : "bg-white border-gray-200"
+                )}
+                align="center"
+              >
+                <div className="space-y-3">
+                  <div className="font-semibold text-sm">File Inclusion</div>
+                  {fileTreeData.length === 0 ? (
+                    <div className="text-sm text-gray-500">No files found</div>
+                  ) : (
+                    fileTreeData.map((item) => (
+                      <div
+                        key={item.path}
+                        className="flex items-center space-x-2"
+                        style={{ marginLeft: `${item.level * 12}px` }}
+                      >
+                        <Checkbox
+                          checked={item.include}
+                          onCheckedChange={(checked) =>
+                            updateInclusionRules({ [item.path]: checked as boolean })
+                          }
+                        />
+                        {item.type === "directory" ? (
+                          <Folder className="h-4 w-4 text-blue-500" />
+                        ) : (
+                          <File className="h-4 w-4 text-gray-500" />
+                        )}
+                        <label
+                          className="text-sm cursor-pointer flex-1"
+                          onClick={() =>
+                            updateInclusionRules({ [item.path]: !item.include })
+                          }
+                        >
+                          {item.name}
+                        </label>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="flex items-center gap-2">

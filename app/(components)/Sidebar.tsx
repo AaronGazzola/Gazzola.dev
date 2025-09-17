@@ -1,5 +1,5 @@
 "use client";
-import { markdownData } from "@/app/(editor)/layout.data";
+import { markdownData, getFirstPagePath } from "@/app/(editor)/layout.data";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
@@ -174,7 +174,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
 const Sidebar = () => {
   const { toggleSidebar } = useSidebar();
-  const { isPageVisited, data, sectionSelections, appStructure, getSectionContent } =
+  const { isPageVisited, data, appStructure, getSectionContent, getSectionInclude } =
     useEditorStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const params = useParams();
@@ -188,7 +188,7 @@ const Sidebar = () => {
     const segments = params.segments as string[] | undefined;
 
     if (!segments || segments.length === 0) {
-      return "welcome";
+      return getFirstPagePath();
     }
 
     const urlPath = "/" + segments.join("/");
@@ -199,7 +199,7 @@ const Sidebar = () => {
       }
     }
 
-    return "welcome";
+    return getFirstPagePath();
   }, [params]);
 
   useEffect(() => {
@@ -260,7 +260,7 @@ const Sidebar = () => {
 
   const handleDownload = async () => {
     try {
-      await generateAndDownloadZip(data, sectionSelections, getSectionContent, appStructure);
+      await generateAndDownloadZip(data, getSectionInclude, getSectionContent, appStructure);
     } catch (error) {
       console.error("Error generating download:", error);
     }

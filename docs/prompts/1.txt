@@ -1,7 +1,0 @@
-- Install lexical
-- render a full width and height lexical editor in "app/(editor)/[...segments]/page.tsx"
-- Configure the editor for markdown files
-- Refer to the navigationItems in "configuration.ts", each page refers to a markdown document. Add a markdown file for each document in "data/markdown/*"
-- Add a store to "app/(editor)/layout.stores.ts" called useEditorStore, and add fields to the store for each markdown file. Initialize the store with the content from the markdown files.
-- When the user makes changes to the markdown document in the lexical editor, update the corresponding field in the store.
-- When the navigation path changes, load the relevant markdown document from the store into the editor.
