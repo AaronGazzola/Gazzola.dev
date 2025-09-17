@@ -151,23 +151,21 @@ export const processContent = (
   filePath: string,
   getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean,
   getSectionContent: (filePath: string, sectionId: string, optionId: string) => string,
+  getSectionOptions: (filePath: string, sectionId: string) => Record<string, { content: string; include: boolean }>,
   appStructure: FileSystemEntry[]
 ): string => {
   let processedContent = content;
 
-  processedContent = processedContent.replace(/<!-- section-(\d+) -->/g, (match, sectionNum) => {
+  processedContent = processedContent.replace(/<!-- section-(\d+) -->/g, (_, sectionNum) => {
     const sectionId = `section${sectionNum}`;
+    const options = getSectionOptions(filePath, sectionId);
 
-    const option1Include = getSectionInclude(filePath, sectionId, "option1");
-    const option2Include = getSectionInclude(filePath, sectionId, "option2");
+    const includedContent = Object.entries(options)
+      .filter(([, option]) => option.include)
+      .map(([, option]) => option.content)
+      .join('\n\n');
 
-    if (option1Include) {
-      return getSectionContent(filePath, sectionId, "option1");
-    } else if (option2Include) {
-      return getSectionContent(filePath, sectionId, "option2");
-    }
-
-    return "";
+    return includedContent;
   });
 
   processedContent = processedContent.replace(/<!-- component-AppStructure -->/g, () => {
@@ -190,13 +188,16 @@ const processNode = (
   currentFolder: JSZip,
   getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean,
   getSectionContent: (filePath: string, sectionId: string, optionId: string) => string,
+  getSectionOptions: (filePath: string, sectionId: string) => Record<string, { content: string; include: boolean }>,
   appStructure: FileSystemEntry[]
 ): void => {
+  if (node.include === false) return;
+
   if (node.type === "directory") {
     const folder = currentFolder.folder(node.name);
     if (folder && node.children) {
       node.children.forEach(child => {
-        processNode(child, zip, folder, getSectionInclude, getSectionContent, appStructure);
+        processNode(child, zip, folder, getSectionInclude, getSectionContent, getSectionOptions, appStructure);
       });
     }
   } else if (node.type === "file") {
@@ -205,6 +206,7 @@ const processNode = (
       node.path,
       getSectionInclude,
       getSectionContent,
+      getSectionOptions,
       appStructure
     );
     
@@ -221,14 +223,17 @@ export const generateAndDownloadZip = async (
   markdownData: MarkdownData,
   getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean,
   getSectionContent: (filePath: string, sectionId: string, optionId: string) => string,
+  getSectionOptions: (filePath: string, sectionId: string) => Record<string, { content: string; include: boolean }>,
   appStructure: FileSystemEntry[]
 ): Promise<void> => {
   const zip = new JSZip();
 
   if (markdownData.root && markdownData.root.children) {
-    markdownData.root.children.forEach(child => {
-      processNode(child, zip, zip, getSectionInclude, getSectionContent, appStructure);
-    });
+    markdownData.root.children
+      .filter(child => child.include !== false)
+      .forEach(child => {
+        processNode(child, zip, zip, getSectionInclude, getSectionContent, getSectionOptions, appStructure);
+      });
   }
 
   const blob = await zip.generateAsync({ type: "blob" });

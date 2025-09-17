@@ -2,8 +2,6 @@
 
 ## Active tasks
 
-- [ ] Remove excluded content from downloaded files
-- [ ] Update the claude document
 - [ ] Add shadcn variants for the editor components
 - [ ] Add dynamic component example elements
 - [ ] Add donate UX on download
@@ -12,6 +10,9 @@
 
 ## Completed tasks
 
+- [x] Expand AppStructure component to output nested layout diagrams
+- [x] Update the claude document
+- [x] Remove excluded content from downloaded files
 - [x] Default to dark theme
 - [x] Make section selection agnostic (currently hard coded to "welcome")
 - [x] Add UX for configuring the app structure with nested layouts
@@ -67,3 +68,4 @@
 - [ ] ~~warp ai~~ (cannot use claude plan)
 - [x] Sean kochle "my new method"
 - [ ] AGENTS.md
+- [ ] GPT-5 Codex news
