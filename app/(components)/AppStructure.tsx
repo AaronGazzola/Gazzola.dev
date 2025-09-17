@@ -4,6 +4,7 @@ import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { FileSystemEntry } from "@/app/(editor)/layout.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/tailwind.utils";
 import {
   File,
@@ -11,6 +12,7 @@ import {
   FolderOpen,
   FolderPlus,
   FoldVertical,
+  Layers,
   Plus,
   SquareStack,
   Trash2,
@@ -23,6 +25,275 @@ type RouteEntry = {
 };
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
+
+const LAYOUT_COLORS = [
+  {
+    bg: "bg-green-100 dark:bg-green-900/30",
+    border: "border-green-300 dark:border-green-700",
+    icon: "text-green-500",
+    text: "text-green-800 dark:text-green-200"
+  },
+  {
+    bg: "bg-purple-100 dark:bg-purple-900/30",
+    border: "border-purple-300 dark:border-purple-700",
+    icon: "text-purple-500",
+    text: "text-purple-800 dark:text-purple-200"
+  },
+  {
+    bg: "bg-orange-100 dark:bg-orange-900/30",
+    border: "border-orange-300 dark:border-orange-700",
+    icon: "text-orange-500",
+    text: "text-orange-800 dark:text-orange-200"
+  },
+  {
+    bg: "bg-red-100 dark:bg-red-900/30",
+    border: "border-red-300 dark:border-red-700",
+    icon: "text-red-500",
+    text: "text-red-800 dark:text-red-200"
+  },
+  {
+    bg: "bg-indigo-100 dark:bg-indigo-900/30",
+    border: "border-indigo-300 dark:border-indigo-700",
+    icon: "text-indigo-500",
+    text: "text-indigo-800 dark:text-indigo-200"
+  },
+  {
+    bg: "bg-cyan-100 dark:bg-cyan-900/30",
+    border: "border-cyan-300 dark:border-cyan-700",
+    icon: "text-cyan-500",
+    text: "text-cyan-800 dark:text-cyan-200"
+  }
+];
+
+const PAGE_COLOR = {
+  bg: "bg-slate-100 dark:bg-slate-900/30",
+  border: "border-slate-300 dark:border-slate-700",
+  icon: "text-slate-500",
+  text: "text-slate-800 dark:text-slate-200"
+};
+
+const findLayoutsForPagePath = (
+  entries: FileSystemEntry[],
+  pagePath: string,
+  currentPath: string = "",
+  isRoot: boolean = false
+): string[] => {
+  const layoutsSet = new Set<string>();
+
+  const normalizedPagePath = pagePath.endsWith("/") && pagePath !== "/"
+    ? pagePath.slice(0, -1)
+    : pagePath;
+
+  const pathExistsInSubtree = (
+    nodes: FileSystemEntry[],
+    targetPath: string,
+    currentDir: string
+  ): boolean => {
+    for (const entry of nodes) {
+      if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+        if (entry.children) {
+          const routeGroupPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
+          if (pathExistsInSubtree(entry.children, targetPath, routeGroupPath)) {
+            return true;
+          }
+        }
+        continue;
+      }
+
+      if (entry.type === "directory" && entry.children) {
+        const newPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
+
+        if (targetPath === newPath) {
+          const hasPageFile = entry.children.some(
+            child => child.type === "file" && child.name === "page.tsx"
+          );
+          if (hasPageFile) return true;
+        }
+
+        if (targetPath.startsWith(newPath + "/")) {
+          if (pathExistsInSubtree(entry.children, targetPath, newPath)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  };
+
+  const findLayoutsRecursive = (
+    nodes: FileSystemEntry[],
+    currentDir: string,
+    targetPath: string
+  ): void => {
+    for (const entry of nodes) {
+      if (entry.name === "app" && isRoot) {
+        if (entry.children) {
+          const hasRootLayout = entry.children.some(
+            child => child.type === "file" && child.name === "layout.tsx"
+          );
+          if (hasRootLayout) {
+            layoutsSet.add("/");
+          }
+          findLayoutsRecursive(entry.children, "", targetPath);
+        }
+        continue;
+      }
+
+      if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+        if (entry.children) {
+          const hasLayout = entry.children.some(
+            child => child.type === "file" && child.name === "layout.tsx"
+          );
+
+          const routeGroupPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
+          const targetPathExistsInGroup = pathExistsInSubtree(entry.children, targetPath, routeGroupPath);
+
+          if (hasLayout && targetPathExistsInGroup) {
+            layoutsSet.add(routeGroupPath);
+          }
+
+          findLayoutsRecursive(entry.children, routeGroupPath, targetPath);
+        }
+        continue;
+      }
+
+      if (entry.type === "directory" && entry.children) {
+        const newPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
+
+        if (targetPath === newPath || targetPath.startsWith(newPath + "/")) {
+          const hasLayout = entry.children.some(
+            child => child.type === "file" && child.name === "layout.tsx"
+          );
+
+          if (hasLayout) {
+            layoutsSet.add(newPath);
+          }
+
+          findLayoutsRecursive(entry.children, newPath, targetPath);
+        }
+      }
+    }
+  };
+
+  findLayoutsRecursive(entries, currentPath, normalizedPagePath);
+
+  const layouts = Array.from(layoutsSet);
+  return layouts.sort((a, b) => {
+    // Root layout always comes first
+    if (a === "/") return -1;
+    if (b === "/") return 1;
+
+    // Calculate depth, treating route groups as having the same depth as their parent
+    const getEffectiveDepth = (path: string): number => {
+      if (path === "/") return 0;
+      // Remove route group parts for depth calculation
+      const withoutGroups = path.replace(/\/\([^)]+\)/g, "");
+      return withoutGroups === "" ? 1 : withoutGroups.split("/").length;
+    };
+
+    const aDepth = getEffectiveDepth(a);
+    const bDepth = getEffectiveDepth(b);
+
+    if (aDepth !== bDepth) {
+      return aDepth - bDepth;
+    }
+
+    // If same depth, route groups come before regular directories
+    const aIsGroup = a.includes("(") && a.includes(")");
+    const bIsGroup = b.includes("(") && b.includes(")");
+
+    if (aIsGroup && !bIsGroup) return -1;
+    if (!aIsGroup && bIsGroup) return 1;
+
+    return a.localeCompare(b);
+  });
+};
+
+const LayoutHierarchyPopover = ({
+  pagePath,
+  appStructure,
+  darkMode,
+  onOpenChange
+}: {
+  pagePath: string;
+  appStructure: FileSystemEntry[];
+  darkMode: boolean;
+  onOpenChange?: (open: boolean, pagePath: string, layouts: string[]) => void;
+}) => {
+  const layouts = findLayoutsForPagePath(appStructure, pagePath, "", true);
+
+  const handleOpenChange = (open: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(open, pagePath, layouts);
+    }
+  };
+
+  const renderNestedBoxes = () => {
+    if (layouts.length === 0) {
+      return (
+        <div className="p-4 text-center text-sm text-muted-foreground">
+          No layout files found for this page
+        </div>
+      );
+    }
+
+    let content = (
+      <div className={cn(PAGE_COLOR.bg, "border-2", PAGE_COLOR.border, "rounded p-3 text-center")}>
+        <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
+          {pagePath}
+        </div>
+        <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>
+          page.tsx
+        </div>
+      </div>
+    );
+
+    for (let i = layouts.length - 1; i >= 0; i--) {
+      const layout = layouts[i];
+      const layoutName = `app${layout}/layout.tsx`;
+      const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+
+      content = (
+        <div className={cn(colorSet.bg, "border-2", colorSet.border, "rounded p-3")}>
+          <div className={cn("text-xs mb-2 text-center font-mono", colorSet.text)}>
+            {layoutName}
+          </div>
+          {content}
+        </div>
+      );
+    }
+
+    return content;
+  };
+
+  return (
+    <Popover onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6"
+          title="Show layout hierarchy"
+        >
+          <Layers className="h-3 w-3" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-96" align="start" side="right">
+        <div className="space-y-2">
+          <h4 className={cn("font-semibold text-sm", darkMode ? "text-gray-200" : "text-gray-800")}>
+            Layout Hierarchy
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            Nested layouts that wrap this page according to Next.js App Router
+          </p>
+          <div className="mt-4">
+            {renderNestedBoxes()}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const generateRoutesFromFileSystem = (
   entries: FileSystemEntry[],
@@ -1071,6 +1342,9 @@ const TreeNode = ({
   onDelete,
   onAddFile,
   onAddDirectory,
+  appStructure,
+  activeLayoutPopover,
+  onLayoutPopoverChange,
 }: {
   node: FileSystemEntry;
   depth?: number;
@@ -1080,9 +1354,65 @@ const TreeNode = ({
   onDelete: (id: string) => void;
   onAddFile: (parentId: string) => void;
   onAddDirectory: (parentId: string) => void;
+  appStructure: FileSystemEntry[];
+  activeLayoutPopover?: { pagePath: string; layouts: string[] } | null;
+  onLayoutPopoverChange?: (open: boolean, pagePath: string, layouts: string[]) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { darkMode } = useEditorStore();
+
+  const getPagePath = (): string => {
+    if (node.name !== "page.tsx" || node.type !== "file") return "";
+
+    let cleanPath = parentPath;
+
+    if (cleanPath.startsWith("/app")) {
+      cleanPath = cleanPath.replace(/^\/app/, "");
+    }
+
+    // Don't remove route groups for layout hierarchy - we need the full path
+    // cleanPath = cleanPath.replace(/\/\([^)]+\)/g, "");
+
+    if (!cleanPath || cleanPath === "") {
+      return "/";
+    }
+
+    return cleanPath;
+  };
+
+  const isPageFile = node.type === "file" && node.name === "page.tsx";
+  const pagePath = getPagePath();
+
+  const getFileIconColor = (): string => {
+    if (!activeLayoutPopover) {
+      return "text-gray-500";
+    }
+
+    if (node.type === "file" && node.name === "layout.tsx") {
+      // Construct the full file path as it would appear in the popover
+      const fullFilePath = parentPath + "/" + node.name;
+
+      // Check if this specific layout file is one of the layouts in the active popover
+      for (let i = 0; i < activeLayoutPopover.layouts.length; i++) {
+        const layout = activeLayoutPopover.layouts[i];
+        const expectedLayoutFile = layout === "/" ? "app/layout.tsx" : `app${layout}/layout.tsx`;
+
+        // Remove leading slash from fullFilePath for comparison
+        const normalizedFullPath = fullFilePath.startsWith("/") ? fullFilePath.substring(1) : fullFilePath;
+
+        if (normalizedFullPath === expectedLayoutFile) {
+          const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+          return colorSet.icon;
+        }
+      }
+    }
+
+    if (isPageFile) {
+      return PAGE_COLOR.icon;
+    }
+
+    return "text-gray-500";
+  };
 
   useEffect(() => {
     if (node.isEditing && inputRef.current) {
@@ -1158,7 +1488,7 @@ const TreeNode = ({
               <Folder className="h-4 w-4 text-blue-500 flex-shrink-0" />
             )
           ) : (
-            <File className="h-4 w-4 text-gray-500 flex-shrink-0" />
+            <File className={cn("h-4 w-4 flex-shrink-0", getFileIconColor())} />
           )}
 
           {node.isEditing ? (
@@ -1180,6 +1510,15 @@ const TreeNode = ({
             >
               {node.name}
             </span>
+          )}
+
+          {isPageFile && (
+            <LayoutHierarchyPopover
+              pagePath={pagePath}
+              appStructure={appStructure}
+              darkMode={darkMode}
+              onOpenChange={onLayoutPopoverChange}
+            />
           )}
         </button>
 
@@ -1227,6 +1566,9 @@ const TreeNode = ({
               onDelete={onDelete}
               onAddFile={onAddFile}
               onAddDirectory={onAddDirectory}
+              appStructure={appStructure}
+              activeLayoutPopover={activeLayoutPopover}
+              onLayoutPopoverChange={onLayoutPopoverChange}
             />
           ))}
         </div>
@@ -1247,6 +1589,10 @@ export const AppStructure = () => {
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
+  const [activeLayoutPopover, setActiveLayoutPopover] = useState<{
+    pagePath: string;
+    layouts: string[];
+  } | null>(null);
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -1359,6 +1705,14 @@ export const AppStructure = () => {
     });
   };
 
+  const handleLayoutPopoverChange = (open: boolean, pagePath: string, layouts: string[]) => {
+    if (open) {
+      setActiveLayoutPopover({ pagePath, layouts });
+    } else {
+      setActiveLayoutPopover(null);
+    }
+  };
+
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
   return (
@@ -1416,6 +1770,9 @@ export const AppStructure = () => {
             onDelete={handleDelete}
             onAddFile={handleAddFile}
             onAddDirectory={handleAddDirectory}
+            appStructure={appStructure}
+            activeLayoutPopover={activeLayoutPopover}
+            onLayoutPopoverChange={handleLayoutPopoverChange}
           />
         ))}
         {appStructure.length === 0 && (
