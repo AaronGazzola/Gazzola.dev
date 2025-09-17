@@ -3,6 +3,7 @@
 ## Active tasks
 
 - [ ] Remove excluded content from downloaded files
+- [ ] Expand AppStructure component to output nested layout diagrams
 - [ ] Update the claude document
 - [ ] Add shadcn variants for the editor components
 - [ ] Add dynamic component example elements
@@ -67,3 +68,4 @@
 - [ ] ~~warp ai~~ (cannot use claude plan)
 - [x] Sean kochle "my new method"
 - [ ] AGENTS.md
+- [ ] GPT-5 Codex news

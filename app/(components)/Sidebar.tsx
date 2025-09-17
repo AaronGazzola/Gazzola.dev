@@ -174,7 +174,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
 const Sidebar = () => {
   const { toggleSidebar } = useSidebar();
-  const { isPageVisited, data, appStructure, getSectionContent, getSectionInclude } =
+  const { isPageVisited, data, appStructure, getSectionContent, getSectionInclude, getSectionOptions } =
     useEditorStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const params = useParams();
@@ -260,7 +260,7 @@ const Sidebar = () => {
 
   const handleDownload = async () => {
     try {
-      await generateAndDownloadZip(data, getSectionInclude, getSectionContent, appStructure);
+      await generateAndDownloadZip(data, getSectionInclude, getSectionContent, getSectionOptions, appStructure);
     } catch (error) {
       console.error("Error generating download:", error);
     }
