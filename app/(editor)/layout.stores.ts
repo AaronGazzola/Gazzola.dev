@@ -12,35 +12,6 @@ const defaultAppStructure: FileSystemEntry[] = [
     type: "directory",
     isExpanded: true,
     children: [
-      {
-        id: generateId(),
-        name: "(auth)",
-        type: "directory",
-        isExpanded: false,
-        children: [
-          {
-            id: generateId(),
-            name: "login",
-            type: "directory",
-            isExpanded: false,
-            children: [{ id: generateId(), name: "page.tsx", type: "file" }],
-          },
-          {
-            id: generateId(),
-            name: "register",
-            type: "directory",
-            isExpanded: false,
-            children: [{ id: generateId(), name: "page.tsx", type: "file" }],
-          },
-        ],
-      },
-      {
-        id: generateId(),
-        name: "api",
-        type: "directory",
-        isExpanded: false,
-        children: [],
-      },
       { id: generateId(), name: "layout.tsx", type: "file" },
       { id: generateId(), name: "page.tsx", type: "file" },
     ],

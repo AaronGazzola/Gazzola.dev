@@ -109,11 +109,6 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
   const [mounted, setMounted] = useState(false);
   const sectionKey = node.getSectionKey();
 
-  console.log(JSON.stringify({
-    sectionNodeComponent: true,
-    sectionKey
-  }, null, 0));
-
   // Find the parent file that contains this section
   const filePath = useMemo(() => {
     // Look for files with sections containing this section ID
@@ -203,11 +198,6 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
         : "border-l-4 border-gray-300 pl-4 italic mb-4",
     },
     onError: (error: Error) => {
-      console.log(JSON.stringify({
-        error: `Section editor error: ${error.message}`,
-        sectionKey,
-        optionId
-      }, null, 0));
     },
     editorState: content
       ? () => $convertFromMarkdownString(content, TRANSFORMERS)

@@ -289,8 +289,6 @@ export const getFirstPageUrl = (): string => {
 
 
 function main(): void {
-  console.log("Parsing markdown files with unified structure...");
-
   try {
     const children = buildMarkdownTree(MARKDOWN_DIR);
 
@@ -314,10 +312,6 @@ function main(): void {
 
     const dataFileContent = generateDataFile(data);
     fs.writeFileSync(DATA_FILE, dataFileContent, "utf8");
-    console.log("Successfully created layout.data.ts with unified structure");
-
-    console.log("Markdown parsing completed successfully!");
-    console.log("Generated nodes:", Object.keys(flatIndex).length);
   } catch (error) {
     console.error("Error during markdown parsing:", error);
     process.exit(1);

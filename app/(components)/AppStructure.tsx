@@ -4,7 +4,11 @@ import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { FileSystemEntry } from "@/app/(editor)/layout.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/tailwind.utils";
 import {
   File,
@@ -31,45 +35,45 @@ const LAYOUT_COLORS = [
     bg: "bg-green-100 dark:bg-green-900/30",
     border: "border-green-300 dark:border-green-700",
     icon: "text-green-500",
-    text: "text-green-800 dark:text-green-200"
+    text: "text-green-800 dark:text-green-200",
   },
   {
     bg: "bg-purple-100 dark:bg-purple-900/30",
     border: "border-purple-300 dark:border-purple-700",
     icon: "text-purple-500",
-    text: "text-purple-800 dark:text-purple-200"
+    text: "text-purple-800 dark:text-purple-200",
   },
   {
     bg: "bg-orange-100 dark:bg-orange-900/30",
     border: "border-orange-300 dark:border-orange-700",
     icon: "text-orange-500",
-    text: "text-orange-800 dark:text-orange-200"
+    text: "text-orange-800 dark:text-orange-200",
   },
   {
     bg: "bg-red-100 dark:bg-red-900/30",
     border: "border-red-300 dark:border-red-700",
     icon: "text-red-500",
-    text: "text-red-800 dark:text-red-200"
+    text: "text-red-800 dark:text-red-200",
   },
   {
     bg: "bg-indigo-100 dark:bg-indigo-900/30",
     border: "border-indigo-300 dark:border-indigo-700",
     icon: "text-indigo-500",
-    text: "text-indigo-800 dark:text-indigo-200"
+    text: "text-indigo-800 dark:text-indigo-200",
   },
   {
     bg: "bg-cyan-100 dark:bg-cyan-900/30",
     border: "border-cyan-300 dark:border-cyan-700",
     icon: "text-cyan-500",
-    text: "text-cyan-800 dark:text-cyan-200"
-  }
+    text: "text-cyan-800 dark:text-cyan-200",
+  },
 ];
 
 const PAGE_COLOR = {
   bg: "bg-slate-100 dark:bg-slate-900/30",
   border: "border-slate-300 dark:border-slate-700",
   icon: "text-slate-500",
-  text: "text-slate-800 dark:text-slate-200"
+  text: "text-slate-800 dark:text-slate-200",
 };
 
 const findLayoutsForPagePath = (
@@ -80,9 +84,10 @@ const findLayoutsForPagePath = (
 ): string[] => {
   const layoutsSet = new Set<string>();
 
-  const normalizedPagePath = pagePath.endsWith("/") && pagePath !== "/"
-    ? pagePath.slice(0, -1)
-    : pagePath;
+  const normalizedPagePath =
+    pagePath.endsWith("/") && pagePath !== "/"
+      ? pagePath.slice(0, -1)
+      : pagePath;
 
   const pathExistsInSubtree = (
     nodes: FileSystemEntry[],
@@ -92,7 +97,9 @@ const findLayoutsForPagePath = (
     for (const entry of nodes) {
       if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
         if (entry.children) {
-          const routeGroupPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
+          const routeGroupPath = currentDir
+            ? `${currentDir}/${entry.name}`
+            : `/${entry.name}`;
           if (pathExistsInSubtree(entry.children, targetPath, routeGroupPath)) {
             return true;
           }
@@ -101,11 +108,13 @@ const findLayoutsForPagePath = (
       }
 
       if (entry.type === "directory" && entry.children) {
-        const newPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
+        const newPath = currentDir
+          ? `${currentDir}/${entry.name}`
+          : `/${entry.name}`;
 
         if (targetPath === newPath) {
           const hasPageFile = entry.children.some(
-            child => child.type === "file" && child.name === "page.tsx"
+            (child) => child.type === "file" && child.name === "page.tsx"
           );
           if (hasPageFile) return true;
         }
@@ -129,7 +138,7 @@ const findLayoutsForPagePath = (
       if (entry.name === "app" && isRoot) {
         if (entry.children) {
           const hasRootLayout = entry.children.some(
-            child => child.type === "file" && child.name === "layout.tsx"
+            (child) => child.type === "file" && child.name === "layout.tsx"
           );
           if (hasRootLayout) {
             layoutsSet.add("/");
@@ -142,11 +151,17 @@ const findLayoutsForPagePath = (
       if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
         if (entry.children) {
           const hasLayout = entry.children.some(
-            child => child.type === "file" && child.name === "layout.tsx"
+            (child) => child.type === "file" && child.name === "layout.tsx"
           );
 
-          const routeGroupPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
-          const targetPathExistsInGroup = pathExistsInSubtree(entry.children, targetPath, routeGroupPath);
+          const routeGroupPath = currentDir
+            ? `${currentDir}/${entry.name}`
+            : `/${entry.name}`;
+          const targetPathExistsInGroup = pathExistsInSubtree(
+            entry.children,
+            targetPath,
+            routeGroupPath
+          );
 
           if (hasLayout && targetPathExistsInGroup) {
             layoutsSet.add(routeGroupPath);
@@ -158,11 +173,13 @@ const findLayoutsForPagePath = (
       }
 
       if (entry.type === "directory" && entry.children) {
-        const newPath = currentDir ? `${currentDir}/${entry.name}` : `/${entry.name}`;
+        const newPath = currentDir
+          ? `${currentDir}/${entry.name}`
+          : `/${entry.name}`;
 
         if (targetPath === newPath || targetPath.startsWith(newPath + "/")) {
           const hasLayout = entry.children.some(
-            child => child.type === "file" && child.name === "layout.tsx"
+            (child) => child.type === "file" && child.name === "layout.tsx"
           );
 
           if (hasLayout) {
@@ -213,7 +230,7 @@ const LayoutHierarchyPopover = ({
   pagePath,
   appStructure,
   darkMode,
-  onOpenChange
+  onOpenChange,
 }: {
   pagePath: string;
   appStructure: FileSystemEntry[];
@@ -238,13 +255,18 @@ const LayoutHierarchyPopover = ({
     }
 
     let content = (
-      <div className={cn(PAGE_COLOR.bg, "border-2", PAGE_COLOR.border, "rounded p-3 text-center")}>
+      <div
+        className={cn(
+          PAGE_COLOR.bg,
+          "border-2",
+          PAGE_COLOR.border,
+          "rounded p-3 text-center"
+        )}
+      >
         <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
           {pagePath}
         </div>
-        <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>
-          page.tsx
-        </div>
+        <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>page.tsx</div>
       </div>
     );
 
@@ -254,8 +276,17 @@ const LayoutHierarchyPopover = ({
       const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
 
       content = (
-        <div className={cn(colorSet.bg, "border-2", colorSet.border, "rounded p-3")}>
-          <div className={cn("text-xs mb-2 text-center font-mono", colorSet.text)}>
+        <div
+          className={cn(
+            colorSet.bg,
+            "border-2",
+            colorSet.border,
+            "rounded p-3"
+          )}
+        >
+          <div
+            className={cn("text-xs mb-2 text-center font-mono", colorSet.text)}
+          >
             {layoutName}
           </div>
           {content}
@@ -270,25 +301,29 @@ const LayoutHierarchyPopover = ({
     <Popover onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
+          asChild
           variant="ghost"
           size="icon"
-          className="h-6 w-6"
+          className="h-5 w-5 ml-2"
           title="Show layout hierarchy"
         >
-          <Layers className="h-3 w-3" />
+          <Layers className="!w-4 !h-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-96" align="start" side="right">
         <div className="space-y-2">
-          <h4 className={cn("font-semibold text-sm", darkMode ? "text-gray-200" : "text-gray-800")}>
+          <h4
+            className={cn(
+              "font-semibold text-sm",
+              darkMode ? "text-gray-200" : "text-gray-800"
+            )}
+          >
             Layout Hierarchy
           </h4>
           <p className="text-xs text-muted-foreground">
             Nested layouts that wrap this page according to Next.js App Router
           </p>
-          <div className="mt-4">
-            {renderNestedBoxes()}
-          </div>
+          <div className="mt-4">{renderNestedBoxes()}</div>
         </div>
       </PopoverContent>
     </Popover>
@@ -755,7 +790,8 @@ const findBestParentForRoute = (
       ? targetRoutePath.slice(0, -1)
       : targetRoutePath;
 
-  const targetSegments = normalizedTarget === "/" ? [] : normalizedTarget.slice(1).split("/");
+  const targetSegments =
+    normalizedTarget === "/" ? [] : normalizedTarget.slice(1).split("/");
 
   for (const entry of entries) {
     if (entry.name === "app" && isRoot) {
@@ -789,7 +825,8 @@ const findBestParentForRoute = (
         ? `${currentRoutePath}/${entry.name}`
         : `/${entry.name}`;
 
-      const currentSegments = routePath === "/" ? [] : routePath.slice(1).split("/");
+      const currentSegments =
+        routePath === "/" ? [] : routePath.slice(1).split("/");
 
       if (targetSegments.length > currentSegments.length) {
         let matches = true;
@@ -806,7 +843,9 @@ const findBestParentForRoute = (
           );
 
           if (hasPageFile) {
-            const remainingSegments = targetSegments.slice(currentSegments.length);
+            const remainingSegments = targetSegments.slice(
+              currentSegments.length
+            );
             if (remainingSegments.length > 0) {
               const deeperResult = findBestParentForRoute(
                 entry.children,
@@ -820,7 +859,7 @@ const findBestParentForRoute = (
               } else {
                 return {
                   parentEntry: entry,
-                  remainingSegments: remainingSegments
+                  remainingSegments: remainingSegments,
                 };
               }
             }
@@ -1001,7 +1040,8 @@ const createRouteFromPath = (
               for (let j = 0; j < i; j++) {
                 const previousSegment = segments[j];
                 const parentDir = targetContainer.find(
-                  (child) => child.type === "directory" && child.name === previousSegment
+                  (child) =>
+                    child.type === "directory" && child.name === previousSegment
                 );
                 if (parentDir?.children) {
                   targetContainer = parentDir.children;
@@ -1018,9 +1058,10 @@ const createRouteFromPath = (
                   name: segment,
                   type: "directory",
                   isExpanded: true,
-                  children: i === segments.length - 1
-                    ? [{ id: generateId(), name: "page.tsx", type: "file" }]
-                    : [],
+                  children:
+                    i === segments.length - 1
+                      ? [{ id: generateId(), name: "page.tsx", type: "file" }]
+                      : [],
                 };
 
                 targetContainer.push(newSegment);
@@ -1032,7 +1073,7 @@ const createRouteFromPath = (
                   existingSegment.children.push({
                     id: generateId(),
                     name: "page.tsx",
-                    type: "file"
+                    type: "file",
                   });
                 }
               }
@@ -1044,7 +1085,11 @@ const createRouteFromPath = (
           if (entry.children) {
             return {
               ...entry,
-              children: addSegmentsToParent(targetEntry, entry.children, segments),
+              children: addSegmentsToParent(
+                targetEntry,
+                entry.children,
+                segments
+              ),
             };
           }
 
@@ -1052,7 +1097,11 @@ const createRouteFromPath = (
         });
       };
 
-      return addSegmentsToParent(bestParent.parentEntry, entries, bestParent.remainingSegments);
+      return addSegmentsToParent(
+        bestParent.parentEntry,
+        entries,
+        bestParent.remainingSegments
+      );
     }
 
     if (normalizedPath === "/" || pathSegments.length === 0) {
@@ -1356,7 +1405,11 @@ const TreeNode = ({
   onAddDirectory: (parentId: string) => void;
   appStructure: FileSystemEntry[];
   activeLayoutPopover?: { pagePath: string; layouts: string[] } | null;
-  onLayoutPopoverChange?: (open: boolean, pagePath: string, layouts: string[]) => void;
+  onLayoutPopoverChange?: (
+    open: boolean,
+    pagePath: string,
+    layouts: string[]
+  ) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { darkMode } = useEditorStore();
@@ -1395,10 +1448,13 @@ const TreeNode = ({
       // Check if this specific layout file is one of the layouts in the active popover
       for (let i = 0; i < activeLayoutPopover.layouts.length; i++) {
         const layout = activeLayoutPopover.layouts[i];
-        const expectedLayoutFile = layout === "/" ? "app/layout.tsx" : `app${layout}/layout.tsx`;
+        const expectedLayoutFile =
+          layout === "/" ? "app/layout.tsx" : `app${layout}/layout.tsx`;
 
         // Remove leading slash from fullFilePath for comparison
-        const normalizedFullPath = fullFilePath.startsWith("/") ? fullFilePath.substring(1) : fullFilePath;
+        const normalizedFullPath = fullFilePath.startsWith("/")
+          ? fullFilePath.substring(1)
+          : fullFilePath;
 
         if (normalizedFullPath === expectedLayoutFile) {
           const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
@@ -1705,7 +1761,11 @@ export const AppStructure = () => {
     });
   };
 
-  const handleLayoutPopoverChange = (open: boolean, pagePath: string, layouts: string[]) => {
+  const handleLayoutPopoverChange = (
+    open: boolean,
+    pagePath: string,
+    layouts: string[]
+  ) => {
     if (open) {
       setActiveLayoutPopover({ pagePath, layouts });
     } else {

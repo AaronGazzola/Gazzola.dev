@@ -2,14 +2,20 @@
 
 ## Active tasks
 
-- [ ] Add shadcn variants for the editor components
+- [ ] fix hydration error (AppStructure)
+- [ ] Add sheet UI to edit app structure throughout the app
+- [ ] Simplify initial App Structure
+- [ ] Update source markdown content
+  - [ ] Add styling content
 - [ ] Add dynamic component example elements
+- [ ] Add shadcn variants for the editor components
 - [ ] Add donate UX on download
 - [ ] Add donation goal tracking
 - [ ] fix Header responsive design
 
 ## Completed tasks
 
+- [x] remove console.logs
 - [x] Expand AppStructure component to output nested layout diagrams
 - [x] Update the claude document
 - [x] Remove excluded content from downloaded files
@@ -69,3 +75,4 @@
 - [x] Sean kochle "my new method"
 - [ ] AGENTS.md
 - [ ] GPT-5 Codex news
+- [ ] Fix selection expansion shortcut

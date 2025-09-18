@@ -23,24 +23,9 @@ export const SECTION_TRANSFORMER: ElementTransformer = {
   },
   regExp: /^<!--\s*(section-\d+)\s*-->$/,
   replace: (parentNode, children, match, isImport) => {
-    console.log(JSON.stringify({
-      transformerCalled: true,
-      isImport,
-      match: match[0],
-      rawSectionKey: match[1],
-      hasContext: !!transformerContext.currentFilePath
-    }, null, 0));
-
     if (isImport) {
       const rawSectionKey = match[1]; // e.g., "section-1"
       const normalizedSectionId = rawSectionKey.replace(/-/, ""); // Convert "section-1" to "section1"
-
-      console.log(JSON.stringify({
-        rawSectionKey,
-        normalizedSectionId,
-        filePath: transformerContext.currentFilePath,
-        creatingNode: true
-      }, null, 0));
 
       // Always create one SectionNode per section comment
       const sectionNode = $createSectionNode(normalizedSectionId);

@@ -57,12 +57,6 @@ const Page = () => {
 
   // Set transformer context when contentPath changes
   useEffect(() => {
-    console.log(JSON.stringify({
-      settingTransformerContext: true,
-      contentPath,
-      hasSectionOptions: !!getSectionOptions
-    }, null, 0));
-
     setSectionTransformerContext({
       currentFilePath: contentPath,
       getSectionOptions: getSectionOptions
@@ -100,7 +94,6 @@ const Page = () => {
         namespace: "markdown-editor",
         theme: {},
         onError: (error: Error) => {
-          console.log(JSON.stringify({ error: error.message }, null, 0));
         },
       };
     }
@@ -147,11 +140,6 @@ const Page = () => {
           : "border-l-4 border-gray-300 pl-4 italic mb-4",
       },
       onError: (error: Error) => {
-        console.log(JSON.stringify({ 
-          error: `Lexical editor error: ${error.message}`,
-          stack: error.stack,
-          contentPath
-        }, null, 0));
       },
       editorState: () => $convertFromMarkdownString(currentContent, [...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER]),
     };
