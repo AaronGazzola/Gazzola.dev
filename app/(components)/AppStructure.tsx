@@ -1413,6 +1413,7 @@ const TreeNode = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { darkMode } = useEditorStore();
+  const [isEditing, setIsEditing] = useState(false);
 
   const getPagePath = (): string => {
     if (node.name !== "page.tsx" || node.type !== "file") return "";
@@ -1471,18 +1472,17 @@ const TreeNode = ({
   };
 
   useEffect(() => {
-    if (node.isEditing && inputRef.current) {
+    if (isEditing && inputRef.current) {
       inputRef.current.focus();
       inputRef.current.select();
     }
-  }, [node.isEditing]);
+  }, [isEditing]);
 
   const handleNameSubmit = (newName: string) => {
     if (newName.trim()) {
-      onUpdate(node.id, { name: newName.trim(), isEditing: false });
-    } else {
-      onUpdate(node.id, { isEditing: false });
+      onUpdate(node.id, { name: newName.trim() });
     }
+    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -1490,7 +1490,7 @@ const TreeNode = ({
       handleNameSubmit(e.currentTarget.value);
     }
     if (e.key === "Escape") {
-      onUpdate(node.id, { isEditing: false });
+      setIsEditing(false);
     }
   };
 
@@ -1547,7 +1547,7 @@ const TreeNode = ({
             <File className={cn("h-4 w-4 flex-shrink-0", getFileIconColor())} />
           )}
 
-          {node.isEditing ? (
+          {isEditing ? (
             <Input
               ref={inputRef}
               defaultValue={node.name}
@@ -1561,7 +1561,7 @@ const TreeNode = ({
               className="text-sm truncate cursor-pointer hover:underline"
               onClick={(e) => {
                 e.stopPropagation();
-                onUpdate(node.id, { isEditing: true });
+                setIsEditing(true);
               }}
             >
               {node.name}
@@ -1663,7 +1663,6 @@ export const AppStructure = () => {
       id: generateId(),
       name: "new-file.tsx",
       type: "file",
-      isEditing: true,
     };
     addAppStructureNode(parentId, newFile);
   };
@@ -1673,7 +1672,6 @@ export const AppStructure = () => {
       id: generateId(),
       name: "new-folder",
       type: "directory",
-      isEditing: true,
       children: [],
       isExpanded: false,
     };

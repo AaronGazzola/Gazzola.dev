@@ -45,7 +45,7 @@ const Header = () => {
         headerIsCollapsed ? "h-[100px] py-6" : "h-screen"
       )}
     >
-      <div className="absolute top-6 left-6 z-30">
+      <div className="absolute top-4 left-3 md:top-6 md:left-6 z-30">
         <Button
           variant="outline"
           className={cn(
@@ -82,7 +82,59 @@ const Header = () => {
           </div>
         </Button>
       </div>
-      <div className="absolute top-6 right-6 z-30 flex gap-2">
+      <div className="absolute top-3 right-3 md:top-6 md:right-6 z-30 flex gap-2">
+        <Link href={configuration.paths.about}>
+          <Button variant="outline" className=" text-gray-300  font-bold">
+            About
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </Link>
+        <div className="md:flex hidden gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-300"
+                  onClick={() => setHeaderIsCollapsed(!headerIsCollapsed)}
+                >
+                  {headerIsCollapsed ? (
+                    <ChevronUp className="w-5 h-5" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Collapse header</p>
+              </TooltipContent>
+            </Tooltip>
+            <Popover>
+              <Tooltip>
+                <PopoverTrigger asChild>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-gray-300"
+                    >
+                      <Palette className="w-5 h-5" />
+                    </Button>
+                  </TooltipTrigger>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="p-0">
+                  <ThemeControlPanel />
+                </PopoverContent>
+                <TooltipContent>
+                  <p>Theme options</p>
+                </TooltipContent>
+              </Tooltip>
+            </Popover>
+          </TooltipProvider>
+        </div>
+      </div>
+      <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -121,12 +173,6 @@ const Header = () => {
             </Tooltip>
           </Popover>
         </TooltipProvider>
-        <Link href={configuration.paths.about}>
-          <Button variant="outline" className=" text-gray-300  font-bold">
-            About
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </Link>
       </div>
       <div className="px-5 sm:px-10">
         {!headerIsCollapsed && (
@@ -134,8 +180,10 @@ const Header = () => {
             AZ GAZZOLA
           </h1>
         )}
-        <h2 className="text-lg font-medium">Full Stack Web App Development</h2>
-        <h3 className="text-lg font-medium">
+        <h2 className="text-lg font-medium md:block hidden">
+          Full Stack Web App Development
+        </h2>
+        <h3 className="text-lg font-medium hidden md:block">
           Typescript + Next.js + PostgresSQL + Supabase
         </h3>
       </div>

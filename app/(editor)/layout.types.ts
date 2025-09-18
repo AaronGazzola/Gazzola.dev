@@ -122,5 +122,4 @@ export interface FileSystemEntry {
   type: "file" | "directory";
   children?: FileSystemEntry[];
   isExpanded?: boolean;
-  isEditing?: boolean;
 }

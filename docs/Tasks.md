@@ -2,19 +2,19 @@
 
 ## Active tasks
 
-- [ ] fix hydration error (AppStructure)
-- [ ] Add sheet UI to edit app structure throughout the app
-- [ ] Simplify initial App Structure
-- [ ] Update source markdown content
-  - [ ] Add styling content
+- [ ] Add sheet UI to edit app structure throughout the app (bug: when the useEditorStore is exported from "app/(editor)/layout.store.ts" file, the AppStructure component cannot manage the store data while rendered in the Sheet because the sheet is in a portal. The AppStructure data management needs to take place in a store that is either defined locally inside the AppStructure component, or exported from a location accessible via the Sheet portal)
+- [ ] Add styling content
 - [ ] Add dynamic component example elements
 - [ ] Add shadcn variants for the editor components
 - [ ] Add donate UX on download
 - [ ] Add donation goal tracking
-- [ ] fix Header responsive design
+- [-] fix Header responsive design
+- [ ] Update source markdown content
 
 ## Completed tasks
 
+- [x] fix hydration error (AppStructure)
+- [x] Simplify initial App Structure
 - [x] remove console.logs
 - [x] Expand AppStructure component to output nested layout diagrams
 - [x] Update the claude document

@@ -1,5 +1,6 @@
 "use client";
 
+import { AppStructure } from "@/app/(components)/AppStructure";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -17,6 +18,12 @@ import {
 } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -30,6 +37,7 @@ import {
   File,
   Files,
   Folder,
+  FolderOpen,
   ListRestart,
   Moon,
   RotateCcw,
@@ -103,9 +111,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
+  const [appStructureSheetOpen, setAppStructureSheetOpen] = useState(false);
 
   const allPages = useMemo(() => {
-    const pages: { path: string; url: string; title: string; order: number }[] = [];
+    const pages: { path: string; url: string; title: string; order: number }[] =
+      [];
 
     const extractPages = (node: any, parentUrl = ""): void => {
       if (node.include === false) {
@@ -146,14 +156,22 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     }[] = [];
 
     Object.values(data.flatIndex).forEach((node) => {
-      if (node.type === "file" && node.sections && Object.keys(node.sections).length > 0) {
-        const sections = Object.entries(node.sections).map(([sectionId, sectionOptions]) => ({
-          sectionId,
-          options: Object.entries(sectionOptions).map(([optionId, option]) => ({
-            optionId,
-            include: option.include,
-          })),
-        }));
+      if (
+        node.type === "file" &&
+        node.sections &&
+        Object.keys(node.sections).length > 0
+      ) {
+        const sections = Object.entries(node.sections).map(
+          ([sectionId, sectionOptions]) => ({
+            sectionId,
+            options: Object.entries(sectionOptions).map(
+              ([optionId, option]) => ({
+                optionId,
+                include: option.include,
+              })
+            ),
+          })
+        );
 
         filesWithSections.push({
           filePath: node.path,
@@ -206,9 +224,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     return allPages.findIndex((page) => page.path === currentContentPath);
   }, [allPages, currentContentPath]);
 
-  const nextPage = currentPageIndex < allPages.length - 1
-    ? allPages[currentPageIndex + 1]
-    : null;
+  const nextPage =
+    currentPageIndex < allPages.length - 1
+      ? allPages[currentPageIndex + 1]
+      : null;
 
   const canGoBack = currentPageIndex > 0;
   const canGoNext = Boolean(nextPage);
@@ -233,7 +252,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const handleResetPage = () => {
     const node = data.flatIndex[currentContentPath];
     if (node && node.type === "file") {
-      const originalContent = node.content.replace(/\\n/g, '\n').replace(/\\`/g, '`').replace(/\\\$/g, '$').replace(/\\\\/g, '\\');
+      const originalContent = node.content
+        .replace(/\\n/g, "\n")
+        .replace(/\\`/g, "`")
+        .replace(/\\\$/g, "$")
+        .replace(/\\\\/g, "\\");
       setContent(currentContentPath, originalContent);
     }
     forceRefresh(); // Force editor refresh to display updated content
@@ -292,6 +315,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               darkMode={darkMode}
             >
               <ChevronLeft className="h-4 w-4" />
+            </IconButton>
+
+            <IconButton
+              onClick={() => setAppStructureSheetOpen(true)}
+              tooltip="App Structure"
+              darkMode={darkMode}
+            >
+              <FolderOpen className="h-4 w-4" />
             </IconButton>
           </div>
 
@@ -414,14 +445,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               <PopoverContent
                 className={cn(
                   "w-80 max-h-96 overflow-y-auto",
-                  darkMode ? "bg-gray-800 border-gray-600" : "bg-white border-gray-200"
+                  darkMode
+                    ? "bg-gray-800 border-gray-600"
+                    : "bg-white border-gray-200"
                 )}
                 align="center"
               >
                 <div className="space-y-4">
                   <div className="font-semibold text-sm">Section Options</div>
                   {sectionsData.length === 0 ? (
-                    <div className="text-sm text-gray-500">No sections found</div>
+                    <div className="text-sm text-gray-500">
+                      No sections found
+                    </div>
                   ) : (
                     sectionsData.map((file) => (
                       <div key={file.filePath} className="space-y-3">
@@ -429,7 +464,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                           {file.fileName}
                         </div>
                         {file.sections.map((section) => (
-                          <div key={section.sectionId} className="ml-2 space-y-2">
+                          <div
+                            key={section.sectionId}
+                            className="ml-2 space-y-2"
+                          >
                             <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
                               {section.sectionId}
                             </div>
@@ -499,7 +537,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               <PopoverContent
                 className={cn(
                   "w-80 max-h-96 overflow-y-auto",
-                  darkMode ? "bg-gray-800 border-gray-600" : "bg-white border-gray-200"
+                  darkMode
+                    ? "bg-gray-800 border-gray-600"
+                    : "bg-white border-gray-200"
                 )}
                 align="center"
               >
@@ -517,7 +557,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         <Checkbox
                           checked={item.include}
                           onCheckedChange={(checked) =>
-                            updateInclusionRules({ [item.path]: checked as boolean })
+                            updateInclusionRules({
+                              [item.path]: checked as boolean,
+                            })
                           }
                         />
                         {item.type === "directory" ? (
@@ -584,6 +626,25 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </div>
         </div>
       </div>
+
+      <Sheet
+        open={appStructureSheetOpen}
+        onOpenChange={setAppStructureSheetOpen}
+      >
+        <SheetContent
+          side="left"
+          className="w-[640px] !max-w-[95%]"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
+          <SheetHeader>
+            <SheetTitle>App Structure</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6 overflow-y-auto w-full">
+            <AppStructure />
+          </div>
+        </SheetContent>
+      </Sheet>
     </TooltipProvider>
   );
 };

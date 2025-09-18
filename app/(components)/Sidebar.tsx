@@ -1,5 +1,5 @@
 "use client";
-import { markdownData, getFirstPagePath } from "@/app/(editor)/layout.data";
+import { getFirstPagePath, markdownData } from "@/app/(editor)/layout.data";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
@@ -24,7 +24,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-const generateNavigationFromMarkdownData = (nodes: MarkdownNode[]): NavigationItem[] => {
+const generateNavigationFromMarkdownData = (
+  nodes: MarkdownNode[]
+): NavigationItem[] => {
   const items: NavigationItem[] = [];
 
   for (const node of nodes) {
@@ -174,8 +176,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
 const Sidebar = () => {
   const { toggleSidebar } = useSidebar();
-  const { isPageVisited, data, appStructure, getSectionContent, getSectionInclude, getSectionOptions } =
-    useEditorStore();
+  const {
+    isPageVisited,
+    data,
+    appStructure,
+    getSectionContent,
+    getSectionInclude,
+    getSectionOptions,
+  } = useEditorStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const params = useParams();
 
@@ -260,7 +268,13 @@ const Sidebar = () => {
 
   const handleDownload = async () => {
     try {
-      await generateAndDownloadZip(data, getSectionInclude, getSectionContent, getSectionOptions, appStructure);
+      await generateAndDownloadZip(
+        data,
+        getSectionInclude,
+        getSectionContent,
+        getSectionOptions,
+        appStructure
+      );
     } catch (error) {
       console.error("Error generating download:", error);
     }
@@ -285,7 +299,11 @@ const Sidebar = () => {
               </Button>
             </div>
             <p className="text-sm text-white font-medium mt-1">
-              A platform for generating full-stack web app roadmaps
+              A platform for generating full-stack{" "}
+              <span className="md:hidden block">
+                Next.js + TypeScript + PostgreSQL
+              </span>{" "}
+              web app roadmaps
             </p>
           </div>
         </div>
