@@ -1,5 +1,12 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/tailwind.utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
@@ -24,6 +31,7 @@ import {
   SerializedLexicalNode,
   Spread,
 } from "lexical";
+import { ListTodo } from "lucide-react";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
 // Import removed - ContentPath no longer exists
@@ -111,11 +119,14 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     getSectionOptions,
     getSectionContent,
     setSectionContent,
+    getSectionInclude,
+    setSectionInclude,
     darkMode,
     data,
   } = useEditorStore();
 
   const [mounted, setMounted] = useState(false);
+  const [sectionPopoverOpen, setSectionPopoverOpen] = useState(false);
   const sectionKey = node.getSectionKey();
 
   // Find the parent file that contains this section
@@ -147,6 +158,14 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
 
     return sectionKey; // ultimate fallback
   }, [sectionKey, data]);
+
+  const sectionOptions = useMemo(() => {
+    const options = getSectionOptions(filePath, sectionKey);
+    return Object.entries(options).map(([optionId, optionData]) => ({
+      optionId,
+      content: optionData.content,
+    }));
+  }, [getSectionOptions, filePath, sectionKey]);
 
   const includedOptions = useMemo(() => {
     const options = getSectionOptions(filePath, sectionKey);
@@ -259,7 +278,79 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
+      {sectionOptions.length > 0 && (
+        <Popover open={sectionPopoverOpen} onOpenChange={setSectionPopoverOpen}>
+          <PopoverTrigger asChild>
+            <button
+              className={cn(
+                "absolute top-0 -left-5 z-10 h-6 w-6 flex items-center justify-center rounded transition-colors border border-gray-500",
+                darkMode
+                  ? "hover:bg-gray-700 text-gray-400 hover:text-gray-200"
+                  : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+              )}
+              onClick={() => setSectionPopoverOpen(true)}
+            >
+              <ListTodo className="h-3 w-3" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            className={cn(
+              "w-64 max-h-80 overflow-y-auto",
+              darkMode
+                ? "bg-gray-800 border-gray-600"
+                : "bg-white border-gray-200"
+            )}
+            align="start"
+          >
+            <div className="space-y-3">
+              <div className="font-semibold text-sm">Section Options</div>
+              <div className="space-y-2">
+                {sectionOptions.map((option) => (
+                  <div
+                    key={option.optionId}
+                    className="flex items-center space-x-2"
+                  >
+                    <Checkbox
+                      checked={getSectionInclude(
+                        filePath,
+                        sectionKey,
+                        option.optionId
+                      )}
+                      onCheckedChange={(checked) =>
+                        setSectionInclude(
+                          filePath,
+                          sectionKey,
+                          option.optionId,
+                          checked as boolean
+                        )
+                      }
+                    />
+                    <label
+                      className="text-sm cursor-pointer flex-1"
+                      onClick={() =>
+                        setSectionInclude(
+                          filePath,
+                          sectionKey,
+                          option.optionId,
+                          !getSectionInclude(
+                            filePath,
+                            sectionKey,
+                            option.optionId
+                          )
+                        )
+                      }
+                    >
+                      {option.optionId}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
+
       {includedOptions.map(({ optionId, content }) => (
         <div key={optionId}>
           <LexicalComposer
