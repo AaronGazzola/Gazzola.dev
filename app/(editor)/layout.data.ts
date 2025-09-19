@@ -22,11 +22,55 @@ export const markdownData: MarkdownData = {
         "include": true,
         "children": [
           {
+            "id": "starthere.welcome",
+            "name": "welcome",
+            "displayName": "Welcome",
+            "type": "file",
+            "order": 1,
+            "path": "starthere.welcome",
+            "urlPath": "/start here/welcome",
+            "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+            "components": [],
+            "sections": {
+              "section1": {
+                "option1": {
+                  "content": "- **Next.js (TypeScript)** - A powerful React framework with built-in TypeScript support for building full-stack web applications",
+                  "include": false
+                },
+                "option2": {
+                  "content": "- **Tailwind CSS** - A utility-first CSS framework for rapidly building custom user interfaces",
+                  "include": false
+                },
+                "option3": {
+                  "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
+                  "include": false
+                },
+                "option4": {
+                  "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
+                  "include": false
+                },
+                "option5": {
+                  "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
+                  "include": false
+                },
+                "option6": {
+                  "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
+                  "include": false
+                },
+                "option7": {
+                  "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
+                  "include": false
+                }
+              }
+            },
+            "include": true
+          },
+          {
             "id": "starthere.appdirectory",
             "name": "appdirectory",
             "displayName": "App directory",
             "type": "file",
-            "order": 1,
+            "order": 2,
             "path": "starthere.appdirectory",
             "urlPath": "/start here/app directory",
             "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",
@@ -69,11 +113,55 @@ export const markdownData: MarkdownData = {
           "include": true,
           "children": [
             {
+              "id": "starthere.welcome",
+              "name": "welcome",
+              "displayName": "Welcome",
+              "type": "file",
+              "order": 1,
+              "path": "starthere.welcome",
+              "urlPath": "/start here/welcome",
+              "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+              "components": [],
+              "sections": {
+                "section1": {
+                  "option1": {
+                    "content": "- **Next.js (TypeScript)** - A powerful React framework with built-in TypeScript support for building full-stack web applications",
+                    "include": false
+                  },
+                  "option2": {
+                    "content": "- **Tailwind CSS** - A utility-first CSS framework for rapidly building custom user interfaces",
+                    "include": false
+                  },
+                  "option3": {
+                    "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
+                    "include": false
+                  },
+                  "option4": {
+                    "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
+                    "include": false
+                  },
+                  "option5": {
+                    "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
+                    "include": false
+                  },
+                  "option6": {
+                    "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
+                    "include": false
+                  },
+                  "option7": {
+                    "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
+                    "include": false
+                  }
+                }
+              },
+              "include": true
+            },
+            {
               "id": "starthere.appdirectory",
               "name": "appdirectory",
               "displayName": "App directory",
               "type": "file",
-              "order": 1,
+              "order": 2,
               "path": "starthere.appdirectory",
               "urlPath": "/start here/app directory",
               "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",
@@ -106,11 +194,55 @@ export const markdownData: MarkdownData = {
       "include": true,
       "children": [
         {
+          "id": "starthere.welcome",
+          "name": "welcome",
+          "displayName": "Welcome",
+          "type": "file",
+          "order": 1,
+          "path": "starthere.welcome",
+          "urlPath": "/start here/welcome",
+          "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+          "components": [],
+          "sections": {
+            "section1": {
+              "option1": {
+                "content": "- **Next.js (TypeScript)** - A powerful React framework with built-in TypeScript support for building full-stack web applications",
+                "include": false
+              },
+              "option2": {
+                "content": "- **Tailwind CSS** - A utility-first CSS framework for rapidly building custom user interfaces",
+                "include": false
+              },
+              "option3": {
+                "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
+                "include": false
+              },
+              "option4": {
+                "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
+                "include": false
+              },
+              "option5": {
+                "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
+                "include": false
+              },
+              "option6": {
+                "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
+                "include": false
+              },
+              "option7": {
+                "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
+                "include": false
+              }
+            }
+          },
+          "include": true
+        },
+        {
           "id": "starthere.appdirectory",
           "name": "appdirectory",
           "displayName": "App directory",
           "type": "file",
-          "order": 1,
+          "order": 2,
           "path": "starthere.appdirectory",
           "urlPath": "/start here/app directory",
           "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",
@@ -131,12 +263,56 @@ export const markdownData: MarkdownData = {
         }
       ]
     },
+    "starthere.welcome": {
+      "id": "starthere.welcome",
+      "name": "welcome",
+      "displayName": "Welcome",
+      "type": "file",
+      "order": 1,
+      "path": "starthere.welcome",
+      "urlPath": "/start here/welcome",
+      "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+      "components": [],
+      "sections": {
+        "section1": {
+          "option1": {
+            "content": "- **Next.js (TypeScript)** - A powerful React framework with built-in TypeScript support for building full-stack web applications",
+            "include": false
+          },
+          "option2": {
+            "content": "- **Tailwind CSS** - A utility-first CSS framework for rapidly building custom user interfaces",
+            "include": false
+          },
+          "option3": {
+            "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
+            "include": false
+          },
+          "option4": {
+            "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
+            "include": false
+          },
+          "option5": {
+            "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
+            "include": false
+          },
+          "option6": {
+            "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
+            "include": false
+          },
+          "option7": {
+            "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
+            "include": false
+          }
+        }
+      },
+      "include": true
+    },
     "starthere.appdirectory": {
       "id": "starthere.appdirectory",
       "name": "appdirectory",
       "displayName": "App directory",
       "type": "file",
-      "order": 1,
+      "order": 2,
       "path": "starthere.appdirectory",
       "urlPath": "/start here/app directory",
       "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",

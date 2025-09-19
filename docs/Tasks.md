@@ -2,8 +2,13 @@
 
 ## Active tasks
 
-- [ ] Add sheet UI to edit app structure throughout the app (bug: when the useEditorStore is exported from "app/(editor)/layout.store.ts" file, the AppStructure component cannot manage the store data while rendered in the Sheet because the sheet is in a portal. The AppStructure data management needs to take place in a store that is either defined locally inside the AppStructure component, or exported from a location accessible via the Sheet portal)
-- [ ] Add styling content
+- [ ] Update section node styling
+- [ ] Add section selection popover to each SectionNode
+- [ ] update parse script to include/exclude sections by default with asterix ("\*")
+- [ ] Add inline text edit components
+- [ ] Add guided walkthrough tutorial
+- [ ] Update section node styling
+- [ ] Add styling markdown content
 - [ ] Add dynamic component example elements
 - [ ] Add shadcn variants for the editor components
 - [ ] Add donate UX on download
@@ -13,6 +18,7 @@
 
 ## Completed tasks
 
+- [x] Add sheet UI to edit app structure throughout the app
 - [x] fix hydration error (AppStructure)
 - [x] Simplify initial App Structure
 - [x] remove console.logs
