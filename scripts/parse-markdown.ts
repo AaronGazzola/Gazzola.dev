@@ -103,15 +103,16 @@ function extractSectionsAndComponents(
 
 function extractOptionsFromSection(content: string): Record<string, { content: string; include: boolean }> {
   const options: Record<string, { content: string; include: boolean }> = {};
-  const optionRegex = /<!-- option-(\d+) -->([\s\S]*?)<!-- \/option-\1 -->/g;
+  const optionRegex = /<!-- (\*?)option-(\d+) -->([\s\S]*?)<!-- \/option-\2 -->/g;
   let match;
 
   while ((match = optionRegex.exec(content)) !== null) {
-    const optionNumber = match[1];
-    const optionContent = match[2].trim();
+    const hasAsterisk = match[1] === '*';
+    const optionNumber = match[2];
+    const optionContent = match[3].trim();
     options[`option${optionNumber}`] = {
       content: optionContent,
-      include: false
+      include: !hasAsterisk
     };
   }
 

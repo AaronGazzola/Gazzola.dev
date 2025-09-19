@@ -2,8 +2,6 @@
 
 ## Active tasks
 
-- [x] Add section selection popover to each SectionNode
-- [ ] update parse script to include/exclude sections by default with asterix ("\*")
 - [ ] Add inline text edit components
 - [ ] Add guided walkthrough tutorial
 - [ ] Add styling markdown content
@@ -16,6 +14,8 @@
 
 ## Completed tasks
 
+- [x] update parse script to include/exclude sections by default with asterix ("\*")
+- [x] Add section selection popover to each SectionNode
 - [x] Update section node styling
 - [x] Add sheet UI to edit app structure throughout the app
 - [x] fix hydration error (AppStructure)

@@ -43,23 +43,23 @@ export const markdownData: MarkdownData = {
                 },
                 "option3": {
                   "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
-                  "include": false
+                  "include": true
                 },
                 "option4": {
                   "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
-                  "include": false
+                  "include": true
                 },
                 "option5": {
                   "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
-                  "include": false
+                  "include": true
                 },
                 "option6": {
                   "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
-                  "include": false
+                  "include": true
                 },
                 "option7": {
                   "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
-                  "include": false
+                  "include": true
                 }
               }
             },
@@ -134,23 +134,23 @@ export const markdownData: MarkdownData = {
                   },
                   "option3": {
                     "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
-                    "include": false
+                    "include": true
                   },
                   "option4": {
                     "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
-                    "include": false
+                    "include": true
                   },
                   "option5": {
                     "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
-                    "include": false
+                    "include": true
                   },
                   "option6": {
                     "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
-                    "include": false
+                    "include": true
                   },
                   "option7": {
                     "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
-                    "include": false
+                    "include": true
                   }
                 }
               },
@@ -215,23 +215,23 @@ export const markdownData: MarkdownData = {
               },
               "option3": {
                 "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
-                "include": false
+                "include": true
               },
               "option4": {
                 "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
-                "include": false
+                "include": true
               },
               "option5": {
                 "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
-                "include": false
+                "include": true
               },
               "option6": {
                 "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
-                "include": false
+                "include": true
               },
               "option7": {
                 "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
-                "include": false
+                "include": true
               }
             }
           },
@@ -285,23 +285,23 @@ export const markdownData: MarkdownData = {
           },
           "option3": {
             "content": "- **shadcn/ui** - Beautifully designed, copy-and-paste React components built with Radix UI and Tailwind CSS",
-            "include": false
+            "include": true
           },
           "option4": {
             "content": "- **Zustand** - A small, fast, and scalable state management solution for React applications",
-            "include": false
+            "include": true
           },
           "option5": {
             "content": "- **React Query** - Powerful data synchronization for React that makes fetching, caching, and updating server state simple",
-            "include": false
+            "include": true
           },
           "option6": {
             "content": "- **Supabase** - An open-source Firebase alternative providing database, authentication, and real-time subscriptions",
-            "include": false
+            "include": true
           },
           "option7": {
             "content": "- **Prisma** - A next-generation ORM that provides type-safe database access and powerful migration tools",
-            "include": false
+            "include": true
           }
         }
       },

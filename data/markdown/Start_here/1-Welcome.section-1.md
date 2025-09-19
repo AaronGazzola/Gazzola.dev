@@ -1,9 +1,9 @@
-<!-- option-1 -->
+<!-- *option-1 -->
 
 - **Next.js (TypeScript)** - A powerful React framework with built-in TypeScript support for building full-stack web applications
 <!-- /option-1 -->
 
-<!-- option-2 -->
+<!-- *option-2 -->
 
 - **Tailwind CSS** - A utility-first CSS framework for rapidly building custom user interfaces
 <!-- /option-2 -->
