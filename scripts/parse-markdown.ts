@@ -19,6 +19,17 @@ function escapeForJavaScript(content: string): string {
     .replace(/\$/g, "\\$");
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function sanitizeFileName(fileName: string): string {
   let name = fileName.replace(/\.md$/, "");
   const orderMatch = name.match(/^(\d+)-(.+)$/);
@@ -32,10 +43,10 @@ function generateUrlPath(relativePath: string): string {
   const parts = relativePath.split(path.sep);
   const cleanParts = parts.map((part) => {
     const orderMatch = part.match(/^(\d+)-(.+)$/);
-    const cleanPart = orderMatch ? orderMatch[2].toLowerCase() : part.toLowerCase();
-    return cleanPart.replace(/\*/g, '');
+    const cleanPart = orderMatch ? orderMatch[2] : part;
+    return slugify(cleanPart.replace(/\*/g, '').replace(/\.md$/, ''));
   });
-  return "/" + cleanParts.join("/").replace(/\.md$/, "");
+  return "/" + cleanParts.join("/");
 }
 
 function extractSectionsAndComponents(
@@ -116,6 +127,7 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     ? orderMatch[2]
     : fileName.replace(/\.md$/, "");
   displayName = displayName.replace(/\*/g, '');
+  displayName = displayName.replace(/_/g, ' ');
   const sanitizedName = sanitizeFileName(fileName);
 
   const hasAsterisk = fileName.includes("*");
@@ -161,6 +173,7 @@ function buildMarkdownTree(
       const order = orderMatch ? parseInt(orderMatch[1], 10) : undefined;
       let displayName = orderMatch ? orderMatch[2] : dirName;
       displayName = displayName.replace(/\*/g, '');
+      displayName = displayName.replace(/_/g, ' ');
       const sanitizedName = sanitizeFileName(dirName);
       const nodePath = parentPath
         ? `${parentPath}.${sanitizedName}`

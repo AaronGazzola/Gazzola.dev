@@ -7,7 +7,6 @@
 - [ ] update parse script to include/exclude sections by default with asterix ("\*")
 - [ ] Add inline text edit components
 - [ ] Add guided walkthrough tutorial
-- [ ] Update section node styling
 - [ ] Add styling markdown content
 - [ ] Add dynamic component example elements
 - [ ] Add shadcn variants for the editor components
@@ -82,3 +81,4 @@
 - [ ] AGENTS.md
 - [ ] GPT-5 Codex news
 - [ ] Fix selection expansion shortcut
+- [ ] Codex

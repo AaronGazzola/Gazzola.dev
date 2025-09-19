@@ -1,33 +1,40 @@
 "use client";
 
-import { DecoratorNode, NodeKey, LexicalNode, SerializedLexicalNode, Spread } from "lexical";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { 
+import { CodeNode } from "@lexical/code";
+import { LinkNode } from "@lexical/link";
+import { ListItemNode, ListNode } from "@lexical/list";
+import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
   TRANSFORMERS,
 } from "@lexical/markdown";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { LinkNode } from "@lexical/link";
-import { ListItemNode, ListNode } from "@lexical/list";
-import { CodeNode } from "@lexical/code";
-import { EditorState } from "lexical";
+import {
+  DecoratorNode,
+  EditorState,
+  LexicalNode,
+  NodeKey,
+  SerializedLexicalNode,
+  Spread,
+} from "lexical";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
 // Import removed - ContentPath no longer exists
 
-export interface SerializedSectionNode extends Spread<
-  {
-    sectionKey: string;
-  },
-  SerializedLexicalNode
-> {}
+export interface SerializedSectionNode
+  extends Spread<
+    {
+      sectionKey: string;
+    },
+    SerializedLexicalNode
+  > {}
 
 export class SectionNode extends DecoratorNode<ReactNode> {
   __sectionKey: string;
@@ -89,7 +96,9 @@ export function $createSectionNode(sectionKey: string): SectionNode {
   return new SectionNode(sectionKey);
 }
 
-export function $isSectionNode(node: LexicalNode | null | undefined): node is SectionNode {
+export function $isSectionNode(
+  node: LexicalNode | null | undefined
+): node is SectionNode {
   return node instanceof SectionNode;
 }
 
@@ -103,7 +112,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     getSectionContent,
     setSectionContent,
     darkMode,
-    data
+    data,
   } = useEditorStore();
 
   const [mounted, setMounted] = useState(false);
@@ -112,17 +121,18 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
   // Find the parent file that contains this section
   const filePath = useMemo(() => {
     // Look for files with sections containing this section ID
-    const filesWithSection = Object.values(data.flatIndex).filter((node) =>
-      node.type === "file" &&
-      node.sections &&
-      node.sections[sectionKey]
+    const filesWithSection = Object.values(data.flatIndex).filter(
+      (node) =>
+        node.type === "file" && node.sections && node.sections[sectionKey]
     );
 
     // Try to find from URL or other context clues
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const currentPath = window.location.pathname;
-      const matchingFile = filesWithSection.find((file: any) =>
-        currentPath.includes(file.name) || currentPath.includes(file.path.split('.').pop())
+      const matchingFile = filesWithSection.find(
+        (file: any) =>
+          currentPath.includes(file.name) ||
+          currentPath.includes(file.path.split(".").pop())
       );
 
       if (matchingFile) {
@@ -146,7 +156,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
       if (optionData.include) {
         included.push({
           optionId,
-          content: optionData.content
+          content: optionData.content,
         });
       }
     });
@@ -158,64 +168,69 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     setMounted(true);
   }, []);
 
-  const createEditorConfig = useCallback((optionId: string, content: string) => ({
-    nodes: [
-      HeadingNode,
-      QuoteNode,
-      LinkNode,
-      ListNode,
-      ListItemNode,
-      CodeNode,
-    ],
-    namespace: `section-editor-${sectionKey}-${optionId}`,
-    theme: {
-      paragraph: "mb-4",
-      heading: {
-        h1: "text-4xl font-bold mb-6 mt-8",
-        h2: "text-3xl font-semibold mb-4 mt-6",
-        h3: "text-2xl font-medium mb-3 mt-5",
-      },
-      text: {
-        bold: "font-bold",
-        italic: "italic",
+  const createEditorConfig = useCallback(
+    (optionId: string, content: string) => ({
+      nodes: [
+        HeadingNode,
+        QuoteNode,
+        LinkNode,
+        ListNode,
+        ListItemNode,
+        CodeNode,
+      ],
+      namespace: `section-editor-${sectionKey}-${optionId}`,
+      theme: {
+        paragraph: "mb-4",
+        heading: {
+          h1: "text-4xl font-bold mb-6 mt-8",
+          h2: "text-3xl font-semibold mb-4 mt-6",
+          h3: "text-2xl font-medium mb-3 mt-5",
+        },
+        text: {
+          bold: "font-bold",
+          italic: "italic",
+          code: darkMode
+            ? "bg-gray-800 text-gray-200 px-1 py-0.5 rounded font-mono text-sm"
+            : "bg-gray-100 text-gray-800 px-1 py-0.5 rounded font-mono text-sm",
+        },
         code: darkMode
-          ? "bg-gray-800 text-gray-200 px-1 py-0.5 rounded font-mono text-sm"
-          : "bg-gray-100 text-gray-800 px-1 py-0.5 rounded font-mono text-sm",
+          ? "bg-gray-800 text-gray-200 p-4 rounded-lg font-mono text-sm overflow-x-auto block mb-4"
+          : "bg-gray-100 text-gray-800 p-4 rounded-lg font-mono text-sm overflow-x-auto block mb-4",
+        list: {
+          ul: "list-disc pl-6 mb-0",
+          ol: "list-decimal pl-6 mb-4",
+          listitem: "mb-1",
+        },
+        link: darkMode
+          ? "text-blue-400 hover:text-blue-300 underline"
+          : "text-blue-600 hover:text-blue-800 underline",
+        quote: darkMode
+          ? "border-l-4 border-gray-600 pl-4 italic mb-4"
+          : "border-l-4 border-gray-300 pl-4 italic mb-4",
       },
-      code: darkMode
-        ? "bg-gray-800 text-gray-200 p-4 rounded-lg font-mono text-sm overflow-x-auto block mb-4"
-        : "bg-gray-100 text-gray-800 p-4 rounded-lg font-mono text-sm overflow-x-auto block mb-4",
-      list: {
-        ul: "list-disc pl-6 mb-4",
-        ol: "list-decimal pl-6 mb-4",
-        listitem: "mb-1",
-      },
-      link: darkMode
-        ? "text-blue-400 hover:text-blue-300 underline"
-        : "text-blue-600 hover:text-blue-800 underline",
-      quote: darkMode
-        ? "border-l-4 border-gray-600 pl-4 italic mb-4"
-        : "border-l-4 border-gray-300 pl-4 italic mb-4",
-    },
-    onError: (error: Error) => {
-    },
-    editorState: content
-      ? () => $convertFromMarkdownString(content, TRANSFORMERS)
-      : undefined,
-  }), [darkMode, sectionKey]);
+      onError: (error: Error) => {},
+      editorState: content
+        ? () => $convertFromMarkdownString(content, TRANSFORMERS)
+        : undefined,
+    }),
+    [darkMode, sectionKey]
+  );
 
-  const createHandleContentChange = useCallback((optionId: string) =>
-    (editorState: EditorState) => {
+  const createHandleContentChange = useCallback(
+    (optionId: string) => (editorState: EditorState) => {
       editorState.read(() => {
         const markdown = $convertToMarkdownString(TRANSFORMERS);
         setSectionContent(filePath, sectionKey, optionId, markdown);
       });
-    }, [setSectionContent, filePath, sectionKey]
+    },
+    [setSectionContent, filePath, sectionKey]
   );
 
   if (!mounted) {
     return (
-      <div className={`w-full p-4 rounded-lg mb-4 ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+      <div
+        className={`w-full p-4 rounded-lg mb-4 ${darkMode ? "bg-gray-800" : "bg-gray-50"}`}
+      >
         <div className="text-sm text-gray-500">Loading section...</div>
       </div>
     );
@@ -223,49 +238,53 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
 
   if (includedOptions.length === 0) {
     return (
-      <div className={`w-full mb-6 p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+      <div
+        className={`w-full mb-6 p-6 rounded-lg ${darkMode ? "bg-gray-800" : "bg-gray-50"}`}
+      >
         <div className="flex items-center justify-center">
-          <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
-          <span className={`px-4 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+          <div
+            className={`h-px flex-1 ${darkMode ? "bg-gray-700" : "bg-gray-300"}`}
+          />
+          <span
+            className={`px-4 text-sm ${darkMode ? "text-gray-500" : "text-gray-400"}`}
+          >
             no sections selected
           </span>
-          <div className={`h-px flex-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
+          <div
+            className={`h-px flex-1 ${darkMode ? "bg-gray-700" : "bg-gray-300"}`}
+          />
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`w-full mb-6 space-y-4`}>
+    <div className="w-full">
       {includedOptions.map(({ optionId, content }) => (
-        <div key={optionId} className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-          <div className="mb-2">
-            <span className={`text-xs px-2 py-1 rounded ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
-              {sectionKey} - {optionId}
-            </span>
-          </div>
-          <div className={`w-full rounded-md ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-            <LexicalComposer key={`${sectionKey}-${optionId}`} initialConfig={createEditorConfig(optionId, content)}>
-              <div className="relative">
-                <RichTextPlugin
-                  contentEditable={
-                    <ContentEditable
-                      className="w-full p-4 outline-none resize-none min-h-[100px]"
-                    />
-                  }
-                  placeholder={
-                    <div className={`absolute top-4 left-4 pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                      Edit the content for {optionId}...
-                    </div>
-                  }
-                  ErrorBoundary={LexicalErrorBoundary}
-                />
-                <OnChangePlugin onChange={createHandleContentChange(optionId)} />
-                <HistoryPlugin />
-                <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-              </div>
-            </LexicalComposer>
-          </div>
+        <div key={optionId}>
+          <LexicalComposer
+            key={`${sectionKey}-${optionId}`}
+            initialConfig={createEditorConfig(optionId, content)}
+          >
+            <div className="relative">
+              <RichTextPlugin
+                contentEditable={
+                  <ContentEditable className="w-full px-0 py-1 outline-none resize-none min-h-[20px]" />
+                }
+                placeholder={
+                  <div
+                    className={`absolute top-1 left-0 pointer-events-none ${darkMode ? "text-gray-500" : "text-gray-400"}`}
+                  >
+                    Edit the content...
+                  </div>
+                }
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+              <OnChangePlugin onChange={createHandleContentChange(optionId)} />
+              <HistoryPlugin />
+              <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+            </div>
+          </LexicalComposer>
         </div>
       ))}
     </div>

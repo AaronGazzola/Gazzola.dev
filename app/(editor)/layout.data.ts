@@ -18,7 +18,7 @@ export const markdownData: MarkdownData = {
         "displayName": "Start here",
         "type": "directory",
         "path": "starthere",
-        "urlPath": "/start here",
+        "urlPath": "/starthere",
         "include": true,
         "children": [
           {
@@ -28,7 +28,7 @@ export const markdownData: MarkdownData = {
             "type": "file",
             "order": 1,
             "path": "starthere.welcome",
-            "urlPath": "/start here/welcome",
+            "urlPath": "/starthere/welcome",
             "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
             "components": [],
             "sections": {
@@ -72,7 +72,7 @@ export const markdownData: MarkdownData = {
             "type": "file",
             "order": 2,
             "path": "starthere.appdirectory",
-            "urlPath": "/start here/app directory",
+            "urlPath": "/starthere/appdirectory",
             "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",
             "components": [
               {
@@ -109,7 +109,7 @@ export const markdownData: MarkdownData = {
           "displayName": "Start here",
           "type": "directory",
           "path": "starthere",
-          "urlPath": "/start here",
+          "urlPath": "/starthere",
           "include": true,
           "children": [
             {
@@ -119,7 +119,7 @@ export const markdownData: MarkdownData = {
               "type": "file",
               "order": 1,
               "path": "starthere.welcome",
-              "urlPath": "/start here/welcome",
+              "urlPath": "/starthere/welcome",
               "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
               "components": [],
               "sections": {
@@ -163,7 +163,7 @@ export const markdownData: MarkdownData = {
               "type": "file",
               "order": 2,
               "path": "starthere.appdirectory",
-              "urlPath": "/start here/app directory",
+              "urlPath": "/starthere/appdirectory",
               "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",
               "components": [
                 {
@@ -190,7 +190,7 @@ export const markdownData: MarkdownData = {
       "displayName": "Start here",
       "type": "directory",
       "path": "starthere",
-      "urlPath": "/start here",
+      "urlPath": "/starthere",
       "include": true,
       "children": [
         {
@@ -200,7 +200,7 @@ export const markdownData: MarkdownData = {
           "type": "file",
           "order": 1,
           "path": "starthere.welcome",
-          "urlPath": "/start here/welcome",
+          "urlPath": "/starthere/welcome",
           "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
           "components": [],
           "sections": {
@@ -244,7 +244,7 @@ export const markdownData: MarkdownData = {
           "type": "file",
           "order": 2,
           "path": "starthere.appdirectory",
-          "urlPath": "/start here/app directory",
+          "urlPath": "/starthere/appdirectory",
           "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",
           "components": [
             {
@@ -270,7 +270,7 @@ export const markdownData: MarkdownData = {
       "type": "file",
       "order": 1,
       "path": "starthere.welcome",
-      "urlPath": "/start here/welcome",
+      "urlPath": "/starthere/welcome",
       "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
       "components": [],
       "sections": {
@@ -314,7 +314,7 @@ export const markdownData: MarkdownData = {
       "type": "file",
       "order": 2,
       "path": "starthere.appdirectory",
-      "urlPath": "/start here/app directory",
+      "urlPath": "/starthere/appdirectory",
       "content": "# Welcome\n\nThis is your app. There are many like it, but this one it yours.\n\n## App directory structure\n\n### Paths compile to routes\n\nThe paths in the app directory are compiled (by Next.js) into routes.\n**Example:** If you want a login page at \\`example.com/login\\`, then you can add a page file here: \\`app/login/page.tsx\\`\n\n### Layouts wrap pages\n\nFiles named \\`layout.tsx\\` wrap adjacent and descendant pages\n**Example:** You can add a header to the layout in \\`app/layout.tsx\\`, and a sidebar in \\`app/(dashboard)/layout.tsx\\`\n\n<!-- component-AppStructure -->\n",
       "components": [
         {
