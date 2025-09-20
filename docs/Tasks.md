@@ -2,6 +2,10 @@
 
 ## Active tasks
 
+- [ ] initial config component
+- [ ] remove sections menu from toolbar
+- [ ] Move files selection to sidebar
+- [ ] Reset prompt from markdown version change
 - [ ] Fix walkthrough position
 - [ ] Add steps to walkthrough
 - [ ] fix hydration error (AppStructure)
