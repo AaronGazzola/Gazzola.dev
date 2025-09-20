@@ -82,3 +82,5 @@
 - [ ] GPT-5 Codex news
 - [ ] Fix selection expansion shortcut
 - [ ] Codex
+- [ ] n8n
+- [ ] Minecraft server

@@ -134,6 +134,7 @@ const initialState = {
   refreshKey: 0,
   visitedPages: [getFirstPagePath()],
   appStructure: defaultAppStructure,
+  placeholderValues: {},
 };
 
 export const useEditorStore = create<EditorState>()(
@@ -265,6 +266,18 @@ export const useEditorStore = create<EditorState>()(
         }
         return false;
       },
+      getPlaceholderValue: (key: string) => {
+        const state = get();
+        return state.placeholderValues[key] || null;
+      },
+      setPlaceholderValue: (key: string, value: string) => {
+        set((state) => ({
+          placeholderValues: {
+            ...state.placeholderValues,
+            [key]: value,
+          },
+        }));
+      },
       setAppStructure: (appStructure: FileSystemEntry[]) =>
         set({ appStructure }),
       updateAppStructureNode: (
@@ -342,6 +355,7 @@ export const useEditorStore = create<EditorState>()(
         darkMode: state.darkMode,
         visitedPages: state.visitedPages,
         appStructure: state.appStructure,
+        placeholderValues: state.placeholderValues,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {

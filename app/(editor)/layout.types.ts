@@ -55,6 +55,7 @@ export interface EditorState {
   refreshKey: number;
   visitedPages: string[];
   appStructure: FileSystemEntry[];
+  placeholderValues: Record<string, string>;
   updateContent: (path: string, content: string) => void;
   setContent: (path: string, content: string) => void;
   getNode: (path: string) => MarkdownNode | null;
@@ -88,6 +89,8 @@ export interface EditorState {
     sectionId: string,
     optionId: string
   ) => boolean;
+  getPlaceholderValue: (key: string) => string | null;
+  setPlaceholderValue: (key: string, value: string) => void;
   setAppStructure: (appStructure: FileSystemEntry[]) => void;
   updateAppStructureNode: (
     id: string,

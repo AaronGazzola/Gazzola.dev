@@ -26,6 +26,8 @@ import { SectionNode } from "../components/SectionNode";
 import { SECTION_TRANSFORMER, setSectionTransformerContext } from "../components/SectionTransformer";
 import { ComponentNode } from "../components/ComponentNode";
 import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
+import { PlaceholderNode } from "../components/PlaceholderNode";
+import { PLACEHOLDER_TRANSFORMER } from "../components/PlaceholderTransformer";
 
 const Page = () => {
   const [mounted, setMounted] = useState(false);
@@ -90,6 +92,7 @@ const Page = () => {
           CodeNode,
           SectionNode,
           ComponentNode,
+          PlaceholderNode,
         ],
         namespace: "markdown-editor",
         theme: {},
@@ -108,6 +111,7 @@ const Page = () => {
         CodeNode,
         SectionNode,
         ComponentNode,
+        PlaceholderNode,
       ],
       namespace: "markdown-editor",
       theme: {
@@ -141,14 +145,14 @@ const Page = () => {
       },
       onError: (error: Error) => {
       },
-      editorState: () => $convertFromMarkdownString(currentContent, [...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER]),
+      editorState: () => $convertFromMarkdownString(currentContent, [...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER, PLACEHOLDER_TRANSFORMER]),
     };
   }, [mounted, currentContent, darkMode, contentPath]);
 
   const onChange = useCallback(
     (editorState: EditorState) => {
       editorState.read(() => {
-        const markdown = $convertToMarkdownString([...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER]);
+        const markdown = $convertToMarkdownString([...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER, PLACEHOLDER_TRANSFORMER]);
         setCurrentContent(markdown);
       });
     },
@@ -184,7 +188,7 @@ const Page = () => {
           />
           <OnChangePlugin onChange={onChange} />
           <HistoryPlugin />
-          <MarkdownShortcutPlugin transformers={[...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER]} />
+          <MarkdownShortcutPlugin transformers={[...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER, PLACEHOLDER_TRANSFORMER]} />
         </div>
       </LexicalComposer>
     </div>

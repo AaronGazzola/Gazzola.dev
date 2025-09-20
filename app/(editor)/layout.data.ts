@@ -29,7 +29,7 @@ export const markdownData: MarkdownData = {
             "order": 1,
             "path": "starthere.welcome",
             "urlPath": "/starthere/welcome",
-            "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+            "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
             "components": [],
             "sections": {
               "section1": {
@@ -120,7 +120,7 @@ export const markdownData: MarkdownData = {
               "order": 1,
               "path": "starthere.welcome",
               "urlPath": "/starthere/welcome",
-              "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+              "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
               "components": [],
               "sections": {
                 "section1": {
@@ -201,7 +201,7 @@ export const markdownData: MarkdownData = {
           "order": 1,
           "path": "starthere.welcome",
           "urlPath": "/starthere/welcome",
-          "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+          "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
           "components": [],
           "sections": {
             "section1": {
@@ -271,7 +271,7 @@ export const markdownData: MarkdownData = {
       "order": 1,
       "path": "starthere.welcome",
       "urlPath": "/starthere/welcome",
-      "content": "# [Your app name] development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
+      "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
       "components": [],
       "sections": {
         "section1": {

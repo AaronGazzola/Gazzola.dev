@@ -1,4 +1,4 @@
-# [Your app name] development roadmap
+# {{appName:Your app name}} development roadmap
 
 This web app is built with:
 
