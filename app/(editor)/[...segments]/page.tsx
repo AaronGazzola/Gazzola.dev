@@ -147,7 +147,7 @@ const Page = () => {
       },
       editorState: () => $convertFromMarkdownString(currentContent, [...TRANSFORMERS, SECTION_TRANSFORMER, COMPONENT_TRANSFORMER, PLACEHOLDER_TRANSFORMER]),
     };
-  }, [mounted, currentContent, darkMode, contentPath]);
+  }, [mounted, currentContent, darkMode]);
 
   const onChange = useCallback(
     (editorState: EditorState) => {

@@ -16,7 +16,6 @@ export const PLACEHOLDER_TRANSFORMER: TextMatchTransformer = {
     const [, placeholderKey, defaultValue] = match;
     const placeholderNode = $createPlaceholderNode(placeholderKey, defaultValue);
     textNode.replace(placeholderNode);
-    return placeholderNode;
   },
   trigger: "}",
   type: "text-match",
