@@ -2,7 +2,6 @@
 
 ## Active tasks
 
-- [ ] Add inline text edit components
 - [ ] Add guided walkthrough tutorial
 - [ ] Add styling markdown content
 - [ ] Add dynamic component example elements
@@ -14,6 +13,7 @@
 
 ## Completed tasks
 
+- [x] Add inline text edit components
 - [x] update parse script to include/exclude sections by default with asterix ("\*")
 - [x] Add section selection popover to each SectionNode
 - [x] Update section node styling

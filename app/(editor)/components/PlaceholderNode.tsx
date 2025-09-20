@@ -76,6 +76,7 @@ export class PlaceholderNode extends DecoratorNode<ReactNode> {
   createDOM(): HTMLElement {
     const span = document.createElement("span");
     span.className = "placeholder-node-container";
+    span.setAttribute("data-walkthrough", "placeholder-node");
     return span;
   }
 

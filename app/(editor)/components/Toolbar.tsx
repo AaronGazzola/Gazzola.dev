@@ -38,6 +38,7 @@ import {
   Files,
   Folder,
   FolderOpen,
+  HelpCircle,
   ListRestart,
   Moon,
   RotateCcw,
@@ -46,6 +47,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useWalkthroughStore } from "@/app/layout.stores";
+import { walkthroughSteps } from "@/data/walkthrough/steps";
 import { useEditorStore } from "../layout.stores";
 
 interface ToolbarProps {
@@ -95,6 +98,7 @@ const IconButton = ({
 
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
+  const { startWalkthrough } = useWalkthroughStore();
   const {
     darkMode,
     setDarkMode,
@@ -269,6 +273,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     router.push(configuration.paths.home);
   };
 
+  const handleStartWalkthrough = () => {
+    localStorage.removeItem('walkthrough-completed');
+    startWalkthrough(walkthroughSteps);
+  };
+
   const progressInfo = useMemo(() => {
     const currentStep = currentPageIndex + 1;
     const totalSteps = allPages.length;
@@ -327,6 +336,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </div>
 
           <div className="flex items-center gap-3">
+            <IconButton
+              onClick={handleStartWalkthrough}
+              tooltip="Start walkthrough tour"
+              darkMode={darkMode}
+            >
+              <HelpCircle className="h-4 w-4" />
+            </IconButton>
+
             <Dialog
               open={resetPageDialogOpen}
               onOpenChange={setResetPageDialogOpen}
@@ -614,6 +631,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         ? "border-gray-400 text-gray-200 hover:border-white hover:text-white"
                         : "border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700"
                   )}
+                  data-walkthrough="next-button"
                 >
                   Next
                   <ChevronRight className="h-4 w-4" />

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
+import { WalkthroughProvider } from "./(components)/WalkthroughProvider";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +16,9 @@ const Providers = ({ children }: { children: ReactNode }) => {
     <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
         <Toaster />
-        <SidebarProvider>{children}</SidebarProvider>
+        <SidebarProvider>
+          <WalkthroughProvider>{children}</WalkthroughProvider>
+        </SidebarProvider>
       </QueryClientProvider>
     </NuqsAdapter>
   );

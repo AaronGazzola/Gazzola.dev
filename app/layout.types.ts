@@ -17,3 +17,28 @@ export interface ThemeState {
   setHeaderIsCollapsed: (headerIsCollapsed: boolean) => void;
   reset: () => void;
 }
+
+export interface WalkthroughStep {
+  id: string;
+  title: string;
+  description: string;
+  targetDataAttribute: string;
+  position: "top" | "bottom" | "left" | "right";
+  showSkip?: boolean;
+  showPrevious?: boolean;
+}
+
+export interface WalkthroughState {
+  isActive: boolean;
+  currentStepIndex: number;
+  steps: WalkthroughStep[];
+  completedSteps: string[];
+  startWalkthrough: (steps: WalkthroughStep[]) => void;
+  nextStep: () => void;
+  previousStep: () => void;
+  endWalkthrough: () => void;
+  setCurrentStep: (index: number) => void;
+  markStepCompleted: (stepId: string) => void;
+  isElementVisible: (dataAttribute: string) => boolean;
+  reset: () => void;
+}

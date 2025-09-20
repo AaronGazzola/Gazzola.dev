@@ -290,6 +290,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
                   : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
               )}
               onClick={() => setSectionPopoverOpen(true)}
+              data-walkthrough="section-options"
             >
               <ListTodo className="h-3 w-3" />
             </button>
