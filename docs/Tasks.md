@@ -2,8 +2,14 @@
 
 ## Active tasks
 
-- [ ] Add guided walkthrough tutorial
-- [ ] Add styling markdown content
+- [ ] Fix walkthrough position
+- [ ] Add steps to walkthrough
+- [ ] fix hydration error (AppStructure)
+- [ ] Add dropdown for add new button in AppStructure (layout file, page file etc)
+- [ ] Update downloaded content to handle new markdown content (eg PlaceholderNodes)
+- [ ] Add tests
+- [ ] Update source markdown content
+  - [ ] Add styling content
 - [ ] Add dynamic component example elements
 - [ ] Add shadcn variants for the editor components
 - [ ] Add donate UX on download
@@ -69,7 +75,11 @@
 - Red queen hypothesis
 - How's my driving?
 
-## Tech to integrate
+## other notes:
+
+- [ ] Fix selection expansion keyboard shortcut (shift + cmd + right arrow)
+
+## Live stream notes
 
 - [ ] payload cms
   - [ ] https://payloadcms.com/get-started
@@ -79,8 +89,4 @@
 - [ ] ~~warp ai~~ (cannot use claude plan)
 - [x] Sean kochle "my new method"
 - [ ] AGENTS.md
-- [ ] GPT-5 Codex news
-- [ ] Fix selection expansion shortcut
-- [ ] Codex
-- [ ] n8n
-- [ ] Minecraft server
+- [x] GPT-5 Codex news
