@@ -24,6 +24,9 @@ export interface WalkthroughStep {
   description: string;
   targetDataAttribute: string;
   position: "top" | "bottom" | "left" | "right";
+  side?: "start" | "center" | "end";
+  alignment?: "start" | "center" | "end";
+  offset?: { x?: number; y?: number };
   showSkip?: boolean;
   showPrevious?: boolean;
 }
@@ -33,6 +36,7 @@ export interface WalkthroughState {
   currentStepIndex: number;
   steps: WalkthroughStep[];
   completedSteps: string[];
+  activeTargetAttribute: string | null;
   startWalkthrough: (steps: WalkthroughStep[]) => void;
   nextStep: () => void;
   previousStep: () => void;
@@ -40,5 +44,7 @@ export interface WalkthroughState {
   setCurrentStep: (index: number) => void;
   markStepCompleted: (stepId: string) => void;
   isElementVisible: (dataAttribute: string) => boolean;
+  setActiveTarget: (dataAttribute: string | null) => void;
+  isActiveTarget: (dataAttribute: string) => boolean;
   reset: () => void;
 }

@@ -28,39 +28,81 @@ export const WalkthroughStep = ({
 }: WalkthroughStepProps) => {
   const [targetElement, setTargetElement] = useState<Element | null>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [isPositioned, setIsPositioned] = useState(false);
   const stepRef = useRef<HTMLDivElement>(null);
-  const { isElementVisible } = useWalkthroughStore();
+  const { isElementVisible, setActiveTarget } = useWalkthroughStore();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    setIsPositioned(false);
+    setTargetElement(null);
+    setActiveTarget(null);
+
     const findAndPositionElement = () => {
-      const element = document.querySelector(`[data-walkthrough="${step.targetDataAttribute}"]`);
+      if (!isMounted) return;
+      const element = document.querySelector(
+        `[data-walkthrough="${step.targetDataAttribute}"]`
+      );
       if (element && isElementVisible(step.targetDataAttribute)) {
         setTargetElement(element);
+        setActiveTarget(step.targetDataAttribute);
 
         const rect = element.getBoundingClientRect();
         const stepElement = stepRef.current;
-
+        console.log(stepElement);
         if (stepElement) {
           const stepRect = stepElement.getBoundingClientRect();
           let top = 0;
           let left = 0;
 
+          const defaultOffset = 16;
+          const xOffset = step.offset?.x ?? 0;
+          const yOffset = step.offset?.y ?? 0;
+
           switch (step.position) {
             case "top":
-              top = rect.top - stepRect.height - 16;
-              left = rect.left + (rect.width - stepRect.width) / 2;
+              top = rect.top - stepRect.height - defaultOffset + yOffset;
+              if (step.side === "start") {
+                left = rect.left + xOffset;
+              } else if (step.side === "end") {
+                left = rect.right - stepRect.width + xOffset;
+              } else {
+                left = rect.left + (rect.width - stepRect.width) / 2 + xOffset;
+              }
               break;
             case "bottom":
-              top = rect.bottom + 16;
-              left = rect.left + (rect.width - stepRect.width) / 2;
+              top = rect.bottom + defaultOffset + yOffset;
+              if (step.side === "start") {
+                left = rect.left + xOffset;
+              } else if (step.side === "end") {
+                left = rect.right - stepRect.width + xOffset;
+              } else {
+                left = rect.left + (rect.width - stepRect.width) / 2 + xOffset;
+              }
               break;
             case "left":
-              top = rect.top + (rect.height - stepRect.height) / 2;
-              left = rect.left - stepRect.width - 16;
+              left = rect.left - stepRect.width - defaultOffset + xOffset;
+              if (step.alignment === "start") {
+                top = rect.top + yOffset;
+              } else if (step.alignment === "end") {
+                top = rect.bottom - stepRect.height + yOffset;
+              } else {
+                top = rect.top + (rect.height - stepRect.height) / 2 + yOffset;
+              }
               break;
             case "right":
-              top = rect.top + (rect.height - stepRect.height) / 2;
-              left = rect.right + 16;
+              left = rect.right + defaultOffset + xOffset;
+              if (step.alignment === "start") {
+                top = rect.top + yOffset;
+              } else if (step.alignment === "end") {
+                top = rect.bottom - stepRect.height + yOffset;
+              } else {
+                top = rect.top + (rect.height - stepRect.height) / 2 + yOffset;
+              }
               break;
           }
 
@@ -72,24 +114,36 @@ export const WalkthroughStep = ({
           top = Math.max(padding, Math.min(top, maxTop));
 
           setPosition({ top, left });
+          setIsPositioned(true);
         }
       } else {
         setTargetElement(null);
+        setActiveTarget(null);
+        setIsPositioned(false);
       }
     };
 
-    const timeoutId = setTimeout(findAndPositionElement, 100);
+    const frameId = requestAnimationFrame(findAndPositionElement);
     window.addEventListener("resize", findAndPositionElement);
     window.addEventListener("scroll", findAndPositionElement);
 
     return () => {
-      clearTimeout(timeoutId);
+      cancelAnimationFrame(frameId);
       window.removeEventListener("resize", findAndPositionElement);
       window.removeEventListener("scroll", findAndPositionElement);
     };
-  }, [step.targetDataAttribute, step.position, isElementVisible]);
+  }, [
+    step.targetDataAttribute,
+    step.position,
+    step.side,
+    step.alignment,
+    step.offset,
+    isElementVisible,
+    setActiveTarget,
+    isMounted,
+  ]);
 
-  if (!targetElement) {
+  if (!targetElement && !isMounted) {
     return null;
   }
 
@@ -102,11 +156,13 @@ export const WalkthroughStep = ({
       ref={stepRef}
       className={cn(
         "fixed z-50 w-80 bg-background border rounded-lg shadow-lg p-6",
-        "animate-in fade-in-0 zoom-in-95 duration-200"
+        isPositioned && "animate-in fade-in-0 zoom-in-95 duration-200"
       )}
       style={{
-        top: position.top,
-        left: position.left,
+        top: isPositioned ? position.top : -9999,
+        left: isPositioned ? position.left : -9999,
+        opacity: isPositioned ? 1 : 0,
+        visibility: isPositioned ? "visible" : "hidden",
       }}
     >
       <div className="flex items-center justify-between mb-4">

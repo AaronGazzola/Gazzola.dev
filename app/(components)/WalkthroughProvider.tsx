@@ -20,6 +20,7 @@ export const WalkthroughProvider = ({ children }: WalkthroughProviderProps) => {
     previousStep,
     endWalkthrough,
     startWalkthrough,
+    setActiveTarget,
   } = useWalkthroughStore();
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export const WalkthroughProvider = ({ children }: WalkthroughProviderProps) => {
   const handleConfirmEnd = () => {
     setShowConfirmDialog(false);
     endWalkthrough();
+    setActiveTarget(null);
     localStorage.setItem('walkthrough-completed', 'true');
   };
 
@@ -56,11 +58,6 @@ export const WalkthroughProvider = ({ children }: WalkthroughProviderProps) => {
     setShowConfirmDialog(false);
   };
 
-  console.log({
-    isActive,
-    currentStepIndex,
-    steps,
-  });
 
   return (
     <>

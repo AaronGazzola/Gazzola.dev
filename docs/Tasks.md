@@ -2,12 +2,14 @@
 
 ## Active tasks
 
+- [ ] Fix walkthrough position
+- [ ] Highlight target element in walkthrough
+- [ ] Reset prompt from markdown version change
 - [ ] initial config component
+- [ ] Add steps to walkthrough
+- [ ] Make the walkthrough reset button more prominent
 - [ ] remove sections menu from toolbar
 - [ ] Move files selection to sidebar
-- [ ] Reset prompt from markdown version change
-- [ ] Fix walkthrough position
-- [ ] Add steps to walkthrough
 - [ ] fix hydration error (AppStructure)
 - [ ] Add dropdown for add new button in AppStructure (layout file, page file etc)
 - [ ] Update downloaded content to handle new markdown content (eg PlaceholderNodes)
@@ -23,6 +25,7 @@
 
 ## Completed tasks
 
+- [x] Fix section selection popover
 - [x] Add inline text edit components
 - [x] update parse script to include/exclude sections by default with asterix ("\*")
 - [x] Add section selection popover to each SectionNode

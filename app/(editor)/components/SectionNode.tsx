@@ -34,6 +34,7 @@ import {
 import { ListTodo } from "lucide-react";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
+import { useWalkthroughStore } from "@/app/layout.stores";
 // Import removed - ContentPath no longer exists
 
 export interface SerializedSectionNode
@@ -124,6 +125,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     darkMode,
     data,
   } = useEditorStore();
+  const { isActiveTarget } = useWalkthroughStore();
 
   const [mounted, setMounted] = useState(false);
   const [sectionPopoverOpen, setSectionPopoverOpen] = useState(false);
@@ -172,7 +174,8 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     const included: { optionId: string; content: string }[] = [];
 
     Object.entries(options).forEach(([optionId, optionData]) => {
-      if (optionData.include) {
+      const isIncluded = getSectionInclude(filePath, sectionKey, optionId);
+      if (isIncluded) {
         included.push({
           optionId,
           content: optionData.content,
@@ -181,7 +184,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     });
 
     return included;
-  }, [getSectionOptions, filePath, sectionKey]);
+  }, [getSectionOptions, getSectionInclude, filePath, sectionKey, data]);
 
   useEffect(() => {
     setMounted(true);
@@ -284,10 +287,14 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
           <PopoverTrigger asChild>
             <button
               className={cn(
-                "absolute top-0 -left-5 z-10 h-6 w-6 flex items-center justify-center rounded transition-colors border border-gray-500",
-                darkMode
-                  ? "hover:bg-gray-700 text-gray-400 hover:text-gray-200"
-                  : "hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                "absolute top-0 -left-5 z-10 h-6 w-6 flex items-center justify-center rounded transition-colors border",
+                isActiveTarget("section-options")
+                  ? darkMode
+                    ? "border-yellow-400 text-yellow-200 hover:bg-yellow-400/20 hover:text-yellow-100 ring-2 ring-yellow-400/50"
+                    : "border-yellow-500 text-yellow-700 hover:bg-yellow-500/20 hover:text-yellow-800 ring-2 ring-yellow-500/50"
+                  : darkMode
+                    ? "border-gray-500 hover:bg-gray-700 text-gray-400 hover:text-gray-200"
+                    : "border-gray-500 hover:bg-gray-100 text-gray-500 hover:text-gray-700"
               )}
               onClick={() => setSectionPopoverOpen(true)}
               data-walkthrough="section-options"
@@ -318,29 +325,26 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
                         sectionKey,
                         option.optionId
                       )}
-                      onCheckedChange={(checked) =>
+                      onCheckedChange={(checked) => {
                         setSectionInclude(
                           filePath,
                           sectionKey,
                           option.optionId,
                           checked as boolean
-                        )
-                      }
+                        );
+                      }}
                     />
                     <label
                       className="text-sm cursor-pointer flex-1"
-                      onClick={() =>
+                      onClick={() => {
+                        const currentValue = getSectionInclude(filePath, sectionKey, option.optionId);
                         setSectionInclude(
                           filePath,
                           sectionKey,
                           option.optionId,
-                          !getSectionInclude(
-                            filePath,
-                            sectionKey,
-                            option.optionId
-                          )
-                        )
-                      }
+                          !currentValue
+                        );
+                      }}
                     >
                       {option.optionId}
                     </label>

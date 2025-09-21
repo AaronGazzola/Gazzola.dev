@@ -17,6 +17,7 @@ import {
   useState,
 } from "react";
 import { useEditorStore } from "../layout.stores";
+import { useWalkthroughStore } from "@/app/layout.stores";
 
 export interface SerializedPlaceholderNode
   extends Spread<
@@ -126,6 +127,7 @@ function PlaceholderNodeComponent({
 }: PlaceholderNodeComponentProps) {
   const { getPlaceholderValue, setPlaceholderValue, darkMode } =
     useEditorStore();
+  const { isActiveTarget } = useWalkthroughStore();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState("");
   const [inputWidth, setInputWidth] = useState(0);
@@ -186,9 +188,13 @@ function PlaceholderNodeComponent({
         ref={measureRef}
         className={cn(
           "inline-block border font-medium rounded px-1 py-0.5 min-w-[2ch] absolute opacity-0 pointer-events-none",
-          darkMode
-            ? "text-gray-100 bg-gray-800 border-gray-600"
-            : "text-gray-900 bg-gray-50 border-gray-200"
+          isActiveTarget("placeholder-node")
+            ? darkMode
+              ? "text-yellow-100 bg-yellow-900 border-yellow-400"
+              : "text-yellow-900 bg-yellow-50 border-yellow-500"
+            : darkMode
+              ? "text-gray-100 bg-gray-800 border-gray-600"
+              : "text-gray-900 bg-gray-50 border-gray-200"
         )}
         style={{
           left: "-9999px",
@@ -207,10 +213,14 @@ function PlaceholderNodeComponent({
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           className={cn(
-            "inline-block border font-medium rounded px-1 py-0.5 min-w-[2ch] focus:outline focus:outline-2 focus:outline-blue-500",
-            darkMode
-              ? "text-gray-100 bg-gray-800 border-gray-600 focus:bg-gray-750"
-              : "text-gray-900 bg-gray-50 border-gray-200 focus:bg-gray-100"
+            "inline-block border font-medium rounded px-1 py-0.5 min-w-[2ch] focus:outline focus:outline-2",
+            isActiveTarget("placeholder-node")
+              ? darkMode
+                ? "text-yellow-100 bg-yellow-900 border-yellow-400 focus:bg-yellow-800 focus:outline-yellow-400 ring-2 ring-yellow-400/50"
+                : "text-yellow-900 bg-yellow-50 border-yellow-500 focus:bg-yellow-100 focus:outline-yellow-500 ring-2 ring-yellow-500/50"
+              : darkMode
+                ? "text-gray-100 bg-gray-800 border-gray-600 focus:bg-gray-750 focus:outline-blue-500"
+                : "text-gray-900 bg-gray-50 border-gray-200 focus:bg-gray-100 focus:outline-blue-500"
           )}
           style={{
             width: inputWidth > 0 ? `${inputWidth}px` : "2ch",
@@ -221,9 +231,13 @@ function PlaceholderNodeComponent({
           onClick={handleClick}
           className={cn(
             "inline-block cursor-pointer font-medium rounded px-1 py-0.5 border transition-colors",
-            darkMode
-              ? "text-gray-100 bg-gray-800 border-gray-600 hover:bg-gray-750"
-              : "text-gray-900 bg-gray-50 border-gray-200 hover:bg-gray-100"
+            isActiveTarget("placeholder-node")
+              ? darkMode
+                ? "text-yellow-100 bg-yellow-900 border-yellow-400 hover:bg-yellow-800 ring-2 ring-yellow-400/50"
+                : "text-yellow-900 bg-yellow-50 border-yellow-500 hover:bg-yellow-100 ring-2 ring-yellow-500/50"
+              : darkMode
+                ? "text-gray-100 bg-gray-800 border-gray-600 hover:bg-gray-750"
+                : "text-gray-900 bg-gray-50 border-gray-200 hover:bg-gray-100"
           )}
           title={`Click to edit "${placeholderKey}"`}
         >

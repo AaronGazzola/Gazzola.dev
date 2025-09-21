@@ -262,7 +262,8 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         const targetNode = state.data.flatIndex[filePath];
         if (targetNode && targetNode.type === "file") {
-          return targetNode.sections[sectionId]?.[optionId]?.include || false;
+          const result = targetNode.sections[sectionId]?.[optionId]?.include || false;
+          return result;
         }
         return false;
       },

@@ -45,6 +45,7 @@ const walkthroughInitialState = {
   currentStepIndex: 0,
   steps: [],
   completedSteps: [],
+  activeTargetAttribute: null,
 };
 
 export const useWalkthroughStore = create<WalkthroughState>()(
@@ -71,7 +72,7 @@ export const useWalkthroughStore = create<WalkthroughState>()(
         if (currentStepIndex < steps.length - 1) {
           set({ currentStepIndex: currentStepIndex + 1 });
         } else {
-          set({ isActive: false });
+          set({ isActive: false, activeTargetAttribute: null });
         }
       },
       previousStep: () => {
@@ -80,7 +81,7 @@ export const useWalkthroughStore = create<WalkthroughState>()(
           set({ currentStepIndex: currentStepIndex - 1 });
         }
       },
-      endWalkthrough: () => set({ isActive: false }),
+      endWalkthrough: () => set({ isActive: false, activeTargetAttribute: null }),
       setCurrentStep: (index) => set({ currentStepIndex: index }),
       markStepCompleted: (stepId) => {
         const { completedSteps } = get();
@@ -94,6 +95,11 @@ export const useWalkthroughStore = create<WalkthroughState>()(
         if (!element) return false;
         const rect = element.getBoundingClientRect();
         return rect.width > 0 && rect.height > 0;
+      },
+      setActiveTarget: (dataAttribute) => set({ activeTargetAttribute: dataAttribute }),
+      isActiveTarget: (dataAttribute) => {
+        const { activeTargetAttribute } = get();
+        return activeTargetAttribute === dataAttribute;
       },
       reset: () => set(walkthroughInitialState),
     }),
