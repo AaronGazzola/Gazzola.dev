@@ -2,8 +2,7 @@
 
 ## Active tasks
 
-- [ ] Fix walkthrough position
-- [ ] Highlight target element in walkthrough
+- [ ] Polish walkthrough styling and position
 - [ ] Reset prompt from markdown version change
 - [ ] initial config component
 - [ ] Add steps to walkthrough
@@ -25,6 +24,8 @@
 
 ## Completed tasks
 
+- [x] Fix walkthrough position
+- [x] Highlight target element in walkthrough
 - [x] Fix section selection popover
 - [x] Add inline text edit components
 - [x] update parse script to include/exclude sections by default with asterix ("\*")

@@ -1,5 +1,6 @@
 "use client";
 
+import { useWalkthroughStore } from "@/app/layout.stores";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
@@ -34,7 +35,6 @@ import {
 import { ListTodo } from "lucide-react";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
-import { useWalkthroughStore } from "@/app/layout.stores";
 // Import removed - ContentPath no longer exists
 
 export interface SerializedSectionNode
@@ -184,6 +184,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     });
 
     return included;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getSectionOptions, getSectionInclude, filePath, sectionKey, data]);
 
   useEffect(() => {
@@ -337,7 +338,11 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
                     <label
                       className="text-sm cursor-pointer flex-1"
                       onClick={() => {
-                        const currentValue = getSectionInclude(filePath, sectionKey, option.optionId);
+                        const currentValue = getSectionInclude(
+                          filePath,
+                          sectionKey,
+                          option.optionId
+                        );
                         setSectionInclude(
                           filePath,
                           sectionKey,
