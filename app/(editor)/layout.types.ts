@@ -48,6 +48,38 @@ export interface MarkdownData {
   flatIndex: Record<string, MarkdownNode>;
 }
 
+export interface InitialConfiguration {
+  authentication: {
+    magicLink: boolean;
+    emailPassword: boolean;
+    googleAuth: boolean;
+    githubAuth: boolean;
+    appleAuth: boolean;
+    facebookAuth: boolean;
+  };
+  theme: {
+    supportLightDark: boolean;
+    defaultTheme: 'light' | 'dark';
+  };
+  admin: {
+    basicAdmin: boolean;
+    withOrganizations: boolean;
+  };
+  payments: {
+    stripePayments: boolean;
+    stripeSubscriptions: boolean;
+    paypalPayments: boolean;
+    cryptoPayments: boolean;
+  };
+  features: {
+    realTimeNotifications: boolean;
+    emailSending: boolean;
+  };
+  database: {
+    hosting: 'supabase' | 'postgresql';
+  };
+}
+
 export interface EditorState {
   version: number;
   data: MarkdownData;
@@ -56,6 +88,7 @@ export interface EditorState {
   visitedPages: string[];
   appStructure: FileSystemEntry[];
   placeholderValues: Record<string, string>;
+  initialConfiguration: InitialConfiguration;
   updateContent: (path: string, content: string) => void;
   setContent: (path: string, content: string) => void;
   getNode: (path: string) => MarkdownNode | null;
@@ -99,6 +132,9 @@ export interface EditorState {
   deleteAppStructureNode: (id: string) => void;
   addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => void;
   updateInclusionRules: (inclusionConfig: Record<string, boolean>) => void;
+  getInitialConfiguration: () => InitialConfiguration;
+  setInitialConfiguration: (config: InitialConfiguration) => void;
+  updateInitialConfiguration: (updates: Partial<InitialConfiguration>) => void;
   reset: () => void;
   resetToLatestData: () => void;
   forceRefresh: () => void;

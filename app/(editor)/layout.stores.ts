@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { getFirstPagePath, markdownData } from "./layout.data";
-import { EditorState, FileSystemEntry } from "./layout.types";
+import { EditorState, FileSystemEntry, InitialConfiguration } from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -17,6 +17,38 @@ const defaultAppStructure: FileSystemEntry[] = [
     ],
   },
 ];
+
+const defaultInitialConfiguration: InitialConfiguration = {
+  authentication: {
+    magicLink: false,
+    emailPassword: true,
+    googleAuth: false,
+    githubAuth: false,
+    appleAuth: false,
+    facebookAuth: false,
+  },
+  theme: {
+    supportLightDark: true,
+    defaultTheme: 'dark',
+  },
+  admin: {
+    basicAdmin: false,
+    withOrganizations: false,
+  },
+  payments: {
+    stripePayments: false,
+    stripeSubscriptions: false,
+    paypalPayments: false,
+    cryptoPayments: false,
+  },
+  features: {
+    realTimeNotifications: false,
+    emailSending: false,
+  },
+  database: {
+    hosting: 'supabase',
+  },
+};
 
 const updateNode = (
   nodes: FileSystemEntry[],
@@ -135,6 +167,7 @@ const initialState = {
   visitedPages: [getFirstPagePath()],
   appStructure: defaultAppStructure,
   placeholderValues: {},
+  initialConfiguration: defaultInitialConfiguration,
 };
 
 export const useEditorStore = create<EditorState>()(
@@ -337,6 +370,39 @@ export const useEditorStore = create<EditorState>()(
           };
         });
       },
+      getInitialConfiguration: () => {
+        const state = get();
+        return state.initialConfiguration;
+      },
+      setInitialConfiguration: (config: InitialConfiguration) => {
+        set({ initialConfiguration: config });
+      },
+      updateInitialConfiguration: (updates: Partial<InitialConfiguration>) => {
+        set((state) => ({
+          initialConfiguration: {
+            ...state.initialConfiguration,
+            ...updates,
+            authentication: updates.authentication
+              ? { ...state.initialConfiguration.authentication, ...updates.authentication }
+              : state.initialConfiguration.authentication,
+            theme: updates.theme
+              ? { ...state.initialConfiguration.theme, ...updates.theme }
+              : state.initialConfiguration.theme,
+            admin: updates.admin
+              ? { ...state.initialConfiguration.admin, ...updates.admin }
+              : state.initialConfiguration.admin,
+            payments: updates.payments
+              ? { ...state.initialConfiguration.payments, ...updates.payments }
+              : state.initialConfiguration.payments,
+            features: updates.features
+              ? { ...state.initialConfiguration.features, ...updates.features }
+              : state.initialConfiguration.features,
+            database: updates.database
+              ? { ...state.initialConfiguration.database, ...updates.database }
+              : state.initialConfiguration.database,
+          },
+        }));
+      },
       reset: () => set(initialState),
       resetToLatestData: () => {
         set({
@@ -357,6 +423,7 @@ export const useEditorStore = create<EditorState>()(
         visitedPages: state.visitedPages,
         appStructure: state.appStructure,
         placeholderValues: state.placeholderValues,
+        initialConfiguration: state.initialConfiguration,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {

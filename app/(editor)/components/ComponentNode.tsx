@@ -35,6 +35,11 @@ const componentMap: Record<string, any> = {
       default: m.HelloSwitch,
     }))
   ),
+  InitialConfiguration: lazy(() =>
+    import("@/app/(components)/InitialConfiguration").then((m) => ({
+      default: m.InitialConfiguration,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

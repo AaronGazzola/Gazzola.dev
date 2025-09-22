@@ -29,8 +29,19 @@ export const markdownData: MarkdownData = {
             "order": 1,
             "path": "starthere.welcome",
             "urlPath": "/starthere/welcome",
-            "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
-            "components": [],
+            "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+            "components": [
+              {
+                "id": "component-InitialConfiguration",
+                "name": "InitialConfiguration",
+                "displayName": "InitialConfiguration",
+                "type": "component",
+                "path": "welcome.component.InitialConfiguration",
+                "urlPath": "",
+                "componentId": "InitialConfiguration",
+                "include": true
+              }
+            ],
             "sections": {
               "section1": {
                 "option1": {
@@ -120,8 +131,19 @@ export const markdownData: MarkdownData = {
               "order": 1,
               "path": "starthere.welcome",
               "urlPath": "/starthere/welcome",
-              "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
-              "components": [],
+              "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+              "components": [
+                {
+                  "id": "component-InitialConfiguration",
+                  "name": "InitialConfiguration",
+                  "displayName": "InitialConfiguration",
+                  "type": "component",
+                  "path": "welcome.component.InitialConfiguration",
+                  "urlPath": "",
+                  "componentId": "InitialConfiguration",
+                  "include": true
+                }
+              ],
               "sections": {
                 "section1": {
                   "option1": {
@@ -201,8 +223,19 @@ export const markdownData: MarkdownData = {
           "order": 1,
           "path": "starthere.welcome",
           "urlPath": "/starthere/welcome",
-          "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
-          "components": [],
+          "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+          "components": [
+            {
+              "id": "component-InitialConfiguration",
+              "name": "InitialConfiguration",
+              "displayName": "InitialConfiguration",
+              "type": "component",
+              "path": "welcome.component.InitialConfiguration",
+              "urlPath": "",
+              "componentId": "InitialConfiguration",
+              "include": true
+            }
+          ],
           "sections": {
             "section1": {
               "option1": {
@@ -271,8 +304,19 @@ export const markdownData: MarkdownData = {
       "order": 1,
       "path": "starthere.welcome",
       "urlPath": "/starthere/welcome",
-      "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
-      "components": [],
+      "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+      "components": [
+        {
+          "id": "component-InitialConfiguration",
+          "name": "InitialConfiguration",
+          "displayName": "InitialConfiguration",
+          "type": "component",
+          "path": "welcome.component.InitialConfiguration",
+          "urlPath": "",
+          "componentId": "InitialConfiguration",
+          "include": true
+        }
+      ],
       "sections": {
         "section1": {
           "option1": {
@@ -305,6 +349,16 @@ export const markdownData: MarkdownData = {
           }
         }
       },
+      "include": true
+    },
+    "welcome.component.InitialConfiguration": {
+      "id": "component-InitialConfiguration",
+      "name": "InitialConfiguration",
+      "displayName": "InitialConfiguration",
+      "type": "component",
+      "path": "welcome.component.InitialConfiguration",
+      "urlPath": "",
+      "componentId": "InitialConfiguration",
       "include": true
     },
     "starthere.appdirectory": {
