@@ -41,7 +41,11 @@ export interface SegmentNode extends BaseNode {
   options?: Record<string, SectionOption>;
 }
 
-export type MarkdownNode = DirectoryNode | FileNode | ComponentRef | SegmentNode;
+export type MarkdownNode =
+  | DirectoryNode
+  | FileNode
+  | ComponentRef
+  | SegmentNode;
 
 export interface MarkdownData {
   root: DirectoryNode;
@@ -49,7 +53,7 @@ export interface MarkdownData {
   contentVersion: number;
 }
 
-export interface InitialConfiguration {
+export interface InitialConfigurationType {
   authentication: {
     magicLink: boolean;
     emailPassword: boolean;
@@ -60,7 +64,7 @@ export interface InitialConfiguration {
   };
   theme: {
     supportLightDark: boolean;
-    defaultTheme: 'light' | 'dark';
+    defaultTheme: "light" | "dark";
   };
   admin: {
     basicAdmin: boolean;
@@ -77,7 +81,7 @@ export interface InitialConfiguration {
     emailSending: boolean;
   };
   database: {
-    hosting: 'supabase' | 'postgresql';
+    hosting: "supabase" | "postgresql";
   };
 }
 
@@ -89,7 +93,7 @@ export interface EditorState {
   visitedPages: string[];
   appStructure: FileSystemEntry[];
   placeholderValues: Record<string, string>;
-  initialConfiguration: InitialConfiguration;
+  initialConfiguration: InitialConfigurationType;
   storedContentVersion?: number;
   updateContent: (path: string, content: string) => void;
   setContent: (path: string, content: string) => void;
@@ -134,9 +138,11 @@ export interface EditorState {
   deleteAppStructureNode: (id: string) => void;
   addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => void;
   updateInclusionRules: (inclusionConfig: Record<string, boolean>) => void;
-  getInitialConfiguration: () => InitialConfiguration;
-  setInitialConfiguration: (config: InitialConfiguration) => void;
-  updateInitialConfiguration: (updates: Partial<InitialConfiguration>) => void;
+  getInitialConfiguration: () => InitialConfigurationType;
+  setInitialConfiguration: (config: InitialConfigurationType) => void;
+  updateInitialConfiguration: (
+    updates: Partial<InitialConfigurationType>
+  ) => void;
   reset: () => void;
   resetToLatestData: () => void;
   forceRefresh: () => void;

@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { getFirstPagePath, markdownData } from "./layout.data";
-import { EditorState, FileSystemEntry, InitialConfiguration } from "./layout.types";
+import {
+  EditorState,
+  FileSystemEntry,
+  InitialConfigurationType,
+} from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -18,7 +22,7 @@ const defaultAppStructure: FileSystemEntry[] = [
   },
 ];
 
-const defaultInitialConfiguration: InitialConfiguration = {
+const defaultInitialConfiguration: InitialConfigurationType = {
   authentication: {
     magicLink: false,
     emailPassword: true,
@@ -29,7 +33,7 @@ const defaultInitialConfiguration: InitialConfiguration = {
   },
   theme: {
     supportLightDark: true,
-    defaultTheme: 'dark',
+    defaultTheme: "dark",
   },
   admin: {
     basicAdmin: false,
@@ -46,7 +50,7 @@ const defaultInitialConfiguration: InitialConfiguration = {
     emailSending: false,
   },
   database: {
-    hosting: 'supabase',
+    hosting: "supabase",
   },
 };
 
@@ -296,7 +300,8 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         const targetNode = state.data.flatIndex[filePath];
         if (targetNode && targetNode.type === "file") {
-          const result = targetNode.sections[sectionId]?.[optionId]?.include || false;
+          const result =
+            targetNode.sections[sectionId]?.[optionId]?.include || false;
           return result;
         }
         return false;
@@ -375,16 +380,21 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         return state.initialConfiguration;
       },
-      setInitialConfiguration: (config: InitialConfiguration) => {
+      setInitialConfiguration: (config: InitialConfigurationType) => {
         set({ initialConfiguration: config });
       },
-      updateInitialConfiguration: (updates: Partial<InitialConfiguration>) => {
+      updateInitialConfiguration: (
+        updates: Partial<InitialConfigurationType>
+      ) => {
         set((state) => ({
           initialConfiguration: {
             ...state.initialConfiguration,
             ...updates,
             authentication: updates.authentication
-              ? { ...state.initialConfiguration.authentication, ...updates.authentication }
+              ? {
+                  ...state.initialConfiguration.authentication,
+                  ...updates.authentication,
+                }
               : state.initialConfiguration.authentication,
             theme: updates.theme
               ? { ...state.initialConfiguration.theme, ...updates.theme }
@@ -404,10 +414,11 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
-      reset: () => set({
-        ...initialState,
-        storedContentVersion: markdownData.contentVersion,
-      }),
+      reset: () =>
+        set({
+          ...initialState,
+          storedContentVersion: markdownData.contentVersion,
+        }),
       resetToLatestData: () => {
         set({
           ...initialState,
