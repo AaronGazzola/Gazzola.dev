@@ -2,9 +2,6 @@
 
 ## Active tasks
 
-- [-] Fix walkthrough styling and position
-- [ ] initial config component
-- [ ] Reset prompt from markdown version change
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
 - [ ] Add labels for options in section nodes
@@ -25,6 +22,9 @@
 
 ## Completed tasks
 
+- [x] Fix walkthrough styling and position
+- [x] initial config component
+- [x] Reset prompt from markdown version change
 - [x] Fix walkthrough position
 - [x] Highlight target element in walkthrough
 - [x] Fix section selection popover
