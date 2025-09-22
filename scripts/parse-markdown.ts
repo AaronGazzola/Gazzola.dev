@@ -11,6 +11,7 @@ import {
 
 const MARKDOWN_DIR = path.join(process.cwd(), "data", "markdown");
 const DATA_FILE = path.join(process.cwd(), "app", "(editor)", "layout.data.ts");
+const VERSION_FILE = path.join(process.cwd(), "data", "content-version.json");
 
 function escapeForJavaScript(content: string): string {
   return content
@@ -304,6 +305,12 @@ export const getFirstPageUrl = (): string => {
 
 function main(): void {
   try {
+    let contentVersion = 1;
+    if (fs.existsSync(VERSION_FILE)) {
+      const versionData = JSON.parse(fs.readFileSync(VERSION_FILE, "utf8"));
+      contentVersion = versionData.version || 1;
+    }
+
     const children = buildMarkdownTree(MARKDOWN_DIR);
 
     const rootNode: DirectoryNode = {
@@ -322,6 +329,7 @@ function main(): void {
     const data: MarkdownData = {
       root: rootNode,
       flatIndex: flatIndex,
+      contentVersion: contentVersion,
     };
 
     const dataFileContent = generateDataFile(data);

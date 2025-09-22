@@ -46,6 +46,7 @@ export type MarkdownNode = DirectoryNode | FileNode | ComponentRef | SegmentNode
 export interface MarkdownData {
   root: DirectoryNode;
   flatIndex: Record<string, MarkdownNode>;
+  contentVersion: number;
 }
 
 export interface InitialConfiguration {
@@ -89,6 +90,7 @@ export interface EditorState {
   appStructure: FileSystemEntry[];
   placeholderValues: Record<string, string>;
   initialConfiguration: InitialConfiguration;
+  storedContentVersion?: number;
   updateContent: (path: string, content: string) => void;
   setContent: (path: string, content: string) => void;
   getNode: (path: string) => MarkdownNode | null;

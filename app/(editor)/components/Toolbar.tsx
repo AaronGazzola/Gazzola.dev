@@ -1,6 +1,7 @@
 "use client";
 
 import { AppStructure } from "@/app/(components)/AppStructure";
+import { useWalkthroughStore } from "@/app/layout.stores";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -30,6 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import configuration from "@/configuration";
+import { walkthroughSteps } from "@/data/walkthrough/steps";
 import { cn } from "@/lib/tailwind.utils";
 import {
   ChevronLeft,
@@ -44,11 +46,11 @@ import {
   RotateCcw,
   Settings,
   Sun,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { useWalkthroughStore } from "@/app/layout.stores";
-import { walkthroughSteps } from "@/data/walkthrough/steps";
+import { useEffect, useMemo, useState } from "react";
+import { useContentVersion } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 
 interface ToolbarProps {
@@ -99,6 +101,7 @@ const IconButton = ({
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const { startWalkthrough, isActiveTarget } = useWalkthroughStore();
+  const { data: liveContentVersion } = useContentVersion();
   const {
     darkMode,
     setDarkMode,
@@ -110,12 +113,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     getSectionInclude,
     setSectionInclude,
     updateInclusionRules,
+    storedContentVersion,
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [appStructureSheetOpen, setAppStructureSheetOpen] = useState(false);
+  const [staleContentPopoverOpen, setStaleContentPopoverOpen] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -274,7 +279,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleStartWalkthrough = () => {
-    localStorage.removeItem('walkthrough-completed');
+    localStorage.removeItem("walkthrough-completed");
     startWalkthrough(walkthroughSteps);
   };
 
@@ -290,6 +295,20 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       currentTitle: allPages[currentPageIndex]?.title || "Unknown",
     };
   }, [allPages, currentPageIndex]);
+
+  const isContentStale = useMemo(() => {
+    if (!liveContentVersion || !storedContentVersion) return false;
+    return storedContentVersion < liveContentVersion;
+  }, [liveContentVersion, storedContentVersion]);
+
+  useEffect(() => {
+    if (isContentStale) {
+      const timer = setTimeout(() => {
+        setStaleContentPopoverOpen(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isContentStale]);
 
   return (
     <TooltipProvider>
@@ -394,21 +413,75 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               </DialogContent>
             </Dialog>
 
-            <Dialog
-              open={resetAllDialogOpen}
-              onOpenChange={setResetAllDialogOpen}
+            <Popover
+              open={staleContentPopoverOpen && isContentStale}
+              onOpenChange={setStaleContentPopoverOpen}
             >
-              <DialogTrigger asChild>
-                <div>
+              <PopoverTrigger asChild>
+                <div
+                  className={cn(
+                    isContentStale && "border border-orange-500 rounded"
+                  )}
+                >
                   <IconButton
                     onClick={() => setResetAllDialogOpen(true)}
                     tooltip="Reset all pages"
                     darkMode={darkMode}
                   >
-                    <ListRestart className="h-4 w-4" />
+                    <ListRestart
+                      className={cn(
+                        "h-4 w-4",
+                        isContentStale && "text-orange-500"
+                      )}
+                    />
                   </IconButton>
                 </div>
-              </DialogTrigger>
+              </PopoverTrigger>
+              {isContentStale && (
+                <PopoverContent
+                  className={cn(
+                    "w-80 rounded relative",
+                    darkMode
+                      ? "bg-orange-900 border-orange-600 text-orange-100"
+                      : "bg-orange-50 border-orange-200 text-orange-900"
+                  )}
+                  align="center"
+                  side="bottom"
+                >
+                  <button
+                    onClick={() => setStaleContentPopoverOpen(false)}
+                    className={cn(
+                      "absolute top-2 right-2 h-6 w-6 flex items-center justify-center rounded-sm transition-colors",
+                      darkMode
+                        ? "hover:bg-orange-800 text-orange-200 hover:text-orange-100"
+                        : "hover:bg-orange-100 text-orange-700 hover:text-orange-900"
+                    )}
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                  <div className="space-y-2 pr-2">
+                    <div className="font-semibold text-sm">
+                      📄 Documentation Updated
+                    </div>
+                    <div className="text-sm">
+                      The source documentation has been updated. To see
+                      the latest content, you&apos;ll need to reset the
+                      editor.
+                    </div>
+                    <div className="text-sm">
+                      ⚠️ This will clear your current changes. Consider
+                      downloading your content first if you want to keep
+                      your edits.
+                    </div>
+                  </div>
+                </PopoverContent>
+              )}
+            </Popover>
+
+            <Dialog
+              open={resetAllDialogOpen}
+              onOpenChange={setResetAllDialogOpen}
+            >
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Reset All Files</DialogTitle>

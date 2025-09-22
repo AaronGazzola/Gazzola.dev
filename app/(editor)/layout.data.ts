@@ -29,7 +29,7 @@ export const markdownData: MarkdownData = {
             "order": 1,
             "path": "starthere.welcome",
             "urlPath": "/starthere/welcome",
-            "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+            "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
             "components": [
               {
                 "id": "component-InitialConfiguration",
@@ -131,7 +131,7 @@ export const markdownData: MarkdownData = {
               "order": 1,
               "path": "starthere.welcome",
               "urlPath": "/starthere/welcome",
-              "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+              "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
               "components": [
                 {
                   "id": "component-InitialConfiguration",
@@ -223,7 +223,7 @@ export const markdownData: MarkdownData = {
           "order": 1,
           "path": "starthere.welcome",
           "urlPath": "/starthere/welcome",
-          "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+          "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
           "components": [
             {
               "id": "component-InitialConfiguration",
@@ -304,7 +304,7 @@ export const markdownData: MarkdownData = {
       "order": 1,
       "path": "starthere.welcome",
       "urlPath": "/starthere/welcome",
-      "content": "# {{appName:Your app name}} development roadmap\n\nThis web app is built with:\n\n<!-- component-InitialConfiguration -->\n\n<!-- section-1 -->\n",
+      "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n\nThis web app is built with:\n\n<!-- section-1 -->\n",
       "components": [
         {
           "id": "component-InitialConfiguration",
@@ -395,7 +395,8 @@ export const markdownData: MarkdownData = {
       "componentId": "AppStructure",
       "include": true
     }
-  }
+  },
+  "contentVersion": 5
 };
 
 export const getAllPagesInOrder = (): { path: string; url: string; title: string; order: number }[] => {

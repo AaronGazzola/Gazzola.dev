@@ -168,6 +168,7 @@ const initialState = {
   appStructure: defaultAppStructure,
   placeholderValues: {},
   initialConfiguration: defaultInitialConfiguration,
+  storedContentVersion: markdownData.contentVersion,
 };
 
 export const useEditorStore = create<EditorState>()(
@@ -403,11 +404,15 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
-      reset: () => set(initialState),
+      reset: () => set({
+        ...initialState,
+        storedContentVersion: markdownData.contentVersion,
+      }),
       resetToLatestData: () => {
         set({
           ...initialState,
           data: markdownData,
+          storedContentVersion: markdownData.contentVersion,
         });
       },
       forceRefresh: () =>
@@ -424,6 +429,7 @@ export const useEditorStore = create<EditorState>()(
         appStructure: state.appStructure,
         placeholderValues: state.placeholderValues,
         initialConfiguration: state.initialConfiguration,
+        storedContentVersion: state.storedContentVersion,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {
