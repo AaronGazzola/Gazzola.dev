@@ -291,8 +291,8 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
                 "absolute top-0 -left-5 z-10 h-6 w-6 flex items-center justify-center rounded transition-colors border",
                 isActiveTarget("section-options")
                   ? darkMode
-                    ? "border-yellow-400 text-yellow-200 hover:bg-yellow-400/20 hover:text-yellow-100 ring-2 ring-yellow-400/50"
-                    : "border-yellow-500 text-yellow-700 hover:bg-yellow-500/20 hover:text-yellow-800 ring-2 ring-yellow-500/50"
+                    ? "border-blue-400 text-blue-200 hover:bg-blue-400/20 hover:text-blue-100 ring-2 ring-blue-400/50"
+                    : "border-blue-500 text-blue-700 hover:bg-blue-500/20 hover:text-blue-800 ring-2 ring-blue-500/50"
                   : darkMode
                     ? "border-gray-500 hover:bg-gray-700 text-gray-400 hover:text-gray-200"
                     : "border-gray-500 hover:bg-gray-100 text-gray-500 hover:text-gray-700"

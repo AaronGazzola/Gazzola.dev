@@ -629,8 +629,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       ? "opacity-50 cursor-not-allowed border-gray-300"
                       : isActiveTarget("next-button")
                         ? darkMode
-                          ? "border-yellow-400 text-yellow-200 hover:border-yellow-300 hover:text-yellow-100 ring-2 ring-yellow-400/50"
-                          : "border-yellow-500 text-yellow-700 hover:border-yellow-600 hover:text-yellow-800 ring-2 ring-yellow-500/50"
+                          ? "border-blue-400 text-blue-200 hover:border-blue-300 hover:text-blue-100 ring-2 ring-blue-400/50"
+                          : "border-blue-500 text-blue-700 hover:border-blue-600 hover:text-blue-800 ring-2 ring-blue-500/50"
                         : darkMode
                           ? "border-gray-400 text-gray-200 hover:border-white hover:text-white"
                           : "border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700"

@@ -53,9 +53,8 @@ export const WalkthroughStep = ({
 
         const rect = element.getBoundingClientRect();
         const stepElement = stepRef.current;
-        console.log(stepElement);
-        if (stepElement) {
-          const stepRect = stepElement.getBoundingClientRect();
+        const stepRect = stepElement?.getBoundingClientRect();
+        if (stepRect) {
           let top = 0;
           let left = 0;
 
@@ -159,8 +158,8 @@ export const WalkthroughStep = ({
         isPositioned && "animate-in fade-in-0 zoom-in-95 duration-200"
       )}
       style={{
-        top: isPositioned ? position.top : -9999,
-        left: isPositioned ? position.left : -9999,
+        top: position.top,
+        left: position.left,
         opacity: isPositioned ? 1 : 0,
         visibility: isPositioned ? "visible" : "hidden",
       }}

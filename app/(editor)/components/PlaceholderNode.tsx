@@ -190,8 +190,8 @@ function PlaceholderNodeComponent({
           "inline-block border font-medium rounded px-1 py-0.5 min-w-[2ch] absolute opacity-0 pointer-events-none",
           isActiveTarget("placeholder-node")
             ? darkMode
-              ? "text-yellow-100 bg-yellow-900 border-yellow-400"
-              : "text-yellow-900 bg-yellow-50 border-yellow-500"
+              ? "text-blue-100 bg-blue-900 border-blue-400"
+              : "text-blue-900 bg-blue-50 border-blue-500"
             : darkMode
               ? "text-gray-100 bg-gray-800 border-gray-600"
               : "text-gray-900 bg-gray-50 border-gray-200"
@@ -216,8 +216,8 @@ function PlaceholderNodeComponent({
             "inline-block border font-medium rounded px-1 py-0.5 min-w-[2ch] focus:outline focus:outline-2",
             isActiveTarget("placeholder-node")
               ? darkMode
-                ? "text-yellow-100 bg-yellow-900 border-yellow-400 focus:bg-yellow-800 focus:outline-yellow-400 ring-2 ring-yellow-400/50"
-                : "text-yellow-900 bg-yellow-50 border-yellow-500 focus:bg-yellow-100 focus:outline-yellow-500 ring-2 ring-yellow-500/50"
+                ? "text-blue-100 bg-blue-900 border-blue-400 focus:bg-blue-800 focus:outline-blue-400 ring-2 ring-blue-400/50"
+                : "text-blue-900 bg-blue-50 border-blue-500 focus:bg-blue-100 focus:outline-blue-500 ring-2 ring-blue-500/50"
               : darkMode
                 ? "text-gray-100 bg-gray-800 border-gray-600 focus:bg-gray-750 focus:outline-blue-500"
                 : "text-gray-900 bg-gray-50 border-gray-200 focus:bg-gray-100 focus:outline-blue-500"
@@ -233,8 +233,8 @@ function PlaceholderNodeComponent({
             "inline-block cursor-pointer font-medium rounded px-1 py-0.5 border transition-colors",
             isActiveTarget("placeholder-node")
               ? darkMode
-                ? "text-yellow-100 bg-yellow-900 border-yellow-400 hover:bg-yellow-800 ring-2 ring-yellow-400/50"
-                : "text-yellow-900 bg-yellow-50 border-yellow-500 hover:bg-yellow-100 ring-2 ring-yellow-500/50"
+                ? "text-blue-100 bg-blue-900 border-blue-400 hover:bg-blue-800 ring-2 ring-blue-400/50"
+                : "text-blue-900 bg-blue-50 border-blue-500 hover:bg-blue-100 ring-2 ring-blue-500/50"
               : darkMode
                 ? "text-gray-100 bg-gray-800 border-gray-600 hover:bg-gray-750"
                 : "text-gray-900 bg-gray-50 border-gray-200 hover:bg-gray-100"

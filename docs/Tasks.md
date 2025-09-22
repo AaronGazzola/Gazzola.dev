@@ -2,11 +2,12 @@
 
 ## Active tasks
 
-- [ ] Polish walkthrough styling and position
-- [ ] Reset prompt from markdown version change
+- [-] Fix walkthrough styling and position
 - [ ] initial config component
+- [ ] Reset prompt from markdown version change
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
+- [ ] Add labels for options in section nodes
 - [ ] remove sections menu from toolbar
 - [ ] Move files selection to sidebar
 - [ ] fix hydration error (AppStructure)
@@ -98,3 +99,8 @@
 - [x] Sean kochle "my new method"
 - [ ] AGENTS.md
 - [x] GPT-5 Codex news
+- [ ] Poll results:
+  - Explain stuff 43%
+  - Bug fixes 29%
+  - New features 14%
+  - e2e and unit tests 14%
