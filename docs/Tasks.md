@@ -2,6 +2,10 @@
 
 ## Active tasks
 
+- [ ] InitialConfig:
+  - At the top of the component include a list of small cards with checkbox items, one for each of the technologies listed in the tech stack section of the about page, each with the relevant icon (see @app/about/page.tsx for the icons).
+  - Below these cards is a nested checklist of items including authentication options, payment methods etc.
+  - The following technologies are
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
 - [ ] Add labels for options in section nodes

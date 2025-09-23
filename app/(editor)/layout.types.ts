@@ -54,29 +54,43 @@ export interface MarkdownData {
 }
 
 export interface InitialConfigurationType {
-  authentication: {
-    magicLink: boolean;
-    emailPassword: boolean;
-    googleAuth: boolean;
-    githubAuth: boolean;
-    appleAuth: boolean;
-    facebookAuth: boolean;
+  technologies: {
+    nextjs: boolean;
+    tailwindcss: boolean;
+    shadcn: boolean;
+    zustand: boolean;
+    reactQuery: boolean;
+    supabase: boolean;
+    prisma: boolean;
+    betterAuth: boolean;
+    postgresql: boolean;
+    cypress: boolean;
   };
-  theme: {
-    supportLightDark: boolean;
-    defaultTheme: "light" | "dark";
-  };
-  admin: {
-    basicAdmin: boolean;
-    withOrganizations: boolean;
-  };
-  payments: {
-    stripePayments: boolean;
-    stripeSubscriptions: boolean;
-    paypalPayments: boolean;
-    cryptoPayments: boolean;
+  questions: {
+    supabaseAuthOnly: boolean;
   };
   features: {
+    authentication: {
+      enabled: boolean;
+      magicLink: boolean;
+      emailPassword: boolean;
+      googleAuth: boolean;
+      githubAuth: boolean;
+      appleAuth: boolean;
+      facebookAuth: boolean;
+    };
+    admin: {
+      enabled: boolean;
+      basicAdmin: boolean;
+      withOrganizations: boolean;
+    };
+    payments: {
+      enabled: boolean;
+      stripePayments: boolean;
+      stripeSubscriptions: boolean;
+      paypalPayments: boolean;
+      cryptoPayments: boolean;
+    };
     realTimeNotifications: boolean;
     emailSending: boolean;
   };

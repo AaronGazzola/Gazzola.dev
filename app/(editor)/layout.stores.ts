@@ -23,29 +23,43 @@ const defaultAppStructure: FileSystemEntry[] = [
 ];
 
 const defaultInitialConfiguration: InitialConfigurationType = {
-  authentication: {
-    magicLink: false,
-    emailPassword: true,
-    googleAuth: false,
-    githubAuth: false,
-    appleAuth: false,
-    facebookAuth: false,
+  technologies: {
+    nextjs: true,
+    tailwindcss: true,
+    shadcn: true,
+    zustand: true,
+    reactQuery: true,
+    supabase: false,
+    prisma: true,
+    betterAuth: false,
+    postgresql: false,
+    cypress: false,
   },
-  theme: {
-    supportLightDark: true,
-    defaultTheme: "dark",
-  },
-  admin: {
-    basicAdmin: false,
-    withOrganizations: false,
-  },
-  payments: {
-    stripePayments: false,
-    stripeSubscriptions: false,
-    paypalPayments: false,
-    cryptoPayments: false,
+  questions: {
+    supabaseAuthOnly: false,
   },
   features: {
+    authentication: {
+      enabled: false,
+      magicLink: false,
+      emailPassword: true,
+      googleAuth: false,
+      githubAuth: false,
+      appleAuth: false,
+      facebookAuth: false,
+    },
+    admin: {
+      enabled: false,
+      basicAdmin: false,
+      withOrganizations: false,
+    },
+    payments: {
+      enabled: false,
+      stripePayments: false,
+      stripeSubscriptions: false,
+      paypalPayments: false,
+      cryptoPayments: false,
+    },
     realTimeNotifications: false,
     emailSending: false,
   },
@@ -390,23 +404,41 @@ export const useEditorStore = create<EditorState>()(
           initialConfiguration: {
             ...state.initialConfiguration,
             ...updates,
-            authentication: updates.authentication
+            technologies: updates.technologies
               ? {
-                  ...state.initialConfiguration.authentication,
-                  ...updates.authentication,
+                  ...state.initialConfiguration.technologies,
+                  ...updates.technologies,
                 }
-              : state.initialConfiguration.authentication,
-            theme: updates.theme
-              ? { ...state.initialConfiguration.theme, ...updates.theme }
-              : state.initialConfiguration.theme,
-            admin: updates.admin
-              ? { ...state.initialConfiguration.admin, ...updates.admin }
-              : state.initialConfiguration.admin,
-            payments: updates.payments
-              ? { ...state.initialConfiguration.payments, ...updates.payments }
-              : state.initialConfiguration.payments,
+              : state.initialConfiguration.technologies,
+            questions: updates.questions
+              ? {
+                  ...state.initialConfiguration.questions,
+                  ...updates.questions,
+                }
+              : state.initialConfiguration.questions,
             features: updates.features
-              ? { ...state.initialConfiguration.features, ...updates.features }
+              ? {
+                  ...state.initialConfiguration.features,
+                  ...updates.features,
+                  authentication: updates.features.authentication
+                    ? {
+                        ...state.initialConfiguration.features.authentication,
+                        ...updates.features.authentication,
+                      }
+                    : state.initialConfiguration.features.authentication,
+                  admin: updates.features.admin
+                    ? {
+                        ...state.initialConfiguration.features.admin,
+                        ...updates.features.admin,
+                      }
+                    : state.initialConfiguration.features.admin,
+                  payments: updates.features.payments
+                    ? {
+                        ...state.initialConfiguration.features.payments,
+                        ...updates.features.payments,
+                      }
+                    : state.initialConfiguration.features.payments,
+                }
               : state.initialConfiguration.features,
             database: updates.database
               ? { ...state.initialConfiguration.database, ...updates.database }
