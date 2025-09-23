@@ -297,7 +297,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   }, [allPages, currentPageIndex]);
 
   const isContentStale = useMemo(() => {
-    if (!liveContentVersion || !storedContentVersion) return false;
+    if (!liveContentVersion) return false;
+    if (!storedContentVersion) return true;
     return storedContentVersion < liveContentVersion;
   }, [liveContentVersion, storedContentVersion]);
 
