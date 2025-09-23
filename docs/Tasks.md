@@ -2,10 +2,8 @@
 
 ## Active tasks
 
-- [ ] InitialConfig:
-  - At the top of the component include a list of small cards with checkbox items, one for each of the technologies listed in the tech stack section of the about page, each with the relevant icon (see @app/about/page.tsx for the icons).
-  - Below these cards is a nested checklist of items including authentication options, payment methods etc.
-  - The following technologies are
+- [ ] Refactor initialConfig
+- [ ] Refactor parse markdown script to use a server action
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
 - [ ] Add labels for options in section nodes
@@ -13,7 +11,7 @@
 - [ ] Move files selection to sidebar
 - [ ] fix hydration error (AppStructure)
 - [ ] Add dropdown for add new button in AppStructure (layout file, page file etc)
-- [ ] Update downloaded content to handle new markdown content (eg PlaceholderNodes)
+- [ ] Update downloaded content to handle new content (ie PlaceholderNodes, initial config)
 - [ ] Add tests
 - [ ] Update source markdown content
   - [ ] Add styling content

@@ -10,8 +10,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **TailwindCSS v4** for styling
 - **PostgreSQL** database with Prisma ORM
 - **Better Auth** for authentication system
-- **Resend** for email sending
-- **Supabase** for postgres db, file storage, webhooks and edge functions
 
 # General rules:
 
@@ -42,12 +40,6 @@ app/
     ├── page.actions.ts
     └── Component.actions.ts
 ```
-
-# Row Level Security (RLS):
-
-- better-auth tables are defined in the `better_auth` schema and are provided full service role access
-- RLS is applied to all tables in the `public` schema
-- The Prisma rls client sets the authenticated user id in the db client context for use by the RLS policies
 
 # Hook, action, store and type patterns
 
@@ -234,143 +226,41 @@ export const useSignIn = () => {
     },
   });
 };
-
 ```
 
-# Client files:
+# Testing
 
-## Auth utilities:
+All tests should be performed with Jest or Playwright and documented in the `Test.md` document
 
-```typescript
-import { User } from "better-auth";
-import jwt from "jsonwebtoken";
-import { headers } from "next/headers";
-import { auth, Session } from "./auth";
-import { createRLSClient } from "./prisma-rls";
+## Test.md
 
-export async function getAuthenticatedClient(user?: User): Promise<{
-  db: ReturnType<typeof createRLSClient>;
-  session: Session | null;
-}> {
-  const headersList = await headers();
+The test document should list all tests in the repo, with each test case listed in a single line with an indented line below with the pass condition.
+Test document should begin with an index and number each test as demonstrated below:
 
-  const session = await auth.api.getSession({
-    headers: headersList,
-  });
+# Test.md file example:
 
-  const userId = user?.id || session?.user.id;
+```md
+# Test Documentation
 
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
+## Run All Tests
 
-  const db = createRLSClient(userId);
+**Command:** `npm run test`
+✓ Runs the complete test suite across all test files
 
-  return { db, session };
-}
+## Test Index
 
-export function generateSupabaseJWT(userId: string, userRole: string): string {
-  const jwtSecret = process.env.SUPABASE_JWT_SECRET;
+1. [Name](#1-name-tests) - `npm run test:name`
 
-  if (!jwtSecret) {
-    throw new Error("SUPABASE_JWT_SECRET is required for JWT generation");
-  }
+## 1. Name Tests
 
-  const payload = {
-    aud: "authenticated",
-    exp: Math.floor(Date.now() / 1000) + 60 * 60,
-    sub: userId,
-    email: `${userId}@better-auth.local`,
-    role: "authenticated",
-    user_metadata: {
-      better_auth_user_id: userId,
-      better_auth_role: userRole,
-    },
-    app_metadata: {
-      provider: "better-auth",
-      providers: ["better-auth"],
-    },
-  };
+**File:** `__tests__/name.test.ts`
+**Command:** `npm run test:name`
 
-  return jwt.sign(payload, jwtSecret, {
-    algorithm: "HS256",
-  });
-}
-```
+### Name Test
 
-## Prisma rls client:
+- should do something
+  ✓ Validates expected results
 
-```typescript
-import { Prisma } from "@prisma/client";
-import { prisma } from "./prisma";
-
-function forUser(userId: string, tenantId?: string) {
-  return Prisma.defineExtension((prisma) =>
-    prisma.$extends({
-      query: {
-        $allModels: {
-          async $allOperations({ args, query }) {
-            if (tenantId) {
-              const [, , result] = await prisma.$transaction([
-                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,
-                prisma.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,
-                query(args),
-              ]);
-              return result;
-            } else {
-              const [, result] = await prisma.$transaction([
-                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,
-                query(args),
-              ]);
-              return result;
-            }
-          },
-        },
-      },
-    })
-  );
-}
-
-export function createRLSClient(userId: string, tenantId?: string) {
-  return prisma.$extends(forUser(userId, tenantId));
-}
-```
-
-# Utility files
-
-## Action utilities:
-
-```typescript
-import { headers } from "next/headers";
-import { auth } from "./auth";
-
-export interface ActionResponse<T> {
-  data?: T | null;
-  error?: string | null;
-}
-
-export const getActionResponse = <T>({
-  data,
-  error,
-}: {
-  data?: T | null;
-  error?: unknown;
-}): ActionResponse<T> => {
-  if (error) {
-    const errorMessage =
-      error instanceof Error
-        ? error?.message
-        : error?.toString() || "An unknown action error occurred";
-    console.error("Action error:", errorMessage);
-    return { data: null, error: errorMessage };
-  }
-  return { data: data ?? null, error: null };
-};
-
-export async function getAuthenticatedUser() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  return session?.user;
-}
+- should do something else
+  ✓ Validates expected results
 ```
