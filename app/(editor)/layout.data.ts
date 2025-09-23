@@ -396,7 +396,7 @@ export const markdownData: MarkdownData = {
       "include": true
     }
   },
-  "contentVersion": 5
+  "contentVersion": 3
 };
 
 export const getAllPagesInOrder = (): { path: string; url: string; title: string; order: number }[] => {
