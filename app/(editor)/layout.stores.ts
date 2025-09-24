@@ -1,13 +1,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { getFirstPagePath, markdownData } from "./layout.data";
+import { markdownData } from "./layout.data";
 import {
   EditorState,
   FileSystemEntry,
   InitialConfigurationType,
+  MarkdownData,
 } from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
+
+const getFirstPagePath = (data: MarkdownData): string => {
+  const pages = Object.values(data.flatIndex)
+    .filter((node) => node.type === "file" && node.include !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  return pages.length > 0 ? pages[0].path : "";
+};
 
 const defaultAppStructure: FileSystemEntry[] = [
   {
@@ -34,6 +43,9 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     betterAuth: false,
     postgresql: false,
     cypress: false,
+    resend: false,
+    stripe: false,
+    paypal: false,
   },
   questions: {
     supabaseAuthOnly: false,
@@ -58,8 +70,8 @@ const defaultInitialConfiguration: InitialConfigurationType = {
       stripePayments: false,
       stripeSubscriptions: false,
       paypalPayments: false,
-      cryptoPayments: false,
     },
+    fileStorage: false,
     realTimeNotifications: false,
     emailSending: false,
   },
@@ -182,7 +194,7 @@ const initialState = {
   data: markdownData,
   darkMode: true,
   refreshKey: 0,
-  visitedPages: [getFirstPagePath()],
+  visitedPages: [getFirstPagePath(markdownData)],
   appStructure: defaultAppStructure,
   placeholderValues: {},
   initialConfiguration: defaultInitialConfiguration,
@@ -438,6 +450,15 @@ export const useEditorStore = create<EditorState>()(
                         ...updates.features.payments,
                       }
                     : state.initialConfiguration.features.payments,
+                  fileStorage: updates.features.fileStorage !== undefined
+                    ? updates.features.fileStorage
+                    : state.initialConfiguration.features.fileStorage,
+                  realTimeNotifications: updates.features.realTimeNotifications !== undefined
+                    ? updates.features.realTimeNotifications
+                    : state.initialConfiguration.features.realTimeNotifications,
+                  emailSending: updates.features.emailSending !== undefined
+                    ? updates.features.emailSending
+                    : state.initialConfiguration.features.emailSending,
                 }
               : state.initialConfiguration.features,
             database: updates.database
@@ -446,16 +467,32 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
-      reset: () =>
+      setMarkdownData: (newData: MarkdownData) => {
+        set((state) => ({
+          data: newData,
+          storedContentVersion: newData.contentVersion,
+          visitedPages: state.visitedPages.length === 0 ? [getFirstPagePath(newData)] : state.visitedPages,
+        }));
+      },
+      refreshMarkdownData: () => {
+        set((state) => ({ refreshKey: state.refreshKey + 1 }));
+      },
+      reset: () => {
+        const state = get();
         set({
           ...initialState,
-          storedContentVersion: markdownData.contentVersion,
-        }),
+          data: state.data,
+          storedContentVersion: state.data.contentVersion,
+          visitedPages: [getFirstPagePath(state.data)],
+        });
+      },
       resetToLatestData: () => {
+        const state = get();
         set({
           ...initialState,
-          data: markdownData,
-          storedContentVersion: markdownData.contentVersion,
+          data: state.data,
+          storedContentVersion: state.data.contentVersion,
+          visitedPages: [getFirstPagePath(state.data)],
         });
       },
       forceRefresh: () =>

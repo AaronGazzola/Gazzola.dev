@@ -2,8 +2,8 @@
 
 ## Active tasks
 
-- [ ] Refactor initialConfig
-- [ ] Refactor parse markdown script to use a server action
+- [ ] Fix the width of the accordion triggers in the InitialConfig component
+- [-] Refactor initialConfig
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
 - [ ] Add labels for options in section nodes
@@ -24,6 +24,7 @@
 
 ## Completed tasks
 
+- [x] Refactor parse markdown script to use a server action
 - [x] Fix walkthrough styling and position
 - [x] initial config component
 - [x] Reset prompt from markdown version change

@@ -15,8 +15,11 @@ import { Bell, CreditCard, Lock, Settings, Shield, Zap } from "lucide-react";
 import {
   SiCypress,
   SiNextdotjs,
+  SiPaypal,
   SiPostgresql,
   SiPrisma,
+  SiResend,
+  SiStripe,
   SiSupabase,
   SiTailwindcss,
 } from "react-icons/si";
@@ -133,6 +136,9 @@ const technologies: Technology[] = [
   { id: "betterAuth", name: "Better Auth", icon: BetterAuthIcon },
   { id: "postgresql", name: "PostgreSQL", icon: SiPostgresql },
   { id: "cypress", name: "Cypress", icon: SiCypress },
+  { id: "resend", name: "Resend", icon: SiResend },
+  { id: "stripe", name: "Stripe", icon: SiStripe },
+  { id: "paypal", name: "PayPal", icon: SiPaypal },
 ];
 
 interface FeatureConfig {
@@ -150,23 +156,38 @@ const featureConfigs: FeatureConfig[] = [
     description:
       "User login, registration, and session management with various authentication methods.",
     icon: Lock,
-    requiredTechnologies: ["betterAuth", "supabase"],
+    requiredTechnologies: ["resend"],
   },
   {
     id: "admin",
-    title: "Admin Dashboard",
+    title: "Admin Functionality",
     description:
-      "Administrative interface for managing users, content, and system settings.",
+      "Basic administrative interface for managing users and content.",
     icon: Settings,
-    requiredTechnologies: ["betterAuth"],
+    requiredTechnologies: [],
+  },
+  {
+    id: "adminOrganizations",
+    title: "Admin Organization Management",
+    description:
+      "Advanced admin features with multi-tenant organization management.",
+    icon: Shield,
+    requiredTechnologies: [],
+  },
+  {
+    id: "fileStorage",
+    title: "File Storage",
+    description: "Upload, store, and manage files with secure access controls.",
+    icon: CreditCard,
+    requiredTechnologies: ["supabase"],
   },
   {
     id: "payments",
     title: "Payment Processing",
     description:
-      "Handle payments, subscriptions, and financial transactions securely.",
+      "Handle payments and subscriptions with various payment providers.",
     icon: CreditCard,
-    requiredTechnologies: ["betterAuth"],
+    requiredTechnologies: [],
   },
   {
     id: "realTimeNotifications",
@@ -182,7 +203,15 @@ const featureConfigs: FeatureConfig[] = [
     description:
       "Send transactional emails, newsletters, and notifications to users.",
     icon: Zap,
-    requiredTechnologies: [],
+    requiredTechnologies: ["resend"],
+  },
+  {
+    id: "supabaseAuthOnly",
+    title: "Supabase Authentication Only",
+    description:
+      "Use Supabase only for authentication with a separate PostgreSQL database for application data. Most secure approach.",
+    icon: Shield,
+    requiredTechnologies: ["supabase"],
   },
 ];
 
@@ -191,6 +220,7 @@ interface TechnologyCardProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   darkMode: boolean;
+  disabled?: boolean;
 }
 
 const TechnologyCard = ({
@@ -198,6 +228,7 @@ const TechnologyCard = ({
   checked,
   onChange,
   darkMode,
+  disabled = false,
 }: TechnologyCardProps) => {
   const Icon = technology.icon;
 
@@ -205,18 +236,17 @@ const TechnologyCard = ({
     <Card
       className={cn(
         "cursor-pointer transition-all duration-200 p-3",
-        checked
-          ? "shadow-lg border-0"
-          : "border border-gray-300 hover:border-gray-400",
+        disabled && "opacity-50 cursor-not-allowed",
+        checked ? "border border-blue-500" : "border border-transparent",
         darkMode
           ? checked
-            ? "bg-blue-900 bg-opacity-20 shadow-blue-500/20"
-            : "border-gray-600 hover:border-gray-500 bg-gray-800"
+            ? "bg-gray-800"
+            : "bg-transparent hover:bg-gray-100/10"
           : checked
-            ? "bg-blue-50 shadow-blue-200/50"
-            : "border-gray-300 hover:border-gray-400 bg-white"
+            ? "bg-white"
+            : "bg-transparent hover:bg-gray-100/30"
       )}
-      onClick={() => onChange(!checked)}
+      onClick={() => !disabled && onChange(!checked)}
     >
       <CardContent className="p-0">
         <div className="flex items-center gap-3">
@@ -224,6 +254,9 @@ const TechnologyCard = ({
             checked={checked}
             onCheckedChange={onChange}
             onClick={(e) => e.stopPropagation()}
+            className={cn(
+              "border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
+            )}
           />
           <Icon
             className={cn(
@@ -234,6 +267,7 @@ const TechnologyCard = ({
           <span
             className={cn(
               "text-sm font-medium select-none",
+              disabled && "line-through",
               darkMode ? "text-gray-200" : "text-gray-800"
             )}
           >
@@ -245,9 +279,103 @@ const TechnologyCard = ({
   );
 };
 
+const isTechnologyDisabled = (
+  techId: string,
+  initialConfiguration: InitialConfigurationType
+): boolean => {
+  if (
+    techId === "betterAuth" &&
+    initialConfiguration.questions.supabaseAuthOnly
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const getRequiredTechnologiesForPayments = (
+  paymentFeatures: InitialConfigurationType["features"]["payments"]
+): (keyof InitialConfigurationType["technologies"])[] => {
+  const required: (keyof InitialConfigurationType["technologies"])[] = [];
+
+  if (paymentFeatures.stripePayments || paymentFeatures.stripeSubscriptions) {
+    required.push("stripe");
+  }
+  if (paymentFeatures.paypalPayments) {
+    required.push("paypal");
+  }
+
+  return required;
+};
+
 export const InitialConfiguration = () => {
   const { darkMode, initialConfiguration, updateInitialConfiguration } =
     useEditorStore();
+
+  const getFeatureEnabled = (featureId: string): boolean => {
+    if (featureId === "authentication") {
+      return initialConfiguration.features.authentication.enabled;
+    } else if (featureId === "admin") {
+      return initialConfiguration.features.admin.enabled;
+    } else if (featureId === "adminOrganizations") {
+      return initialConfiguration.features.admin.withOrganizations;
+    } else if (featureId === "payments") {
+      return initialConfiguration.features.payments.enabled;
+    } else if (featureId === "supabaseAuthOnly") {
+      return initialConfiguration.questions.supabaseAuthOnly;
+    }
+    return initialConfiguration.features[
+      featureId as keyof typeof initialConfiguration.features
+    ] as boolean;
+  };
+
+  const getTechnologyRequirementCount = (
+    techId: keyof InitialConfigurationType["technologies"]
+  ): number => {
+    let count = 0;
+
+    featureConfigs.forEach((feature) => {
+      const isFeatureEnabled = getFeatureEnabled(feature.id);
+      if (isFeatureEnabled && feature.requiredTechnologies.includes(techId)) {
+        count++;
+      }
+    });
+
+    if (
+      techId === "betterAuth" &&
+      initialConfiguration.features.authentication.enabled &&
+      !initialConfiguration.questions.supabaseAuthOnly
+    ) {
+      count++;
+    }
+    if (
+      techId === "supabase" &&
+      initialConfiguration.features.authentication.enabled &&
+      initialConfiguration.questions.supabaseAuthOnly
+    ) {
+      count++;
+    }
+
+    const paymentTechs = getRequiredTechnologiesForPayments(
+      initialConfiguration.features.payments
+    );
+    if (
+      initialConfiguration.features.payments.enabled &&
+      paymentTechs.includes(techId)
+    ) {
+      count++;
+    }
+
+    return count;
+  };
+
+  const getSortedTechnologies = () => {
+    return technologies
+      .map((tech) => ({
+        ...tech,
+        requirementCount: getTechnologyRequirementCount(tech.id),
+      }))
+      .sort((a, b) => b.requirementCount - a.requirementCount);
+  };
 
   const updateTechnology = (
     key: keyof InitialConfigurationType["technologies"],
@@ -265,12 +393,31 @@ export const InitialConfiguration = () => {
     key: keyof InitialConfigurationType["questions"],
     value: boolean
   ) => {
-    updateInitialConfiguration({
+    const updates: Partial<InitialConfigurationType> = {
       questions: {
         ...initialConfiguration.questions,
         [key]: value,
       },
-    });
+    };
+
+    if (key === "supabaseAuthOnly" && value) {
+      updates.technologies = {
+        ...initialConfiguration.technologies,
+        betterAuth: false,
+        supabase: true,
+      };
+
+      updates.features = {
+        ...initialConfiguration.features,
+        payments: {
+          ...initialConfiguration.features.payments,
+          enabled: false,
+          stripeSubscriptions: false,
+        },
+      };
+    }
+
+    updateInitialConfiguration(updates);
   };
 
   const updateFeature = (featureId: string, enabled: boolean) => {
@@ -282,6 +429,14 @@ export const InitialConfiguration = () => {
       feature.requiredTechnologies.forEach((tech) => {
         techUpdates[tech] = true;
       });
+
+      if (featureId === "authentication") {
+        if (!initialConfiguration.questions.supabaseAuthOnly) {
+          techUpdates["betterAuth"] = true;
+        } else {
+          techUpdates["supabase"] = true;
+        }
+      }
 
       updateInitialConfiguration({
         technologies: {
@@ -311,8 +466,33 @@ export const InitialConfiguration = () => {
           },
         },
       });
-    } else if (featureId === "payments") {
+    } else if (featureId === "adminOrganizations") {
       updateInitialConfiguration({
+        features: {
+          ...initialConfiguration.features,
+          admin: {
+            ...initialConfiguration.features.admin,
+            withOrganizations: enabled,
+          },
+        },
+      });
+    } else if (featureId === "payments") {
+      const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
+
+      if (enabled) {
+        const paymentTechs = getRequiredTechnologiesForPayments(
+          initialConfiguration.features.payments
+        );
+        paymentTechs.forEach((tech) => {
+          techUpdates[tech] = true;
+        });
+      }
+
+      updateInitialConfiguration({
+        technologies: {
+          ...initialConfiguration.technologies,
+          ...techUpdates,
+        },
         features: {
           ...initialConfiguration.features,
           payments: {
@@ -321,6 +501,32 @@ export const InitialConfiguration = () => {
           },
         },
       });
+    } else if (featureId === "supabaseAuthOnly") {
+      const updates: Partial<InitialConfigurationType> = {
+        questions: {
+          ...initialConfiguration.questions,
+          supabaseAuthOnly: enabled,
+        },
+      };
+
+      if (enabled) {
+        updates.technologies = {
+          ...initialConfiguration.technologies,
+          betterAuth: false,
+          supabase: true,
+        };
+
+        updates.features = {
+          ...initialConfiguration.features,
+          payments: {
+            ...initialConfiguration.features.payments,
+            enabled: false,
+            stripeSubscriptions: false,
+          },
+        };
+      }
+
+      updateInitialConfiguration(updates);
     } else {
       updateInitialConfiguration({
         features: {
@@ -331,211 +537,142 @@ export const InitialConfiguration = () => {
     }
   };
 
-  const getFeatureEnabled = (featureId: string): boolean => {
-    if (featureId === "authentication") {
-      return initialConfiguration.features.authentication.enabled;
-    } else if (featureId === "admin") {
-      return initialConfiguration.features.admin.enabled;
-    } else if (featureId === "payments") {
-      return initialConfiguration.features.payments.enabled;
-    }
-    return initialConfiguration.features[
-      featureId as keyof typeof initialConfiguration.features
-    ] as boolean;
-  };
-
   return (
     <div
       className={cn("p-6 rounded-lg", darkMode ? "bg-gray-800" : "bg-gray-50")}
     >
-      <div className="mb-6">
-        <h2
-          className={cn(
-            "text-lg font-semibold mb-2",
-            darkMode ? "text-gray-200" : "text-gray-800"
-          )}
-        >
-          Technology Stack
-        </h2>
-        <p
-          className={cn(
-            "text-sm mb-4",
-            darkMode ? "text-gray-300" : "text-gray-700"
-          )}
-        >
-          Select the technologies you want to include in your application.
-        </p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+          <h3
+            className={cn(
+              "text-md font-semibold mb-4",
+              darkMode ? "text-gray-200" : "text-gray-800"
+            )}
+          >
+            Features & Configuration
+          </h3>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
-          {technologies.map((tech) => (
-            <TechnologyCard
-              key={tech.id}
-              technology={tech}
-              checked={initialConfiguration.technologies[tech.id]}
-              onChange={(checked) => updateTechnology(tech.id, checked)}
-              darkMode={darkMode}
-            />
-          ))}
-        </div>
-      </div>
+          <Accordion type="single" collapsible className="space-y-0">
+            {featureConfigs.map((feature) => {
+              const Icon = feature.icon;
+              const isEnabled = getFeatureEnabled(feature.id);
 
-      <div className="mb-6">
-        <h3
-          className={cn(
-            "text-md font-semibold mb-4",
-            darkMode ? "text-gray-200" : "text-gray-800"
-          )}
-        >
-          Features & Configuration
-        </h3>
-
-        <Accordion type="multiple" className="space-y-2">
-          {featureConfigs.map((feature) => {
-            const Icon = feature.icon;
-            const isEnabled = getFeatureEnabled(feature.id);
-
-            return (
-              <AccordionItem
-                key={feature.id}
-                value={feature.id}
-                className={cn(
-                  "border rounded-lg px-4",
-                  darkMode ? "border-gray-600" : "border-gray-200"
-                )}
-              >
-                <AccordionTrigger className="hover:no-underline">
+              return (
+                <AccordionItem
+                  key={feature.id}
+                  value={feature.id}
+                  className={cn(
+                    "transition-all duration-200 p-2 rounded-t-lg border-0",
+                    darkMode
+                      ? isEnabled
+                        ? "bg-gray-800"
+                        : "bg-transparent"
+                      : isEnabled
+                        ? "bg-white"
+                        : "bg-transparent"
+                  )}
+                >
                   <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-3">
-                      <Icon className="w-4 h-4 text-blue-500" />
-                      <span
-                        className={cn(
-                          "text-sm font-medium",
-                          darkMode ? "text-gray-200" : "text-gray-800"
-                        )}
-                      >
-                        {feature.title}
-                      </span>
-                    </div>
+                    <AccordionTrigger className="hover:no-underline flex-1 justify-between mr-2">
+                      <div className="flex items-center gap-3">
+                        <Icon className="w-4 h-4 text-blue-500" />
+                        <span
+                          className={cn(
+                            "text-sm font-medium",
+                            darkMode ? "text-gray-200" : "text-gray-800"
+                          )}
+                        >
+                          {feature.title}
+                        </span>
+                      </div>
+                    </AccordionTrigger>
 
                     <Checkbox
                       checked={isEnabled}
                       onCheckedChange={(checked) => {
                         updateFeature(feature.id, checked === true);
                       }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="mr-2 size-5"
+                      className={cn(
+                        "size-5 border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
+                      )}
                     />
                   </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="pt-2 pb-4">
-                    <p
-                      className={cn(
-                        "text-sm mb-3",
-                        darkMode ? "text-gray-300" : "text-gray-600"
-                      )}
-                    >
-                      {feature.description}
-                    </p>
-                    {feature.requiredTechnologies.length > 0 && (
-                      <div>
-                        <p
-                          className={cn(
-                            "text-xs font-medium mb-2",
-                            darkMode ? "text-gray-400" : "text-gray-500"
-                          )}
-                        >
-                          Required technologies:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {feature.requiredTechnologies.map((techId) => {
-                            const tech = technologies.find(
-                              (t) => t.id === techId
-                            );
-                            if (!tech) return null;
-                            const TechIcon = tech.icon;
-                            return (
-                              <div
-                                key={techId}
-                                className={cn(
-                                  "flex items-center gap-1 px-2 py-1 rounded text-xs",
-                                  darkMode
-                                    ? "bg-gray-700 text-gray-300"
-                                    : "bg-gray-100 text-gray-600"
-                                )}
-                              >
-                                <TechIcon className="w-3 h-3" />
-                                <span>{tech.name}</span>
-                              </div>
-                            );
-                          })}
+                  <AccordionContent>
+                    <div className="pt-1 pb-2">
+                      <p
+                        className={cn(
+                          "text-sm mb-3",
+                          darkMode ? "text-gray-300" : "text-gray-600"
+                        )}
+                      >
+                        {feature.description}
+                      </p>
+                      {feature.requiredTechnologies.length > 0 && (
+                        <div>
+                          <p
+                            className={cn(
+                              "text-xs font-medium mb-2",
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            )}
+                          >
+                            Required technologies:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {feature.requiredTechnologies.map((techId) => {
+                              const tech = technologies.find(
+                                (t) => t.id === techId
+                              );
+                              if (!tech) return null;
+                              const TechIcon = tech.icon;
+                              return (
+                                <div
+                                  key={techId}
+                                  className={cn(
+                                    "flex items-center gap-1 px-2 py-1 rounded text-xs",
+                                    darkMode
+                                      ? "bg-gray-700 text-gray-300"
+                                      : "bg-gray-100 text-gray-600"
+                                  )}
+                                >
+                                  <TechIcon className="w-3 h-3" />
+                                  <span>{tech.name}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </div>
 
-          <AccordionItem
-            value="questions"
+        <div>
+          <h2
             className={cn(
-              "border rounded-lg px-4",
-              darkMode ? "border-gray-600" : "border-gray-200"
+              "text-lg font-semibold mb-4",
+              darkMode ? "text-gray-200" : "text-gray-800"
             )}
           >
-            <AccordionTrigger className="hover:no-underline">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
-                  <Shield className="w-4 h-4 text-blue-500" />
-                  <span
-                    className={cn(
-                      "text-sm font-medium",
-                      darkMode ? "text-gray-200" : "text-gray-800"
-                    )}
-                  >
-                    Security Questions
-                  </span>
-                </div>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="pt-2 pb-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p
-                      className={cn(
-                        "text-sm font-medium mb-1",
-                        darkMode ? "text-gray-200" : "text-gray-800"
-                      )}
-                    >
-                      Do you want to use Supabase only for authentication? (Most
-                      secure)
-                    </p>
-                    <p
-                      className={cn(
-                        "text-xs",
-                        darkMode ? "text-gray-400" : "text-gray-600"
-                      )}
-                    >
-                      This limits Supabase access to authentication only, using
-                      a separate PostgreSQL database for your application data.
-                    </p>
-                  </div>
-                  <Checkbox
-                    checked={initialConfiguration.questions.supabaseAuthOnly}
-                    onCheckedChange={(checked) =>
-                      updateQuestion("supabaseAuthOnly", checked === true)
-                    }
-                    onClick={(e) => e.stopPropagation()}
-                    className="ml-4"
-                  />
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            Required Technologies
+          </h2>
+
+          <div className="space-y-2">
+            {getSortedTechnologies().map((tech) => (
+              <TechnologyCard
+                key={tech.id}
+                technology={tech}
+                checked={initialConfiguration.technologies[tech.id]}
+                onChange={(checked) => updateTechnology(tech.id, checked)}
+                darkMode={darkMode}
+                disabled={isTechnologyDisabled(tech.id, initialConfiguration)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

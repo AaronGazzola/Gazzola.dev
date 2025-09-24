@@ -50,7 +50,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useContentVersion } from "../layout.hooks";
+import { useContentVersion, useGetMarkdownData } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 
 interface ToolbarProps {
@@ -102,6 +102,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const { startWalkthrough, isActiveTarget } = useWalkthroughStore();
   const { data: liveContentVersion } = useContentVersion();
+  const { refetch: refetchMarkdownData } = useGetMarkdownData();
   const {
     darkMode,
     setDarkMode,
@@ -272,10 +273,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setResetPageDialogOpen(false);
   };
 
-  const handleResetAll = () => {
-    reset();
-    setResetAllDialogOpen(false);
-    router.push(configuration.paths.home);
+  const handleResetAll = async () => {
+    try {
+      await refetchMarkdownData();
+      reset();
+      forceRefresh();
+      setResetAllDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to refetch markdown data:", error);
+      reset();
+      forceRefresh();
+      setResetAllDialogOpen(false);
+    }
   };
 
   const handleStartWalkthrough = () => {

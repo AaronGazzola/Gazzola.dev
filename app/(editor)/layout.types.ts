@@ -65,6 +65,9 @@ export interface InitialConfigurationType {
     betterAuth: boolean;
     postgresql: boolean;
     cypress: boolean;
+    resend: boolean;
+    stripe: boolean;
+    paypal: boolean;
   };
   questions: {
     supabaseAuthOnly: boolean;
@@ -89,8 +92,8 @@ export interface InitialConfigurationType {
       stripePayments: boolean;
       stripeSubscriptions: boolean;
       paypalPayments: boolean;
-      cryptoPayments: boolean;
     };
+    fileStorage: boolean;
     realTimeNotifications: boolean;
     emailSending: boolean;
   };
@@ -157,6 +160,8 @@ export interface EditorState {
   updateInitialConfiguration: (
     updates: Partial<InitialConfigurationType>
   ) => void;
+  setMarkdownData: (data: MarkdownData) => void;
+  refreshMarkdownData: () => void;
   reset: () => void;
   resetToLatestData: () => void;
   forceRefresh: () => void;
