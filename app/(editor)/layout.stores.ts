@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { markdownData } from "./layout.data";
 import {
   EditorState,
   FileSystemEntry,
@@ -55,15 +54,16 @@ const defaultInitialConfiguration: InitialConfigurationType = {
       enabled: false,
       magicLink: false,
       emailPassword: true,
+      otp: false,
       googleAuth: false,
       githubAuth: false,
       appleAuth: false,
-      facebookAuth: false,
     },
     admin: {
       enabled: false,
-      basicAdmin: false,
-      withOrganizations: false,
+      superAdmins: false,
+      orgAdmins: false,
+      orgMembers: false,
     },
     payments: {
       enabled: false,
@@ -189,22 +189,37 @@ const migrateSections = (data: any): any => {
   return migratedData;
 };
 
-const initialState = {
+const createInitialState = (data: MarkdownData) => ({
   version: STORE_VERSION,
-  data: markdownData,
+  data,
   darkMode: true,
   refreshKey: 0,
-  visitedPages: [getFirstPagePath(markdownData)],
+  visitedPages: [getFirstPagePath(data)],
   appStructure: defaultAppStructure,
   placeholderValues: {},
   initialConfiguration: defaultInitialConfiguration,
-  storedContentVersion: markdownData.contentVersion,
+  storedContentVersion: data.contentVersion,
+});
+
+const defaultMarkdownData: MarkdownData = {
+  root: {
+    id: "root",
+    name: "root",
+    displayName: "Root",
+    type: "directory",
+    path: "",
+    urlPath: "/",
+    include: true,
+    children: [],
+  },
+  flatIndex: {},
+  contentVersion: 1,
 };
 
 export const useEditorStore = create<EditorState>()(
   persist(
     (set, get) => ({
-      ...initialState,
+      ...createInitialState(defaultMarkdownData),
       updateContent: (path: string, content: string) => {
         set((state) => {
           const node = state.data.flatIndex[path];
@@ -467,6 +482,48 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
+      updateAuthenticationOption: (optionId: string, enabled: boolean) => {
+        set((state) => ({
+          initialConfiguration: {
+            ...state.initialConfiguration,
+            features: {
+              ...state.initialConfiguration.features,
+              authentication: {
+                ...state.initialConfiguration.features.authentication,
+                [optionId]: enabled,
+              },
+            },
+          },
+        }));
+      },
+      updateAdminOption: (optionId: string, enabled: boolean) => {
+        set((state) => ({
+          initialConfiguration: {
+            ...state.initialConfiguration,
+            features: {
+              ...state.initialConfiguration.features,
+              admin: {
+                ...state.initialConfiguration.features.admin,
+                [optionId]: enabled,
+              },
+            },
+          },
+        }));
+      },
+      updatePaymentOption: (optionId: string, enabled: boolean) => {
+        set((state) => ({
+          initialConfiguration: {
+            ...state.initialConfiguration,
+            features: {
+              ...state.initialConfiguration.features,
+              payments: {
+                ...state.initialConfiguration.features.payments,
+                [optionId]: enabled,
+              },
+            },
+          },
+        }));
+      },
       setMarkdownData: (newData: MarkdownData) => {
         set((state) => ({
           data: newData,
@@ -480,19 +537,15 @@ export const useEditorStore = create<EditorState>()(
       reset: () => {
         const state = get();
         set({
-          ...initialState,
-          data: state.data,
+          ...createInitialState(state.data),
           storedContentVersion: state.data.contentVersion,
-          visitedPages: [getFirstPagePath(state.data)],
         });
       },
       resetToLatestData: () => {
         const state = get();
         set({
-          ...initialState,
-          data: state.data,
+          ...createInitialState(state.data),
           storedContentVersion: state.data.contentVersion,
-          visitedPages: [getFirstPagePath(state.data)],
         });
       },
       forceRefresh: () =>
@@ -514,7 +567,7 @@ export const useEditorStore = create<EditorState>()(
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {
           const migratedData = migrateSections(
-            persistedState.data || markdownData
+            persistedState.data || defaultMarkdownData
           );
           return {
             ...persistedState,

@@ -127,7 +127,7 @@ function PlaceholderNodeComponent({
 }: PlaceholderNodeComponentProps) {
   const { getPlaceholderValue, setPlaceholderValue, darkMode } =
     useEditorStore();
-  const { isActiveTarget } = useWalkthroughStore();
+  const { isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState("");
   const [inputWidth, setInputWidth] = useState(0);
@@ -155,18 +155,24 @@ function PlaceholderNodeComponent({
       if (e.key === "Enter") {
         e.preventDefault();
         handleSave();
+        if (canAutoProgress("placeholder-element")) {
+          autoProgressWalkthrough();
+        }
       } else if (e.key === "Escape") {
         e.preventDefault();
         setLocalValue(currentValue);
         setIsEditing(false);
       }
     },
-    [handleSave, currentValue]
+    [handleSave, currentValue, canAutoProgress, autoProgressWalkthrough]
   );
 
   const handleBlur = useCallback(() => {
     handleSave();
-  }, [handleSave]);
+    if (canAutoProgress("placeholder-element")) {
+      autoProgressWalkthrough();
+    }
+  }, [handleSave, canAutoProgress, autoProgressWalkthrough]);
 
   useLayoutEffect(() => {
     if (measureRef.current) {

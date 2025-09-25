@@ -100,9 +100,9 @@ const IconButton = ({
 
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
-  const { startWalkthrough, isActiveTarget } = useWalkthroughStore();
-  const { data: liveContentVersion } = useContentVersion();
-  const { refetch: refetchMarkdownData } = useGetMarkdownData();
+  const { startWalkthrough, isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
+  const { data: markdownData, refetch: refetchMarkdownData } = useGetMarkdownData();
+  const { data: currentVersion } = useContentVersion();
   const {
     darkMode,
     setDarkMode,
@@ -111,10 +111,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     forceRefresh,
     markPageVisited,
     data,
+    storedContentVersion,
     getSectionInclude,
     setSectionInclude,
     updateInclusionRules,
-    storedContentVersion,
+    setMarkdownData,
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
@@ -254,6 +255,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleNext = () => {
     if (nextPage) {
+      if (canAutoProgress("next-button")) {
+        autoProgressWalkthrough();
+      }
       markPageVisited(nextPage.path);
       router.push(nextPage.url);
     }
@@ -275,9 +279,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleResetAll = async () => {
     try {
-      await refetchMarkdownData();
-      reset();
-      forceRefresh();
+      const { data: freshData } = await refetchMarkdownData();
+      if (freshData) {
+        reset();
+        setMarkdownData(freshData);
+        forceRefresh();
+      }
       setResetAllDialogOpen(false);
     } catch (error) {
       console.error("Failed to refetch markdown data:", error);
@@ -306,10 +313,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   }, [allPages, currentPageIndex]);
 
   const isContentStale = useMemo(() => {
-    if (!liveContentVersion) return false;
+    if (!currentVersion) return false;
     if (!storedContentVersion) return true;
-    return storedContentVersion < liveContentVersion;
-  }, [liveContentVersion, storedContentVersion]);
+    return storedContentVersion !== currentVersion;
+  }, [currentVersion, storedContentVersion]);
 
   useEffect(() => {
     if (isContentStale) {

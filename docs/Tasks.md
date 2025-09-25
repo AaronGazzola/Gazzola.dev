@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] Progress walkthrough when the user clicks the target element
 - [ ] Fix the width of the accordion triggers in the InitialConfig component
 - [-] Refactor initialConfig
 - [ ] Add steps to walkthrough

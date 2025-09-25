@@ -2,10 +2,10 @@ import { WalkthroughStep } from "@/app/layout.types";
 
 export const walkthroughSteps: WalkthroughStep[] = [
   {
-    id: "placeholder-nodes",
-    title: "Customize Placeholder Values",
+    id: "placeholder-element",
+    title: "Customize Your App Name",
     description:
-      "Click on any highlighted placeholder element throughout the documents to update them with your project-specific details. These placeholders help you customize the content to match your needs.",
+      "Click on any highlighted placeholder element to customize it with your app name. Try editing one now - the walkthrough will automatically continue when you finish editing.",
     targetDataAttribute: "placeholder-node",
     position: "right",
     side: "center",
@@ -15,12 +15,12 @@ export const walkthroughSteps: WalkthroughStep[] = [
     showPrevious: false,
   },
   {
-    id: "section-options",
-    title: "Select Content Sections",
+    id: "initial-configuration",
+    title: "Configure Your App Features",
     description:
-      "Click on the section option buttons (small icons next to content blocks) to choose which sections are included in your document. This allows you to customize what content appears based on your requirements.",
-    targetDataAttribute: "section-options",
-    position: "right",
+      "Select the features your app needs by checking or unchecking options in the Initial Configuration section. The walkthrough will continue when you make a selection.",
+    targetDataAttribute: "initial-configuration",
+    position: "bottom",
     side: "center",
     alignment: "center",
     offset: { x: -8 },
@@ -28,10 +28,10 @@ export const walkthroughSteps: WalkthroughStep[] = [
     showPrevious: true,
   },
   {
-    id: "next-document",
-    title: "Progress Through Documents",
+    id: "next-button",
+    title: "Navigate to Next Document",
     description:
-      "Use the 'Next' button to progress through the documents sequentially. This will reveal and take you to the next document in your project workflow.",
+      "Click the 'Next' button to progress to the next document. This will advance you through your project workflow.",
     targetDataAttribute: "next-button",
     position: "left",
     side: "center",

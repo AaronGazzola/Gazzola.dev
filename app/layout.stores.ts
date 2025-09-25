@@ -101,6 +101,31 @@ export const useWalkthroughStore = create<WalkthroughState>()(
         const { activeTargetAttribute } = get();
         return activeTargetAttribute === dataAttribute;
       },
+      autoProgressWalkthrough: () => {
+        const { currentStepIndex, steps, isActive } = get();
+        if (!isActive) return;
+
+        const currentStep = steps[currentStepIndex];
+        if (currentStep) {
+          const newCompletedSteps = get().completedSteps;
+          if (!newCompletedSteps.includes(currentStep.id)) {
+            newCompletedSteps.push(currentStep.id);
+            set({ completedSteps: newCompletedSteps });
+          }
+
+          if (currentStepIndex >= steps.length - 1) {
+            set({ isActive: false, activeTargetAttribute: null });
+          } else {
+            set({ currentStepIndex: currentStepIndex + 1 });
+          }
+        }
+      },
+      canAutoProgress: (stepId: string) => {
+        const { isActive, currentStepIndex, steps } = get();
+        if (!isActive) return false;
+        const currentStep = steps[currentStepIndex];
+        return currentStep?.id === stepId;
+      },
       reset: () => set(walkthroughInitialState),
     }),
     {

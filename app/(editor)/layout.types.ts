@@ -77,15 +77,16 @@ export interface InitialConfigurationType {
       enabled: boolean;
       magicLink: boolean;
       emailPassword: boolean;
+      otp: boolean;
       googleAuth: boolean;
       githubAuth: boolean;
       appleAuth: boolean;
-      facebookAuth: boolean;
     };
     admin: {
       enabled: boolean;
-      basicAdmin: boolean;
-      withOrganizations: boolean;
+      superAdmins: boolean;
+      orgAdmins: boolean;
+      orgMembers: boolean;
     };
     payments: {
       enabled: boolean;
@@ -160,6 +161,9 @@ export interface EditorState {
   updateInitialConfiguration: (
     updates: Partial<InitialConfigurationType>
   ) => void;
+  updateAuthenticationOption: (optionId: string, enabled: boolean) => void;
+  updateAdminOption: (optionId: string, enabled: boolean) => void;
+  updatePaymentOption: (optionId: string, enabled: boolean) => void;
   setMarkdownData: (data: MarkdownData) => void;
   refreshMarkdownData: () => void;
   reset: () => void;

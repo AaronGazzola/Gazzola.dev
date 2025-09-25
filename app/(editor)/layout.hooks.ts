@@ -18,19 +18,34 @@ export const useContentVersion = () => {
 };
 
 export const useGetMarkdownData = () => {
-  const { setMarkdownData } = useEditorStore();
-
   const query = useQuery({
     queryKey: ["markdownData"],
     queryFn: async () => {
       const { data, error } = await getMarkdownDataAction();
       if (error) throw new Error(error);
       if (!data) throw new Error("No markdown data received");
-      setMarkdownData(data);
       return data;
     },
     staleTime: 1000 * 60 * 5,
   });
 
   return query;
+};
+
+export const useInitializeMarkdownData = () => {
+  const { data, storedContentVersion, setMarkdownData } = useEditorStore();
+  const { data: markdownData, isLoading, error } = useGetMarkdownData();
+
+  const needsInitialization = !data.root.children.length || data.contentVersion === 1;
+
+  if (needsInitialization && markdownData && !isLoading) {
+    setMarkdownData(markdownData);
+  }
+
+  return {
+    needsInitialization,
+    isLoading,
+    error,
+    isInitialized: !needsInitialization && !isLoading && !error,
+  };
 };

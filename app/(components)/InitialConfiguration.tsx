@@ -2,16 +2,31 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
+import { useWalkthroughStore } from "@/app/layout.stores";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/default/ui/accordion";
-import { Card, CardContent } from "@/components/default/ui/card";
 import { Checkbox } from "@/components/default/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/default/ui/tooltip";
 import { cn } from "@/lib/tailwind.utils";
-import { Bell, CreditCard, Lock, Settings, Shield, Zap } from "lucide-react";
+import {
+  Bell,
+  ChevronDown,
+  CreditCard,
+  Database,
+  Mail,
+  Settings,
+  Upload,
+  Users,
+} from "lucide-react";
 import {
   SiCypress,
   SiNextdotjs,
@@ -141,156 +156,140 @@ const technologies: Technology[] = [
   { id: "paypal", name: "PayPal", icon: SiPaypal },
 ];
 
-interface FeatureConfig {
+interface QuestionConfig {
   id: string;
-  title: string;
+  question: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   requiredTechnologies: (keyof InitialConfigurationType["technologies"])[];
+  subOptions?: {
+    id: string;
+    label: string;
+    description: string;
+  }[];
 }
 
-const featureConfigs: FeatureConfig[] = [
+const questionConfigs: QuestionConfig[] = [
   {
     id: "authentication",
-    title: "Authentication System",
-    description:
-      "User login, registration, and session management with various authentication methods.",
-    icon: Lock,
+    question: "Can users sign in to your app?",
+    description: "Enable user authentication and session management.",
+    icon: Users,
     requiredTechnologies: ["resend"],
+    subOptions: [
+      {
+        id: "magicLink",
+        label: "Magic Link",
+        description: "Passwordless authentication via email links",
+      },
+      {
+        id: "emailPassword",
+        label: "Email & Password",
+        description: "Traditional email and password authentication",
+      },
+      {
+        id: "otp",
+        label: "One-Time Password",
+        description: "SMS or email based OTP verification",
+      },
+      {
+        id: "googleAuth",
+        label: "Google OAuth",
+        description: "Sign in with Google accounts",
+      },
+      {
+        id: "githubAuth",
+        label: "GitHub OAuth",
+        description: "Sign in with GitHub accounts",
+      },
+      {
+        id: "appleAuth",
+        label: "Apple Sign In",
+        description: "Sign in with Apple ID",
+      },
+    ],
   },
   {
     id: "admin",
-    title: "Admin Functionality",
-    description:
-      "Basic administrative interface for managing users and content.",
+    question: "Do you need admin functionality?",
+    description: "Administrative interface for managing users and content.",
     icon: Settings,
     requiredTechnologies: [],
-  },
-  {
-    id: "adminOrganizations",
-    title: "Admin Organization Management",
-    description:
-      "Advanced admin features with multi-tenant organization management.",
-    icon: Shield,
-    requiredTechnologies: [],
+    subOptions: [
+      {
+        id: "superAdmins",
+        label: "Super admins",
+        description:
+          "Created using a script, super admins have full access and can assign other user roles",
+      },
+      {
+        id: "orgAdmins",
+        label: "Organisation admins",
+        description:
+          "Invited by super admins, org admins can manage their own organisations and the members they contain",
+      },
+      {
+        id: "orgMembers",
+        label: "Organisation members",
+        description:
+          "Have read access to content related to their organisations",
+      },
+    ],
   },
   {
     id: "fileStorage",
-    title: "File Storage",
-    description: "Upload, store, and manage files with secure access controls.",
-    icon: CreditCard,
+    question: "Do users need to upload files?",
+    description: "File storage with secure access controls.",
+    icon: Upload,
     requiredTechnologies: ["supabase"],
   },
   {
     id: "payments",
-    title: "Payment Processing",
-    description:
-      "Handle payments and subscriptions with various payment providers.",
+    question: "Will you process payments?",
+    description: "Handle payments and subscriptions.",
     icon: CreditCard,
     requiredTechnologies: [],
+    subOptions: [
+      {
+        id: "stripePayments",
+        label: "One-time Payments",
+        description: "Accept one-time payments via Stripe",
+      },
+      {
+        id: "stripeSubscriptions",
+        label: "Subscriptions",
+        description: "Recurring subscription billing",
+      },
+      {
+        id: "paypalPayments",
+        label: "PayPal",
+        description: "Accept payments via PayPal",
+      },
+    ],
   },
   {
     id: "realTimeNotifications",
-    title: "Real-time Notifications",
-    description:
-      "Live updates and push notifications for enhanced user engagement.",
+    question: "Do you need real-time notifications?",
+    description: "Live updates and push notifications for users.",
     icon: Bell,
     requiredTechnologies: ["supabase"],
   },
   {
     id: "emailSending",
-    title: "Email Functionality",
-    description:
-      "Send transactional emails, newsletters, and notifications to users.",
-    icon: Zap,
+    question: "Will you send emails to users?",
+    description: "Transactional emails, newsletters, and notifications.",
+    icon: Mail,
     requiredTechnologies: ["resend"],
   },
   {
     id: "supabaseAuthOnly",
-    title: "Supabase Authentication Only",
+    question: "Use Supabase for authentication only?",
     description:
-      "Use Supabase only for authentication with a separate PostgreSQL database for application data. Most secure approach.",
-    icon: Shield,
+      "Most secure: Supabase auth + separate PostgreSQL for app data.",
+    icon: Database,
     requiredTechnologies: ["supabase"],
   },
 ];
-
-interface TechnologyCardProps {
-  technology: Technology;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  darkMode: boolean;
-  disabled?: boolean;
-}
-
-const TechnologyCard = ({
-  technology,
-  checked,
-  onChange,
-  darkMode,
-  disabled = false,
-}: TechnologyCardProps) => {
-  const Icon = technology.icon;
-
-  return (
-    <Card
-      className={cn(
-        "cursor-pointer transition-all duration-200 p-3",
-        disabled && "opacity-50 cursor-not-allowed",
-        checked ? "border border-blue-500" : "border border-transparent",
-        darkMode
-          ? checked
-            ? "bg-gray-800"
-            : "bg-transparent hover:bg-gray-100/10"
-          : checked
-            ? "bg-white"
-            : "bg-transparent hover:bg-gray-100/30"
-      )}
-      onClick={() => !disabled && onChange(!checked)}
-    >
-      <CardContent className="p-0">
-        <div className="flex items-center gap-3">
-          <Checkbox
-            checked={checked}
-            onCheckedChange={onChange}
-            onClick={(e) => e.stopPropagation()}
-            className={cn(
-              "border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
-            )}
-          />
-          <Icon
-            className={cn(
-              "w-5 h-5",
-              darkMode ? "text-gray-300" : "text-gray-600"
-            )}
-          />
-          <span
-            className={cn(
-              "text-sm font-medium select-none",
-              disabled && "line-through",
-              darkMode ? "text-gray-200" : "text-gray-800"
-            )}
-          >
-            {technology.name}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-const isTechnologyDisabled = (
-  techId: string,
-  initialConfiguration: InitialConfigurationType
-): boolean => {
-  if (
-    techId === "betterAuth" &&
-    initialConfiguration.questions.supabaseAuthOnly
-  ) {
-    return true;
-  }
-  return false;
-};
 
 const getRequiredTechnologiesForPayments = (
   paymentFeatures: InitialConfigurationType["features"]["payments"]
@@ -308,16 +307,21 @@ const getRequiredTechnologiesForPayments = (
 };
 
 export const InitialConfiguration = () => {
-  const { darkMode, initialConfiguration, updateInitialConfiguration } =
-    useEditorStore();
+  const {
+    darkMode,
+    initialConfiguration,
+    updateInitialConfiguration,
+    updateAuthenticationOption,
+    updateAdminOption,
+    updatePaymentOption,
+  } = useEditorStore();
+  const { canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
 
   const getFeatureEnabled = (featureId: string): boolean => {
     if (featureId === "authentication") {
       return initialConfiguration.features.authentication.enabled;
     } else if (featureId === "admin") {
       return initialConfiguration.features.admin.enabled;
-    } else if (featureId === "adminOrganizations") {
-      return initialConfiguration.features.admin.withOrganizations;
     } else if (featureId === "payments") {
       return initialConfiguration.features.payments.enabled;
     } else if (featureId === "supabaseAuthOnly") {
@@ -328,15 +332,49 @@ export const InitialConfiguration = () => {
     ] as boolean;
   };
 
-  const getTechnologyRequirementCount = (
-    techId: keyof InitialConfigurationType["technologies"]
-  ): number => {
-    let count = 0;
+  const getEnabledTechnologies = () => {
+    const enabledTechs = new Set<
+      keyof InitialConfigurationType["technologies"]
+    >();
 
-    featureConfigs.forEach((feature) => {
-      const isFeatureEnabled = getFeatureEnabled(feature.id);
-      if (isFeatureEnabled && feature.requiredTechnologies.includes(techId)) {
-        count++;
+    questionConfigs.forEach((question) => {
+      const isQuestionEnabled = getFeatureEnabled(question.id);
+      if (isQuestionEnabled) {
+        question.requiredTechnologies.forEach((tech) => {
+          enabledTechs.add(tech);
+        });
+      }
+    });
+
+    if (initialConfiguration.features.authentication.enabled) {
+      if (initialConfiguration.questions.supabaseAuthOnly) {
+        enabledTechs.add("supabase");
+      } else {
+        enabledTechs.add("betterAuth");
+      }
+    }
+
+    if (initialConfiguration.features.payments.enabled) {
+      const paymentTechs = getRequiredTechnologiesForPayments(
+        initialConfiguration.features.payments
+      );
+      paymentTechs.forEach((tech) => enabledTechs.add(tech));
+    }
+
+    return Array.from(enabledTechs)
+      .map((techId) => technologies.find((t) => t.id === techId))
+      .filter((tech): tech is Technology => tech !== undefined);
+  };
+
+  const getRequiredByFeatures = (
+    techId: keyof InitialConfigurationType["technologies"]
+  ) => {
+    const requiredBy: string[] = [];
+
+    questionConfigs.forEach((question) => {
+      const isEnabled = getFeatureEnabled(question.id);
+      if (isEnabled && question.requiredTechnologies.includes(techId)) {
+        requiredBy.push(question.question);
       }
     });
 
@@ -345,48 +383,26 @@ export const InitialConfiguration = () => {
       initialConfiguration.features.authentication.enabled &&
       !initialConfiguration.questions.supabaseAuthOnly
     ) {
-      count++;
+      requiredBy.push("Can users sign in to your app?");
     }
     if (
       techId === "supabase" &&
       initialConfiguration.features.authentication.enabled &&
       initialConfiguration.questions.supabaseAuthOnly
     ) {
-      count++;
+      requiredBy.push("Can users sign in to your app?");
     }
 
-    const paymentTechs = getRequiredTechnologiesForPayments(
-      initialConfiguration.features.payments
-    );
-    if (
-      initialConfiguration.features.payments.enabled &&
-      paymentTechs.includes(techId)
-    ) {
-      count++;
+    if (initialConfiguration.features.payments.enabled) {
+      const paymentTechs = getRequiredTechnologiesForPayments(
+        initialConfiguration.features.payments
+      );
+      if (paymentTechs.includes(techId)) {
+        requiredBy.push("Will you process payments?");
+      }
     }
 
-    return count;
-  };
-
-  const getSortedTechnologies = () => {
-    return technologies
-      .map((tech) => ({
-        ...tech,
-        requirementCount: getTechnologyRequirementCount(tech.id),
-      }))
-      .sort((a, b) => b.requirementCount - a.requirementCount);
-  };
-
-  const updateTechnology = (
-    key: keyof InitialConfigurationType["technologies"],
-    value: boolean
-  ) => {
-    updateInitialConfiguration({
-      technologies: {
-        ...initialConfiguration.technologies,
-        [key]: value,
-      },
-    });
+    return requiredBy;
   };
 
   const updateQuestion = (
@@ -421,12 +437,12 @@ export const InitialConfiguration = () => {
   };
 
   const updateFeature = (featureId: string, enabled: boolean) => {
-    const feature = featureConfigs.find((f) => f.id === featureId);
-    if (!feature) return;
+    const question = questionConfigs.find((q) => q.id === featureId);
+    if (!question) return;
 
     if (enabled) {
       const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
-      feature.requiredTechnologies.forEach((tech) => {
+      question.requiredTechnologies.forEach((tech) => {
         techUpdates[tech] = true;
       });
 
@@ -463,16 +479,6 @@ export const InitialConfiguration = () => {
           admin: {
             ...initialConfiguration.features.admin,
             enabled,
-          },
-        },
-      });
-    } else if (featureId === "adminOrganizations") {
-      updateInitialConfiguration({
-        features: {
-          ...initialConfiguration.features,
-          admin: {
-            ...initialConfiguration.features.admin,
-            withOrganizations: enabled,
           },
         },
       });
@@ -537,143 +543,213 @@ export const InitialConfiguration = () => {
     }
   };
 
+  const enabledTechnologies = getEnabledTechnologies();
+
   return (
-    <div
-      className={cn("p-6 rounded-lg", darkMode ? "bg-gray-800" : "bg-gray-50")}
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-          <h3
-            className={cn(
-              "text-md font-semibold mb-4",
-              darkMode ? "text-gray-200" : "text-gray-800"
-            )}
-          >
-            Features & Configuration
-          </h3>
+    <TooltipProvider>
+      <div
+        className={cn(
+          "p-2 rounded-lg border",
+          darkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-300"
+        )}
+        data-walkthrough="initial-configuration"
+      >
+        {enabledTechnologies.length > 0 && (
+          <div className="sticky -top-6 z-50 mb-2 p-2 rounded-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <h4
+              className={cn(
+                "text-base font-semibold mb-1.5",
+                darkMode ? "text-white" : "text-black"
+              )}
+            >
+              Required Technologies
+            </h4>
+            <div className="flex flex-wrap gap-1">
+              {enabledTechnologies.map((tech) => {
+                const Icon = tech.icon;
+                const requiredBy = getRequiredByFeatures(tech.id);
 
-          <Accordion type="single" collapsible className="space-y-0">
-            {featureConfigs.map((feature) => {
-              const Icon = feature.icon;
-              const isEnabled = getFeatureEnabled(feature.id);
-
-              return (
-                <AccordionItem
-                  key={feature.id}
-                  value={feature.id}
-                  className={cn(
-                    "transition-all duration-200 p-2 rounded-t-lg border-0",
-                    darkMode
-                      ? isEnabled
-                        ? "bg-gray-800"
-                        : "bg-transparent"
-                      : isEnabled
-                        ? "bg-white"
-                        : "bg-transparent"
-                  )}
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <AccordionTrigger className="hover:no-underline flex-1 justify-between mr-2">
-                      <div className="flex items-center gap-3">
-                        <Icon className="w-4 h-4 text-blue-500" />
-                        <span
-                          className={cn(
-                            "text-sm font-medium",
-                            darkMode ? "text-gray-200" : "text-gray-800"
-                          )}
-                        >
-                          {feature.title}
-                        </span>
-                      </div>
-                    </AccordionTrigger>
-
-                    <Checkbox
-                      checked={isEnabled}
-                      onCheckedChange={(checked) => {
-                        updateFeature(feature.id, checked === true);
-                      }}
-                      className={cn(
-                        "size-5 border border-gray-400 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
-                      )}
-                    />
-                  </div>
-                  <AccordionContent>
-                    <div className="pt-1 pb-2">
-                      <p
+                return (
+                  <Tooltip key={tech.id}>
+                    <TooltipTrigger asChild>
+                      <div
                         className={cn(
-                          "text-sm mb-3",
-                          darkMode ? "text-gray-300" : "text-gray-600"
+                          "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold cursor-help border",
+                          darkMode
+                            ? "bg-black text-white border-gray-600"
+                            : "bg-gray-100 text-black border-gray-400"
                         )}
                       >
-                        {feature.description}
-                      </p>
-                      {feature.requiredTechnologies.length > 0 && (
-                        <div>
-                          <p
+                        <Icon className="w-4 h-4" />
+                        <span>{tech.name}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="max-w-48">
+                        <p className="font-medium mb-1">Required by:</p>
+                        <ul className="text-sm">
+                          {requiredBy.map((feature, index) => (
+                            <li key={index}>• {feature}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <Accordion type="single" collapsible className="space-y-1">
+          {questionConfigs.map((question) => {
+            const Icon = question.icon;
+            const isEnabled = getFeatureEnabled(question.id);
+            let questionRequiredTechs = question.requiredTechnologies
+              .map((techId) => technologies.find((t) => t.id === techId))
+              .filter((tech): tech is Technology => tech !== undefined);
+
+            if (question.id === "authentication") {
+              const authTech = initialConfiguration.questions.supabaseAuthOnly
+                ? technologies.find((t) => t.id === "supabase")
+                : technologies.find((t) => t.id === "betterAuth");
+              if (authTech) {
+                questionRequiredTechs = [...questionRequiredTechs, authTech];
+              }
+            }
+
+            if (question.id === "payments") {
+              const paymentTechs = getRequiredTechnologiesForPayments(
+                initialConfiguration.features.payments
+              );
+              const additionalTechs = paymentTechs
+                .map((techId) => technologies.find((t) => t.id === techId))
+                .filter((tech): tech is Technology => tech !== undefined);
+              questionRequiredTechs = [
+                ...questionRequiredTechs,
+                ...additionalTechs,
+              ];
+            }
+
+            return (
+              <AccordionItem
+                key={question.id}
+                value={question.id}
+                className="transition-all duration-200"
+              >
+                <div className="flex items-center justify-between w-full py-1 px-2">
+                  <div className="flex-grow ">
+                    <AccordionTrigger className="hover:no-underline flex-1 justify-between mr-2">
+                      <div className="flex items-center gap-2">
+                        <Icon className="w-5 h-5 text-blue-500" />
+                        <div className="text-left">
+                          <span
                             className={cn(
-                              "text-xs font-medium mb-2",
-                              darkMode ? "text-gray-400" : "text-gray-500"
+                              "text-lg font-semibold block",
+                              darkMode ? "text-white" : "text-black"
                             )}
                           >
-                            Required technologies:
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {feature.requiredTechnologies.map((techId) => {
-                              const tech = technologies.find(
-                                (t) => t.id === techId
-                              );
-                              if (!tech) return null;
-                              const TechIcon = tech.icon;
-                              return (
-                                <div
-                                  key={techId}
-                                  className={cn(
-                                    "flex items-center gap-1 px-2 py-1 rounded text-xs",
-                                    darkMode
-                                      ? "bg-gray-700 text-gray-300"
-                                      : "bg-gray-100 text-gray-600"
-                                  )}
-                                >
-                                  <TechIcon className="w-3 h-3" />
-                                  <span>{tech.name}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
+                            {question.question}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        </div>
+                        <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200" />
+                      </div>
+                    </AccordionTrigger>
+                  </div>
 
-        <div>
-          <h2
-            className={cn(
-              "text-lg font-semibold mb-4",
-              darkMode ? "text-gray-200" : "text-gray-800"
-            )}
-          >
-            Required Technologies
-          </h2>
-
-          <div className="space-y-2">
-            {getSortedTechnologies().map((tech) => (
-              <TechnologyCard
-                key={tech.id}
-                technology={tech}
-                checked={initialConfiguration.technologies[tech.id]}
-                onChange={(checked) => updateTechnology(tech.id, checked)}
-                darkMode={darkMode}
-                disabled={isTechnologyDisabled(tech.id, initialConfiguration)}
-              />
-            ))}
-          </div>
-        </div>
+                  <Checkbox
+                    checked={isEnabled}
+                    onCheckedChange={(checked) => {
+                      updateFeature(question.id, checked === true);
+                      if (canAutoProgress("initial-configuration")) {
+                        autoProgressWalkthrough();
+                      }
+                    }}
+                    className={cn(
+                      "size-5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
+                    )}
+                  />
+                </div>
+                <AccordionContent>
+                  <div className="px-2 pb-2">
+                    {question.subOptions && question.subOptions.length > 0 ? (
+                      <div className="space-y-1">
+                        {question.subOptions.map((option) => (
+                          <label
+                            key={option.id}
+                            className="flex items-start gap-2 cursor-pointer"
+                          >
+                            <Checkbox
+                              checked={
+                                question.id === "payments"
+                                  ? initialConfiguration.features.payments[
+                                      option.id as keyof typeof initialConfiguration.features.payments
+                                    ] || false
+                                  : question.id === "admin"
+                                    ? initialConfiguration.features.admin[
+                                        option.id as keyof typeof initialConfiguration.features.admin
+                                      ] || false
+                                    : question.id === "authentication"
+                                      ? initialConfiguration.features
+                                          .authentication[
+                                          option.id as keyof typeof initialConfiguration.features.authentication
+                                        ] || false
+                                      : false
+                              }
+                              onCheckedChange={(checked) => {
+                                if (question.id === "payments") {
+                                  updatePaymentOption(
+                                    option.id,
+                                    checked === true
+                                  );
+                                } else if (question.id === "admin") {
+                                  updateAdminOption(
+                                    option.id,
+                                    checked === true
+                                  );
+                                } else if (question.id === "authentication") {
+                                  updateAuthenticationOption(
+                                    option.id,
+                                    checked === true
+                                  );
+                                }
+                                if (canAutoProgress("initial-configuration")) {
+                                  autoProgressWalkthrough();
+                                }
+                              }}
+                              className={cn(
+                                "size-4 mt-0.5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
+                              )}
+                            />
+                            <div>
+                              <span
+                                className={cn(
+                                  "text-base font-medium block",
+                                  darkMode ? "text-white" : "text-black"
+                                )}
+                              >
+                                {option.label}
+                              </span>
+                              <span
+                                className={cn(
+                                  "text-base block mt-0.5",
+                                  darkMode ? "text-gray-400" : "text-gray-600"
+                                )}
+                              >
+                                {option.description}
+                              </span>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };

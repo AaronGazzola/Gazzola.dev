@@ -20,7 +20,7 @@ import { EditorState } from "lexical";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
-import { markdownData, getFirstPagePath } from "../layout.data";
+import { useInitializeMarkdownData } from "../layout.hooks";
 import { Toolbar } from "../components/Toolbar";
 import { SectionNode } from "../components/SectionNode";
 import { SECTION_TRANSFORMER, setSectionTransformerContext } from "../components/SectionTransformer";
@@ -32,12 +32,21 @@ import { PLACEHOLDER_TRANSFORMER } from "../components/PlaceholderTransformer";
 const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
-  const { updateContent, getNode, darkMode, refreshKey, getSectionOptions } = useEditorStore();
+  const { updateContent, getNode, darkMode, refreshKey, getSectionOptions, data } = useEditorStore();
+  const { needsInitialization, isLoading } = useInitializeMarkdownData();
 
   useEffect(() => {
     useEditorStore.persist.rehydrate();
     setMounted(true);
   }, []);
+
+  const getFirstPagePath = useCallback((): string => {
+    const pages = Object.values(data.flatIndex)
+      .filter((node) => node.type === "file" && node.include !== false)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    return pages.length > 0 ? pages[0].path : "";
+  }, [data]);
 
   const contentPath = useMemo((): string => {
     const segments = params.segments as string[] | undefined;
@@ -48,14 +57,14 @@ const Page = () => {
 
     const urlPath = "/" + segments.join("/");
 
-    for (const [path, node] of Object.entries(markdownData.flatIndex)) {
+    for (const [path, node] of Object.entries(data.flatIndex)) {
       if (node.type === "file" && node.urlPath === urlPath) {
         return path;
       }
     }
 
     return getFirstPagePath();
-  }, [params]);
+  }, [params, data, getFirstPagePath]);
 
   // Set transformer context when contentPath changes
   useEffect(() => {
@@ -159,10 +168,12 @@ const Page = () => {
     [setCurrentContent]
   );
 
-  if (!mounted) {
+  if (!mounted || (needsInitialization && isLoading)) {
     return (
       <div className="w-full h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex items-center justify-center">
-        <div className="text-gray-500">Loading editor...</div>
+        <div className="text-gray-500">
+          {!mounted ? "Loading editor..." : "Loading content..."}
+        </div>
       </div>
     );
   }

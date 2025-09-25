@@ -46,5 +46,7 @@ export interface WalkthroughState {
   isElementVisible: (dataAttribute: string) => boolean;
   setActiveTarget: (dataAttribute: string | null) => void;
   isActiveTarget: (dataAttribute: string) => boolean;
+  autoProgressWalkthrough: () => void;
+  canAutoProgress: (stepId: string) => boolean;
   reset: () => void;
 }

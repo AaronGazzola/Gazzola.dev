@@ -1,5 +1,4 @@
 "use client";
-import { getFirstPagePath, markdownData } from "@/app/(editor)/layout.data";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
@@ -61,6 +60,7 @@ interface TreeItemProps {
   parentPath?: string;
   isPageVisited: (path: string) => boolean;
   currentPath: string;
+  data: any;
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({
@@ -70,6 +70,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
   onToggleExpansion,
   isPageVisited,
   currentPath,
+  data,
 }) => {
   const itemPath = item.path || item.name;
   const isOpen = expandedItems.has(itemPath);
@@ -88,7 +89,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   const buildLinkPath = () => {
-    const node = markdownData.flatIndex[itemPath];
+    const node = data.flatIndex[itemPath];
     if (node && node.type === "file") {
       return node.urlPath;
     } else if (node && node.type === "directory") {
@@ -167,6 +168,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
               parentPath={itemPath}
               isPageVisited={isPageVisited}
               currentPath={currentPath}
+              data={data}
             />
           ))}
       </CollapsibleContent>
@@ -195,20 +197,27 @@ const Sidebar = () => {
   const currentPath = useMemo((): string => {
     const segments = params.segments as string[] | undefined;
 
+    const getFirstPagePath = () => {
+      const pages = Object.values(data.flatIndex)
+        .filter((node) => node.type === "file" && node.include !== false)
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
+      return pages.length > 0 ? pages[0].path : "";
+    };
+
     if (!segments || segments.length === 0) {
       return getFirstPagePath();
     }
 
     const urlPath = "/" + segments.join("/");
 
-    for (const [path, node] of Object.entries(markdownData.flatIndex)) {
+    for (const [path, node] of Object.entries(data.flatIndex)) {
       if (node.type === "file" && node.urlPath === urlPath) {
         return path;
       }
     }
 
     return getFirstPagePath();
-  }, [params]);
+  }, [params, data]);
 
   useEffect(() => {
     const expandParentSegments = () => {
@@ -323,6 +332,7 @@ const Sidebar = () => {
                     onToggleExpansion={handleToggleExpansion}
                     isPageVisited={isPageVisited}
                     currentPath={currentPath}
+                    data={data}
                   />
                 ))}
             </div>
