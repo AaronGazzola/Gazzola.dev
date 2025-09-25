@@ -675,6 +675,8 @@ export const useEditorStore = create<EditorState>()(
       },
       forceRefresh: () =>
         set((state) => ({ refreshKey: state.refreshKey + 1 })),
+      setRefreshKey: (key: number) =>
+        set({ refreshKey: key }),
     }),
     {
       name: "editor-storage",

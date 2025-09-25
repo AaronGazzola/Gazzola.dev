@@ -169,6 +169,7 @@ export interface EditorState {
   reset: () => void;
   resetToLatestData: () => void;
   forceRefresh: () => void;
+  setRefreshKey: (key: number) => void;
 }
 
 export interface NavigationItem {

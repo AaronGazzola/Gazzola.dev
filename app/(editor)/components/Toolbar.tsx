@@ -50,6 +50,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useContentVersion, useGetMarkdownData, useInitializeMarkdownData } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 import { FileSystemEntry, InitialConfigurationType } from "../layout.types";
@@ -166,6 +167,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
 
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { startWalkthrough, isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
   const { data: markdownData, refetch: refetchMarkdownData } = useGetMarkdownData();
   const { refetch: refetchInitialization } = useInitializeMarkdownData();
@@ -176,6 +178,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     reset,
     setContent,
     forceRefresh,
+    setRefreshKey,
     markPageVisited,
     data,
     storedContentVersion,
@@ -348,15 +351,31 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleResetAll = async () => {
     try {
+      queryClient.invalidateQueries({ queryKey: ["markdownData"] });
+      queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
+
       const { data: freshData, error } = await refetchMarkdownData();
       if (error) {
         console.error("Failed to get markdown data:", error);
         return;
       }
+
       if (freshData) {
+        const firstPagePath = Object.values(freshData.flatIndex)
+          .filter((node) => node.type === "file" && node.include !== false)
+          .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
+
+        const resetKey = Date.now();
+
         setMarkdownData(freshData);
         reset();
-        forceRefresh();
+        setRefreshKey(resetKey);
+
+        setTimeout(() => {
+          if (firstPagePath?.urlPath) {
+            router.push(firstPagePath.urlPath);
+          }
+        }, 0);
       }
       setResetAllDialogOpen(false);
     } catch (error) {

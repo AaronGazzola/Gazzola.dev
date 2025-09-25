@@ -97,9 +97,9 @@ const careerSteps = [
   },
   {
     title: "Freelance Career",
-    description: "4 years full-time freelance development on Upwork",
+    description: "5 years full-time freelance development on Upwork",
     icon: Briefcase,
-    duration: "4 years",
+    duration: "5 years",
   },
 ];
 
