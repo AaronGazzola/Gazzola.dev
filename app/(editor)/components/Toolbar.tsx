@@ -51,7 +51,9 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useContentVersion, useGetMarkdownData } from "../layout.hooks";
+import { getMarkdownDataAction } from "../layout.actions";
 import { useEditorStore } from "../layout.stores";
+import { FileSystemEntry, InitialConfigurationType } from "../layout.types";
 
 interface ToolbarProps {
   currentContentPath: string;
@@ -98,6 +100,71 @@ const IconButton = ({
   </Tooltip>
 );
 
+const generateId = () => Math.random().toString(36).substring(2, 11);
+
+const defaultAppStructure: FileSystemEntry[] = [
+  {
+    id: generateId(),
+    name: "app",
+    type: "directory",
+    isExpanded: true,
+    children: [
+      { id: generateId(), name: "layout.tsx", type: "file" },
+      { id: generateId(), name: "page.tsx", type: "file" },
+    ],
+  },
+];
+
+const defaultInitialConfiguration: InitialConfigurationType = {
+  technologies: {
+    nextjs: true,
+    tailwindcss: true,
+    shadcn: true,
+    zustand: true,
+    reactQuery: true,
+    supabase: false,
+    prisma: false,
+    betterAuth: false,
+    postgresql: false,
+    cypress: false,
+    resend: false,
+    stripe: false,
+    paypal: false,
+  },
+  questions: {
+    supabaseAuthOnly: false,
+  },
+  features: {
+    authentication: {
+      enabled: false,
+      magicLink: false,
+      emailPassword: false,
+      otp: false,
+      googleAuth: false,
+      githubAuth: false,
+      appleAuth: false,
+    },
+    admin: {
+      enabled: false,
+      superAdmins: false,
+      orgAdmins: false,
+      orgMembers: false,
+    },
+    payments: {
+      enabled: false,
+      stripePayments: false,
+      stripeSubscriptions: false,
+      paypalPayments: false,
+    },
+    fileStorage: false,
+    realTimeNotifications: false,
+    emailSending: false,
+  },
+  database: {
+    hosting: "supabase",
+  },
+};
+
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const { startWalkthrough, isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
@@ -116,6 +183,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setSectionInclude,
     updateInclusionRules,
     setMarkdownData,
+    setAppStructure,
+    setInitialConfiguration,
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
@@ -279,17 +348,20 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleResetAll = async () => {
     try {
-      const { data: freshData } = await refetchMarkdownData();
+      const { data: freshData, error } = await getMarkdownDataAction();
+      if (error) {
+        console.error("Failed to get markdown data:", error);
+        return;
+      }
       if (freshData) {
-        reset();
         setMarkdownData(freshData);
+        setAppStructure(defaultAppStructure);
+        setInitialConfiguration(defaultInitialConfiguration);
         forceRefresh();
       }
       setResetAllDialogOpen(false);
     } catch (error) {
-      console.error("Failed to refetch markdown data:", error);
-      reset();
-      forceRefresh();
+      console.error("Failed to reset markdown data:", error);
       setResetAllDialogOpen(false);
     }
   };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { getContentVersionAction, getMarkdownDataAction } from "./layout.actions";
 import { useEditorStore } from "./layout.stores";
 
@@ -36,11 +37,13 @@ export const useInitializeMarkdownData = () => {
   const { data, storedContentVersion, setMarkdownData } = useEditorStore();
   const { data: markdownData, isLoading, error } = useGetMarkdownData();
 
-  const needsInitialization = !data.root.children.length || data.contentVersion === 1;
+  const needsInitialization = !data.root.children.length && data.contentVersion === 1 && Object.keys(data.flatIndex).length === 0;
 
-  if (needsInitialization && markdownData && !isLoading) {
-    setMarkdownData(markdownData);
-  }
+  useEffect(() => {
+    if (needsInitialization && markdownData && !isLoading) {
+      setMarkdownData(markdownData);
+    }
+  }, [needsInitialization, markdownData, isLoading, setMarkdownData]);
 
   return {
     needsInitialization,
