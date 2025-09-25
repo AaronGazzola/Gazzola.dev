@@ -34,7 +34,7 @@ export const useGetMarkdownData = () => {
 };
 
 export const useInitializeMarkdownData = () => {
-  const { data, storedContentVersion, setMarkdownData } = useEditorStore();
+  const { data, storedContentVersion, setMarkdownData, forceRefresh } = useEditorStore();
   const { data: markdownData, isLoading, error, refetch } = useGetMarkdownData();
 
   const hasDefaultData = data.root.id === "root" &&
@@ -47,8 +47,9 @@ export const useInitializeMarkdownData = () => {
   useEffect(() => {
     if (needsInitialization && markdownData && !isLoading && !error) {
       setMarkdownData(markdownData);
+      forceRefresh();
     }
-  }, [needsInitialization, markdownData, isLoading, error, setMarkdownData]);
+  }, [needsInitialization, markdownData, isLoading, error, setMarkdownData, forceRefresh]);
 
   return {
     needsInitialization,
