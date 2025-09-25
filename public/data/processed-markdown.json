@@ -1,0 +1,272 @@
+{
+  "root": {
+    "id": "root",
+    "name": "root",
+    "displayName": "Root",
+    "type": "directory",
+    "path": "",
+    "urlPath": "/",
+    "include": true,
+    "children": [
+      {
+        "id": "starthere",
+        "name": "starthere",
+        "displayName": "Start here",
+        "type": "directory",
+        "path": "starthere",
+        "urlPath": "/starthere",
+        "include": true,
+        "children": [
+          {
+            "id": "starthere.techstack",
+            "name": "techstack",
+            "displayName": "Tech Stack",
+            "type": "file",
+            "order": 1,
+            "path": "starthere.techstack",
+            "urlPath": "/starthere/techstack",
+            "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+            "components": [
+              {
+                "id": "component-InitialConfiguration",
+                "name": "InitialConfiguration",
+                "displayName": "InitialConfiguration",
+                "type": "component",
+                "path": "techstack.component.InitialConfiguration",
+                "urlPath": "",
+                "componentId": "InitialConfiguration",
+                "include": true
+              }
+            ],
+            "sections": {},
+            "include": true
+          },
+          {
+            "id": "starthere.appdirectory",
+            "name": "appdirectory",
+            "displayName": "App directory",
+            "type": "file",
+            "order": 2,
+            "path": "starthere.appdirectory",
+            "urlPath": "/starthere/appdirectory",
+            "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+            "components": [
+              {
+                "id": "component-AppStructure",
+                "name": "AppStructure",
+                "displayName": "AppStructure",
+                "type": "component",
+                "path": "appdirectory.component.AppStructure",
+                "urlPath": "",
+                "componentId": "AppStructure",
+                "include": true
+              }
+            ],
+            "sections": {},
+            "include": true
+          }
+        ]
+      }
+    ]
+  },
+  "flatIndex": {
+    "": {
+      "id": "root",
+      "name": "root",
+      "displayName": "Root",
+      "type": "directory",
+      "path": "",
+      "urlPath": "/",
+      "include": true,
+      "children": [
+        {
+          "id": "starthere",
+          "name": "starthere",
+          "displayName": "Start here",
+          "type": "directory",
+          "path": "starthere",
+          "urlPath": "/starthere",
+          "include": true,
+          "children": [
+            {
+              "id": "starthere.techstack",
+              "name": "techstack",
+              "displayName": "Tech Stack",
+              "type": "file",
+              "order": 1,
+              "path": "starthere.techstack",
+              "urlPath": "/starthere/techstack",
+              "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+              "components": [
+                {
+                  "id": "component-InitialConfiguration",
+                  "name": "InitialConfiguration",
+                  "displayName": "InitialConfiguration",
+                  "type": "component",
+                  "path": "techstack.component.InitialConfiguration",
+                  "urlPath": "",
+                  "componentId": "InitialConfiguration",
+                  "include": true
+                }
+              ],
+              "sections": {},
+              "include": true
+            },
+            {
+              "id": "starthere.appdirectory",
+              "name": "appdirectory",
+              "displayName": "App directory",
+              "type": "file",
+              "order": 2,
+              "path": "starthere.appdirectory",
+              "urlPath": "/starthere/appdirectory",
+              "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+              "components": [
+                {
+                  "id": "component-AppStructure",
+                  "name": "AppStructure",
+                  "displayName": "AppStructure",
+                  "type": "component",
+                  "path": "appdirectory.component.AppStructure",
+                  "urlPath": "",
+                  "componentId": "AppStructure",
+                  "include": true
+                }
+              ],
+              "sections": {},
+              "include": true
+            }
+          ]
+        }
+      ]
+    },
+    "starthere": {
+      "id": "starthere",
+      "name": "starthere",
+      "displayName": "Start here",
+      "type": "directory",
+      "path": "starthere",
+      "urlPath": "/starthere",
+      "include": true,
+      "children": [
+        {
+          "id": "starthere.techstack",
+          "name": "techstack",
+          "displayName": "Tech Stack",
+          "type": "file",
+          "order": 1,
+          "path": "starthere.techstack",
+          "urlPath": "/starthere/techstack",
+          "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-InitialConfiguration",
+              "name": "InitialConfiguration",
+              "displayName": "InitialConfiguration",
+              "type": "component",
+              "path": "techstack.component.InitialConfiguration",
+              "urlPath": "",
+              "componentId": "InitialConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        },
+        {
+          "id": "starthere.appdirectory",
+          "name": "appdirectory",
+          "displayName": "App directory",
+          "type": "file",
+          "order": 2,
+          "path": "starthere.appdirectory",
+          "urlPath": "/starthere/appdirectory",
+          "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+          "components": [
+            {
+              "id": "component-AppStructure",
+              "name": "AppStructure",
+              "displayName": "AppStructure",
+              "type": "component",
+              "path": "appdirectory.component.AppStructure",
+              "urlPath": "",
+              "componentId": "AppStructure",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        }
+      ]
+    },
+    "starthere.techstack": {
+      "id": "starthere.techstack",
+      "name": "techstack",
+      "displayName": "Tech Stack",
+      "type": "file",
+      "order": 1,
+      "path": "starthere.techstack",
+      "urlPath": "/starthere/techstack",
+      "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+      "components": [
+        {
+          "id": "component-InitialConfiguration",
+          "name": "InitialConfiguration",
+          "displayName": "InitialConfiguration",
+          "type": "component",
+          "path": "techstack.component.InitialConfiguration",
+          "urlPath": "",
+          "componentId": "InitialConfiguration",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "techstack.component.InitialConfiguration": {
+      "id": "component-InitialConfiguration",
+      "name": "InitialConfiguration",
+      "displayName": "InitialConfiguration",
+      "type": "component",
+      "path": "techstack.component.InitialConfiguration",
+      "urlPath": "",
+      "componentId": "InitialConfiguration",
+      "include": true
+    },
+    "starthere.appdirectory": {
+      "id": "starthere.appdirectory",
+      "name": "appdirectory",
+      "displayName": "App directory",
+      "type": "file",
+      "order": 2,
+      "path": "starthere.appdirectory",
+      "urlPath": "/starthere/appdirectory",
+      "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+      "components": [
+        {
+          "id": "component-AppStructure",
+          "name": "AppStructure",
+          "displayName": "AppStructure",
+          "type": "component",
+          "path": "appdirectory.component.AppStructure",
+          "urlPath": "",
+          "componentId": "AppStructure",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "appdirectory.component.AppStructure": {
+      "id": "component-AppStructure",
+      "name": "AppStructure",
+      "displayName": "AppStructure",
+      "type": "component",
+      "path": "appdirectory.component.AppStructure",
+      "urlPath": "",
+      "componentId": "AppStructure",
+      "include": true
+    }
+  },
+  "contentVersion": 8
+}

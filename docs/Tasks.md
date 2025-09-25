@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] Add download preview dialog
 - [-] Refactor initialConfig
 - [ ] Update downloaded content to handle new content (ie PlaceholderNodes, initial config)
 - [ ] Add dynamic component example elements
