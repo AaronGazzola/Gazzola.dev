@@ -2,9 +2,9 @@
 
 ## Active tasks
 
-- [ ] Progress walkthrough when the user clicks the target element
-- [ ] Fix the width of the accordion triggers in the InitialConfig component
 - [-] Refactor initialConfig
+- [ ] Update downloaded content to handle new content (ie PlaceholderNodes, initial config)
+- [ ] Add dynamic component example elements
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
 - [ ] Add labels for options in section nodes
@@ -16,7 +16,6 @@
 - [ ] Add tests
 - [ ] Update source markdown content
   - [ ] Add styling content
-- [ ] Add dynamic component example elements
 - [ ] Add shadcn variants for the editor components
 - [ ] Add donate UX on download
 - [ ] Add donation goal tracking
@@ -25,6 +24,8 @@
 
 ## Completed tasks
 
+- [x] Progress walkthrough when the user clicks the target element
+- [x] Fix the width of the accordion triggers in the InitialConfig component
 - [x] Refactor parse markdown script to use a server action
 - [x] Fix walkthrough styling and position
 - [x] initial config component
@@ -103,8 +104,9 @@
 - [x] Sean kochle "my new method"
 - [ ] AGENTS.md
 - [x] GPT-5 Codex news
-- [ ] Poll results:
+- [ ] Poll results: (what do you want to see?)
   - Explain stuff 43%
   - Bug fixes 29%
   - New features 14%
   - e2e and unit tests 14%
+- [ ] Research Codex

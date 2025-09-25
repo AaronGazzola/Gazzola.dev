@@ -185,6 +185,8 @@ const Sidebar = () => {
     getSectionContent,
     getSectionInclude,
     getSectionOptions,
+    getPlaceholderValue,
+    getInitialConfiguration,
   } = useEditorStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const params = useParams();
@@ -282,7 +284,9 @@ const Sidebar = () => {
         getSectionInclude,
         getSectionContent,
         getSectionOptions,
-        appStructure
+        appStructure,
+        getPlaceholderValue,
+        getInitialConfiguration
       );
     } catch (error) {
       console.error("Error generating download:", error);

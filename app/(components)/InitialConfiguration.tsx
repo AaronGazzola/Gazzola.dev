@@ -171,11 +171,18 @@ interface QuestionConfig {
 
 const questionConfigs: QuestionConfig[] = [
   {
+    id: "supabaseAuthOnly",
+    question: "Use Supabase for authentication only?",
+    description: "Most secure: Supabase auth + separate PostgreSQL for app data.",
+    icon: Database,
+    requiredTechnologies: ["supabase"],
+  },
+  {
     id: "authentication",
     question: "Can users sign in to your app?",
     description: "Enable user authentication and session management.",
     icon: Users,
-    requiredTechnologies: ["resend"],
+    requiredTechnologies: [],
     subOptions: [
       {
         id: "magicLink",
@@ -239,7 +246,7 @@ const questionConfigs: QuestionConfig[] = [
   {
     id: "fileStorage",
     question: "Do users need to upload files?",
-    description: "File storage with secure access controls.",
+    description: "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
     icon: Upload,
     requiredTechnologies: ["supabase"],
   },
@@ -270,24 +277,16 @@ const questionConfigs: QuestionConfig[] = [
   {
     id: "realTimeNotifications",
     question: "Do you need real-time notifications?",
-    description: "Live updates and push notifications for users.",
+    description: "Live updates and push notifications using Supabase Realtime for instant data synchronization and user notifications.",
     icon: Bell,
     requiredTechnologies: ["supabase"],
   },
   {
     id: "emailSending",
     question: "Will you send emails to users?",
-    description: "Transactional emails, newsletters, and notifications.",
+    description: "Transactional emails, newsletters, and notifications using Resend for reliable email delivery with excellent developer experience.",
     icon: Mail,
     requiredTechnologies: ["resend"],
-  },
-  {
-    id: "supabaseAuthOnly",
-    question: "Use Supabase for authentication only?",
-    description:
-      "Most secure: Supabase auth + separate PostgreSQL for app data.",
-    icon: Database,
-    requiredTechnologies: ["supabase"],
   },
 ];
 
@@ -337,6 +336,13 @@ export const InitialConfiguration = () => {
       keyof InitialConfigurationType["technologies"]
     >();
 
+    // Always include core technologies
+    enabledTechs.add("nextjs");
+    enabledTechs.add("shadcn");
+    enabledTechs.add("tailwindcss");
+    enabledTechs.add("zustand");
+    enabledTechs.add("reactQuery");
+
     questionConfigs.forEach((question) => {
       const isQuestionEnabled = getFeatureEnabled(question.id);
       if (isQuestionEnabled) {
@@ -346,11 +352,30 @@ export const InitialConfiguration = () => {
       }
     });
 
+    // Check if any database functionality is selected
+    const hasDatabaseFunctionality =
+      initialConfiguration.features.authentication.enabled ||
+      initialConfiguration.features.admin.enabled ||
+      initialConfiguration.features.fileStorage ||
+      initialConfiguration.features.realTimeNotifications;
+
+    if (hasDatabaseFunctionality) {
+      enabledTechs.add("prisma");
+      enabledTechs.add("postgresql");
+    }
+
     if (initialConfiguration.features.authentication.enabled) {
       if (initialConfiguration.questions.supabaseAuthOnly) {
         enabledTechs.add("supabase");
       } else {
         enabledTechs.add("betterAuth");
+      }
+
+      const hasEmailAuth = initialConfiguration.features.authentication.magicLink ||
+        initialConfiguration.features.authentication.emailPassword ||
+        initialConfiguration.features.authentication.otp;
+      if (hasEmailAuth) {
+        enabledTechs.add("resend");
       }
     }
 
@@ -371,12 +396,30 @@ export const InitialConfiguration = () => {
   ) => {
     const requiredBy: string[] = [];
 
+    // Core technologies are always included
+    if (techId === "nextjs" || techId === "shadcn" || techId === "tailwindcss" || techId === "zustand" || techId === "reactQuery") {
+      requiredBy.push("Core technology stack");
+    }
+
     questionConfigs.forEach((question) => {
       const isEnabled = getFeatureEnabled(question.id);
       if (isEnabled && question.requiredTechnologies.includes(techId)) {
         requiredBy.push(question.question);
       }
     });
+
+    // Database technologies
+    if (techId === "prisma" || techId === "postgresql") {
+      const hasDatabaseFunctionality =
+        initialConfiguration.features.authentication.enabled ||
+        initialConfiguration.features.admin.enabled ||
+        initialConfiguration.features.fileStorage ||
+        initialConfiguration.features.realTimeNotifications;
+
+      if (hasDatabaseFunctionality) {
+        requiredBy.push("Database functionality");
+      }
+    }
 
     if (
       techId === "betterAuth" &&
@@ -391,6 +434,17 @@ export const InitialConfiguration = () => {
       initialConfiguration.questions.supabaseAuthOnly
     ) {
       requiredBy.push("Can users sign in to your app?");
+    }
+    if (
+      techId === "resend" &&
+      initialConfiguration.features.authentication.enabled
+    ) {
+      const hasEmailAuth = initialConfiguration.features.authentication.magicLink ||
+        initialConfiguration.features.authentication.emailPassword ||
+        initialConfiguration.features.authentication.otp;
+      if (hasEmailAuth) {
+        requiredBy.push("Email-based authentication methods");
+      }
     }
 
     if (initialConfiguration.features.payments.enabled) {
@@ -473,6 +527,9 @@ export const InitialConfiguration = () => {
         },
       });
     } else if (featureId === "admin") {
+      if (enabled && initialConfiguration.questions.supabaseAuthOnly) {
+        return;
+      }
       updateInitialConfiguration({
         features: {
           ...initialConfiguration.features,
@@ -528,6 +585,12 @@ export const InitialConfiguration = () => {
             ...initialConfiguration.features.payments,
             enabled: false,
             stripeSubscriptions: false,
+          },
+          admin: {
+            ...initialConfiguration.features.admin,
+            enabled: false,
+            orgAdmins: false,
+            orgMembers: false,
           },
         };
       }
@@ -677,7 +740,13 @@ export const InitialConfiguration = () => {
                         {question.subOptions.map((option) => (
                           <label
                             key={option.id}
-                            className="flex items-start gap-2 cursor-pointer"
+                            className={cn(
+                              "flex items-start gap-2 cursor-pointer",
+                              question.id === "admin" &&
+                              (option.id === "orgAdmins" || option.id === "orgMembers") &&
+                              initialConfiguration.questions.supabaseAuthOnly &&
+                              "opacity-50 cursor-not-allowed"
+                            )}
                           >
                             <Checkbox
                               checked={
@@ -696,13 +765,26 @@ export const InitialConfiguration = () => {
                                         ] || false
                                       : false
                               }
+                              disabled={
+                                question.id === "admin" &&
+                                (option.id === "orgAdmins" || option.id === "orgMembers") &&
+                                initialConfiguration.questions.supabaseAuthOnly
+                              }
                               onCheckedChange={(checked) => {
+                                if (checked && !getFeatureEnabled(question.id)) {
+                                  updateFeature(question.id, true);
+                                }
+
                                 if (question.id === "payments") {
                                   updatePaymentOption(
                                     option.id,
                                     checked === true
                                   );
                                 } else if (question.id === "admin") {
+                                  if (initialConfiguration.questions.supabaseAuthOnly &&
+                                      (option.id === "orgAdmins" || option.id === "orgMembers")) {
+                                    return;
+                                  }
                                   updateAdminOption(
                                     option.id,
                                     checked === true
@@ -742,7 +824,16 @@ export const InitialConfiguration = () => {
                           </label>
                         ))}
                       </div>
-                    ) : null}
+                    ) : (
+                      <p
+                        className={cn(
+                          "text-sm",
+                          darkMode ? "text-gray-400" : "text-gray-600"
+                        )}
+                      >
+                        {question.description}
+                      </p>
+                    )}
                   </div>
                 </AccordionContent>
               </AccordionItem>

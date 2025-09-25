@@ -38,7 +38,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     zustand: true,
     reactQuery: true,
     supabase: false,
-    prisma: true,
+    prisma: false,
     betterAuth: false,
     postgresql: false,
     cypress: false,
@@ -53,7 +53,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     authentication: {
       enabled: false,
       magicLink: false,
-      emailPassword: true,
+      emailPassword: false,
       otp: false,
       googleAuth: false,
       githubAuth: false,
@@ -427,102 +427,216 @@ export const useEditorStore = create<EditorState>()(
       updateInitialConfiguration: (
         updates: Partial<InitialConfigurationType>
       ) => {
-        set((state) => ({
-          initialConfiguration: {
-            ...state.initialConfiguration,
-            ...updates,
-            technologies: updates.technologies
-              ? {
-                  ...state.initialConfiguration.technologies,
-                  ...updates.technologies,
-                }
-              : state.initialConfiguration.technologies,
-            questions: updates.questions
-              ? {
-                  ...state.initialConfiguration.questions,
-                  ...updates.questions,
-                }
-              : state.initialConfiguration.questions,
-            features: updates.features
-              ? {
-                  ...state.initialConfiguration.features,
-                  ...updates.features,
-                  authentication: updates.features.authentication
-                    ? {
-                        ...state.initialConfiguration.features.authentication,
-                        ...updates.features.authentication,
-                      }
-                    : state.initialConfiguration.features.authentication,
-                  admin: updates.features.admin
-                    ? {
-                        ...state.initialConfiguration.features.admin,
-                        ...updates.features.admin,
-                      }
-                    : state.initialConfiguration.features.admin,
-                  payments: updates.features.payments
-                    ? {
-                        ...state.initialConfiguration.features.payments,
-                        ...updates.features.payments,
-                      }
-                    : state.initialConfiguration.features.payments,
-                  fileStorage: updates.features.fileStorage !== undefined
-                    ? updates.features.fileStorage
-                    : state.initialConfiguration.features.fileStorage,
-                  realTimeNotifications: updates.features.realTimeNotifications !== undefined
-                    ? updates.features.realTimeNotifications
-                    : state.initialConfiguration.features.realTimeNotifications,
-                  emailSending: updates.features.emailSending !== undefined
-                    ? updates.features.emailSending
-                    : state.initialConfiguration.features.emailSending,
-                }
-              : state.initialConfiguration.features,
-            database: updates.database
-              ? { ...state.initialConfiguration.database, ...updates.database }
-              : state.initialConfiguration.database,
-          },
-        }));
+        set((state) => {
+          const newFeatures = updates.features
+            ? {
+                ...state.initialConfiguration.features,
+                ...updates.features,
+                authentication: updates.features.authentication
+                  ? {
+                      ...state.initialConfiguration.features.authentication,
+                      ...updates.features.authentication,
+                    }
+                  : state.initialConfiguration.features.authentication,
+                admin: updates.features.admin
+                  ? {
+                      ...state.initialConfiguration.features.admin,
+                      ...updates.features.admin,
+                    }
+                  : state.initialConfiguration.features.admin,
+                payments: updates.features.payments
+                  ? {
+                      ...state.initialConfiguration.features.payments,
+                      ...updates.features.payments,
+                    }
+                  : state.initialConfiguration.features.payments,
+                fileStorage: updates.features.fileStorage !== undefined
+                  ? updates.features.fileStorage
+                  : state.initialConfiguration.features.fileStorage,
+                realTimeNotifications: updates.features.realTimeNotifications !== undefined
+                  ? updates.features.realTimeNotifications
+                  : state.initialConfiguration.features.realTimeNotifications,
+                emailSending: updates.features.emailSending !== undefined
+                  ? updates.features.emailSending
+                  : state.initialConfiguration.features.emailSending,
+              }
+            : state.initialConfiguration.features;
+
+          const newTechnologies = updates.technologies
+            ? {
+                ...state.initialConfiguration.technologies,
+                ...updates.technologies,
+                nextjs: true,
+                tailwindcss: true,
+                shadcn: true,
+              }
+            : {
+                ...state.initialConfiguration.technologies,
+                nextjs: true,
+                tailwindcss: true,
+                shadcn: true,
+              };
+
+          const hasDatabaseFunctionality =
+            newFeatures.authentication.enabled ||
+            newFeatures.admin.enabled ||
+            newFeatures.fileStorage ||
+            newFeatures.realTimeNotifications;
+
+          if (hasDatabaseFunctionality) {
+            newTechnologies.prisma = true;
+            newTechnologies.postgresql = true;
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              ...updates,
+              technologies: newTechnologies,
+              features: newFeatures,
+              questions: updates.questions
+                ? {
+                    ...state.initialConfiguration.questions,
+                    ...updates.questions,
+                  }
+                : state.initialConfiguration.questions,
+              database: updates.database
+                ? { ...state.initialConfiguration.database, ...updates.database }
+                : state.initialConfiguration.database,
+            },
+          };
+        });
       },
       updateAuthenticationOption: (optionId: string, enabled: boolean) => {
-        set((state) => ({
-          initialConfiguration: {
-            ...state.initialConfiguration,
-            features: {
-              ...state.initialConfiguration.features,
-              authentication: {
-                ...state.initialConfiguration.features.authentication,
-                [optionId]: enabled,
-              },
+        set((state) => {
+          const techUpdates: InitialConfigurationType["technologies"] = {
+            ...state.initialConfiguration.technologies,
+            nextjs: true,
+            tailwindcss: true,
+            shadcn: true,
+          };
+
+          const newAuthConfig = {
+            ...state.initialConfiguration.features.authentication,
+            [optionId]: enabled,
+          };
+
+          if (enabled) {
+            const hasEmailAuth = newAuthConfig.magicLink ||
+              newAuthConfig.emailPassword ||
+              newAuthConfig.otp;
+            if (hasEmailAuth) {
+              techUpdates.resend = true;
+            }
+          }
+
+          const newFeatures = {
+            ...state.initialConfiguration.features,
+            authentication: {
+              ...newAuthConfig,
+              enabled: true,
             },
-          },
-        }));
+          };
+
+          const hasDatabaseFunctionality =
+            newFeatures.authentication.enabled ||
+            newFeatures.admin.enabled ||
+            newFeatures.fileStorage ||
+            newFeatures.realTimeNotifications;
+
+          if (hasDatabaseFunctionality) {
+            techUpdates.prisma = true;
+            techUpdates.postgresql = true;
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              technologies: techUpdates,
+              features: newFeatures,
+            },
+          };
+        });
       },
       updateAdminOption: (optionId: string, enabled: boolean) => {
-        set((state) => ({
-          initialConfiguration: {
-            ...state.initialConfiguration,
-            features: {
-              ...state.initialConfiguration.features,
-              admin: {
-                ...state.initialConfiguration.features.admin,
-                [optionId]: enabled,
-              },
+        set((state) => {
+          if (state.initialConfiguration.questions.supabaseAuthOnly &&
+              (optionId === "orgAdmins" || optionId === "orgMembers")) {
+            return state;
+          }
+
+          const techUpdates: InitialConfigurationType["technologies"] = {
+            ...state.initialConfiguration.technologies,
+            nextjs: true,
+            tailwindcss: true,
+            shadcn: true,
+          };
+
+          const newFeatures = {
+            ...state.initialConfiguration.features,
+            admin: {
+              ...state.initialConfiguration.features.admin,
+              enabled: true,
+              [optionId]: enabled,
             },
-          },
-        }));
+          };
+
+          const hasDatabaseFunctionality =
+            newFeatures.authentication.enabled ||
+            newFeatures.admin.enabled ||
+            newFeatures.fileStorage ||
+            newFeatures.realTimeNotifications;
+
+          if (hasDatabaseFunctionality) {
+            techUpdates.prisma = true;
+            techUpdates.postgresql = true;
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              technologies: techUpdates,
+              features: newFeatures,
+            },
+          };
+        });
       },
       updatePaymentOption: (optionId: string, enabled: boolean) => {
-        set((state) => ({
-          initialConfiguration: {
-            ...state.initialConfiguration,
-            features: {
-              ...state.initialConfiguration.features,
-              payments: {
-                ...state.initialConfiguration.features.payments,
-                [optionId]: enabled,
+        set((state) => {
+          const techUpdates: InitialConfigurationType["technologies"] = {
+            ...state.initialConfiguration.technologies,
+            nextjs: true,
+            tailwindcss: true,
+            shadcn: true,
+          };
+
+          if (enabled) {
+            if (optionId === "stripePayments" || optionId === "stripeSubscriptions") {
+              if (state.initialConfiguration.questions.supabaseAuthOnly && optionId === "stripeSubscriptions") {
+                return state;
+              }
+              techUpdates.stripe = true;
+            }
+            if (optionId === "paypalPayments") {
+              techUpdates.paypal = true;
+            }
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              technologies: techUpdates,
+              features: {
+                ...state.initialConfiguration.features,
+                payments: {
+                  ...state.initialConfiguration.features.payments,
+                  enabled: true,
+                  [optionId]: enabled,
+                },
               },
             },
-          },
-        }));
+          };
+        });
       },
       setMarkdownData: (newData: MarkdownData) => {
         set((state) => ({
