@@ -1,7 +1,7 @@
 "use client";
 
 import { useWalkthroughStore } from "@/app/layout.stores";
-import { walkthroughSteps } from "@/data/walkthrough/steps";
+import { walkthroughSteps } from "@/public/data/walkthrough/steps";
 import { ReactNode, useEffect, useState } from "react";
 import { WalkthroughConfirmDialog } from "./WalkthroughConfirmDialog";
 import { WalkthroughStep } from "./WalkthroughStep";

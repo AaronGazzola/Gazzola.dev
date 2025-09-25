@@ -12,8 +12,8 @@ import {
   SegmentNode,
 } from "./layout.types";
 
-const MARKDOWN_DIR = path.join(process.cwd(), "data", "markdown");
-const VERSION_FILE = path.join(process.cwd(), "data", "content-version.json");
+const MARKDOWN_DIR = path.join(process.cwd(), "public", "data", "markdown");
+const VERSION_FILE = path.join(process.cwd(), "public", "data", "content-version.json");
 
 function escapeForJavaScript(content: string): string {
   return content

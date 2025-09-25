@@ -31,7 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import configuration from "@/configuration";
-import { walkthroughSteps } from "@/data/walkthrough/steps";
+import { walkthroughSteps } from "@/public/data/walkthrough/steps";
 import { cn } from "@/lib/tailwind.utils";
 import {
   ChevronLeft,
