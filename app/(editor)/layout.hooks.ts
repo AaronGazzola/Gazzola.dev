@@ -35,20 +35,26 @@ export const useGetMarkdownData = () => {
 
 export const useInitializeMarkdownData = () => {
   const { data, storedContentVersion, setMarkdownData } = useEditorStore();
-  const { data: markdownData, isLoading, error } = useGetMarkdownData();
+  const { data: markdownData, isLoading, error, refetch } = useGetMarkdownData();
 
-  const needsInitialization = !data.root.children.length && data.contentVersion === 1 && Object.keys(data.flatIndex).length === 0;
+  const hasDefaultData = data.root.id === "root" &&
+    data.root.children.length === 0 &&
+    Object.keys(data.flatIndex).length === 1 &&
+    data.contentVersion === 1;
+
+  const needsInitialization = hasDefaultData || !data.root.children.length;
 
   useEffect(() => {
-    if (needsInitialization && markdownData && !isLoading) {
+    if (needsInitialization && markdownData && !isLoading && !error) {
       setMarkdownData(markdownData);
     }
-  }, [needsInitialization, markdownData, isLoading, setMarkdownData]);
+  }, [needsInitialization, markdownData, isLoading, error, setMarkdownData]);
 
   return {
     needsInitialization,
-    isLoading,
+    isLoading: needsInitialization ? isLoading : false,
     error,
-    isInitialized: !needsInitialization && !isLoading && !error,
+    isInitialized: !needsInitialization || (!isLoading && !error && !!markdownData),
+    refetch,
   };
 };

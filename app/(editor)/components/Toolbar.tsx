@@ -50,8 +50,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useContentVersion, useGetMarkdownData } from "../layout.hooks";
-import { getMarkdownDataAction } from "../layout.actions";
+import { useContentVersion, useGetMarkdownData, useInitializeMarkdownData } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 import { FileSystemEntry, InitialConfigurationType } from "../layout.types";
 
@@ -169,6 +168,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const { startWalkthrough, isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
   const { data: markdownData, refetch: refetchMarkdownData } = useGetMarkdownData();
+  const { refetch: refetchInitialization } = useInitializeMarkdownData();
   const { data: currentVersion } = useContentVersion();
   const {
     darkMode,
@@ -348,15 +348,16 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleResetAll = async () => {
     try {
-      const { data: freshData, error } = await getMarkdownDataAction();
+      setAppStructure(defaultAppStructure);
+      setInitialConfiguration(defaultInitialConfiguration);
+
+      const { data: freshData, error } = await refetchMarkdownData();
       if (error) {
         console.error("Failed to get markdown data:", error);
         return;
       }
       if (freshData) {
         setMarkdownData(freshData);
-        setAppStructure(defaultAppStructure);
-        setInitialConfiguration(defaultInitialConfiguration);
         forceRefresh();
       }
       setResetAllDialogOpen(false);

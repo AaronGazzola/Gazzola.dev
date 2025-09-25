@@ -33,7 +33,7 @@ const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
   const { updateContent, getNode, darkMode, refreshKey, getSectionOptions, data } = useEditorStore();
-  const { needsInitialization, isLoading } = useInitializeMarkdownData();
+  const { needsInitialization, isLoading, error, isInitialized } = useInitializeMarkdownData();
 
   useEffect(() => {
     useEditorStore.persist.rehydrate();
@@ -170,10 +170,43 @@ const Page = () => {
 
   if (!mounted || (needsInitialization && isLoading)) {
     return (
-      <div className="w-full h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex items-center justify-center">
+      <div className={`w-full h-full ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'} flex items-center justify-center`}>
         <div className="text-gray-500">
           {!mounted ? "Loading editor..." : "Loading content..."}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={`w-full h-full ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'} flex items-center justify-center`}>
+        <div className="text-center space-y-4">
+          <div className="text-red-500 text-lg font-medium">
+            Failed to load editor content
+          </div>
+          <div className="text-gray-500">
+            {error.message || "An error occurred while loading the content"}
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              darkMode
+                ? "bg-blue-700 text-blue-100 hover:bg-blue-600"
+                : "bg-blue-600 text-blue-100 hover:bg-blue-700"
+            }`}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isInitialized) {
+    return (
+      <div className={`w-full h-full ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'} flex items-center justify-center`}>
+        <div className="text-gray-500">Initializing editor...</div>
       </div>
     );
   }

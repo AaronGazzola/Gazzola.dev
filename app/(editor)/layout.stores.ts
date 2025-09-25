@@ -212,7 +212,18 @@ const defaultMarkdownData: MarkdownData = {
     include: true,
     children: [],
   },
-  flatIndex: {},
+  flatIndex: {
+    "": {
+      id: "root",
+      name: "root",
+      displayName: "Root",
+      type: "directory",
+      path: "",
+      urlPath: "/",
+      include: true,
+      children: [],
+    }
+  },
   contentVersion: 1,
 };
 
