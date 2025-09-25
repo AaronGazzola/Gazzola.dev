@@ -172,8 +172,8 @@ interface QuestionConfig {
 const questionConfigs: QuestionConfig[] = [
   {
     id: "supabaseAuthOnly",
-    question: "Use Supabase for authentication only?",
-    description: "Most secure: Supabase auth + separate PostgreSQL for app data.",
+    question: "Use only Supabase for authentication?",
+    description: "Provides established security reputation for enterprise compliance and audit requirements.",
     icon: Database,
     requiredTechnologies: ["supabase"],
   },
@@ -246,7 +246,8 @@ const questionConfigs: QuestionConfig[] = [
   {
     id: "fileStorage",
     question: "Do users need to upload files?",
-    description: "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
+    description:
+      "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
     icon: Upload,
     requiredTechnologies: ["supabase"],
   },
@@ -277,14 +278,16 @@ const questionConfigs: QuestionConfig[] = [
   {
     id: "realTimeNotifications",
     question: "Do you need real-time notifications?",
-    description: "Live updates and push notifications using Supabase Realtime for instant data synchronization and user notifications.",
+    description:
+      "Live updates and push notifications using Supabase Realtime for instant data synchronization and user notifications.",
     icon: Bell,
     requiredTechnologies: ["supabase"],
   },
   {
     id: "emailSending",
     question: "Will you send emails to users?",
-    description: "Transactional emails, newsletters, and notifications using Resend for reliable email delivery with excellent developer experience.",
+    description:
+      "Transactional emails, newsletters, and notifications using Resend for reliable email delivery with excellent developer experience.",
     icon: Mail,
     requiredTechnologies: ["resend"],
   },
@@ -371,7 +374,8 @@ export const InitialConfiguration = () => {
         enabledTechs.add("betterAuth");
       }
 
-      const hasEmailAuth = initialConfiguration.features.authentication.magicLink ||
+      const hasEmailAuth =
+        initialConfiguration.features.authentication.magicLink ||
         initialConfiguration.features.authentication.emailPassword ||
         initialConfiguration.features.authentication.otp;
       if (hasEmailAuth) {
@@ -397,7 +401,13 @@ export const InitialConfiguration = () => {
     const requiredBy: string[] = [];
 
     // Core technologies are always included
-    if (techId === "nextjs" || techId === "shadcn" || techId === "tailwindcss" || techId === "zustand" || techId === "reactQuery") {
+    if (
+      techId === "nextjs" ||
+      techId === "shadcn" ||
+      techId === "tailwindcss" ||
+      techId === "zustand" ||
+      techId === "reactQuery"
+    ) {
       requiredBy.push("Core technology stack");
     }
 
@@ -439,7 +449,8 @@ export const InitialConfiguration = () => {
       techId === "resend" &&
       initialConfiguration.features.authentication.enabled
     ) {
-      const hasEmailAuth = initialConfiguration.features.authentication.magicLink ||
+      const hasEmailAuth =
+        initialConfiguration.features.authentication.magicLink ||
         initialConfiguration.features.authentication.emailPassword ||
         initialConfiguration.features.authentication.otp;
       if (hasEmailAuth) {
@@ -698,13 +709,23 @@ export const InitialConfiguration = () => {
               <AccordionItem
                 key={question.id}
                 value={question.id}
-                className="transition-all duration-200"
+                className={cn(
+                  "transition-all duration-200 data-[state=open]:rounded-lg border-none",
+                  darkMode
+                    ? "data-[state=open]:bg-black"
+                    : "data-[state=open]:bg-gray-100"
+                )}
               >
                 <div className="flex items-center justify-between w-full py-1 px-2">
                   <div className="flex-grow ">
-                    <AccordionTrigger className="hover:no-underline flex-1 justify-between mr-2">
+                    <AccordionTrigger className="hover:no-underline flex-1 justify-between mr-2 group">
                       <div className="flex items-center gap-2">
-                        <Icon className="w-5 h-5 text-blue-500" />
+                        <Icon className={cn(
+                          "w-5 h-5 transition-colors duration-200",
+                          darkMode
+                            ? "text-white group-data-[state=open]:text-blue-400"
+                            : "text-black group-data-[state=open]:text-blue-600"
+                        )} />
                         <div className="text-left">
                           <span
                             className={cn(
@@ -743,9 +764,11 @@ export const InitialConfiguration = () => {
                             className={cn(
                               "flex items-start gap-2 cursor-pointer",
                               question.id === "admin" &&
-                              (option.id === "orgAdmins" || option.id === "orgMembers") &&
-                              initialConfiguration.questions.supabaseAuthOnly &&
-                              "opacity-50 cursor-not-allowed"
+                                (option.id === "orgAdmins" ||
+                                  option.id === "orgMembers") &&
+                                initialConfiguration.questions
+                                  .supabaseAuthOnly &&
+                                "opacity-50 cursor-not-allowed"
                             )}
                           >
                             <Checkbox
@@ -767,11 +790,15 @@ export const InitialConfiguration = () => {
                               }
                               disabled={
                                 question.id === "admin" &&
-                                (option.id === "orgAdmins" || option.id === "orgMembers") &&
+                                (option.id === "orgAdmins" ||
+                                  option.id === "orgMembers") &&
                                 initialConfiguration.questions.supabaseAuthOnly
                               }
                               onCheckedChange={(checked) => {
-                                if (checked && !getFeatureEnabled(question.id)) {
+                                if (
+                                  checked &&
+                                  !getFeatureEnabled(question.id)
+                                ) {
                                   updateFeature(question.id, true);
                                 }
 
@@ -781,8 +808,12 @@ export const InitialConfiguration = () => {
                                     checked === true
                                   );
                                 } else if (question.id === "admin") {
-                                  if (initialConfiguration.questions.supabaseAuthOnly &&
-                                      (option.id === "orgAdmins" || option.id === "orgMembers")) {
+                                  if (
+                                    initialConfiguration.questions
+                                      .supabaseAuthOnly &&
+                                    (option.id === "orgAdmins" ||
+                                      option.id === "orgMembers")
+                                  ) {
                                     return;
                                   }
                                   updateAdminOption(
@@ -814,8 +845,8 @@ export const InitialConfiguration = () => {
                               </span>
                               <span
                                 className={cn(
-                                  "text-base block mt-0.5",
-                                  darkMode ? "text-gray-400" : "text-gray-600"
+                                  "text-base block mt-0.5 font-medium",
+                                  darkMode ? "text-gray-300" : "text-gray-700"
                                 )}
                               >
                                 {option.description}
@@ -827,8 +858,8 @@ export const InitialConfiguration = () => {
                     ) : (
                       <p
                         className={cn(
-                          "text-sm",
-                          darkMode ? "text-gray-400" : "text-gray-600"
+                          "text-sm font-medium",
+                          darkMode ? "text-gray-200" : "text-gray-800"
                         )}
                       >
                         {question.description}

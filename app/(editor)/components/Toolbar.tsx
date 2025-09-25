@@ -348,9 +348,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleResetAll = async () => {
     try {
-      setAppStructure(defaultAppStructure);
-      setInitialConfiguration(defaultInitialConfiguration);
-
       const { data: freshData, error } = await refetchMarkdownData();
       if (error) {
         console.error("Failed to get markdown data:", error);
@@ -358,6 +355,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       }
       if (freshData) {
         setMarkdownData(freshData);
+        reset();
         forceRefresh();
       }
       setResetAllDialogOpen(false);

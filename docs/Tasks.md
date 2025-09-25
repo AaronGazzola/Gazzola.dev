@@ -2,6 +2,9 @@
 
 ## Active tasks
 
+- [ ] Update `markdown-data.md`
+- [ ] fix: reset placeholder data with reset all
+- [ ] test: set and rest single page and all data local and deployed.
 - [ ] Add download preview dialog
 - [-] Refactor initialConfig
 - [ ] Update downloaded content to handle new content (ie PlaceholderNodes, initial config)

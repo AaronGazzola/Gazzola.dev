@@ -20,9 +20,9 @@ export const walkthroughSteps: WalkthroughStep[] = [
     description:
       "Select the features your app needs by checking or unchecking options in the Initial Configuration section. The walkthrough will continue when you make a selection.",
     targetDataAttribute: "initial-configuration",
-    position: "bottom",
-    side: "center",
-    alignment: "center",
+    position: "left",
+    side: "start",
+    alignment: "end",
     offset: { x: -8 },
     showSkip: true,
     showPrevious: true,
