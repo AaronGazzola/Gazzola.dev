@@ -24,18 +24,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import configuration from "@/configuration";
-import { walkthroughSteps } from "@/public/data/walkthrough/steps";
 import { cn } from "@/lib/tailwind.utils";
+import { walkthroughSteps } from "@/public/data/walkthrough/steps";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
   ChevronRight,
+  Eye,
   File,
   Files,
   Folder,
@@ -50,8 +52,11 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { useContentVersion, useGetMarkdownData, useInitializeMarkdownData } from "../layout.hooks";
+import {
+  useContentVersion,
+  useGetMarkdownData,
+  useInitializeMarkdownData,
+} from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 import { FileSystemEntry, InitialConfigurationType } from "../layout.types";
 
@@ -130,6 +135,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     resend: false,
     stripe: false,
     paypal: false,
+    openrouter: false,
   },
   questions: {
     supabaseAuthOnly: false,
@@ -152,13 +158,21 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     },
     payments: {
       enabled: false,
+      paypalPayments: false,
       stripePayments: false,
       stripeSubscriptions: false,
-      paypalPayments: false,
+    },
+    aiIntegration: {
+      enabled: false,
+      imageGeneration: false,
+      textGeneration: false,
+    },
+    realTimeNotifications: {
+      enabled: false,
+      emailNotifications: false,
+      inAppNotifications: false,
     },
     fileStorage: false,
-    realTimeNotifications: false,
-    emailSending: false,
   },
   database: {
     hosting: "supabase",
@@ -168,13 +182,21 @@ const defaultInitialConfiguration: InitialConfigurationType = {
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { startWalkthrough, isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
-  const { data: markdownData, refetch: refetchMarkdownData } = useGetMarkdownData();
+  const {
+    startWalkthrough,
+    isActiveTarget,
+    canAutoProgress,
+    autoProgressWalkthrough,
+  } = useWalkthroughStore();
+  const { data: markdownData, refetch: refetchMarkdownData } =
+    useGetMarkdownData();
   const { refetch: refetchInitialization } = useInitializeMarkdownData();
   const { data: currentVersion } = useContentVersion();
   const {
     darkMode,
     setDarkMode,
+    previewMode,
+    setPreviewMode,
     reset,
     setContent,
     forceRefresh,
@@ -571,14 +593,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       📄 Documentation Updated
                     </div>
                     <div className="text-sm">
-                      The source documentation has been updated. To see
-                      the latest content, you&apos;ll need to reset the
-                      editor.
+                      The source documentation has been updated. To see the
+                      latest content, you&apos;ll need to reset the editor.
                     </div>
                     <div className="text-sm">
                       ⚠️ This will clear your current changes. Consider
-                      downloading your content first if you want to keep
-                      your edits.
+                      downloading your content first if you want to keep your
+                      edits.
                     </div>
                   </div>
                 </PopoverContent>
@@ -781,6 +802,64 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </div>
 
           <div className="flex items-center gap-2">
+            {previewMode && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className={cn(
+                      "px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5",
+                      darkMode
+                        ? "bg-orange-900 text-white"
+                        : "bg-orange-100 border border-orange-500 text-orange-900"
+                    )}
+                  >
+                    <Eye className="h-3 w-3" />
+                    Preview mode (read only)
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-2">
+                    <p>You are currently in preview mode.</p>
+                    <p>
+                      This shows exactly how your content will look when
+                      downloaded.
+                    </p>
+                    <p>Switch back to Edit mode to continue making changes.</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1">
+                  <span
+                    className={cn(
+                      "text-xs",
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    )}
+                  >
+                    Edit
+                  </span>
+                  <Switch
+                    checked={previewMode}
+                    onCheckedChange={setPreviewMode}
+                  />
+                  <span
+                    className={cn(
+                      "text-xs",
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    )}
+                  >
+                    Preview
+                  </span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Toggle between edit mode and processed preview</p>
+              </TooltipContent>
+            </Tooltip>
+
             <IconButton
               onClick={() => setDarkMode(!darkMode)}
               tooltip={

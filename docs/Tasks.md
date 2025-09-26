@@ -2,13 +2,12 @@
 
 ## Active tasks
 
+- [-] Refactor tech stack selection
+- [ ] Add dynamic component example elements
 - [ ] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
-- [ ] test: set and rest single page and all data local and deployed.
-- [ ] Add download preview dialog
-- [-] Refactor initialConfig
+- [ ] test: set and reset single page and all data local and deployed.
 - [ ] Update downloaded content to handle new content (ie PlaceholderNodes, initial config)
-- [ ] Add dynamic component example elements
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
 - [ ] Add labels for options in section nodes
@@ -28,6 +27,7 @@
 
 ## Completed tasks
 
+- [x] Add output preview toggle
 - [x] Progress walkthrough when the user clicks the target element
 - [x] Fix the width of the accordion triggers in the InitialConfig component
 - [x] Refactor parse markdown script to use a server action

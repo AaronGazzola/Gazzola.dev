@@ -134,6 +134,12 @@ const ReactQueryIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const OpenRouterIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M4 4h4v4H4V4zm8 0h8v4h-8V4zM4 12h8v8H4v-8zm12 0h4v4h-4v-4zm0 8h4v4h-4v-4z" />
+  </svg>
+);
+
 interface Technology {
   id: keyof InitialConfigurationType["technologies"];
   name: string;
@@ -154,6 +160,7 @@ const technologies: Technology[] = [
   { id: "resend", name: "Resend", icon: SiResend },
   { id: "stripe", name: "Stripe", icon: SiStripe },
   { id: "paypal", name: "PayPal", icon: SiPaypal },
+  { id: "openrouter", name: "OpenRouter", icon: OpenRouterIcon },
 ];
 
 interface QuestionConfig {
@@ -259,19 +266,38 @@ const questionConfigs: QuestionConfig[] = [
     requiredTechnologies: [],
     subOptions: [
       {
+        id: "paypalPayments",
+        label: "One-time payments with PayPal",
+        description: "Accept one-time payments via PayPal",
+      },
+      {
         id: "stripePayments",
-        label: "One-time Payments",
+        label: "One-time payments with Stripe",
         description: "Accept one-time payments via Stripe",
       },
       {
         id: "stripeSubscriptions",
-        label: "Subscriptions",
-        description: "Recurring subscription billing",
+        label: "Subscription management with Stripe",
+        description: "Recurring subscription billing with Stripe and Better Auth",
+      },
+    ],
+  },
+  {
+    id: "aiIntegration",
+    question: "Do you need AI integration?",
+    description: "AI-powered features for enhanced user experience.",
+    icon: Settings,
+    requiredTechnologies: ["openrouter"],
+    subOptions: [
+      {
+        id: "imageGeneration",
+        label: "Image generation",
+        description: "AI-powered image creation and editing capabilities",
       },
       {
-        id: "paypalPayments",
-        label: "PayPal",
-        description: "Accept payments via PayPal",
+        id: "textGeneration",
+        label: "Text generation",
+        description: "AI-powered content creation and text processing",
       },
     ],
   },
@@ -279,17 +305,21 @@ const questionConfigs: QuestionConfig[] = [
     id: "realTimeNotifications",
     question: "Do you need real-time notifications?",
     description:
-      "Live updates and push notifications using Supabase Realtime for instant data synchronization and user notifications.",
+      "Live updates and push notifications using Supabase Realtime for instant data synchronization.",
     icon: Bell,
     requiredTechnologies: ["supabase"],
-  },
-  {
-    id: "emailSending",
-    question: "Will you send emails to users?",
-    description:
-      "Transactional emails, newsletters, and notifications using Resend for reliable email delivery with excellent developer experience.",
-    icon: Mail,
-    requiredTechnologies: ["resend"],
+    subOptions: [
+      {
+        id: "emailNotifications",
+        label: "Email notifications",
+        description: "Send notifications via email using Resend",
+      },
+      {
+        id: "inAppNotifications",
+        label: "In-app notifications",
+        description: "Real-time notifications within your application",
+      },
+    ],
   },
 ];
 
@@ -304,8 +334,75 @@ const getRequiredTechnologiesForPayments = (
   if (paymentFeatures.paypalPayments) {
     required.push("paypal");
   }
+  if (paymentFeatures.stripeSubscriptions) {
+    required.push("betterAuth");
+  }
 
   return required;
+};
+
+const getRequiredTechnologiesForSubOption = (
+  questionId: string,
+  optionId: string
+): (keyof InitialConfigurationType["technologies"])[] => {
+  const required: (keyof InitialConfigurationType["technologies"])[] = [];
+
+  if (questionId === "payments") {
+    if (optionId === "paypalPayments") {
+      required.push("paypal");
+    } else if (optionId === "stripePayments") {
+      required.push("stripe");
+    } else if (optionId === "stripeSubscriptions") {
+      required.push("stripe", "betterAuth");
+    }
+  } else if (questionId === "authentication") {
+    if (optionId === "magicLink" || optionId === "emailPassword" || optionId === "otp") {
+      required.push("resend");
+    }
+  } else if (questionId === "admin") {
+    if (optionId === "orgAdmins" || optionId === "orgMembers") {
+      required.push("betterAuth");
+    }
+  } else if (questionId === "aiIntegration") {
+    required.push("openrouter");
+  } else if (questionId === "realTimeNotifications") {
+    required.push("supabase");
+    if (optionId === "emailNotifications") {
+      required.push("resend");
+    }
+  }
+
+  return required;
+};
+
+const hasAnyChildrenSelected = (
+  questionId: string,
+  initialConfiguration: InitialConfigurationType
+): boolean => {
+  if (questionId === "payments") {
+    return initialConfiguration.features.payments.paypalPayments ||
+           initialConfiguration.features.payments.stripePayments ||
+           initialConfiguration.features.payments.stripeSubscriptions;
+  } else if (questionId === "admin") {
+    return initialConfiguration.features.admin.superAdmins ||
+           initialConfiguration.features.admin.orgAdmins ||
+           initialConfiguration.features.admin.orgMembers;
+  } else if (questionId === "authentication") {
+    return initialConfiguration.features.authentication.magicLink ||
+           initialConfiguration.features.authentication.emailPassword ||
+           initialConfiguration.features.authentication.otp ||
+           initialConfiguration.features.authentication.googleAuth ||
+           initialConfiguration.features.authentication.githubAuth ||
+           initialConfiguration.features.authentication.appleAuth;
+  } else if (questionId === "aiIntegration") {
+    return initialConfiguration.features.aiIntegration.imageGeneration ||
+           initialConfiguration.features.aiIntegration.textGeneration;
+  } else if (questionId === "realTimeNotifications") {
+    return initialConfiguration.features.realTimeNotifications.emailNotifications ||
+           initialConfiguration.features.realTimeNotifications.inAppNotifications;
+  }
+
+  return false;
 };
 
 export const InitialConfiguration = () => {
@@ -316,6 +413,8 @@ export const InitialConfiguration = () => {
     updateAuthenticationOption,
     updateAdminOption,
     updatePaymentOption,
+    updateAIIntegrationOption,
+    updateRealTimeNotificationsOption,
   } = useEditorStore();
   const { canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
 
@@ -326,6 +425,10 @@ export const InitialConfiguration = () => {
       return initialConfiguration.features.admin.enabled;
     } else if (featureId === "payments") {
       return initialConfiguration.features.payments.enabled;
+    } else if (featureId === "aiIntegration") {
+      return initialConfiguration.features.aiIntegration.enabled;
+    } else if (featureId === "realTimeNotifications") {
+      return initialConfiguration.features.realTimeNotifications.enabled;
     } else if (featureId === "supabaseAuthOnly") {
       return initialConfiguration.questions.supabaseAuthOnly;
     }
@@ -360,7 +463,7 @@ export const InitialConfiguration = () => {
       initialConfiguration.features.authentication.enabled ||
       initialConfiguration.features.admin.enabled ||
       initialConfiguration.features.fileStorage ||
-      initialConfiguration.features.realTimeNotifications;
+      initialConfiguration.features.realTimeNotifications.enabled;
 
     if (hasDatabaseFunctionality) {
       enabledTechs.add("prisma");
@@ -424,7 +527,7 @@ export const InitialConfiguration = () => {
         initialConfiguration.features.authentication.enabled ||
         initialConfiguration.features.admin.enabled ||
         initialConfiguration.features.fileStorage ||
-        initialConfiguration.features.realTimeNotifications;
+        initialConfiguration.features.realTimeNotifications.enabled;
 
       if (hasDatabaseFunctionality) {
         requiredBy.push("Database functionality");
@@ -445,17 +548,25 @@ export const InitialConfiguration = () => {
     ) {
       requiredBy.push("Can users sign in to your app?");
     }
-    if (
-      techId === "resend" &&
-      initialConfiguration.features.authentication.enabled
-    ) {
-      const hasEmailAuth =
-        initialConfiguration.features.authentication.magicLink ||
-        initialConfiguration.features.authentication.emailPassword ||
-        initialConfiguration.features.authentication.otp;
-      if (hasEmailAuth) {
-        requiredBy.push("Email-based authentication methods");
+    if (techId === "resend") {
+      if (initialConfiguration.features.authentication.enabled) {
+        const hasEmailAuth =
+          initialConfiguration.features.authentication.magicLink ||
+          initialConfiguration.features.authentication.emailPassword ||
+          initialConfiguration.features.authentication.otp;
+        if (hasEmailAuth) {
+          requiredBy.push("Email-based authentication methods");
+        }
       }
+      if (initialConfiguration.features.realTimeNotifications.enabled &&
+          initialConfiguration.features.realTimeNotifications.emailNotifications) {
+        requiredBy.push("Email notifications");
+      }
+    }
+
+    if (techId === "openrouter" &&
+        initialConfiguration.features.aiIntegration.enabled) {
+      requiredBy.push("Do you need AI integration?");
     }
 
     if (initialConfiguration.features.payments.enabled) {
@@ -575,6 +686,26 @@ export const InitialConfiguration = () => {
           },
         },
       });
+    } else if (featureId === "aiIntegration") {
+      updateInitialConfiguration({
+        features: {
+          ...initialConfiguration.features,
+          aiIntegration: {
+            ...initialConfiguration.features.aiIntegration,
+            enabled,
+          },
+        },
+      });
+    } else if (featureId === "realTimeNotifications") {
+      updateInitialConfiguration({
+        features: {
+          ...initialConfiguration.features,
+          realTimeNotifications: {
+            ...initialConfiguration.features.realTimeNotifications,
+            enabled,
+          },
+        },
+      });
     } else if (featureId === "supabaseAuthOnly") {
       const updates: Partial<InitialConfigurationType> = {
         questions: {
@@ -678,7 +809,11 @@ export const InitialConfiguration = () => {
         <Accordion type="single" collapsible className="space-y-1">
           {questionConfigs.map((question) => {
             const Icon = question.icon;
-            const isEnabled = getFeatureEnabled(question.id);
+            // If question has children, parent is enabled only if any children are selected
+            // If no children, use the standard enabled state
+            const isEnabled = question.subOptions && question.subOptions.length > 0
+              ? hasAnyChildrenSelected(question.id, initialConfiguration)
+              : getFeatureEnabled(question.id);
             let questionRequiredTechs = question.requiredTechnologies
               .map((techId) => technologies.find((t) => t.id === techId))
               .filter((tech): tech is Technology => tech !== undefined);
@@ -743,14 +878,25 @@ export const InitialConfiguration = () => {
 
                   <Checkbox
                     checked={isEnabled}
+                    disabled={question.subOptions && question.subOptions.length > 0}
                     onCheckedChange={(checked) => {
-                      updateFeature(question.id, checked === true);
+                      // Only allow direct parent interaction if no sub-options exist
+                      if (question.subOptions && question.subOptions.length > 0) {
+                        return;
+                      }
+
+                      const isChecking = checked === true;
+                      updateFeature(question.id, isChecking);
+
                       if (canAutoProgress("initial-configuration")) {
                         autoProgressWalkthrough();
                       }
                     }}
                     className={cn(
-                      "size-5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
+                      "size-5 border border-gray-500 select-none",
+                      question.subOptions && question.subOptions.length > 0
+                        ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed"
+                        : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
                     )}
                   />
                 </div>
@@ -771,69 +917,102 @@ export const InitialConfiguration = () => {
                                 "opacity-50 cursor-not-allowed"
                             )}
                           >
-                            <Checkbox
-                              checked={
-                                question.id === "payments"
-                                  ? initialConfiguration.features.payments[
-                                      option.id as keyof typeof initialConfiguration.features.payments
-                                    ] || false
-                                  : question.id === "admin"
-                                    ? initialConfiguration.features.admin[
+                            {question.id === "admin" &&
+                            (option.id === "orgAdmins" || option.id === "orgMembers") &&
+                            initialConfiguration.questions.supabaseAuthOnly ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Checkbox
+                                    checked={
+                                      initialConfiguration.features.admin[
                                         option.id as keyof typeof initialConfiguration.features.admin
                                       ] || false
-                                    : question.id === "authentication"
-                                      ? initialConfiguration.features
-                                          .authentication[
-                                          option.id as keyof typeof initialConfiguration.features.authentication
+                                    }
+                                    disabled={true}
+                                    className={cn(
+                                      "size-4 mt-0.5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white select-none"
+                                    )}
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Disabled when using Supabase-only authentication</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              <Checkbox
+                                checked={
+                                  question.id === "payments"
+                                    ? initialConfiguration.features.payments[
+                                        option.id as keyof typeof initialConfiguration.features.payments
+                                      ] || false
+                                    : question.id === "admin"
+                                      ? initialConfiguration.features.admin[
+                                          option.id as keyof typeof initialConfiguration.features.admin
                                         ] || false
-                                      : false
-                              }
-                              disabled={
-                                question.id === "admin" &&
-                                (option.id === "orgAdmins" ||
-                                  option.id === "orgMembers") &&
-                                initialConfiguration.questions.supabaseAuthOnly
-                              }
-                              onCheckedChange={(checked) => {
-                                if (
-                                  checked &&
-                                  !getFeatureEnabled(question.id)
-                                ) {
-                                  updateFeature(question.id, true);
+                                      : question.id === "authentication"
+                                        ? initialConfiguration.features
+                                            .authentication[
+                                            option.id as keyof typeof initialConfiguration.features.authentication
+                                          ] || false
+                                        : question.id === "aiIntegration"
+                                          ? initialConfiguration.features
+                                              .aiIntegration[
+                                              option.id as keyof typeof initialConfiguration.features.aiIntegration
+                                            ] || false
+                                          : question.id === "realTimeNotifications"
+                                            ? initialConfiguration.features
+                                                .realTimeNotifications[
+                                                option.id as keyof typeof initialConfiguration.features.realTimeNotifications
+                                              ] || false
+                                            : false
                                 }
+                                onCheckedChange={(checked) => {
+                                  // Check if this sub-item is disabled and should not trigger updates
+                                  const isSubItemDisabled = question.id === "admin" &&
+                                    (option.id === "orgAdmins" || option.id === "orgMembers") &&
+                                    initialConfiguration.questions.supabaseAuthOnly;
 
-                                if (question.id === "payments") {
-                                  updatePaymentOption(
-                                    option.id,
-                                    checked === true
-                                  );
-                                } else if (question.id === "admin") {
-                                  if (
-                                    initialConfiguration.questions
-                                      .supabaseAuthOnly &&
-                                    (option.id === "orgAdmins" ||
-                                      option.id === "orgMembers")
-                                  ) {
+                                  // Early return if trying to check a disabled item
+                                  if (checked && isSubItemDisabled) {
                                     return;
                                   }
-                                  updateAdminOption(
-                                    option.id,
-                                    checked === true
-                                  );
-                                } else if (question.id === "authentication") {
-                                  updateAuthenticationOption(
-                                    option.id,
-                                    checked === true
-                                  );
-                                }
-                                if (canAutoProgress("initial-configuration")) {
-                                  autoProgressWalkthrough();
-                                }
-                              }}
-                              className={cn(
-                                "size-4 mt-0.5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
-                              )}
-                            />
+
+                                  // Update the specific sub-option - parent state will update automatically
+                                  if (question.id === "payments") {
+                                    updatePaymentOption(
+                                      option.id,
+                                      checked === true
+                                    );
+                                  } else if (question.id === "admin") {
+                                    updateAdminOption(
+                                      option.id,
+                                      checked === true
+                                    );
+                                  } else if (question.id === "authentication") {
+                                    updateAuthenticationOption(
+                                      option.id,
+                                      checked === true
+                                    );
+                                  } else if (question.id === "aiIntegration") {
+                                    updateAIIntegrationOption(
+                                      option.id,
+                                      checked === true
+                                    );
+                                  } else if (question.id === "realTimeNotifications") {
+                                    updateRealTimeNotificationsOption(
+                                      option.id,
+                                      checked === true
+                                    );
+                                  }
+                                  if (canAutoProgress("initial-configuration")) {
+                                    autoProgressWalkthrough();
+                                  }
+                                }}
+                                className={cn(
+                                  "size-4 mt-0.5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white select-none"
+                                )}
+                              />
+                            )}
                             <div>
                               <span
                                 className={cn(
@@ -851,6 +1030,67 @@ export const InitialConfiguration = () => {
                               >
                                 {option.description}
                               </span>
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {getRequiredTechnologiesForSubOption(question.id, option.id).map((techId) => {
+                                  const tech = technologies.find((t) => t.id === techId);
+                                  if (!tech) return null;
+
+                                  const Icon = tech.icon;
+
+                                  // Check if this specific sub-option is selected
+                                  const isSubOptionSelected = question.id === "payments"
+                                    ? initialConfiguration.features.payments[
+                                        option.id as keyof typeof initialConfiguration.features.payments
+                                      ] || false
+                                    : question.id === "admin"
+                                      ? initialConfiguration.features.admin[
+                                          option.id as keyof typeof initialConfiguration.features.admin
+                                        ] || false
+                                      : question.id === "authentication"
+                                        ? initialConfiguration.features.authentication[
+                                            option.id as keyof typeof initialConfiguration.features.authentication
+                                          ] || false
+                                        : question.id === "aiIntegration"
+                                          ? initialConfiguration.features.aiIntegration[
+                                              option.id as keyof typeof initialConfiguration.features.aiIntegration
+                                            ] || false
+                                          : question.id === "realTimeNotifications"
+                                            ? initialConfiguration.features.realTimeNotifications[
+                                                option.id as keyof typeof initialConfiguration.features.realTimeNotifications
+                                              ] || false
+                                            : false;
+
+                                  // Badge is active only if technology is enabled AND this specific sub-option is selected
+                                  const isBadgeActive = initialConfiguration.technologies[techId] && isSubOptionSelected;
+
+                                  const isAvailable = question.id === "payments" ?
+                                    (option.id !== "stripeSubscriptions" || !initialConfiguration.questions.supabaseAuthOnly) :
+                                    question.id === "admin" ?
+                                      (option.id === "superAdmins" || !initialConfiguration.questions.supabaseAuthOnly) :
+                                      true;
+
+                                  return (
+                                    <div
+                                      key={techId}
+                                      className={cn(
+                                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border",
+                                        !isAvailable
+                                          ? "bg-gray-200 text-gray-400 border-gray-300 line-through"
+                                          : isBadgeActive
+                                            ? darkMode
+                                              ? "bg-black text-white border-gray-600"
+                                              : "bg-black text-white border-gray-400"
+                                            : darkMode
+                                              ? "bg-gray-800 text-gray-400 border-gray-600"
+                                              : "bg-gray-100 text-gray-500 border-gray-300"
+                                      )}
+                                    >
+                                      <Icon className="w-3 h-3" />
+                                      <span>{tech.name}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             </div>
                           </label>
                         ))}

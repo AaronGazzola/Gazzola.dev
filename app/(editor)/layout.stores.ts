@@ -45,6 +45,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     resend: false,
     stripe: false,
     paypal: false,
+    openrouter: false,
   },
   questions: {
     supabaseAuthOnly: false,
@@ -67,13 +68,21 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     },
     payments: {
       enabled: false,
+      paypalPayments: false,
       stripePayments: false,
       stripeSubscriptions: false,
-      paypalPayments: false,
+    },
+    aiIntegration: {
+      enabled: false,
+      imageGeneration: false,
+      textGeneration: false,
+    },
+    realTimeNotifications: {
+      enabled: false,
+      emailNotifications: false,
+      inAppNotifications: false,
     },
     fileStorage: false,
-    realTimeNotifications: false,
-    emailSending: false,
   },
   database: {
     hosting: "supabase",
@@ -193,6 +202,7 @@ const createInitialState = (data: MarkdownData) => ({
   version: STORE_VERSION,
   data,
   darkMode: true,
+  previewMode: false,
   refreshKey: 0,
   visitedPages: [getFirstPagePath(data)],
   appStructure: defaultAppStructure,
@@ -254,6 +264,7 @@ export const useEditorStore = create<EditorState>()(
         return state.data.flatIndex[path] || null;
       },
       setDarkMode: (darkMode) => set({ darkMode }),
+      setPreviewMode: (previewMode: boolean) => set({ previewMode }),
       markPageVisited: (path) =>
         set((state) => ({
           visitedPages: state.visitedPages.includes(path)
@@ -461,15 +472,21 @@ export const useEditorStore = create<EditorState>()(
                       ...updates.features.payments,
                     }
                   : state.initialConfiguration.features.payments,
+                aiIntegration: updates.features.aiIntegration
+                  ? {
+                      ...state.initialConfiguration.features.aiIntegration,
+                      ...updates.features.aiIntegration,
+                    }
+                  : state.initialConfiguration.features.aiIntegration,
+                realTimeNotifications: updates.features.realTimeNotifications
+                  ? {
+                      ...state.initialConfiguration.features.realTimeNotifications,
+                      ...updates.features.realTimeNotifications,
+                    }
+                  : state.initialConfiguration.features.realTimeNotifications,
                 fileStorage: updates.features.fileStorage !== undefined
                   ? updates.features.fileStorage
                   : state.initialConfiguration.features.fileStorage,
-                realTimeNotifications: updates.features.realTimeNotifications !== undefined
-                  ? updates.features.realTimeNotifications
-                  : state.initialConfiguration.features.realTimeNotifications,
-                emailSending: updates.features.emailSending !== undefined
-                  ? updates.features.emailSending
-                  : state.initialConfiguration.features.emailSending,
               }
             : state.initialConfiguration.features;
 
@@ -492,7 +509,7 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.authentication.enabled ||
             newFeatures.admin.enabled ||
             newFeatures.fileStorage ||
-            newFeatures.realTimeNotifications;
+            newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
             newTechnologies.prisma = true;
@@ -553,7 +570,7 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.authentication.enabled ||
             newFeatures.admin.enabled ||
             newFeatures.fileStorage ||
-            newFeatures.realTimeNotifications;
+            newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
             techUpdates.prisma = true;
@@ -596,7 +613,7 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.authentication.enabled ||
             newFeatures.admin.enabled ||
             newFeatures.fileStorage ||
-            newFeatures.realTimeNotifications;
+            newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
             techUpdates.prisma = true;
@@ -627,6 +644,9 @@ export const useEditorStore = create<EditorState>()(
                 return state;
               }
               techUpdates.stripe = true;
+              if (optionId === "stripeSubscriptions") {
+                techUpdates.betterAuth = true;
+              }
             }
             if (optionId === "paypalPayments") {
               techUpdates.paypal = true;
@@ -641,6 +661,78 @@ export const useEditorStore = create<EditorState>()(
                 ...state.initialConfiguration.features,
                 payments: {
                   ...state.initialConfiguration.features.payments,
+                  enabled: true,
+                  [optionId]: enabled,
+                },
+              },
+            },
+          };
+        });
+      },
+      updateAIIntegrationOption: (optionId: string, enabled: boolean) => {
+        set((state) => {
+          const techUpdates: InitialConfigurationType["technologies"] = {
+            ...state.initialConfiguration.technologies,
+            nextjs: true,
+            tailwindcss: true,
+            shadcn: true,
+          };
+
+          if (enabled) {
+            techUpdates.openrouter = true;
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              technologies: techUpdates,
+              features: {
+                ...state.initialConfiguration.features,
+                aiIntegration: {
+                  ...state.initialConfiguration.features.aiIntegration,
+                  enabled: true,
+                  [optionId]: enabled,
+                },
+              },
+            },
+          };
+        });
+      },
+      updateRealTimeNotificationsOption: (optionId: string, enabled: boolean) => {
+        set((state) => {
+          const techUpdates: InitialConfigurationType["technologies"] = {
+            ...state.initialConfiguration.technologies,
+            nextjs: true,
+            tailwindcss: true,
+            shadcn: true,
+          };
+
+          if (enabled) {
+            techUpdates.supabase = true;
+            if (optionId === "emailNotifications") {
+              techUpdates.resend = true;
+            }
+          }
+
+          const hasDatabaseFunctionality =
+            state.initialConfiguration.features.authentication.enabled ||
+            state.initialConfiguration.features.admin.enabled ||
+            state.initialConfiguration.features.fileStorage ||
+            true;
+
+          if (hasDatabaseFunctionality) {
+            techUpdates.prisma = true;
+            techUpdates.postgresql = true;
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              technologies: techUpdates,
+              features: {
+                ...state.initialConfiguration.features,
+                realTimeNotifications: {
+                  ...state.initialConfiguration.features.realTimeNotifications,
                   enabled: true,
                   [optionId]: enabled,
                 },
@@ -685,6 +777,7 @@ export const useEditorStore = create<EditorState>()(
         version: state.version,
         data: state.data,
         darkMode: state.darkMode,
+        previewMode: state.previewMode,
         visitedPages: state.visitedPages,
         appStructure: state.appStructure,
         placeholderValues: state.placeholderValues,

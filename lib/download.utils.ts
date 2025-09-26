@@ -199,8 +199,9 @@ const generateInitialConfigurationContent = (initialConfiguration: InitialConfig
     }
 
     if (techId === "resend") {
-      if (initialConfiguration.features.emailSending) {
-        reasons.push("Email sending");
+      if (initialConfiguration.features.realTimeNotifications.enabled &&
+          initialConfiguration.features.realTimeNotifications.emailNotifications) {
+        reasons.push("Email notifications");
       }
       if (initialConfiguration.features.authentication.enabled) {
         const hasEmailAuth = initialConfiguration.features.authentication.magicLink ||
@@ -314,11 +315,11 @@ const generateInitialConfigurationContent = (initialConfiguration: InitialConfig
   if (initialConfiguration.features.fileStorage) {
     otherFeatures.push("File Storage");
   }
-  if (initialConfiguration.features.realTimeNotifications) {
+  if (initialConfiguration.features.realTimeNotifications.enabled) {
     otherFeatures.push("Real-time Notifications");
   }
-  if (initialConfiguration.features.emailSending) {
-    otherFeatures.push("Email Sending");
+  if (initialConfiguration.features.aiIntegration.enabled) {
+    otherFeatures.push("AI Integration");
   }
 
   if (otherFeatures.length > 0) {

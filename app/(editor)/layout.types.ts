@@ -68,6 +68,7 @@ export interface InitialConfigurationType {
     resend: boolean;
     stripe: boolean;
     paypal: boolean;
+    openrouter: boolean;
   };
   questions: {
     supabaseAuthOnly: boolean;
@@ -90,13 +91,21 @@ export interface InitialConfigurationType {
     };
     payments: {
       enabled: boolean;
+      paypalPayments: boolean;
       stripePayments: boolean;
       stripeSubscriptions: boolean;
-      paypalPayments: boolean;
+    };
+    aiIntegration: {
+      enabled: boolean;
+      imageGeneration: boolean;
+      textGeneration: boolean;
+    };
+    realTimeNotifications: {
+      enabled: boolean;
+      emailNotifications: boolean;
+      inAppNotifications: boolean;
     };
     fileStorage: boolean;
-    realTimeNotifications: boolean;
-    emailSending: boolean;
   };
   database: {
     hosting: "supabase" | "postgresql";
@@ -107,6 +116,7 @@ export interface EditorState {
   version: number;
   data: MarkdownData;
   darkMode: boolean;
+  previewMode: boolean;
   refreshKey: number;
   visitedPages: string[];
   appStructure: FileSystemEntry[];
@@ -117,6 +127,7 @@ export interface EditorState {
   setContent: (path: string, content: string) => void;
   getNode: (path: string) => MarkdownNode | null;
   setDarkMode: (darkMode: boolean) => void;
+  setPreviewMode: (previewMode: boolean) => void;
   markPageVisited: (path: string) => void;
   isPageVisited: (path: string) => boolean;
   getNextUnvisitedPage: (currentPath: string) => string | null;
@@ -164,6 +175,8 @@ export interface EditorState {
   updateAuthenticationOption: (optionId: string, enabled: boolean) => void;
   updateAdminOption: (optionId: string, enabled: boolean) => void;
   updatePaymentOption: (optionId: string, enabled: boolean) => void;
+  updateAIIntegrationOption: (optionId: string, enabled: boolean) => void;
+  updateRealTimeNotificationsOption: (optionId: string, enabled: boolean) => void;
   setMarkdownData: (data: MarkdownData) => void;
   refreshMarkdownData: () => void;
   reset: () => void;
