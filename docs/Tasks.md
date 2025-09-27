@@ -2,9 +2,9 @@
 
 ## Active tasks
 
-- [-] Refactor tech stack selection
-- [ ] Add dynamic component example elements
-- [ ] Update `markdown-data.md`
+- [ ] Add wire-frame page and layout builder component
+- [ ] Add dynamic component theme and styling page
+- [-] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
 - [ ] test: set and reset single page and all data local and deployed.
 - [ ] Update downloaded content to handle new content (ie PlaceholderNodes, initial config)
@@ -27,6 +27,7 @@
 
 ## Completed tasks
 
+- [x] Refactor tech stack selection
 - [x] Add output preview toggle
 - [x] Progress walkthrough when the user clicks the target element
 - [x] Fix the width of the accordion triggers in the InitialConfig component

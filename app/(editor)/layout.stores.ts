@@ -5,6 +5,10 @@ import {
   FileSystemEntry,
   InitialConfigurationType,
   MarkdownData,
+  WireframeData,
+  WireframeElement,
+  WireframeElementType,
+  WireframeState,
 } from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
@@ -87,6 +91,20 @@ const defaultInitialConfiguration: InitialConfigurationType = {
   database: {
     hosting: "supabase",
   },
+};
+
+const defaultWireframeState: WireframeState = {
+  currentPageIndex: 0,
+  totalPages: 0,
+  availablePages: [],
+  wireframeData: {
+    layouts: {},
+    pages: {},
+  },
+  isConfigPopoverOpen: false,
+  selectedElementType: null,
+  selectedType: null,
+  selectedPath: null,
 };
 
 const updateNode = (
@@ -209,6 +227,7 @@ const createInitialState = (data: MarkdownData) => ({
   placeholderValues: {},
   initialConfiguration: defaultInitialConfiguration,
   storedContentVersion: data.contentVersion,
+  wireframeState: defaultWireframeState,
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -755,7 +774,6 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         set({
           ...createInitialState(state.data),
-          storedContentVersion: state.data.contentVersion,
         });
       },
       resetToLatestData: () => {
@@ -769,6 +787,203 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({ refreshKey: state.refreshKey + 1 })),
       setRefreshKey: (key: number) =>
         set({ refreshKey: key }),
+      setWireframeCurrentPage: (pageIndex: number) => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            currentPageIndex: pageIndex,
+          },
+        }));
+      },
+      getWireframeCurrentPage: () => {
+        const state = get();
+        const { currentPageIndex, availablePages } = state.wireframeState;
+        return availablePages[currentPageIndex] || null;
+      },
+      addWireframeElement: (
+        targetPath: string,
+        targetType: "layout" | "page",
+        element: WireframeElement
+      ) => {
+        set((state) => {
+          const newWireframeData = { ...state.wireframeState.wireframeData };
+
+          if (targetType === "layout") {
+            if (!newWireframeData.layouts[targetPath]) {
+              newWireframeData.layouts[targetPath] = {
+                layoutPath: targetPath,
+                elements: [],
+              };
+            }
+            newWireframeData.layouts[targetPath].elements.push(element);
+          } else {
+            if (!newWireframeData.pages[targetPath]) {
+              newWireframeData.pages[targetPath] = {
+                pagePath: targetPath,
+                elements: [],
+              };
+            }
+            newWireframeData.pages[targetPath].elements.push(element);
+          }
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              wireframeData: newWireframeData,
+            },
+          };
+        });
+      },
+      removeWireframeElement: (
+        targetPath: string,
+        targetType: "layout" | "page",
+        elementId: string
+      ) => {
+        set((state) => {
+          const newWireframeData = { ...state.wireframeState.wireframeData };
+
+          if (targetType === "layout" && newWireframeData.layouts[targetPath]) {
+            newWireframeData.layouts[targetPath].elements =
+              newWireframeData.layouts[targetPath].elements.filter(
+                (el) => el.id !== elementId
+              );
+          } else if (targetType === "page" && newWireframeData.pages[targetPath]) {
+            newWireframeData.pages[targetPath].elements =
+              newWireframeData.pages[targetPath].elements.filter(
+                (el) => el.id !== elementId
+              );
+          }
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              wireframeData: newWireframeData,
+            },
+          };
+        });
+      },
+      updateWireframeElement: (
+        targetPath: string,
+        targetType: "layout" | "page",
+        elementId: string,
+        updates: Partial<WireframeElement>
+      ) => {
+        set((state) => {
+          const newWireframeData = { ...state.wireframeState.wireframeData };
+
+          if (targetType === "layout" && newWireframeData.layouts[targetPath]) {
+            newWireframeData.layouts[targetPath].elements =
+              newWireframeData.layouts[targetPath].elements.map((el) =>
+                el.id === elementId ? { ...el, ...updates } : el
+              );
+          } else if (targetType === "page" && newWireframeData.pages[targetPath]) {
+            newWireframeData.pages[targetPath].elements =
+              newWireframeData.pages[targetPath].elements.map((el) =>
+                el.id === elementId ? { ...el, ...updates } : el
+              );
+          }
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              wireframeData: newWireframeData,
+            },
+          };
+        });
+      },
+      initializeWireframePages: () => {
+        set((state) => {
+          const extractPagePaths = (
+            entries: FileSystemEntry[],
+            parentPath: string = "",
+            isRoot: boolean = false
+          ): string[] => {
+            const paths: string[] = [];
+
+            entries.forEach((entry) => {
+              if (entry.name === "app" && isRoot) {
+                if (entry.children) {
+                  const hasRootPageFile = entry.children.some(
+                    (child) => child.type === "file" && child.name === "page.tsx"
+                  );
+                  if (hasRootPageFile) {
+                    paths.push("/");
+                  }
+                  paths.push(...extractPagePaths(entry.children, "", false));
+                }
+                return;
+              }
+
+              if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+                if (entry.children) {
+                  const routeGroupPath = parentPath
+                    ? `${parentPath}/${entry.name}`
+                    : `/${entry.name}`;
+                  paths.push(...extractPagePaths(entry.children, routeGroupPath, false));
+                }
+                return;
+              }
+
+              if (entry.type === "directory" && entry.children) {
+                const newPath = parentPath
+                  ? `${parentPath}/${entry.name}`
+                  : `/${entry.name}`;
+
+                const hasPageFile = entry.children.some(
+                  (child) => child.type === "file" && child.name === "page.tsx"
+                );
+
+                if (hasPageFile) {
+                  paths.push(newPath);
+                }
+
+                paths.push(...extractPagePaths(entry.children, newPath, false));
+              }
+            });
+
+            return paths;
+          };
+
+          const extractedPages = extractPagePaths(state.appStructure, "", true);
+          const availablePages = Array.from(new Set(extractedPages)).sort();
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              availablePages,
+              totalPages: availablePages.length,
+              currentPageIndex: 0,
+            },
+          };
+        });
+      },
+      setWireframeConfigPopover: (open: boolean, elementType?: WireframeElementType) => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            isConfigPopoverOpen: open,
+            selectedElementType: elementType || null,
+          },
+        }));
+      },
+      selectWireframeItem: (type: "page" | "layout", path: string) => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            selectedType: type,
+            selectedPath: path,
+          },
+        }));
+      },
+      clearWireframeSelection: () => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            selectedType: null,
+            selectedPath: null,
+          },
+        }));
+      },
     }),
     {
       name: "editor-storage",
@@ -783,6 +998,7 @@ export const useEditorStore = create<EditorState>()(
         placeholderValues: state.placeholderValues,
         initialConfiguration: state.initialConfiguration,
         storedContentVersion: state.storedContentVersion,
+        wireframeState: state.wireframeState,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {

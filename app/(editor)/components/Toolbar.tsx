@@ -57,6 +57,7 @@ import {
   useGetMarkdownData,
   useInitializeMarkdownData,
 } from "../layout.hooks";
+import { parseMarkdownAction } from "../layout.actions";
 import { useEditorStore } from "../layout.stores";
 import { FileSystemEntry, InitialConfigurationType } from "../layout.types";
 
@@ -213,6 +214,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
+  const [resetAllLoading, setResetAllLoading] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [appStructureSheetOpen, setAppStructureSheetOpen] = useState(false);
@@ -372,24 +374,42 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleResetAll = async () => {
+    setResetAllLoading(true);
     try {
+      console.log("Starting reset all process...");
+
+      console.log("Running markdown parser...");
+      const { error: parseError } = await parseMarkdownAction();
+      if (parseError) {
+        console.error("Failed to parse markdown:", parseError);
+        alert("Failed to parse markdown files. Please check the console for details.");
+        return;
+      }
+      console.log("Markdown parsing completed successfully");
+
       queryClient.invalidateQueries({ queryKey: ["markdownData"] });
       queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
       const { data: freshData, error } = await refetchMarkdownData();
       if (error) {
         console.error("Failed to get markdown data:", error);
+        alert("Failed to fetch updated markdown data. Please try again.");
         return;
       }
 
-      if (freshData) {
+      if (freshData && currentVersion) {
         const firstPagePath = Object.values(freshData.flatIndex)
           .filter((node) => node.type === "file" && node.include !== false)
           .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
         const resetKey = Date.now();
 
-        setMarkdownData(freshData);
+        const updatedData = {
+          ...freshData,
+          contentVersion: currentVersion,
+        };
+
+        setMarkdownData(updatedData);
         reset();
         setRefreshKey(resetKey);
 
@@ -402,7 +422,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       setResetAllDialogOpen(false);
     } catch (error) {
       console.error("Failed to reset markdown data:", error);
+      alert("An unexpected error occurred during reset. Please try again.");
       setResetAllDialogOpen(false);
+    } finally {
+      setResetAllLoading(false);
     }
   };
 
@@ -425,6 +448,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   }, [allPages, currentPageIndex]);
 
   const isContentStale = useMemo(() => {
+    console.log({ currentVersion, storedContentVersion });
     if (!currentVersion) return false;
     if (!storedContentVersion) return true;
     return storedContentVersion !== currentVersion;
@@ -633,13 +657,16 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <button
                     className={cn(
                       "px-4 py-2 rounded-md transition-colors",
-                      darkMode
-                        ? "bg-red-700 text-red-100 hover:bg-red-600"
-                        : "bg-red-600 text-red-100 hover:bg-red-700"
+                      resetAllLoading
+                        ? "opacity-50 cursor-not-allowed bg-gray-500"
+                        : darkMode
+                          ? "bg-red-700 text-red-100 hover:bg-red-600"
+                          : "bg-red-600 text-red-100 hover:bg-red-700"
                     )}
                     onClick={handleResetAll}
+                    disabled={resetAllLoading}
                   >
-                    Reset All
+                    {resetAllLoading ? "Resetting..." : "Reset All"}
                   </button>
                 </DialogFooter>
               </DialogContent>

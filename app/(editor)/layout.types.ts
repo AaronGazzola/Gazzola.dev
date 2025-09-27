@@ -183,6 +183,29 @@ export interface EditorState {
   resetToLatestData: () => void;
   forceRefresh: () => void;
   setRefreshKey: (key: number) => void;
+  wireframeState: WireframeState;
+  setWireframeCurrentPage: (pageIndex: number) => void;
+  getWireframeCurrentPage: () => string | null;
+  addWireframeElement: (
+    targetPath: string,
+    targetType: "layout" | "page",
+    element: WireframeElement
+  ) => void;
+  removeWireframeElement: (
+    targetPath: string,
+    targetType: "layout" | "page",
+    elementId: string
+  ) => void;
+  updateWireframeElement: (
+    targetPath: string,
+    targetType: "layout" | "page",
+    elementId: string,
+    updates: Partial<WireframeElement>
+  ) => void;
+  initializeWireframePages: () => void;
+  setWireframeConfigPopover: (open: boolean, elementType?: WireframeElementType) => void;
+  selectWireframeItem: (type: "page" | "layout", path: string) => void;
+  clearWireframeSelection: () => void;
 }
 
 export interface NavigationItem {
@@ -206,4 +229,52 @@ export interface FileSystemEntry {
   type: "file" | "directory";
   children?: FileSystemEntry[];
   isExpanded?: boolean;
+}
+
+export type WireframeElementType =
+  | "header"
+  | "sidebar-left"
+  | "sidebar-right"
+  | "footer"
+  | "form"
+  | "table"
+  | "tabs"
+  | "accordion";
+
+export interface WireframeElement {
+  id: string;
+  type: WireframeElementType;
+  label: string;
+  config: {
+    width?: "sm" | "md" | "lg" | "xl" | "full";
+    height?: "sm" | "md" | "lg" | "xl" | "auto";
+    position?: "top" | "bottom" | "left" | "right" | "center";
+    variant?: "primary" | "secondary" | "outline";
+  };
+}
+
+export interface WireframeLayoutData {
+  layoutPath: string;
+  elements: WireframeElement[];
+}
+
+export interface WireframePageData {
+  pagePath: string;
+  elements: WireframeElement[];
+}
+
+export interface WireframeData {
+  layouts: Record<string, WireframeLayoutData>;
+  pages: Record<string, WireframePageData>;
+}
+
+export interface WireframeState {
+  currentPageIndex: number;
+  totalPages: number;
+  availablePages: string[];
+  wireframeData: WireframeData;
+  isConfigPopoverOpen: boolean;
+  selectedElementType: WireframeElementType | null;
+  selectedType: "page" | "layout" | null;
+  selectedPath: string | null;
 }

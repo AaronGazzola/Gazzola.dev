@@ -25,7 +25,7 @@
             "order": 1,
             "path": "starthere.techstack",
             "urlPath": "/starthere/techstack",
-            "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+            "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
             "components": [
               {
                 "id": "component-InitialConfiguration",
@@ -49,8 +49,18 @@
             "order": 2,
             "path": "starthere.appdirectory",
             "urlPath": "/starthere/appdirectory",
-            "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+            "content": "# App directory structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
             "components": [
+              {
+                "id": "component-WireFrame",
+                "name": "WireFrame",
+                "displayName": "WireFrame",
+                "type": "component",
+                "path": "appdirectory.component.WireFrame",
+                "urlPath": "",
+                "componentId": "WireFrame",
+                "include": true
+              },
               {
                 "id": "component-AppStructure",
                 "name": "AppStructure",
@@ -96,7 +106,7 @@
               "order": 1,
               "path": "starthere.techstack",
               "urlPath": "/starthere/techstack",
-              "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+              "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
               "components": [
                 {
                   "id": "component-InitialConfiguration",
@@ -120,8 +130,18 @@
               "order": 2,
               "path": "starthere.appdirectory",
               "urlPath": "/starthere/appdirectory",
-              "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+              "content": "# App directory structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
               "components": [
+                {
+                  "id": "component-WireFrame",
+                  "name": "WireFrame",
+                  "displayName": "WireFrame",
+                  "type": "component",
+                  "path": "appdirectory.component.WireFrame",
+                  "urlPath": "",
+                  "componentId": "WireFrame",
+                  "include": true
+                },
                 {
                   "id": "component-AppStructure",
                   "name": "AppStructure",
@@ -157,7 +177,7 @@
           "order": 1,
           "path": "starthere.techstack",
           "urlPath": "/starthere/techstack",
-          "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+          "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
           "components": [
             {
               "id": "component-InitialConfiguration",
@@ -181,8 +201,18 @@
           "order": 2,
           "path": "starthere.appdirectory",
           "urlPath": "/starthere/appdirectory",
-          "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+          "content": "# App directory structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
           "components": [
+            {
+              "id": "component-WireFrame",
+              "name": "WireFrame",
+              "displayName": "WireFrame",
+              "type": "component",
+              "path": "appdirectory.component.WireFrame",
+              "urlPath": "",
+              "componentId": "WireFrame",
+              "include": true
+            },
             {
               "id": "component-AppStructure",
               "name": "AppStructure",
@@ -207,7 +237,7 @@
       "order": 1,
       "path": "starthere.techstack",
       "urlPath": "/starthere/techstack",
-      "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+      "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
       "components": [
         {
           "id": "component-InitialConfiguration",
@@ -241,8 +271,18 @@
       "order": 2,
       "path": "starthere.appdirectory",
       "urlPath": "/starthere/appdirectory",
-      "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+      "content": "# App directory structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
       "components": [
+        {
+          "id": "component-WireFrame",
+          "name": "WireFrame",
+          "displayName": "WireFrame",
+          "type": "component",
+          "path": "appdirectory.component.WireFrame",
+          "urlPath": "",
+          "componentId": "WireFrame",
+          "include": true
+        },
         {
           "id": "component-AppStructure",
           "name": "AppStructure",
@@ -257,6 +297,16 @@
       "sections": {},
       "include": true
     },
+    "appdirectory.component.WireFrame": {
+      "id": "component-WireFrame",
+      "name": "WireFrame",
+      "displayName": "WireFrame",
+      "type": "component",
+      "path": "appdirectory.component.WireFrame",
+      "urlPath": "",
+      "componentId": "WireFrame",
+      "include": true
+    },
     "appdirectory.component.AppStructure": {
       "id": "component-AppStructure",
       "name": "AppStructure",
@@ -268,5 +318,5 @@
       "include": true
     }
   },
-  "contentVersion": 8
+  "contentVersion": 9
 }
