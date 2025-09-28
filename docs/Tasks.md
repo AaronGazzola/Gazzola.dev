@@ -114,4 +114,5 @@
   - Bug fixes 29%
   - New features 14%
   - e2e and unit tests 14%
-- [ ] Research Codex
+- [x] Research Codex
+- [ ] N8N
