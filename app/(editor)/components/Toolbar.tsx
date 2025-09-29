@@ -24,18 +24,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import configuration from "@/configuration";
-import { walkthroughSteps } from "@/public/data/walkthrough/steps";
 import { cn } from "@/lib/tailwind.utils";
+import { walkthroughSteps } from "@/public/data/walkthrough/steps";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
   ChevronRight,
+  Eye,
   File,
   Files,
   Folder,
@@ -50,8 +52,12 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { useContentVersion, useGetMarkdownData, useInitializeMarkdownData } from "../layout.hooks";
+import {
+  useContentVersion,
+  useGetMarkdownData,
+  useInitializeMarkdownData,
+} from "../layout.hooks";
+import { parseMarkdownAction } from "../layout.actions";
 import { useEditorStore } from "../layout.stores";
 import { FileSystemEntry, InitialConfigurationType } from "../layout.types";
 
@@ -130,6 +136,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     resend: false,
     stripe: false,
     paypal: false,
+    openrouter: false,
   },
   questions: {
     supabaseAuthOnly: false,
@@ -152,13 +159,21 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     },
     payments: {
       enabled: false,
+      paypalPayments: false,
       stripePayments: false,
       stripeSubscriptions: false,
-      paypalPayments: false,
+    },
+    aiIntegration: {
+      enabled: false,
+      imageGeneration: false,
+      textGeneration: false,
+    },
+    realTimeNotifications: {
+      enabled: false,
+      emailNotifications: false,
+      inAppNotifications: false,
     },
     fileStorage: false,
-    realTimeNotifications: false,
-    emailSending: false,
   },
   database: {
     hosting: "supabase",
@@ -168,13 +183,21 @@ const defaultInitialConfiguration: InitialConfigurationType = {
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { startWalkthrough, isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
-  const { data: markdownData, refetch: refetchMarkdownData } = useGetMarkdownData();
+  const {
+    startWalkthrough,
+    isActiveTarget,
+    canAutoProgress,
+    autoProgressWalkthrough,
+  } = useWalkthroughStore();
+  const { data: markdownData, refetch: refetchMarkdownData } =
+    useGetMarkdownData();
   const { refetch: refetchInitialization } = useInitializeMarkdownData();
   const { data: currentVersion } = useContentVersion();
   const {
     darkMode,
     setDarkMode,
+    previewMode,
+    setPreviewMode,
     reset,
     setContent,
     forceRefresh,
@@ -191,6 +214,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
+  const [resetAllLoading, setResetAllLoading] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [appStructureSheetOpen, setAppStructureSheetOpen] = useState(false);
@@ -350,24 +374,42 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleResetAll = async () => {
+    setResetAllLoading(true);
     try {
+      console.log("Starting reset all process...");
+
+      console.log("Running markdown parser...");
+      const { error: parseError } = await parseMarkdownAction();
+      if (parseError) {
+        console.error("Failed to parse markdown:", parseError);
+        alert("Failed to parse markdown files. Please check the console for details.");
+        return;
+      }
+      console.log("Markdown parsing completed successfully");
+
       queryClient.invalidateQueries({ queryKey: ["markdownData"] });
       queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
       const { data: freshData, error } = await refetchMarkdownData();
       if (error) {
         console.error("Failed to get markdown data:", error);
+        alert("Failed to fetch updated markdown data. Please try again.");
         return;
       }
 
-      if (freshData) {
+      if (freshData && currentVersion) {
         const firstPagePath = Object.values(freshData.flatIndex)
           .filter((node) => node.type === "file" && node.include !== false)
           .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
         const resetKey = Date.now();
 
-        setMarkdownData(freshData);
+        const updatedData = {
+          ...freshData,
+          contentVersion: currentVersion,
+        };
+
+        setMarkdownData(updatedData);
         reset();
         setRefreshKey(resetKey);
 
@@ -380,7 +422,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       setResetAllDialogOpen(false);
     } catch (error) {
       console.error("Failed to reset markdown data:", error);
+      alert("An unexpected error occurred during reset. Please try again.");
       setResetAllDialogOpen(false);
+    } finally {
+      setResetAllLoading(false);
     }
   };
 
@@ -403,6 +448,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   }, [allPages, currentPageIndex]);
 
   const isContentStale = useMemo(() => {
+    console.log({ currentVersion, storedContentVersion });
     if (!currentVersion) return false;
     if (!storedContentVersion) return true;
     return storedContentVersion !== currentVersion;
@@ -571,14 +617,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       📄 Documentation Updated
                     </div>
                     <div className="text-sm">
-                      The source documentation has been updated. To see
-                      the latest content, you&apos;ll need to reset the
-                      editor.
+                      The source documentation has been updated. To see the
+                      latest content, you&apos;ll need to reset the editor.
                     </div>
                     <div className="text-sm">
                       ⚠️ This will clear your current changes. Consider
-                      downloading your content first if you want to keep
-                      your edits.
+                      downloading your content first if you want to keep your
+                      edits.
                     </div>
                   </div>
                 </PopoverContent>
@@ -612,13 +657,16 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <button
                     className={cn(
                       "px-4 py-2 rounded-md transition-colors",
-                      darkMode
-                        ? "bg-red-700 text-red-100 hover:bg-red-600"
-                        : "bg-red-600 text-red-100 hover:bg-red-700"
+                      resetAllLoading
+                        ? "opacity-50 cursor-not-allowed bg-gray-500"
+                        : darkMode
+                          ? "bg-red-700 text-red-100 hover:bg-red-600"
+                          : "bg-red-600 text-red-100 hover:bg-red-700"
                     )}
                     onClick={handleResetAll}
+                    disabled={resetAllLoading}
                   >
-                    Reset All
+                    {resetAllLoading ? "Resetting..." : "Reset All"}
                   </button>
                 </DialogFooter>
               </DialogContent>
@@ -781,6 +829,64 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </div>
 
           <div className="flex items-center gap-2">
+            {previewMode && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className={cn(
+                      "px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5",
+                      darkMode
+                        ? "bg-orange-900 text-white"
+                        : "bg-orange-100 border border-orange-500 text-orange-900"
+                    )}
+                  >
+                    <Eye className="h-3 w-3" />
+                    Preview mode (read only)
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-2">
+                    <p>You are currently in preview mode.</p>
+                    <p>
+                      This shows exactly how your content will look when
+                      downloaded.
+                    </p>
+                    <p>Switch back to Edit mode to continue making changes.</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1">
+                  <span
+                    className={cn(
+                      "text-xs",
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    )}
+                  >
+                    Edit
+                  </span>
+                  <Switch
+                    checked={previewMode}
+                    onCheckedChange={setPreviewMode}
+                  />
+                  <span
+                    className={cn(
+                      "text-xs",
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    )}
+                  >
+                    Preview
+                  </span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Toggle between edit mode and processed preview</p>
+              </TooltipContent>
+            </Tooltip>
+
             <IconButton
               onClick={() => setDarkMode(!darkMode)}
               tooltip={

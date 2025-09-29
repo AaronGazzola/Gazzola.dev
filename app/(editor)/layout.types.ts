@@ -68,6 +68,7 @@ export interface InitialConfigurationType {
     resend: boolean;
     stripe: boolean;
     paypal: boolean;
+    openrouter: boolean;
   };
   questions: {
     supabaseAuthOnly: boolean;
@@ -90,13 +91,21 @@ export interface InitialConfigurationType {
     };
     payments: {
       enabled: boolean;
+      paypalPayments: boolean;
       stripePayments: boolean;
       stripeSubscriptions: boolean;
-      paypalPayments: boolean;
+    };
+    aiIntegration: {
+      enabled: boolean;
+      imageGeneration: boolean;
+      textGeneration: boolean;
+    };
+    realTimeNotifications: {
+      enabled: boolean;
+      emailNotifications: boolean;
+      inAppNotifications: boolean;
     };
     fileStorage: boolean;
-    realTimeNotifications: boolean;
-    emailSending: boolean;
   };
   database: {
     hosting: "supabase" | "postgresql";
@@ -107,6 +116,7 @@ export interface EditorState {
   version: number;
   data: MarkdownData;
   darkMode: boolean;
+  previewMode: boolean;
   refreshKey: number;
   visitedPages: string[];
   appStructure: FileSystemEntry[];
@@ -117,6 +127,7 @@ export interface EditorState {
   setContent: (path: string, content: string) => void;
   getNode: (path: string) => MarkdownNode | null;
   setDarkMode: (darkMode: boolean) => void;
+  setPreviewMode: (previewMode: boolean) => void;
   markPageVisited: (path: string) => void;
   isPageVisited: (path: string) => boolean;
   getNextUnvisitedPage: (currentPath: string) => string | null;
@@ -164,12 +175,37 @@ export interface EditorState {
   updateAuthenticationOption: (optionId: string, enabled: boolean) => void;
   updateAdminOption: (optionId: string, enabled: boolean) => void;
   updatePaymentOption: (optionId: string, enabled: boolean) => void;
+  updateAIIntegrationOption: (optionId: string, enabled: boolean) => void;
+  updateRealTimeNotificationsOption: (optionId: string, enabled: boolean) => void;
   setMarkdownData: (data: MarkdownData) => void;
   refreshMarkdownData: () => void;
   reset: () => void;
   resetToLatestData: () => void;
   forceRefresh: () => void;
   setRefreshKey: (key: number) => void;
+  wireframeState: WireframeState;
+  setWireframeCurrentPage: (pageIndex: number) => void;
+  getWireframeCurrentPage: () => string | null;
+  addWireframeElement: (
+    targetPath: string,
+    targetType: "layout" | "page",
+    element: WireframeElement
+  ) => void;
+  removeWireframeElement: (
+    targetPath: string,
+    targetType: "layout" | "page",
+    elementId: string
+  ) => void;
+  updateWireframeElement: (
+    targetPath: string,
+    targetType: "layout" | "page",
+    elementId: string,
+    updates: Partial<WireframeElement>
+  ) => void;
+  initializeWireframePages: () => void;
+  setWireframeConfigPopover: (open: boolean, elementType?: WireframeElementType) => void;
+  selectWireframeItem: (type: "page" | "layout", path: string) => void;
+  clearWireframeSelection: () => void;
 }
 
 export interface NavigationItem {
@@ -193,4 +229,52 @@ export interface FileSystemEntry {
   type: "file" | "directory";
   children?: FileSystemEntry[];
   isExpanded?: boolean;
+}
+
+export type WireframeElementType =
+  | "header"
+  | "sidebar-left"
+  | "sidebar-right"
+  | "footer"
+  | "form"
+  | "table"
+  | "tabs"
+  | "accordion";
+
+export interface WireframeElement {
+  id: string;
+  type: WireframeElementType;
+  label: string;
+  config: {
+    width?: "sm" | "md" | "lg" | "xl" | "full";
+    height?: "sm" | "md" | "lg" | "xl" | "auto";
+    position?: "top" | "bottom" | "left" | "right" | "center";
+    variant?: "primary" | "secondary" | "outline";
+  };
+}
+
+export interface WireframeLayoutData {
+  layoutPath: string;
+  elements: WireframeElement[];
+}
+
+export interface WireframePageData {
+  pagePath: string;
+  elements: WireframeElement[];
+}
+
+export interface WireframeData {
+  layouts: Record<string, WireframeLayoutData>;
+  pages: Record<string, WireframePageData>;
+}
+
+export interface WireframeState {
+  currentPageIndex: number;
+  totalPages: number;
+  availablePages: string[];
+  wireframeData: WireframeData;
+  isConfigPopoverOpen: boolean;
+  selectedElementType: WireframeElementType | null;
+  selectedType: "page" | "layout" | null;
+  selectedPath: string | null;
 }

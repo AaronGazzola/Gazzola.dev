@@ -5,6 +5,10 @@ import {
   FileSystemEntry,
   InitialConfigurationType,
   MarkdownData,
+  WireframeData,
+  WireframeElement,
+  WireframeElementType,
+  WireframeState,
 } from "./layout.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
@@ -45,6 +49,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     resend: false,
     stripe: false,
     paypal: false,
+    openrouter: false,
   },
   questions: {
     supabaseAuthOnly: false,
@@ -67,17 +72,39 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     },
     payments: {
       enabled: false,
+      paypalPayments: false,
       stripePayments: false,
       stripeSubscriptions: false,
-      paypalPayments: false,
+    },
+    aiIntegration: {
+      enabled: false,
+      imageGeneration: false,
+      textGeneration: false,
+    },
+    realTimeNotifications: {
+      enabled: false,
+      emailNotifications: false,
+      inAppNotifications: false,
     },
     fileStorage: false,
-    realTimeNotifications: false,
-    emailSending: false,
   },
   database: {
     hosting: "supabase",
   },
+};
+
+const defaultWireframeState: WireframeState = {
+  currentPageIndex: 0,
+  totalPages: 0,
+  availablePages: [],
+  wireframeData: {
+    layouts: {},
+    pages: {},
+  },
+  isConfigPopoverOpen: false,
+  selectedElementType: null,
+  selectedType: null,
+  selectedPath: null,
 };
 
 const updateNode = (
@@ -193,12 +220,14 @@ const createInitialState = (data: MarkdownData) => ({
   version: STORE_VERSION,
   data,
   darkMode: true,
+  previewMode: false,
   refreshKey: 0,
   visitedPages: [getFirstPagePath(data)],
   appStructure: defaultAppStructure,
   placeholderValues: {},
   initialConfiguration: defaultInitialConfiguration,
   storedContentVersion: data.contentVersion,
+  wireframeState: defaultWireframeState,
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -254,6 +283,7 @@ export const useEditorStore = create<EditorState>()(
         return state.data.flatIndex[path] || null;
       },
       setDarkMode: (darkMode) => set({ darkMode }),
+      setPreviewMode: (previewMode: boolean) => set({ previewMode }),
       markPageVisited: (path) =>
         set((state) => ({
           visitedPages: state.visitedPages.includes(path)
@@ -461,15 +491,21 @@ export const useEditorStore = create<EditorState>()(
                       ...updates.features.payments,
                     }
                   : state.initialConfiguration.features.payments,
+                aiIntegration: updates.features.aiIntegration
+                  ? {
+                      ...state.initialConfiguration.features.aiIntegration,
+                      ...updates.features.aiIntegration,
+                    }
+                  : state.initialConfiguration.features.aiIntegration,
+                realTimeNotifications: updates.features.realTimeNotifications
+                  ? {
+                      ...state.initialConfiguration.features.realTimeNotifications,
+                      ...updates.features.realTimeNotifications,
+                    }
+                  : state.initialConfiguration.features.realTimeNotifications,
                 fileStorage: updates.features.fileStorage !== undefined
                   ? updates.features.fileStorage
                   : state.initialConfiguration.features.fileStorage,
-                realTimeNotifications: updates.features.realTimeNotifications !== undefined
-                  ? updates.features.realTimeNotifications
-                  : state.initialConfiguration.features.realTimeNotifications,
-                emailSending: updates.features.emailSending !== undefined
-                  ? updates.features.emailSending
-                  : state.initialConfiguration.features.emailSending,
               }
             : state.initialConfiguration.features;
 
@@ -492,7 +528,7 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.authentication.enabled ||
             newFeatures.admin.enabled ||
             newFeatures.fileStorage ||
-            newFeatures.realTimeNotifications;
+            newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
             newTechnologies.prisma = true;
@@ -553,7 +589,7 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.authentication.enabled ||
             newFeatures.admin.enabled ||
             newFeatures.fileStorage ||
-            newFeatures.realTimeNotifications;
+            newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
             techUpdates.prisma = true;
@@ -596,7 +632,7 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.authentication.enabled ||
             newFeatures.admin.enabled ||
             newFeatures.fileStorage ||
-            newFeatures.realTimeNotifications;
+            newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
             techUpdates.prisma = true;
@@ -627,6 +663,9 @@ export const useEditorStore = create<EditorState>()(
                 return state;
               }
               techUpdates.stripe = true;
+              if (optionId === "stripeSubscriptions") {
+                techUpdates.betterAuth = true;
+              }
             }
             if (optionId === "paypalPayments") {
               techUpdates.paypal = true;
@@ -649,6 +688,78 @@ export const useEditorStore = create<EditorState>()(
           };
         });
       },
+      updateAIIntegrationOption: (optionId: string, enabled: boolean) => {
+        set((state) => {
+          const techUpdates: InitialConfigurationType["technologies"] = {
+            ...state.initialConfiguration.technologies,
+            nextjs: true,
+            tailwindcss: true,
+            shadcn: true,
+          };
+
+          if (enabled) {
+            techUpdates.openrouter = true;
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              technologies: techUpdates,
+              features: {
+                ...state.initialConfiguration.features,
+                aiIntegration: {
+                  ...state.initialConfiguration.features.aiIntegration,
+                  enabled: true,
+                  [optionId]: enabled,
+                },
+              },
+            },
+          };
+        });
+      },
+      updateRealTimeNotificationsOption: (optionId: string, enabled: boolean) => {
+        set((state) => {
+          const techUpdates: InitialConfigurationType["technologies"] = {
+            ...state.initialConfiguration.technologies,
+            nextjs: true,
+            tailwindcss: true,
+            shadcn: true,
+          };
+
+          if (enabled) {
+            techUpdates.supabase = true;
+            if (optionId === "emailNotifications") {
+              techUpdates.resend = true;
+            }
+          }
+
+          const hasDatabaseFunctionality =
+            state.initialConfiguration.features.authentication.enabled ||
+            state.initialConfiguration.features.admin.enabled ||
+            state.initialConfiguration.features.fileStorage ||
+            true;
+
+          if (hasDatabaseFunctionality) {
+            techUpdates.prisma = true;
+            techUpdates.postgresql = true;
+          }
+
+          return {
+            initialConfiguration: {
+              ...state.initialConfiguration,
+              technologies: techUpdates,
+              features: {
+                ...state.initialConfiguration.features,
+                realTimeNotifications: {
+                  ...state.initialConfiguration.features.realTimeNotifications,
+                  enabled: true,
+                  [optionId]: enabled,
+                },
+              },
+            },
+          };
+        });
+      },
       setMarkdownData: (newData: MarkdownData) => {
         set((state) => ({
           data: newData,
@@ -663,7 +774,6 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         set({
           ...createInitialState(state.data),
-          storedContentVersion: state.data.contentVersion,
         });
       },
       resetToLatestData: () => {
@@ -677,6 +787,203 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({ refreshKey: state.refreshKey + 1 })),
       setRefreshKey: (key: number) =>
         set({ refreshKey: key }),
+      setWireframeCurrentPage: (pageIndex: number) => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            currentPageIndex: pageIndex,
+          },
+        }));
+      },
+      getWireframeCurrentPage: () => {
+        const state = get();
+        const { currentPageIndex, availablePages } = state.wireframeState;
+        return availablePages[currentPageIndex] || null;
+      },
+      addWireframeElement: (
+        targetPath: string,
+        targetType: "layout" | "page",
+        element: WireframeElement
+      ) => {
+        set((state) => {
+          const newWireframeData = { ...state.wireframeState.wireframeData };
+
+          if (targetType === "layout") {
+            if (!newWireframeData.layouts[targetPath]) {
+              newWireframeData.layouts[targetPath] = {
+                layoutPath: targetPath,
+                elements: [],
+              };
+            }
+            newWireframeData.layouts[targetPath].elements.push(element);
+          } else {
+            if (!newWireframeData.pages[targetPath]) {
+              newWireframeData.pages[targetPath] = {
+                pagePath: targetPath,
+                elements: [],
+              };
+            }
+            newWireframeData.pages[targetPath].elements.push(element);
+          }
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              wireframeData: newWireframeData,
+            },
+          };
+        });
+      },
+      removeWireframeElement: (
+        targetPath: string,
+        targetType: "layout" | "page",
+        elementId: string
+      ) => {
+        set((state) => {
+          const newWireframeData = { ...state.wireframeState.wireframeData };
+
+          if (targetType === "layout" && newWireframeData.layouts[targetPath]) {
+            newWireframeData.layouts[targetPath].elements =
+              newWireframeData.layouts[targetPath].elements.filter(
+                (el) => el.id !== elementId
+              );
+          } else if (targetType === "page" && newWireframeData.pages[targetPath]) {
+            newWireframeData.pages[targetPath].elements =
+              newWireframeData.pages[targetPath].elements.filter(
+                (el) => el.id !== elementId
+              );
+          }
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              wireframeData: newWireframeData,
+            },
+          };
+        });
+      },
+      updateWireframeElement: (
+        targetPath: string,
+        targetType: "layout" | "page",
+        elementId: string,
+        updates: Partial<WireframeElement>
+      ) => {
+        set((state) => {
+          const newWireframeData = { ...state.wireframeState.wireframeData };
+
+          if (targetType === "layout" && newWireframeData.layouts[targetPath]) {
+            newWireframeData.layouts[targetPath].elements =
+              newWireframeData.layouts[targetPath].elements.map((el) =>
+                el.id === elementId ? { ...el, ...updates } : el
+              );
+          } else if (targetType === "page" && newWireframeData.pages[targetPath]) {
+            newWireframeData.pages[targetPath].elements =
+              newWireframeData.pages[targetPath].elements.map((el) =>
+                el.id === elementId ? { ...el, ...updates } : el
+              );
+          }
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              wireframeData: newWireframeData,
+            },
+          };
+        });
+      },
+      initializeWireframePages: () => {
+        set((state) => {
+          const extractPagePaths = (
+            entries: FileSystemEntry[],
+            parentPath: string = "",
+            isRoot: boolean = false
+          ): string[] => {
+            const paths: string[] = [];
+
+            entries.forEach((entry) => {
+              if (entry.name === "app" && isRoot) {
+                if (entry.children) {
+                  const hasRootPageFile = entry.children.some(
+                    (child) => child.type === "file" && child.name === "page.tsx"
+                  );
+                  if (hasRootPageFile) {
+                    paths.push("/");
+                  }
+                  paths.push(...extractPagePaths(entry.children, "", false));
+                }
+                return;
+              }
+
+              if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+                if (entry.children) {
+                  const routeGroupPath = parentPath
+                    ? `${parentPath}/${entry.name}`
+                    : `/${entry.name}`;
+                  paths.push(...extractPagePaths(entry.children, routeGroupPath, false));
+                }
+                return;
+              }
+
+              if (entry.type === "directory" && entry.children) {
+                const newPath = parentPath
+                  ? `${parentPath}/${entry.name}`
+                  : `/${entry.name}`;
+
+                const hasPageFile = entry.children.some(
+                  (child) => child.type === "file" && child.name === "page.tsx"
+                );
+
+                if (hasPageFile) {
+                  paths.push(newPath);
+                }
+
+                paths.push(...extractPagePaths(entry.children, newPath, false));
+              }
+            });
+
+            return paths;
+          };
+
+          const extractedPages = extractPagePaths(state.appStructure, "", true);
+          const availablePages = Array.from(new Set(extractedPages)).sort();
+
+          return {
+            wireframeState: {
+              ...state.wireframeState,
+              availablePages,
+              totalPages: availablePages.length,
+              currentPageIndex: 0,
+            },
+          };
+        });
+      },
+      setWireframeConfigPopover: (open: boolean, elementType?: WireframeElementType) => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            isConfigPopoverOpen: open,
+            selectedElementType: elementType || null,
+          },
+        }));
+      },
+      selectWireframeItem: (type: "page" | "layout", path: string) => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            selectedType: type,
+            selectedPath: path,
+          },
+        }));
+      },
+      clearWireframeSelection: () => {
+        set((state) => ({
+          wireframeState: {
+            ...state.wireframeState,
+            selectedType: null,
+            selectedPath: null,
+          },
+        }));
+      },
     }),
     {
       name: "editor-storage",
@@ -685,11 +992,13 @@ export const useEditorStore = create<EditorState>()(
         version: state.version,
         data: state.data,
         darkMode: state.darkMode,
+        previewMode: state.previewMode,
         visitedPages: state.visitedPages,
         appStructure: state.appStructure,
         placeholderValues: state.placeholderValues,
         initialConfiguration: state.initialConfiguration,
         storedContentVersion: state.storedContentVersion,
+        wireframeState: state.wireframeState,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {

@@ -2,13 +2,12 @@
 
 ## Active tasks
 
-- [ ] Update `markdown-data.md`
+- [ ] Add wire-frame page and layout builder component
+- [ ] Add dynamic component theme and styling page
+- [-] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
-- [ ] test: set and rest single page and all data local and deployed.
-- [ ] Add download preview dialog
-- [-] Refactor initialConfig
+- [ ] test: set and reset single page and all data local and deployed.
 - [ ] Update downloaded content to handle new content (ie PlaceholderNodes, initial config)
-- [ ] Add dynamic component example elements
 - [ ] Add steps to walkthrough
 - [ ] Make the walkthrough reset button more prominent
 - [ ] Add labels for options in section nodes
@@ -28,6 +27,8 @@
 
 ## Completed tasks
 
+- [x] Refactor tech stack selection
+- [x] Add output preview toggle
 - [x] Progress walkthrough when the user clicks the target element
 - [x] Fix the width of the accordion triggers in the InitialConfig component
 - [x] Refactor parse markdown script to use a server action
@@ -113,4 +114,5 @@
   - Bug fixes 29%
   - New features 14%
   - e2e and unit tests 14%
-- [ ] Research Codex
+- [x] Research Codex
+- [ ] N8N

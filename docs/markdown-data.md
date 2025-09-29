@@ -233,9 +233,272 @@ This processes all files in `data/markdown/` and generates `app/(editor)/layout.
 5. **Option clarity**: Make option differences clear to users
 6. **Component integration**: Use components for interactive content
 
+## Data Storage and Loading
+
+### Processed Data Storage
+
+The parser generates structured data that's stored in:
+- `public/data/processed-markdown.json` - Complete parsed markdown structure
+- `public/data/content-version.json` - Content version tracking
+
+### Data Loading via Server Actions
+
+The editor loads markdown data through server actions:
+
+```typescript
+// app/(editor)/layout.actions.ts
+export const getMarkdownDataAction = async (): Promise<ActionResponse<MarkdownData>> => {
+  // Fetches processed-markdown.json via HTTP request
+  const response = await fetch(`${baseUrl}/data/processed-markdown.json`);
+  const data: MarkdownData = await response.json();
+  return getActionResponse({ data });
+};
+
+export const getContentVersionAction = async (): Promise<ActionResponse<number>> => {
+  // Reads content-version.json to check for updates
+  const versionData = JSON.parse(fs.readFileSync(VERSION_FILE, "utf8"));
+  return getActionResponse({ data: versionData.version });
+};
+```
+
+### Content Versioning
+
+The system tracks content changes using version numbers:
+- Parser increments version on each run
+- Editor store checks for version mismatches
+- Automatic refresh when new content is available
+
+## Editor Store Architecture
+
+### Store Structure
+
+The editor uses Zustand for state management with persistence:
+
+```typescript
+interface EditorState {
+  version: number;
+  data: MarkdownData;          // Complete parsed markdown tree
+  darkMode: boolean;
+  previewMode: boolean;
+  refreshKey: number;
+  visitedPages: string[];      // Navigation tracking
+  placeholderValues: Record<string, string>;  // {{key:value}} replacements
+  initialConfiguration: InitialConfigurationType;
+  storedContentVersion?: number;
+  // ... methods for data manipulation
+}
+```
+
+### Flat Index for Performance
+
+The store maintains a `flatIndex` for O(1) node lookups:
+
+```typescript
+interface MarkdownData {
+  root: DirectoryNode;
+  flatIndex: Record<string, MarkdownNode>;  // path -> node mapping
+  contentVersion: number;
+}
+
+// Fast node retrieval
+const node = store.data.flatIndex[path];
+```
+
+### Store Persistence and Migrations
+
+The store persists to localStorage with version-based migrations:
+
+```typescript
+export const useEditorStore = create<EditorState>()(
+  persist(
+    (set, get) => ({ /* store implementation */ }),
+    {
+      name: "editor-storage",
+      version: STORE_VERSION,
+      migrate: (persistedState: any, version: number) => {
+        // Handle data structure changes between versions
+        if (version < 2) {
+          return migrateSections(persistedState);
+        }
+        return persistedState;
+      }
+    }
+  )
+);
+```
+
+## Advanced Section Features
+
+### Section Inclusion System
+
+Each section option has an `include` boolean flag:
+
+```typescript
+interface SectionOption {
+  content: string;
+  include: boolean;  // Controls whether option appears in editor
+}
+```
+
+### Section Content Management
+
+The store provides methods for dynamic section manipulation:
+
+```typescript
+// Get section options for a file
+getSectionOptions: (filePath: string, sectionId: string) => Record<string, SectionOption>
+
+// Update section content
+setSectionContent: (filePath: string, sectionId: string, optionId: string, content: string) => void
+
+// Toggle section inclusion
+setSectionInclude: (filePath: string, sectionId: string, optionId: string, include: boolean) => void
+```
+
+### Section Option Exclusion
+
+Exclude options from the editor by prefixing with asterisk:
+
+```markdown
+<!-- option-1 -->
+This option will be included.
+<!-- /option-1 -->
+
+<!-- *option-2 -->
+This option will be excluded from the editor.
+<!-- /*option-2 -->
+```
+
+## Placeholder System
+
+### Placeholder Values
+
+Use dynamic placeholders in markdown content:
+
+```markdown
+# {{appName:Your app name}} development roadmap
+
+Welcome to {{projectType:your project}}!
+```
+
+### Placeholder Management
+
+The store manages placeholder values:
+
+```typescript
+// Get placeholder value
+getPlaceholderValue: (key: string) => string | null
+
+// Set placeholder value
+setPlaceholderValue: (key: string, value: string) => void
+
+// Access in store
+placeholderValues: Record<string, string>
+```
+
+## Component Reference System
+
+### Embedding React Components
+
+Use component markers to embed interactive components:
+
+```markdown
+<!-- component-InitialConfiguration -->
+```
+
+This creates a ComponentRef node:
+
+```typescript
+interface ComponentRef extends BaseNode {
+  type: "component";
+  componentId: string;  // "InitialConfiguration"
+}
+```
+
+### Component Processing
+
+Components are:
+- Detected during parsing
+- Stored in file nodes' `components` array
+- Added to flatIndex for lookup
+- Rendered by the editor interface
+
+## Navigation and URL Generation
+
+### URL Generation Algorithm
+
+URLs are generated from file paths:
+
+1. Remove numeric prefixes (`1-Getting Started` → `Getting Started`)
+2. Convert to lowercase
+3. Replace spaces with hyphens
+4. Remove special characters
+5. Join path segments with `/`
+
+```typescript
+function generateUrlPath(relativePath: string): string {
+  const parts = relativePath.split(path.sep);
+  const cleanParts = parts.map((part) => {
+    const orderMatch = part.match(/^(\d+)-(.+)$/);
+    const cleanPart = orderMatch ? orderMatch[2] : part;
+    return slugify(cleanPart.replace(/\*/g, '').replace(/\.md$/, ''));
+  });
+  return "/" + cleanParts.join("/");
+}
+```
+
+### Page Navigation Tracking
+
+The store tracks visited pages:
+
+```typescript
+// Mark page as visited
+markPageVisited: (path: string) => void
+
+// Check if page was visited
+isPageVisited: (path: string) => boolean
+
+// Get next unvisited page
+getNextUnvisitedPage: (currentPath: string) => string | null
+```
+
+## Content Refresh and Synchronization
+
+### Refresh Mechanisms
+
+The editor provides multiple refresh methods:
+
+```typescript
+// Refresh markdown data from server
+refreshMarkdownData: () => void
+
+// Force complete refresh
+forceRefresh: () => void
+
+// Reset to latest data
+resetToLatestData: () => void
+```
+
+### Version Synchronization
+
+The store compares versions to detect updates:
+
+```typescript
+// Current store version vs. server version
+if (state.storedContentVersion !== serverContentVersion) {
+  // Trigger refresh
+  refreshMarkdownData();
+}
+```
+
 ## Troubleshooting
 
 **Section not showing**: Ensure the section file exists and follows naming convention
 **Wrong order**: Check numeric prefixes are correct
 **Content not updating**: Re-run the parser after changes
 **File excluded**: Check for asterisk (*) prefix in filename or parent directory
+**Store data missing**: Check browser localStorage for `editor-storage` key
+**Version mismatch**: Clear localStorage or run parser to update content version
+**Component not rendering**: Verify component ID matches the registered components
+**Placeholder not working**: Check placeholder syntax `{{key:defaultValue}}`
+**Store migration failing**: Check store version and migration logic in layout.stores.ts
