@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] Fix automatic reset on page load in deployment
 - [ ] improve App Directory page UX
 - [ ] Add reminder icon/badge to download the roadmap in case the content changes
 - [ ] Add dynamic component theme and styling page
