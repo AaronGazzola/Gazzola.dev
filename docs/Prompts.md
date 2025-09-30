@@ -6,7 +6,7 @@ The commands and numbers below are shorthand references to the corresponding pro
 
 3. `_build_plan`: "run `npm run build`, then create a plan to fix the build errors"
 
-4. `_build_fix`: "run `npm run build` and fix the build errors"
+4. `_build_fix`: "run `npm run build` and fix the build errors, then run `num run build again` and repeat"
 
 5. `_test_plan`: "run `npm run test`, then create a plan to fix the fail cases"
 
