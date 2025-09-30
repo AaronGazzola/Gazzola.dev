@@ -2,17 +2,7 @@
 
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { conditionalLog } from "@/lib/log.util";
-import fs from "fs";
-import path from "path";
 import { MarkdownData } from "./layout.types";
-
-const OUTPUT_FILE = path.join(process.cwd(), "public", "data", "processed-markdown.json");
-const VERSION_FILE = path.join(
-  process.cwd(),
-  "public",
-  "data",
-  "content-version.json"
-);
 
 
 
@@ -22,20 +12,23 @@ export const getContentVersionAction = async (): Promise<
   try {
     console.log(conditionalLog("getContentVersionAction: Starting", { label: "markdown-parse" }));
 
-    if (!fs.existsSync(VERSION_FILE)) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+    const response = await fetch(`${baseUrl}/data/content-version.json`);
+
+    if (!response.ok) {
       console.log(conditionalLog("getContentVersionAction: Version file not found, returning 1", { label: "markdown-parse" }));
       return getActionResponse({ data: 1 });
     }
 
-    const versionData = JSON.parse(fs.readFileSync(VERSION_FILE, "utf8"));
+    const versionData = await response.json();
     const version = versionData.version || 1;
 
-    console.log(conditionalLog({ version, versionFile: VERSION_FILE }, { label: "markdown-parse" }));
+    console.log(conditionalLog({ version }, { label: "markdown-parse" }));
 
     return getActionResponse({ data: version });
   } catch (error) {
     console.log(conditionalLog({ error: String(error) }, { label: "markdown-parse" }));
-    return getActionResponse({ error });
+    return getActionResponse({ data: 1 });
   }
 };
 
@@ -43,13 +36,15 @@ export const parseMarkdownAction = async (): Promise<ActionResponse<MarkdownData
   try {
     console.log(conditionalLog("parseMarkdownAction: Starting", { label: "markdown-parse" }));
 
-    if (!fs.existsSync(OUTPUT_FILE)) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+    const response = await fetch(`${baseUrl}/data/processed-markdown.json`);
+
+    if (!response.ok) {
       console.log(conditionalLog({ error: "Processed markdown file not found" }, { label: "markdown-parse" }));
       return getActionResponse({ error: "Processed markdown file not found. Run 'npm run parse' first." });
     }
 
-    const fileContent = fs.readFileSync(OUTPUT_FILE, 'utf8');
-    const markdownData: MarkdownData = JSON.parse(fileContent);
+    const markdownData: MarkdownData = await response.json();
 
     console.log(conditionalLog({
       nodeCount: Object.keys(markdownData.flatIndex).length,
@@ -69,13 +64,15 @@ export const parseAndGetMarkdownDataAction = async (): Promise<
   try {
     console.log(conditionalLog("parseAndGetMarkdownDataAction: Starting", { label: "markdown-parse" }));
 
-    if (!fs.existsSync(OUTPUT_FILE)) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+    const response = await fetch(`${baseUrl}/data/processed-markdown.json`);
+
+    if (!response.ok) {
       console.log(conditionalLog({ error: "Processed markdown file not found" }, { label: "markdown-parse" }));
       return getActionResponse({ error: "Processed markdown file not found. Run 'npm run parse' first." });
     }
 
-    const fileContent = fs.readFileSync(OUTPUT_FILE, 'utf8');
-    const markdownData: MarkdownData = JSON.parse(fileContent);
+    const markdownData: MarkdownData = await response.json();
 
     console.log(conditionalLog({
       nodeCount: Object.keys(markdownData.flatIndex).length,
@@ -95,15 +92,19 @@ export const getMarkdownDataAction = async (): Promise<
   try {
     console.log(conditionalLog("getMarkdownDataAction: Starting", { label: "markdown-parse" }));
 
-    if (!fs.existsSync(OUTPUT_FILE)) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+    const url = `${baseUrl}/data/processed-markdown.json`;
+
+    console.log(conditionalLog({ message: "Fetching from URL", url }, { label: "markdown-parse" }));
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
       console.log(conditionalLog({ error: "Processed markdown file not found" }, { label: "markdown-parse" }));
       return getActionResponse({ error: "Processed markdown file not found. Run 'npm run parse' first." });
     }
 
-    console.log(conditionalLog({ message: "Reading from file", outputFile: OUTPUT_FILE }, { label: "markdown-parse" }));
-
-    const fileContent = fs.readFileSync(OUTPUT_FILE, 'utf8');
-    const data: MarkdownData = JSON.parse(fileContent);
+    const data: MarkdownData = await response.json();
 
     console.log(conditionalLog({
       nodeCount: Object.keys(data.flatIndex).length,
