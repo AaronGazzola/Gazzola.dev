@@ -1,5 +1,6 @@
 "use client";
 
+import { conditionalLog } from "@/lib/log.util";
 import { processContent } from "@/lib/download.utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
@@ -31,7 +32,7 @@ import {
 } from "../components/SectionTransformer";
 import { Toolbar } from "../components/Toolbar";
 import { ReadOnlyLexicalEditor } from "../components/ReadOnlyLexicalEditor";
-import { useInitializeMarkdownData } from "../layout.hooks";
+import { useContentVersionCheck, useInitializeMarkdownData } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 
 const Page = () => {
@@ -51,13 +52,30 @@ const Page = () => {
     getPlaceholderValue,
     getInitialConfiguration,
   } = useEditorStore();
+  const { isResetting, versionChecked, isLoading: versionCheckLoading, isContentStale } = useContentVersionCheck();
   const { needsInitialization, isLoading, error, isInitialized } =
-    useInitializeMarkdownData();
+    useInitializeMarkdownData(versionChecked, versionCheckLoading);
 
   useEffect(() => {
+    console.log(conditionalLog("Page: Component mounting", { label: "markdown-parse" }));
     useEditorStore.persist.rehydrate();
     setMounted(true);
   }, []);
+
+  const canRender = mounted && versionChecked && !versionCheckLoading && !isResetting;
+
+  useEffect(() => {
+    console.log(conditionalLog({
+      mounted,
+      needsInitialization,
+      isLoading,
+      hasError: !!error,
+      isInitialized,
+      isResetting,
+      dataNodeCount: data ? Object.keys(data.flatIndex).length : 0,
+      dataVersion: data?.contentVersion
+    }, { label: "markdown-parse" }));
+  }, [mounted, needsInitialization, isLoading, error, isInitialized, isResetting, data]);
 
   const getFirstPagePath = useCallback((): string => {
     const pages = Object.values(data.flatIndex)
@@ -68,22 +86,29 @@ const Page = () => {
   }, [data]);
 
   const contentPath = useMemo((): string => {
+    if (!canRender) return "";
+
     const segments = params.segments as string[] | undefined;
 
     if (!segments || segments.length === 0) {
-      return getFirstPagePath();
+      const firstPath = getFirstPagePath();
+      console.log(conditionalLog({ message: "No segments, using first page", firstPath }, { label: "markdown-parse" }));
+      return firstPath;
     }
 
     const urlPath = "/" + segments.join("/");
 
     for (const [path, node] of Object.entries(data.flatIndex)) {
       if (node.type === "file" && node.urlPath === urlPath) {
+        console.log(conditionalLog({ message: "Found matching path", urlPath, path }, { label: "markdown-parse" }));
         return path;
       }
     }
 
-    return getFirstPagePath();
-  }, [params, data, getFirstPagePath]);
+    const firstPath = getFirstPagePath();
+    console.log(conditionalLog({ message: "No match found, using first page", urlPath, firstPath }, { label: "markdown-parse" }));
+    return firstPath;
+  }, [canRender, params, data, getFirstPagePath]);
 
   // Set transformer context when contentPath changes
   useEffect(() => {
@@ -94,7 +119,17 @@ const Page = () => {
   }, [contentPath, getSectionOptions]);
 
   const currentContent = useMemo(() => {
+    if (!canRender || !contentPath) return "";
+
     const node = getNode(contentPath);
+    console.log(conditionalLog({
+      message: "Getting current content",
+      contentPath,
+      hasNode: !!node,
+      nodeType: node?.type,
+      contentLength: node && node.type === "file" ? node.content.length : 0
+    }, { label: "markdown-parse" }));
+
     if (node && node.type === "file") {
       return node.content
         .replace(/\\n/g, "\n")
@@ -103,7 +138,7 @@ const Page = () => {
         .replace(/\\\\/g, "\\");
     }
     return "";
-  }, [contentPath, getNode]);
+  }, [canRender, contentPath, getNode]);
 
   const processedContent = useMemo(() => {
     if (!previewMode) return "";
@@ -137,7 +172,7 @@ const Page = () => {
   );
 
   const initialConfig = useMemo(() => {
-    if (!mounted) {
+    if (!canRender) {
       return {
         nodes: [
           HeadingNode,
@@ -207,7 +242,7 @@ const Page = () => {
           PLACEHOLDER_TRANSFORMER,
         ]),
     };
-  }, [mounted, currentContent, darkMode]);
+  }, [canRender, currentContent, darkMode]);
 
   const onChange = useCallback(
     (editorState: EditorState) => {
@@ -224,13 +259,13 @@ const Page = () => {
     [setCurrentContent]
   );
 
-  if (!mounted || (needsInitialization && isLoading)) {
+  if (!canRender || (needsInitialization && isLoading)) {
     return (
       <div
         className={`w-full h-full ${darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"} flex items-center justify-center`}
       >
         <div className="text-gray-500">
-          {!mounted ? "Loading editor..." : "Loading content..."}
+          {!mounted ? "Loading editor..." : versionCheckLoading ? "Checking content version..." : isResetting ? "Updating content..." : "Loading content..."}
         </div>
       </div>
     );

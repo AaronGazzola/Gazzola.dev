@@ -25,7 +25,7 @@
             "order": 1,
             "path": "starthere.techstack",
             "urlPath": "/starthere/techstack",
-            "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
+            "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
             "components": [
               {
                 "id": "component-InitialConfiguration",
@@ -106,7 +106,7 @@
               "order": 1,
               "path": "starthere.techstack",
               "urlPath": "/starthere/techstack",
-              "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
+              "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
               "components": [
                 {
                   "id": "component-InitialConfiguration",
@@ -177,7 +177,7 @@
           "order": 1,
           "path": "starthere.techstack",
           "urlPath": "/starthere/techstack",
-          "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
+          "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
           "components": [
             {
               "id": "component-InitialConfiguration",
@@ -237,7 +237,7 @@
       "order": 1,
       "path": "starthere.techstack",
       "urlPath": "/starthere/techstack",
-      "content": "# {{appName:Your app name}} development roadmap\n\ntest\n\n<!-- component-InitialConfiguration -->\n",
+      "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
       "components": [
         {
           "id": "component-InitialConfiguration",
@@ -318,5 +318,5 @@
       "include": true
     }
   },
-  "contentVersion": 9
+  "contentVersion": 10
 }

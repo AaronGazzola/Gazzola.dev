@@ -2,6 +2,7 @@
 
 import { AppStructure } from "@/app/(components)/AppStructure";
 import { useWalkthroughStore } from "@/app/layout.stores";
+import { conditionalLog } from "@/lib/log.util";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -48,18 +49,12 @@ import {
   RotateCcw,
   Settings,
   Sun,
-  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import {
-  useContentVersion,
-  useGetMarkdownData,
-  useInitializeMarkdownData,
-} from "../layout.hooks";
-import { parseMarkdownAction } from "../layout.actions";
+import { useMemo, useState } from "react";
+import { useContentVersionCheck } from "../layout.hooks";
+import { parseAndGetMarkdownDataAction } from "../layout.actions";
 import { useEditorStore } from "../layout.stores";
-import { FileSystemEntry, InitialConfigurationType } from "../layout.types";
 
 interface ToolbarProps {
   currentContentPath: string;
@@ -106,80 +101,6 @@ const IconButton = ({
   </Tooltip>
 );
 
-const generateId = () => Math.random().toString(36).substring(2, 11);
-
-const defaultAppStructure: FileSystemEntry[] = [
-  {
-    id: generateId(),
-    name: "app",
-    type: "directory",
-    isExpanded: true,
-    children: [
-      { id: generateId(), name: "layout.tsx", type: "file" },
-      { id: generateId(), name: "page.tsx", type: "file" },
-    ],
-  },
-];
-
-const defaultInitialConfiguration: InitialConfigurationType = {
-  technologies: {
-    nextjs: true,
-    tailwindcss: true,
-    shadcn: true,
-    zustand: true,
-    reactQuery: true,
-    supabase: false,
-    prisma: false,
-    betterAuth: false,
-    postgresql: false,
-    cypress: false,
-    resend: false,
-    stripe: false,
-    paypal: false,
-    openrouter: false,
-  },
-  questions: {
-    supabaseAuthOnly: false,
-  },
-  features: {
-    authentication: {
-      enabled: false,
-      magicLink: false,
-      emailPassword: false,
-      otp: false,
-      googleAuth: false,
-      githubAuth: false,
-      appleAuth: false,
-    },
-    admin: {
-      enabled: false,
-      superAdmins: false,
-      orgAdmins: false,
-      orgMembers: false,
-    },
-    payments: {
-      enabled: false,
-      paypalPayments: false,
-      stripePayments: false,
-      stripeSubscriptions: false,
-    },
-    aiIntegration: {
-      enabled: false,
-      imageGeneration: false,
-      textGeneration: false,
-    },
-    realTimeNotifications: {
-      enabled: false,
-      emailNotifications: false,
-      inAppNotifications: false,
-    },
-    fileStorage: false,
-  },
-  database: {
-    hosting: "supabase",
-  },
-};
-
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -189,10 +110,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     canAutoProgress,
     autoProgressWalkthrough,
   } = useWalkthroughStore();
-  const { data: markdownData, refetch: refetchMarkdownData } =
-    useGetMarkdownData();
-  const { refetch: refetchInitialization } = useInitializeMarkdownData();
-  const { data: currentVersion } = useContentVersion();
+  useContentVersionCheck();
   const {
     darkMode,
     setDarkMode,
@@ -204,13 +122,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setRefreshKey,
     markPageVisited,
     data,
-    storedContentVersion,
     getSectionInclude,
     setSectionInclude,
     updateInclusionRules,
     setMarkdownData,
-    setAppStructure,
-    setInitialConfiguration,
   } = useEditorStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
@@ -218,7 +133,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [appStructureSheetOpen, setAppStructureSheetOpen] = useState(false);
-  const [staleContentPopoverOpen, setStaleContentPopoverOpen] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -374,44 +288,47 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleResetAll = async () => {
+    console.log(conditionalLog("Toolbar.handleResetAll: Starting", { label: "markdown-parse" }));
     setResetAllLoading(true);
     try {
-      console.log("Starting reset all process...");
+      const { data: freshData, error } = await parseAndGetMarkdownDataAction();
 
-      console.log("Running markdown parser...");
-      const { error: parseError } = await parseMarkdownAction();
-      if (parseError) {
-        console.error("Failed to parse markdown:", parseError);
+      console.log(conditionalLog({
+        hasFreshData: !!freshData,
+        hasError: !!error,
+        freshDataNodeCount: freshData ? Object.keys(freshData.flatIndex).length : 0,
+        freshDataVersion: freshData?.contentVersion
+      }, { label: "markdown-parse" }));
+
+      if (error) {
+        console.log(conditionalLog({ parseError: String(error) }, { label: "markdown-parse" }));
         alert("Failed to parse markdown files. Please check the console for details.");
         return;
       }
-      console.log("Markdown parsing completed successfully");
 
-      queryClient.invalidateQueries({ queryKey: ["markdownData"] });
-      queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
+      if (freshData) {
+        console.log(conditionalLog("Toolbar.handleResetAll: Invalidating queries", { label: "markdown-parse" }));
 
-      const { data: freshData, error } = await refetchMarkdownData();
-      if (error) {
-        console.error("Failed to get markdown data:", error);
-        alert("Failed to fetch updated markdown data. Please try again.");
-        return;
-      }
+        queryClient.invalidateQueries({ queryKey: ["markdownData"] });
+        queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
-      if (freshData && currentVersion) {
         const firstPagePath = Object.values(freshData.flatIndex)
           .filter((node) => node.type === "file" && node.include !== false)
           .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
         const resetKey = Date.now();
 
-        const updatedData = {
-          ...freshData,
-          contentVersion: currentVersion,
-        };
+        console.log(conditionalLog({
+          resetKey,
+          firstPageUrl: firstPagePath?.urlPath,
+          message: "Setting markdown data in store"
+        }, { label: "markdown-parse" }));
 
-        setMarkdownData(updatedData);
+        setMarkdownData(freshData);
         reset();
         setRefreshKey(resetKey);
+
+        console.log(conditionalLog("Toolbar.handleResetAll: Store updated, navigating", { label: "markdown-parse" }));
 
         setTimeout(() => {
           if (firstPagePath?.urlPath) {
@@ -421,11 +338,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       }
       setResetAllDialogOpen(false);
     } catch (error) {
-      console.error("Failed to reset markdown data:", error);
+      console.log(conditionalLog({ catchError: String(error) }, { label: "markdown-parse" }));
       alert("An unexpected error occurred during reset. Please try again.");
       setResetAllDialogOpen(false);
     } finally {
       setResetAllLoading(false);
+      console.log(conditionalLog("Toolbar.handleResetAll: Complete", { label: "markdown-parse" }));
     }
   };
 
@@ -446,22 +364,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       currentTitle: allPages[currentPageIndex]?.title || "Unknown",
     };
   }, [allPages, currentPageIndex]);
-
-  const isContentStale = useMemo(() => {
-    console.log({ currentVersion, storedContentVersion });
-    if (!currentVersion) return false;
-    if (!storedContentVersion) return true;
-    return storedContentVersion !== currentVersion;
-  }, [currentVersion, storedContentVersion]);
-
-  useEffect(() => {
-    if (isContentStale) {
-      const timer = setTimeout(() => {
-        setStaleContentPopoverOpen(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [isContentStale]);
 
   return (
     <TooltipProvider>
@@ -566,69 +468,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               </DialogContent>
             </Dialog>
 
-            <Popover
-              open={staleContentPopoverOpen && isContentStale}
-              onOpenChange={setStaleContentPopoverOpen}
+            <IconButton
+              onClick={() => setResetAllDialogOpen(true)}
+              tooltip="Reset all pages"
+              darkMode={darkMode}
             >
-              <PopoverTrigger asChild>
-                <div
-                  className={cn(
-                    isContentStale && "border border-orange-500 rounded"
-                  )}
-                >
-                  <IconButton
-                    onClick={() => setResetAllDialogOpen(true)}
-                    tooltip="Reset all pages"
-                    darkMode={darkMode}
-                  >
-                    <ListRestart
-                      className={cn(
-                        "h-4 w-4",
-                        isContentStale && "text-orange-500"
-                      )}
-                    />
-                  </IconButton>
-                </div>
-              </PopoverTrigger>
-              {isContentStale && (
-                <PopoverContent
-                  className={cn(
-                    "w-80 rounded relative",
-                    darkMode
-                      ? "bg-orange-900 border-orange-600 text-orange-100"
-                      : "bg-orange-50 border-orange-200 text-orange-900"
-                  )}
-                  align="center"
-                  side="bottom"
-                >
-                  <button
-                    onClick={() => setStaleContentPopoverOpen(false)}
-                    className={cn(
-                      "absolute top-2 right-2 h-6 w-6 flex items-center justify-center rounded-sm transition-colors",
-                      darkMode
-                        ? "hover:bg-orange-800 text-orange-200 hover:text-orange-100"
-                        : "hover:bg-orange-100 text-orange-700 hover:text-orange-900"
-                    )}
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                  <div className="space-y-2 pr-2">
-                    <div className="font-semibold text-sm">
-                      📄 Documentation Updated
-                    </div>
-                    <div className="text-sm">
-                      The source documentation has been updated. To see the
-                      latest content, you&apos;ll need to reset the editor.
-                    </div>
-                    <div className="text-sm">
-                      ⚠️ This will clear your current changes. Consider
-                      downloading your content first if you want to keep your
-                      edits.
-                    </div>
-                  </div>
-                </PopoverContent>
-              )}
-            </Popover>
+              <ListRestart className="h-4 w-4" />
+            </IconButton>
 
             <Dialog
               open={resetAllDialogOpen}

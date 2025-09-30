@@ -2,7 +2,8 @@
 
 ## Active tasks
 
-- [ ] Add wire-frame page and layout builder component
+- [ ] improve App Directory page UX
+- [ ] Add reminder icon/badge to download the roadmap in case the content changes
 - [ ] Add dynamic component theme and styling page
 - [-] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
@@ -27,6 +28,8 @@
 
 ## Completed tasks
 
+- [x] Remove "reset all" prompt on stale version, automatically update
+- [x] Add wire-frame page and layout builder component
 - [x] Refactor tech stack selection
 - [x] Add output preview toggle
 - [x] Progress walkthrough when the user clicks the target element
@@ -115,4 +118,9 @@
   - New features 14%
   - e2e and unit tests 14%
 - [x] Research Codex
-- [ ] N8N
+- [x] N8N
+- Poll results: (What should my next "side quest" be?)
+  - AI image analysis/recognition 57%
+  - Bitcoin trading simulator 29%
+  - Project management dashboard 14%
+  - Dream analysis consultation app 0% lol

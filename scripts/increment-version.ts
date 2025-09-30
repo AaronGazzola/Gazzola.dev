@@ -1,9 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { execSync } from "child_process";
 
-const VERSION_FILE = path.join(process.cwd(), "data", "content-version.json");
-const PARSE_SCRIPT = path.join(process.cwd(), "scripts", "parse-markdown.ts");
+const VERSION_FILE = path.join(process.cwd(), "public", "data", "content-version.json");
 
 function incrementVersion(): void {
   try {
@@ -16,6 +14,7 @@ function incrementVersion(): void {
 
     const newVersion = currentVersion + 1;
 
+    fs.mkdirSync(path.dirname(VERSION_FILE), { recursive: true });
     fs.writeFileSync(
       VERSION_FILE,
       JSON.stringify({ version: newVersion }, null, 2),
@@ -23,11 +22,7 @@ function incrementVersion(): void {
     );
 
     console.log(`Content version incremented: ${currentVersion} → ${newVersion}`);
-
-    console.log("Running markdown parser...");
-    execSync(`npx tsx "${PARSE_SCRIPT}"`, { stdio: "inherit" });
-
-    console.log("✅ Version incremented and data regenerated successfully!");
+    console.log("✅ Version incremented successfully!");
   } catch (error) {
     console.error("Error during version increment:", error);
     process.exit(1);
