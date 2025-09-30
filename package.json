@@ -7,11 +7,12 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run parse && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "dev:test": "APP_ENV=test next dev",
+    "parse": "npx tsx scripts/parse-markdown.ts",
     "parse:v": "npx tsx scripts/increment-version.ts"
   },
   "dependencies": {

@@ -328,13 +328,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         reset();
         setRefreshKey(resetKey);
 
-        console.log(conditionalLog("Toolbar.handleResetAll: Store updated, navigating", { label: "markdown-parse" }));
+        console.log(conditionalLog("Toolbar.handleResetAll: Store updated, waiting for state to settle", { label: "markdown-parse" }));
 
-        setTimeout(() => {
-          if (firstPagePath?.urlPath) {
-            router.push(firstPagePath.urlPath);
-          }
-        }, 0);
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        console.log(conditionalLog("Toolbar.handleResetAll: State settled, navigating", { label: "markdown-parse" }));
+
+        if (firstPagePath?.urlPath) {
+          router.push(firstPagePath.urlPath);
+        }
       }
       setResetAllDialogOpen(false);
     } catch (error) {
