@@ -133,3 +133,10 @@
   Parkour! (25%)
   Build automated farms (25%)
   Trade to get diamond tools & armor (0%)
+- What made you click on this stream?
+  I'm a vibe coder here to learn! (33%)
+  Just bored & curious, what is this? (33%)
+  Background company and chill vibes (17%)
+  Minecraft + programming looks fun (17%)
+
+Poll complete: 6 votes
