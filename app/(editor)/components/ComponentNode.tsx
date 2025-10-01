@@ -40,11 +40,6 @@ const componentMap: Record<string, any> = {
       default: m.InitialConfiguration,
     }))
   ),
-  WireFrame: lazy(() =>
-    import("@/app/(components)/WireFrame").then((m) => ({
-      default: m.WireFrame,
-    }))
-  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

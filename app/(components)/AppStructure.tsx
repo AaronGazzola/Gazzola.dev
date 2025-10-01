@@ -1,7 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { FileSystemEntry } from "@/app/(editor)/layout.types";
+import { FileSystemEntry, WireframeElement, WireframeElementType } from "@/app/(editor)/layout.types";
 import { findLayoutsForPagePath } from "@/app/(editor)/layout.utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,15 +12,22 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/tailwind.utils";
 import {
+  ChevronDown,
   File,
+  FileText,
   Folder,
   FolderOpen,
   FolderPlus,
   FoldVertical,
   Layers,
+  Layout as LayoutIcon,
+  Menu,
   Plus,
+  Sidebar,
   SquareStack,
+  Table,
   Trash2,
+  User,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -77,6 +84,126 @@ const PAGE_COLOR = {
   text: "text-slate-800 dark:text-slate-200",
 };
 
+const ELEMENT_TYPES: {
+  type: WireframeElementType;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  category: "layout" | "content";
+}[] = [
+  { type: "header", label: "Header", icon: LayoutIcon, category: "layout" },
+  {
+    type: "sidebar-left",
+    label: "Left Sidebar",
+    icon: Sidebar,
+    category: "layout",
+  },
+  {
+    type: "sidebar-right",
+    label: "Right Sidebar",
+    icon: Sidebar,
+    category: "layout",
+  },
+  { type: "footer", label: "Footer", icon: LayoutIcon, category: "layout" },
+  { type: "form", label: "Form", icon: User, category: "content" },
+  { type: "table", label: "Table", icon: Table, category: "content" },
+  { type: "tabs", label: "Tabs", icon: Menu, category: "content" },
+  {
+    type: "accordion",
+    label: "Accordion",
+    icon: ChevronDown,
+    category: "content",
+  },
+];
+
+const WireframeElementComponent = ({
+  element,
+  onDelete,
+}: {
+  element: WireframeElement;
+  onDelete: () => void;
+}) => {
+  const getElementIcon = () => {
+    const elementType = ELEMENT_TYPES.find((t) => t.type === element.type);
+    const Icon = elementType?.icon || FileText;
+    return <Icon className="w-3 h-3" />;
+  };
+
+  const getElementSize = () => {
+    const { width = "md", height = "auto" } = element.config;
+    let className =
+      "border-2 border-dashed border-gray-400 bg-gray-50 dark:bg-gray-800 rounded p-2 relative group ";
+
+    if (element.type === "header" || element.type === "footer") {
+      className += "w-full ";
+    } else if (
+      element.type === "sidebar-left" ||
+      element.type === "sidebar-right"
+    ) {
+      className += "w-20 ";
+    } else {
+      switch (width) {
+        case "sm":
+          className += "w-16 ";
+          break;
+        case "md":
+          className += "w-24 ";
+          break;
+        case "lg":
+          className += "w-32 ";
+          break;
+        case "xl":
+          className += "w-40 ";
+          break;
+        case "full":
+          className += "w-full ";
+          break;
+      }
+    }
+
+    if (element.type === "sidebar-left" || element.type === "sidebar-right") {
+      className += "h-full min-h-24";
+    } else {
+      switch (height) {
+        case "sm":
+          className += "h-8";
+          break;
+        case "md":
+          className += "h-12";
+          break;
+        case "lg":
+          className += "h-16";
+          break;
+        case "xl":
+          className += "h-20";
+          break;
+        case "auto":
+          className += "h-auto min-h-8";
+          break;
+      }
+    }
+
+    return className;
+  };
+
+  return (
+    <div className={getElementSize()}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          {getElementIcon()}
+          <span className="text-xs font-mono">{element.label}</span>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={onDelete}
+        >
+          <Trash2 className="h-2 w-2 text-red-500" />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const LayoutHierarchyPopover = ({
   pagePath,
@@ -89,36 +216,188 @@ const LayoutHierarchyPopover = ({
   darkMode: boolean;
   onOpenChange?: (open: boolean, pagePath: string, layouts: string[]) => void;
 }) => {
+  const {
+    wireframeState,
+    addWireframeElement,
+    removeWireframeElement,
+    selectWireframeItem,
+  } = useEditorStore();
+  const [isAddingElement, setIsAddingElement] = useState(false);
+  const [selectedTarget, setSelectedTarget] = useState<{
+    type: "page" | "layout";
+    path: string;
+  } | null>(null);
+
   const layouts = findLayoutsForPagePath(appStructure, pagePath, "", true);
 
   const handleOpenChange = (open: boolean) => {
     if (onOpenChange) {
       onOpenChange(open, pagePath, layouts);
     }
+    if (!open) {
+      setIsAddingElement(false);
+      setSelectedTarget(null);
+    }
+  };
+
+  const handleSelectTarget = (type: "page" | "layout", path: string) => {
+    setSelectedTarget({ type, path });
+    selectWireframeItem(type, path);
+  };
+
+  const handleAddElement = (
+    elementType: WireframeElementType,
+    _category: "layout" | "content"
+  ) => {
+    if (!selectedTarget) return;
+
+    const element: WireframeElement = {
+      id: generateId(),
+      type: elementType,
+      label:
+        ELEMENT_TYPES.find((t) => t.type === elementType)?.label || elementType,
+      config: {
+        width: "md",
+        height: "auto",
+        position: "center",
+        variant: "primary",
+      },
+    };
+
+    addWireframeElement(selectedTarget.path, selectedTarget.type, element);
+    setIsAddingElement(false);
+  };
+
+  const renderWireframeElements = (
+    targetType: "page" | "layout",
+    targetPath: string
+  ) => {
+    const elements =
+      targetType === "page"
+        ? wireframeState.wireframeData.pages[targetPath]?.elements || []
+        : wireframeState.wireframeData.layouts[targetPath]?.elements || [];
+
+    const headers = elements.filter((el) => el.type === "header");
+    const footers = elements.filter((el) => el.type === "footer");
+    const leftSidebars = elements.filter((el) => el.type === "sidebar-left");
+    const rightSidebars = elements.filter((el) => el.type === "sidebar-right");
+    const contentElements = elements.filter(
+      (el) =>
+        el.type !== "header" &&
+        el.type !== "footer" &&
+        el.type !== "sidebar-left" &&
+        el.type !== "sidebar-right"
+    );
+
+    return (
+      <>
+        {headers.map((header) => (
+          <div key={header.id} className="mb-2">
+            <WireframeElementComponent
+              element={header}
+              onDelete={() =>
+                removeWireframeElement(targetPath, targetType, header.id)
+              }
+            />
+          </div>
+        ))}
+        <div className="flex gap-2 flex-1">
+          {leftSidebars.map((sidebar) => (
+            <div key={sidebar.id} className="flex-shrink-0 h-full">
+              <WireframeElementComponent
+                element={sidebar}
+                onDelete={() =>
+                  removeWireframeElement(targetPath, targetType, sidebar.id)
+                }
+              />
+            </div>
+          ))}
+          <div className="flex-1 space-y-2">
+            {contentElements.map((element) => (
+              <WireframeElementComponent
+                key={element.id}
+                element={element}
+                onDelete={() =>
+                  removeWireframeElement(targetPath, targetType, element.id)
+                }
+              />
+            ))}
+          </div>
+          {rightSidebars.map((sidebar) => (
+            <div key={sidebar.id} className="flex-shrink-0 h-full">
+              <WireframeElementComponent
+                element={sidebar}
+                onDelete={() =>
+                  removeWireframeElement(targetPath, targetType, sidebar.id)
+                }
+              />
+            </div>
+          ))}
+        </div>
+        {footers.map((footer) => (
+          <div key={footer.id} className="mt-2">
+            <WireframeElementComponent
+              element={footer}
+              onDelete={() =>
+                removeWireframeElement(targetPath, targetType, footer.id)
+              }
+            />
+          </div>
+        ))}
+      </>
+    );
   };
 
   const renderNestedBoxes = () => {
     if (layouts.length === 0) {
+      const isPageSelected =
+        selectedTarget?.type === "page" && selectedTarget?.path === pagePath;
+
       return (
-        <div className="p-4 text-center text-sm text-muted-foreground">
-          No layout files found for this page
+        <div
+          className={cn(
+            PAGE_COLOR.bg,
+            "border-2",
+            isPageSelected ? "border-solid" : "border-dashed",
+            PAGE_COLOR.border,
+            "rounded p-3 text-center cursor-pointer min-h-[200px] flex flex-col"
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSelectTarget("page", pagePath);
+          }}
+        >
+          <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
+            {pagePath}
+          </div>
+          <div className={cn("text-xs mt-1 mb-3", PAGE_COLOR.text)}>page.tsx</div>
+          {renderWireframeElements("page", pagePath)}
         </div>
       );
     }
+
+    const isPageSelected =
+      selectedTarget?.type === "page" && selectedTarget?.path === pagePath;
 
     let content = (
       <div
         className={cn(
           PAGE_COLOR.bg,
           "border-2",
+          isPageSelected ? "border-solid" : "border-dashed",
           PAGE_COLOR.border,
-          "rounded p-3 text-center"
+          "rounded p-3 text-center cursor-pointer min-h-[200px] flex flex-col"
         )}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleSelectTarget("page", pagePath);
+        }}
       >
         <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
           {pagePath}
         </div>
-        <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>page.tsx</div>
+        <div className={cn("text-xs mt-1 mb-3", PAGE_COLOR.text)}>page.tsx</div>
+        {renderWireframeElements("page", pagePath)}
       </div>
     );
 
@@ -126,21 +405,29 @@ const LayoutHierarchyPopover = ({
       const layout = layouts[i];
       const layoutName = `app${layout}/layout.tsx`;
       const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+      const isLayoutSelected =
+        selectedTarget?.type === "layout" && selectedTarget?.path === layout;
 
       content = (
         <div
           className={cn(
             colorSet.bg,
             "border-2",
+            isLayoutSelected ? "border-solid" : "border-dashed",
             colorSet.border,
-            "rounded p-3"
+            "rounded p-3 cursor-pointer min-h-[200px] flex flex-col"
           )}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSelectTarget("layout", layout);
+          }}
         >
           <div
             className={cn("text-xs mb-2 text-center font-mono", colorSet.text)}
           >
             {layoutName}
           </div>
+          {renderWireframeElements("layout", layout)}
           {content}
         </div>
       );
@@ -148,6 +435,11 @@ const LayoutHierarchyPopover = ({
 
     return content;
   };
+
+  const layoutElements = ELEMENT_TYPES.filter((el) => el.category === "layout");
+  const contentElements = ELEMENT_TYPES.filter(
+    (el) => el.category === "content"
+  );
 
   return (
     <Popover onOpenChange={handleOpenChange}>
@@ -157,24 +449,67 @@ const LayoutHierarchyPopover = ({
           variant="ghost"
           size="icon"
           className="h-5 w-5 ml-2"
-          title="Show layout hierarchy"
+          title="Show layout hierarchy & wireframe"
         >
           <Layers className="!w-4 !h-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96" align="start" side="right">
+      <PopoverContent className="w-[600px]" align="start" side="right">
         <div className="space-y-2">
-          <h4
-            className={cn(
-              "font-semibold text-sm",
-              darkMode ? "text-gray-200" : "text-gray-800"
+          <div className="flex items-center justify-between">
+            <h4
+              className={cn(
+                "font-semibold text-sm",
+                darkMode ? "text-gray-200" : "text-gray-800"
+              )}
+            >
+              Layout Hierarchy & Wireframe
+            </h4>
+            {selectedTarget && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsAddingElement(!isAddingElement)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Element
+              </Button>
             )}
-          >
-            Layout Hierarchy
-          </h4>
+          </div>
           <p className="text-xs text-muted-foreground">
-            Nested layouts that wrap this page according to Next.js App Router
+            Click on a layout or page to select it, then add wireframe elements
           </p>
+
+          {isAddingElement && selectedTarget && (
+            <div className="border rounded p-2 space-y-2">
+              <h5 className="text-xs font-medium text-muted-foreground">
+                {selectedTarget.type === "layout"
+                  ? "Layout Elements"
+                  : "Content Elements"}
+              </h5>
+              <div className="grid grid-cols-2 gap-2">
+                {(selectedTarget.type === "layout"
+                  ? layoutElements
+                  : contentElements
+                ).map((element) => {
+                  const Icon = element.icon;
+                  return (
+                    <Button
+                      key={element.type}
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start"
+                      onClick={() => handleAddElement(element.type, element.category)}
+                    >
+                      <Icon className="h-4 w-4 mr-2" />
+                      {element.label}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="mt-4">{renderNestedBoxes()}</div>
         </div>
       </PopoverContent>

@@ -2,9 +2,10 @@
 
 ## Active tasks
 
-- [ ] Fix automatic reset on page load in deployment
 - [ ] improve App Directory page UX
-- [ ] Add reminder icon/badge to download the roadmap in case the content changes
+- [ ] Update the tech stack page
+  - [ ] Add a database questin and hosting service selection that will include/exclude Supabase, Vercel and Railway
+- [ ] Add reminder icon/badge to download the roadmap in case the content changes (and explaining that the app is in development)
 - [ ] Add dynamic component theme and styling page
 - [-] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
@@ -29,6 +30,7 @@
 
 ## Completed tasks
 
+- [x] Fix automatic reset on page load in deployment
 - [x] Remove "reset all" prompt on stale version, automatically update
 - [x] Add wire-frame page and layout builder component
 - [x] Refactor tech stack selection
@@ -125,3 +127,8 @@
   - Bitcoin trading simulator 29%
   - Project management dashboard 14%
   - Dream analysis consultation app 0% lol
+- What should I do next in Minecraft?
+  Go to the Nether (50%)
+  Parkour! (25%)
+  Build automated farms (25%)
+  Trade to get diamond tools & armor (0%)
