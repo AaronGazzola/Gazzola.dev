@@ -206,6 +206,14 @@ export interface EditorState {
   setWireframeConfigPopover: (open: boolean, elementType?: WireframeElementType) => void;
   selectWireframeItem: (type: "page" | "layout", path: string) => void;
   clearWireframeSelection: () => void;
+  themeConfigState: ThemeConfigState;
+  setSelectedComponent: (componentId: string | null) => void;
+  setActiveVariant: (variant: string) => void;
+  setThemeMode: (mode: "light" | "dark") => void;
+  updateGlobalTheme: (updates: Partial<GlobalThemeConfig>) => void;
+  updateComponentStyle: (componentId: string, updates: ComponentStyleConfig) => void;
+  resetComponentStyle: (componentId: string) => void;
+  initializeAvailableComponents: () => void;
 }
 
 export interface NavigationItem {
@@ -277,4 +285,45 @@ export interface WireframeState {
   selectedElementType: WireframeElementType | null;
   selectedType: "page" | "layout" | null;
   selectedPath: string | null;
+}
+
+export type ComponentCategory = "form" | "layout" | "feedback" | "data-display" | "navigation" | "overlay";
+
+export interface ThemeConfigComponent {
+  id: string;
+  name: string;
+  category: ComponentCategory;
+  variants: string[];
+  defaultVariant: string;
+}
+
+export interface ComponentStyleConfig {
+  borderRadius?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  hoverBackgroundColor?: string;
+  hoverBorderColor?: string;
+  padding?: string;
+  [key: string]: any;
+}
+
+export interface GlobalThemeConfig {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  borderRadiusPreset: "none" | "sm" | "md" | "lg" | "xl";
+  shadowIntensity: "none" | "sm" | "md" | "lg";
+  fontSizeScale: "sm" | "md" | "lg";
+  previewBackgroundColor: string;
+}
+
+export interface ThemeConfigState {
+  selectedComponentId: string | null;
+  activeVariant: string;
+  themeMode: "light" | "dark";
+  lightModeTheme: GlobalThemeConfig;
+  darkModeTheme: GlobalThemeConfig;
+  lightModeComponentStyles: Record<string, ComponentStyleConfig>;
+  darkModeComponentStyles: Record<string, ComponentStyleConfig>;
+  availableComponents: ThemeConfigComponent[];
 }

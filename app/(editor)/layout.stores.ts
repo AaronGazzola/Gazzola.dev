@@ -5,6 +5,7 @@ import {
   FileSystemEntry,
   InitialConfigurationType,
   MarkdownData,
+  ThemeConfigState,
   WireframeData,
   WireframeElement,
   WireframeElementType,
@@ -105,6 +106,33 @@ const defaultWireframeState: WireframeState = {
   selectedElementType: null,
   selectedType: null,
   selectedPath: null,
+};
+
+const defaultThemeConfigState: ThemeConfigState = {
+  selectedComponentId: null,
+  activeVariant: "default",
+  themeMode: "light",
+  lightModeTheme: {
+    primaryColor: "#3b82f6",
+    secondaryColor: "#8b5cf6",
+    accentColor: "#10b981",
+    borderRadiusPreset: "md",
+    shadowIntensity: "sm",
+    fontSizeScale: "md",
+    previewBackgroundColor: "#ffffff",
+  },
+  darkModeTheme: {
+    primaryColor: "#60a5fa",
+    secondaryColor: "#a78bfa",
+    accentColor: "#34d399",
+    borderRadiusPreset: "md",
+    shadowIntensity: "sm",
+    fontSizeScale: "md",
+    previewBackgroundColor: "#111827",
+  },
+  lightModeComponentStyles: {},
+  darkModeComponentStyles: {},
+  availableComponents: [],
 };
 
 const updateNode = (
@@ -228,6 +256,7 @@ const createInitialState = (data: MarkdownData) => ({
   initialConfiguration: defaultInitialConfiguration,
   storedContentVersion: data.contentVersion,
   wireframeState: defaultWireframeState,
+  themeConfigState: defaultThemeConfigState,
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -984,6 +1013,82 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
+      setSelectedComponent: (componentId: string | null) => {
+        set((state) => ({
+          themeConfigState: {
+            ...state.themeConfigState,
+            selectedComponentId: componentId,
+          },
+        }));
+      },
+      setActiveVariant: (variant: string) => {
+        set((state) => ({
+          themeConfigState: {
+            ...state.themeConfigState,
+            activeVariant: variant,
+          },
+        }));
+      },
+      setThemeMode: (mode: "light" | "dark") => {
+        set((state) => ({
+          themeConfigState: {
+            ...state.themeConfigState,
+            themeMode: mode,
+          },
+        }));
+      },
+      updateGlobalTheme: (updates) => {
+        set((state) => {
+          const themeKey = state.themeConfigState.themeMode === "light" ? "lightModeTheme" : "darkModeTheme";
+          return {
+            themeConfigState: {
+              ...state.themeConfigState,
+              [themeKey]: {
+                ...state.themeConfigState[themeKey],
+                ...updates,
+              },
+            },
+          };
+        });
+      },
+      updateComponentStyle: (componentId, updates) => {
+        set((state) => {
+          const stylesKey = state.themeConfigState.themeMode === "light" ? "lightModeComponentStyles" : "darkModeComponentStyles";
+          return {
+            themeConfigState: {
+              ...state.themeConfigState,
+              [stylesKey]: {
+                ...state.themeConfigState[stylesKey],
+                [componentId]: {
+                  ...state.themeConfigState[stylesKey][componentId],
+                  ...updates,
+                },
+              },
+            },
+          };
+        });
+      },
+      resetComponentStyle: (componentId) => {
+        set((state) => {
+          const stylesKey = state.themeConfigState.themeMode === "light" ? "lightModeComponentStyles" : "darkModeComponentStyles";
+          const newStyles = { ...state.themeConfigState[stylesKey] };
+          delete newStyles[componentId];
+          return {
+            themeConfigState: {
+              ...state.themeConfigState,
+              [stylesKey]: newStyles,
+            },
+          };
+        });
+      },
+      initializeAvailableComponents: () => {
+        set((state) => ({
+          themeConfigState: {
+            ...state.themeConfigState,
+            availableComponents: [],
+          },
+        }));
+      },
     }),
     {
       name: "editor-storage",
@@ -999,6 +1104,7 @@ export const useEditorStore = create<EditorState>()(
         initialConfiguration: state.initialConfiguration,
         storedContentVersion: state.storedContentVersion,
         wireframeState: state.wireframeState,
+        themeConfigState: state.themeConfigState,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {

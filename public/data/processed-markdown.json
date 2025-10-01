@@ -64,6 +64,30 @@
             ],
             "sections": {},
             "include": true
+          },
+          {
+            "id": "starthere.theme",
+            "name": "theme",
+            "displayName": "Theme",
+            "type": "file",
+            "order": 3,
+            "path": "starthere.theme",
+            "urlPath": "/starthere/theme",
+            "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
+            "components": [
+              {
+                "id": "component-ThemeConfiguration",
+                "name": "ThemeConfiguration",
+                "displayName": "ThemeConfiguration",
+                "type": "component",
+                "path": "theme.component.ThemeConfiguration",
+                "urlPath": "",
+                "componentId": "ThemeConfiguration",
+                "include": true
+              }
+            ],
+            "sections": {},
+            "include": true
           }
         ]
       }
@@ -135,6 +159,30 @@
               ],
               "sections": {},
               "include": true
+            },
+            {
+              "id": "starthere.theme",
+              "name": "theme",
+              "displayName": "Theme",
+              "type": "file",
+              "order": 3,
+              "path": "starthere.theme",
+              "urlPath": "/starthere/theme",
+              "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
+              "components": [
+                {
+                  "id": "component-ThemeConfiguration",
+                  "name": "ThemeConfiguration",
+                  "displayName": "ThemeConfiguration",
+                  "type": "component",
+                  "path": "theme.component.ThemeConfiguration",
+                  "urlPath": "",
+                  "componentId": "ThemeConfiguration",
+                  "include": true
+                }
+              ],
+              "sections": {},
+              "include": true
             }
           ]
         }
@@ -191,6 +239,30 @@
               "path": "appdirectory.component.AppStructure",
               "urlPath": "",
               "componentId": "AppStructure",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        },
+        {
+          "id": "starthere.theme",
+          "name": "theme",
+          "displayName": "Theme",
+          "type": "file",
+          "order": 3,
+          "path": "starthere.theme",
+          "urlPath": "/starthere/theme",
+          "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-ThemeConfiguration",
+              "name": "ThemeConfiguration",
+              "displayName": "ThemeConfiguration",
+              "type": "component",
+              "path": "theme.component.ThemeConfiguration",
+              "urlPath": "",
+              "componentId": "ThemeConfiguration",
               "include": true
             }
           ],
@@ -266,7 +338,41 @@
       "urlPath": "",
       "componentId": "AppStructure",
       "include": true
+    },
+    "starthere.theme": {
+      "id": "starthere.theme",
+      "name": "theme",
+      "displayName": "Theme",
+      "type": "file",
+      "order": 3,
+      "path": "starthere.theme",
+      "urlPath": "/starthere/theme",
+      "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
+      "components": [
+        {
+          "id": "component-ThemeConfiguration",
+          "name": "ThemeConfiguration",
+          "displayName": "ThemeConfiguration",
+          "type": "component",
+          "path": "theme.component.ThemeConfiguration",
+          "urlPath": "",
+          "componentId": "ThemeConfiguration",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "theme.component.ThemeConfiguration": {
+      "id": "component-ThemeConfiguration",
+      "name": "ThemeConfiguration",
+      "displayName": "ThemeConfiguration",
+      "type": "component",
+      "path": "theme.component.ThemeConfiguration",
+      "urlPath": "",
+      "componentId": "ThemeConfiguration",
+      "include": true
     }
   },
-  "contentVersion": 13
+  "contentVersion": 14
 }

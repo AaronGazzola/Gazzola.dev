@@ -2,11 +2,12 @@
 
 ## Active tasks
 
-- [ ] improve App Directory page UX
+- [ ] rename "default" shadcn directory to "editor"
+- [ ] Add dynamic component theme and styling page
+- [-] improve App Directory page UX
 - [ ] Update the tech stack page
   - [ ] Add a database questin and hosting service selection that will include/exclude Supabase, Vercel and Railway
 - [ ] Add reminder icon/badge to download the roadmap in case the content changes (and explaining that the app is in development)
-- [ ] Add dynamic component theme and styling page
 - [-] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
 - [ ] test: set and reset single page and all data local and deployed.

@@ -40,6 +40,11 @@ const componentMap: Record<string, any> = {
       default: m.InitialConfiguration,
     }))
   ),
+  ThemeConfiguration: lazy(() =>
+    import("@/app/(components)/ThemeConfiguration").then((m) => ({
+      default: m.ThemeConfiguration,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {
