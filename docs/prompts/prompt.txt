@@ -1,0 +1,38 @@
+Update the UI and the state management of the @app/(components)/AppStructure.tsx component as described below. Continue the existing UX and state management patterns.
+Some options require specific technologies, while some options exclude specific technologies. If a technology is excluded then the options that require that technology should be deselected and disabled. If an option is disabled and deselected then a tooltip should explain which excluded technologies are causing the option to be disabled.
+
+Question 1: Do you want to use Supabase?
+Option 1: No, I want to use NeonDB instead (requires: NeonDB; excludes: Supabase)
+Option 2: Yes, use Supabase db with Better-Auth for authentication (requires: Supabase, Better-Auth; Excludes: NeonDB)
+Option 2: Yes, use only Supabase for authentication (requires: Supabase; excludes: Better-Auth, NeonDB)
+
+Question 2: Do you need an "always on" server?
+Option 1: No, a serverless deployment is sufficient (requires: Vercel; excludes: Railway)
+Option 2: Yes, I need live monitoring for continuous service  (requires: Railway; Vercel)
+
+Question 3: Can users sign in to your app?
+Option 1: Magic Link (requires Better-Auth OR Supbase, and Resend)
+Option 2: Email & Password (requires Better-Auth OR Supbase, and Resend)
+Option 3: Google Oauth (requires Better-Auth OR Supbase)
+Option 4: Github Oauth (requires Better-Auth OR Supbase)
+Option 5: Apple Oauth (requires Better-Auth OR Supbase)
+Option 5: Password only (requires Better-Auth OR Supbase)
+
+Question 4: Does your app use role access? (requires "Can users sign in to your app?")
+Option 1: Super admins have elevated access (requires Better-Auth OR Supbase)
+Option 2: Organization access is limited to organization members  (requires Better-Auth)
+Option 2: Organization admins have elevated access to organizations  (requires Better-Auth)
+
+Question 5: Can users upload files? (requires Supabase and "Can users sign in to your app?")
+
+Question 6: Does your app process payments?
+Option 1: One-time payments with PayPalAccept (requires PayPal)
+Option 2: One-time payments with Stripe (requires Stripe)
+Option 3: Subscription management with Stripe (requires Stripe and Better-auth and "Can users sign in to your app?")
+
+Question 7: Do you need AI integration? (requires OpenRouter)
+{...remove options}
+
+Question 8: Do you need realtime notifications? 
+Option 1: Email notifications (requires Supabase, Resend and "Can users sign in to your app?")
+Option 2: In-app notifications (requires Supabase)
