@@ -1,5 +1,5 @@
 Update the UI and the state management of the @app/(components)/AppStructure.tsx component as described below. Continue the existing UX and state management patterns.
-Some options require specific technologies, while some options exclude specific technologies. If a technology is excluded then the options that require that technology should be deselected and disabled. If an option is disabled and deselected then a tooltip should explain which excluded technologies are causing the option to be disabled.
+Some questions and some options require certain technologies, while some options exclude technologies. If a technology is excluded then the options that require it should be deselected and disabled. If an option or question is disabled then a tooltip should explain which questions/options are causing the option to be disabled.
 
 Question 1: Do you want to use Supabase?
 Option 1: No, I want to use NeonDB instead (requires: NeonDB; excludes: Supabase)
