@@ -2,12 +2,18 @@
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -18,7 +24,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { generateAndDownloadZip } from "@/lib/download.utils";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
-import { ChevronDown, ChevronRight, Download, Menu } from "lucide-react";
+import { ChevronDown, ChevronRight, Download, Info, Menu } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -340,7 +346,29 @@ const Sidebar = () => {
                   />
                 ))}
             </div>
-            <div className="p-3  mt-auto">
+            <div className="p-3  mt-auto space-y-3">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Badge
+                    variant="outline"
+                    className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
+                  >
+                    <Info className="h-4 w-4 text-orange-500 absolute left-3" />
+                    Work in Progress
+                  </Badge>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Work in Progress</h4>
+                    <p className="text-sm text-gray-300">
+                      This app is a work in progress and will likely change often. When the source material changes, the editor content will be reset.
+                    </p>
+                    <p className="text-sm text-gray-300 font-medium">
+                      Please download your roadmap frequently to avoid losing your progress.
+                    </p>
+                  </div>
+                </PopoverContent>
+              </Popover>
               <Button
                 variant="outline"
                 className="w-full text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500"

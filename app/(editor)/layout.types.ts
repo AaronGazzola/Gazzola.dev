@@ -61,9 +61,12 @@ export interface InitialConfigurationType {
     zustand: boolean;
     reactQuery: boolean;
     supabase: boolean;
+    neondb: boolean;
     prisma: boolean;
     betterAuth: boolean;
     postgresql: boolean;
+    vercel: boolean;
+    railway: boolean;
     cypress: boolean;
     resend: boolean;
     stripe: boolean;
@@ -71,7 +74,8 @@ export interface InitialConfigurationType {
     openrouter: boolean;
   };
   questions: {
-    supabaseAuthOnly: boolean;
+    useSupabase: "no" | "withBetterAuth" | "authOnly";
+    alwaysOnServer: boolean;
   };
   features: {
     authentication: {
@@ -108,7 +112,10 @@ export interface InitialConfigurationType {
     fileStorage: boolean;
   };
   database: {
-    hosting: "supabase" | "postgresql";
+    hosting: "supabase" | "neondb" | "postgresql";
+  };
+  deployment: {
+    platform: "vercel" | "railway";
   };
 }
 

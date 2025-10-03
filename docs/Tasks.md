@@ -2,11 +2,12 @@
 
 ## Active tasks
 
+- [ ] Landing page
 - [ ] rename "default" shadcn directory to "editor"
 - [ ] Add dynamic component theme and styling page
 - [-] improve App Directory page UX
 - [ ] Update the tech stack page
-  - [ ] Add a database questin and hosting service selection that will include/exclude Supabase, Vercel and Railway
+  - [ ] Add a database question and hosting service selection that will include/exclude Supabase, Vercel and Railway
 - [ ] Add reminder icon/badge to download the roadmap in case the content changes (and explaining that the app is in development)
 - [-] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
@@ -92,18 +93,6 @@
 - [x] Fix editor comment transform error
 - [x] Add section selection menu to the editor Toolbar
 - [x] Remove asterix ("\*") from paths
-
-## Pending tasks
-
-# Topics
-
-- Unicorns everywhere
-- Red queen hypothesis
-- How's my driving?
-
-## other notes:
-
-- [ ] Fix selection expansion keyboard shortcut (shift + cmd + right arrow)
 
 ## Live stream notes
 

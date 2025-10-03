@@ -181,7 +181,7 @@ const generateInitialConfigurationContent = (initialConfiguration: InitialConfig
     }
 
     if (techId === "supabase") {
-      if (initialConfiguration.questions.supabaseAuthOnly && initialConfiguration.features.authentication.enabled) {
+      if (initialConfiguration.questions.useSupabase === "authOnly" && initialConfiguration.features.authentication.enabled) {
         reasons.push("Supabase-only authentication");
       }
       if (initialConfiguration.features.fileStorage) {
@@ -193,7 +193,7 @@ const generateInitialConfigurationContent = (initialConfiguration: InitialConfig
     }
 
     if (techId === "betterAuth") {
-      if (initialConfiguration.features.authentication.enabled && !initialConfiguration.questions.supabaseAuthOnly) {
+      if (initialConfiguration.features.authentication.enabled && initialConfiguration.questions.useSupabase !== "authOnly") {
         reasons.push("Authentication system");
       }
     }

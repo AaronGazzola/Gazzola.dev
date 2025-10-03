@@ -43,9 +43,12 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     zustand: true,
     reactQuery: true,
     supabase: false,
+    neondb: false,
     prisma: false,
     betterAuth: false,
     postgresql: false,
+    vercel: true,
+    railway: false,
     cypress: false,
     resend: false,
     stripe: false,
@@ -53,7 +56,8 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     openrouter: false,
   },
   questions: {
-    supabaseAuthOnly: false,
+    useSupabase: "no",
+    alwaysOnServer: false,
   },
   features: {
     authentication: {
@@ -90,7 +94,10 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     fileStorage: false,
   },
   database: {
-    hosting: "supabase",
+    hosting: "neondb",
+  },
+  deployment: {
+    platform: "vercel",
   },
 };
 
@@ -636,7 +643,7 @@ export const useEditorStore = create<EditorState>()(
       },
       updateAdminOption: (optionId: string, enabled: boolean) => {
         set((state) => {
-          if (state.initialConfiguration.questions.supabaseAuthOnly &&
+          if (state.initialConfiguration.questions.useSupabase === "authOnly" &&
               (optionId === "orgAdmins" || optionId === "orgMembers")) {
             return state;
           }
@@ -688,7 +695,7 @@ export const useEditorStore = create<EditorState>()(
 
           if (enabled) {
             if (optionId === "stripePayments" || optionId === "stripeSubscriptions") {
-              if (state.initialConfiguration.questions.supabaseAuthOnly && optionId === "stripeSubscriptions") {
+              if (state.initialConfiguration.questions.useSupabase === "authOnly" && optionId === "stripeSubscriptions") {
                 return state;
               }
               techUpdates.stripe = true;
