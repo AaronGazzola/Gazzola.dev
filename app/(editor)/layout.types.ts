@@ -74,7 +74,7 @@ export interface InitialConfigurationType {
     openrouter: boolean;
   };
   questions: {
-    useSupabase: "no" | "withBetterAuth" | "authOnly";
+    useSupabase: "none" | "no" | "withBetterAuth" | "authOnly";
     alwaysOnServer: boolean;
   };
   features: {
@@ -86,6 +86,7 @@ export interface InitialConfigurationType {
       googleAuth: boolean;
       githubAuth: boolean;
       appleAuth: boolean;
+      passwordOnly: boolean;
     };
     admin: {
       enabled: boolean;

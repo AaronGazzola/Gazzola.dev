@@ -198,19 +198,24 @@ const questionConfigs: (
 ) => QuestionConfig[] = (config) => [
   {
     id: "databaseChoice",
-    question: "Do you want to use Supabase?",
+    question: "Do you want to use a database?",
     description: "Choose your database and authentication provider.",
     icon: Database,
     requiredTechnologies: [],
     subOptions: [
       {
+        id: "noDatabase",
+        label: "No, I don't need any custom backend logic",
+        description: "No database or authentication functionality",
+      },
+      {
         id: "neondb",
-        label: "No, I want to use NeonDB instead",
+        label: "Yes, I want to use NeonDB with Better-auth for authentication",
         description: "Cheaper, more restrictive",
       },
       {
         id: "supabaseWithBetter",
-        label: "Yes, use Supabase db with Better-Auth for authentication",
+        label: "Yes, I want to use Supabase with Better-Auth for authentication",
         description: "More options for authentication and integration",
       },
       {
@@ -247,23 +252,17 @@ const questionConfigs: (
     description: "Enable user authentication and session management.",
     icon: Users,
     requiredTechnologies: [],
+    disabledWhen: (config) => config.questions.useSupabase === "none",
     subOptions: [
       {
         id: "magicLink",
         label: "Magic Link",
         description: "Passwordless authentication via email links",
-        disabledWhen: (config) => config.questions.useSupabase === "authOnly",
       },
       {
         id: "emailPassword",
         label: "Email & Password",
         description: "Traditional email and password authentication",
-      },
-      {
-        id: "otp",
-        label: "One-Time Password",
-        description: "SMS or email based OTP verification",
-        disabledWhen: (config) => config.questions.useSupabase === "authOnly",
       },
       {
         id: "googleAuth",
@@ -279,51 +278,56 @@ const questionConfigs: (
         id: "appleAuth",
         label: "Apple Sign In",
         description: "Sign in with Apple ID",
-        disabledWhen: (config) => config.questions.useSupabase === "authOnly",
+      },
+      {
+        id: "passwordOnly",
+        label: "Password only",
+        description: "Basic password authentication",
       },
     ],
   },
   {
     id: "admin",
-    question: "Do you need admin functionality?",
+    question: "Does your app use role access?",
     description: "Administrative interface for managing users and content.",
     icon: Settings,
     requiredTechnologies: [],
+    disabledWhen: (config) => !config.features.authentication.enabled,
     subOptions: [
       {
         id: "superAdmins",
-        label: "Super admins",
+        label: "Super admins have elevated access",
         description:
           "Created using a script, super admins have full access and can assign other user roles",
       },
       {
-        id: "orgAdmins",
-        label: "Organisation admins",
+        id: "orgMembers",
+        label: "Organization access is limited to organization members",
         description:
-          "Invited by super admins, org admins can manage their own organisations and the members they contain",
-        disabledWhen: (config) => config.questions.useSupabase === "authOnly",
+          "Have read access to content related to their organizations",
+        disabledWhen: (config) => config.questions.useSupabase !== "withBetterAuth" && config.questions.useSupabase !== "no",
       },
       {
-        id: "orgMembers",
-        label: "Organisation members",
+        id: "orgAdmins",
+        label: "Organization admins have elevated access to organizations",
         description:
-          "Have read access to content related to their organisations",
-        disabledWhen: (config) => config.questions.useSupabase === "authOnly",
+          "Invited by super admins, org admins can manage their own organizations and the members they contain",
+        disabledWhen: (config) => config.questions.useSupabase !== "withBetterAuth" && config.questions.useSupabase !== "no",
       },
     ],
   },
   {
     id: "fileStorage",
-    question: "Do users need to upload files?",
+    question: "Can users upload files?",
     description:
       "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
     icon: Upload,
     requiredTechnologies: ["supabase"],
-    disabledWhen: (config) => config.questions.useSupabase === "no",
+    disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none" || !config.features.authentication.enabled,
   },
   {
     id: "payments",
-    question: "Will you process payments?",
+    question: "Does your app process payments?",
     description: "Handle payments and subscriptions.",
     icon: CreditCard,
     requiredTechnologies: [],
@@ -343,7 +347,7 @@ const questionConfigs: (
         label: "Subscription management with Stripe",
         description:
           "Recurring subscription billing with Stripe and Better Auth",
-        disabledWhen: (config) => config.questions.useSupabase === "authOnly",
+        disabledWhen: (config) => config.questions.useSupabase !== "withBetterAuth" && config.questions.useSupabase !== "no" || !config.features.authentication.enabled,
       },
     ],
   },
@@ -353,32 +357,21 @@ const questionConfigs: (
     description: "AI-powered features for enhanced user experience.",
     icon: Settings,
     requiredTechnologies: ["openrouter"],
-    subOptions: [
-      {
-        id: "imageGeneration",
-        label: "Image generation",
-        description: "AI-powered image creation and editing capabilities",
-      },
-      {
-        id: "textGeneration",
-        label: "Text generation",
-        description: "AI-powered content creation and text processing",
-      },
-    ],
   },
   {
     id: "realTimeNotifications",
-    question: "Do you need real-time notifications?",
+    question: "Do you need realtime notifications?",
     description:
       "Live updates and push notifications using Supabase Realtime for instant data synchronization.",
     icon: Bell,
     requiredTechnologies: ["supabase"],
-    disabledWhen: (config) => config.questions.useSupabase === "no",
+    disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none",
     subOptions: [
       {
         id: "emailNotifications",
         label: "Email notifications",
         description: "Send notifications via email using Resend",
+        disabledWhen: (config) => !config.features.authentication.enabled,
       },
       {
         id: "inAppNotifications",
@@ -414,12 +407,13 @@ const getRequiredTechnologiesForSubOption = (
   const required: (keyof InitialConfigurationType["technologies"])[] = [];
 
   if (questionId === "databaseChoice") {
-    if (optionId === "neondb") {
-      required.push("neondb", "betterAuth");
+    if (optionId === "noDatabase") {
+    } else if (optionId === "neondb") {
+      required.push("neondb", "betterAuth", "prisma", "postgresql");
     } else if (optionId === "supabaseWithBetter") {
-      required.push("supabase", "betterAuth");
+      required.push("supabase", "betterAuth", "prisma", "postgresql");
     } else if (optionId === "supabaseOnly") {
-      required.push("supabase");
+      required.push("supabase", "prisma", "postgresql");
     }
   } else if (questionId === "deploymentChoice") {
     if (optionId === "serverless") {
@@ -436,11 +430,7 @@ const getRequiredTechnologiesForSubOption = (
       required.push("stripe", "betterAuth");
     }
   } else if (questionId === "authentication") {
-    if (
-      optionId === "magicLink" ||
-      optionId === "emailPassword" ||
-      optionId === "otp"
-    ) {
+    if (optionId === "magicLink" || optionId === "emailPassword") {
       required.push("resend");
     }
   } else if (questionId === "admin") {
@@ -486,12 +476,8 @@ const hasAnyChildrenSelected = (
       initialConfiguration.features.authentication.otp ||
       initialConfiguration.features.authentication.googleAuth ||
       initialConfiguration.features.authentication.githubAuth ||
-      initialConfiguration.features.authentication.appleAuth
-    );
-  } else if (questionId === "aiIntegration") {
-    return (
-      initialConfiguration.features.aiIntegration.imageGeneration ||
-      initialConfiguration.features.aiIntegration.textGeneration
+      initialConfiguration.features.authentication.appleAuth ||
+      initialConfiguration.features.authentication.passwordOnly
     );
   } else if (questionId === "realTimeNotifications") {
     return (
@@ -501,6 +487,74 @@ const hasAnyChildrenSelected = (
   }
 
   return false;
+};
+
+const getDisabledReason = (
+  questionId: string,
+  optionId: string | null,
+  config: InitialConfigurationType
+): string | null => {
+  if (questionId === "authentication" && !optionId) {
+    if (config.questions.useSupabase === "none") {
+      return "Requires a database (Question 1)";
+    }
+  }
+
+  if (questionId === "admin" && !optionId) {
+    if (!config.features.authentication.enabled) {
+      return "Requires user authentication (Question 3)";
+    }
+  }
+
+  if (questionId === "fileStorage" && !optionId) {
+    if (config.questions.useSupabase === "none") {
+      return "Requires a database (Question 1)";
+    }
+    if (config.questions.useSupabase === "no") {
+      return "Requires Supabase (Question 1)";
+    }
+    if (!config.features.authentication.enabled) {
+      return "Requires user authentication (Question 3)";
+    }
+  }
+
+  if (questionId === "realTimeNotifications" && !optionId) {
+    if (config.questions.useSupabase === "none") {
+      return "Requires a database (Question 1)";
+    }
+    if (config.questions.useSupabase === "no") {
+      return "Requires Supabase (Question 1)";
+    }
+  }
+
+  if (questionId === "admin" && optionId === "orgMembers") {
+    if (config.questions.useSupabase === "authOnly") {
+      return "Requires Better-Auth (Question 1: choose NeonDB or Supabase with Better-Auth)";
+    }
+  }
+
+  if (questionId === "admin" && optionId === "orgAdmins") {
+    if (config.questions.useSupabase === "authOnly") {
+      return "Requires Better-Auth (Question 1: choose NeonDB or Supabase with Better-Auth)";
+    }
+  }
+
+  if (questionId === "payments" && optionId === "stripeSubscriptions") {
+    if (config.questions.useSupabase === "authOnly") {
+      return "Requires Better-Auth (Question 1: choose NeonDB or Supabase with Better-Auth)";
+    }
+    if (!config.features.authentication.enabled) {
+      return "Requires user authentication (Question 3)";
+    }
+  }
+
+  if (questionId === "realTimeNotifications" && optionId === "emailNotifications") {
+    if (!config.features.authentication.enabled) {
+      return "Requires user authentication (Question 3)";
+    }
+  }
+
+  return null;
 };
 
 export const InitialConfiguration = () => {
@@ -540,71 +594,11 @@ export const InitialConfiguration = () => {
       keyof InitialConfigurationType["technologies"]
     >();
 
-    enabledTechs.add("nextjs");
-    enabledTechs.add("shadcn");
-    enabledTechs.add("tailwindcss");
-    enabledTechs.add("zustand");
-    enabledTechs.add("reactQuery");
-
-    if (initialConfiguration.questions.alwaysOnServer) {
-      enabledTechs.add("railway");
-    } else {
-      enabledTechs.add("vercel");
-    }
-
-    questionConfigs(initialConfiguration).forEach((question) => {
-      const isQuestionEnabled = getFeatureEnabled(question.id);
-      if (isQuestionEnabled) {
-        question.requiredTechnologies.forEach((tech) => {
-          enabledTechs.add(tech);
-        });
+    Object.entries(initialConfiguration.technologies).forEach(([techId, isEnabled]) => {
+      if (isEnabled) {
+        enabledTechs.add(techId as keyof InitialConfigurationType["technologies"]);
       }
     });
-
-    const hasDatabaseFunctionality =
-      initialConfiguration.features.authentication.enabled ||
-      initialConfiguration.features.admin.enabled ||
-      initialConfiguration.features.fileStorage ||
-      initialConfiguration.features.realTimeNotifications.enabled;
-
-    if (hasDatabaseFunctionality) {
-      enabledTechs.add("prisma");
-      enabledTechs.add("postgresql");
-
-      if (initialConfiguration.questions.useSupabase !== "no") {
-        enabledTechs.add("supabase");
-      } else {
-        enabledTechs.add("neondb");
-      }
-    }
-
-    if (initialConfiguration.features.authentication.enabled) {
-      if (initialConfiguration.questions.useSupabase === "authOnly") {
-        enabledTechs.add("supabase");
-      } else if (
-        initialConfiguration.questions.useSupabase === "withBetterAuth"
-      ) {
-        enabledTechs.add("supabase");
-        enabledTechs.add("betterAuth");
-      } else {
-        enabledTechs.add("betterAuth");
-      }
-
-      const hasEmailAuth =
-        initialConfiguration.features.authentication.magicLink ||
-        initialConfiguration.features.authentication.emailPassword ||
-        initialConfiguration.features.authentication.otp;
-      if (hasEmailAuth) {
-        enabledTechs.add("resend");
-      }
-    }
-
-    if (initialConfiguration.features.payments.enabled) {
-      const paymentTechs = getRequiredTechnologiesForPayments(
-        initialConfiguration.features.payments
-      );
-      paymentTechs.forEach((tech) => enabledTechs.add(tech));
-    }
 
     return Array.from(enabledTechs)
       .map((techId) => technologies.find((t) => t.id === techId))
@@ -1001,35 +995,51 @@ export const InitialConfiguration = () => {
                     </AccordionTrigger>
                   </div>
 
-                  <Checkbox
-                    checked={isEnabled}
-                    disabled={
-                      isQuestionDisabled ||
-                      (question.subOptions && question.subOptions.length > 0)
-                    }
-                    onCheckedChange={(checked) => {
-                      if (
-                        isQuestionDisabled ||
-                        (question.subOptions && question.subOptions.length > 0)
-                      ) {
-                        return;
+                  {isQuestionDisabled ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Checkbox
+                          checked={isEnabled}
+                          disabled={true}
+                          className={cn(
+                            "size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                          )}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {getDisabledReason(question.id, null, initialConfiguration) || "Question not available"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <Checkbox
+                      checked={isEnabled}
+                      disabled={
+                        question.subOptions && question.subOptions.length > 0
                       }
+                      onCheckedChange={(checked) => {
+                        if (
+                          question.subOptions && question.subOptions.length > 0
+                        ) {
+                          return;
+                        }
 
-                      const isChecking = checked === true;
-                      updateFeature(question.id, isChecking);
+                        const isChecking = checked === true;
+                        updateFeature(question.id, isChecking);
 
-                      if (canAutoProgress("initial-configuration")) {
-                        autoProgressWalkthrough();
-                      }
-                    }}
-                    className={cn(
-                      "size-5 border border-gray-500 select-none",
-                      isQuestionDisabled ||
-                        (question.subOptions && question.subOptions.length > 0)
-                        ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
-                        : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
-                    )}
-                  />
+                        if (canAutoProgress("initial-configuration")) {
+                          autoProgressWalkthrough();
+                        }
+                      }}
+                      className={cn(
+                        "size-5 border border-gray-500 select-none",
+                        question.subOptions && question.subOptions.length > 0
+                          ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                          : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
+                      )}
+                    />
+                  )}
                 </div>
                 <AccordionContent>
                   <div className="px-2 pb-2">
@@ -1067,7 +1077,12 @@ export const InitialConfiguration = () => {
                                                   .payments[
                                                   option.id as keyof typeof initialConfiguration.features.payments
                                                 ] || false
-                                              : false
+                                              : question.id === "realTimeNotifications"
+                                                ? initialConfiguration.features
+                                                    .realTimeNotifications[
+                                                    option.id as keyof typeof initialConfiguration.features.realTimeNotifications
+                                                  ] || false
+                                                : false
                                       }
                                       disabled={true}
                                       className={cn(
@@ -1077,8 +1092,7 @@ export const InitialConfiguration = () => {
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p>
-                                      Requires Better Auth (not available with
-                                      Supabase-only auth)
+                                      {getDisabledReason(question.id, option.id, initialConfiguration) || "Option not available"}
                                     </p>
                                   </TooltipContent>
                                 </Tooltip>
@@ -1086,7 +1100,10 @@ export const InitialConfiguration = () => {
                                 <Checkbox
                                   checked={
                                     question.id === "databaseChoice"
-                                      ? (option.id === "neondb" &&
+                                      ? (option.id === "noDatabase" &&
+                                          initialConfiguration.questions
+                                            .useSupabase === "none") ||
+                                        (option.id === "neondb" &&
                                           initialConfiguration.questions
                                             .useSupabase === "no") ||
                                         (option.id === "supabaseWithBetter" &&
@@ -1142,17 +1159,69 @@ export const InitialConfiguration = () => {
                                       checked
                                     ) {
                                       let useSupabaseValue:
+                                        | "none"
                                         | "no"
                                         | "withBetterAuth"
-                                        | "authOnly" = "no";
-                                      if (option.id === "neondb") {
+                                        | "authOnly" = "none";
+                                      const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
+                                      const featureUpdates: Partial<InitialConfigurationType["features"]> = {};
+
+                                      if (option.id === "noDatabase") {
+                                        useSupabaseValue = "none";
+                                        techUpdates.supabase = false;
+                                        techUpdates.neondb = false;
+                                        techUpdates.betterAuth = false;
+                                        techUpdates.prisma = false;
+                                        techUpdates.postgresql = false;
+                                        featureUpdates.authentication = {
+                                          ...initialConfiguration.features.authentication,
+                                          enabled: false,
+                                        };
+                                        featureUpdates.admin = {
+                                          ...initialConfiguration.features.admin,
+                                          enabled: false,
+                                        };
+                                        featureUpdates.fileStorage = false;
+                                        featureUpdates.realTimeNotifications = {
+                                          ...initialConfiguration.features.realTimeNotifications,
+                                          enabled: false,
+                                        };
+                                      } else if (option.id === "neondb") {
                                         useSupabaseValue = "no";
+                                        techUpdates.neondb = true;
+                                        techUpdates.betterAuth = true;
+                                        techUpdates.prisma = true;
+                                        techUpdates.postgresql = true;
+                                        techUpdates.supabase = false;
+                                        featureUpdates.fileStorage = false;
+                                        featureUpdates.realTimeNotifications = {
+                                          ...initialConfiguration.features.realTimeNotifications,
+                                          enabled: false,
+                                        };
                                       } else if (
                                         option.id === "supabaseWithBetter"
                                       ) {
                                         useSupabaseValue = "withBetterAuth";
+                                        techUpdates.supabase = true;
+                                        techUpdates.betterAuth = true;
+                                        techUpdates.prisma = true;
+                                        techUpdates.postgresql = true;
+                                        techUpdates.neondb = false;
                                       } else if (option.id === "supabaseOnly") {
                                         useSupabaseValue = "authOnly";
+                                        techUpdates.supabase = true;
+                                        techUpdates.prisma = true;
+                                        techUpdates.postgresql = true;
+                                        techUpdates.betterAuth = false;
+                                        techUpdates.neondb = false;
+                                        const adminUpdates = {
+                                          ...initialConfiguration.features.admin,
+                                        };
+                                        if (adminUpdates.orgAdmins || adminUpdates.orgMembers) {
+                                          adminUpdates.orgAdmins = false;
+                                          adminUpdates.orgMembers = false;
+                                        }
+                                        featureUpdates.admin = adminUpdates;
                                       }
                                       updateInitialConfiguration({
                                         questions: {
@@ -1161,9 +1230,19 @@ export const InitialConfiguration = () => {
                                         },
                                         database: {
                                           hosting:
-                                            useSupabaseValue === "no"
+                                            useSupabaseValue === "none"
+                                              ? "postgresql"
+                                              : useSupabaseValue === "no"
                                               ? "neondb"
                                               : "supabase",
+                                        },
+                                        technologies: {
+                                          ...initialConfiguration.technologies,
+                                          ...techUpdates,
+                                        },
+                                        features: {
+                                          ...initialConfiguration.features,
+                                          ...featureUpdates,
                                         },
                                       });
                                     } else if (
@@ -1262,7 +1341,10 @@ export const InitialConfiguration = () => {
                                     // Check if this specific sub-option is selected
                                     const isSubOptionSelected =
                                       question.id === "databaseChoice"
-                                        ? (option.id === "neondb" &&
+                                        ? (option.id === "noDatabase" &&
+                                            initialConfiguration.questions
+                                              .useSupabase === "none") ||
+                                          (option.id === "neondb" &&
                                             initialConfiguration.questions
                                               .useSupabase === "no") ||
                                           (option.id === "supabaseWithBetter" &&

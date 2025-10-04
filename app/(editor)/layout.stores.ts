@@ -56,7 +56,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     openrouter: false,
   },
   questions: {
-    useSupabase: "no",
+    useSupabase: "none",
     alwaysOnServer: false,
   },
   features: {
@@ -68,6 +68,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
       googleAuth: false,
       githubAuth: false,
       appleAuth: false,
+      passwordOnly: false,
     },
     admin: {
       enabled: false,
@@ -654,6 +655,10 @@ export const useEditorStore = create<EditorState>()(
             tailwindcss: true,
             shadcn: true,
           };
+
+          if (enabled && (optionId === "orgAdmins" || optionId === "orgMembers")) {
+            techUpdates.betterAuth = true;
+          }
 
           const newFeatures = {
             ...state.initialConfiguration.features,

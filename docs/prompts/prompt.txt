@@ -1,10 +1,11 @@
-Update the UI and the state management of the @app/(components)/AppStructure.tsx component as described below. Continue the existing UX and state management patterns.
+Update the UI and the state management of the @app/(components)/InitialConfiguration.tsx component as described below. Continue the existing UX and state management patterns.
 Some questions and some options require certain technologies, while some options exclude technologies. If a technology is excluded then the options that require it should be deselected and disabled. If an option or question is disabled then a tooltip should explain which questions/options are causing the option to be disabled.
 
-Question 1: Do you want to use Supabase?
-Option 1: No, I want to use NeonDB instead (requires: NeonDB; excludes: Supabase)
-Option 2: Yes, use Supabase db with Better-Auth for authentication (requires: Supabase, Better-Auth; Excludes: NeonDB)
-Option 2: Yes, use only Supabase for authentication (requires: Supabase; excludes: Better-Auth, NeonDB)
+Question 1: Do you want to use a database?
+Option 1: No, I don't need any custom backend logic ( excludes: Supabase and NeonDB)
+Option 2: Yes, I want to use NeonDB with Better-auth for authentication (requires: NeonDB and better-auth; excludes: Supabase)
+Option 3: Yes, I want tou use Supabase with Better-Auth for authentication (requires: Supabase, Better-Auth; Excludes: NeonDB)
+Option 4: Yes, use only Supabase for authentication (requires: Supabase; excludes: Better-Auth, NeonDB)
 
 Question 2: Do you need an "always on" server?
 Option 1: No, a serverless deployment is sufficient (requires: Vercel; excludes: Railway)
