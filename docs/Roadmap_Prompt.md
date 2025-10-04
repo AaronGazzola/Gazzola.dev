@@ -1,6 +1,7 @@
 # Project Roadmap Template & Instructions
 
-This document provides a template for creating detailed implementation roadmaps for software projects. Use this template to break down complex projects into manageable phases with clear deliverables and tracking.
+The roadmap is an ordered sequence of detailed, specific, technical instructions to implement ALL of the requested functionality. Do not skip any functionality, the roadmap needs to be exhaustive. Don't include any testing in the roadmap.
+Only mark a task as complete when the feature that the task describes is fully implemented.
 
 ## Purpose & Intended Use
 
@@ -104,7 +105,7 @@ Include in each task:
 
 ### Status Indicators
 
-- **✅ COMPLETED**: Feature is fully implemented and tested
+- **✅ COMPLETED**: Feature is fully implemented
 - **🔄 IN PROGRESS**: Currently being worked on
 - **⏳ REMAINING**: Planned for future implementation
 - **🚀 READY TO USE**: Available for users in current state

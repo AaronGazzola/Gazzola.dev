@@ -20,10 +20,12 @@ The commands and numbers below are shorthand references to the corresponding pro
 
 10. `test_doc_fix`: "compare `docs/Test.md` with all tests in the repo and update the tests to align with the `docs/Test.md` document"
 
-11. `_roadmap_continue`: "continue to follow the roadmap"
+11. `roadmap_create`: "Create a roadmap at `docs/roadmaps/${scope}_${date}.md` ("eg: "docs/roadmaps/User_authentication_1-Jun-25.md"). Refer to the roadmap prompt at @docs/Roadmap_Prompt.md and the programming patterns in @CLAUDE.md and @docs/util.md . Your task is not to implement any of the described features. Your task is to create a comprehensive roadmap that details all of the steps required to complete the entire process and implement ALL of the functionality"
 
-12. `_roadmap_commit`: "Update the roadmap to document the completed and remaining tasks, and push a commit"
+12. `_roadmap_continue`: "continue to follow the roadmap"
 
-13. `_roadmap_phase`: "Continue to follow the roadmap. After completing a phase, update the roadmap to document the completed and remaining tasks and push a commit"
+13. `_roadmap_commit`: "Update the roadmap to document the completed and remaining tasks, and push a commit"
 
-14. `_roadmap_review`: "Review this repo and the latest roadmap ("docs/roadmap[date].md"). If the app and the roadmap deviate, then make a plan to make the app more aligned with the roadmap"
+14. `_roadmap_phase`: "Continue to follow the roadmap. After completing a phase, update the roadmap to document the completed and remaining tasks and commit the changes"
+
+15. `_roadmap_review`: "Review this repo and the latest roadmap ("docs/roadmap[date].md"). If the app and the roadmap deviate, then make a plan to make the app more aligned with the roadmap"
