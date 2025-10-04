@@ -10,13 +10,13 @@ export const useContentVersion = () => {
   return useQuery({
     queryKey: ["contentVersion"],
     queryFn: async () => {
-      console.log(conditionalLog("useContentVersion: queryFn starting", { label: "markdown-parse" }));
+      conditionalLog("useContentVersion: queryFn starting", { label: "markdown-parse" });
       const { data, error } = await getContentVersionAction();
       if (error) {
-        console.log(conditionalLog({ error: String(error) }, { label: "markdown-parse" }));
+        conditionalLog({ error: String(error) }, { label: "markdown-parse" });
         throw error;
       }
-      console.log(conditionalLog({ version: data || 1 }, { label: "markdown-parse" }));
+      conditionalLog({ version: data || 1 }, { label: "markdown-parse" });
       return data || 1;
     },
     staleTime: 1000 * 60 * 5,
@@ -28,20 +28,20 @@ export const useGetMarkdownData = (enabled: boolean = true) => {
   const query = useQuery({
     queryKey: ["markdownData"],
     queryFn: async () => {
-      console.log(conditionalLog("useGetMarkdownData: queryFn starting", { label: "markdown-parse" }));
+      conditionalLog("useGetMarkdownData: queryFn starting", { label: "markdown-parse" });
       const { data, error } = await getMarkdownDataAction();
       if (error) {
-        console.log(conditionalLog({ error: String(error) }, { label: "markdown-parse" }));
+        conditionalLog({ error: String(error) }, { label: "markdown-parse" });
         throw new Error(error);
       }
       if (!data) {
-        console.log(conditionalLog("useGetMarkdownData: No data received", { label: "markdown-parse" }));
+        conditionalLog("useGetMarkdownData: No data received", { label: "markdown-parse" });
         throw new Error("No markdown data received");
       }
-      console.log(conditionalLog({
+      conditionalLog({
         nodeCount: Object.keys(data.flatIndex).length,
         contentVersion: data.contentVersion
-      }, { label: "markdown-parse" }));
+      }, { label: "markdown-parse" });
       return data;
     },
     staleTime: 1000 * 60 * 5,
@@ -64,7 +64,7 @@ export const useInitializeMarkdownData = (versionChecked: boolean, versionCheckL
   const needsInitialization = hasDefaultData || !data.root.children.length;
 
   useEffect(() => {
-    console.log(conditionalLog({
+    conditionalLog({
       versionChecked,
       versionCheckLoading,
       shouldFetchData,
@@ -74,10 +74,10 @@ export const useInitializeMarkdownData = (versionChecked: boolean, versionCheckL
       hasError: !!error,
       dataNodeCount: Object.keys(data.flatIndex).length,
       dataVersion: data.contentVersion
-    }, { label: "markdown-parse" }));
+    }, { label: "markdown-parse" });
 
     if (shouldFetchData && needsInitialization && markdownData && !isLoading && !error) {
-      console.log(conditionalLog("useInitializeMarkdownData: Setting markdown data", { label: "markdown-parse" }));
+      conditionalLog("useInitializeMarkdownData: Setting markdown data", { label: "markdown-parse" });
       setMarkdownData(markdownData);
       forceRefresh();
     }
@@ -105,41 +105,41 @@ export const useContentVersionCheck = () => {
     storedContentVersion !== currentVersion;
 
   useEffect(() => {
-    console.log(conditionalLog({
+    conditionalLog({
       isContentStale,
       currentVersion,
       storedContentVersion,
       isResetting,
       versionChecked,
       isLoading
-    }, { label: "markdown-parse" }));
+    }, { label: "markdown-parse" });
 
     const resetContent = async () => {
       if (currentVersion === undefined) {
-        console.log(conditionalLog("useContentVersionCheck: Waiting for version", { label: "markdown-parse" }));
+        conditionalLog("useContentVersionCheck: Waiting for version", { label: "markdown-parse" });
         setIsLoading(true);
         return;
       }
 
       if (versionChecked) {
-        console.log(conditionalLog("useContentVersionCheck: Already checked", { label: "markdown-parse" }));
+        conditionalLog("useContentVersionCheck: Already checked", { label: "markdown-parse" });
         setIsLoading(false);
         return;
       }
 
       if (!isContentStale) {
-        console.log(conditionalLog("useContentVersionCheck: Content not stale, marking checked", { label: "markdown-parse" }));
+        conditionalLog("useContentVersionCheck: Content not stale, marking checked", { label: "markdown-parse" });
         setVersionChecked(true);
         setIsLoading(false);
         return;
       }
 
       if (isResetting) {
-        console.log(conditionalLog("useContentVersionCheck: Already resetting", { label: "markdown-parse" }));
+        conditionalLog("useContentVersionCheck: Already resetting", { label: "markdown-parse" });
         return;
       }
 
-      console.log(conditionalLog("useContentVersionCheck: Starting reset", { label: "markdown-parse" }));
+      conditionalLog("useContentVersionCheck: Starting reset", { label: "markdown-parse" });
       setIsResetting(true);
       setIsLoading(true);
 
@@ -147,18 +147,18 @@ export const useContentVersionCheck = () => {
         const { data: freshData, error } = await parseAndGetMarkdownDataAction();
 
         if (error) {
-          console.log(conditionalLog({ parseError: String(error) }, { label: "markdown-parse" }));
+          conditionalLog({ parseError: String(error) }, { label: "markdown-parse" });
           setVersionChecked(true);
           setIsLoading(false);
           return;
         }
 
         if (freshData && currentVersion) {
-          console.log(conditionalLog({
+          conditionalLog({
             freshDataNodeCount: Object.keys(freshData.flatIndex).length,
             freshDataVersion: freshData.contentVersion,
             currentVersion
-          }, { label: "markdown-parse" }));
+          }, { label: "markdown-parse" });
 
           queryClient.invalidateQueries({ queryKey: ["markdownData"] });
           queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
@@ -170,16 +170,16 @@ export const useContentVersionCheck = () => {
             contentVersion: currentVersion,
           };
 
-          console.log(conditionalLog("useContentVersionCheck: Setting markdown data in store", { label: "markdown-parse" }));
+          conditionalLog("useContentVersionCheck: Setting markdown data in store", { label: "markdown-parse" });
           setMarkdownData(updatedData);
           reset();
           setRefreshKey(resetKey);
           setVersionChecked(true);
           setIsLoading(false);
-          console.log(conditionalLog({ resetKey, message: "Content updated successfully" }, { label: "markdown-parse" }));
+          conditionalLog({ resetKey, message: "Content updated successfully" }, { label: "markdown-parse" });
         }
       } catch (error) {
-        console.log(conditionalLog({ resetError: String(error) }, { label: "markdown-parse" }));
+        conditionalLog({ resetError: String(error) }, { label: "markdown-parse" });
         setVersionChecked(true);
         setIsLoading(false);
       } finally {

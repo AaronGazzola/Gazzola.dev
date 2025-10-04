@@ -17,28 +17,28 @@ interface ConditionalLogOptions {
 export function conditionalLog(
   data: unknown,
   options: ConditionalLogOptions
-): string | null {
+): void {
   const { maxStringLength = 200, label } = options;
 
   const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;
 
   if (!logLabels || logLabels === "none") {
-    return null;
+    return;
   }
 
   if (logLabels !== "all") {
     const allowedLabels = logLabels.split(",").map((l) => l.trim());
     if (!allowedLabels.includes(label)) {
-      return null;
+      return;
     }
   }
 
   try {
     const processedData = deepStringify(data, maxStringLength, new WeakSet());
     const result = JSON.stringify(processedData);
-    return result.replace(/\s+/g, "");
+    console.log(result.replace(/\s+/g, ""));
   } catch (error) {
-    return JSON.stringify({ error: "Failed to stringify data", label });
+    console.log(JSON.stringify({ error: "Failed to stringify data", label }));
   }
 }
 

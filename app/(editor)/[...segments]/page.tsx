@@ -57,7 +57,7 @@ const Page = () => {
     useInitializeMarkdownData(versionChecked, versionCheckLoading);
 
   useEffect(() => {
-    console.log(conditionalLog("Page: Component mounting", { label: "markdown-parse" }));
+    conditionalLog("Page: Component mounting", { label: "markdown-parse" });
     useEditorStore.persist.rehydrate();
     setMounted(true);
   }, []);
@@ -65,7 +65,7 @@ const Page = () => {
   const canRender = mounted && versionChecked && !versionCheckLoading && !isResetting;
 
   useEffect(() => {
-    console.log(conditionalLog({
+    conditionalLog({
       mounted,
       needsInitialization,
       isLoading,
@@ -74,7 +74,7 @@ const Page = () => {
       isResetting,
       dataNodeCount: data ? Object.keys(data.flatIndex).length : 0,
       dataVersion: data?.contentVersion
-    }, { label: "markdown-parse" }));
+    }, { label: "markdown-parse" });
   }, [mounted, needsInitialization, isLoading, error, isInitialized, isResetting, data]);
 
   const getFirstPagePath = useCallback((): string => {
@@ -92,7 +92,7 @@ const Page = () => {
 
     if (!segments || segments.length === 0) {
       const firstPath = getFirstPagePath();
-      console.log(conditionalLog({ message: "No segments, using first page", firstPath }, { label: "markdown-parse" }));
+      conditionalLog({ message: "No segments, using first page", firstPath }, { label: "markdown-parse" });
       return firstPath;
     }
 
@@ -100,13 +100,13 @@ const Page = () => {
 
     for (const [path, node] of Object.entries(data.flatIndex)) {
       if (node.type === "file" && node.urlPath === urlPath) {
-        console.log(conditionalLog({ message: "Found matching path", urlPath, path }, { label: "markdown-parse" }));
+        conditionalLog({ message: "Found matching path", urlPath, path }, { label: "markdown-parse" });
         return path;
       }
     }
 
     const firstPath = getFirstPagePath();
-    console.log(conditionalLog({ message: "No match found, using first page", urlPath, firstPath }, { label: "markdown-parse" }));
+    conditionalLog({ message: "No match found, using first page", urlPath, firstPath }, { label: "markdown-parse" });
     return firstPath;
   }, [canRender, params, data, getFirstPagePath]);
 
@@ -122,13 +122,13 @@ const Page = () => {
     if (!canRender || !contentPath) return "";
 
     const node = getNode(contentPath);
-    console.log(conditionalLog({
+    conditionalLog({
       message: "Getting current content",
       contentPath,
       hasNode: !!node,
       nodeType: node?.type,
       contentLength: node && node.type === "file" ? node.content.length : 0
-    }, { label: "markdown-parse" }));
+    }, { label: "markdown-parse" });
 
     if (node && node.type === "file") {
       return node.content

@@ -288,26 +288,26 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleResetAll = async () => {
-    console.log(conditionalLog("Toolbar.handleResetAll: Starting", { label: "markdown-parse" }));
+    conditionalLog("Toolbar.handleResetAll: Starting", { label: "markdown-parse" });
     setResetAllLoading(true);
     try {
       const { data: freshData, error } = await parseAndGetMarkdownDataAction();
 
-      console.log(conditionalLog({
+      conditionalLog({
         hasFreshData: !!freshData,
         hasError: !!error,
         freshDataNodeCount: freshData ? Object.keys(freshData.flatIndex).length : 0,
         freshDataVersion: freshData?.contentVersion
-      }, { label: "markdown-parse" }));
+      }, { label: "markdown-parse" });
 
       if (error) {
-        console.log(conditionalLog({ parseError: String(error) }, { label: "markdown-parse" }));
+        conditionalLog({ parseError: String(error) }, { label: "markdown-parse" });
         alert("Failed to parse markdown files. Please check the console for details.");
         return;
       }
 
       if (freshData) {
-        console.log(conditionalLog("Toolbar.handleResetAll: Invalidating queries", { label: "markdown-parse" }));
+        conditionalLog("Toolbar.handleResetAll: Invalidating queries", { label: "markdown-parse" });
 
         queryClient.invalidateQueries({ queryKey: ["markdownData"] });
         queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
@@ -318,21 +318,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
         const resetKey = Date.now();
 
-        console.log(conditionalLog({
+        conditionalLog({
           resetKey,
           firstPageUrl: firstPagePath?.urlPath,
           message: "Setting markdown data in store"
-        }, { label: "markdown-parse" }));
+        }, { label: "markdown-parse" });
 
         setMarkdownData(freshData);
         reset();
         setRefreshKey(resetKey);
 
-        console.log(conditionalLog("Toolbar.handleResetAll: Store updated, waiting for state to settle", { label: "markdown-parse" }));
+        conditionalLog("Toolbar.handleResetAll: Store updated, waiting for state to settle", { label: "markdown-parse" });
 
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        console.log(conditionalLog("Toolbar.handleResetAll: State settled, navigating", { label: "markdown-parse" }));
+        conditionalLog("Toolbar.handleResetAll: State settled, navigating", { label: "markdown-parse" });
 
         if (firstPagePath?.urlPath) {
           router.push(firstPagePath.urlPath);
@@ -340,12 +340,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       }
       setResetAllDialogOpen(false);
     } catch (error) {
-      console.log(conditionalLog({ catchError: String(error) }, { label: "markdown-parse" }));
+      conditionalLog({ catchError: String(error) }, { label: "markdown-parse" });
       alert("An unexpected error occurred during reset. Please try again.");
       setResetAllDialogOpen(false);
     } finally {
       setResetAllLoading(false);
-      console.log(conditionalLog("Toolbar.handleResetAll: Complete", { label: "markdown-parse" }));
+      conditionalLog("Toolbar.handleResetAll: Complete", { label: "markdown-parse" });
     }
   };
 
