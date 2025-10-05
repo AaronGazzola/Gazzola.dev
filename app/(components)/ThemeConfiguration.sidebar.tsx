@@ -1,9 +1,9 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/default/ui/input";
+import { ScrollArea } from "@/components/default/ui/scroll-area";
+import { Separator } from "@/components/default/ui/separator";
 import { cn } from "@/lib/tailwind.utils";
 import { Search } from "lucide-react";
 import { useState } from "react";

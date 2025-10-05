@@ -1063,28 +1063,48 @@ export const useEditorStore = create<EditorState>()(
           };
         });
       },
-      updateComponentStyle: (componentId, updates) => {
+      updateComponentStyle: (componentId, variant, updates) => {
         set((state) => {
           const stylesKey = state.themeConfigState.themeMode === "light" ? "lightModeComponentStyles" : "darkModeComponentStyles";
+          const currentComponentStyles = state.themeConfigState[stylesKey][componentId] || {};
+          const currentVariantStyles = currentComponentStyles[variant] || {};
+
           return {
             themeConfigState: {
               ...state.themeConfigState,
               [stylesKey]: {
                 ...state.themeConfigState[stylesKey],
                 [componentId]: {
-                  ...state.themeConfigState[stylesKey][componentId],
-                  ...updates,
+                  ...currentComponentStyles,
+                  [variant]: {
+                    ...currentVariantStyles,
+                    ...updates,
+                  },
                 },
               },
             },
           };
         });
       },
-      resetComponentStyle: (componentId) => {
+      resetComponentStyle: (componentId, variant) => {
         set((state) => {
           const stylesKey = state.themeConfigState.themeMode === "light" ? "lightModeComponentStyles" : "darkModeComponentStyles";
           const newStyles = { ...state.themeConfigState[stylesKey] };
-          delete newStyles[componentId];
+
+          if (variant) {
+            if (newStyles[componentId]) {
+              const componentStyles = { ...newStyles[componentId] };
+              delete componentStyles[variant];
+              if (Object.keys(componentStyles).length === 0) {
+                delete newStyles[componentId];
+              } else {
+                newStyles[componentId] = componentStyles;
+              }
+            }
+          } else {
+            delete newStyles[componentId];
+          }
+
           return {
             themeConfigState: {
               ...state.themeConfigState,

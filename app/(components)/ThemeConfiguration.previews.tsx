@@ -114,17 +114,26 @@ export const CardPreview = ({ styleConfig }: PreviewProps) => (
   </Card>
 );
 
-export const CheckboxPreview = ({ styleConfig }: PreviewProps) => (
-  <div className="flex items-center space-x-2">
-    <Checkbox id="terms" style={styleConfig} />
-    <label
-      htmlFor="terms"
-      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-    >
-      Accept terms and conditions
-    </label>
-  </div>
-);
+export const CheckboxPreview = ({ styleConfig }: PreviewProps) => {
+  const checkboxStyles = {
+    ...styleConfig,
+    ...(styleConfig?.checkedColor && {
+      ['--checkbox-checked' as any]: styleConfig.checkedColor,
+    }),
+    ...(styleConfig?.checkmarkColor && {
+      ['--checkbox-checkmark' as any]: styleConfig.checkmarkColor,
+    }),
+  };
+
+  return (
+    <div className="flex items-center space-x-2">
+      <Checkbox id="terms" style={checkboxStyles} />
+      <label htmlFor="terms" className="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" style={styleConfig}>
+        Accept terms and conditions
+      </label>
+    </div>
+  );
+};
 
 export const CollapsiblePreview = ({ styleConfig }: PreviewProps) => (
   <Collapsible className="w-[350px] space-y-2" style={styleConfig}>
@@ -195,9 +204,22 @@ export const PopoverPreview = ({ styleConfig }: PreviewProps) => (
   </Popover>
 );
 
-export const ProgressPreview = ({ styleConfig }: PreviewProps) => (
-  <Progress value={66} className="w-[60%]" style={styleConfig} />
-);
+export const ProgressPreview = ({ styleConfig }: PreviewProps) => {
+  const progressStyles = {
+    ...styleConfig,
+    ...(styleConfig?.foregroundColor && {
+      ['--progress-foreground' as any]: styleConfig.foregroundColor,
+    }),
+  };
+
+  return (
+    <Progress
+      value={66}
+      className="w-[60%]"
+      style={progressStyles}
+    />
+  );
+};
 
 export const RadioGroupPreview = ({ styleConfig }: PreviewProps) => (
   <RadioGroup defaultValue="option-one" style={styleConfig}>
@@ -215,9 +237,9 @@ export const RadioGroupPreview = ({ styleConfig }: PreviewProps) => (
 export const ScrollAreaPreview = ({ styleConfig }: PreviewProps) => (
   <ScrollArea className="h-72 w-48 rounded-md border" style={styleConfig}>
     <div className="p-4">
-      <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
+      <h4 className="mb-4 font-medium leading-none" style={styleConfig}>Tags</h4>
       {Array.from({ length: 50 }).map((_, i) => (
-        <div key={i} className="text-sm">
+        <div key={i} style={styleConfig}>
           Tag {i + 1}
         </div>
       ))}
@@ -241,16 +263,16 @@ export const SelectPreview = ({ styleConfig }: PreviewProps) => (
 export const SeparatorPreview = ({ styleConfig }: PreviewProps) => (
   <div>
     <div className="space-y-1">
-      <h4 className="text-sm font-medium leading-none">Radix Primitives</h4>
-      <p className="text-sm text-muted-foreground">
+      <h4 className="font-medium leading-none" style={styleConfig}>Radix Primitives</h4>
+      <p className="text-muted-foreground" style={styleConfig}>
         An open-source UI component library.
       </p>
     </div>
     <Separator className="my-4" style={styleConfig} />
-    <div className="flex h-5 items-center space-x-4 text-sm">
-      <div>Blog</div>
-      <Separator orientation="vertical" />
-      <div>Docs</div>
+    <div className="flex h-5 items-center space-x-4">
+      <div style={styleConfig}>Blog</div>
+      <Separator orientation="vertical" style={styleConfig} />
+      <div style={styleConfig}>Docs</div>
     </div>
   </div>
 );
@@ -281,40 +303,94 @@ export const SkeletonPreview = ({ styleConfig }: PreviewProps) => (
   </div>
 );
 
-export const SliderPreview = ({ styleConfig }: PreviewProps) => (
-  <Slider defaultValue={[50]} max={100} step={1} className="w-[60%]" style={styleConfig} />
-);
+export const SliderPreview = ({ styleConfig }: PreviewProps) => {
+  const sliderStyles = {
+    ...styleConfig,
+    ...(styleConfig?.trackColor && {
+      ['--slider-track' as any]: styleConfig.trackColor,
+    }),
+    ...(styleConfig?.activeTrackColor && {
+      ['--slider-active-track' as any]: styleConfig.activeTrackColor,
+    }),
+    ...(styleConfig?.thumbColor && {
+      ['--slider-thumb' as any]: styleConfig.thumbColor,
+    }),
+    ...(styleConfig?.thumbBorderColor && {
+      ['--slider-thumb-border' as any]: styleConfig.thumbBorderColor,
+    }),
+  };
 
-export const SwitchPreview = ({ styleConfig }: PreviewProps) => (
-  <div className="flex items-center space-x-2">
-    <Switch id="airplane-mode" style={styleConfig} />
-    <Label htmlFor="airplane-mode">Airplane Mode</Label>
-  </div>
-);
+  return (
+    <Slider
+      defaultValue={[50]}
+      max={100}
+      step={1}
+      className="w-[60%]"
+      style={sliderStyles}
+    />
+  );
+};
 
-export const TablePreview = ({ styleConfig }: PreviewProps) => (
-  <Table style={styleConfig}>
-    <TableHeader>
-      <TableRow>
-        <TableHead>Name</TableHead>
-        <TableHead>Status</TableHead>
-        <TableHead>Email</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      <TableRow>
-        <TableCell className="font-medium">John Doe</TableCell>
-        <TableCell>Active</TableCell>
-        <TableCell>john@example.com</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell className="font-medium">Jane Smith</TableCell>
-        <TableCell>Inactive</TableCell>
-        <TableCell>jane@example.com</TableCell>
-      </TableRow>
-    </TableBody>
-  </Table>
-);
+export const SwitchPreview = ({ styleConfig }: PreviewProps) => {
+  const switchStyles = {
+    ...styleConfig,
+    ...(styleConfig?.trackOffColor && {
+      ['--switch-track-off' as any]: styleConfig.trackOffColor,
+    }),
+    ...(styleConfig?.trackOnColor && {
+      ['--switch-track-on' as any]: styleConfig.trackOnColor,
+    }),
+    ...(styleConfig?.thumbColor && {
+      ['--switch-thumb' as any]: styleConfig.thumbColor,
+    }),
+  };
+
+  return (
+    <div className="flex items-center space-x-2">
+      <Switch id="airplane-mode" style={switchStyles} />
+      <Label htmlFor="airplane-mode">Airplane Mode</Label>
+    </div>
+  );
+};
+
+export const TablePreview = ({ styleConfig }: PreviewProps) => {
+  const tableStyles = {
+    ...styleConfig,
+    ...(styleConfig?.headerBackgroundColor && {
+      ['--table-header-bg' as any]: styleConfig.headerBackgroundColor,
+    }),
+    ...(styleConfig?.rowBackgroundColor && {
+      ['--table-row-bg' as any]: styleConfig.rowBackgroundColor,
+    }),
+    ...(styleConfig?.hoverRowColor && {
+      ['--table-hover-row' as any]: styleConfig.hoverRowColor,
+    }),
+  };
+
+  return (
+    <Table style={tableStyles}>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Email</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">John Doe</TableCell>
+          <TableCell>Active</TableCell>
+          <TableCell>john@example.com</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">Jane Smith</TableCell>
+          <TableCell>Inactive</TableCell>
+          <TableCell>jane@example.com</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+};
 
 export const TextareaPreview = ({ styleConfig }: PreviewProps) => (
   <Textarea placeholder="Type your message here." style={styleConfig} />

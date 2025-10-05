@@ -219,8 +219,8 @@ export interface EditorState {
   setActiveVariant: (variant: string) => void;
   setThemeMode: (mode: "light" | "dark") => void;
   updateGlobalTheme: (updates: Partial<GlobalThemeConfig>) => void;
-  updateComponentStyle: (componentId: string, updates: ComponentStyleConfig) => void;
-  resetComponentStyle: (componentId: string) => void;
+  updateComponentStyle: (componentId: string, variant: string, updates: ComponentStyleConfig) => void;
+  resetComponentStyle: (componentId: string, variant?: string) => void;
   initializeAvailableComponents: () => void;
 }
 
@@ -306,13 +306,11 @@ export interface ThemeConfigComponent {
 }
 
 export interface ComponentStyleConfig {
-  borderRadius?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  hoverBackgroundColor?: string;
-  hoverBorderColor?: string;
-  padding?: string;
   [key: string]: any;
+}
+
+export interface VariantStyleConfig {
+  [variant: string]: ComponentStyleConfig;
 }
 
 export interface GlobalThemeConfig {
@@ -331,7 +329,7 @@ export interface ThemeConfigState {
   themeMode: "light" | "dark";
   lightModeTheme: GlobalThemeConfig;
   darkModeTheme: GlobalThemeConfig;
-  lightModeComponentStyles: Record<string, ComponentStyleConfig>;
-  darkModeComponentStyles: Record<string, ComponentStyleConfig>;
+  lightModeComponentStyles: Record<string, VariantStyleConfig>;
+  darkModeComponentStyles: Record<string, VariantStyleConfig>;
   availableComponents: ThemeConfigComponent[];
 }

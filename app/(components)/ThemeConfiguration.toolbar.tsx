@@ -1,25 +1,27 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/default/ui/button";
+import { Label } from "@/components/default/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/default/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
+} from "@/components/default/ui/select";
+import { Separator } from "@/components/default/ui/separator";
+import { Slider } from "@/components/default/ui/slider";
+import { Switch } from "@/components/default/ui/switch";
 import { cn } from "@/lib/tailwind.utils";
 import { Palette, Settings } from "lucide-react";
+import { HexColorPicker } from "react-colorful";
+import { StyleControls } from "./ThemeConfiguration.controls";
 import { AVAILABLE_COMPONENTS } from "./ThemeConfiguration.types";
 
 export const ThemeConfigurationToolbar = () => {
@@ -41,19 +43,21 @@ export const ThemeConfigurationToolbar = () => {
     ? themeConfigState.lightModeTheme
     : themeConfigState.darkModeTheme;
 
-  const currentStyles = themeConfigState.themeMode === "light"
+  const currentVariantStyles = themeConfigState.themeMode === "light"
     ? (themeConfigState.lightModeComponentStyles[themeConfigState.selectedComponentId || ""] || {})
     : (themeConfigState.darkModeComponentStyles[themeConfigState.selectedComponentId || ""] || {});
 
-  const handleColorChange = (key: string, value: string) => {
+  const currentStyles = currentVariantStyles[themeConfigState.activeVariant] || {};
+
+  const handleStyleChange = (key: string, value: any) => {
     if (themeConfigState.selectedComponentId) {
-      updateComponentStyle(themeConfigState.selectedComponentId, { [key]: value });
+      updateComponentStyle(themeConfigState.selectedComponentId, themeConfigState.activeVariant, { [key]: value });
     }
   };
 
   const handleReset = () => {
     if (themeConfigState.selectedComponentId) {
-      resetComponentStyle(themeConfigState.selectedComponentId);
+      resetComponentStyle(themeConfigState.selectedComponentId, themeConfigState.activeVariant);
     }
   };
 
@@ -95,117 +99,29 @@ export const ThemeConfigurationToolbar = () => {
                   Component Settings
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80">
+              <PopoverContent className="w-80 max-h-[500px] overflow-y-auto">
                 <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium mb-3">Component Styles</h4>
+                  <h4 className="font-medium">Component Styles</h4>
 
-                    <div className="space-y-3">
-                      <div>
-                        <Label className="text-xs">Border Radius (px)</Label>
-                        <Slider
-                          value={[parseInt(currentStyles.borderRadius || "6")]}
-                          onValueChange={(value) =>
-                            handleColorChange("borderRadius", `${value[0]}px`)
-                          }
-                          max={24}
-                          step={1}
-                          className="mt-2"
-                        />
-                        <span className="text-xs text-muted-foreground">
-                          {currentStyles.borderRadius || "6px"}
-                        </span>
-                      </div>
+                  {themeConfigState.selectedComponentId && (
+                    <>
+                      <StyleControls
+                        componentId={themeConfigState.selectedComponentId}
+                        variant={themeConfigState.activeVariant}
+                        currentStyles={currentStyles}
+                        onStyleChange={handleStyleChange}
+                      />
 
-                      <div>
-                        <Label className="text-xs">Background Color</Label>
-                        <div className="flex gap-2 mt-1">
-                          <input
-                            type="color"
-                            value={currentStyles.backgroundColor || "#ffffff"}
-                            onChange={(e) =>
-                              handleColorChange("backgroundColor", e.target.value)
-                            }
-                            className="w-10 h-10 rounded border"
-                          />
-                          <input
-                            type="text"
-                            value={currentStyles.backgroundColor || "#ffffff"}
-                            onChange={(e) =>
-                              handleColorChange("backgroundColor", e.target.value)
-                            }
-                            className="flex-1 px-2 py-1 text-sm border rounded"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label className="text-xs">Border Color</Label>
-                        <div className="flex gap-2 mt-1">
-                          <input
-                            type="color"
-                            value={currentStyles.borderColor || "#e5e7eb"}
-                            onChange={(e) =>
-                              handleColorChange("borderColor", e.target.value)
-                            }
-                            className="w-10 h-10 rounded border"
-                          />
-                          <input
-                            type="text"
-                            value={currentStyles.borderColor || "#e5e7eb"}
-                            onChange={(e) =>
-                              handleColorChange("borderColor", e.target.value)
-                            }
-                            className="flex-1 px-2 py-1 text-sm border rounded"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label className="text-xs">Hover Background</Label>
-                        <div className="flex gap-2 mt-1">
-                          <input
-                            type="color"
-                            value={currentStyles.hoverBackgroundColor || "#f3f4f6"}
-                            onChange={(e) =>
-                              handleColorChange("hoverBackgroundColor", e.target.value)
-                            }
-                            className="w-10 h-10 rounded border"
-                          />
-                          <input
-                            type="text"
-                            value={currentStyles.hoverBackgroundColor || "#f3f4f6"}
-                            onChange={(e) =>
-                              handleColorChange("hoverBackgroundColor", e.target.value)
-                            }
-                            className="flex-1 px-2 py-1 text-sm border rounded"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label className="text-xs">Padding</Label>
-                        <input
-                          type="text"
-                          value={currentStyles.padding || "8px 16px"}
-                          onChange={(e) =>
-                            handleColorChange("padding", e.target.value)
-                          }
-                          className="w-full px-2 py-1 text-sm border rounded mt-1"
-                          placeholder="e.g., 8px 16px"
-                        />
-                      </div>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleReset}
-                      className="w-full mt-4"
-                    >
-                      Reset Styles
-                    </Button>
-                  </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleReset}
+                        className="w-full mt-4"
+                      >
+                        Reset Variant Styles
+                      </Button>
+                    </>
+                  )}
                 </div>
               </PopoverContent>
             </Popover>
@@ -240,14 +156,22 @@ export const ThemeConfigurationToolbar = () => {
                 <div>
                   <Label className="text-xs">Preview Background Color</Label>
                   <div className="flex gap-2 mt-1">
-                    <input
-                      type="color"
-                      value={currentTheme.previewBackgroundColor}
-                      onChange={(e) =>
-                        updateGlobalTheme({ previewBackgroundColor: e.target.value })
-                      }
-                      className="w-10 h-10 rounded border"
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          className="w-10 h-10 rounded border"
+                          style={{ backgroundColor: currentTheme.previewBackgroundColor }}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3">
+                        <HexColorPicker
+                          color={currentTheme.previewBackgroundColor}
+                          onChange={(color) =>
+                            updateGlobalTheme({ previewBackgroundColor: color })
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <input
                       type="text"
                       value={currentTheme.previewBackgroundColor}
@@ -262,14 +186,22 @@ export const ThemeConfigurationToolbar = () => {
                 <div>
                   <Label className="text-xs">Primary Color</Label>
                   <div className="flex gap-2 mt-1">
-                    <input
-                      type="color"
-                      value={currentTheme.primaryColor}
-                      onChange={(e) =>
-                        updateGlobalTheme({ primaryColor: e.target.value })
-                      }
-                      className="w-10 h-10 rounded border"
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          className="w-10 h-10 rounded border"
+                          style={{ backgroundColor: currentTheme.primaryColor }}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3">
+                        <HexColorPicker
+                          color={currentTheme.primaryColor}
+                          onChange={(color) =>
+                            updateGlobalTheme({ primaryColor: color })
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <input
                       type="text"
                       value={currentTheme.primaryColor}
@@ -284,14 +216,22 @@ export const ThemeConfigurationToolbar = () => {
                 <div>
                   <Label className="text-xs">Secondary Color</Label>
                   <div className="flex gap-2 mt-1">
-                    <input
-                      type="color"
-                      value={currentTheme.secondaryColor}
-                      onChange={(e) =>
-                        updateGlobalTheme({ secondaryColor: e.target.value })
-                      }
-                      className="w-10 h-10 rounded border"
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          className="w-10 h-10 rounded border"
+                          style={{ backgroundColor: currentTheme.secondaryColor }}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3">
+                        <HexColorPicker
+                          color={currentTheme.secondaryColor}
+                          onChange={(color) =>
+                            updateGlobalTheme({ secondaryColor: color })
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <input
                       type="text"
                       value={currentTheme.secondaryColor}
@@ -306,14 +246,22 @@ export const ThemeConfigurationToolbar = () => {
                 <div>
                   <Label className="text-xs">Accent Color</Label>
                   <div className="flex gap-2 mt-1">
-                    <input
-                      type="color"
-                      value={currentTheme.accentColor}
-                      onChange={(e) =>
-                        updateGlobalTheme({ accentColor: e.target.value })
-                      }
-                      className="w-10 h-10 rounded border"
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          className="w-10 h-10 rounded border"
+                          style={{ backgroundColor: currentTheme.accentColor }}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3">
+                        <HexColorPicker
+                          color={currentTheme.accentColor}
+                          onChange={(color) =>
+                            updateGlobalTheme({ accentColor: color })
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <input
                       type="text"
                       value={currentTheme.accentColor}

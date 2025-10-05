@@ -7,9 +7,11 @@ import { COMPONENT_PREVIEWS } from "./ThemeConfiguration.previews";
 import { ThemeConfigurationSidebar } from "./ThemeConfiguration.sidebar";
 import { ThemeConfigurationToolbar } from "./ThemeConfiguration.toolbar";
 import { AVAILABLE_COMPONENTS } from "./ThemeConfiguration.types";
+import { mergeThemeStyles } from "./ThemeConfiguration.utils";
 
 export const ThemeConfiguration = () => {
-  const { darkMode, themeConfigState, initializeAvailableComponents } = useEditorStore();
+  const { darkMode, themeConfigState, initializeAvailableComponents } =
+    useEditorStore();
 
   useEffect(() => {
     initializeAvailableComponents();
@@ -23,13 +25,21 @@ export const ThemeConfiguration = () => {
     ? COMPONENT_PREVIEWS[selectedComponent.id]
     : null;
 
-  const currentTheme = themeConfigState.themeMode === "light"
-    ? themeConfigState.lightModeTheme
-    : themeConfigState.darkModeTheme;
+  const currentTheme =
+    themeConfigState.themeMode === "light"
+      ? themeConfigState.lightModeTheme
+      : themeConfigState.darkModeTheme;
 
-  const currentStyles = themeConfigState.themeMode === "light"
-    ? (themeConfigState.lightModeComponentStyles[themeConfigState.selectedComponentId || ""] || {})
-    : (themeConfigState.darkModeComponentStyles[themeConfigState.selectedComponentId || ""] || {});
+  const currentVariantStyles =
+    themeConfigState.themeMode === "light"
+      ? themeConfigState.lightModeComponentStyles[
+          themeConfigState.selectedComponentId || ""
+        ] || {}
+      : themeConfigState.darkModeComponentStyles[
+          themeConfigState.selectedComponentId || ""
+        ] || {};
+
+  const mergedStyles = mergeThemeStyles(currentTheme, currentVariantStyles, themeConfigState.activeVariant);
 
   return (
     <div
@@ -48,38 +58,10 @@ export const ThemeConfiguration = () => {
           style={{ backgroundColor: currentTheme.previewBackgroundColor }}
         >
           {PreviewComponent ? (
-            <div
-              className={cn(
-                "rounded-lg border p-8 min-w-[400px]",
-                darkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
-              )}
-            >
-              <div className="mb-4">
-                <h3
-                  className={cn(
-                    "text-lg font-semibold",
-                    darkMode ? "text-gray-200" : "text-gray-800"
-                  )}
-                >
-                  {selectedComponent?.name}
-                </h3>
-                <p
-                  className={cn(
-                    "text-sm",
-                    darkMode ? "text-gray-400" : "text-gray-600"
-                  )}
-                >
-                  Variant: {themeConfigState.activeVariant}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-center min-h-[200px]">
-                <PreviewComponent
-                  variant={themeConfigState.activeVariant}
-                  styleConfig={currentStyles}
-                />
-              </div>
-            </div>
+            <PreviewComponent
+              variant={themeConfigState.activeVariant}
+              styleConfig={mergedStyles}
+            />
           ) : (
             <div
               className={cn(
