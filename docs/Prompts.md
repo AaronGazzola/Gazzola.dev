@@ -1,99 +1,35 @@
-# CLAUDE.md
+# Prompt commands:
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+The commands and numbers below are shorthand references to the corresponding prompts.
 
-### Core Technologies
+2. `_add_logs`: "Add logging using the `conditionalLog` function from `lib/log.util.ts` as described in `CLAUDE.md`"
 
-- **Next.js 15** with App Router architecture
-- **TailwindCSS v4** for styling
-- **Shadcn** component library
-- **PrismaORM** PostgresDatabase
-- **Jest & Playwrite** for testing
+3. `_build_plan`: "run `npm run build`, then create a plan to fix the build errors"
 
-# General rules:
+4. `_build_fix`: "run `npm run build` and fix the build errors, then run `num run build` again and repeat"
 
-- Don't include any comments in any files.
-- Import "cn" from "@/lib/shadcn.utils" to concatinate classes.
-- All console.logs should be stringified and minified.
+5. `_test_plan`: "run `npm run test`, then create a plan to fix the fail cases."
 
-# File Organization and Naming Conventions
+6. `_test_fix`: "run `npm run test` and fix the fail cases, then run the tests again and repeat until all tests are passing"
 
-- Types and store files alongside anscenstor files
-- Actions and hooks files alongside descendent files
+7. `_test_fix_test`: "run `npm run test` and fix the fail cases. Assume that the app is working correctly, update the tests to align with the expected behaviour of the app"
 
-```txt
-app/
-├── layout.tsx
-├── layout.providers.tsx
-├── layout.types.ts
-├── layout.stores.ts ◄─── useAppStore
-└── (dashboard)/
-    ├── layout.tsx
-    ├── layout.skeleton.tsx
-    ├── layout.types.tsx
-    ├── layout.stores.tsx ◄─── useDashboardStore
-    ├── page.tsx              ─┐
-    ├── page.hooks.tsx         ├────► useAppStore
-    ├── Component.tsx          ├────► useDashboardStore
-    ├── Component.hooks.tsx   ─┘
-    ├── page.actions.ts
-    └── Component.actions.ts
-```
+8. `_test_fix_app`: "run `npm run test` and fix the fail cases. Assume that the tests are working correctly, update the app to implement the required functionality"
 
-# Hook, action, store and type patterns
+9. `_test_focus_plan`: "run `npm run test` and make a plan to add unit test(s) to isolate the failing functinonality into more specific test(s)"
 
-- Better-auth client methods are called directly in the react-query hooks.
-- Prisma client queries are called in actions via getAuthenticatedClient.
-- Actions are called via react-query hooks.
-- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.
-- Loading and error state is managed via the react-query hooks, NOT the zustand store.
-- All db types should be defined from `"@prisma/client"`
+10. `_test_focus_fix`: "run `npm run test` and then add and run unit test(s) to isolate the failing functinonality into more specific test(s)"
 
-## Example of file patterns - [`docs/util.md`](docs/util.md)
+11. `_test_doc`: "compare `docs/Test.md` with all tests in the repo and update the Test document to align with the actual tests. Document the tests following the approach outlined in @CLAUDE.md - ensure that ALL tests are documented"
 
-Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, action, store or type files. The file also contains the `prisma-rls.ts` and `action.util.ts` files for reference.
+12. `test_doc_fix`: "compare `docs/Test.md` with all tests in the repo and update the tests to align with the `docs/Test.md` document"
 
-# Testing
+13. `roadmap_create`: "Create a roadmap at `docs/roadmaps/${scope}_${date}.md` ("eg: "docs/roadmaps/User_authentication_1-Jun-25.md"). Refer to the roadmap prompt at @docs/Roadmap_Prompt.md and the programming patterns in @CLAUDE.md and @docs/util.md . Your task is not to implement any of the described features. Your task is to create a comprehensive roadmap that details all of the steps required to complete the entire process and implement ALL of the functionality"
 
-All tests should be performed with Jest or Playwright and documented in the `Test.md` document
+14. `_roadmap_continue`: "continue to follow the roadmap"
 
-## Test.md
+15. `_roadmap_commit`: "Update the roadmap to document the completed and remaining tasks, and push a commit"
 
-The test document should list all tests in the repo, with each test case listed in a single line with an indented line below with the pass condition.
-Add `test` and `test:all` scripts to the `package.json`.
-Test document should begin with an index and number each test as demonstrated below:
+16. `_roadmap_phase`: "Continue to follow the roadmap. After completing a phase, update the roadmap to document the completed and remaining tasks and push a commit"
 
-# Test.md file example:
-
-```md
-# Test Documentation
-
-## Run All Tests
-
-**Command:** `npm run test:all`
-✓ Runs the complete test suite across all test files including time or credit consuming tests
-**Command:** `npm run test`
-✓ Runs all tests that can be run repeatedly
-
-## Test Index
-
-1. [Name](#1-name-tests) - `npm run test:name`
-
-## 1. Name Tests
-
-**File:** `__tests__/name.test.ts`
-**Command:** `npm run test:name`
-
-### Name Test
-
-- should do something
-  ✓ Validates expected results
-
-- should do something else
-  ✓ Validates expected results
-```
-
-# Console.logging
-
-All logging should be performed using the `conditionalLog` function exported from `lib/log.util.ts`
-The `NEXT_PUBLIC_LOG_LABELS` variable in `.env.local` stores a comma separated string of log labels. Logs are returned if `NEXT_PUBLIC_LOG_LABELS="all"`, or if `NEXT_PUBLIC_LOG_LABELS` includes the label arg in `conditionalLog`.
+17. `_roadmap_review`: "Review this repo and the latest roadmap ("docs/roadmap[date].md"). If the app and the roadmap deviate, then make a plan to make the app more aligned with the roadmap"
