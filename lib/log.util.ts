@@ -7,6 +7,11 @@ export enum LOG_LABELS {
   RATE_LIMIT = "rate-limit",
   IMAGE = "image",
   WIDGET = "widget",
+  ASSIGN_IMAGES = "assign-images",
+  CSV_EXPORT = "csv-export",
+  PAGINATION = "pagination",
+  SHOPIFY_ANALYTICS = "shopify-analytics",
+  REALTIME = "realtime",
 }
 
 interface ConditionalLogOptions {
@@ -33,13 +38,9 @@ export function conditionalLog(
     }
   }
 
-  try {
-    const processedData = deepStringify(data, maxStringLength, new WeakSet());
-    const result = JSON.stringify(processedData);
-    console.log(result.replace(/\s+/g, ""));
-  } catch (error) {
-    console.log(JSON.stringify({ error: "Failed to stringify data", label }));
-  }
+  const processedData = deepStringify(data, maxStringLength, new WeakSet());
+  const result = JSON.stringify(processedData);
+  console.log(result.replace(/\s+/g, ""));
 }
 
 function deepStringify(

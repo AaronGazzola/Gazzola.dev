@@ -10,7 +10,7 @@ The commands and numbers below are shorthand references to the corresponding pro
 
 5. `_test_plan`: "run `npm run test`, then create a plan to fix the fail cases."
 
-6. `_test_fix`: "run `npm run test` and fix the fail cases, then run the tests again and repeat until all tests are passing"
+6. `_test_fix`: "run `npm run test` and fix the fail cases, then run the tests again and repeat until they are all passing. Do not change the test to be less scrupulous. Don't break or remove functionality. If you are stuck then stop and ask."
 
 7. `_test_fix_test`: "run `npm run test` and fix the fail cases. Assume that the app is working correctly, update the tests to align with the expected behaviour of the app"
 
@@ -22,9 +22,9 @@ The commands and numbers below are shorthand references to the corresponding pro
 
 11. `_test_doc`: "compare `docs/Test.md` with all tests in the repo and update the Test document to align with the actual tests. Document the tests following the approach outlined in @CLAUDE.md - ensure that ALL tests are documented"
 
-12. `test_doc_fix`: "compare `docs/Test.md` with all tests in the repo and update the tests to align with the `docs/Test.md` document"
+12. `_test_doc_fix`: "compare `docs/Test.md` with all tests in the repo and update the tests to align with the `docs/Test.md` document"
 
-13. `roadmap_create`: "Create a roadmap at `docs/roadmaps/${scope}_${date}.md` ("eg: "docs/roadmaps/User_authentication_1-Jun-25.md"). Refer to the roadmap prompt at @docs/Roadmap_Prompt.md and the programming patterns in @CLAUDE.md and @docs/util.md . Your task is not to implement any of the described features. Your task is to create a comprehensive roadmap that details all of the steps required to complete the entire process and implement ALL of the functionality"
+13. `_roadmap_create`: "Create a roadmap at `docs/roadmaps/${scope}_${date}.md` ("eg: "docs/roadmaps/User_authentication_1-Jun-25.md"). Refer to the roadmap prompt at @docs/Roadmap_Prompt.md and the programming patterns in @CLAUDE.md and @docs/util.md . Your task is not to implement any of the described features. Your task is to create a comprehensive roadmap that details all of the steps required to complete the entire process and implement ALL of the functionality"
 
 14. `_roadmap_continue`: "continue to follow the roadmap"
 
