@@ -1,7 +1,7 @@
 "use client";
 
-import { conditionalLog } from "@/lib/log.util";
 import { processContent } from "@/lib/download.utils";
+import { conditionalLog } from "@/lib/log.util";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
@@ -25,14 +25,17 @@ import { ComponentNode } from "../components/ComponentNode";
 import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
 import { PlaceholderNode } from "../components/PlaceholderNode";
 import { PLACEHOLDER_TRANSFORMER } from "../components/PlaceholderTransformer";
+import { ReadOnlyLexicalEditor } from "../components/ReadOnlyLexicalEditor";
 import { SectionNode } from "../components/SectionNode";
 import {
   SECTION_TRANSFORMER,
   setSectionTransformerContext,
 } from "../components/SectionTransformer";
 import { Toolbar } from "../components/Toolbar";
-import { ReadOnlyLexicalEditor } from "../components/ReadOnlyLexicalEditor";
-import { useContentVersionCheck, useInitializeMarkdownData } from "../layout.hooks";
+import {
+  useContentVersionCheck,
+  useInitializeMarkdownData,
+} from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 
 const Page = () => {
@@ -52,7 +55,12 @@ const Page = () => {
     getPlaceholderValue,
     getInitialConfiguration,
   } = useEditorStore();
-  const { isResetting, versionChecked, isLoading: versionCheckLoading, isContentStale } = useContentVersionCheck();
+  const {
+    isResetting,
+    versionChecked,
+    isLoading: versionCheckLoading,
+    isContentStale,
+  } = useContentVersionCheck();
   const { needsInitialization, isLoading, error, isInitialized } =
     useInitializeMarkdownData(versionChecked, versionCheckLoading);
 
@@ -62,20 +70,32 @@ const Page = () => {
     setMounted(true);
   }, []);
 
-  const canRender = mounted && versionChecked && !versionCheckLoading && !isResetting;
+  const canRender =
+    mounted && versionChecked && !versionCheckLoading && !isResetting;
 
   useEffect(() => {
-    conditionalLog({
-      mounted,
-      needsInitialization,
-      isLoading,
-      hasError: !!error,
-      isInitialized,
-      isResetting,
-      dataNodeCount: data ? Object.keys(data.flatIndex).length : 0,
-      dataVersion: data?.contentVersion
-    }, { label: "markdown-parse" });
-  }, [mounted, needsInitialization, isLoading, error, isInitialized, isResetting, data]);
+    conditionalLog(
+      {
+        mounted,
+        needsInitialization,
+        isLoading,
+        hasError: !!error,
+        isInitialized,
+        isResetting,
+        dataNodeCount: data ? Object.keys(data.flatIndex).length : 0,
+        dataVersion: data?.contentVersion,
+      },
+      { label: "markdown-parse" }
+    );
+  }, [
+    mounted,
+    needsInitialization,
+    isLoading,
+    error,
+    isInitialized,
+    isResetting,
+    data,
+  ]);
 
   const getFirstPagePath = useCallback((): string => {
     const pages = Object.values(data.flatIndex)
@@ -92,7 +112,10 @@ const Page = () => {
 
     if (!segments || segments.length === 0) {
       const firstPath = getFirstPagePath();
-      conditionalLog({ message: "No segments, using first page", firstPath }, { label: "markdown-parse" });
+      conditionalLog(
+        { message: "No segments, using first page", firstPath },
+        { label: "markdown-parse" }
+      );
       return firstPath;
     }
 
@@ -100,13 +123,19 @@ const Page = () => {
 
     for (const [path, node] of Object.entries(data.flatIndex)) {
       if (node.type === "file" && node.urlPath === urlPath) {
-        conditionalLog({ message: "Found matching path", urlPath, path }, { label: "markdown-parse" });
+        conditionalLog(
+          { message: "Found matching path", urlPath, path },
+          { label: "markdown-parse" }
+        );
         return path;
       }
     }
 
     const firstPath = getFirstPagePath();
-    conditionalLog({ message: "No match found, using first page", urlPath, firstPath }, { label: "markdown-parse" });
+    conditionalLog(
+      { message: "No match found, using first page", urlPath, firstPath },
+      { label: "markdown-parse" }
+    );
     return firstPath;
   }, [canRender, params, data, getFirstPagePath]);
 
@@ -122,13 +151,16 @@ const Page = () => {
     if (!canRender || !contentPath) return "";
 
     const node = getNode(contentPath);
-    conditionalLog({
-      message: "Getting current content",
-      contentPath,
-      hasNode: !!node,
-      nodeType: node?.type,
-      contentLength: node && node.type === "file" ? node.content.length : 0
-    }, { label: "markdown-parse" });
+    conditionalLog(
+      {
+        message: "Getting current content",
+        contentPath,
+        hasNode: !!node,
+        nodeType: node?.type,
+        contentLength: node && node.type === "file" ? node.content.length : 0,
+      },
+      { label: "markdown-parse" }
+    );
 
     if (node && node.type === "file") {
       return node.content
@@ -138,7 +170,8 @@ const Page = () => {
         .replace(/\\\\/g, "\\");
     }
     return "";
-  }, [canRender, contentPath, getNode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canRender, contentPath, getNode, refreshKey, data]);
 
   const processedContent = useMemo(() => {
     if (!previewMode) return "";
@@ -265,7 +298,13 @@ const Page = () => {
         className={`w-full h-full ${darkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"} flex items-center justify-center`}
       >
         <div className="text-gray-500">
-          {!mounted ? "Loading editor..." : versionCheckLoading ? "Checking content version..." : isResetting ? "Updating content..." : "Loading content..."}
+          {!mounted
+            ? "Loading editor..."
+            : versionCheckLoading
+              ? "Checking content version..."
+              : isResetting
+                ? "Updating content..."
+                : "Loading content..."}
         </div>
       </div>
     );

@@ -2,9 +2,7 @@
 
 ## Active tasks
 
-- [ ] Fix bug: when switching between preview and edit mode in the editor, the editor changes are lost.
 - [ ] Landing page
-- [ ] rename "default" shadcn directory to "editor"
 - [ ] Add dynamic component theme and styling page
 - [-] improve App Directory page UX
 - [ ] Update the tech stack page
@@ -33,6 +31,8 @@
 
 ## Completed tasks
 
+- [x] Fix bug: when switching between preview and edit mode in the editor, the editor changes are lost.
+- [x] rename "default" shadcn directory to "editor"
 - [x] Fix automatic reset on page load in deployment
 - [x] Remove "reset all" prompt on stale version, automatically update
 - [x] Add wire-frame page and layout builder component
@@ -130,3 +130,5 @@
   Minecraft + programming looks fun (17%)
 
 Poll complete: 6 votes
+
+- Godel's incompleteness theorem states that any formal system contains truths that cannot be proved within that formal system.
