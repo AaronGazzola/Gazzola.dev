@@ -1,20 +1,22 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { Label } from "@/components/default/ui/label";
+import { Button } from "@/components/editor/ui/button";
+import { Input } from "@/components/editor/ui/input";
+import { Label } from "@/components/editor/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/default/ui/popover";
+} from "@/components/editor/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/default/ui/select";
-import { Slider } from "@/components/default/ui/slider";
+} from "@/components/editor/ui/select";
+import { Slider } from "@/components/editor/ui/slider";
 import { HexColorPicker } from "react-colorful";
 import { COMPONENT_STYLE_SCHEMAS, StyleControl } from "./ThemeConfiguration.styles";
 
@@ -42,8 +44,9 @@ const StyleControlRenderer = ({
           <div className="flex gap-2 mt-1">
             <Popover>
               <PopoverTrigger asChild>
-                <button
-                  className="w-10 h-10 rounded border"
+                <Button
+                  variant="outline"
+                  className="w-10 h-10 p-0"
                   style={{ backgroundColor: value || control.defaultValue || "#000000" }}
                 />
               </PopoverTrigger>
@@ -54,11 +57,10 @@ const StyleControlRenderer = ({
                 />
               </PopoverContent>
             </Popover>
-            <input
-              type="text"
+            <Input
               value={value || control.defaultValue || ""}
               onChange={(e) => onChange(e.target.value)}
-              className="flex-1 px-2 py-1 text-sm border rounded"
+              className="flex-1"
               placeholder={control.defaultValue}
             />
           </div>
@@ -88,11 +90,10 @@ const StyleControlRenderer = ({
       return (
         <div>
           <Label className="text-xs">{control.label}</Label>
-          <input
-            type="text"
+          <Input
             value={value || control.defaultValue || ""}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full px-2 py-1 text-sm border rounded mt-1"
+            className="w-full mt-1"
             placeholder={control.defaultValue}
           />
         </div>

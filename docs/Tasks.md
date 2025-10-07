@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] Fix bug: when switching between preview and edit mode in the editor, the editor changes are lost.
 - [ ] Landing page
 - [ ] rename "default" shadcn directory to "editor"
 - [ ] Add dynamic component theme and styling page

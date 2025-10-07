@@ -3,13 +3,13 @@
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { FileSystemEntry, WireframeElement, WireframeElementType } from "@/app/(editor)/layout.types";
 import { findLayoutsForPagePath } from "@/app/(editor)/layout.utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/editor/ui/button";
+import { Input } from "@/components/editor/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/editor/ui/popover";
 import { cn } from "@/lib/tailwind.utils";
 import {
   ChevronDown,
@@ -1509,7 +1509,7 @@ const SiteMapNode = ({
     <>
       <div
         className={cn(
-          "group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1 py-0.5",
+          "group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1",
           darkMode ? "text-gray-300" : "text-gray-700"
         )}
       >
@@ -1705,7 +1705,7 @@ const TreeNode = ({
     <div>
       <div
         className={cn(
-          "group flex items-center gap-1 hover:bg-accent/50 rounded px-1 py-0.5",
+          "group flex items-center gap-1 hover:bg-accent/50 rounded px-1",
           darkMode ? "text-gray-300" : "text-gray-700"
         )}
       >
@@ -1720,9 +1720,9 @@ const TreeNode = ({
           {depth > 0 && "─ "}
         </span>
 
-        <button
+        <Button variant="ghost"
           onClick={toggleExpand}
-          className="flex items-center gap-1 flex-1 min-w-0"
+          className="flex items-center gap-1 flex-1 min-w-0 justify-start px-2 hover:bg-transparent"
         >
           {node.type === "directory" ? (
             node.isExpanded ? (
@@ -1763,7 +1763,7 @@ const TreeNode = ({
               onOpenChange={onLayoutPopoverChange}
             />
           )}
-        </button>
+        </Button>
 
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button

@@ -1,23 +1,24 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { Button } from "@/components/default/ui/button";
-import { Label } from "@/components/default/ui/label";
+import { Button } from "@/components/editor/ui/button";
+import { Input } from "@/components/editor/ui/input";
+import { Label } from "@/components/editor/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/default/ui/popover";
+} from "@/components/editor/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/default/ui/select";
-import { Separator } from "@/components/default/ui/separator";
-import { Slider } from "@/components/default/ui/slider";
-import { Switch } from "@/components/default/ui/switch";
+} from "@/components/editor/ui/select";
+import { Separator } from "@/components/editor/ui/separator";
+import { Slider } from "@/components/editor/ui/slider";
+import { Switch } from "@/components/editor/ui/switch";
 import { cn } from "@/lib/tailwind.utils";
 import { Palette, Settings } from "lucide-react";
 import { HexColorPicker } from "react-colorful";
@@ -64,20 +65,34 @@ export const ThemeConfigurationToolbar = () => {
   return (
     <div
       className={cn(
-        "border-b px-4 py-3 flex items-center justify-between gap-4",
-        darkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+        "border-b px-6 py-4 flex items-center justify-between gap-6",
+        darkMode ? "bg-gray-950 border-gray-800" : "bg-white border-gray-200"
       )}
     >
       <div className="flex items-center gap-4 flex-1">
         {selectedComponent && (
           <>
-            <div className="flex items-center gap-2">
-              <Label className="text-sm whitespace-nowrap">Variant:</Label>
+            <div className="flex items-center gap-3">
+              <Label
+                className={cn(
+                  "text-sm font-medium whitespace-nowrap",
+                  darkMode ? "text-gray-300" : "text-gray-700"
+                )}
+              >
+                Variant:
+              </Label>
               <Select
                 value={themeConfigState.activeVariant}
                 onValueChange={setActiveVariant}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger
+                  className={cn(
+                    "w-[180px] h-9",
+                    darkMode
+                      ? "bg-gray-900 border-gray-700 text-gray-100"
+                      : "bg-gray-50 border-gray-200"
+                  )}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -94,7 +109,16 @@ export const ThemeConfigurationToolbar = () => {
 
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-9",
+                    darkMode
+                      ? "bg-gray-900 border-gray-700 text-gray-100 hover:bg-gray-800"
+                      : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                  )}
+                >
                   <Settings className="h-4 w-4 mr-2" />
                   Component Settings
                 </Button>
@@ -129,20 +153,43 @@ export const ThemeConfigurationToolbar = () => {
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        <Label className="text-sm whitespace-nowrap">Theme Mode:</Label>
+      <div className="flex items-center gap-3">
+        <Label
+          className={cn(
+            "text-sm font-medium whitespace-nowrap",
+            darkMode ? "text-gray-300" : "text-gray-700"
+          )}
+        >
+          Theme Mode:
+        </Label>
         <Switch
           checked={themeConfigState.themeMode === "dark"}
           onCheckedChange={(checked) => setThemeMode(checked ? "dark" : "light")}
         />
-        <span className="text-sm">{themeConfigState.themeMode === "dark" ? "Dark" : "Light"}</span>
+        <span
+          className={cn(
+            "text-sm font-medium",
+            darkMode ? "text-gray-400" : "text-gray-600"
+          )}
+        >
+          {themeConfigState.themeMode === "dark" ? "Dark" : "Light"}
+        </span>
       </div>
 
       <Separator orientation="vertical" className="h-6" />
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn(
+              "h-9",
+              darkMode
+                ? "bg-gray-900 border-gray-700 text-gray-100 hover:bg-gray-800"
+                : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+            )}
+          >
             <Palette className="h-4 w-4 mr-2" />
             Global Theme
           </Button>
@@ -158,8 +205,9 @@ export const ThemeConfigurationToolbar = () => {
                   <div className="flex gap-2 mt-1">
                     <Popover>
                       <PopoverTrigger asChild>
-                        <button
-                          className="w-10 h-10 rounded border"
+                        <Button
+                          variant="outline"
+                          className="w-10 h-10 p-0"
                           style={{ backgroundColor: currentTheme.previewBackgroundColor }}
                         />
                       </PopoverTrigger>
@@ -172,13 +220,12 @@ export const ThemeConfigurationToolbar = () => {
                         />
                       </PopoverContent>
                     </Popover>
-                    <input
-                      type="text"
+                    <Input
                       value={currentTheme.previewBackgroundColor}
                       onChange={(e) =>
                         updateGlobalTheme({ previewBackgroundColor: e.target.value })
                       }
-                      className="flex-1 px-2 py-1 text-sm border rounded"
+                      className="flex-1"
                     />
                   </div>
                 </div>
@@ -188,8 +235,9 @@ export const ThemeConfigurationToolbar = () => {
                   <div className="flex gap-2 mt-1">
                     <Popover>
                       <PopoverTrigger asChild>
-                        <button
-                          className="w-10 h-10 rounded border"
+                        <Button
+                          variant="outline"
+                          className="w-10 h-10 p-0"
                           style={{ backgroundColor: currentTheme.primaryColor }}
                         />
                       </PopoverTrigger>
@@ -202,13 +250,13 @@ export const ThemeConfigurationToolbar = () => {
                         />
                       </PopoverContent>
                     </Popover>
-                    <input
+                    <Input
                       type="text"
                       value={currentTheme.primaryColor}
                       onChange={(e) =>
                         updateGlobalTheme({ primaryColor: e.target.value })
                       }
-                      className="flex-1 px-2 py-1 text-sm border rounded"
+                      className="flex-1"
                     />
                   </div>
                 </div>
@@ -218,8 +266,9 @@ export const ThemeConfigurationToolbar = () => {
                   <div className="flex gap-2 mt-1">
                     <Popover>
                       <PopoverTrigger asChild>
-                        <button
-                          className="w-10 h-10 rounded border"
+                        <Button
+                          variant="outline"
+                          className="w-10 h-10 p-0"
                           style={{ backgroundColor: currentTheme.secondaryColor }}
                         />
                       </PopoverTrigger>
@@ -232,13 +281,13 @@ export const ThemeConfigurationToolbar = () => {
                         />
                       </PopoverContent>
                     </Popover>
-                    <input
+                    <Input
                       type="text"
                       value={currentTheme.secondaryColor}
                       onChange={(e) =>
                         updateGlobalTheme({ secondaryColor: e.target.value })
                       }
-                      className="flex-1 px-2 py-1 text-sm border rounded"
+                      className="flex-1"
                     />
                   </div>
                 </div>
@@ -248,8 +297,9 @@ export const ThemeConfigurationToolbar = () => {
                   <div className="flex gap-2 mt-1">
                     <Popover>
                       <PopoverTrigger asChild>
-                        <button
-                          className="w-10 h-10 rounded border"
+                        <Button
+                          variant="outline"
+                          className="w-10 h-10 p-0"
                           style={{ backgroundColor: currentTheme.accentColor }}
                         />
                       </PopoverTrigger>
@@ -262,13 +312,13 @@ export const ThemeConfigurationToolbar = () => {
                         />
                       </PopoverContent>
                     </Popover>
-                    <input
+                    <Input
                       type="text"
                       value={currentTheme.accentColor}
                       onChange={(e) =>
                         updateGlobalTheme({ accentColor: e.target.value })
                       }
-                      className="flex-1 px-2 py-1 text-sm border rounded"
+                      className="flex-1"
                     />
                   </div>
                 </div>

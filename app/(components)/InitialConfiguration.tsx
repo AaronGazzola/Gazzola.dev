@@ -8,14 +8,14 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/default/ui/accordion";
-import { Checkbox } from "@/components/default/ui/checkbox";
+} from "@/components/editor/ui/accordion";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/default/ui/tooltip";
+} from "@/components/editor/ui/tooltip";
 import { cn } from "@/lib/tailwind.utils";
 import {
   Bell,
