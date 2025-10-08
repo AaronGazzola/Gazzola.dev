@@ -55,7 +55,12 @@ export const ThemeConfiguration = () => {
 
         <div
           className="flex-1 flex items-center justify-center p-8"
-          style={{ backgroundColor: currentTheme.previewBackgroundColor }}
+          style={{
+            backgroundColor: currentTheme.previewBackgroundColor,
+            color: currentTheme.defaultFontColor,
+            fontFamily: `var(--font-${currentTheme.defaultFontFamily})`,
+            fontSize: currentTheme.fontSize,
+          }}
         >
           {PreviewComponent ? (
             <PreviewComponent

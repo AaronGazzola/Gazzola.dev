@@ -319,8 +319,10 @@ export interface GlobalThemeConfig {
   accentColor: string;
   borderRadiusPreset: "none" | "sm" | "md" | "lg" | "xl";
   shadowIntensity: "none" | "sm" | "md" | "lg";
-  fontSizeScale: "sm" | "md" | "lg";
+  fontSize: string;
   previewBackgroundColor: string;
+  defaultFontColor: string;
+  defaultFontFamily: string;
 }
 
 export interface ThemeConfigState {

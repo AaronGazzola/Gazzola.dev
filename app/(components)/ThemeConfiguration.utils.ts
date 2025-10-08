@@ -15,20 +15,15 @@ const shadowMap = {
   lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
 };
 
-const fontSizeMap = {
-  sm: "14px",
-  md: "16px",
-  lg: "18px",
-};
-
 export const applyGlobalThemeToComponent = (
   globalTheme: GlobalThemeConfig
 ): ComponentStyleConfig => {
   return {
     borderRadius: borderRadiusMap[globalTheme.borderRadiusPreset],
     boxShadow: shadowMap[globalTheme.shadowIntensity],
-    fontSize: fontSizeMap[globalTheme.fontSizeScale],
-    color: globalTheme.primaryColor,
+    fontSize: globalTheme.fontSize,
+    color: globalTheme.defaultFontColor,
+    fontFamily: `var(--font-${globalTheme.defaultFontFamily})`,
   };
 };
 
