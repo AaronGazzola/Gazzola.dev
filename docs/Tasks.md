@@ -3,7 +3,6 @@
 ## Active tasks
 
 - [ ] Landing page
-- [ ] Add dynamic component theme and styling page
 - [-] improve App Directory page UX
 - [ ] Update the tech stack page
   - [ ] Add a database question and hosting service selection that will include/exclude Supabase, Vercel and Railway
@@ -31,6 +30,7 @@
 
 ## Completed tasks
 
+- [x] Add dynamic component theme and styling page
 - [x] Fix bug: when switching between preview and edit mode in the editor, the editor changes are lost.
 - [x] rename "default" shadcn directory to "editor"
 - [x] Fix automatic reset on page load in deployment
@@ -133,3 +133,4 @@ Poll complete: 6 votes
 
 - Godel's incompleteness theorem states that any formal system contains truths that cannot be proved within that formal system.
 - RL trained on minecraft
+- Parmededes

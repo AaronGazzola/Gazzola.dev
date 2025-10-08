@@ -1,7 +1,11 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { FileSystemEntry, WireframeElement, WireframeElementType } from "@/app/(editor)/layout.types";
+import {
+  FileSystemEntry,
+  WireframeElement,
+  WireframeElementType,
+} from "@/app/(editor)/layout.types";
 import { findLayoutsForPagePath } from "@/app/(editor)/layout.utils";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
@@ -367,10 +371,14 @@ const LayoutHierarchyPopover = ({
             handleSelectTarget("page", pagePath);
           }}
         >
-          <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
+          <div
+            className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}
+          >
             {pagePath}
           </div>
-          <div className={cn("text-xs mt-1 mb-3", PAGE_COLOR.text)}>page.tsx</div>
+          <div className={cn("text-xs mt-1 mb-3", PAGE_COLOR.text)}>
+            page.tsx
+          </div>
           {renderWireframeElements("page", pagePath)}
         </div>
       );
@@ -451,7 +459,9 @@ const LayoutHierarchyPopover = ({
           className="h-5 w-5 ml-2"
           title="Show layout hierarchy & wireframe"
         >
-          <Layers className="!w-4 !h-4" />
+          <span>
+            <Layers className="!w-4 !h-4" />
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[600px]" align="start" side="right">
@@ -499,7 +509,9 @@ const LayoutHierarchyPopover = ({
                       variant="ghost"
                       size="sm"
                       className="justify-start"
-                      onClick={() => handleAddElement(element.type, element.category)}
+                      onClick={() =>
+                        handleAddElement(element.type, element.category)
+                      }
                     >
                       <Icon className="h-4 w-4 mr-2" />
                       {element.label}
@@ -1720,7 +1732,8 @@ const TreeNode = ({
           {depth > 0 && "─ "}
         </span>
 
-        <Button variant="ghost"
+        <Button
+          variant="ghost"
           onClick={toggleExpand}
           className="flex items-center gap-1 flex-1 min-w-0 justify-start px-2 hover:bg-transparent"
         >
