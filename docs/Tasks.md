@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] fix editor reset bug on editor store state change (eg. after updating the ThemeConfiugration)
 - [ ] Landing page
 - [-] improve App Directory page UX
 - [ ] Update the tech stack page
