@@ -1,8 +1,16 @@
 import { ThemeConfigComponent } from "@/app/(editor)/layout.types";
 
+export type ThemeTab = "global" | "components";
+export type PreviewMode = "single" | "grid";
+
 export interface PreviewProps {
   variant?: string;
   styleConfig?: Record<string, any>;
+}
+
+export interface GridPreviewItem {
+  componentId: string;
+  variant: string;
 }
 
 export const AVAILABLE_COMPONENTS: ThemeConfigComponent[] = [

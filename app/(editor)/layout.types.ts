@@ -215,8 +215,12 @@ export interface EditorState {
   selectWireframeItem: (type: "page" | "layout", path: string) => void;
   clearWireframeSelection: () => void;
   themeConfigState: ThemeConfigState;
+  setActiveTab: (tab: "global" | "components") => void;
+  setThemePreviewMode: (mode: "single" | "grid") => void;
   setSelectedComponent: (componentId: string | null) => void;
+  toggleComponentSelection: (componentId: string) => void;
   setActiveVariant: (variant: string) => void;
+  setGridComponentVariant: (componentId: string, variant: string) => void;
   setThemeMode: (mode: "light" | "dark") => void;
   updateGlobalTheme: (updates: Partial<GlobalThemeConfig>) => void;
   updateComponentStyle: (componentId: string, variant: string, updates: ComponentStyleConfig) => void;
@@ -326,8 +330,12 @@ export interface GlobalThemeConfig {
 }
 
 export interface ThemeConfigState {
+  activeTab: "global" | "components";
+  previewMode: "single" | "grid";
   selectedComponentId: string | null;
+  selectedComponents: string[];
   activeVariant: string;
+  gridComponentVariants: Record<string, string>;
   themeMode: "light" | "dark";
   lightModeTheme: GlobalThemeConfig;
   darkModeTheme: GlobalThemeConfig;
