@@ -1,6 +1,25 @@
 //-| File path: app/layout.tsx
 import Providers from "@/app/layout.providers";
-import { inter } from "@/styles/fonts";
+import {
+  inter,
+  roboto,
+  openSans,
+  lato,
+  montserrat,
+  poppins,
+  sourceSans,
+  raleway,
+  merriweather,
+  playfair,
+  lora,
+  ptSerif,
+  crimsonText,
+  sourceCodePro,
+  jetbrainsMono,
+  firaCode,
+  ibmPlexMono,
+  spaceMono,
+} from "@/styles/fonts";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
@@ -38,7 +57,28 @@ export default function RootLayout({
         <link rel="alternate icon" href="/icon.ico" />
       </head>
       <body
-        className={clsx(inter.className, "antialiased text-gray-100 bg-black")}
+        className={clsx(
+          inter.variable,
+          roboto.variable,
+          openSans.variable,
+          lato.variable,
+          montserrat.variable,
+          poppins.variable,
+          sourceSans.variable,
+          raleway.variable,
+          merriweather.variable,
+          playfair.variable,
+          lora.variable,
+          ptSerif.variable,
+          crimsonText.variable,
+          sourceCodePro.variable,
+          jetbrainsMono.variable,
+          firaCode.variable,
+          ibmPlexMono.variable,
+          spaceMono.variable,
+          inter.className,
+          "antialiased text-gray-100 bg-black"
+        )}
       >
         <Providers>{children}</Providers>
         <Analytics />

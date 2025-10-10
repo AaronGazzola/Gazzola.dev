@@ -117,8 +117,12 @@ const defaultWireframeState: WireframeState = {
 };
 
 const defaultThemeConfigState: ThemeConfigState = {
+  activeTab: "global",
+  previewMode: "single",
   selectedComponentId: null,
+  selectedComponents: [],
   activeVariant: "default",
+  gridComponentVariants: {},
   themeMode: "light",
   lightModeTheme: {
     primaryColor: "#3b82f6",
@@ -126,8 +130,10 @@ const defaultThemeConfigState: ThemeConfigState = {
     accentColor: "#10b981",
     borderRadiusPreset: "md",
     shadowIntensity: "sm",
-    fontSizeScale: "md",
+    fontSize: "16px",
     previewBackgroundColor: "#ffffff",
+    defaultFontColor: "#111827",
+    defaultFontFamily: "inter",
   },
   darkModeTheme: {
     primaryColor: "#60a5fa",
@@ -135,8 +141,10 @@ const defaultThemeConfigState: ThemeConfigState = {
     accentColor: "#34d399",
     borderRadiusPreset: "md",
     shadowIntensity: "sm",
-    fontSizeScale: "md",
+    fontSize: "16px",
     previewBackgroundColor: "#111827",
+    defaultFontColor: "#f9fafb",
+    defaultFontFamily: "inter",
   },
   lightModeComponentStyles: {},
   darkModeComponentStyles: {},
@@ -1025,6 +1033,22 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
+      setActiveTab: (tab) => {
+        set((state) => ({
+          themeConfigState: {
+            ...state.themeConfigState,
+            activeTab: tab,
+          },
+        }));
+      },
+      setThemePreviewMode: (mode) => {
+        set((state) => ({
+          themeConfigState: {
+            ...state.themeConfigState,
+            previewMode: mode,
+          },
+        }));
+      },
       setSelectedComponent: (componentId: string | null) => {
         set((state) => ({
           themeConfigState: {
@@ -1033,11 +1057,36 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
+      toggleComponentSelection: (componentId) => {
+        set((state) => {
+          const selectedComponents = state.themeConfigState.selectedComponents.includes(componentId)
+            ? state.themeConfigState.selectedComponents.filter(id => id !== componentId)
+            : [...state.themeConfigState.selectedComponents, componentId];
+
+          return {
+            themeConfigState: {
+              ...state.themeConfigState,
+              selectedComponents,
+            },
+          };
+        });
+      },
       setActiveVariant: (variant: string) => {
         set((state) => ({
           themeConfigState: {
             ...state.themeConfigState,
             activeVariant: variant,
+          },
+        }));
+      },
+      setGridComponentVariant: (componentId, variant) => {
+        set((state) => ({
+          themeConfigState: {
+            ...state.themeConfigState,
+            gridComponentVariants: {
+              ...state.themeConfigState.gridComponentVariants,
+              [componentId]: variant,
+            },
           },
         }));
       },

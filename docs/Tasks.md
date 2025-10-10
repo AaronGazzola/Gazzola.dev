@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] fix editor reset bug on editor store state change (eg. after updating the ThemeConfiugration)
 - [ ] Landing page
 - [-] improve App Directory page UX
 - [ ] Update the tech stack page
@@ -134,3 +135,5 @@ Poll complete: 6 votes
 - Godel's incompleteness theorem states that any formal system contains truths that cannot be proved within that formal system.
 - RL trained on minecraft
 - Parmededes
+
+- OpenAI agent builder
