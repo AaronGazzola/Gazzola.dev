@@ -20,13 +20,15 @@ import {
   BookDown,
   BrainCog,
   Briefcase,
+  Cpu,
   Database,
+  FlaskConical,
   GraduationCap,
-  MonitorStop,
+  LayoutPanelTop,
   Palette,
   Plus,
   Rocket,
-  Users,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -105,23 +107,38 @@ const careerSteps = [
 
 const nextSteps = [
   {
-    title: "Build your UI",
-    description: "Design your theme and your custom components",
-    icon: MonitorStop,
+    title: "Select your tech stack",
+    description: "Answer questions to define your technology choices",
+    icon: Cpu,
   },
   {
-    title: "Map your UX",
-    description: "Create a user journey map to visualize the user experience",
-    icon: Users,
+    title: "Design your layout",
+    description: "Create wireframes and define your route structure",
+    icon: LayoutPanelTop,
   },
   {
-    title: "Design your Database",
-    description: "Define the structure and security for your app data",
+    title: "Design your theme",
+    description: "Configure your light and dark mode color schemes",
+    icon: Palette,
+  },
+  {
+    title: "Design your database",
+    description: "Define your data models and relationships",
     icon: Database,
   },
   {
+    title: "Define user experience",
+    description: "Map out user flows and interactions",
+    icon: User,
+  },
+  {
+    title: "Describe your tests",
+    description: "Plan your testing strategy and test cases",
+    icon: FlaskConical,
+  },
+  {
     title: "Download your roadmap",
-    description: "Export your documentation and start building!",
+    description: "Export your documentation and start building",
     icon: BookDown,
   },
 ];
@@ -348,26 +365,28 @@ const Page = () => {
             </div>
 
             {/* Mobile Layout */}
-            <div className="md:hidden">
+            <div className="md:hidden flex flex-col items-center mt-8 gap-6">
               {careerSteps.map((step, index) => (
-                <div key={index} className="flex flex-col items-start">
+                <div
+                  key={index}
+                  className="flex flex-col items-center w-full max-w-md"
+                >
                   <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    className="flex items-center space-x-4 w-full mb-4 justify-start"
+                    className="flex flex-col items-center gap-4 w-full"
                   >
-                    {/* Icon with Gradient */}
                     <div className="flex-shrink-0 relative">
                       <svg
-                        className="w-12 h-12"
+                        className="w-16 h-16"
                         viewBox="0 0 24 24"
                         fill="none"
                       >
                         <defs>
                           <linearGradient
-                            id={`gradient-mobile-${index}`}
+                            id={`gradient-career-mobile-${index}`}
                             x1="0%"
                             y1="0%"
                             x2="100%"
@@ -387,33 +406,31 @@ const Page = () => {
                           </linearGradient>
                         </defs>
                         <step.icon
-                          className="w-12 h-12"
-                          stroke={`url(#gradient-mobile-${index})`}
+                          className="w-16 h-16"
+                          stroke={`url(#gradient-career-mobile-${index})`}
                           strokeWidth={2}
                         />
                       </svg>
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 text-center">
                       <h3 className="text-xl font-bold mb-1">{step.title}</h3>
-                      <p className="text-base font-semibold mb-1">
+                      <p className="text-base font-semibold">
                         {step.description}
                       </p>
                     </div>
                   </motion.div>
 
-                  {/* Arrow pointing down (except for last item) */}
                   {index < careerSteps.length - 1 && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
                       viewport={{ once: true }}
-                      className="mb-4 flex justify-center w-12"
+                      className="my-2"
                     >
                       <ArrowDown
-                        className="w-6 h-6 text-white"
+                        className="w-6 h-6"
                         style={{
                           filter:
                             "drop-shadow(0 0 6px rgba(147, 51, 234, 0.5))",
@@ -557,127 +574,127 @@ const Page = () => {
             Next steps
           </motion.h2>
 
-          <div className="max-w-6xl mx-auto">
-            {/* Desktop Layout */}
-            <div className="hidden md:flex items-start justify-center relative">
-              {nextSteps.map((step, index) => (
-                <div key={index} className="flex items-center">
-                  <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.2 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col items-center relative z-10 bg-black"
+          <div className="max-w-7xl mx-auto">
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 relative">
+              {nextSteps.map((step, index) => {
+                const totalItems = nextSteps.length;
+                const isLastItemOverall = index === totalItems - 1;
+                const mdLastInGrid = totalItems - 1;
+                const lgLastInGrid = totalItems - 1;
+
+                const showInMdGrid = index < mdLastInGrid;
+                const showInLgGrid = true;
+
+                const getLgColsInfo = () => {
+                  const col = index % 3;
+                  const row = Math.floor(index / 3);
+                  const isEvenRow = row % 2 === 0;
+                  return { col, row, isEvenRow, totalCols: 3 };
+                };
+
+                const getMdColsInfo = () => {
+                  const col = index % 2;
+                  const row = Math.floor(index / 2);
+                  const isEvenRow = row % 2 === 0;
+                  return { col, row, isEvenRow, totalCols: 2 };
+                };
+
+                const lgInfo = getLgColsInfo();
+                const mdInfo = getMdColsInfo();
+
+                const isLastItemInMdGrid = index === mdLastInGrid - 1;
+                const isLastItemInLgGrid = index === lgLastInGrid - 1;
+
+                const getLgArrowDirection = () => {
+                  if (isLastItemOverall) return null;
+
+                  const visualCol = lgInfo.isEvenRow ? lgInfo.col : 2 - lgInfo.col;
+
+                  if (visualCol === 0 && lgInfo.row === 1 && totalItems === 7) {
+                    return "down-right";
+                  }
+
+                  if (isLastItemInLgGrid) {
+                    return null;
+                  }
+
+                  const nextCol = (index + 1) % 3;
+                  const nextRow = Math.floor((index + 1) / 3);
+                  if (nextRow > lgInfo.row) {
+                    return "down";
+                  }
+                  return lgInfo.isEvenRow ? "right" : "left";
+                };
+
+                const getMdArrowDirection = () => {
+                  if (isLastItemInMdGrid) {
+                    const visualCol = mdInfo.isEvenRow ? mdInfo.col : 1 - mdInfo.col;
+                    if (visualCol === 1 && mdInfo.row === 2) return "down-left";
+                    return null;
+                  }
+                  if (isLastItemOverall) return null;
+
+                  const visualCol = mdInfo.isEvenRow ? mdInfo.col : 1 - mdInfo.col;
+
+                  if (mdInfo.isEvenRow) {
+                    return visualCol === 0 ? "right" : "down";
+                  } else {
+                    return visualCol === 1 ? "left" : "down";
+                  }
+                };
+
+                const lgArrowDirection = getLgArrowDirection();
+                const mdArrowDirection = getMdArrowDirection();
+
+                const lgOrder = lgInfo.isEvenRow
+                  ? index
+                  : lgInfo.row * 3 + (3 - 1 - lgInfo.col);
+                const mdOrder = mdInfo.isEvenRow
+                  ? index
+                  : mdInfo.row * 2 + (2 - 1 - mdInfo.col);
+
+                const mdColStartClass = "";
+                const lgColStartClass = lgInfo.row === 2 && lgInfo.col === 0 ? "lg:col-start-2" : "";
+                const mdHideClass = isLastItemOverall ? "md:hidden lg:flex" : "";
+                const combinedClassName = `relative flex flex-col items-center ${mdColStartClass} ${lgColStartClass} ${mdHideClass}`.trim();
+
+                return (
+                  <div
+                    key={index}
+                    className={combinedClassName}
+                    style={{
+                      ["--md-order" as any]: mdOrder,
+                      ["--lg-order" as any]: lgOrder,
+                    }}
                   >
-                    {/* Number */}
-                    <div className="mb-2 relative">
-                      <span
-                        className={`text-2xl sm:text-3xl font-bold block ${getTextGradientClasses()}`}
-                        style={getTextGradientStyle()}
-                      >
-                        {index + 1}
-                      </span>
-                    </div>
-
-                    {/* Icon with Gradient */}
-                    <div className="mb-4 relative">
-                      <svg
-                        className="w-20 h-20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <defs>
-                          <linearGradient
-                            id={`gradient-next-desktop-${index}`}
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="100%"
-                          >
-                            {gradientEnabled ? (
-                              gradientColors.map((color, colorIndex) => (
-                                <stop
-                                  key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                  stopColor={color}
-                                />
-                              ))
-                            ) : (
-                              <stop offset="0%" stopColor={singleColor} />
-                            )}
-                          </linearGradient>
-                        </defs>
-                        <step.icon
-                          className="w-20 h-20 stroke-1"
-                          stroke={`url(#gradient-next-desktop-${index})`}
-                          fill="none"
-                        />
-                      </svg>
-                    </div>
-
-                    {/* Content */}
-                    <div className="text-center max-w-[250px]">
-                      <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                      <p className="text-base font-semibold mb-2">
-                        {step.description}
-                      </p>
-                    </div>
-                  </motion.div>
-
-                  {/* Arrow pointing right (except for last item) */}
-                  {index < nextSteps.length - 1 && (
+                    <style dangerouslySetInnerHTML={{
+                      __html: `
+                        [style*="--md-order:${mdOrder}"] {
+                          order: ${mdOrder};
+                        }
+                        @media (min-width: 976px) {
+                          [style*="--lg-order:${lgOrder}"] {
+                            order: ${lgOrder};
+                          }
+                        }
+                      `
+                    }} />
                     <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
                       viewport={{ once: true }}
-                      className="mx-8 h-20 flex items-center"
+                      className="flex flex-col items-center relative z-10 bg-black w-full max-w-[250px]"
                     >
-                      <ArrowRight
-                        className="w-8 h-8 text-gradient-to-r from-blue-500 via-purple-500 to-green-500"
-                        style={{
-                          filter:
-                            "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Mobile Layout */}
-            <div className="md:hidden">
-              {nextSteps.map((step, index) => (
-                <div key={index} className="flex flex-col items-start">
-                  <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.2 }}
-                    viewport={{ once: true }}
-                    className="flex items-center space-x-4 w-full mb-4 justify-start"
-                  >
-                    <div className="flex flex-col items-center">
-                      {/* Number */}
-                      <div className="mb-2 relative">
-                        <span
-                          className={`text-[40px] font-light block ${getTextGradientClasses()}`}
-                          style={getTextGradientStyle()}
-                        >
-                          {index + 1}
-                        </span>
-                      </div>
-
-                      {/* Icon with Gradient */}
-                      <div className="flex-shrink-0 relative">
+                      <div className="mb-4 relative">
                         <svg
-                          className="w-12 h-12"
+                          className="w-20 h-20"
                           viewBox="0 0 24 24"
                           fill="none"
                         >
                           <defs>
                             <linearGradient
-                              id={`gradient-next-mobile-${index}`}
+                              id={`gradient-next-${index}`}
                               x1="0%"
                               y1="0%"
                               x2="100%"
@@ -697,34 +714,259 @@ const Page = () => {
                             </linearGradient>
                           </defs>
                           <step.icon
-                            className="w-12 h-12"
-                            stroke={`url(#gradient-next-mobile-${index})`}
-                            strokeWidth={2}
+                            className="w-20 h-20 stroke-1"
+                            stroke={`url(#gradient-next-${index})`}
+                            fill="none"
                           />
                         </svg>
                       </div>
+
+                      <div className="text-center">
+                        <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                        <p className="text-base font-semibold mb-2">
+                          {step.description}
+                        </p>
+                      </div>
+                    </motion.div>
+
+                    {lgArrowDirection && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                        viewport={{ once: true }}
+                        className={`absolute z-20 hidden lg:block ${
+                          lgArrowDirection === "right"
+                            ? "-right-4 top-1/3 -translate-y-1/2"
+                            : lgArrowDirection === "left"
+                              ? "-left-4 top-1/3 -translate-y-1/2"
+                              : lgArrowDirection === "down-right"
+                                ? "-bottom-4 right-4"
+                                : "-bottom-8 left-[calc(50%-1rem)] -translate-x-1/2"
+                        }`}
+                      >
+                        {lgArrowDirection === "right" && (
+                          <ArrowRight
+                            className="w-8 h-8"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                        {lgArrowDirection === "left" && (
+                          <ArrowLeft
+                            className="w-8 h-8"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                        {lgArrowDirection === "down" && (
+                          <ArrowDown
+                            className="w-8 h-8"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                        {lgArrowDirection === "down-right" && (
+                          <ArrowDown
+                            className="w-8 h-8 rotate-[-30deg]"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                      </motion.div>
+                    )}
+
+                    {mdArrowDirection && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                        viewport={{ once: true }}
+                        className={`absolute z-20 lg:hidden ${
+                          mdArrowDirection === "right"
+                            ? "-right-4 top-1/3 -translate-y-1/2"
+                            : mdArrowDirection === "left"
+                              ? "-left-4 top-1/3 -translate-y-1/2"
+                              : mdArrowDirection === "down-left"
+                                ? "-bottom-4 left-16"
+                                : "-bottom-8 left-[calc(50%-1rem)] -translate-x-1/2"
+                        }`}
+                      >
+                        {mdArrowDirection === "right" && (
+                          <ArrowRight
+                            className="w-8 h-8"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                        {mdArrowDirection === "left" && (
+                          <ArrowLeft
+                            className="w-8 h-8"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                        {mdArrowDirection === "down" && (
+                          <ArrowDown
+                            className="w-8 h-8"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                        {mdArrowDirection === "down-left" && (
+                          <ArrowDown
+                            className="w-8 h-8 rotate-[20deg]"
+                            style={{
+                              filter:
+                                "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
+                            }}
+                          />
+                        )}
+                      </motion.div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="hidden md:flex lg:hidden justify-center mt-16">
+              {(() => {
+                const lastStep = nextSteps[nextSteps.length - 1];
+                const LastIcon = lastStep.icon;
+                return (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.6 }}
+                    viewport={{ once: true }}
+                    className="flex flex-col items-center relative z-10 bg-black w-full max-w-[250px]"
+                  >
+                    <div className="mb-4 relative">
+                      <svg
+                        className="w-20 h-20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`gradient-next-last`}
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                          >
+                            {gradientEnabled ? (
+                              gradientColors.map((color, colorIndex) => (
+                                <stop
+                                  key={colorIndex}
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                  stopColor={color}
+                                />
+                              ))
+                            ) : (
+                              <stop offset="0%" stopColor={singleColor} />
+                            )}
+                          </linearGradient>
+                        </defs>
+                        <LastIcon
+                          className="w-20 h-20 stroke-1"
+                          stroke={`url(#gradient-next-last)`}
+                          fill="none"
+                        />
+                      </svg>
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1 ml-4">
+                    <div className="text-center">
+                      <h3 className="text-xl font-bold mb-2">{lastStep.title}</h3>
+                      <p className="text-base font-semibold mb-2">
+                        {lastStep.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })()}
+            </div>
+
+            <div className="md:hidden flex flex-col items-center mt-8 gap-6">
+              {nextSteps.map((step, index) => (
+                <div
+                  key={`mobile-${index}`}
+                  className="flex flex-col items-center w-full max-w-md"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="flex flex-col items-center gap-4 w-full"
+                  >
+                    <div className="flex-shrink-0 relative">
+                      <svg
+                        className="w-16 h-16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`gradient-next-mobile-${index}`}
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                          >
+                            {gradientEnabled ? (
+                              gradientColors.map((color, colorIndex) => (
+                                <stop
+                                  key={colorIndex}
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                  stopColor={color}
+                                />
+                              ))
+                            ) : (
+                              <stop offset="0%" stopColor={singleColor} />
+                            )}
+                          </linearGradient>
+                        </defs>
+                        <step.icon
+                          className="w-16 h-16"
+                          stroke={`url(#gradient-next-mobile-${index})`}
+                          strokeWidth={2}
+                        />
+                      </svg>
+                    </div>
+
+                    <div className="flex-1 text-center">
                       <h3 className="text-xl font-bold mb-1">{step.title}</h3>
-                      <p className="text-base font-semibold mb-1">
+                      <p className="text-base font-semibold">
                         {step.description}
                       </p>
                     </div>
                   </motion.div>
 
-                  {/* Arrow pointing down (except for last item) */}
                   {index < nextSteps.length - 1 && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
                       viewport={{ once: true }}
-                      className="mb-4 flex justify-start w-12 ml-6"
+                      className="my-2"
                     >
                       <ArrowDown
-                        className="w-6 h-6 text-white"
+                        className="w-6 h-6"
                         style={{
                           filter:
                             "drop-shadow(0 0 6px rgba(147, 51, 234, 0.5))",

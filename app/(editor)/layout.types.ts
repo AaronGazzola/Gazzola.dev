@@ -214,18 +214,6 @@ export interface EditorState {
   setWireframeConfigPopover: (open: boolean, elementType?: WireframeElementType) => void;
   selectWireframeItem: (type: "page" | "layout", path: string) => void;
   clearWireframeSelection: () => void;
-  themeConfigState: ThemeConfigState;
-  setActiveTab: (tab: "global" | "components") => void;
-  setThemePreviewMode: (mode: "single" | "grid") => void;
-  setSelectedComponent: (componentId: string | null) => void;
-  toggleComponentSelection: (componentId: string) => void;
-  setActiveVariant: (variant: string) => void;
-  setGridComponentVariant: (componentId: string, variant: string) => void;
-  setThemeMode: (mode: "light" | "dark") => void;
-  updateGlobalTheme: (updates: Partial<GlobalThemeConfig>) => void;
-  updateComponentStyle: (componentId: string, variant: string, updates: ComponentStyleConfig) => void;
-  resetComponentStyle: (componentId: string, variant?: string) => void;
-  initializeAvailableComponents: () => void;
 }
 
 export interface NavigationItem {
@@ -299,47 +287,3 @@ export interface WireframeState {
   selectedPath: string | null;
 }
 
-export type ComponentCategory = "form" | "layout" | "feedback" | "data-display" | "navigation" | "overlay";
-
-export interface ThemeConfigComponent {
-  id: string;
-  name: string;
-  category: ComponentCategory;
-  variants: string[];
-  defaultVariant: string;
-}
-
-export interface ComponentStyleConfig {
-  [key: string]: any;
-}
-
-export interface VariantStyleConfig {
-  [variant: string]: ComponentStyleConfig;
-}
-
-export interface GlobalThemeConfig {
-  primaryColor: string;
-  secondaryColor: string;
-  accentColor: string;
-  borderRadiusPreset: "none" | "sm" | "md" | "lg" | "xl";
-  shadowIntensity: "none" | "sm" | "md" | "lg";
-  fontSize: string;
-  previewBackgroundColor: string;
-  defaultFontColor: string;
-  defaultFontFamily: string;
-}
-
-export interface ThemeConfigState {
-  activeTab: "global" | "components";
-  previewMode: "single" | "grid";
-  selectedComponentId: string | null;
-  selectedComponents: string[];
-  activeVariant: string;
-  gridComponentVariants: Record<string, string>;
-  themeMode: "light" | "dark";
-  lightModeTheme: GlobalThemeConfig;
-  darkModeTheme: GlobalThemeConfig;
-  lightModeComponentStyles: Record<string, VariantStyleConfig>;
-  darkModeComponentStyles: Record<string, VariantStyleConfig>;
-  availableComponents: ThemeConfigComponent[];
-}

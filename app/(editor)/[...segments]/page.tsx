@@ -240,9 +240,9 @@ const Page = () => {
       theme: {
         paragraph: "mb-4",
         heading: {
-          h1: "text-4xl font-bold mb-6 mt-8",
-          h2: "text-3xl font-semibold mb-4 mt-6",
-          h3: "text-2xl font-medium mb-3 mt-5",
+          h1: "text-4xl font-bold mb-6 mt-8 first:mt-4",
+          h2: "text-3xl font-semibold mb-4 mt-6 first:mt-3",
+          h3: "text-2xl font-medium mb-3 mt-5 first:mt-2",
         },
         text: {
           bold: "font-bold",

@@ -292,7 +292,7 @@ const questionConfigs: (
     description: "Administrative interface for managing users and content.",
     icon: Settings,
     requiredTechnologies: [],
-    disabledWhen: (config) => !config.features.authentication.enabled,
+    disabledWhen: (config) => config.questions.useSupabase === "none",
     subOptions: [
       {
         id: "superAdmins",
@@ -323,7 +323,7 @@ const questionConfigs: (
       "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
     icon: Upload,
     requiredTechnologies: ["supabase"],
-    disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none" || !config.features.authentication.enabled,
+    disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none",
   },
   {
     id: "payments",
@@ -501,8 +501,8 @@ const getDisabledReason = (
   }
 
   if (questionId === "admin" && !optionId) {
-    if (!config.features.authentication.enabled) {
-      return "Requires user authentication (Question 3)";
+    if (config.questions.useSupabase === "none") {
+      return "Requires a database (Question 1)";
     }
   }
 
@@ -512,9 +512,6 @@ const getDisabledReason = (
     }
     if (config.questions.useSupabase === "no") {
       return "Requires Supabase (Question 1)";
-    }
-    if (!config.features.authentication.enabled) {
-      return "Requires user authentication (Question 3)";
     }
   }
 

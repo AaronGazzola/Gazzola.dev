@@ -25,7 +25,7 @@
             "order": 1,
             "path": "starthere.techstack",
             "urlPath": "/starthere/techstack",
-            "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+            "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
             "components": [
               {
                 "id": "component-InitialConfiguration",
@@ -42,21 +42,31 @@
             "include": true
           },
           {
-            "id": "starthere.appdirectory",
-            "name": "appdirectory",
-            "displayName": "App directory",
+            "id": "starthere.layoutroutes",
+            "name": "layoutroutes",
+            "displayName": "Layout & routes",
             "type": "file",
             "order": 2,
-            "path": "starthere.appdirectory",
-            "urlPath": "/starthere/appdirectory",
-            "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+            "path": "starthere.layoutroutes",
+            "urlPath": "/starthere/layoutroutes",
+            "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
             "components": [
+              {
+                "id": "component-WireFrame",
+                "name": "WireFrame",
+                "displayName": "WireFrame",
+                "type": "component",
+                "path": "layoutroutes.component.WireFrame",
+                "urlPath": "",
+                "componentId": "WireFrame",
+                "include": true
+              },
               {
                 "id": "component-AppStructure",
                 "name": "AppStructure",
                 "displayName": "AppStructure",
                 "type": "component",
-                "path": "appdirectory.component.AppStructure",
+                "path": "layoutroutes.component.AppStructure",
                 "urlPath": "",
                 "componentId": "AppStructure",
                 "include": true
@@ -120,7 +130,7 @@
               "order": 1,
               "path": "starthere.techstack",
               "urlPath": "/starthere/techstack",
-              "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+              "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
               "components": [
                 {
                   "id": "component-InitialConfiguration",
@@ -137,21 +147,31 @@
               "include": true
             },
             {
-              "id": "starthere.appdirectory",
-              "name": "appdirectory",
-              "displayName": "App directory",
+              "id": "starthere.layoutroutes",
+              "name": "layoutroutes",
+              "displayName": "Layout & routes",
               "type": "file",
               "order": 2,
-              "path": "starthere.appdirectory",
-              "urlPath": "/starthere/appdirectory",
-              "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+              "path": "starthere.layoutroutes",
+              "urlPath": "/starthere/layoutroutes",
+              "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
               "components": [
+                {
+                  "id": "component-WireFrame",
+                  "name": "WireFrame",
+                  "displayName": "WireFrame",
+                  "type": "component",
+                  "path": "layoutroutes.component.WireFrame",
+                  "urlPath": "",
+                  "componentId": "WireFrame",
+                  "include": true
+                },
                 {
                   "id": "component-AppStructure",
                   "name": "AppStructure",
                   "displayName": "AppStructure",
                   "type": "component",
-                  "path": "appdirectory.component.AppStructure",
+                  "path": "layoutroutes.component.AppStructure",
                   "urlPath": "",
                   "componentId": "AppStructure",
                   "include": true
@@ -205,7 +225,7 @@
           "order": 1,
           "path": "starthere.techstack",
           "urlPath": "/starthere/techstack",
-          "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+          "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
           "components": [
             {
               "id": "component-InitialConfiguration",
@@ -222,21 +242,31 @@
           "include": true
         },
         {
-          "id": "starthere.appdirectory",
-          "name": "appdirectory",
-          "displayName": "App directory",
+          "id": "starthere.layoutroutes",
+          "name": "layoutroutes",
+          "displayName": "Layout & routes",
           "type": "file",
           "order": 2,
-          "path": "starthere.appdirectory",
-          "urlPath": "/starthere/appdirectory",
-          "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+          "path": "starthere.layoutroutes",
+          "urlPath": "/starthere/layoutroutes",
+          "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
           "components": [
+            {
+              "id": "component-WireFrame",
+              "name": "WireFrame",
+              "displayName": "WireFrame",
+              "type": "component",
+              "path": "layoutroutes.component.WireFrame",
+              "urlPath": "",
+              "componentId": "WireFrame",
+              "include": true
+            },
             {
               "id": "component-AppStructure",
               "name": "AppStructure",
               "displayName": "AppStructure",
               "type": "component",
-              "path": "appdirectory.component.AppStructure",
+              "path": "layoutroutes.component.AppStructure",
               "urlPath": "",
               "componentId": "AppStructure",
               "include": true
@@ -279,7 +309,7 @@
       "order": 1,
       "path": "starthere.techstack",
       "urlPath": "/starthere/techstack",
-      "content": "# {{appName:Your app name}} development roadmap\n\n<!-- component-InitialConfiguration -->\n",
+      "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
       "components": [
         {
           "id": "component-InitialConfiguration",
@@ -305,22 +335,32 @@
       "componentId": "InitialConfiguration",
       "include": true
     },
-    "starthere.appdirectory": {
-      "id": "starthere.appdirectory",
-      "name": "appdirectory",
-      "displayName": "App directory",
+    "starthere.layoutroutes": {
+      "id": "starthere.layoutroutes",
+      "name": "layoutroutes",
+      "displayName": "Layout & routes",
       "type": "file",
       "order": 2,
-      "path": "starthere.appdirectory",
-      "urlPath": "/starthere/appdirectory",
-      "content": "# App directory structure\n\n<!-- component-AppStructure -->\n",
+      "path": "starthere.layoutroutes",
+      "urlPath": "/starthere/layoutroutes",
+      "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
       "components": [
+        {
+          "id": "component-WireFrame",
+          "name": "WireFrame",
+          "displayName": "WireFrame",
+          "type": "component",
+          "path": "layoutroutes.component.WireFrame",
+          "urlPath": "",
+          "componentId": "WireFrame",
+          "include": true
+        },
         {
           "id": "component-AppStructure",
           "name": "AppStructure",
           "displayName": "AppStructure",
           "type": "component",
-          "path": "appdirectory.component.AppStructure",
+          "path": "layoutroutes.component.AppStructure",
           "urlPath": "",
           "componentId": "AppStructure",
           "include": true
@@ -329,12 +369,22 @@
       "sections": {},
       "include": true
     },
-    "appdirectory.component.AppStructure": {
+    "layoutroutes.component.WireFrame": {
+      "id": "component-WireFrame",
+      "name": "WireFrame",
+      "displayName": "WireFrame",
+      "type": "component",
+      "path": "layoutroutes.component.WireFrame",
+      "urlPath": "",
+      "componentId": "WireFrame",
+      "include": true
+    },
+    "layoutroutes.component.AppStructure": {
       "id": "component-AppStructure",
       "name": "AppStructure",
       "displayName": "AppStructure",
       "type": "component",
-      "path": "appdirectory.component.AppStructure",
+      "path": "layoutroutes.component.AppStructure",
       "urlPath": "",
       "componentId": "AppStructure",
       "include": true
@@ -374,5 +424,5 @@
       "include": true
     }
   },
-  "contentVersion": 15
+  "contentVersion": 16
 }

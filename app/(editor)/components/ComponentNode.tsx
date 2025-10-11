@@ -25,6 +25,11 @@ const componentMap: Record<string, any> = {
       default: m.FullStackOrFrontEnd,
     }))
   ),
+  WireFrame: lazy(() =>
+    import("@/app/(components)/AppStructure").then((m) => ({
+      default: m.WireFrame,
+    }))
+  ),
   AppStructure: lazy(() =>
     import("@/app/(components)/AppStructure").then((m) => ({
       default: m.AppStructure,

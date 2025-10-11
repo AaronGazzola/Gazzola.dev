@@ -17,6 +17,8 @@ import {
 import { cn } from "@/lib/tailwind.utils";
 import {
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   File,
   FileText,
   Folder,
@@ -1829,6 +1831,174 @@ const TreeNode = ({
           ))}
         </div>
       )}
+    </div>
+  );
+};
+
+export const WireFrame = () => {
+  const {
+    darkMode,
+    appStructure,
+    wireframeState,
+    setWireframeCurrentPage,
+    initializeWireframePages,
+  } = useEditorStore();
+
+  useEffect(() => {
+    initializeWireframePages();
+  }, [appStructure, initializeWireframePages]);
+
+  const { currentPageIndex, availablePages, totalPages } = wireframeState;
+  const currentPage = availablePages[currentPageIndex] || null;
+
+  const handlePrevious = () => {
+    if (currentPageIndex > 0) {
+      setWireframeCurrentPage(currentPageIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPageIndex < totalPages - 1) {
+      setWireframeCurrentPage(currentPageIndex + 1);
+    }
+  };
+
+  const layouts = currentPage
+    ? findLayoutsForPagePath(appStructure, currentPage, "", true)
+    : [];
+
+  const renderNestedBoxes = () => {
+    if (!currentPage) {
+      return (
+        <div
+          className={cn(
+            "text-center py-8",
+            darkMode ? "text-gray-500" : "text-gray-400"
+          )}
+        >
+          No pages available
+        </div>
+      );
+    }
+
+    if (layouts.length === 0) {
+      return (
+        <div
+          className={cn(
+            PAGE_COLOR.bg,
+            "border-2 border-dashed",
+            PAGE_COLOR.border,
+            "rounded p-3 text-center min-h-[200px] flex flex-col"
+          )}
+        >
+          <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
+            {currentPage}
+          </div>
+          <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>page.tsx</div>
+        </div>
+      );
+    }
+
+    let content = (
+      <div
+        className={cn(
+          PAGE_COLOR.bg,
+          "border-2 border-dashed",
+          PAGE_COLOR.border,
+          "rounded p-3 text-center min-h-[200px] flex flex-col"
+        )}
+      >
+        <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
+          {currentPage}
+        </div>
+        <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>page.tsx</div>
+      </div>
+    );
+
+    for (let i = layouts.length - 1; i >= 0; i--) {
+      const layout = layouts[i];
+      const layoutName = `app${layout}/layout.tsx`;
+      const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+
+      content = (
+        <div
+          className={cn(
+            colorSet.bg,
+            "border-2 border-dashed",
+            colorSet.border,
+            "rounded p-3 min-h-[200px] flex flex-col"
+          )}
+        >
+          <div className={cn("text-xs mb-2 text-center font-mono", colorSet.text)}>
+            {layoutName}
+          </div>
+          {content}
+        </div>
+      );
+    }
+
+    return content;
+  };
+
+  return (
+    <div
+      className={cn(
+        "p-4 rounded-lg border mb-6",
+        darkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+      )}
+    >
+      <div className="mb-4">
+        <h3
+          className={cn(
+            "text-lg font-semibold mb-3",
+            darkMode ? "text-gray-200" : "text-gray-800"
+          )}
+        >
+          Wireframe Preview
+        </h3>
+        <div
+          className={cn(
+            "flex items-center justify-between px-3 py-2 rounded border",
+            darkMode ? "bg-gray-950 border-gray-700" : "bg-gray-50 border-gray-300"
+          )}
+        >
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={handlePrevious}
+            disabled={currentPageIndex === 0}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span
+            className={cn(
+              "text-sm font-mono",
+              darkMode ? "text-gray-300" : "text-gray-700"
+            )}
+          >
+            {currentPage || "No page"}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={handleNext}
+            disabled={currentPageIndex >= totalPages - 1}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          "p-4 rounded",
+          darkMode ? "bg-gray-950" : "bg-gray-50"
+        )}
+      >
+        {renderNestedBoxes()}
+      </div>
     </div>
   );
 };
