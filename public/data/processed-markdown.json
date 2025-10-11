@@ -9,22 +9,22 @@
     "include": true,
     "children": [
       {
-        "id": "starthere",
-        "name": "starthere",
+        "id": "start-here",
+        "name": "start-here",
         "displayName": "Start here",
         "type": "directory",
-        "path": "starthere",
-        "urlPath": "/starthere",
+        "path": "start-here",
+        "urlPath": "/start-here",
         "include": true,
         "children": [
           {
-            "id": "starthere.techstack",
-            "name": "techstack",
+            "id": "start-here.tech-stack",
+            "name": "tech-stack",
             "displayName": "Tech Stack",
             "type": "file",
             "order": 1,
-            "path": "starthere.techstack",
-            "urlPath": "/starthere/techstack",
+            "path": "start-here.tech-stack",
+            "urlPath": "/start-here/tech-stack",
             "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
             "components": [
               {
@@ -32,7 +32,7 @@
                 "name": "InitialConfiguration",
                 "displayName": "InitialConfiguration",
                 "type": "component",
-                "path": "techstack.component.InitialConfiguration",
+                "path": "tech-stack.component.InitialConfiguration",
                 "urlPath": "",
                 "componentId": "InitialConfiguration",
                 "include": true
@@ -42,21 +42,21 @@
             "include": true
           },
           {
-            "id": "starthere.layoutroutes",
-            "name": "layoutroutes",
+            "id": "start-here.layout-routes",
+            "name": "layout-routes",
             "displayName": "Layout & routes",
             "type": "file",
             "order": 2,
-            "path": "starthere.layoutroutes",
-            "urlPath": "/starthere/layoutroutes",
-            "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
+            "path": "start-here.layout-routes",
+            "urlPath": "/start-here/layout-routes",
+            "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
             "components": [
               {
                 "id": "component-WireFrame",
                 "name": "WireFrame",
                 "displayName": "WireFrame",
                 "type": "component",
-                "path": "layoutroutes.component.WireFrame",
+                "path": "layout-routes.component.WireFrame",
                 "urlPath": "",
                 "componentId": "WireFrame",
                 "include": true
@@ -66,7 +66,7 @@
                 "name": "AppStructure",
                 "displayName": "AppStructure",
                 "type": "component",
-                "path": "layoutroutes.component.AppStructure",
+                "path": "layout-routes.component.AppStructure",
                 "urlPath": "",
                 "componentId": "AppStructure",
                 "include": true
@@ -76,13 +76,13 @@
             "include": true
           },
           {
-            "id": "starthere.theme",
+            "id": "start-here.theme",
             "name": "theme",
             "displayName": "Theme",
             "type": "file",
             "order": 3,
-            "path": "starthere.theme",
-            "urlPath": "/starthere/theme",
+            "path": "start-here.theme",
+            "urlPath": "/start-here/theme",
             "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
             "components": [
               {
@@ -114,22 +114,22 @@
       "include": true,
       "children": [
         {
-          "id": "starthere",
-          "name": "starthere",
+          "id": "start-here",
+          "name": "start-here",
           "displayName": "Start here",
           "type": "directory",
-          "path": "starthere",
-          "urlPath": "/starthere",
+          "path": "start-here",
+          "urlPath": "/start-here",
           "include": true,
           "children": [
             {
-              "id": "starthere.techstack",
-              "name": "techstack",
+              "id": "start-here.tech-stack",
+              "name": "tech-stack",
               "displayName": "Tech Stack",
               "type": "file",
               "order": 1,
-              "path": "starthere.techstack",
-              "urlPath": "/starthere/techstack",
+              "path": "start-here.tech-stack",
+              "urlPath": "/start-here/tech-stack",
               "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
               "components": [
                 {
@@ -137,7 +137,7 @@
                   "name": "InitialConfiguration",
                   "displayName": "InitialConfiguration",
                   "type": "component",
-                  "path": "techstack.component.InitialConfiguration",
+                  "path": "tech-stack.component.InitialConfiguration",
                   "urlPath": "",
                   "componentId": "InitialConfiguration",
                   "include": true
@@ -147,21 +147,21 @@
               "include": true
             },
             {
-              "id": "starthere.layoutroutes",
-              "name": "layoutroutes",
+              "id": "start-here.layout-routes",
+              "name": "layout-routes",
               "displayName": "Layout & routes",
               "type": "file",
               "order": 2,
-              "path": "starthere.layoutroutes",
-              "urlPath": "/starthere/layoutroutes",
-              "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
+              "path": "start-here.layout-routes",
+              "urlPath": "/start-here/layout-routes",
+              "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
               "components": [
                 {
                   "id": "component-WireFrame",
                   "name": "WireFrame",
                   "displayName": "WireFrame",
                   "type": "component",
-                  "path": "layoutroutes.component.WireFrame",
+                  "path": "layout-routes.component.WireFrame",
                   "urlPath": "",
                   "componentId": "WireFrame",
                   "include": true
@@ -171,7 +171,7 @@
                   "name": "AppStructure",
                   "displayName": "AppStructure",
                   "type": "component",
-                  "path": "layoutroutes.component.AppStructure",
+                  "path": "layout-routes.component.AppStructure",
                   "urlPath": "",
                   "componentId": "AppStructure",
                   "include": true
@@ -181,13 +181,13 @@
               "include": true
             },
             {
-              "id": "starthere.theme",
+              "id": "start-here.theme",
               "name": "theme",
               "displayName": "Theme",
               "type": "file",
               "order": 3,
-              "path": "starthere.theme",
-              "urlPath": "/starthere/theme",
+              "path": "start-here.theme",
+              "urlPath": "/start-here/theme",
               "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
               "components": [
                 {
@@ -208,23 +208,23 @@
         }
       ]
     },
-    "starthere": {
-      "id": "starthere",
-      "name": "starthere",
+    "start-here": {
+      "id": "start-here",
+      "name": "start-here",
       "displayName": "Start here",
       "type": "directory",
-      "path": "starthere",
-      "urlPath": "/starthere",
+      "path": "start-here",
+      "urlPath": "/start-here",
       "include": true,
       "children": [
         {
-          "id": "starthere.techstack",
-          "name": "techstack",
+          "id": "start-here.tech-stack",
+          "name": "tech-stack",
           "displayName": "Tech Stack",
           "type": "file",
           "order": 1,
-          "path": "starthere.techstack",
-          "urlPath": "/starthere/techstack",
+          "path": "start-here.tech-stack",
+          "urlPath": "/start-here/tech-stack",
           "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
           "components": [
             {
@@ -232,7 +232,7 @@
               "name": "InitialConfiguration",
               "displayName": "InitialConfiguration",
               "type": "component",
-              "path": "techstack.component.InitialConfiguration",
+              "path": "tech-stack.component.InitialConfiguration",
               "urlPath": "",
               "componentId": "InitialConfiguration",
               "include": true
@@ -242,21 +242,21 @@
           "include": true
         },
         {
-          "id": "starthere.layoutroutes",
-          "name": "layoutroutes",
+          "id": "start-here.layout-routes",
+          "name": "layout-routes",
           "displayName": "Layout & routes",
           "type": "file",
           "order": 2,
-          "path": "starthere.layoutroutes",
-          "urlPath": "/starthere/layoutroutes",
-          "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
+          "path": "start-here.layout-routes",
+          "urlPath": "/start-here/layout-routes",
+          "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
           "components": [
             {
               "id": "component-WireFrame",
               "name": "WireFrame",
               "displayName": "WireFrame",
               "type": "component",
-              "path": "layoutroutes.component.WireFrame",
+              "path": "layout-routes.component.WireFrame",
               "urlPath": "",
               "componentId": "WireFrame",
               "include": true
@@ -266,7 +266,7 @@
               "name": "AppStructure",
               "displayName": "AppStructure",
               "type": "component",
-              "path": "layoutroutes.component.AppStructure",
+              "path": "layout-routes.component.AppStructure",
               "urlPath": "",
               "componentId": "AppStructure",
               "include": true
@@ -276,13 +276,13 @@
           "include": true
         },
         {
-          "id": "starthere.theme",
+          "id": "start-here.theme",
           "name": "theme",
           "displayName": "Theme",
           "type": "file",
           "order": 3,
-          "path": "starthere.theme",
-          "urlPath": "/starthere/theme",
+          "path": "start-here.theme",
+          "urlPath": "/start-here/theme",
           "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
           "components": [
             {
@@ -301,14 +301,14 @@
         }
       ]
     },
-    "starthere.techstack": {
-      "id": "starthere.techstack",
-      "name": "techstack",
+    "start-here.tech-stack": {
+      "id": "start-here.tech-stack",
+      "name": "tech-stack",
       "displayName": "Tech Stack",
       "type": "file",
       "order": 1,
-      "path": "starthere.techstack",
-      "urlPath": "/starthere/techstack",
+      "path": "start-here.tech-stack",
+      "urlPath": "/start-here/tech-stack",
       "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
       "components": [
         {
@@ -316,7 +316,7 @@
           "name": "InitialConfiguration",
           "displayName": "InitialConfiguration",
           "type": "component",
-          "path": "techstack.component.InitialConfiguration",
+          "path": "tech-stack.component.InitialConfiguration",
           "urlPath": "",
           "componentId": "InitialConfiguration",
           "include": true
@@ -325,32 +325,32 @@
       "sections": {},
       "include": true
     },
-    "techstack.component.InitialConfiguration": {
+    "tech-stack.component.InitialConfiguration": {
       "id": "component-InitialConfiguration",
       "name": "InitialConfiguration",
       "displayName": "InitialConfiguration",
       "type": "component",
-      "path": "techstack.component.InitialConfiguration",
+      "path": "tech-stack.component.InitialConfiguration",
       "urlPath": "",
       "componentId": "InitialConfiguration",
       "include": true
     },
-    "starthere.layoutroutes": {
-      "id": "starthere.layoutroutes",
-      "name": "layoutroutes",
+    "start-here.layout-routes": {
+      "id": "start-here.layout-routes",
+      "name": "layout-routes",
       "displayName": "Layout & routes",
       "type": "file",
       "order": 2,
-      "path": "starthere.layoutroutes",
-      "urlPath": "/starthere/layoutroutes",
-      "content": "# Layout wireframe and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
+      "path": "start-here.layout-routes",
+      "urlPath": "/start-here/layout-routes",
+      "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
       "components": [
         {
           "id": "component-WireFrame",
           "name": "WireFrame",
           "displayName": "WireFrame",
           "type": "component",
-          "path": "layoutroutes.component.WireFrame",
+          "path": "layout-routes.component.WireFrame",
           "urlPath": "",
           "componentId": "WireFrame",
           "include": true
@@ -360,7 +360,7 @@
           "name": "AppStructure",
           "displayName": "AppStructure",
           "type": "component",
-          "path": "layoutroutes.component.AppStructure",
+          "path": "layout-routes.component.AppStructure",
           "urlPath": "",
           "componentId": "AppStructure",
           "include": true
@@ -369,34 +369,34 @@
       "sections": {},
       "include": true
     },
-    "layoutroutes.component.WireFrame": {
+    "layout-routes.component.WireFrame": {
       "id": "component-WireFrame",
       "name": "WireFrame",
       "displayName": "WireFrame",
       "type": "component",
-      "path": "layoutroutes.component.WireFrame",
+      "path": "layout-routes.component.WireFrame",
       "urlPath": "",
       "componentId": "WireFrame",
       "include": true
     },
-    "layoutroutes.component.AppStructure": {
+    "layout-routes.component.AppStructure": {
       "id": "component-AppStructure",
       "name": "AppStructure",
       "displayName": "AppStructure",
       "type": "component",
-      "path": "layoutroutes.component.AppStructure",
+      "path": "layout-routes.component.AppStructure",
       "urlPath": "",
       "componentId": "AppStructure",
       "include": true
     },
-    "starthere.theme": {
-      "id": "starthere.theme",
+    "start-here.theme": {
+      "id": "start-here.theme",
       "name": "theme",
       "displayName": "Theme",
       "type": "file",
       "order": 3,
-      "path": "starthere.theme",
-      "urlPath": "/starthere/theme",
+      "path": "start-here.theme",
+      "urlPath": "/start-here/theme",
       "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
       "components": [
         {
@@ -424,5 +424,5 @@
       "include": true
     }
   },
-  "contentVersion": 16
+  "contentVersion": 17
 }

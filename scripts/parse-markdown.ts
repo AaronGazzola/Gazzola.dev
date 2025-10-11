@@ -74,6 +74,7 @@ function escapeForJavaScript(content: string): string {
 function slugify(text: string): string {
   return text
     .toLowerCase()
+    .replace(/_/g, " ")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9\s-]/g, "")
@@ -88,7 +89,7 @@ function sanitizeFileName(fileName: string): string {
   if (orderMatch) {
     name = orderMatch[2];
   }
-  return name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  return slugify(name);
 }
 
 function generateUrlPath(relativePath: string): string {
