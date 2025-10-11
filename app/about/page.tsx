@@ -656,29 +656,23 @@ const Page = () => {
                 const mdColStartClass = "";
                 const lgColStartClass = lgInfo.row === 2 && lgInfo.col === 0 ? "lg:col-start-2" : "";
                 const mdHideClass = isLastItemOverall ? "md:hidden lg:flex" : "";
-                const combinedClassName = `relative flex flex-col items-center ${mdColStartClass} ${lgColStartClass} ${mdHideClass}`.trim();
+                const combinedClassName = `next-step-item-${index} relative flex flex-col items-center ${mdColStartClass} ${lgColStartClass} ${mdHideClass}`.trim();
 
                 return (
                   <div
                     key={index}
                     className={combinedClassName}
-                    style={{
-                      ["--md-order" as any]: mdOrder,
-                      ["--lg-order" as any]: lgOrder,
-                    }}
                   >
-                    <style dangerouslySetInnerHTML={{
-                      __html: `
-                        [style*="--md-order:${mdOrder}"] {
-                          order: ${mdOrder};
+                    <style>{`
+                      .next-step-item-${index} {
+                        order: ${mdOrder};
+                      }
+                      @media (min-width: 976px) {
+                        .next-step-item-${index} {
+                          order: ${lgOrder};
                         }
-                        @media (min-width: 976px) {
-                          [style*="--lg-order:${lgOrder}"] {
-                            order: ${lgOrder};
-                          }
-                        }
-                      `
-                    }} />
+                      }
+                    `}</style>
                     <motion.div
                       initial={{ opacity: 0, y: 50 }}
                       whileInView={{ opacity: 1, y: 0 }}

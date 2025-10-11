@@ -1,4 +1,4 @@
-# Layout wireframe and route structure
+# Layout wire frame and route structure
 
 <!-- component-WireFrame -->
 
