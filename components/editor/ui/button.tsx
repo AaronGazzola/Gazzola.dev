@@ -5,25 +5,25 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/tailwind.utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-[calc(var(--spacing)*0.5)] whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[hsl(var(--ring))] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow hover:bg-[hsl(var(--primary)/0.9)] rounded-[var(--radius)]",
+          "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary)/0.9)] rounded-[var(--radius)]",
         destructive:
-          "bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] shadow-sm hover:bg-[hsl(var(--destructive)/0.9)] rounded-[var(--radius)]",
+          "bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:bg-[hsl(var(--destructive)/0.9)] rounded-[var(--radius)]",
         outline:
-          "border border-[hsl(var(--input))] bg-[hsl(var(--background))] shadow-sm hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] rounded-[var(--radius)]",
+          "border border-[hsl(var(--input))] bg-[hsl(var(--background))] hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] rounded-[var(--radius)]",
         secondary:
-          "bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] shadow-sm hover:bg-[hsl(var(--secondary)/0.8)] rounded-[var(--radius)]",
+          "bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] hover:bg-[hsl(var(--secondary)/0.8)] rounded-[var(--radius)]",
         ghost: "hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] rounded-[var(--radius)]",
         link: "text-[hsl(var(--primary))] underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 px-3 text-xs rounded-[var(--radius)]",
-        lg: "h-10 px-8 rounded-[var(--radius)]",
+        default: "h-9 px-[calc(var(--spacing)*1rem)] py-[calc(var(--spacing)*0.5rem)]",
+        sm: "h-8 px-[calc(var(--spacing)*0.75rem)] text-xs rounded-[var(--radius)]",
+        lg: "h-10 px-[calc(var(--spacing)*2rem)] rounded-[var(--radius)]",
         icon: "h-9 w-9",
       },
     },
@@ -46,6 +46,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
+        style={{
+          boxShadow: variant !== "ghost" && variant !== "link" ? `var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread) hsl(var(--shadow-color) / calc(var(--shadow-opacity) * ${variant === "default" || variant === "destructive" ? "1" : "0.5"}))` : undefined
+        }}
         ref={ref}
         {...props}
       />

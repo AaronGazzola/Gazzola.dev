@@ -64,16 +64,40 @@ export interface ThemeConfiguration {
     light: ThemeColors;
     dark: ThemeColors;
   };
-  typography: ThemeTypography;
-  other: ThemeOther;
+  typography: {
+    light: ThemeTypography;
+    dark: ThemeTypography;
+  };
+  other: {
+    light: ThemeOther;
+    dark: ThemeOther;
+  };
+}
+
+export interface ParsedTheme {
+  name: string;
+  light: {
+    colors: ThemeColors;
+    typography: ThemeTypography;
+    other: ThemeOther;
+  };
+  dark: {
+    colors: ThemeColors;
+    typography: ThemeTypography;
+    other: ThemeOther;
+  };
+  previewColors: string[];
 }
 
 export interface ThemeState {
   theme: ThemeConfiguration;
   setTheme: (theme: Partial<ThemeConfiguration>) => void;
   updateColors: (mode: "light" | "dark", colors: Partial<ThemeColors>) => void;
-  updateTypography: (typography: Partial<ThemeTypography>) => void;
-  updateOther: (other: Partial<ThemeOther>) => void;
+  updateColor: (mode: "light" | "dark", colorKey: keyof ThemeColors, value: string) => void;
+  updateTypography: (mode: "light" | "dark", typography: Partial<ThemeTypography>) => void;
+  updateOther: (mode: "light" | "dark", other: Partial<ThemeOther>) => void;
+  updateShadow: (mode: "light" | "dark", shadowField: keyof ThemeShadow, value: number | string) => void;
   setThemePreset: (themeIndex: number) => void;
+  applyThemePreset: (themeIndex: number, parsedTheme: ParsedTheme) => void;
   resetTheme: () => void;
 }

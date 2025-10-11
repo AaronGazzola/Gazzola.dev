@@ -112,14 +112,14 @@ const nextSteps = [
     icon: Cpu,
   },
   {
-    title: "Design your layout",
-    description: "Create wireframes and define your route structure",
-    icon: LayoutPanelTop,
-  },
-  {
     title: "Design your theme",
     description: "Configure your light and dark mode color schemes",
     icon: Palette,
+  },
+  {
+    title: "Design your layout",
+    description: "Create wireframes and define your route structure",
+    icon: LayoutPanelTop,
   },
   {
     title: "Design your database",
@@ -608,7 +608,9 @@ const Page = () => {
                 const getLgArrowDirection = () => {
                   if (isLastItemOverall) return null;
 
-                  const visualCol = lgInfo.isEvenRow ? lgInfo.col : 2 - lgInfo.col;
+                  const visualCol = lgInfo.isEvenRow
+                    ? lgInfo.col
+                    : 2 - lgInfo.col;
 
                   if (visualCol === 0 && lgInfo.row === 1 && totalItems === 7) {
                     return "down-right";
@@ -628,13 +630,17 @@ const Page = () => {
 
                 const getMdArrowDirection = () => {
                   if (isLastItemInMdGrid) {
-                    const visualCol = mdInfo.isEvenRow ? mdInfo.col : 1 - mdInfo.col;
+                    const visualCol = mdInfo.isEvenRow
+                      ? mdInfo.col
+                      : 1 - mdInfo.col;
                     if (visualCol === 1 && mdInfo.row === 2) return "down-left";
                     return null;
                   }
                   if (isLastItemOverall) return null;
 
-                  const visualCol = mdInfo.isEvenRow ? mdInfo.col : 1 - mdInfo.col;
+                  const visualCol = mdInfo.isEvenRow
+                    ? mdInfo.col
+                    : 1 - mdInfo.col;
 
                   if (mdInfo.isEvenRow) {
                     return visualCol === 0 ? "right" : "down";
@@ -654,15 +660,16 @@ const Page = () => {
                   : mdInfo.row * 2 + (2 - 1 - mdInfo.col);
 
                 const mdColStartClass = "";
-                const lgColStartClass = lgInfo.row === 2 && lgInfo.col === 0 ? "lg:col-start-2" : "";
-                const mdHideClass = isLastItemOverall ? "md:hidden lg:flex" : "";
-                const combinedClassName = `next-step-item-${index} relative flex flex-col items-center ${mdColStartClass} ${lgColStartClass} ${mdHideClass}`.trim();
+                const lgColStartClass =
+                  lgInfo.row === 2 && lgInfo.col === 0 ? "lg:col-start-2" : "";
+                const mdHideClass = isLastItemOverall
+                  ? "md:hidden lg:flex"
+                  : "";
+                const combinedClassName =
+                  `next-step-item-${index} relative flex flex-col items-center ${mdColStartClass} ${lgColStartClass} ${mdHideClass}`.trim();
 
                 return (
-                  <div
-                    key={index}
-                    className={combinedClassName}
-                  >
+                  <div key={index} className={combinedClassName}>
                     <style>{`
                       .next-step-item-${index} {
                         order: ${mdOrder};
@@ -885,7 +892,9 @@ const Page = () => {
                     </div>
 
                     <div className="text-center">
-                      <h3 className="text-xl font-bold mb-2">{lastStep.title}</h3>
+                      <h3 className="text-xl font-bold mb-2">
+                        {lastStep.title}
+                      </h3>
                       <p className="text-base font-semibold mb-2">
                         {lastStep.description}
                       </p>

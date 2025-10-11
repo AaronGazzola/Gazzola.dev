@@ -107,8 +107,14 @@ const defaultTheme: ThemeConfiguration = {
     light: defaultLightColors,
     dark: defaultDarkColors,
   },
-  typography: defaultTypography,
-  other: defaultOther,
+  typography: {
+    light: defaultTypography,
+    dark: defaultTypography,
+  },
+  other: {
+    light: defaultOther,
+    dark: defaultOther,
+  },
 };
 
 export const useThemeStore = create<ThemeState>()(
@@ -129,18 +135,53 @@ export const useThemeStore = create<ThemeState>()(
             },
           },
         })),
-      updateTypography: (typography) =>
+      updateColor: (mode, colorKey, value) =>
         set((state) => ({
           theme: {
             ...state.theme,
-            typography: { ...state.theme.typography, ...typography },
+            colors: {
+              ...state.theme.colors,
+              [mode]: {
+                ...state.theme.colors[mode],
+                [colorKey]: value
+              },
+            },
           },
         })),
-      updateOther: (other) =>
+      updateTypography: (mode, typography) =>
         set((state) => ({
           theme: {
             ...state.theme,
-            other: { ...state.theme.other, ...other },
+            typography: {
+              ...state.theme.typography,
+              [mode]: { ...state.theme.typography[mode], ...typography },
+            },
+          },
+        })),
+      updateOther: (mode, other) =>
+        set((state) => ({
+          theme: {
+            ...state.theme,
+            other: {
+              ...state.theme.other,
+              [mode]: { ...state.theme.other[mode], ...other },
+            },
+          },
+        })),
+      updateShadow: (mode, shadowField, value) =>
+        set((state) => ({
+          theme: {
+            ...state.theme,
+            other: {
+              ...state.theme.other,
+              [mode]: {
+                ...state.theme.other[mode],
+                shadow: {
+                  ...state.theme.other[mode].shadow,
+                  [shadowField]: value,
+                },
+              },
+            },
           },
         })),
       setThemePreset: (themeIndex) =>
@@ -150,10 +191,48 @@ export const useThemeStore = create<ThemeState>()(
             selectedTheme: themeIndex,
           },
         })),
+      applyThemePreset: (themeIndex, parsedTheme) => {
+        console.log(JSON.stringify({
+          action: "store_applyThemePreset",
+          themeIndex: themeIndex,
+          lightPrimary: parsedTheme.light.colors.primary,
+          darkPrimary: parsedTheme.dark.colors.primary
+        }));
+        set(() => {
+          const newTheme = {
+            selectedTheme: themeIndex,
+            colors: {
+              light: parsedTheme.light.colors,
+              dark: parsedTheme.dark.colors,
+            },
+            typography: {
+              light: parsedTheme.light.typography,
+              dark: parsedTheme.dark.typography,
+            },
+            other: {
+              light: parsedTheme.light.other,
+              dark: parsedTheme.dark.other,
+            },
+          };
+          console.log(JSON.stringify({
+            action: "store_setting_new_theme",
+            lightPrimary: newTheme.colors.light.primary,
+            darkPrimary: newTheme.colors.dark.primary
+          }));
+          return { theme: newTheme };
+        });
+      },
       resetTheme: () => set({ theme: defaultTheme }),
     }),
     {
       name: "theme-storage",
+      version: 2,
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2 || !persistedState?.theme?.typography?.light) {
+          return { theme: defaultTheme };
+        }
+        return persistedState;
+      },
     }
   )
 );

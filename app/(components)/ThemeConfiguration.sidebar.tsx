@@ -5,55 +5,122 @@ import { Input } from "@/components/editor/ui/input";
 import { Label } from "@/components/editor/ui/label";
 import { ScrollArea } from "@/components/editor/ui/scroll-area";
 import { Slider } from "@/components/editor/ui/slider";
+import { Switch } from "@/components/editor/ui/switch";
 import { cn } from "@/lib/tailwind.utils";
-import { ChevronLeft, ChevronRight, ChevronDown, Shuffle } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, ChevronRight, ChevronDown, Shuffle, CheckCircle2, AlertCircle, Sun, Moon } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/editor/ui/popover";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/editor/ui/collapsible";
+import { useThemeStore } from "./ThemeConfiguration.stores";
+import { loadThemesAction } from "./ThemeConfiguration.actions";
+import { ParsedTheme } from "./ThemeConfiguration.types";
+import { verifyThemeApplication, VerificationResult } from "./ThemeConfiguration.verify";
 
 type TabType = "colors" | "typography" | "other";
 
-const THEMES = [
-  { name: "Default", colors: ["#09090b", "#fafafa", "#f4f4f5", "#18181b"] },
-  { name: "Slate", colors: ["#0f172a", "#f8fafc", "#e2e8f0", "#1e293b"] },
-  { name: "Stone", colors: ["#1c1917", "#fafaf9", "#e7e5e4", "#292524"] },
-  { name: "Zinc", colors: ["#18181b", "#fafafa", "#e4e4e7", "#27272a"] },
-  { name: "Neutral", colors: ["#171717", "#fafafa", "#e5e5e5", "#262626"] },
-  { name: "Red", colors: ["#7f1d1d", "#fef2f2", "#fecaca", "#991b1b"] },
-  { name: "Rose", colors: ["#881337", "#fff1f2", "#fecdd3", "#9f1239"] },
-  { name: "Orange", colors: ["#7c2d12", "#fff7ed", "#fed7aa", "#9a3412"] },
-  { name: "Green", colors: ["#14532d", "#f0fdf4", "#bbf7d0", "#166534"] },
-  { name: "Blue", colors: ["#1e3a8a", "#eff6ff", "#bfdbfe", "#1e40af"] },
-  { name: "Yellow", colors: ["#713f12", "#fefce8", "#fef08a", "#854d0e"] },
-  { name: "Violet", colors: ["#4c1d95", "#f5f3ff", "#ddd6fe", "#5b21b6"] },
-];
-
-import { useThemeStore } from "./ThemeConfiguration.stores";
-
 export const ThemeConfigurationSidebar = () => {
-  const { theme, setThemePreset } = useThemeStore();
+  const [darkMode, setDarkMode] = useState(false);
+  const mode = darkMode ? "dark" : "light";
+
+  const selectedTheme = useThemeStore((state) => state.theme.selectedTheme);
+  const lightColors = useThemeStore((state) => state.theme.colors.light);
+  const darkColors = useThemeStore((state) => state.theme.colors.dark);
+  const lightTypography = useThemeStore((state) => state.theme.typography.light);
+  const darkTypography = useThemeStore((state) => state.theme.typography.dark);
+  const lightOther = useThemeStore((state) => state.theme.other.light);
+  const darkOther = useThemeStore((state) => state.theme.other.dark);
+
+  const currentColors = mode === "light" ? lightColors : darkColors;
+  const currentTypography = mode === "light" ? lightTypography : darkTypography;
+  const currentOther = mode === "light" ? lightOther : darkOther;
+
+  const applyThemePreset = useThemeStore((state) => state.applyThemePreset);
+  const updateColor = useThemeStore((state) => state.updateColor);
+  const updateTypography = useThemeStore((state) => state.updateTypography);
+  const updateOther = useThemeStore((state) => state.updateOther);
+  const updateShadow = useThemeStore((state) => state.updateShadow);
+
+  const [themes, setThemes] = useState<ParsedTheme[]>([]);
 
   const [activeTab, setActiveTab] = useState<TabType>("colors");
   const [searchQuery, setSearchQuery] = useState("");
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [verification, setVerification] = useState<VerificationResult | null>(null);
+
+  useEffect(() => {
+    loadThemesAction().then(setThemes);
+  }, []);
+
+  useEffect(() => {
+    console.log(JSON.stringify({
+      action: "currentColors_changed",
+      mode: mode,
+      primary: currentColors?.primary,
+      allColors: currentColors
+    }));
+  }, [currentColors, mode]);
+
+  const fullTheme = useThemeStore((state) => state.theme);
+
+  useEffect(() => {
+    if (themes.length > 0 && themes[selectedTheme]) {
+      const result = verifyThemeApplication(fullTheme, themes[selectedTheme], selectedTheme);
+      setVerification(result);
+      console.log(JSON.stringify({
+        action: "theme_verification",
+        isComplete: result.isComplete,
+        missingCount: result.missingFields.length,
+        mismatchCount: result.mismatchedFields.length,
+        missingFields: result.missingFields,
+        mismatchedFields: result.mismatchedFields
+      }));
+    }
+  }, [fullTheme, themes, selectedTheme]);
 
   const handlePrevTheme = () => {
-    const newIndex = theme.selectedTheme === 0 ? THEMES.length - 1 : theme.selectedTheme - 1;
-    setThemePreset(newIndex);
+    const newIndex = selectedTheme === 0 ? themes.length - 1 : selectedTheme - 1;
+    applyThemePreset(newIndex, themes[newIndex]);
   };
 
   const handleNextTheme = () => {
-    const newIndex = theme.selectedTheme === THEMES.length - 1 ? 0 : theme.selectedTheme + 1;
-    setThemePreset(newIndex);
+    const newIndex = selectedTheme === themes.length - 1 ? 0 : selectedTheme + 1;
+    applyThemePreset(newIndex, themes[newIndex]);
   };
 
   const handleRandomTheme = () => {
-    const randomIndex = Math.floor(Math.random() * THEMES.length);
-    setThemePreset(randomIndex);
+    const randomIndex = Math.floor(Math.random() * themes.length);
+    applyThemePreset(randomIndex, themes[randomIndex]);
     setIsPopoverOpen(false);
   };
 
-  const filteredThemes = THEMES.filter((theme) =>
+  const hslToHex = (hsl: string): string => {
+    const parts = hsl.match(/[\d.]+/g);
+    if (!parts || parts.length < 3) return "#000000";
+
+    const h = parseFloat(parts[0]) / 360;
+    const s = parseFloat(parts[1]) / 100;
+    const l = parseFloat(parts[2]) / 100;
+
+    const hueToRgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    const r = Math.round(hueToRgb(p, q, h + 1 / 3) * 255);
+    const g = Math.round(hueToRgb(p, q, h) * 255);
+    const b = Math.round(hueToRgb(p, q, h - 1 / 3) * 255);
+
+    return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+  };
+
+  const filteredThemes = themes.filter((theme) =>
     theme.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -64,18 +131,68 @@ export const ThemeConfigurationSidebar = () => {
   ];
 
   return (
-    <div className="w-80 border-r flex flex-col bg-[hsl(var(--background))] border-[hsl(var(--border))]">
-      <div className="p-6 border-b border-[hsl(var(--border))]">
-        <Label className="text-xs font-medium mb-2 block text-[hsl(var(--muted-foreground))]">
-          Theme
-        </Label>
+    <div className="w-80 border-r flex flex-col bg-[hsl(var(--background))] border-[hsl(var(--border))] max-h-[calc(100vh-200px)] sticky top-0">
+      <div className="p-3 border-b border-[hsl(var(--border))] space-y-2">
+        {verification && !verification.isComplete && (
+          <Collapsible>
+            <CollapsibleTrigger className="w-full">
+              <div className="flex items-start gap-2 p-2 rounded-md bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/15 transition-colors">
+                <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" />
+                <div className="text-xs space-y-1 flex-1 text-left">
+                  <div className="font-medium text-yellow-900 dark:text-yellow-100">Theme Verification Failed</div>
+                  {verification.mismatchedFields.length > 0 && (
+                    <div className="text-yellow-800 dark:text-yellow-200">
+                      {verification.mismatchedFields.length} field{verification.mismatchedFields.length !== 1 ? "s" : ""} mismatch
+                    </div>
+                  )}
+                  {verification.missingFields.length > 0 && (
+                    <div className="text-yellow-800 dark:text-yellow-200">
+                      {verification.missingFields.length} field{verification.missingFields.length !== 1 ? "s" : ""} missing
+                    </div>
+                  )}
+                </div>
+                <ChevronDown className="h-3 w-3 text-yellow-600 mt-0.5 transition-transform group-data-[state=open]:rotate-180" />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="mt-2 p-2 rounded-md bg-yellow-500/5 border border-yellow-500/20 text-xs space-y-2 max-h-60 overflow-y-auto">
+                {verification.mismatchedFields.length > 0 && (
+                  <div>
+                    <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">Mismatched Fields:</div>
+                    {verification.mismatchedFields.map((mismatch, idx) => (
+                      <div key={idx} className="mb-2 pb-2 border-b border-yellow-500/20 last:border-0">
+                        <div className="font-medium text-yellow-800 dark:text-yellow-200">
+                          {mismatch.field} ({mismatch.mode})
+                        </div>
+                        <div className="text-yellow-700 dark:text-yellow-300 font-mono text-[10px] mt-1">
+                          Store: {JSON.stringify(mismatch.storeValue)}
+                        </div>
+                        <div className="text-yellow-700 dark:text-yellow-300 font-mono text-[10px]">
+                          Theme: {JSON.stringify(mismatch.themeValue)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {verification.missingFields.length > 0 && (
+                  <div>
+                    <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">Missing Fields:</div>
+                    <div className="text-yellow-800 dark:text-yellow-200">
+                      {verification.missingFields.join(", ")}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
         <div className="flex items-center gap-2">
           <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
-              <button className="flex-1 h-9 px-3 rounded-md border flex items-center justify-between text-sm font-medium bg-[hsl(var(--secondary))] border-[hsl(var(--border))] text-[hsl(var(--secondary-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]">
-                <span>{THEMES[theme.selectedTheme].name}</span>
+              <button className="flex-1 h-9 px-3 rounded-md border flex items-center justify-between text-sm font-medium border-[hsl(var(--border))] text-[hsl(var(--secondary-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]">
+                <span>{themes[selectedTheme]?.name || "Loading..."}</span>
                 <div className="flex items-center gap-1 ml-2">
-                  {THEMES[theme.selectedTheme].colors.map((color, idx) => (
+                  {themes[selectedTheme]?.previewColors.map((color, idx) => (
                     <div
                       key={idx}
                       className="w-3 h-3 rounded-sm border border-gray-300"
@@ -110,13 +227,20 @@ export const ThemeConfigurationSidebar = () => {
               <ScrollArea className="h-64">
                 <div className="p-2 space-y-1">
                   {filteredThemes.map((themeItem) => {
-                    const themeIndex = THEMES.findIndex(t => t.name === themeItem.name);
-                    const isSelected = theme.selectedTheme === themeIndex;
+                    const themeIndex = themes.findIndex(t => t.name === themeItem.name);
+                    const isSelected = selectedTheme === themeIndex;
                     return (
                       <button
                         key={themeItem.name}
                         onClick={() => {
-                          setThemePreset(themeIndex);
+                          console.log(JSON.stringify({
+                            action: "clicking_theme",
+                            themeName: themeItem.name,
+                            themeIndex: themeIndex,
+                            lightPrimary: themeItem.light.colors.primary,
+                            darkPrimary: themeItem.dark.colors.primary
+                          }));
+                          applyThemePreset(themeIndex, themeItem);
                           setIsPopoverOpen(false);
                           setSearchQuery("");
                         }}
@@ -129,7 +253,7 @@ export const ThemeConfigurationSidebar = () => {
                       >
                         <span>{themeItem.name}</span>
                         <div className="flex items-center gap-1">
-                          {themeItem.colors.map((color, colorIdx) => (
+                          {themeItem.previewColors.map((color, colorIdx) => (
                             <div
                               key={colorIdx}
                               className="w-3 h-3 rounded-sm border border-gray-300"
@@ -189,7 +313,12 @@ export const ThemeConfigurationSidebar = () => {
         <div className="p-6">
           {activeTab === "colors" && (
             <div className="space-y-4">
-              <Collapsible defaultOpen>
+              <div className="flex items-center justify-center gap-3 pb-4 border-b border-[hsl(var(--border))]">
+                <Sun className={cn("h-4 w-4 transition-colors", !darkMode ? "text-foreground" : "text-muted-foreground")} />
+                <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+                <Moon className={cn("h-4 w-4 transition-colors", darkMode ? "text-foreground" : "text-muted-foreground")} />
+              </div>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3 className="text-sm font-semibold mb-3 flex items-center justify-between group text-foreground">
                     <span>Primary Colors</span>
@@ -204,10 +333,18 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="222.2 47.4% 11.2%"
+                        value={currentColors.primary}
+                        onChange={(e) => {
+                          console.log(JSON.stringify({action:"input_change",newValue:e.target.value}));
+                          updateColor(darkMode ? "dark" : "light", "primary", e.target.value);
+                        }}
+                        onFocus={() => console.log(JSON.stringify({action:"input_focus",currentValue:currentColors.primary}))}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.primary) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -216,17 +353,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="210 40% 98%"
+                        value={currentColors.primaryForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "primaryForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-50" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.primaryForeground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3 className="text-sm font-semibold mb-3 flex items-center justify-between group text-foreground">
                     <span>Secondary Colors</span>
@@ -241,10 +382,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="210 40% 96.1%"
+                        value={currentColors.secondary}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "secondary", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-100" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.secondary) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -253,17 +398,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="222.2 47.4% 11.2%"
+                        value={currentColors.secondaryForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "secondaryForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.secondaryForeground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group text-foreground"
@@ -280,10 +429,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="210 40% 96.1%"
+                        value={currentColors.accent}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "accent", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-100" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.accent) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -292,17 +445,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="222.2 47.4% 11.2%"
+                        value={currentColors.accentForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "accentForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.accentForeground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -319,10 +476,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="0 0% 100%"
+                        value={currentColors.background}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "background", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-white" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.background) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -331,17 +492,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="222.2 47.4% 11.2%"
+                        value={currentColors.foreground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "foreground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.foreground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -358,10 +523,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="0 0% 100%"
+                        value={currentColors.card}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "card", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-white" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.card) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -370,17 +539,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="222.2 47.4% 11.2%"
+                        value={currentColors.cardForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "cardForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.cardForeground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -397,10 +570,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="0 0% 100%"
+                        value={currentColors.popover}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "popover", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-white" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.popover) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -409,17 +586,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="222.2 47.4% 11.2%"
+                        value={currentColors.popoverForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "popoverForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.popoverForeground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -436,10 +617,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="210 40% 96.1%"
+                        value={currentColors.muted}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "muted", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-100" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.muted) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -448,17 +633,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="215.4 16.3% 46.9%"
+                        value={currentColors.mutedForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "mutedForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-500" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.mutedForeground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -475,10 +664,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="0 84.2% 60.2%"
+                        value={currentColors.destructive}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "destructive", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-red-500" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.destructive) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -487,17 +680,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="210 40% 98%"
+                        value={currentColors.destructiveForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "destructiveForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-50" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.destructiveForeground) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -514,10 +711,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="214.3 31.8% 91.4%"
+                        value={currentColors.border}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "border", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-200" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.border) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -526,10 +727,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="214.3 31.8% 91.4%"
+                        value={currentColors.input}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "input", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-200" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.input) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -538,17 +743,21 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="222.2 47.4% 11.2%"
+                        value={currentColors.ring}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "ring", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.ring) }}
+                      />
                     </div>
                   </div>
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -559,32 +768,32 @@ export const ThemeConfigurationSidebar = () => {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                 <div className="space-y-3">
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <div key={num}>
-                      <Label
-                        className="text-xs mb-1.5 block"
-                      >
-                        Chart {num}
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          defaultValue={`${num * 40} 70% 50%`}
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="w-9 h-9 rounded border"
-                          style={{
-                            background: `hsl(${num * 40} 70% 50%)`,
-                          }}
-                        />
+                  {([1, 2, 3, 4, 5] as const).map((num) => {
+                    const chartKey = `chart${num}` as keyof typeof currentColors;
+                    return (
+                      <div key={num}>
+                        <Label className="text-xs mb-1.5 block text-muted-foreground">
+                          Chart {num}
+                        </Label>
+                        <div className="flex gap-2">
+                          <Input
+                            value={currentColors[chartKey]}
+                            onChange={(e) => updateColor(darkMode ? "dark" : "light", chartKey, e.target.value)}
+                            className="h-9 text-xs font-mono flex-1"
+                          />
+                          <div
+                            className="w-9 h-9 rounded border"
+                            style={{ backgroundColor: hslToHex(currentColors[chartKey]) }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -601,10 +810,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="0 0% 98%"
+                        value={currentColors.sidebarBackground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarBackground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-50" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarBackground) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -613,10 +826,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="240 5.3% 26.1%"
+                        value={currentColors.sidebarForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-700" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarForeground) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -625,10 +842,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="240 5.9% 10%"
+                        value={currentColors.sidebarPrimary}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarPrimary", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarPrimary) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -637,10 +858,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="0 0% 98%"
+                        value={currentColors.sidebarPrimaryForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarPrimaryForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-50" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarPrimaryForeground) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -649,10 +874,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="240 4.8% 95.9%"
+                        value={currentColors.sidebarAccent}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarAccent", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-100" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarAccent) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -661,10 +890,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="240 5.9% 10%"
+                        value={currentColors.sidebarAccentForeground}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarAccentForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-900" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarAccentForeground) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -673,10 +906,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="220 13% 91%"
+                        value={currentColors.sidebarBorder}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarBorder", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-gray-200" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarBorder) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -685,10 +922,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="217.2 91.2% 59.8%"
+                        value={currentColors.sidebarRing}
+                        onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarRing", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-blue-500" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentColors.sidebarRing) }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -699,7 +940,12 @@ export const ThemeConfigurationSidebar = () => {
 
           {activeTab === "typography" && (
             <div className="space-y-4">
-              <Collapsible defaultOpen>
+              <div className="flex items-center justify-center gap-3 pb-4 border-b border-[hsl(var(--border))]">
+                <Sun className={cn("h-4 w-4 transition-colors", !darkMode ? "text-foreground" : "text-muted-foreground")} />
+                <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+                <Moon className={cn("h-4 w-4 transition-colors", darkMode ? "text-foreground" : "text-muted-foreground")} />
+              </div>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -715,7 +961,8 @@ export const ThemeConfigurationSidebar = () => {
                       Sans-Serif Font
                     </Label>
                     <Input
-                      defaultValue="Inter, system-ui, sans-serif"
+                      value={currentTypography.fontSans}
+                      onChange={(e) => updateTypography(mode, { fontSans: e.target.value })}
                       className="h-9 text-xs"
                     />
                   </div>
@@ -724,7 +971,8 @@ export const ThemeConfigurationSidebar = () => {
                       Serif Font
                     </Label>
                     <Input
-                      defaultValue="Georgia, serif"
+                      value={currentTypography.fontSerif}
+                      onChange={(e) => updateTypography(mode, { fontSerif: e.target.value })}
                       className="h-9 text-xs"
                     />
                   </div>
@@ -733,7 +981,8 @@ export const ThemeConfigurationSidebar = () => {
                       Monospace Font
                     </Label>
                     <Input
-                      defaultValue="Fira Code, monospace"
+                      value={currentTypography.fontMono}
+                      onChange={(e) => updateTypography(mode, { fontMono: e.target.value })}
                       className="h-9 text-xs"
                     />
                   </div>
@@ -741,7 +990,7 @@ export const ThemeConfigurationSidebar = () => {
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -759,14 +1008,16 @@ export const ThemeConfigurationSidebar = () => {
                   </Label>
                   <div className="flex items-center gap-3">
                     <Slider
-                      defaultValue={[0]}
+                      value={[currentTypography.letterSpacing]}
+                      onValueChange={([value]) => updateTypography(mode, { letterSpacing: value })}
                       min={-2}
                       max={2}
                       step={0.1}
                       className="flex-1"
                     />
                     <Input
-                      defaultValue="0"
+                      value={currentTypography.letterSpacing}
+                      onChange={(e) => updateTypography(mode, { letterSpacing: parseFloat(e.target.value) || 0 })}
                       type="number"
                       className="h-9 w-16 text-xs"
                     />
@@ -779,7 +1030,12 @@ export const ThemeConfigurationSidebar = () => {
 
           {activeTab === "other" && (
             <div className="space-y-4">
-              <Collapsible defaultOpen>
+              <div className="flex items-center justify-center gap-3 pb-4 border-b border-[hsl(var(--border))]">
+                <Sun className={cn("h-4 w-4 transition-colors", !darkMode ? "text-foreground" : "text-muted-foreground")} />
+                <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+                <Moon className={cn("h-4 w-4 transition-colors", darkMode ? "text-foreground" : "text-muted-foreground")} />
+              </div>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -799,14 +1055,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[0]}
+                        value={[currentOther.hueShift]}
+                        onValueChange={([value]) => updateOther(mode, { hueShift: value })}
                         min={-180}
                         max={180}
                         step={1}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="0"
+                        value={currentOther.hueShift}
+                        onChange={(e) => updateOther(mode, { hueShift: parseInt(e.target.value) || 0 })}
                         type="number"
                         className="h-9 w-16 text-xs"
                       />
@@ -821,14 +1079,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[1]}
+                        value={[currentOther.saturationMultiplier]}
+                        onValueChange={([value]) => updateOther(mode, { saturationMultiplier: value })}
                         min={0}
                         max={2}
                         step={0.1}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="1"
+                        value={currentOther.saturationMultiplier}
+                        onChange={(e) => updateOther(mode, { saturationMultiplier: parseFloat(e.target.value) || 1 })}
                         type="number"
                         step="0.1"
                         className="h-9 w-16 text-xs"
@@ -844,14 +1104,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[1]}
+                        value={[currentOther.lightnessMultiplier]}
+                        onValueChange={([value]) => updateOther(mode, { lightnessMultiplier: value })}
                         min={0}
                         max={2}
                         step={0.1}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="1"
+                        value={currentOther.lightnessMultiplier}
+                        onChange={(e) => updateOther(mode, { lightnessMultiplier: parseFloat(e.target.value) || 1 })}
                         type="number"
                         step="0.1"
                         className="h-9 w-16 text-xs"
@@ -862,7 +1124,7 @@ export const ThemeConfigurationSidebar = () => {
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -881,14 +1143,16 @@ export const ThemeConfigurationSidebar = () => {
                   </Label>
                   <div className="flex items-center gap-3">
                     <Slider
-                      defaultValue={[0.5]}
+                      value={[currentOther.radius]}
+                      onValueChange={([value]) => updateOther(mode, { radius: value })}
                       min={0}
                       max={2}
                       step={0.05}
                       className="flex-1"
                     />
                     <Input
-                      defaultValue="0.5"
+                      value={currentOther.radius}
+                      onChange={(e) => updateOther(mode, { radius: parseFloat(e.target.value) || 0.5 })}
                       type="number"
                       step="0.05"
                       className="h-9 w-16 text-xs"
@@ -898,7 +1162,7 @@ export const ThemeConfigurationSidebar = () => {
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -917,14 +1181,16 @@ export const ThemeConfigurationSidebar = () => {
                   </Label>
                   <div className="flex items-center gap-3">
                     <Slider
-                      defaultValue={[1]}
+                      value={[currentOther.spacing]}
+                      onValueChange={([value]) => updateOther(mode, { spacing: value })}
                       min={0}
                       max={4}
                       step={0.25}
                       className="flex-1"
                     />
                     <Input
-                      defaultValue="1"
+                      value={currentOther.spacing}
+                      onChange={(e) => updateOther(mode, { spacing: parseFloat(e.target.value) || 1 })}
                       type="number"
                       step="0.25"
                       className="h-9 w-16 text-xs"
@@ -934,7 +1200,7 @@ export const ThemeConfigurationSidebar = () => {
                 </CollapsibleContent>
               </Collapsible>
 
-              <Collapsible defaultOpen>
+              <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
                     className="text-sm font-semibold mb-3 flex items-center justify-between group"
@@ -951,10 +1217,14 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        defaultValue="0 0% 0%"
+                        value={currentOther.shadow.color}
+                        onChange={(e) => updateShadow(mode, "color", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
-                      <div className="w-9 h-9 rounded border bg-black" />
+                      <div
+                        className="w-9 h-9 rounded border"
+                        style={{ backgroundColor: hslToHex(currentOther.shadow.color) }}
+                      />
                     </div>
                   </div>
                   <div>
@@ -963,14 +1233,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[0.1]}
+                        value={[currentOther.shadow.opacity]}
+                        onValueChange={([value]) => updateShadow(mode, "opacity", value)}
                         min={0}
                         max={1}
                         step={0.05}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="0.1"
+                        value={currentOther.shadow.opacity}
+                        onChange={(e) => updateShadow(mode, "opacity", parseFloat(e.target.value) || 0.1)}
                         type="number"
                         step="0.05"
                         className="h-9 w-16 text-xs"
@@ -986,14 +1258,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[10]}
+                        value={[currentOther.shadow.blurRadius]}
+                        onValueChange={([value]) => updateShadow(mode, "blurRadius", value)}
                         min={0}
                         max={50}
                         step={1}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="10"
+                        value={currentOther.shadow.blurRadius}
+                        onChange={(e) => updateShadow(mode, "blurRadius", parseInt(e.target.value) || 10)}
                         type="number"
                         className="h-9 w-16 text-xs"
                       />
@@ -1008,14 +1282,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[0]}
+                        value={[currentOther.shadow.spread]}
+                        onValueChange={([value]) => updateShadow(mode, "spread", value)}
                         min={-20}
                         max={20}
                         step={1}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="0"
+                        value={currentOther.shadow.spread}
+                        onChange={(e) => updateShadow(mode, "spread", parseInt(e.target.value) || 0)}
                         type="number"
                         className="h-9 w-16 text-xs"
                       />
@@ -1030,14 +1306,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[0]}
+                        value={[currentOther.shadow.offsetX]}
+                        onValueChange={([value]) => updateShadow(mode, "offsetX", value)}
                         min={-20}
                         max={20}
                         step={1}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="0"
+                        value={currentOther.shadow.offsetX}
+                        onChange={(e) => updateShadow(mode, "offsetX", parseInt(e.target.value) || 0)}
                         type="number"
                         className="h-9 w-16 text-xs"
                       />
@@ -1052,14 +1330,16 @@ export const ThemeConfigurationSidebar = () => {
                     </Label>
                     <div className="flex items-center gap-3">
                       <Slider
-                        defaultValue={[4]}
+                        value={[currentOther.shadow.offsetY]}
+                        onValueChange={([value]) => updateShadow(mode, "offsetY", value)}
                         min={-20}
                         max={20}
                         step={1}
                         className="flex-1"
                       />
                       <Input
-                        defaultValue="4"
+                        value={currentOther.shadow.offsetY}
+                        onChange={(e) => updateShadow(mode, "offsetY", parseInt(e.target.value) || 4)}
                         type="number"
                         className="h-9 w-16 text-xs"
                       />

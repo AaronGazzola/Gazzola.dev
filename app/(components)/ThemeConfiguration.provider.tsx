@@ -10,25 +10,28 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const root = document.documentElement;
-    const colors = darkMode ? theme.colors.dark : theme.colors.light;
+    const mode = darkMode ? "dark" : "light";
+    const colors = theme.colors[mode];
+    const typography = theme.typography[mode];
+    const other = theme.other[mode];
 
     Object.entries(colors).forEach(([key, value]) => {
       const cssVarName = `--${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
       root.style.setProperty(cssVarName, value);
     });
 
-    root.style.setProperty("--font-sans", theme.typography.fontSans);
-    root.style.setProperty("--font-serif", theme.typography.fontSerif);
-    root.style.setProperty("--font-mono", theme.typography.fontMono);
+    root.style.setProperty("--font-sans", typography.fontSans);
+    root.style.setProperty("--font-serif", typography.fontSerif);
+    root.style.setProperty("--font-mono", typography.fontMono);
     root.style.setProperty(
       "--letter-spacing",
-      `${theme.typography.letterSpacing}px`
+      `${typography.letterSpacing}px`
     );
 
-    root.style.setProperty("--radius", `${theme.other.radius}rem`);
-    root.style.setProperty("--spacing", `${theme.other.spacing}rem`);
+    root.style.setProperty("--radius", `${other.radius}rem`);
+    root.style.setProperty("--spacing", `${other.spacing}rem`);
 
-    const shadow = theme.other.shadow;
+    const shadow = other.shadow;
     root.style.setProperty(
       "--shadow",
       `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px hsl(${shadow.color} / ${shadow.opacity})`

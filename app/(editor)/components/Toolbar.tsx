@@ -36,10 +36,8 @@ import {
   Files,
   Folder,
   ListRestart,
-  Moon,
   RotateCcw,
   Settings,
-  Sun,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -92,8 +90,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const queryClient = useQueryClient();
   useContentVersionCheck();
   const {
-    darkMode,
-    setDarkMode,
     previewMode,
     setPreviewMode,
     reset,
@@ -637,19 +633,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 <p>Toggle between edit mode and processed preview</p>
               </TooltipContent>
             </Tooltip>
-
-            <IconButton
-              onClick={() => setDarkMode(!darkMode)}
-              tooltip={
-                darkMode ? "Switch to light mode" : "Switch to dark mode"
-              }
-            >
-              {darkMode ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </IconButton>
 
             <Tooltip>
               <TooltipTrigger asChild>

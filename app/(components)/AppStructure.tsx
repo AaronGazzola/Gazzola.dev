@@ -5,13 +5,20 @@ import { FileSystemEntry } from "@/app/(editor)/layout.types";
 import { findLayoutsForPagePath } from "@/app/(editor)/layout.utils";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/editor/ui/popover";
 import { cn } from "@/lib/tailwind.utils";
 import {
+  ChevronDown,
+  ChevronUp,
   File,
   Folder,
   FolderOpen,
-  FolderPlus,
   Plus,
+  Save,
   Trash2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -1097,6 +1104,8 @@ const TreeNode = ({
   onAddDirectory,
   appStructure,
   ancestorIsLast = [],
+  onAddSpecificFile,
+  newNodeId,
 }: {
   node: FileSystemEntry;
   depth?: number;
@@ -1108,6 +1117,8 @@ const TreeNode = ({
   onAddDirectory: (parentId: string) => void;
   appStructure: FileSystemEntry[];
   ancestorIsLast?: boolean[];
+  onAddSpecificFile?: (parentId: string, fileName: string) => void;
+  newNodeId?: string | null;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { wireframeState, setWireframeCurrentPage } = useEditorStore();
@@ -1145,11 +1156,20 @@ const TreeNode = ({
     }
   }, [isEditing]);
 
+  useEffect(() => {
+    if (newNodeId && node.id === newNodeId) {
+      setIsEditing(true);
+    }
+  }, [newNodeId, node.id]);
+
   const handleNameSubmit = (newName: string) => {
     if (newName.trim()) {
       onUpdate(node.id, { name: newName.trim() });
+      setIsEditing(false);
+    } else {
+      onDelete(node.id);
+      setIsEditing(false);
     }
-    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -1212,7 +1232,7 @@ const TreeNode = ({
           "group flex items-center gap-1 rounded px-1 text-[hsl(var(--foreground))]",
           isPageFile && "cursor-pointer hover:bg-primary/15",
           !isPageFile && "hover:bg-accent/50",
-          isCurrentPage && "bg-primary/20 hover:bg-primary/25"
+          isCurrentPage && "border border-gray-300 dark:border-gray-600"
         )}
         onClick={(e) => {
           if (isPageFile) {
@@ -1268,25 +1288,17 @@ const TreeNode = ({
           )}
         </div>
 
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={() => onAddFile(node.id)}
-            title="Add file"
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={() => onAddDirectory(node.id)}
-            title="Add directory"
-          >
-            <FolderPlus className="h-3 w-3" />
-          </Button>
+        <div className={cn("flex items-center gap-0.5 transition-opacity", isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100")}>
+          {isEditing && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              title="Save"
+            >
+              <Save className="h-3 w-3 text-gray-500" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -1306,16 +1318,88 @@ const TreeNode = ({
               key={child.id}
               node={child}
               depth={depth + 1}
-              isLast={index === node.children!.length - 1}
+              isLast={false}
               parentPath={`${parentPath}/${node.name}`}
               onUpdate={onUpdate}
               onDelete={onDelete}
               onAddFile={onAddFile}
               onAddDirectory={onAddDirectory}
               appStructure={appStructure}
-              ancestorIsLast={[...ancestorIsLast, isLast]}
+              ancestorIsLast={[...ancestorIsLast, false]}
+              onAddSpecificFile={onAddSpecificFile}
+              newNodeId={newNodeId}
             />
           ))}
+
+          <div className="flex items-center gap-1 rounded px-1 text-[hsl(var(--foreground))]">
+            <span className="font-mono text-base select-none text-[hsl(var(--muted-foreground))]">
+              {(() => {
+                const lines = [];
+                for (let i = 0; i < depth - 1; i++) {
+                  lines.push(ancestorIsLast[i] ? "    " : "│   ");
+                }
+                if (depth > 0) {
+                  lines.push("│   ");
+                }
+                return lines.join("");
+              })()}
+              └─{" "}
+            </span>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 gap-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+                >
+                  <Plus className="h-3 w-3" />
+                  <span className="text-sm">Add...</span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-48 p-2" align="start">
+                <div className="flex flex-col gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start gap-2"
+                    onClick={() => {
+                      if (onAddSpecificFile) {
+                        onAddSpecificFile(node.id, "page.tsx");
+                      }
+                    }}
+                    disabled={node.children?.some(child => child.name === "page.tsx")}
+                  >
+                    <File className="h-4 w-4 text-blue-500" />
+                    <span>page.tsx</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start gap-2"
+                    onClick={() => {
+                      if (onAddSpecificFile) {
+                        onAddSpecificFile(node.id, "layout.tsx");
+                      }
+                    }}
+                    disabled={node.children?.some(child => child.name === "layout.tsx")}
+                  >
+                    <File className="h-4 w-4 text-green-500" />
+                    <span>layout.tsx</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start gap-2"
+                    onClick={() => onAddDirectory(node.id)}
+                  >
+                    <Folder className="h-4 w-4 text-blue-500" />
+                    <span>directory</span>
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
       )}
     </div>
@@ -1331,6 +1415,7 @@ export const LayoutAndStructure = () => {
     setAppStructure,
     wireframeState,
     initializeWireframePages,
+    setWireframeCurrentPage,
   } = useEditorStore();
 
   useEffect(() => {
@@ -1348,6 +1433,7 @@ export const LayoutAndStructure = () => {
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
+  const [newNodeId, setNewNodeId] = useState<string | null>(null);
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -1363,6 +1449,17 @@ export const LayoutAndStructure = () => {
       name: "new-file.tsx",
       type: "file",
     };
+    setNewNodeId(newFile.id);
+    addAppStructureNode(parentId, newFile);
+  };
+
+  const handleAddSpecificFile = (parentId: string, fileName: string) => {
+    const newFile: FileSystemEntry = {
+      id: generateId(),
+      name: fileName,
+      type: "file",
+    };
+    setNewNodeId(newFile.id);
     addAppStructureNode(parentId, newFile);
   };
 
@@ -1372,8 +1469,9 @@ export const LayoutAndStructure = () => {
       name: "new-folder",
       type: "directory",
       children: [],
-      isExpanded: false,
+      isExpanded: true,
     };
+    setNewNodeId(newDir.id);
     addAppStructureNode(parentId, newDir);
   };
 
@@ -1478,14 +1576,17 @@ export const LayoutAndStructure = () => {
               <TreeNode
                 key={node.id}
                 node={node}
-                isLast={index === appStructure.length - 1}
+                isLast={false}
                 onUpdate={handleUpdate}
                 onDelete={handleDelete}
                 onAddFile={handleAddFile}
                 onAddDirectory={handleAddDirectory}
                 appStructure={appStructure}
+                onAddSpecificFile={handleAddSpecificFile}
+                newNodeId={newNodeId}
               />
             ))}
+
             {appStructure.length === 0 && (
               <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
                 Click the buttons above to start building your app structure
@@ -1495,9 +1596,41 @@ export const LayoutAndStructure = () => {
         </div>
 
         <div className="flex flex-col order-1 lg:order-2">
-          <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
-            Layout Wireframe {currentPage && `- ${currentPage}`}
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
+              Layout Wireframe {currentPage && `- ${currentPage}`}
+            </h3>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => {
+                  if (currentPageIndex > 0) {
+                    setWireframeCurrentPage(currentPageIndex - 1);
+                  }
+                }}
+                disabled={currentPageIndex === 0}
+                title="Previous page"
+              >
+                <ChevronUp className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => {
+                  if (currentPageIndex < availablePages.length - 1) {
+                    setWireframeCurrentPage(currentPageIndex + 1);
+                  }
+                }}
+                disabled={currentPageIndex === availablePages.length - 1}
+                title="Next page"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
           <div className="p-4 rounded bg-[hsl(var(--muted))] min-h-[400px] lg:min-h-0 flex-1">
             {renderNestedBoxes()}
           </div>
@@ -1536,6 +1669,7 @@ export const WireFrame = () => {
     appStructure,
     wireframeState,
     initializeWireframePages,
+    setWireframeCurrentPage,
   } = useEditorStore();
 
   useEffect(() => {
@@ -1594,9 +1728,41 @@ export const WireFrame = () => {
 
   return (
     <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[400px] flex flex-col">
-      <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
-        Layout Wireframe {currentPage && `- ${currentPage}`}
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
+          Layout Wireframe {currentPage && `- ${currentPage}`}
+        </h3>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={() => {
+              if (currentPageIndex > 0) {
+                setWireframeCurrentPage(currentPageIndex - 1);
+              }
+            }}
+            disabled={currentPageIndex === 0}
+            title="Previous page"
+          >
+            <ChevronUp className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={() => {
+              if (currentPageIndex < availablePages.length - 1) {
+                setWireframeCurrentPage(currentPageIndex + 1);
+              }
+            }}
+            disabled={currentPageIndex === availablePages.length - 1}
+            title="Next page"
+          >
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
       <div className="p-4 rounded bg-[hsl(var(--muted))] flex-1">
         {renderNestedBoxes()}
       </div>
@@ -1615,6 +1781,7 @@ export const AppStructure = () => {
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
+  const [newNodeId, setNewNodeId] = useState<string | null>(null);
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -1630,6 +1797,17 @@ export const AppStructure = () => {
       name: "new-file.tsx",
       type: "file",
     };
+    setNewNodeId(newFile.id);
+    addAppStructureNode(parentId, newFile);
+  };
+
+  const handleAddSpecificFile = (parentId: string, fileName: string) => {
+    const newFile: FileSystemEntry = {
+      id: generateId(),
+      name: fileName,
+      type: "file",
+    };
+    setNewNodeId(newFile.id);
     addAppStructureNode(parentId, newFile);
   };
 
@@ -1639,8 +1817,9 @@ export const AppStructure = () => {
       name: "new-folder",
       type: "directory",
       children: [],
-      isExpanded: false,
+      isExpanded: true,
     };
+    setNewNodeId(newDir.id);
     addAppStructureNode(parentId, newDir);
   };
 
@@ -1702,14 +1881,17 @@ export const AppStructure = () => {
           <TreeNode
             key={node.id}
             node={node}
-            isLast={index === appStructure.length - 1}
+            isLast={false}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
             onAddFile={handleAddFile}
             onAddDirectory={handleAddDirectory}
             appStructure={appStructure}
+            onAddSpecificFile={handleAddSpecificFile}
+            newNodeId={newNodeId}
           />
         ))}
+
         {appStructure.length === 0 && (
           <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
             Click the buttons above to start building your app structure
