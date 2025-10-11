@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] expand/improve walkthrough
 - [ ] Add theme presets from tweakcn
 - [ ] fix editor reset bug on editor store state change (eg. after updating the ThemeConfiugration)
 - [ ] Landing page

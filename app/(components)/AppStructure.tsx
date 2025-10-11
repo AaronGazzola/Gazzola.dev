@@ -1,39 +1,18 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import {
-  FileSystemEntry,
-  WireframeElement,
-  WireframeElementType,
-} from "@/app/(editor)/layout.types";
+import { FileSystemEntry } from "@/app/(editor)/layout.types";
 import { findLayoutsForPagePath } from "@/app/(editor)/layout.utils";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/editor/ui/popover";
 import { cn } from "@/lib/tailwind.utils";
 import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   File,
-  FileText,
   Folder,
   FolderOpen,
   FolderPlus,
-  FoldVertical,
-  Layers,
-  Layout as LayoutIcon,
-  Menu,
   Plus,
-  Sidebar,
-  SquareStack,
-  Table,
   Trash2,
-  User,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -44,492 +23,26 @@ type RouteEntry = {
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
+const PAGE_FILE_ICON = "text-blue-500";
+
 const LAYOUT_COLORS = [
   {
-    bg: "bg-green-100 dark:bg-green-900/30",
     border: "border-green-300 dark:border-green-700",
     icon: "text-green-500",
-    text: "text-green-800 dark:text-green-200",
   },
   {
-    bg: "bg-purple-100 dark:bg-purple-900/30",
     border: "border-purple-300 dark:border-purple-700",
     icon: "text-purple-500",
-    text: "text-purple-800 dark:text-purple-200",
   },
   {
-    bg: "bg-orange-100 dark:bg-orange-900/30",
     border: "border-orange-300 dark:border-orange-700",
     icon: "text-orange-500",
-    text: "text-orange-800 dark:text-orange-200",
   },
   {
-    bg: "bg-red-100 dark:bg-red-900/30",
     border: "border-red-300 dark:border-red-700",
     icon: "text-red-500",
-    text: "text-red-800 dark:text-red-200",
-  },
-  {
-    bg: "bg-indigo-100 dark:bg-indigo-900/30",
-    border: "border-indigo-300 dark:border-indigo-700",
-    icon: "text-indigo-500",
-    text: "text-indigo-800 dark:text-indigo-200",
-  },
-  {
-    bg: "bg-cyan-100 dark:bg-cyan-900/30",
-    border: "border-cyan-300 dark:border-cyan-700",
-    icon: "text-cyan-500",
-    text: "text-cyan-800 dark:text-cyan-200",
   },
 ];
-
-const PAGE_COLOR = {
-  bg: "bg-slate-100 dark:bg-slate-900/30",
-  border: "border-slate-300 dark:border-slate-700",
-  icon: "text-slate-500",
-  text: "text-slate-800 dark:text-slate-200",
-};
-
-const ELEMENT_TYPES: {
-  type: WireframeElementType;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  category: "layout" | "content";
-}[] = [
-  { type: "header", label: "Header", icon: LayoutIcon, category: "layout" },
-  {
-    type: "sidebar-left",
-    label: "Left Sidebar",
-    icon: Sidebar,
-    category: "layout",
-  },
-  {
-    type: "sidebar-right",
-    label: "Right Sidebar",
-    icon: Sidebar,
-    category: "layout",
-  },
-  { type: "footer", label: "Footer", icon: LayoutIcon, category: "layout" },
-  { type: "form", label: "Form", icon: User, category: "content" },
-  { type: "table", label: "Table", icon: Table, category: "content" },
-  { type: "tabs", label: "Tabs", icon: Menu, category: "content" },
-  {
-    type: "accordion",
-    label: "Accordion",
-    icon: ChevronDown,
-    category: "content",
-  },
-];
-
-const WireframeElementComponent = ({
-  element,
-  onDelete,
-}: {
-  element: WireframeElement;
-  onDelete: () => void;
-}) => {
-  const getElementIcon = () => {
-    const elementType = ELEMENT_TYPES.find((t) => t.type === element.type);
-    const Icon = elementType?.icon || FileText;
-    return <Icon className="w-3 h-3" />;
-  };
-
-  const getElementSize = () => {
-    const { width = "md", height = "auto" } = element.config;
-    let className =
-      "border-2 border-dashed border-gray-400 bg-gray-50 dark:bg-gray-800 rounded p-2 relative group ";
-
-    if (element.type === "header" || element.type === "footer") {
-      className += "w-full ";
-    } else if (
-      element.type === "sidebar-left" ||
-      element.type === "sidebar-right"
-    ) {
-      className += "w-20 ";
-    } else {
-      switch (width) {
-        case "sm":
-          className += "w-16 ";
-          break;
-        case "md":
-          className += "w-24 ";
-          break;
-        case "lg":
-          className += "w-32 ";
-          break;
-        case "xl":
-          className += "w-40 ";
-          break;
-        case "full":
-          className += "w-full ";
-          break;
-      }
-    }
-
-    if (element.type === "sidebar-left" || element.type === "sidebar-right") {
-      className += "h-full min-h-24";
-    } else {
-      switch (height) {
-        case "sm":
-          className += "h-8";
-          break;
-        case "md":
-          className += "h-12";
-          break;
-        case "lg":
-          className += "h-16";
-          break;
-        case "xl":
-          className += "h-20";
-          break;
-        case "auto":
-          className += "h-auto min-h-8";
-          break;
-      }
-    }
-
-    return className;
-  };
-
-  return (
-    <div className={getElementSize()}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          {getElementIcon()}
-          <span className="text-xs font-mono">{element.label}</span>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={onDelete}
-        >
-          <Trash2 className="h-2 w-2 text-red-500" />
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-const LayoutHierarchyPopover = ({
-  pagePath,
-  appStructure,
-  darkMode,
-  onOpenChange,
-}: {
-  pagePath: string;
-  appStructure: FileSystemEntry[];
-  darkMode: boolean;
-  onOpenChange?: (open: boolean, pagePath: string, layouts: string[]) => void;
-}) => {
-  const {
-    wireframeState,
-    addWireframeElement,
-    removeWireframeElement,
-    selectWireframeItem,
-  } = useEditorStore();
-  const [isAddingElement, setIsAddingElement] = useState(false);
-  const [selectedTarget, setSelectedTarget] = useState<{
-    type: "page" | "layout";
-    path: string;
-  } | null>(null);
-
-  const layouts = findLayoutsForPagePath(appStructure, pagePath, "", true);
-
-  const handleOpenChange = (open: boolean) => {
-    if (onOpenChange) {
-      onOpenChange(open, pagePath, layouts);
-    }
-    if (!open) {
-      setIsAddingElement(false);
-      setSelectedTarget(null);
-    }
-  };
-
-  const handleSelectTarget = (type: "page" | "layout", path: string) => {
-    setSelectedTarget({ type, path });
-    selectWireframeItem(type, path);
-  };
-
-  const handleAddElement = (
-    elementType: WireframeElementType,
-    _category: "layout" | "content"
-  ) => {
-    if (!selectedTarget) return;
-
-    const element: WireframeElement = {
-      id: generateId(),
-      type: elementType,
-      label:
-        ELEMENT_TYPES.find((t) => t.type === elementType)?.label || elementType,
-      config: {
-        width: "md",
-        height: "auto",
-        position: "center",
-        variant: "primary",
-      },
-    };
-
-    addWireframeElement(selectedTarget.path, selectedTarget.type, element);
-    setIsAddingElement(false);
-  };
-
-  const renderWireframeElements = (
-    targetType: "page" | "layout",
-    targetPath: string
-  ) => {
-    const elements =
-      targetType === "page"
-        ? wireframeState.wireframeData.pages[targetPath]?.elements || []
-        : wireframeState.wireframeData.layouts[targetPath]?.elements || [];
-
-    const headers = elements.filter((el) => el.type === "header");
-    const footers = elements.filter((el) => el.type === "footer");
-    const leftSidebars = elements.filter((el) => el.type === "sidebar-left");
-    const rightSidebars = elements.filter((el) => el.type === "sidebar-right");
-    const contentElements = elements.filter(
-      (el) =>
-        el.type !== "header" &&
-        el.type !== "footer" &&
-        el.type !== "sidebar-left" &&
-        el.type !== "sidebar-right"
-    );
-
-    return (
-      <>
-        {headers.map((header) => (
-          <div key={header.id} className="mb-2">
-            <WireframeElementComponent
-              element={header}
-              onDelete={() =>
-                removeWireframeElement(targetPath, targetType, header.id)
-              }
-            />
-          </div>
-        ))}
-        <div className="flex gap-2 flex-1">
-          {leftSidebars.map((sidebar) => (
-            <div key={sidebar.id} className="flex-shrink-0 h-full">
-              <WireframeElementComponent
-                element={sidebar}
-                onDelete={() =>
-                  removeWireframeElement(targetPath, targetType, sidebar.id)
-                }
-              />
-            </div>
-          ))}
-          <div className="flex-1 space-y-2">
-            {contentElements.map((element) => (
-              <WireframeElementComponent
-                key={element.id}
-                element={element}
-                onDelete={() =>
-                  removeWireframeElement(targetPath, targetType, element.id)
-                }
-              />
-            ))}
-          </div>
-          {rightSidebars.map((sidebar) => (
-            <div key={sidebar.id} className="flex-shrink-0 h-full">
-              <WireframeElementComponent
-                element={sidebar}
-                onDelete={() =>
-                  removeWireframeElement(targetPath, targetType, sidebar.id)
-                }
-              />
-            </div>
-          ))}
-        </div>
-        {footers.map((footer) => (
-          <div key={footer.id} className="mt-2">
-            <WireframeElementComponent
-              element={footer}
-              onDelete={() =>
-                removeWireframeElement(targetPath, targetType, footer.id)
-              }
-            />
-          </div>
-        ))}
-      </>
-    );
-  };
-
-  const renderNestedBoxes = () => {
-    if (layouts.length === 0) {
-      const isPageSelected =
-        selectedTarget?.type === "page" && selectedTarget?.path === pagePath;
-
-      return (
-        <div
-          className={cn(
-            PAGE_COLOR.bg,
-            "border-2",
-            isPageSelected ? "border-solid" : "border-dashed",
-            PAGE_COLOR.border,
-            "rounded p-3 text-center cursor-pointer min-h-[200px] flex flex-col"
-          )}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSelectTarget("page", pagePath);
-          }}
-        >
-          <div
-            className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}
-          >
-            {pagePath}
-          </div>
-          <div className={cn("text-xs mt-1 mb-3", PAGE_COLOR.text)}>
-            page.tsx
-          </div>
-          {renderWireframeElements("page", pagePath)}
-        </div>
-      );
-    }
-
-    const isPageSelected =
-      selectedTarget?.type === "page" && selectedTarget?.path === pagePath;
-
-    let content = (
-      <div
-        className={cn(
-          PAGE_COLOR.bg,
-          "border-2",
-          isPageSelected ? "border-solid" : "border-dashed",
-          PAGE_COLOR.border,
-          "rounded p-3 text-center cursor-pointer min-h-[200px] flex flex-col"
-        )}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleSelectTarget("page", pagePath);
-        }}
-      >
-        <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
-          {pagePath}
-        </div>
-        <div className={cn("text-xs mt-1 mb-3", PAGE_COLOR.text)}>page.tsx</div>
-        {renderWireframeElements("page", pagePath)}
-      </div>
-    );
-
-    for (let i = layouts.length - 1; i >= 0; i--) {
-      const layout = layouts[i];
-      const layoutName = `app${layout}/layout.tsx`;
-      const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
-      const isLayoutSelected =
-        selectedTarget?.type === "layout" && selectedTarget?.path === layout;
-
-      content = (
-        <div
-          className={cn(
-            colorSet.bg,
-            "border-2",
-            isLayoutSelected ? "border-solid" : "border-dashed",
-            colorSet.border,
-            "rounded p-3 cursor-pointer min-h-[200px] flex flex-col"
-          )}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSelectTarget("layout", layout);
-          }}
-        >
-          <div
-            className={cn("text-xs mb-2 text-center font-mono", colorSet.text)}
-          >
-            {layoutName}
-          </div>
-          {renderWireframeElements("layout", layout)}
-          {content}
-        </div>
-      );
-    }
-
-    return content;
-  };
-
-  const layoutElements = ELEMENT_TYPES.filter((el) => el.category === "layout");
-  const contentElements = ELEMENT_TYPES.filter(
-    (el) => el.category === "content"
-  );
-
-  return (
-    <Popover onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>
-        <Button
-          asChild
-          variant="ghost"
-          size="icon"
-          className="h-5 w-5 ml-2"
-          title="Show layout hierarchy & wireframe"
-        >
-          <span>
-            <Layers className="!w-4 !h-4" />
-          </span>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[600px]" align="start" side="right">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h4
-              className={cn(
-                "font-semibold text-sm",
-                darkMode ? "text-gray-200" : "text-gray-800"
-              )}
-            >
-              Layout Hierarchy & Wireframe
-            </h4>
-            {selectedTarget && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsAddingElement(!isAddingElement)}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add Element
-              </Button>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Click on a layout or page to select it, then add wireframe elements
-          </p>
-
-          {isAddingElement && selectedTarget && (
-            <div className="border rounded p-2 space-y-2">
-              <h5 className="text-xs font-medium text-muted-foreground">
-                {selectedTarget.type === "layout"
-                  ? "Layout Elements"
-                  : "Content Elements"}
-              </h5>
-              <div className="grid grid-cols-2 gap-2">
-                {(selectedTarget.type === "layout"
-                  ? layoutElements
-                  : contentElements
-                ).map((element) => {
-                  const Icon = element.icon;
-                  return (
-                    <Button
-                      key={element.type}
-                      variant="ghost"
-                      size="sm"
-                      className="justify-start"
-                      onClick={() =>
-                        handleAddElement(element.type, element.category)
-                      }
-                    >
-                      <Icon className="h-4 w-4 mr-2" />
-                      {element.label}
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          <div className="mt-4">{renderNestedBoxes()}</div>
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-};
 
 const generateRoutesFromFileSystem = (
   entries: FileSystemEntry[],
@@ -1382,20 +895,20 @@ const SiteMapNode = ({
   route,
   depth = 0,
   isLast = false,
-  darkMode,
   appStructure,
   onUpdateAppStructure,
   onDeleteRoute,
   onAddSegment,
+  ancestorIsLast = [],
 }: {
   route: RouteEntry;
   depth?: number;
   isLast?: boolean;
-  darkMode: boolean;
   appStructure: FileSystemEntry[];
   onUpdateAppStructure: (id: string, updates: Partial<FileSystemEntry>) => void;
   onDeleteRoute: (routePath: string) => void;
   onAddSegment: (parentPath: string) => void;
+  ancestorIsLast?: boolean[];
 }) => {
   const [editingSegmentIndex, setEditingSegmentIndex] = useState<number | null>(
     null
@@ -1419,7 +932,7 @@ const SiteMapNode = ({
     if (depth === 0) return "";
     const lines = [];
     for (let i = 0; i < depth - 1; i++) {
-      lines.push("│   ");
+      lines.push(ancestorIsLast[i] ? "    " : "│   ");
     }
     return lines.join("");
   };
@@ -1521,19 +1034,9 @@ const SiteMapNode = ({
 
   return (
     <>
-      <div
-        className={cn(
-          "group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1",
-          darkMode ? "text-gray-300" : "text-gray-700"
-        )}
-      >
+      <div className="group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1 text-[hsl(var(--foreground))]">
         <div className="flex items-center gap-1">
-          <span
-            className={cn(
-              "font-mono text-sm select-none",
-              darkMode ? "text-gray-500" : "text-gray-400"
-            )}
-          >
+          <span className="font-mono text-base select-none text-[hsl(var(--muted-foreground))]">
             {getLinePrefix()}
             {getTreeChar()}
             {depth > 0 && "─ "}
@@ -1570,11 +1073,11 @@ const SiteMapNode = ({
               route={child}
               depth={depth + 1}
               isLast={index === route.children!.length - 1}
-              darkMode={darkMode}
               appStructure={appStructure}
               onUpdateAppStructure={onUpdateAppStructure}
               onDeleteRoute={onDeleteRoute}
               onAddSegment={onAddSegment}
+              ancestorIsLast={[...ancestorIsLast, isLast]}
             />
           ))}
         </>
@@ -1593,8 +1096,7 @@ const TreeNode = ({
   onAddFile,
   onAddDirectory,
   appStructure,
-  activeLayoutPopover,
-  onLayoutPopoverChange,
+  ancestorIsLast = [],
 }: {
   node: FileSystemEntry;
   depth?: number;
@@ -1605,71 +1107,35 @@ const TreeNode = ({
   onAddFile: (parentId: string) => void;
   onAddDirectory: (parentId: string) => void;
   appStructure: FileSystemEntry[];
-  activeLayoutPopover?: { pagePath: string; layouts: string[] } | null;
-  onLayoutPopoverChange?: (
-    open: boolean,
-    pagePath: string,
-    layouts: string[]
-  ) => void;
+  ancestorIsLast?: boolean[];
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { darkMode } = useEditorStore();
+  const { wireframeState, setWireframeCurrentPage } = useEditorStore();
   const [isEditing, setIsEditing] = useState(false);
 
-  const getPagePath = (): string => {
-    if (node.name !== "page.tsx" || node.type !== "file") return "";
-
-    let cleanPath = parentPath;
-
-    if (cleanPath.startsWith("/app")) {
-      cleanPath = cleanPath.replace(/^\/app/, "");
-    }
-
-    // Don't remove route groups for layout hierarchy - we need the full path
-    // cleanPath = cleanPath.replace(/\/\([^)]+\)/g, "");
-
-    if (!cleanPath || cleanPath === "") {
-      return "/";
-    }
-
-    return cleanPath;
-  };
-
   const isPageFile = node.type === "file" && node.name === "page.tsx";
-  const pagePath = getPagePath();
+  const isLayoutFile = node.type === "file" && node.name === "layout.tsx";
 
   const getFileIconColor = (): string => {
-    if (!activeLayoutPopover) {
-      return "text-gray-500";
+    if (isPageFile) {
+      return PAGE_FILE_ICON;
     }
-
-    if (node.type === "file" && node.name === "layout.tsx") {
-      // Construct the full file path as it would appear in the popover
-      const fullFilePath = parentPath + "/" + node.name;
-
-      // Check if this specific layout file is one of the layouts in the active popover
-      for (let i = 0; i < activeLayoutPopover.layouts.length; i++) {
-        const layout = activeLayoutPopover.layouts[i];
-        const expectedLayoutFile =
-          layout === "/" ? "app/layout.tsx" : `app${layout}/layout.tsx`;
-
-        // Remove leading slash from fullFilePath for comparison
-        const normalizedFullPath = fullFilePath.startsWith("/")
-          ? fullFilePath.substring(1)
-          : fullFilePath;
-
-        if (normalizedFullPath === expectedLayoutFile) {
-          const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
-          return colorSet.icon;
-        }
+    if (isLayoutFile) {
+      const fullPath = parentPath + "/" + node.name;
+      const normalizedPath = fullPath.startsWith("/")
+        ? fullPath.substring(1)
+        : fullPath;
+      const layoutPath = normalizedPath.replace("/layout.tsx", "").replace("app", "") || "/";
+      const layouts = findLayoutsForPagePath(appStructure, layoutPath, "", true);
+      const layoutIndex = layouts.findIndex(l => {
+        const expectedFile = l === "/" ? "app/layout.tsx" : `app${l}/layout.tsx`;
+        return normalizedPath === expectedFile;
+      });
+      if (layoutIndex !== -1) {
+        return LAYOUT_COLORS[layoutIndex % LAYOUT_COLORS.length].icon;
       }
     }
-
-    if (isPageFile) {
-      return PAGE_COLOR.icon;
-    }
-
-    return "text-gray-500";
+    return "";
   };
 
   useEffect(() => {
@@ -1695,12 +1161,6 @@ const TreeNode = ({
     }
   };
 
-  const toggleExpand = () => {
-    if (node.type === "directory") {
-      onUpdate(node.id, { isExpanded: !node.isExpanded });
-    }
-  };
-
   const getTreeChar = () => {
     if (depth === 0) return "";
     return isLast ? "└" : "├";
@@ -1710,35 +1170,64 @@ const TreeNode = ({
     if (depth === 0) return "";
     const lines = [];
     for (let i = 0; i < depth - 1; i++) {
-      lines.push("│   ");
+      lines.push(ancestorIsLast[i] ? "    " : "│   ");
     }
     return lines.join("");
   };
+
+  const getPagePath = () => {
+    const fullPath = parentPath + "/" + node.name;
+    const normalizedPath = fullPath.startsWith("/")
+      ? fullPath.substring(1)
+      : fullPath;
+    let pagePath = normalizedPath.replace("/page.tsx", "").replace(/^app/, "");
+    pagePath = pagePath.replace(/\/\([^)]+\)/g, "");
+    if (!pagePath.startsWith("/")) {
+      pagePath = "/" + pagePath;
+    }
+    if (pagePath === "//" || pagePath === "") {
+      pagePath = "/";
+    }
+    return pagePath;
+  };
+
+  const handlePageFileClick = () => {
+    if (!isPageFile) return;
+    const pagePath = getPagePath();
+    console.log(JSON.stringify({pagePath,availablePages:wireframeState.availablePages}));
+    const pageIndex = wireframeState.availablePages.indexOf(pagePath);
+    console.log(JSON.stringify({pageIndex}));
+    if (pageIndex !== -1) {
+      setWireframeCurrentPage(pageIndex);
+      console.log(JSON.stringify({setPageIndexTo:pageIndex}));
+    }
+  };
+
+  const isCurrentPage = isPageFile && wireframeState.availablePages[wireframeState.currentPageIndex] === getPagePath();
 
   return (
     <div>
       <div
         className={cn(
-          "group flex items-center gap-1 hover:bg-accent/50 rounded px-1",
-          darkMode ? "text-gray-300" : "text-gray-700"
+          "group flex items-center gap-1 rounded px-1 text-[hsl(var(--foreground))]",
+          isPageFile && "cursor-pointer hover:bg-primary/15",
+          !isPageFile && "hover:bg-accent/50",
+          isCurrentPage && "bg-primary/20 hover:bg-primary/25"
         )}
+        onClick={(e) => {
+          if (isPageFile) {
+            e.stopPropagation();
+            handlePageFileClick();
+          }
+        }}
       >
-        <span
-          className={cn(
-            "font-mono text-sm select-none",
-            darkMode ? "text-gray-500" : "text-gray-400"
-          )}
-        >
+        <span className="font-mono text-base select-none text-[hsl(var(--muted-foreground))]">
           {getLinePrefix()}
           {getTreeChar()}
           {depth > 0 && "─ "}
         </span>
 
-        <Button
-          variant="ghost"
-          onClick={toggleExpand}
-          className="flex items-center gap-1 flex-1 min-w-0 justify-start px-2 hover:bg-transparent"
-        >
+        <div className="flex items-center gap-1 flex-1 min-w-0 px-2">
           {node.type === "directory" ? (
             node.isExpanded ? (
               <FolderOpen className="h-4 w-4 text-blue-500 flex-shrink-0" />
@@ -1746,7 +1235,15 @@ const TreeNode = ({
               <Folder className="h-4 w-4 text-blue-500 flex-shrink-0" />
             )
           ) : (
-            <File className={cn("h-4 w-4 flex-shrink-0", getFileIconColor())} />
+            <File
+              className={cn("h-4 w-4 flex-shrink-0 text-gray-500", getFileIconColor(), isPageFile && "cursor-pointer hover:opacity-70")}
+              onClick={(e) => {
+                if (isPageFile) {
+                  e.stopPropagation();
+                  handlePageFileClick();
+                }
+              }}
+            />
           )}
 
           {isEditing ? (
@@ -1769,16 +1266,7 @@ const TreeNode = ({
               {node.name}
             </span>
           )}
-
-          {isPageFile && (
-            <LayoutHierarchyPopover
-              pagePath={pagePath}
-              appStructure={appStructure}
-              darkMode={darkMode}
-              onOpenChange={onLayoutPopoverChange}
-            />
-          )}
-        </Button>
+        </div>
 
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
@@ -1825,8 +1313,7 @@ const TreeNode = ({
               onAddFile={onAddFile}
               onAddDirectory={onAddDirectory}
               appStructure={appStructure}
-              activeLayoutPopover={activeLayoutPopover}
-              onLayoutPopoverChange={onLayoutPopoverChange}
+              ancestorIsLast={[...ancestorIsLast, isLast]}
             />
           ))}
         </div>
@@ -1835,12 +1322,14 @@ const TreeNode = ({
   );
 };
 
-export const WireFrame = () => {
+export const LayoutAndStructure = () => {
   const {
-    darkMode,
     appStructure,
+    updateAppStructureNode,
+    deleteAppStructureNode,
+    addAppStructureNode,
+    setAppStructure,
     wireframeState,
-    setWireframeCurrentPage,
     initializeWireframePages,
   } = useEditorStore();
 
@@ -1848,177 +1337,17 @@ export const WireFrame = () => {
     initializeWireframePages();
   }, [appStructure, initializeWireframePages]);
 
-  const { currentPageIndex, availablePages, totalPages } = wireframeState;
+  const { currentPageIndex, availablePages } = wireframeState;
   const currentPage = availablePages[currentPageIndex] || null;
-
-  const handlePrevious = () => {
-    if (currentPageIndex > 0) {
-      setWireframeCurrentPage(currentPageIndex - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentPageIndex < totalPages - 1) {
-      setWireframeCurrentPage(currentPageIndex + 1);
-    }
-  };
 
   const layouts = currentPage
     ? findLayoutsForPagePath(appStructure, currentPage, "", true)
     : [];
 
-  const renderNestedBoxes = () => {
-    if (!currentPage) {
-      return (
-        <div
-          className={cn(
-            "text-center py-8",
-            darkMode ? "text-gray-500" : "text-gray-400"
-          )}
-        >
-          No pages available
-        </div>
-      );
-    }
-
-    if (layouts.length === 0) {
-      return (
-        <div
-          className={cn(
-            PAGE_COLOR.bg,
-            "border-2 border-dashed",
-            PAGE_COLOR.border,
-            "rounded p-3 text-center min-h-[200px] flex flex-col"
-          )}
-        >
-          <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
-            {currentPage}
-          </div>
-          <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>page.tsx</div>
-        </div>
-      );
-    }
-
-    let content = (
-      <div
-        className={cn(
-          PAGE_COLOR.bg,
-          "border-2 border-dashed",
-          PAGE_COLOR.border,
-          "rounded p-3 text-center min-h-[200px] flex flex-col"
-        )}
-      >
-        <div className={cn("text-sm font-mono font-semibold", PAGE_COLOR.text)}>
-          {currentPage}
-        </div>
-        <div className={cn("text-xs mt-1", PAGE_COLOR.text)}>page.tsx</div>
-      </div>
-    );
-
-    for (let i = layouts.length - 1; i >= 0; i--) {
-      const layout = layouts[i];
-      const layoutName = `app${layout}/layout.tsx`;
-      const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
-
-      content = (
-        <div
-          className={cn(
-            colorSet.bg,
-            "border-2 border-dashed",
-            colorSet.border,
-            "rounded p-3 min-h-[200px] flex flex-col"
-          )}
-        >
-          <div className={cn("text-xs mb-2 text-center font-mono", colorSet.text)}>
-            {layoutName}
-          </div>
-          {content}
-        </div>
-      );
-    }
-
-    return content;
-  };
-
-  return (
-    <div
-      className={cn(
-        "p-4 rounded-lg border mb-6",
-        darkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
-      )}
-    >
-      <div className="mb-4">
-        <h3
-          className={cn(
-            "text-lg font-semibold mb-3",
-            darkMode ? "text-gray-200" : "text-gray-800"
-          )}
-        >
-          Wireframe Preview
-        </h3>
-        <div
-          className={cn(
-            "flex items-center justify-between px-3 py-2 rounded border",
-            darkMode ? "bg-gray-950 border-gray-700" : "bg-gray-50 border-gray-300"
-          )}
-        >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={handlePrevious}
-            disabled={currentPageIndex === 0}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span
-            className={cn(
-              "text-sm font-mono",
-              darkMode ? "text-gray-300" : "text-gray-700"
-            )}
-          >
-            {currentPage || "No page"}
-          </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={handleNext}
-            disabled={currentPageIndex >= totalPages - 1}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div
-        className={cn(
-          "p-4 rounded",
-          darkMode ? "bg-gray-950" : "bg-gray-50"
-        )}
-      >
-        {renderNestedBoxes()}
-      </div>
-    </div>
-  );
-};
-
-export const AppStructure = () => {
-  const {
-    darkMode,
-    appStructure,
-    updateAppStructureNode,
-    deleteAppStructureNode,
-    addAppStructureNode,
-    setAppStructure,
-  } = useEditorStore();
+  console.log(JSON.stringify({wireframe:{currentPageIndex,availablePages,currentPage,layoutsCount:layouts.length,layouts}}));
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
-  const [activeLayoutPopover, setActiveLayoutPopover] = useState<{
-    pagePath: string;
-    layouts: string[];
-  } | null>(null);
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -2093,102 +1422,282 @@ export const AppStructure = () => {
     }
   };
 
-  const collapseAll = (nodes: FileSystemEntry[]): FileSystemEntry[] => {
-    return nodes.map((node) => {
-      if (node.type === "directory") {
-        return {
-          ...node,
-          isExpanded: false,
-          children: node.children ? collapseAll(node.children) : [],
-        };
-      }
-      return node;
-    });
+  const routes = generateRoutesFromFileSystem(appStructure, "", true);
+
+  const renderNestedBoxes = () => {
+    if (!currentPage) {
+      return (
+        <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
+          No pages available
+        </div>
+      );
+    }
+
+    if (layouts.length === 0) {
+      return (
+        <div
+          className={cn(
+            "border-2 border-dashed",
+            PAGE_FILE_ICON.replace("text-", "border-"),
+            "rounded p-3 h-full flex flex-col"
+          )}
+        />
+      );
+    }
+
+    let content: JSX.Element | null = null;
+
+    for (let i = layouts.length - 1; i >= 0; i--) {
+      const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+      content = (
+        <div
+          className={cn(
+            "border-2 border-dashed",
+            colorSet.border,
+            "rounded p-3 h-full flex flex-col"
+          )}
+        >
+          {content}
+        </div>
+      );
+    }
+
+    return content;
   };
 
-  const expandAll = (nodes: FileSystemEntry[]): FileSystemEntry[] => {
-    return nodes.map((node) => {
-      if (node.type === "directory") {
-        return {
-          ...node,
-          isExpanded: true,
-          children: node.children ? expandAll(node.children) : [],
-        };
-      }
-      return node;
-    });
+  return (
+    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:min-h-[400px]">
+        <div className="flex flex-col order-2 lg:order-1">
+          <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
+            App Directory Structure
+          </h3>
+
+          <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto min-h-[400px] lg:min-h-0 flex-1 lg:overflow-y-auto">
+            {appStructure.map((node, index) => (
+              <TreeNode
+                key={node.id}
+                node={node}
+                isLast={index === appStructure.length - 1}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                onAddFile={handleAddFile}
+                onAddDirectory={handleAddDirectory}
+                appStructure={appStructure}
+              />
+            ))}
+            {appStructure.length === 0 && (
+              <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
+                Click the buttons above to start building your app structure
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col order-1 lg:order-2">
+          <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
+            Layout Wireframe {currentPage && `- ${currentPage}`}
+          </h3>
+          <div className="p-4 rounded bg-[hsl(var(--muted))] min-h-[400px] lg:min-h-0 flex-1">
+            {renderNestedBoxes()}
+          </div>
+        </div>
+      </div>
+
+      {routes.length > 0 && (
+        <>
+          <div className="mt-6 mb-4">
+            <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
+              Site Map (Resulting Routes)
+            </h3>
+          </div>
+
+          <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto">
+            {routes.map((route, index) => (
+              <SiteMapNode
+                key={route.path}
+                route={route}
+                isLast={index === routes.length - 1}
+                appStructure={appStructure}
+                onUpdateAppStructure={handleUpdate}
+                onDeleteRoute={handleDeleteRoute}
+                onAddSegment={handleAddSegment}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export const WireFrame = () => {
+  const {
+    appStructure,
+    wireframeState,
+    initializeWireframePages,
+  } = useEditorStore();
+
+  useEffect(() => {
+    initializeWireframePages();
+  }, [appStructure, initializeWireframePages]);
+
+  const { currentPageIndex, availablePages } = wireframeState;
+  const currentPage = availablePages[currentPageIndex] || null;
+
+  const layouts = currentPage
+    ? findLayoutsForPagePath(appStructure, currentPage, "", true)
+    : [];
+
+  console.log(JSON.stringify({wireframe:{currentPageIndex,availablePages,currentPage,layoutsCount:layouts.length,layouts}}));
+
+  const renderNestedBoxes = () => {
+    if (!currentPage) {
+      return (
+        <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
+          No pages available
+        </div>
+      );
+    }
+
+    if (layouts.length === 0) {
+      return (
+        <div
+          className={cn(
+            "border-2 border-dashed",
+            PAGE_FILE_ICON.replace("text-", "border-"),
+            "rounded p-3 min-h-[200px] flex flex-col"
+          )}
+        />
+      );
+    }
+
+    let content: JSX.Element | null = null;
+
+    for (let i = layouts.length - 1; i >= 0; i--) {
+      const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+      content = (
+        <div
+          className={cn(
+            "border-2 border-dashed",
+            colorSet.border,
+            "rounded p-3 min-h-[200px] flex flex-col"
+          )}
+        >
+          {content}
+        </div>
+      );
+    }
+
+    return content;
   };
 
-  const hasExpandedDirectories = (nodes: FileSystemEntry[]): boolean => {
-    return nodes.some((node) => {
-      if (node.type === "directory") {
-        if (node.isExpanded) return true;
-        if (node.children) return hasExpandedDirectories(node.children);
-      }
-      return false;
-    });
+  return (
+    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[400px] flex flex-col">
+      <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
+        Layout Wireframe {currentPage && `- ${currentPage}`}
+      </h3>
+      <div className="p-4 rounded bg-[hsl(var(--muted))] flex-1">
+        {renderNestedBoxes()}
+      </div>
+    </div>
+  );
+};
+
+export const AppStructure = () => {
+  const {
+    appStructure,
+    updateAppStructureNode,
+    deleteAppStructureNode,
+    addAppStructureNode,
+    setAppStructure,
+  } = useEditorStore();
+
+  const [routeInputValue, setRouteInputValue] = useState("");
+  const routeInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
+    updateAppStructureNode(id, updates);
   };
 
-  const handleLayoutPopoverChange = (
-    open: boolean,
-    pagePath: string,
-    layouts: string[]
-  ) => {
-    if (open) {
-      setActiveLayoutPopover({ pagePath, layouts });
-    } else {
-      setActiveLayoutPopover(null);
+  const handleDelete = (id: string) => {
+    deleteAppStructureNode(id);
+  };
+
+  const handleAddFile = (parentId: string) => {
+    const newFile: FileSystemEntry = {
+      id: generateId(),
+      name: "new-file.tsx",
+      type: "file",
+    };
+    addAppStructureNode(parentId, newFile);
+  };
+
+  const handleAddDirectory = (parentId: string) => {
+    const newDir: FileSystemEntry = {
+      id: generateId(),
+      name: "new-folder",
+      type: "directory",
+      children: [],
+      isExpanded: false,
+    };
+    addAppStructureNode(parentId, newDir);
+  };
+
+  const handleDeleteRoute = (routePath: string) => {
+    const updatedStructure = deleteRouteFromFileSystem(
+      appStructure,
+      routePath,
+      "",
+      true
+    );
+    setAppStructure(updatedStructure);
+  };
+
+  const handleAddSegment = (parentPath: string) => {
+    const segmentName = "new-segment";
+    const updatedStructure = addRouteSegment(
+      appStructure,
+      parentPath,
+      segmentName,
+      "",
+      true
+    );
+    setAppStructure(updatedStructure);
+  };
+
+  const handleRouteSubmit = () => {
+    const path = routeInputValue.trim();
+
+    const validation = validateRoutePath(path);
+    if (!validation.valid) {
+      console.error("Invalid route path:", validation.error);
+      return;
+    }
+
+    const updatedStructure = createRouteFromPath(appStructure, path, "", true);
+    setAppStructure(updatedStructure);
+    setRouteInputValue("");
+  };
+
+  const handleRouteKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleRouteSubmit();
+    }
+    if (e.key === "Escape") {
+      setRouteInputValue("");
     }
   };
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
   return (
-    <div
-      className={cn(
-        "p-4 rounded-lg border",
-        darkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
-      )}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <h3
-          className={cn(
-            "text-lg font-semibold",
-            darkMode ? "text-gray-200" : "text-gray-800"
-          )}
-        >
-          App Directory Structure
-        </h3>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            const isExpanded = hasExpandedDirectories(appStructure);
-            if (isExpanded) {
-              setAppStructure(collapseAll(appStructure));
-            } else {
-              setAppStructure(expandAll(appStructure));
-            }
-          }}
-          title={
-            hasExpandedDirectories(appStructure) ? "Collapse all" : "Expand all"
-          }
-        >
-          {hasExpandedDirectories(appStructure) ? (
-            <FoldVertical className="h-4 w-4" />
-          ) : (
-            <SquareStack className="h-4 w-4" />
-          )}
-        </Button>
-      </div>
+    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[400px] flex flex-col">
+      <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
+        App Directory Structure
+      </h3>
 
-      <div
-        className={cn(
-          "font-mono text-sm",
-          darkMode ? "bg-gray-950" : "bg-gray-50",
-          "p-3 rounded overflow-x-auto"
-        )}
-      >
+      <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto">
         {appStructure.map((node, index) => (
           <TreeNode
             key={node.id}
@@ -2199,17 +1708,10 @@ export const AppStructure = () => {
             onAddFile={handleAddFile}
             onAddDirectory={handleAddDirectory}
             appStructure={appStructure}
-            activeLayoutPopover={activeLayoutPopover}
-            onLayoutPopoverChange={handleLayoutPopoverChange}
           />
         ))}
         {appStructure.length === 0 && (
-          <div
-            className={cn(
-              "text-center py-8",
-              darkMode ? "text-gray-500" : "text-gray-400"
-            )}
-          >
+          <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
             Click the buttons above to start building your app structure
           </div>
         )}
@@ -2218,29 +1720,17 @@ export const AppStructure = () => {
       {routes.length > 0 && (
         <>
           <div className="mt-6 mb-4">
-            <h3
-              className={cn(
-                "text-lg font-semibold",
-                darkMode ? "text-gray-200" : "text-gray-800"
-              )}
-            >
+            <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
               Site Map (Resulting Routes)
             </h3>
           </div>
 
-          <div
-            className={cn(
-              "font-mono text-sm",
-              darkMode ? "bg-gray-950" : "bg-gray-50",
-              "p-3 rounded overflow-x-auto"
-            )}
-          >
+          <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto">
             {routes.map((route, index) => (
               <SiteMapNode
                 key={route.path}
                 route={route}
                 isLast={index === routes.length - 1}
-                darkMode={darkMode}
                 appStructure={appStructure}
                 onUpdateAppStructure={handleUpdate}
                 onDeleteRoute={handleDeleteRoute}

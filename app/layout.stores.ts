@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ThemeState, WalkthroughState } from "./layout.types";
+import { ThemeState } from "./layout.types";
 
 const initialState = {
   gradientEnabled: true,
@@ -36,100 +36,6 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: "theme-store",
-    }
-  )
-);
-
-const walkthroughInitialState = {
-  isActive: false,
-  currentStepIndex: 0,
-  steps: [],
-  completedSteps: [],
-  activeTargetAttribute: null,
-};
-
-export const useWalkthroughStore = create<WalkthroughState>()(
-  persist(
-    (set, get) => ({
-      ...walkthroughInitialState,
-      startWalkthrough: (steps) =>
-        set({
-          isActive: true,
-          currentStepIndex: 0,
-          steps,
-          completedSteps: [],
-        }),
-      nextStep: () => {
-        const { currentStepIndex, steps, completedSteps } = get();
-        const currentStep = steps[currentStepIndex];
-        if (currentStep) {
-          const newCompletedSteps = [...completedSteps];
-          if (!newCompletedSteps.includes(currentStep.id)) {
-            newCompletedSteps.push(currentStep.id);
-          }
-          set({ completedSteps: newCompletedSteps });
-        }
-        if (currentStepIndex < steps.length - 1) {
-          set({ currentStepIndex: currentStepIndex + 1 });
-        } else {
-          set({ isActive: false, activeTargetAttribute: null });
-        }
-      },
-      previousStep: () => {
-        const { currentStepIndex } = get();
-        if (currentStepIndex > 0) {
-          set({ currentStepIndex: currentStepIndex - 1 });
-        }
-      },
-      endWalkthrough: () => set({ isActive: false, activeTargetAttribute: null }),
-      setCurrentStep: (index) => set({ currentStepIndex: index }),
-      markStepCompleted: (stepId) => {
-        const { completedSteps } = get();
-        if (!completedSteps.includes(stepId)) {
-          set({ completedSteps: [...completedSteps, stepId] });
-        }
-      },
-      isElementVisible: (dataAttribute) => {
-        if (typeof document === "undefined") return false;
-        const element = document.querySelector(`[data-walkthrough="${dataAttribute}"]`);
-        if (!element) return false;
-        const rect = element.getBoundingClientRect();
-        return rect.width > 0 && rect.height > 0;
-      },
-      setActiveTarget: (dataAttribute) => set({ activeTargetAttribute: dataAttribute }),
-      isActiveTarget: (dataAttribute) => {
-        const { activeTargetAttribute } = get();
-        return activeTargetAttribute === dataAttribute;
-      },
-      autoProgressWalkthrough: () => {
-        const { currentStepIndex, steps, isActive } = get();
-        if (!isActive) return;
-
-        const currentStep = steps[currentStepIndex];
-        if (currentStep) {
-          const newCompletedSteps = get().completedSteps;
-          if (!newCompletedSteps.includes(currentStep.id)) {
-            newCompletedSteps.push(currentStep.id);
-            set({ completedSteps: newCompletedSteps });
-          }
-
-          if (currentStepIndex >= steps.length - 1) {
-            set({ isActive: false, activeTargetAttribute: null });
-          } else {
-            set({ currentStepIndex: currentStepIndex + 1 });
-          }
-        }
-      },
-      canAutoProgress: (stepId: string) => {
-        const { isActive, currentStepIndex, steps } = get();
-        if (!isActive) return false;
-        const currentStep = steps[currentStepIndex];
-        return currentStep?.id === stepId;
-      },
-      reset: () => set(walkthroughInitialState),
-    }),
-    {
-      name: "walkthrough-store",
     }
   )
 );

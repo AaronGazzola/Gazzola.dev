@@ -42,45 +42,11 @@
             "include": true
           },
           {
-            "id": "start-here.layout-routes",
-            "name": "layout-routes",
-            "displayName": "Layout & routes",
-            "type": "file",
-            "order": 2,
-            "path": "start-here.layout-routes",
-            "urlPath": "/start-here/layout-routes",
-            "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
-            "components": [
-              {
-                "id": "component-WireFrame",
-                "name": "WireFrame",
-                "displayName": "WireFrame",
-                "type": "component",
-                "path": "layout-routes.component.WireFrame",
-                "urlPath": "",
-                "componentId": "WireFrame",
-                "include": true
-              },
-              {
-                "id": "component-AppStructure",
-                "name": "AppStructure",
-                "displayName": "AppStructure",
-                "type": "component",
-                "path": "layout-routes.component.AppStructure",
-                "urlPath": "",
-                "componentId": "AppStructure",
-                "include": true
-              }
-            ],
-            "sections": {},
-            "include": true
-          },
-          {
             "id": "start-here.theme",
             "name": "theme",
             "displayName": "Theme",
             "type": "file",
-            "order": 3,
+            "order": 2,
             "path": "start-here.theme",
             "urlPath": "/start-here/theme",
             "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
@@ -93,6 +59,30 @@
                 "path": "theme.component.ThemeConfiguration",
                 "urlPath": "",
                 "componentId": "ThemeConfiguration",
+                "include": true
+              }
+            ],
+            "sections": {},
+            "include": true
+          },
+          {
+            "id": "start-here.layout-routes",
+            "name": "layout-routes",
+            "displayName": "Layout & routes",
+            "type": "file",
+            "order": 3,
+            "path": "start-here.layout-routes",
+            "urlPath": "/start-here/layout-routes",
+            "content": "# Layout wire frame and route structure\n\n<!-- component-LayoutAndStructure -->\n",
+            "components": [
+              {
+                "id": "component-LayoutAndStructure",
+                "name": "LayoutAndStructure",
+                "displayName": "LayoutAndStructure",
+                "type": "component",
+                "path": "layout-routes.component.LayoutAndStructure",
+                "urlPath": "",
+                "componentId": "LayoutAndStructure",
                 "include": true
               }
             ],
@@ -147,45 +137,11 @@
               "include": true
             },
             {
-              "id": "start-here.layout-routes",
-              "name": "layout-routes",
-              "displayName": "Layout & routes",
-              "type": "file",
-              "order": 2,
-              "path": "start-here.layout-routes",
-              "urlPath": "/start-here/layout-routes",
-              "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
-              "components": [
-                {
-                  "id": "component-WireFrame",
-                  "name": "WireFrame",
-                  "displayName": "WireFrame",
-                  "type": "component",
-                  "path": "layout-routes.component.WireFrame",
-                  "urlPath": "",
-                  "componentId": "WireFrame",
-                  "include": true
-                },
-                {
-                  "id": "component-AppStructure",
-                  "name": "AppStructure",
-                  "displayName": "AppStructure",
-                  "type": "component",
-                  "path": "layout-routes.component.AppStructure",
-                  "urlPath": "",
-                  "componentId": "AppStructure",
-                  "include": true
-                }
-              ],
-              "sections": {},
-              "include": true
-            },
-            {
               "id": "start-here.theme",
               "name": "theme",
               "displayName": "Theme",
               "type": "file",
-              "order": 3,
+              "order": 2,
               "path": "start-here.theme",
               "urlPath": "/start-here/theme",
               "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
@@ -198,6 +154,30 @@
                   "path": "theme.component.ThemeConfiguration",
                   "urlPath": "",
                   "componentId": "ThemeConfiguration",
+                  "include": true
+                }
+              ],
+              "sections": {},
+              "include": true
+            },
+            {
+              "id": "start-here.layout-routes",
+              "name": "layout-routes",
+              "displayName": "Layout & routes",
+              "type": "file",
+              "order": 3,
+              "path": "start-here.layout-routes",
+              "urlPath": "/start-here/layout-routes",
+              "content": "# Layout wire frame and route structure\n\n<!-- component-LayoutAndStructure -->\n",
+              "components": [
+                {
+                  "id": "component-LayoutAndStructure",
+                  "name": "LayoutAndStructure",
+                  "displayName": "LayoutAndStructure",
+                  "type": "component",
+                  "path": "layout-routes.component.LayoutAndStructure",
+                  "urlPath": "",
+                  "componentId": "LayoutAndStructure",
                   "include": true
                 }
               ],
@@ -242,45 +222,11 @@
           "include": true
         },
         {
-          "id": "start-here.layout-routes",
-          "name": "layout-routes",
-          "displayName": "Layout & routes",
-          "type": "file",
-          "order": 2,
-          "path": "start-here.layout-routes",
-          "urlPath": "/start-here/layout-routes",
-          "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
-          "components": [
-            {
-              "id": "component-WireFrame",
-              "name": "WireFrame",
-              "displayName": "WireFrame",
-              "type": "component",
-              "path": "layout-routes.component.WireFrame",
-              "urlPath": "",
-              "componentId": "WireFrame",
-              "include": true
-            },
-            {
-              "id": "component-AppStructure",
-              "name": "AppStructure",
-              "displayName": "AppStructure",
-              "type": "component",
-              "path": "layout-routes.component.AppStructure",
-              "urlPath": "",
-              "componentId": "AppStructure",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true
-        },
-        {
           "id": "start-here.theme",
           "name": "theme",
           "displayName": "Theme",
           "type": "file",
-          "order": 3,
+          "order": 2,
           "path": "start-here.theme",
           "urlPath": "/start-here/theme",
           "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
@@ -293,6 +239,30 @@
               "path": "theme.component.ThemeConfiguration",
               "urlPath": "",
               "componentId": "ThemeConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        },
+        {
+          "id": "start-here.layout-routes",
+          "name": "layout-routes",
+          "displayName": "Layout & routes",
+          "type": "file",
+          "order": 3,
+          "path": "start-here.layout-routes",
+          "urlPath": "/start-here/layout-routes",
+          "content": "# Layout wire frame and route structure\n\n<!-- component-LayoutAndStructure -->\n",
+          "components": [
+            {
+              "id": "component-LayoutAndStructure",
+              "name": "LayoutAndStructure",
+              "displayName": "LayoutAndStructure",
+              "type": "component",
+              "path": "layout-routes.component.LayoutAndStructure",
+              "urlPath": "",
+              "componentId": "LayoutAndStructure",
               "include": true
             }
           ],
@@ -335,66 +305,12 @@
       "componentId": "InitialConfiguration",
       "include": true
     },
-    "start-here.layout-routes": {
-      "id": "start-here.layout-routes",
-      "name": "layout-routes",
-      "displayName": "Layout & routes",
-      "type": "file",
-      "order": 2,
-      "path": "start-here.layout-routes",
-      "urlPath": "/start-here/layout-routes",
-      "content": "# Layout wire frame and route structure\n\n<!-- component-WireFrame -->\n\n<!-- component-AppStructure -->\n",
-      "components": [
-        {
-          "id": "component-WireFrame",
-          "name": "WireFrame",
-          "displayName": "WireFrame",
-          "type": "component",
-          "path": "layout-routes.component.WireFrame",
-          "urlPath": "",
-          "componentId": "WireFrame",
-          "include": true
-        },
-        {
-          "id": "component-AppStructure",
-          "name": "AppStructure",
-          "displayName": "AppStructure",
-          "type": "component",
-          "path": "layout-routes.component.AppStructure",
-          "urlPath": "",
-          "componentId": "AppStructure",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true
-    },
-    "layout-routes.component.WireFrame": {
-      "id": "component-WireFrame",
-      "name": "WireFrame",
-      "displayName": "WireFrame",
-      "type": "component",
-      "path": "layout-routes.component.WireFrame",
-      "urlPath": "",
-      "componentId": "WireFrame",
-      "include": true
-    },
-    "layout-routes.component.AppStructure": {
-      "id": "component-AppStructure",
-      "name": "AppStructure",
-      "displayName": "AppStructure",
-      "type": "component",
-      "path": "layout-routes.component.AppStructure",
-      "urlPath": "",
-      "componentId": "AppStructure",
-      "include": true
-    },
     "start-here.theme": {
       "id": "start-here.theme",
       "name": "theme",
       "displayName": "Theme",
       "type": "file",
-      "order": 3,
+      "order": 2,
       "path": "start-here.theme",
       "urlPath": "/start-here/theme",
       "content": "# Theme configuration\n\n<!-- component-ThemeConfiguration -->\n",
@@ -421,6 +337,40 @@
       "path": "theme.component.ThemeConfiguration",
       "urlPath": "",
       "componentId": "ThemeConfiguration",
+      "include": true
+    },
+    "start-here.layout-routes": {
+      "id": "start-here.layout-routes",
+      "name": "layout-routes",
+      "displayName": "Layout & routes",
+      "type": "file",
+      "order": 3,
+      "path": "start-here.layout-routes",
+      "urlPath": "/start-here/layout-routes",
+      "content": "# Layout wire frame and route structure\n\n<!-- component-LayoutAndStructure -->\n",
+      "components": [
+        {
+          "id": "component-LayoutAndStructure",
+          "name": "LayoutAndStructure",
+          "displayName": "LayoutAndStructure",
+          "type": "component",
+          "path": "layout-routes.component.LayoutAndStructure",
+          "urlPath": "",
+          "componentId": "LayoutAndStructure",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "layout-routes.component.LayoutAndStructure": {
+      "id": "component-LayoutAndStructure",
+      "name": "LayoutAndStructure",
+      "displayName": "LayoutAndStructure",
+      "type": "component",
+      "path": "layout-routes.component.LayoutAndStructure",
+      "urlPath": "",
+      "componentId": "LayoutAndStructure",
       "include": true
     }
   },

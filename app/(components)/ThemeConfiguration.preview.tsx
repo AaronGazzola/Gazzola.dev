@@ -1,10 +1,10 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { Button } from "@/components/configuration/ui/button";
-import { Input } from "@/components/configuration/ui/input";
-import { Card } from "@/components/configuration/ui/card";
-import { Badge } from "@/components/configuration/ui/badge";
+import { Button } from "@/components/editor/ui/button";
+import { Input } from "@/components/editor/ui/input";
+import { Card } from "@/components/editor/ui/card";
+import { Badge } from "@/components/editor/ui/badge";
 import { cn } from "@/lib/tailwind.utils";
 import { ScrollArea } from "@/components/editor/ui/scroll-area";
 

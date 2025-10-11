@@ -1,8 +1,7 @@
 "use client";
 
-import { useWalkthroughStore } from "@/app/layout.stores";
 import { conditionalLog } from "@/lib/log.util";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -11,22 +10,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/editor/ui/dialog";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Progress } from "@/components/ui/progress";
-import { Switch } from "@/components/ui/switch";
+} from "@/components/editor/ui/popover";
+import { Progress } from "@/components/editor/ui/progress";
+import { Switch } from "@/components/editor/ui/switch";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/editor/ui/tooltip";
+import { Button } from "@/components/editor/ui/button";
+import { Label } from "@/components/editor/ui/label";
 import { cn } from "@/lib/tailwind.utils";
-import { walkthroughSteps } from "@/public/data/walkthrough/steps";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
@@ -35,7 +35,6 @@ import {
   File,
   Files,
   Folder,
-  HelpCircle,
   ListRestart,
   Moon,
   RotateCcw,
@@ -59,7 +58,6 @@ interface IconButtonProps {
   disabled?: boolean;
   children: React.ReactNode;
   tooltip: string;
-  darkMode: boolean;
 }
 
 const IconButton = ({
@@ -67,27 +65,21 @@ const IconButton = ({
   disabled = false,
   children,
   tooltip,
-  darkMode,
 }: IconButtonProps) => (
   <Tooltip>
     <TooltipTrigger asChild>
-      <button
+      <Button
         onClick={onClick}
         disabled={disabled}
+        variant="ghost"
+        size="icon"
         style={{
           borderRadius: "3px",
         }}
-        className={cn(
-          "h-8 w-8 flex items-center justify-center transition-colors",
-          disabled
-            ? "opacity-50 cursor-not-allowed"
-            : darkMode
-              ? "hover:bg-gray-700 text-gray-300 hover:text-gray-100"
-              : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
-        )}
+        className="h-8 w-8"
       >
         {children}
-      </button>
+      </Button>
     </TooltipTrigger>
     <TooltipContent>
       <p>{tooltip}</p>
@@ -98,12 +90,6 @@ const IconButton = ({
 export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const {
-    startWalkthrough,
-    isActiveTarget,
-    canAutoProgress,
-    autoProgressWalkthrough,
-  } = useWalkthroughStore();
   useContentVersionCheck();
   const {
     darkMode,
@@ -258,9 +244,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleNext = () => {
     if (nextPage) {
-      if (canAutoProgress("next-button")) {
-        autoProgressWalkthrough();
-      }
       markPageVisited(nextPage.path);
       router.push(nextPage.url);
     }
@@ -342,11 +325,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     }
   };
 
-  const handleStartWalkthrough = () => {
-    localStorage.removeItem("walkthrough-completed");
-    startWalkthrough(walkthroughSteps);
-  };
-
   const progressInfo = useMemo(() => {
     const currentStep = currentPageIndex + 1;
     const totalSteps = allPages.length;
@@ -362,9 +340,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   return (
     <TooltipProvider>
-      <div
-        className={`w-full border-b ${darkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
-      >
+      <div className="w-full border-b bg-[hsl(var(--background))] border-[hsl(var(--border))]">
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="w-full">
@@ -390,21 +366,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               tooltip={
                 canGoBack ? `Previous: ${prevPageTitle}` : "No previous page"
               }
-              darkMode={darkMode}
             >
               <ChevronLeft className="h-4 w-4" />
             </IconButton>
           </div>
 
           <div className="flex items-center gap-3">
-            <IconButton
-              onClick={handleStartWalkthrough}
-              tooltip="Start walkthrough tour"
-              darkMode={darkMode}
-            >
-              <HelpCircle className="h-4 w-4" />
-            </IconButton>
-
             <Dialog
               open={resetPageDialogOpen}
               onOpenChange={setResetPageDialogOpen}
@@ -414,7 +381,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <IconButton
                     onClick={() => setResetPageDialogOpen(true)}
                     tooltip="Reset current page"
-                    darkMode={darkMode}
                   >
                     <RotateCcw className="h-4 w-4" />
                   </IconButton>
@@ -429,28 +395,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <button
-                    className={cn(
-                      "px-4 py-2 rounded-md transition-colors",
-                      darkMode
-                        ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                    )}
+                  <Button
+                    variant="outline"
                     onClick={() => setResetPageDialogOpen(false)}
                   >
                     Cancel
-                  </button>
-                  <button
-                    className={cn(
-                      "px-4 py-2 rounded-md transition-colors",
-                      darkMode
-                        ? "bg-red-700 text-red-100 hover:bg-red-600"
-                        : "bg-red-600 text-red-100 hover:bg-red-700"
-                    )}
+                  </Button>
+                  <Button
+                    variant="destructive"
                     onClick={handleResetPage}
                   >
                     Reset Page
-                  </button>
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -458,7 +414,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             <IconButton
               onClick={() => setResetAllDialogOpen(true)}
               tooltip="Reset all pages"
-              darkMode={darkMode}
             >
               <ListRestart className="h-4 w-4" />
             </IconButton>
@@ -476,31 +431,19 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <button
-                    className={cn(
-                      "px-4 py-2 rounded-md transition-colors",
-                      darkMode
-                        ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                    )}
+                  <Button
+                    variant="outline"
                     onClick={() => setResetAllDialogOpen(false)}
                   >
                     Cancel
-                  </button>
-                  <button
-                    className={cn(
-                      "px-4 py-2 rounded-md transition-colors",
-                      resetAllLoading
-                        ? "opacity-50 cursor-not-allowed bg-gray-500"
-                        : darkMode
-                          ? "bg-red-700 text-red-100 hover:bg-red-600"
-                          : "bg-red-600 text-red-100 hover:bg-red-700"
-                    )}
+                  </Button>
+                  <Button
+                    variant="destructive"
                     onClick={handleResetAll}
                     disabled={resetAllLoading}
                   >
                     {resetAllLoading ? "Resetting..." : "Reset All"}
-                  </button>
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -515,19 +458,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <IconButton
                       onClick={() => setSectionsPopoverOpen(true)}
                       tooltip="Manage sections"
-                      darkMode={darkMode}
                     >
                       <Settings className="h-4 w-4" />
                     </IconButton>
                   </div>
                 </PopoverTrigger>
               <PopoverContent
-                className={cn(
-                  "w-80 max-h-96 overflow-y-auto",
-                  darkMode
-                    ? "bg-gray-800 border-gray-600"
-                    : "bg-white border-gray-200"
-                )}
+                className="w-80 max-h-96 overflow-y-auto"
                 align="center"
               >
                 <div className="space-y-4">
@@ -570,7 +507,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                                     )
                                   }
                                 />
-                                <label
+                                <Label
                                   className="text-sm cursor-pointer"
                                   onClick={() =>
                                     setSectionInclude(
@@ -586,7 +523,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                                   }
                                 >
                                   {option.optionId}
-                                </label>
+                                </Label>
                               </div>
                             ))}
                           </div>
@@ -609,19 +546,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <IconButton
                       onClick={() => setFileTreePopoverOpen(true)}
                       tooltip="Manage file inclusion"
-                      darkMode={darkMode}
                     >
                       <Files className="h-4 w-4" />
                     </IconButton>
                   </div>
                 </PopoverTrigger>
               <PopoverContent
-                className={cn(
-                  "w-80 max-h-96 overflow-y-auto",
-                  darkMode
-                    ? "bg-gray-800 border-gray-600"
-                    : "bg-white border-gray-200"
-                )}
+                className="w-80 max-h-96 overflow-y-auto"
                 align="center"
               >
                 <div className="space-y-3">
@@ -648,14 +579,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         ) : (
                           <File className="h-4 w-4 text-gray-500" />
                         )}
-                        <label
+                        <Label
                           className="text-sm cursor-pointer flex-1"
                           onClick={() =>
                             updateInclusionRules({ [item.path]: !item.include })
                           }
                         >
                           {item.name}
-                        </label>
+                        </Label>
                       </div>
                     ))
                   )}
@@ -669,14 +600,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             {previewMode && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div
-                    className={cn(
-                      "px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5",
-                      darkMode
-                        ? "bg-orange-900 text-white"
-                        : "bg-orange-100 border border-orange-500 text-orange-900"
-                    )}
-                  >
+                  <div className="px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5 bg-orange-500/20 border border-orange-500 text-orange-900 dark:text-orange-100">
                     <Eye className="h-3 w-3" />
                     Preview mode (read only)
                   </div>
@@ -697,24 +621,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-1">
-                  <span
-                    className={cn(
-                      "text-xs",
-                      darkMode ? "text-gray-300" : "text-gray-600"
-                    )}
-                  >
+                  <span className="text-xs text-[hsl(var(--muted-foreground))]">
                     Edit
                   </span>
                   <Switch
                     checked={previewMode}
                     onCheckedChange={setPreviewMode}
                   />
-                  <span
-                    className={cn(
-                      "text-xs",
-                      darkMode ? "text-gray-300" : "text-gray-600"
-                    )}
-                  >
+                  <span className="text-xs text-[hsl(var(--muted-foreground))]">
                     Preview
                   </span>
                 </div>
@@ -729,7 +643,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               tooltip={
                 darkMode ? "Switch to light mode" : "Switch to dark mode"
               }
-              darkMode={darkMode}
             >
               {darkMode ? (
                 <Sun className="h-4 w-4" />
@@ -740,29 +653,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
                   onClick={handleNext}
                   disabled={!canGoNext}
+                  variant="outline"
                   style={{
                     borderRadius: "3px",
                   }}
-                  className={cn(
-                    "px-3 py-1 flex items-center gap-2 font-medium transition-colors border",
-                    !canGoNext
-                      ? "opacity-50 cursor-not-allowed border-gray-300"
-                      : isActiveTarget("next-button")
-                        ? darkMode
-                          ? "border-blue-400 text-blue-200 hover:border-blue-300 hover:text-blue-100 ring-2 ring-blue-400/50"
-                          : "border-blue-500 text-blue-700 hover:border-blue-600 hover:text-blue-800 ring-2 ring-blue-500/50"
-                        : darkMode
-                          ? "border-gray-400 text-gray-200 hover:border-white hover:text-white"
-                          : "border-blue-600 text-blue-600 hover:border-blue-700 hover:text-blue-700"
-                  )}
-                  data-walkthrough="next-button"
+                  className="px-3 py-1 flex items-center gap-2 font-medium"
                 >
                   Next
                   <ChevronRight className="h-4 w-4" />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>{canGoNext ? `Next: ${nextPageTitle}` : "No next page"}</p>

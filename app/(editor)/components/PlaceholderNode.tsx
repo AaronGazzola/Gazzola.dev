@@ -17,7 +17,6 @@ import {
   useState,
 } from "react";
 import { useEditorStore } from "../layout.stores";
-import { useWalkthroughStore } from "@/app/layout.stores";
 
 export interface SerializedPlaceholderNode
   extends Spread<
@@ -77,7 +76,6 @@ export class PlaceholderNode extends DecoratorNode<ReactNode> {
   createDOM(): HTMLElement {
     const span = document.createElement("span");
     span.className = "placeholder-node-container";
-    span.setAttribute("data-walkthrough", "placeholder-node");
     return span;
   }
 
@@ -127,7 +125,6 @@ function PlaceholderNodeComponent({
 }: PlaceholderNodeComponentProps) {
   const { getPlaceholderValue, setPlaceholderValue, darkMode } =
     useEditorStore();
-  const { isActiveTarget, canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState("");
   const [inputWidth, setInputWidth] = useState(0);
@@ -155,24 +152,18 @@ function PlaceholderNodeComponent({
       if (e.key === "Enter") {
         e.preventDefault();
         handleSave();
-        if (canAutoProgress("placeholder-element")) {
-          autoProgressWalkthrough();
-        }
       } else if (e.key === "Escape") {
         e.preventDefault();
         setLocalValue(currentValue);
         setIsEditing(false);
       }
     },
-    [handleSave, currentValue, canAutoProgress, autoProgressWalkthrough]
+    [handleSave, currentValue]
   );
 
   const handleBlur = useCallback(() => {
     handleSave();
-    if (canAutoProgress("placeholder-element")) {
-      autoProgressWalkthrough();
-    }
-  }, [handleSave, canAutoProgress, autoProgressWalkthrough]);
+  }, [handleSave]);
 
   useLayoutEffect(() => {
     if (measureRef.current) {
@@ -194,13 +185,9 @@ function PlaceholderNodeComponent({
         ref={measureRef}
         className={cn(
           "inline-block border font-medium rounded px-1 py-0.5 min-w-[2ch] absolute opacity-0 pointer-events-none",
-          isActiveTarget("placeholder-node")
-            ? darkMode
-              ? "text-blue-100 bg-blue-900 border-blue-400"
-              : "text-blue-900 bg-blue-50 border-blue-500"
-            : darkMode
-              ? "text-gray-100 bg-gray-800 border-gray-600"
-              : "text-gray-900 bg-gray-50 border-gray-200"
+          darkMode
+            ? "text-gray-100 bg-gray-800 border-gray-600"
+            : "text-gray-900 bg-gray-50 border-gray-200"
         )}
         style={{
           left: "-9999px",
@@ -220,13 +207,9 @@ function PlaceholderNodeComponent({
           onBlur={handleBlur}
           className={cn(
             "inline-block border font-medium rounded px-1 py-0.5 min-w-[2ch] focus:outline focus:outline-2",
-            isActiveTarget("placeholder-node")
-              ? darkMode
-                ? "text-blue-100 bg-blue-900 border-blue-400 focus:bg-blue-800 focus:outline-blue-400 ring-2 ring-blue-400/50"
-                : "text-blue-900 bg-blue-50 border-blue-500 focus:bg-blue-100 focus:outline-blue-500 ring-2 ring-blue-500/50"
-              : darkMode
-                ? "text-gray-100 bg-gray-800 border-gray-600 focus:bg-gray-750 focus:outline-blue-500"
-                : "text-gray-900 bg-gray-50 border-gray-200 focus:bg-gray-100 focus:outline-blue-500"
+            darkMode
+              ? "text-gray-100 bg-gray-800 border-gray-600 focus:bg-gray-750 focus:outline-blue-500"
+              : "text-gray-900 bg-gray-50 border-gray-200 focus:bg-gray-100 focus:outline-blue-500"
           )}
           style={{
             width: inputWidth > 0 ? `${inputWidth}px` : "2ch",
@@ -237,13 +220,9 @@ function PlaceholderNodeComponent({
           onClick={handleClick}
           className={cn(
             "inline-block cursor-pointer font-medium rounded px-1 py-0.5 border transition-colors",
-            isActiveTarget("placeholder-node")
-              ? darkMode
-                ? "text-blue-100 bg-blue-900 border-blue-400 hover:bg-blue-800 ring-2 ring-blue-400/50"
-                : "text-blue-900 bg-blue-50 border-blue-500 hover:bg-blue-100 ring-2 ring-blue-500/50"
-              : darkMode
-                ? "text-gray-100 bg-gray-800 border-gray-600 hover:bg-gray-750"
-                : "text-gray-900 bg-gray-50 border-gray-200 hover:bg-gray-100"
+            darkMode
+              ? "text-gray-100 bg-gray-800 border-gray-600 hover:bg-gray-750"
+              : "text-gray-900 bg-gray-50 border-gray-200 hover:bg-gray-100"
           )}
           title={`Click to edit "${placeholderKey}"`}
         >

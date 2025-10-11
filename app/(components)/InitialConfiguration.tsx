@@ -2,7 +2,6 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
-import { useWalkthroughStore } from "@/app/layout.stores";
 import {
   Accordion,
   AccordionContent,
@@ -556,7 +555,6 @@ const getDisabledReason = (
 
 export const InitialConfiguration = () => {
   const {
-    darkMode,
     initialConfiguration,
     updateInitialConfiguration,
     updateAuthenticationOption,
@@ -565,7 +563,6 @@ export const InitialConfiguration = () => {
     updateAIIntegrationOption,
     updateRealTimeNotificationsOption,
   } = useEditorStore();
-  const { canAutoProgress, autoProgressWalkthrough } = useWalkthroughStore();
 
   const getFeatureEnabled = (featureId: string): boolean => {
     if (featureId === "databaseChoice" || featureId === "deploymentChoice") {
@@ -824,20 +821,12 @@ export const InitialConfiguration = () => {
   return (
     <TooltipProvider>
       <div
-        className={cn(
-          "p-2 rounded-lg border",
-          darkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-300"
-        )}
+        className="p-2 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))]"
         data-walkthrough="initial-configuration"
       >
         {enabledTechnologies.length > 0 && (
           <div className="sticky -top-6 z-50 mb-2 p-2 rounded-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <h4
-              className={cn(
-                "text-base font-semibold mb-1.5",
-                darkMode ? "text-white" : "text-black"
-              )}
-            >
+            <h4 className="text-base font-semibold mb-1.5 text-[hsl(var(--card-foreground))]">
               Required Technologies
             </h4>
             <div className="flex flex-wrap gap-1">
@@ -848,14 +837,7 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div
-                        className={cn(
-                          "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold cursor-help border",
-                          darkMode
-                            ? "bg-black text-white border-gray-600"
-                            : "bg-gray-100 text-black border-gray-400"
-                        )}
-                      >
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold cursor-help border bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] border-[hsl(var(--border))]">
                         <Icon className="w-4 h-4" />
                         <span>{tech.name}</span>
                       </div>
@@ -950,12 +932,7 @@ export const InitialConfiguration = () => {
               <AccordionItem
                 key={question.id}
                 value={question.id}
-                className={cn(
-                  "transition-all duration-200 data-[state=open]:rounded-lg border-none",
-                  darkMode
-                    ? "data-[state=open]:bg-black"
-                    : "data-[state=open]:bg-gray-100"
-                )}
+                className="transition-all duration-200 data-[state=open]:rounded-lg border-none data-[state=open]:bg-[hsl(var(--muted))]"
               >
                 <div
                   className={cn(
@@ -969,21 +946,9 @@ export const InitialConfiguration = () => {
                       disabled={isQuestionDisabled}
                     >
                       <div className="flex items-center gap-2">
-                        <Icon
-                          className={cn(
-                            "w-5 h-5 transition-colors duration-200",
-                            darkMode
-                              ? "text-white group-data-[state=open]:text-blue-400"
-                              : "text-black group-data-[state=open]:text-blue-600"
-                          )}
-                        />
+                        <Icon className="w-5 h-5 transition-colors duration-200 text-[hsl(var(--foreground))] group-data-[state=open]:text-[hsl(var(--primary))]" />
                         <div className="text-left">
-                          <span
-                            className={cn(
-                              "text-lg font-semibold block",
-                              darkMode ? "text-white" : "text-black"
-                            )}
-                          >
+                          <span className="text-lg font-semibold block text-[hsl(var(--foreground))]">
                             {question.question}
                           </span>
                         </div>
@@ -1024,10 +989,6 @@ export const InitialConfiguration = () => {
 
                         const isChecking = checked === true;
                         updateFeature(question.id, isChecking);
-
-                        if (canAutoProgress("initial-configuration")) {
-                          autoProgressWalkthrough();
-                        }
                       }}
                       className={cn(
                         "size-5 border border-gray-500 select-none",
@@ -1082,9 +1043,7 @@ export const InitialConfiguration = () => {
                                                 : false
                                       }
                                       disabled={true}
-                                      className={cn(
-                                        "size-4 mt-0.5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white select-none"
-                                      )}
+                                      className="size-4 mt-0.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
                                     />
                                   </TooltipTrigger>
                                   <TooltipContent>
@@ -1295,32 +1254,15 @@ export const InitialConfiguration = () => {
                                         checked === true
                                       );
                                     }
-                                    if (
-                                      canAutoProgress("initial-configuration")
-                                    ) {
-                                      autoProgressWalkthrough();
-                                    }
                                   }}
-                                  className={cn(
-                                    "size-4 mt-0.5 border border-gray-500 data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white select-none"
-                                  )}
+                                  className="size-4 mt-0.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
                                 />
                               )}
                               <div>
-                                <span
-                                  className={cn(
-                                    "text-base font-medium block",
-                                    darkMode ? "text-white" : "text-black"
-                                  )}
-                                >
+                                <span className="text-base font-medium block text-[hsl(var(--foreground))]">
                                   {option.label}
                                 </span>
-                                <span
-                                  className={cn(
-                                    "text-base block mt-0.5 font-medium",
-                                    darkMode ? "text-gray-300" : "text-gray-700"
-                                  )}
-                                >
+                                <span className="text-base block mt-0.5 font-medium text-[hsl(var(--muted-foreground))]">
                                   {option.description}
                                 </span>
                                 <div className="flex flex-wrap gap-1 mt-2">
@@ -1402,14 +1344,10 @@ export const InitialConfiguration = () => {
                                         className={cn(
                                           "flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border",
                                           !isAvailable
-                                            ? "bg-gray-200 text-gray-400 border-gray-300 line-through"
+                                            ? "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))] line-through opacity-50"
                                             : isBadgeActive
-                                              ? darkMode
-                                                ? "bg-black text-white border-gray-600"
-                                                : "bg-black text-white border-gray-400"
-                                              : darkMode
-                                                ? "bg-gray-800 text-gray-400 border-gray-600"
-                                                : "bg-gray-100 text-gray-500 border-gray-300"
+                                              ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))]"
+                                              : "bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] border-[hsl(var(--border))]"
                                         )}
                                       >
                                         <Icon className="w-3 h-3" />
@@ -1424,12 +1362,7 @@ export const InitialConfiguration = () => {
                         })}
                       </div>
                     ) : (
-                      <p
-                        className={cn(
-                          "text-sm font-medium",
-                          darkMode ? "text-gray-200" : "text-gray-800"
-                        )}
-                      >
+                      <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                         {question.description}
                       </p>
                     )}

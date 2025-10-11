@@ -35,6 +35,11 @@ const componentMap: Record<string, any> = {
       default: m.AppStructure,
     }))
   ),
+  LayoutAndStructure: lazy(() =>
+    import("@/app/(components)/AppStructure").then((m) => ({
+      default: m.LayoutAndStructure,
+    }))
+  ),
   HelloSwitch: lazy(() =>
     import("@/app/(components)/HelloSwitch").then((m) => ({
       default: m.HelloSwitch,

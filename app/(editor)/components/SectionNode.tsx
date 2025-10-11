@@ -1,12 +1,13 @@
 "use client";
 
-import { useWalkthroughStore } from "@/app/layout.stores";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/editor/ui/popover";
+import { Button } from "@/components/editor/ui/button";
+import { Label } from "@/components/editor/ui/label";
 import { cn } from "@/lib/tailwind.utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
@@ -125,7 +126,6 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     darkMode,
     data,
   } = useEditorStore();
-  const { isActiveTarget } = useWalkthroughStore();
 
   const [mounted, setMounted] = useState(false);
   const [sectionPopoverOpen, setSectionPopoverOpen] = useState(false);
@@ -286,22 +286,19 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
       {sectionOptions.length > 0 && (
         <Popover open={sectionPopoverOpen} onOpenChange={setSectionPopoverOpen}>
           <PopoverTrigger asChild>
-            <button
+            <Button
+              variant="outline"
+              size="icon"
               className={cn(
-                "absolute top-0 -left-5 z-10 h-6 w-6 flex items-center justify-center rounded transition-colors border",
-                isActiveTarget("section-options")
-                  ? darkMode
-                    ? "border-blue-400 text-blue-200 hover:bg-blue-400/20 hover:text-blue-100 ring-2 ring-blue-400/50"
-                    : "border-blue-500 text-blue-700 hover:bg-blue-500/20 hover:text-blue-800 ring-2 ring-blue-500/50"
-                  : darkMode
-                    ? "border-gray-500 hover:bg-gray-700 text-gray-400 hover:text-gray-200"
-                    : "border-gray-500 hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                "absolute top-0 -left-5 z-10 h-6 w-6 rounded",
+                darkMode
+                  ? "border-gray-500 hover:bg-gray-700 text-gray-400 hover:text-gray-200"
+                  : "border-gray-500 hover:bg-gray-100 text-gray-500 hover:text-gray-700"
               )}
               onClick={() => setSectionPopoverOpen(true)}
-              data-walkthrough="section-options"
             >
               <ListTodo className="h-3 w-3" />
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent
             className={cn(
@@ -335,7 +332,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
                         );
                       }}
                     />
-                    <label
+                    <Label
                       className="text-sm cursor-pointer flex-1"
                       onClick={() => {
                         const currentValue = getSectionInclude(
@@ -352,7 +349,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
                       }}
                     >
                       {option.optionId}
-                    </label>
+                    </Label>
                   </div>
                 ))}
               </div>
