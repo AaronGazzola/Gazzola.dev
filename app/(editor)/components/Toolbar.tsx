@@ -1,6 +1,5 @@
 "use client";
 
-import { AppStructure } from "@/app/(components)/AppStructure";
 import { useWalkthroughStore } from "@/app/layout.stores";
 import { conditionalLog } from "@/lib/log.util";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,12 +18,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
@@ -42,7 +35,6 @@ import {
   File,
   Files,
   Folder,
-  FolderOpen,
   HelpCircle,
   ListRestart,
   Moon,
@@ -55,6 +47,8 @@ import { useMemo, useState } from "react";
 import { useContentVersionCheck } from "../layout.hooks";
 import { parseAndGetMarkdownDataAction } from "../layout.actions";
 import { useEditorStore } from "../layout.stores";
+
+const isDevelopment = process.env.NODE_ENV === "development";
 
 interface ToolbarProps {
   currentContentPath: string;
@@ -132,7 +126,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [resetAllLoading, setResetAllLoading] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
-  const [appStructureSheetOpen, setAppStructureSheetOpen] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -401,14 +394,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             >
               <ChevronLeft className="h-4 w-4" />
             </IconButton>
-
-            <IconButton
-              onClick={() => setAppStructureSheetOpen(true)}
-              tooltip="App Structure"
-              darkMode={darkMode}
-            >
-              <FolderOpen className="h-4 w-4" />
-            </IconButton>
           </div>
 
           <div className="flex items-center gap-3">
@@ -520,21 +505,22 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               </DialogContent>
             </Dialog>
 
-            <Popover
-              open={sectionsPopoverOpen}
-              onOpenChange={setSectionsPopoverOpen}
-            >
-              <PopoverTrigger asChild>
-                <div>
-                  <IconButton
-                    onClick={() => setSectionsPopoverOpen(true)}
-                    tooltip="Manage sections"
-                    darkMode={darkMode}
-                  >
-                    <Settings className="h-4 w-4" />
-                  </IconButton>
-                </div>
-              </PopoverTrigger>
+            {isDevelopment && (
+              <Popover
+                open={sectionsPopoverOpen}
+                onOpenChange={setSectionsPopoverOpen}
+              >
+                <PopoverTrigger asChild>
+                  <div>
+                    <IconButton
+                      onClick={() => setSectionsPopoverOpen(true)}
+                      tooltip="Manage sections"
+                      darkMode={darkMode}
+                    >
+                      <Settings className="h-4 w-4" />
+                    </IconButton>
+                  </div>
+                </PopoverTrigger>
               <PopoverContent
                 className={cn(
                   "w-80 max-h-96 overflow-y-auto",
@@ -611,22 +597,24 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </div>
               </PopoverContent>
             </Popover>
+            )}
 
-            <Popover
-              open={fileTreePopoverOpen}
-              onOpenChange={setFileTreePopoverOpen}
-            >
-              <PopoverTrigger asChild>
-                <div>
-                  <IconButton
-                    onClick={() => setFileTreePopoverOpen(true)}
-                    tooltip="Manage file inclusion"
-                    darkMode={darkMode}
-                  >
-                    <Files className="h-4 w-4" />
-                  </IconButton>
-                </div>
-              </PopoverTrigger>
+            {isDevelopment && (
+              <Popover
+                open={fileTreePopoverOpen}
+                onOpenChange={setFileTreePopoverOpen}
+              >
+                <PopoverTrigger asChild>
+                  <div>
+                    <IconButton
+                      onClick={() => setFileTreePopoverOpen(true)}
+                      tooltip="Manage file inclusion"
+                      darkMode={darkMode}
+                    >
+                      <Files className="h-4 w-4" />
+                    </IconButton>
+                  </div>
+                </PopoverTrigger>
               <PopoverContent
                 className={cn(
                   "w-80 max-h-96 overflow-y-auto",
@@ -674,6 +662,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </div>
               </PopoverContent>
             </Popover>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -782,25 +771,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </div>
         </div>
       </div>
-
-      <Sheet
-        open={appStructureSheetOpen}
-        onOpenChange={setAppStructureSheetOpen}
-      >
-        <SheetContent
-          side="left"
-          className="w-[640px] !max-w-[95%]"
-          onOpenAutoFocus={(e) => e.preventDefault()}
-          onCloseAutoFocus={(e) => e.preventDefault()}
-        >
-          <SheetHeader>
-            <SheetTitle>App Structure</SheetTitle>
-          </SheetHeader>
-          <div className="mt-6 overflow-y-auto w-full">
-            <AppStructure />
-          </div>
-        </SheetContent>
-      </Sheet>
     </TooltipProvider>
   );
 };

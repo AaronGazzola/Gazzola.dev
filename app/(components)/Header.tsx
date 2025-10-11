@@ -181,10 +181,10 @@ const Header = () => {
           </h1>
         )}
         <h2 className="text-lg font-medium md:block hidden">
-          Full Stack Web App Development
+          Full stack web dev
         </h2>
         <h3 className="text-lg font-medium hidden md:block">
-          Typescript + Next.js + PostgresSQL + Supabase
+          Typescript + Next.js + Supabase
         </h3>
       </div>
       {!headerIsCollapsed && (
