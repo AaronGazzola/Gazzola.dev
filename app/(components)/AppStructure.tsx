@@ -30,7 +30,7 @@ type RouteEntry = {
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
-const PAGE_FILE_ICON = "text-blue-500";
+const PAGE_FILE_ICON = "text-[var(--theme-chart-1)]";
 
 const LayoutInsertionButtons = ({
   layoutPath,
@@ -42,8 +42,12 @@ const LayoutInsertionButtons = ({
   hasRightSidebar,
 }: {
   layoutPath: string;
-  onAddElement: (type: "header" | "footer" | "sidebar-left" | "sidebar-right") => void;
-  onRemoveElement: (type: "header" | "footer" | "sidebar-left" | "sidebar-right") => void;
+  onAddElement: (
+    type: "header" | "footer" | "sidebar-left" | "sidebar-right"
+  ) => void;
+  onRemoveElement: (
+    type: "header" | "footer" | "sidebar-left" | "sidebar-right"
+  ) => void;
   hasHeader: boolean;
   hasFooter: boolean;
   hasLeftSidebar: boolean;
@@ -56,10 +60,16 @@ const LayoutInsertionButtons = ({
           variant="ghost"
           size="icon"
           className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
-          onClick={() => hasHeader ? onRemoveElement("header") : onAddElement("header")}
+          onClick={() =>
+            hasHeader ? onRemoveElement("header") : onAddElement("header")
+          }
           title={hasHeader ? "Remove header" : "Add header"}
         >
-          {hasHeader ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+          {hasHeader ? (
+            <Trash2 className="h-3 w-3 text-red-500" />
+          ) : (
+            <Plus className="h-3 w-3" />
+          )}
         </Button>
       </div>
       <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10">
@@ -67,10 +77,18 @@ const LayoutInsertionButtons = ({
           variant="ghost"
           size="icon"
           className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
-          onClick={() => hasLeftSidebar ? onRemoveElement("sidebar-left") : onAddElement("sidebar-left")}
+          onClick={() =>
+            hasLeftSidebar
+              ? onRemoveElement("sidebar-left")
+              : onAddElement("sidebar-left")
+          }
           title={hasLeftSidebar ? "Remove left sidebar" : "Add left sidebar"}
         >
-          {hasLeftSidebar ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+          {hasLeftSidebar ? (
+            <Trash2 className="h-3 w-3 text-red-500" />
+          ) : (
+            <Plus className="h-3 w-3" />
+          )}
         </Button>
       </div>
       <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10">
@@ -78,10 +96,18 @@ const LayoutInsertionButtons = ({
           variant="ghost"
           size="icon"
           className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
-          onClick={() => hasRightSidebar ? onRemoveElement("sidebar-right") : onAddElement("sidebar-right")}
+          onClick={() =>
+            hasRightSidebar
+              ? onRemoveElement("sidebar-right")
+              : onAddElement("sidebar-right")
+          }
           title={hasRightSidebar ? "Remove right sidebar" : "Add right sidebar"}
         >
-          {hasRightSidebar ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+          {hasRightSidebar ? (
+            <Trash2 className="h-3 w-3 text-red-500" />
+          ) : (
+            <Plus className="h-3 w-3" />
+          )}
         </Button>
       </div>
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10">
@@ -89,10 +115,16 @@ const LayoutInsertionButtons = ({
           variant="ghost"
           size="icon"
           className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
-          onClick={() => hasFooter ? onRemoveElement("footer") : onAddElement("footer")}
+          onClick={() =>
+            hasFooter ? onRemoveElement("footer") : onAddElement("footer")
+          }
           title={hasFooter ? "Remove footer" : "Add footer"}
         >
-          {hasFooter ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+          {hasFooter ? (
+            <Trash2 className="h-3 w-3 text-red-500" />
+          ) : (
+            <Plus className="h-3 w-3" />
+          )}
         </Button>
       </div>
     </>
@@ -101,26 +133,33 @@ const LayoutInsertionButtons = ({
 
 const WireframeElementComponent = ({
   element,
+  colorSet,
 }: {
   element: import("@/app/(editor)/layout.types").WireframeElement;
+  colorSet: { border: string; icon: string };
 }) => {
   const getElementStyles = () => {
-    const baseStyles = "bg-primary/10 border-2 border-primary/30 rounded";
-
     switch (element.type) {
       case "header":
-        return `${baseStyles} w-full h-4`;
+        return `w-full h-4`;
       case "footer":
-        return `${baseStyles} w-full h-4`;
+        return `w-full h-4`;
       case "sidebar-left":
       case "sidebar-right":
-        return `${baseStyles} w-8 h-full`;
+        return `w-4 h-full`;
       default:
-        return baseStyles;
+        return "";
     }
   };
 
-  return <div className={getElementStyles()} />;
+  const getBgColorClass = () => {
+    const bgClass = colorSet.border.replace("border-", "bg-");
+    return bgClass + "/10";
+  };
+
+  return (
+    <div className={cn("border rounded", colorSet.border, getBgColorClass(), getElementStyles())} />
+  );
 };
 
 const LAYOUT_COLORS = [
@@ -1087,12 +1126,12 @@ const SiteMapNode = ({
 
   const renderPathSegments = () => {
     if (route.path === "/") {
-      return <span className="text-sm font-mono">/</span>;
+      return <span className="text-sm font-mono" style={{ color: "var(--theme-foreground)" }}>/</span>;
     }
 
     return (
       <div className="flex items-center">
-        <span className="text-sm font-mono text-gray-500">/</span>
+        <span className="text-sm font-mono" style={{ color: "var(--theme-muted-foreground)" }}>/</span>
         {pathSegments.map((segment, index) => (
           <div key={index} className="flex items-center">
             {editingSegmentIndex === index ? (
@@ -1108,13 +1147,14 @@ const SiteMapNode = ({
             ) : (
               <span
                 className="text-sm font-mono cursor-pointer hover:bg-accent/50 px-1 py-0.5 rounded"
+                style={{ color: "var(--theme-foreground)" }}
                 onClick={() => handleSegmentClick(index)}
               >
                 {segment}
               </span>
             )}
             {index < pathSegments.length - 1 && (
-              <span className="text-sm font-mono text-gray-500">/</span>
+              <span className="text-sm font-mono" style={{ color: "var(--theme-muted-foreground)" }}>/</span>
             )}
           </div>
         ))}
@@ -1132,9 +1172,9 @@ const SiteMapNode = ({
 
   return (
     <>
-      <div className="group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1 text-[hsl(var(--foreground))]">
+      <div className="group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1" style={{ color: "var(--theme-foreground)" }}>
         <div className="flex items-center gap-1">
-          <span className="font-mono text-base select-none text-[hsl(var(--muted-foreground))]">
+          <span className="font-mono text-base select-none" style={{ color: "var(--theme-muted-foreground)" }}>
             {getLinePrefix()}
             {getTreeChar()}
             {depth > 0 && "─ "}
@@ -1227,10 +1267,17 @@ const TreeNode = ({
       const normalizedPath = fullPath.startsWith("/")
         ? fullPath.substring(1)
         : fullPath;
-      const layoutPath = normalizedPath.replace("/layout.tsx", "").replace("app", "") || "/";
-      const layouts = findLayoutsForPagePath(appStructure, layoutPath, "", true);
-      const layoutIndex = layouts.findIndex(l => {
-        const expectedFile = l === "/" ? "app/layout.tsx" : `app${l}/layout.tsx`;
+      const layoutPath =
+        normalizedPath.replace("/layout.tsx", "").replace("app", "") || "/";
+      const layouts = findLayoutsForPagePath(
+        appStructure,
+        layoutPath,
+        "",
+        true
+      );
+      const layoutIndex = layouts.findIndex((l) => {
+        const expectedFile =
+          l === "/" ? "app/layout.tsx" : `app${l}/layout.tsx`;
         return normalizedPath === expectedFile;
       });
       if (layoutIndex !== -1) {
@@ -1305,16 +1352,24 @@ const TreeNode = ({
   const handlePageFileClick = () => {
     if (!isPageFile) return;
     const pagePath = getPagePath();
-    console.log(JSON.stringify({pagePath,availablePages:wireframeState.availablePages}));
+    console.log(
+      JSON.stringify({
+        pagePath,
+        availablePages: wireframeState.availablePages,
+      })
+    );
     const pageIndex = wireframeState.availablePages.indexOf(pagePath);
-    console.log(JSON.stringify({pageIndex}));
+    console.log(JSON.stringify({ pageIndex }));
     if (pageIndex !== -1) {
       setWireframeCurrentPage(pageIndex);
-      console.log(JSON.stringify({setPageIndexTo:pageIndex}));
+      console.log(JSON.stringify({ setPageIndexTo: pageIndex }));
     }
   };
 
-  const isCurrentPage = isPageFile && wireframeState.availablePages[wireframeState.currentPageIndex] === getPagePath();
+  const isCurrentPage =
+    isPageFile &&
+    wireframeState.availablePages[wireframeState.currentPageIndex] ===
+      getPagePath();
 
   return (
     <div>
@@ -1341,13 +1396,17 @@ const TreeNode = ({
         <div className="flex items-center gap-1 flex-1 min-w-0 px-2">
           {node.type === "directory" ? (
             node.isExpanded ? (
-              <FolderOpen className="h-4 w-4 text-blue-500 flex-shrink-0" />
+              <FolderOpen className="h-4 w-4 flex-shrink-0" style={{ color: "var(--theme-chart-2)" }} />
             ) : (
-              <Folder className="h-4 w-4 text-blue-500 flex-shrink-0" />
+              <Folder className="h-4 w-4 flex-shrink-0" style={{ color: "var(--theme-chart-2)" }} />
             )
           ) : (
             <File
-              className={cn("h-4 w-4 flex-shrink-0 text-gray-500", getFileIconColor(), isPageFile && "cursor-pointer hover:opacity-70")}
+              className={cn(
+                "h-4 w-4 flex-shrink-0 text-[var(--theme-chart-3)]",
+                getFileIconColor(),
+                isPageFile && "cursor-pointer hover:opacity-70"
+              )}
               onClick={(e) => {
                 if (isPageFile) {
                   e.stopPropagation();
@@ -1369,6 +1428,7 @@ const TreeNode = ({
           ) : (
             <span
               className="text-sm truncate cursor-pointer hover:underline"
+              style={{ color: "var(--theme-foreground)" }}
               onClick={(e) => {
                 e.stopPropagation();
                 setIsEditing(true);
@@ -1379,7 +1439,12 @@ const TreeNode = ({
           )}
         </div>
 
-        <div className={cn("flex items-center gap-0.5 transition-opacity", isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100")}>
+        <div
+          className={cn(
+            "flex items-center gap-0.5 transition-opacity",
+            isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          )}
+        >
           {isEditing && (
             <Button
               variant="ghost"
@@ -1387,7 +1452,7 @@ const TreeNode = ({
               className="h-6 w-6"
               title="Save"
             >
-              <Save className="h-3 w-3 text-gray-500" />
+              <Save className="h-3 w-3" style={{ color: "var(--theme-muted-foreground)" }} />
             </Button>
           )}
           <Button
@@ -1459,9 +1524,11 @@ const TreeNode = ({
                         onAddSpecificFile(node.id, "page.tsx");
                       }
                     }}
-                    disabled={node.children?.some(child => child.name === "page.tsx")}
+                    disabled={node.children?.some(
+                      (child) => child.name === "page.tsx"
+                    )}
                   >
-                    <File className="h-4 w-4 text-blue-500" />
+                    <File className="h-4 w-4" style={{ color: "var(--theme-chart-1)" }} />
                     <span>page.tsx</span>
                   </Button>
                   <Button
@@ -1473,7 +1540,9 @@ const TreeNode = ({
                         onAddSpecificFile(node.id, "layout.tsx");
                       }
                     }}
-                    disabled={node.children?.some(child => child.name === "layout.tsx")}
+                    disabled={node.children?.some(
+                      (child) => child.name === "layout.tsx"
+                    )}
                   >
                     <File className="h-4 w-4 text-green-500" />
                     <span>layout.tsx</span>
@@ -1484,7 +1553,7 @@ const TreeNode = ({
                     className="justify-start gap-2"
                     onClick={() => onAddDirectory(node.id)}
                   >
-                    <Folder className="h-4 w-4 text-blue-500" />
+                    <Folder className="h-4 w-4" style={{ color: "var(--theme-chart-2)" }} />
                     <span>directory</span>
                   </Button>
                 </div>
@@ -1522,7 +1591,17 @@ export const LayoutAndStructure = () => {
     ? findLayoutsForPagePath(appStructure, currentPage, "", true)
     : [];
 
-  console.log(JSON.stringify({wireframe:{currentPageIndex,availablePages,currentPage,layoutsCount:layouts.length,layouts}}));
+  console.log(
+    JSON.stringify({
+      wireframe: {
+        currentPageIndex,
+        availablePages,
+        currentPage,
+        layoutsCount: layouts.length,
+        layouts,
+      },
+    })
+  );
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
@@ -1615,10 +1694,15 @@ export const LayoutAndStructure = () => {
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
-  const handleAddLayoutElement = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+  const handleAddLayoutElement = (
+    layoutPath: string,
+    elementType: "header" | "footer" | "sidebar-left" | "sidebar-right"
+  ) => {
     const layoutData = wireframeState.wireframeData.layouts[layoutPath];
     const existingElements = layoutData?.elements || [];
-    const existingElement = existingElements.find(el => el.type === elementType);
+    const existingElement = existingElements.find(
+      (el) => el.type === elementType
+    );
 
     if (existingElement) {
       removeWireframeElement(layoutPath, "layout", existingElement.id);
@@ -1629,16 +1713,28 @@ export const LayoutAndStructure = () => {
       type: elementType,
       label: elementType.replace("-", " "),
       config: {
-        position: elementType === "header" ? "top" : elementType === "footer" ? "bottom" : elementType === "sidebar-left" ? "left" : "right",
+        position:
+          elementType === "header"
+            ? "top"
+            : elementType === "footer"
+              ? "bottom"
+              : elementType === "sidebar-left"
+                ? "left"
+                : "right",
       },
     };
     addWireframeElement(layoutPath, "layout", newElement);
   };
 
-  const handleRemoveLayoutElementByType = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+  const handleRemoveLayoutElementByType = (
+    layoutPath: string,
+    elementType: "header" | "footer" | "sidebar-left" | "sidebar-right"
+  ) => {
     const layoutData = wireframeState.wireframeData.layouts[layoutPath];
     const existingElements = layoutData?.elements || [];
-    const existingElement = existingElements.find(el => el.type === elementType);
+    const existingElement = existingElements.find(
+      (el) => el.type === elementType
+    );
 
     if (existingElement) {
       removeWireframeElement(layoutPath, "layout", existingElement.id);
@@ -1674,10 +1770,12 @@ export const LayoutAndStructure = () => {
       const layoutData = wireframeState.wireframeData.layouts[layoutPath];
       const elements = layoutData?.elements || [];
 
-      const headers = elements.filter(el => el.type === "header");
-      const footers = elements.filter(el => el.type === "footer");
-      const leftSidebars = elements.filter(el => el.type === "sidebar-left");
-      const rightSidebars = elements.filter(el => el.type === "sidebar-right");
+      const headers = elements.filter((el) => el.type === "header");
+      const footers = elements.filter((el) => el.type === "footer");
+      const leftSidebars = elements.filter((el) => el.type === "sidebar-left");
+      const rightSidebars = elements.filter(
+        (el) => el.type === "sidebar-right"
+      );
 
       const hasHeader = headers.length > 0;
       const hasFooter = footers.length > 0;
@@ -1695,53 +1793,41 @@ export const LayoutAndStructure = () => {
           <LayoutInsertionButtons
             layoutPath={layoutPath}
             onAddElement={(type) => handleAddLayoutElement(layoutPath, type)}
-            onRemoveElement={(type) => handleRemoveLayoutElementByType(layoutPath, type)}
+            onRemoveElement={(type) =>
+              handleRemoveLayoutElementByType(layoutPath, type)
+            }
             hasHeader={hasHeader}
             hasFooter={hasFooter}
             hasLeftSidebar={hasLeftSidebar}
             hasRightSidebar={hasRightSidebar}
           />
 
-          {headers.map(el => (
-            <WireframeElementComponent
-              key={el.id}
-              element={el}
-            />
+          {headers.map((el) => (
+            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
           ))}
 
           <div className="flex-1 flex gap-2">
             {leftSidebars.length > 0 && (
               <div className="flex flex-col gap-2">
-                {leftSidebars.map(el => (
-                  <WireframeElementComponent
-                    key={el.id}
-                    element={el}
-                  />
+                {leftSidebars.map((el) => (
+                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
               </div>
             )}
 
-            <div className="flex-1">
-              {content}
-            </div>
+            <div className="flex-1">{content}</div>
 
             {rightSidebars.length > 0 && (
               <div className="flex flex-col gap-2">
-                {rightSidebars.map(el => (
-                  <WireframeElementComponent
-                    key={el.id}
-                    element={el}
-                  />
+                {rightSidebars.map((el) => (
+                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
               </div>
             )}
           </div>
 
-          {footers.map(el => (
-            <WireframeElementComponent
-              key={el.id}
-              element={el}
-            />
+          {footers.map((el) => (
+            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
           ))}
         </div>
       );
@@ -1751,43 +1837,67 @@ export const LayoutAndStructure = () => {
   };
 
   return (
-    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] flex flex-col">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:min-h-[400px]">
-        <div className="flex flex-col order-2 lg:order-1">
-          <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
-            App Directory Structure
-          </h3>
+    <div style={{ padding: "calc(var(--theme-spacing) * 4)", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: "var(--theme-card)", color: "var(--theme-card-foreground)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(400px, 2fr) minmax(400px, 3fr)", gap: "calc(var(--theme-spacing) * 4)", minHeight: "calc(100vh - 400px)" }} className="max-xl:grid-cols-1">
+        <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 4)", height: "100%" }}>
+          <div style={{ display: "flex", flexDirection: "column", flex: "1", minHeight: "0" }}>
+            <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 4)", color: "var(--theme-card-foreground)" }}>
+              App Directory Structure
+            </h3>
 
-          <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto min-h-[400px] lg:min-h-0 flex-1 lg:overflow-y-auto">
-            {appStructure.map((node, index) => (
-              <TreeNode
-                key={node.id}
-                node={node}
-                isLast={false}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-                onAddFile={handleAddFile}
-                onAddDirectory={handleAddDirectory}
-                appStructure={appStructure}
-                onAddSpecificFile={handleAddSpecificFile}
-                newNodeId={newNodeId}
-              />
-            ))}
+            <div style={{ fontFamily: "var(--theme-font-mono)", fontSize: "1rem", backgroundColor: "var(--theme-muted)", padding: "calc(var(--theme-spacing) * 3)", borderRadius: "var(--theme-radius)", overflowX: "auto", overflowY: "auto", flex: "1" }}>
+              {appStructure.map((node, index) => (
+                <TreeNode
+                  key={node.id}
+                  node={node}
+                  isLast={false}
+                  onUpdate={handleUpdate}
+                  onDelete={handleDelete}
+                  onAddFile={handleAddFile}
+                  onAddDirectory={handleAddDirectory}
+                  appStructure={appStructure}
+                  onAddSpecificFile={handleAddSpecificFile}
+                  newNodeId={newNodeId}
+                />
+              ))}
 
-            {appStructure.length === 0 && (
-              <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
-                Click the buttons above to start building your app structure
-              </div>
-            )}
+              {appStructure.length === 0 && (
+                <div style={{ textAlign: "center", padding: "calc(var(--theme-spacing) * 8) 0", color: "var(--theme-muted-foreground)" }}>
+                  Click the buttons above to start building your app structure
+                </div>
+              )}
+            </div>
           </div>
+
+          {routes.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", flex: "1", minHeight: "0" }}>
+              <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 4)", color: "var(--theme-card-foreground)" }}>
+                Site Map (Resulting Routes)
+              </h3>
+
+              <div style={{ fontFamily: "var(--theme-font-mono)", fontSize: "1rem", backgroundColor: "var(--theme-muted)", padding: "calc(var(--theme-spacing) * 3)", borderRadius: "var(--theme-radius)", overflowX: "auto", overflowY: "auto", flex: "1" }}>
+                {routes.map((route, index) => (
+                  <SiteMapNode
+                    key={route.path}
+                    route={route}
+                    isLast={index === routes.length - 1}
+                    appStructure={appStructure}
+                    onUpdateAppStructure={handleUpdate}
+                    onDeleteRoute={handleDeleteRoute}
+                    onAddSegment={handleAddSegment}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-col order-1 lg:order-2">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
+        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "calc(var(--theme-spacing) * 4)" }}>
+            <h3 style={{ fontSize: "1.125rem", fontWeight: "600", color: "var(--theme-card-foreground)" }}>
               Layout Wireframe {currentPage && `- ${currentPage}`}
             </h3>
-            <div className="flex items-center gap-1">
+            <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1)" }}>
               <Button
                 variant="ghost"
                 size="icon"
@@ -1818,35 +1928,11 @@ export const LayoutAndStructure = () => {
               </Button>
             </div>
           </div>
-          <div className="p-4 rounded bg-[hsl(var(--muted))] min-h-[400px] lg:min-h-0 flex-1">
+          <div style={{ padding: "calc(var(--theme-spacing) * 4)", borderRadius: "var(--theme-radius)", backgroundColor: "var(--theme-muted)", flex: "1", overflowY: "auto" }}>
             {renderNestedBoxes()}
           </div>
         </div>
       </div>
-
-      {routes.length > 0 && (
-        <>
-          <div className="mt-6 mb-4">
-            <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
-              Site Map (Resulting Routes)
-            </h3>
-          </div>
-
-          <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto">
-            {routes.map((route, index) => (
-              <SiteMapNode
-                key={route.path}
-                route={route}
-                isLast={index === routes.length - 1}
-                appStructure={appStructure}
-                onUpdateAppStructure={handleUpdate}
-                onDeleteRoute={handleDeleteRoute}
-                onAddSegment={handleAddSegment}
-              />
-            ))}
-          </div>
-        </>
-      )}
     </div>
   );
 };
@@ -1872,12 +1958,27 @@ export const WireFrame = () => {
     ? findLayoutsForPagePath(appStructure, currentPage, "", true)
     : [];
 
-  console.log(JSON.stringify({wireframe:{currentPageIndex,availablePages,currentPage,layoutsCount:layouts.length,layouts}}));
+  console.log(
+    JSON.stringify({
+      wireframe: {
+        currentPageIndex,
+        availablePages,
+        currentPage,
+        layoutsCount: layouts.length,
+        layouts,
+      },
+    })
+  );
 
-  const handleAddLayoutElement = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+  const handleAddLayoutElement = (
+    layoutPath: string,
+    elementType: "header" | "footer" | "sidebar-left" | "sidebar-right"
+  ) => {
     const layoutData = wireframeState.wireframeData.layouts[layoutPath];
     const existingElements = layoutData?.elements || [];
-    const existingElement = existingElements.find(el => el.type === elementType);
+    const existingElement = existingElements.find(
+      (el) => el.type === elementType
+    );
 
     if (existingElement) {
       removeWireframeElement(layoutPath, "layout", existingElement.id);
@@ -1888,16 +1989,28 @@ export const WireFrame = () => {
       type: elementType,
       label: elementType.replace("-", " "),
       config: {
-        position: elementType === "header" ? "top" : elementType === "footer" ? "bottom" : elementType === "sidebar-left" ? "left" : "right",
+        position:
+          elementType === "header"
+            ? "top"
+            : elementType === "footer"
+              ? "bottom"
+              : elementType === "sidebar-left"
+                ? "left"
+                : "right",
       },
     };
     addWireframeElement(layoutPath, "layout", newElement);
   };
 
-  const handleRemoveLayoutElementByType = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+  const handleRemoveLayoutElementByType = (
+    layoutPath: string,
+    elementType: "header" | "footer" | "sidebar-left" | "sidebar-right"
+  ) => {
     const layoutData = wireframeState.wireframeData.layouts[layoutPath];
     const existingElements = layoutData?.elements || [];
-    const existingElement = existingElements.find(el => el.type === elementType);
+    const existingElement = existingElements.find(
+      (el) => el.type === elementType
+    );
 
     if (existingElement) {
       removeWireframeElement(layoutPath, "layout", existingElement.id);
@@ -1933,10 +2046,12 @@ export const WireFrame = () => {
       const layoutData = wireframeState.wireframeData.layouts[layoutPath];
       const elements = layoutData?.elements || [];
 
-      const headers = elements.filter(el => el.type === "header");
-      const footers = elements.filter(el => el.type === "footer");
-      const leftSidebars = elements.filter(el => el.type === "sidebar-left");
-      const rightSidebars = elements.filter(el => el.type === "sidebar-right");
+      const headers = elements.filter((el) => el.type === "header");
+      const footers = elements.filter((el) => el.type === "footer");
+      const leftSidebars = elements.filter((el) => el.type === "sidebar-left");
+      const rightSidebars = elements.filter(
+        (el) => el.type === "sidebar-right"
+      );
 
       const hasHeader = headers.length > 0;
       const hasFooter = footers.length > 0;
@@ -1954,53 +2069,41 @@ export const WireFrame = () => {
           <LayoutInsertionButtons
             layoutPath={layoutPath}
             onAddElement={(type) => handleAddLayoutElement(layoutPath, type)}
-            onRemoveElement={(type) => handleRemoveLayoutElementByType(layoutPath, type)}
+            onRemoveElement={(type) =>
+              handleRemoveLayoutElementByType(layoutPath, type)
+            }
             hasHeader={hasHeader}
             hasFooter={hasFooter}
             hasLeftSidebar={hasLeftSidebar}
             hasRightSidebar={hasRightSidebar}
           />
 
-          {headers.map(el => (
-            <WireframeElementComponent
-              key={el.id}
-              element={el}
-            />
+          {headers.map((el) => (
+            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
           ))}
 
           <div className="flex-1 flex gap-2">
             {leftSidebars.length > 0 && (
               <div className="flex flex-col gap-2">
-                {leftSidebars.map(el => (
-                  <WireframeElementComponent
-                    key={el.id}
-                    element={el}
-                  />
+                {leftSidebars.map((el) => (
+                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
               </div>
             )}
 
-            <div className="flex-1">
-              {content}
-            </div>
+            <div className="flex-1">{content}</div>
 
             {rightSidebars.length > 0 && (
               <div className="flex flex-col gap-2">
-                {rightSidebars.map(el => (
-                  <WireframeElementComponent
-                    key={el.id}
-                    element={el}
-                  />
+                {rightSidebars.map((el) => (
+                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
               </div>
             )}
           </div>
 
-          {footers.map(el => (
-            <WireframeElementComponent
-              key={el.id}
-              element={el}
-            />
+          {footers.map((el) => (
+            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
           ))}
         </div>
       );
@@ -2010,7 +2113,7 @@ export const WireFrame = () => {
   };
 
   return (
-    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[400px] flex flex-col">
+    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[calc(100vh-200px)] flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
           Layout Wireframe {currentPage && `- ${currentPage}`}
@@ -2154,7 +2257,7 @@ export const AppStructure = () => {
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
   return (
-    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[400px] flex flex-col">
+    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[calc(100vh-200px)] flex flex-col">
       <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
         App Directory Structure
       </h3>

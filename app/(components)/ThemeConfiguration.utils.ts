@@ -77,116 +77,6 @@ const oklchToHex = (oklch: string): string => {
   return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 };
 
-const parseThemeBlock = (block: string): {
-  colors: Partial<ThemeColors>;
-  typography: Partial<ThemeTypography>;
-  other: Partial<ThemeOther>;
-} => {
-  const colors: Partial<ThemeColors> = {};
-  const typography: Partial<ThemeTypography> = {};
-  const other: any = {
-    shadow: {}
-  };
-
-  const lines = block.split("\n");
-
-  for (const line of lines) {
-    const colorMatch = line.match(/--([a-z-]+):\s*oklch\([^)]+\);/);
-    if (colorMatch) {
-      const [, varName, value] = line.match(/--([a-z-]+):\s*(oklch\([^)]+\));/) || [];
-      if (varName && value) {
-        const hsl = oklchToHsl(value);
-        const camelCase = varName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-
-        if (varName === "sidebar") {
-          colors.sidebarBackground = hsl;
-        } else {
-          (colors as any)[camelCase] = hsl;
-        }
-      }
-    }
-
-    if (line.includes("--font-sans:")) {
-      let fontValue = line.replace(/.*--font-sans:\s*/, "").trim();
-      let currentIndex = lines.indexOf(line);
-      while (!fontValue.includes(";") && currentIndex < lines.length - 1) {
-        currentIndex++;
-        fontValue += " " + lines[currentIndex].trim();
-      }
-      fontValue = fontValue.replace(/;$/, "").trim();
-      typography.fontSans = fontValue;
-    }
-    if (line.includes("--font-serif:")) {
-      let fontValue = line.replace(/.*--font-serif:\s*/, "").trim();
-      let currentIndex = lines.indexOf(line);
-      while (!fontValue.includes(";") && currentIndex < lines.length - 1) {
-        currentIndex++;
-        fontValue += " " + lines[currentIndex].trim();
-      }
-      fontValue = fontValue.replace(/;$/, "").trim();
-      typography.fontSerif = fontValue;
-    }
-    if (line.includes("--font-mono:")) {
-      let fontValue = line.replace(/.*--font-mono:\s*/, "").trim();
-      let currentIndex = lines.indexOf(line);
-      while (!fontValue.includes(";") && currentIndex < lines.length - 1) {
-        currentIndex++;
-        fontValue += " " + lines[currentIndex].trim();
-      }
-      fontValue = fontValue.replace(/;$/, "").trim();
-      typography.fontMono = fontValue;
-    }
-
-    if (line.includes("--radius:")) {
-      const match = line.match(/--radius:\s*([0-9.]+)rem;/);
-      if (match) other.radius = parseFloat(match[1]);
-    }
-    if (line.includes("--spacing:")) {
-      const match = line.match(/--spacing:\s*([0-9.]+)rem;/);
-      if (match) other.spacing = parseFloat(match[1]);
-    }
-    if (line.includes("--tracking-normal:")) {
-      const match = line.match(/--tracking-normal:\s*(-?[0-9.]+)em;/);
-      if (match) typography.letterSpacing = parseFloat(match[1]);
-    }
-
-    if (line.includes("--shadow-x:")) {
-      const match = line.match(/--shadow-x:\s*(-?[0-9.]+)(px)?;/);
-      if (match) other.shadow!.offsetX = parseFloat(match[1]);
-    }
-    if (line.includes("--shadow-y:")) {
-      const match = line.match(/--shadow-y:\s*(-?[0-9.]+)(px)?;/);
-      if (match) other.shadow!.offsetY = parseFloat(match[1]);
-    }
-    if (line.includes("--shadow-blur:")) {
-      const match = line.match(/--shadow-blur:\s*([0-9.]+)(px)?;/);
-      if (match) other.shadow!.blurRadius = parseFloat(match[1]);
-    }
-    if (line.includes("--shadow-spread:")) {
-      const match = line.match(/--shadow-spread:\s*(-?[0-9.]+)(px)?;/);
-      if (match) other.shadow!.spread = parseFloat(match[1]);
-    }
-    if (line.includes("--shadow-opacity:")) {
-      const match = line.match(/--shadow-opacity:\s*([0-9.]+);/);
-      if (match) other.shadow!.opacity = parseFloat(match[1]);
-    }
-    if (line.includes("--shadow-color:")) {
-      const hslMatch = line.match(/--shadow-color:\s*hsl\(([^)]+)\);/);
-      const oklchMatch = line.match(/--shadow-color:\s*(oklch\([^)]+\));/);
-      if (hslMatch) {
-        other.shadow!.color = hslMatch[1];
-      } else if (oklchMatch) {
-        other.shadow!.color = oklchToHsl(oklchMatch[1]);
-      }
-    }
-  }
-
-  other.hueShift = 0;
-  other.saturationMultiplier = 1;
-  other.lightnessMultiplier = 1;
-
-  return { colors, typography, other };
-};
 
 const defaultLightColors: ThemeColors = {
   primary: "222.2 47.4% 11.2%",
@@ -259,9 +149,9 @@ const defaultDarkColors: ThemeColors = {
 };
 
 const defaultTypography: ThemeTypography = {
-  fontSans: "Inter, system-ui, sans-serif",
+  fontSans: "var(--font-inter)",
   fontSerif: "Georgia, serif",
-  fontMono: "Fira Code, monospace",
+  fontMono: "var(--font-fira-code)",
   letterSpacing: 0,
 };
 
@@ -270,7 +160,7 @@ const defaultOther: ThemeOther = {
   saturationMultiplier: 1,
   lightnessMultiplier: 1,
   radius: 0.5,
-  spacing: 1,
+  spacing: 0.25,
   shadow: {
     color: "0 0% 0%",
     opacity: 0.1,
@@ -281,18 +171,126 @@ const defaultOther: ThemeOther = {
   },
 };
 
-export const parseThemesFromCSS = (): ParsedTheme[] => {
-  const cssPath = path.join(process.cwd(), "public", "data", "css", "ThemeTemplates.css");
-  const cssContent = fs.readFileSync(cssPath, "utf-8");
+const normalizeFontValue = (fontValue: string): string => {
+  const fontMap: Record<string, string> = {
+    "Inter, sans-serif": "var(--font-inter)",
+    "Roboto, sans-serif": "var(--font-roboto)",
+    "Open Sans, sans-serif": "var(--font-open-sans)",
+    "Lato, sans-serif": "var(--font-lato)",
+    "Montserrat, sans-serif": "var(--font-montserrat)",
+    "Poppins, sans-serif": "var(--font-poppins)",
+    "Source Sans 3, sans-serif": "var(--font-source-sans)",
+    "Raleway, sans-serif": "var(--font-raleway)",
+    "DM Sans, sans-serif": "var(--font-dm-sans)",
+    "Plus Jakarta Sans, sans-serif": "var(--font-plus-jakarta)",
+    "Outfit, sans-serif": "var(--font-outfit)",
+    "Quicksand, sans-serif": "var(--font-quicksand)",
+    "Oxanium, sans-serif": "var(--font-oxanium)",
+    '"Oxanium", sans-serif': "var(--font-oxanium)",
+    "Architects Daughter, sans-serif": "var(--font-architects-daughter)",
+    "Geist, sans-serif": "system-ui, sans-serif",
+    "Merriweather, serif": "var(--font-merriweather)",
+    "Playfair Display, serif": "var(--font-playfair)",
+    "Lora, serif": "var(--font-lora)",
+    '"Lora", Georgia, serif': "var(--font-lora)",
+    "PT Serif, serif": "var(--font-pt-serif)",
+    "Crimson Text, serif": "var(--font-crimson)",
+    "Libre Baskerville, serif": "var(--font-libre-baskerville)",
+    "Source Serif 4, serif": "Georgia, serif",
+    "Source Code Pro, monospace": "var(--font-source-code)",
+    '"Source Code Pro", monospace': "var(--font-source-code)",
+    "JetBrains Mono, monospace": "var(--font-jetbrains)",
+    "Fira Code, monospace": "var(--font-fira-code)",
+    '"Fira Code", "Courier New", monospace': "var(--font-fira-code)",
+    '"Fira Code", monospace': "var(--font-fira-code)",
+    "IBM Plex Mono, monospace": "var(--font-ibm-plex)",
+    "Space Mono, monospace": "var(--font-space-mono)",
+    "Roboto Mono, monospace": "var(--font-roboto-mono)",
+    "Ubuntu Mono, monospace": "var(--font-ubuntu-mono)",
+    "Geist Mono, monospace": "var(--font-geist-mono)",
+    "Geist Mono, ui-monospace, monospace": "var(--font-geist-mono)",
+    "Georgia, serif": "Georgia, serif",
+    "Menlo, monospace": "Menlo, monospace",
+    '"Courier New", Courier, monospace': "'Courier New', Courier, monospace",
+    "Courier New, monospace": "'Courier New', Courier, monospace",
+    "monospace": "monospace",
+    "serif": "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
+    'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif': "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
+  };
 
-  const themeRegex = /\/\*\s*(.+?)\s*\*\/\s*\n\n:root\s*\{([\s\S]+?)\}\s*\n\n\.dark\s*\{([\s\S]+?)\}/g;
-  const matches = Array.from(cssContent.matchAll(themeRegex));
+  return fontMap[fontValue] || fontValue;
+};
 
-  const themes: ParsedTheme[] = matches.map((match) => {
-    const [, name, lightBlock, darkBlock] = match;
+const parseThemeObject = (themeObj: Record<string, string>): {
+  colors: Partial<ThemeColors>;
+  typography: Partial<ThemeTypography>;
+  other: Partial<ThemeOther>;
+} => {
+  const colors: Partial<ThemeColors> = {};
+  const typography: Partial<ThemeTypography> = {};
+  const other: any = { shadow: {} };
 
-    const lightParsed = parseThemeBlock(lightBlock);
-    const darkParsed = parseThemeBlock(darkBlock);
+  for (const [key, value] of Object.entries(themeObj)) {
+    if (value.startsWith("oklch(")) {
+      const hsl = oklchToHsl(value);
+      const varName = key.replace(/^--/, "");
+      const camelCase = varName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+
+      if (varName === "sidebar") {
+        colors.sidebarBackground = hsl;
+      } else if (varName.startsWith("shadow-color")) {
+        other.shadow.color = hsl;
+      } else {
+        (colors as any)[camelCase] = hsl;
+      }
+    } else if (value.startsWith("hsl(")) {
+      const hslMatch = value.match(/hsl\(([^)]+)\)/);
+      if (hslMatch) {
+        const varName = key.replace(/^--/, "");
+        if (varName === "shadow-color") {
+          other.shadow.color = hslMatch[1];
+        }
+      }
+    } else if (key === "--font-sans") {
+      typography.fontSans = normalizeFontValue(value);
+    } else if (key === "--font-serif") {
+      typography.fontSerif = normalizeFontValue(value);
+    } else if (key === "--font-mono") {
+      typography.fontMono = normalizeFontValue(value);
+    } else if (key === "--tracking-normal") {
+      typography.letterSpacing = parseFloat(value.replace("em", ""));
+    } else if (key === "--radius") {
+      other.radius = parseFloat(value.replace("rem", ""));
+    } else if (key === "--spacing") {
+      other.spacing = parseFloat(value.replace("rem", ""));
+    } else if (key === "--shadow-x") {
+      other.shadow.offsetX = parseFloat(value.replace("px", ""));
+    } else if (key === "--shadow-y") {
+      other.shadow.offsetY = parseFloat(value.replace("px", ""));
+    } else if (key === "--shadow-blur") {
+      other.shadow.blurRadius = parseFloat(value.replace("px", ""));
+    } else if (key === "--shadow-spread") {
+      other.shadow.spread = parseFloat(value.replace("px", ""));
+    } else if (key === "--shadow-opacity") {
+      other.shadow.opacity = parseFloat(value);
+    }
+  }
+
+  other.hueShift = 0;
+  other.saturationMultiplier = 1;
+  other.lightnessMultiplier = 1;
+
+  return { colors, typography, other };
+};
+
+export const parseThemesFromJSON = (): ParsedTheme[] => {
+  const jsonPath = path.join(process.cwd(), "public", "data", "themes.json");
+  const jsonContent = fs.readFileSync(jsonPath, "utf-8");
+  const data = JSON.parse(jsonContent);
+
+  const themes: ParsedTheme[] = data.themes.map((theme: any) => {
+    const lightParsed = parseThemeObject(theme.light);
+    const darkParsed = parseThemeObject(theme.dark);
 
     const lightColors = sanitizeThemeColors({ ...defaultLightColors, ...lightParsed.colors });
     const darkColors = sanitizeThemeColors({ ...defaultDarkColors, ...darkParsed.colors });
@@ -311,20 +309,15 @@ export const parseThemesFromCSS = (): ParsedTheme[] => {
       shadow: { ...defaultOther.shadow, ...darkParsed.other.shadow }
     });
 
-    const primaryMatch = lightBlock.match(/--primary:\s*(oklch\([^)]+\));/);
-    const secondaryMatch = lightBlock.match(/--secondary:\s*(oklch\([^)]+\));/);
-    const accentMatch = lightBlock.match(/--accent:\s*(oklch\([^)]+\));/);
-    const backgroundMatch = lightBlock.match(/--background:\s*(oklch\([^)]+\));/);
-
     const previewColors = [
-      primaryMatch ? oklchToHex(primaryMatch[1]) : "#09090b",
-      secondaryMatch ? oklchToHex(secondaryMatch[1]) : "#fafafa",
-      accentMatch ? oklchToHex(accentMatch[1]) : "#f4f4f5",
-      backgroundMatch ? oklchToHex(backgroundMatch[1]) : "#18181b",
+      theme.light["--primary"] ? oklchToHex(theme.light["--primary"]) : "#09090b",
+      theme.light["--secondary"] ? oklchToHex(theme.light["--secondary"]) : "#fafafa",
+      theme.light["--accent"] ? oklchToHex(theme.light["--accent"]) : "#f4f4f5",
+      theme.light["--background"] ? oklchToHex(theme.light["--background"]) : "#18181b",
     ];
 
     return {
-      name: name.trim(),
+      name: theme.name,
       light: {
         colors: lightColors,
         typography: lightTypography,

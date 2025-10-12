@@ -30,6 +30,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
 import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
+import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 
 const generateNavigationFromMarkdownData = (
   nodes: MarkdownNode[]
@@ -382,42 +383,23 @@ const Sidebar = () => {
               </Popover>
               <div className="relative w-full">
                 {showDownloadHelp && (
-                  <Popover open={downloadHelpOpen} onOpenChange={(open) => {
-                    setDownloadHelpOpen(open);
-                    if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
-                      markStepComplete(WalkthroughStep.DOWNLOAD);
-                    } else if (open && !isStepOpen(WalkthroughStep.DOWNLOAD)) {
-                      setStepOpen(WalkthroughStep.DOWNLOAD, true);
-                    }
-                  }}>
-                    <PopoverTrigger asChild>
-                      <div className="absolute -top-2 -right-2 z-10">
-                        <div className="relative inline-block">
-                          {!isStepOpen(WalkthroughStep.DOWNLOAD) && (
-                            <div className="absolute inset-0 flex items-center justify-center z-0">
-                              <Info className="h-3 w-3 text-blue-500 animate-ping" />
-                            </div>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-5 w-5 bg-transparent hover:bg-transparent relative z-10"
-                            style={{ borderRadius: "3px" }}
-                          >
-                            <Info className="h-3 w-3 text-blue-500" />
-                          </Button>
-                        </div>
-                      </div>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 bg-black border-gray-600 text-white">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold">Download Your Roadmap</h4>
-                        <p className="text-sm">
-                          Click here to download all your customized roadmap documents as a ZIP file. You can download at any time to save your progress.
-                        </p>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                  <div className="absolute -top-2 -right-2 z-10">
+                    <WalkthroughHelper
+                      isOpen={downloadHelpOpen}
+                      onOpenChange={(open) => {
+                        setDownloadHelpOpen(open);
+                        if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
+                          markStepComplete(WalkthroughStep.DOWNLOAD);
+                        } else if (open && !isStepOpen(WalkthroughStep.DOWNLOAD)) {
+                          setStepOpen(WalkthroughStep.DOWNLOAD, true);
+                        }
+                      }}
+                      showAnimation={!isStepOpen(WalkthroughStep.DOWNLOAD)}
+                      title="Download Your Roadmap"
+                      description="Click here to download all your customized roadmap documents as a ZIP file. You can download at any time to save your progress."
+                      iconSize="sm"
+                    />
+                  </div>
                 )}
                 <Button
                   variant="outline"

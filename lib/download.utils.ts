@@ -82,30 +82,106 @@ export const generateRoutesFromFileSystem = (
   return routes;
 };
 
+const getWireframeData = (): any => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const storeState = localStorage.getItem("editor-storage");
+    if (!storeState) {
+      return null;
+    }
+
+    const parsed = JSON.parse(storeState);
+    return parsed?.state?.wireframeState?.wireframeData;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const generateAppStructureAscii = (
   appStructure: FileSystemEntry[]
 ): string => {
   const lines: string[] = ["```txt", "App Directory Structure:", ""];
+  const wireframeData = getWireframeData();
+
+  const getLayoutElements = (layoutPath: string): string => {
+    if (!wireframeData || !wireframeData.layouts) {
+      return "";
+    }
+
+    const layoutData = wireframeData.layouts[layoutPath];
+    if (!layoutData || !layoutData.elements || layoutData.elements.length === 0) {
+      return "";
+    }
+
+    const elementLabels = layoutData.elements
+      .map((el: any) => {
+        switch (el.type) {
+          case "header":
+            return "header";
+          case "footer":
+            return "footer";
+          case "sidebar-left":
+            return "left sidebar";
+          case "sidebar-right":
+            return "right sidebar";
+          default:
+            return el.type;
+        }
+      })
+      .join(", ");
+
+    return ` ──► [ ${elementLabels} ]`;
+  };
 
   function renderTree(
     entries: FileSystemEntry[],
     parentPrefix = "",
-    isLast = true
+    currentPath = "",
+    isRoot = true,
+    isInsideApp = false
   ): void {
     entries.forEach((entry, index) => {
       const isLastEntry = index === entries.length - 1;
       const connector = isLastEntry ? "└── " : "├── ";
-      const prefix = parentPrefix + (isLast ? "    " : "│   ");
+      const childPrefix = parentPrefix + (isLastEntry ? "    " : "│   ");
 
+      const isLayoutFile = entry.type === "file" && entry.name === "layout.tsx";
+      let layoutAnnotation = "";
+
+      if (isLayoutFile && wireframeData && isInsideApp) {
+        const layoutPath = currentPath || "/";
+        layoutAnnotation = getLayoutElements(layoutPath);
+      }
+
+      const dirSuffix = entry.type === "directory" ? "/" : "";
       lines.push(
-        parentPrefix +
-          connector +
-          entry.name +
-          (entry.type === "directory" ? "/" : "")
+        parentPrefix + connector + entry.name + dirSuffix + layoutAnnotation
       );
 
       if (entry.children && entry.children.length > 0) {
-        renderTree(entry.children, prefix, isLastEntry);
+        const isAppDir = entry.name === "app" && isRoot;
+        const isRouteGroup = entry.name.startsWith("(") && entry.name.endsWith(")");
+
+        const newPath = isAppDir
+          ? "/"
+          : isRouteGroup
+          ? currentPath
+          : currentPath === "/"
+          ? `/${entry.name}`
+          : currentPath
+          ? `${currentPath}/${entry.name}`
+          : `/${entry.name}`;
+
+        renderTree(
+          entry.children,
+          childPrefix,
+          newPath,
+          false,
+          isAppDir || isInsideApp
+        );
       }
     });
   }
@@ -341,6 +417,216 @@ const generateInitialConfigurationContent = (
   return lines.join("\n");
 };
 
+const hslToOklch = (hsl: string): string => {
+  const match = hsl.match(/([0-9.]+)\s+([0-9.]+)%\s+([0-9.]+)%/);
+  if (!match) return "oklch(0 0 0)";
+
+  const [, hStr, sStr, lStr] = match;
+  const h = parseFloat(hStr);
+  const s = parseFloat(sStr) / 100;
+  const l = parseFloat(lStr) / 100;
+
+  const a = s * Math.cos((h * Math.PI) / 180);
+  const b = s * Math.sin((h * Math.PI) / 180);
+
+  const L = l;
+  const C = Math.sqrt(a * a + b * b);
+  const H = h;
+
+  return `oklch(${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(3)})`;
+};
+
+const generateThemeCss = (): string => {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  try {
+    const themeStoreState = localStorage.getItem("theme-storage");
+    if (!themeStoreState) {
+      return "";
+    }
+
+    const parsed = JSON.parse(themeStoreState);
+    const theme = parsed?.state?.theme;
+    if (!theme) {
+      return "";
+    }
+
+    const lightColors = theme.colors.light;
+    const darkColors = theme.colors.dark;
+    const lightTypography = theme.typography.light;
+    const darkTypography = theme.typography.dark;
+    const lightOther = theme.other.light;
+    const darkOther = theme.other.dark;
+
+    const colorKeys = [
+      { key: "background", css: "--background" },
+      { key: "foreground", css: "--foreground" },
+      { key: "card", css: "--card" },
+      { key: "cardForeground", css: "--card-foreground" },
+      { key: "popover", css: "--popover" },
+      { key: "popoverForeground", css: "--popover-foreground" },
+      { key: "primary", css: "--primary" },
+      { key: "primaryForeground", css: "--primary-foreground" },
+      { key: "secondary", css: "--secondary" },
+      { key: "secondaryForeground", css: "--secondary-foreground" },
+      { key: "muted", css: "--muted" },
+      { key: "mutedForeground", css: "--muted-foreground" },
+      { key: "accent", css: "--accent" },
+      { key: "accentForeground", css: "--accent-foreground" },
+      { key: "destructive", css: "--destructive" },
+      { key: "destructiveForeground", css: "--destructive-foreground" },
+      { key: "border", css: "--border" },
+      { key: "input", css: "--input" },
+      { key: "ring", css: "--ring" },
+      { key: "chart1", css: "--chart-1" },
+      { key: "chart2", css: "--chart-2" },
+      { key: "chart3", css: "--chart-3" },
+      { key: "chart4", css: "--chart-4" },
+      { key: "chart5", css: "--chart-5" },
+      { key: "sidebarBackground", css: "--sidebar" },
+      { key: "sidebarForeground", css: "--sidebar-foreground" },
+      { key: "sidebarPrimary", css: "--sidebar-primary" },
+      { key: "sidebarPrimaryForeground", css: "--sidebar-primary-foreground" },
+      { key: "sidebarAccent", css: "--sidebar-accent" },
+      { key: "sidebarAccentForeground", css: "--sidebar-accent-foreground" },
+      { key: "sidebarBorder", css: "--sidebar-border" },
+      { key: "sidebarRing", css: "--sidebar-ring" },
+    ];
+
+    const lines: string[] = ["```css", "", ":root {"];
+
+    colorKeys.forEach(({ key, css }) => {
+      const hsl = (lightColors as any)[key];
+      if (hsl) {
+        lines.push(`  ${css}: ${hslToOklch(hsl)};`);
+      }
+    });
+
+    lines.push(`  --font-sans:`);
+    lines.push(`    ${lightTypography.fontSans};`);
+    lines.push(`  --font-serif: ${lightTypography.fontSerif};`);
+    lines.push(`  --font-mono:`);
+    lines.push(`    ${lightTypography.fontMono};`);
+    lines.push(`  --radius: ${lightOther.radius}rem;`);
+    lines.push(`  --shadow-x: ${lightOther.shadow.offsetX};`);
+    lines.push(`  --shadow-y: ${lightOther.shadow.offsetY}px;`);
+    lines.push(`  --shadow-blur: ${lightOther.shadow.blurRadius}px;`);
+    lines.push(`  --shadow-spread: ${lightOther.shadow.spread}px;`);
+    lines.push(`  --shadow-opacity: ${lightOther.shadow.opacity};`);
+    lines.push(`  --shadow-color: ${hslToOklch(lightOther.shadow.color)};`);
+    lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-sm:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-md:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-lg:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-xl:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
+    lines.push(`  --tracking-normal: ${lightTypography.letterSpacing}em;`);
+    lines.push(`  --spacing: ${lightOther.spacing}rem;`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.dark {`);
+
+    colorKeys.forEach(({ key, css }) => {
+      const hsl = (darkColors as any)[key];
+      if (hsl) {
+        lines.push(`  ${css}: ${hslToOklch(hsl)};`);
+      }
+    });
+
+    lines.push(`  --font-sans:`);
+    lines.push(`    ${darkTypography.fontSans};`);
+    lines.push(`  --font-serif: ${darkTypography.fontSerif};`);
+    lines.push(`  --font-mono:`);
+    lines.push(`    ${darkTypography.fontMono};`);
+    lines.push(`  --radius: ${darkOther.radius}rem;`);
+    lines.push(`  --shadow-x: ${darkOther.shadow.offsetX};`);
+    lines.push(`  --shadow-y: ${darkOther.shadow.offsetY}px;`);
+    lines.push(`  --shadow-blur: ${darkOther.shadow.blurRadius}px;`);
+    lines.push(`  --shadow-spread: ${darkOther.shadow.spread}px;`);
+    lines.push(`  --shadow-opacity: ${darkOther.shadow.opacity};`);
+    lines.push(`  --shadow-color: ${hslToOklch(darkOther.shadow.color)};`);
+    lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-sm:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-md:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-lg:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-xl:`);
+    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`@theme inline {`);
+    lines.push(`  --color-background: var(--background);`);
+    lines.push(`  --color-foreground: var(--foreground);`);
+    lines.push(`  --color-card: var(--card);`);
+    lines.push(`  --color-card-foreground: var(--card-foreground);`);
+    lines.push(`  --color-popover: var(--popover);`);
+    lines.push(`  --color-popover-foreground: var(--popover-foreground);`);
+    lines.push(`  --color-primary: var(--primary);`);
+    lines.push(`  --color-primary-foreground: var(--primary-foreground);`);
+    lines.push(`  --color-secondary: var(--secondary);`);
+    lines.push(`  --color-secondary-foreground: var(--secondary-foreground);`);
+    lines.push(`  --color-muted: var(--muted);`);
+    lines.push(`  --color-muted-foreground: var(--muted-foreground);`);
+    lines.push(`  --color-accent: var(--accent);`);
+    lines.push(`  --color-accent-foreground: var(--accent-foreground);`);
+    lines.push(`  --color-destructive: var(--destructive);`);
+    lines.push(`  --color-destructive-foreground: var(--destructive-foreground);`);
+    lines.push(`  --color-border: var(--border);`);
+    lines.push(`  --color-input: var(--input);`);
+    lines.push(`  --color-ring: var(--ring);`);
+    lines.push(`  --color-chart-1: var(--chart-1);`);
+    lines.push(`  --color-chart-2: var(--chart-2);`);
+    lines.push(`  --color-chart-3: var(--chart-3);`);
+    lines.push(`  --color-chart-4: var(--chart-4);`);
+    lines.push(`  --color-chart-5: var(--chart-5);`);
+    lines.push(`  --color-sidebar: var(--sidebar);`);
+    lines.push(`  --color-sidebar-foreground: var(--sidebar-foreground);`);
+    lines.push(`  --color-sidebar-primary: var(--sidebar-primary);`);
+    lines.push(`  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);`);
+    lines.push(`  --color-sidebar-accent: var(--sidebar-accent);`);
+    lines.push(`  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);`);
+    lines.push(`  --color-sidebar-border: var(--sidebar-border);`);
+    lines.push(`  --color-sidebar-ring: var(--sidebar-ring);`);
+    lines.push(``);
+    lines.push(`  --font-sans: var(--font-sans);`);
+    lines.push(`  --font-mono: var(--font-mono);`);
+    lines.push(`  --font-serif: var(--font-serif);`);
+    lines.push(``);
+    lines.push(`  --radius-sm: calc(var(--radius) - 4px);`);
+    lines.push(`  --radius-md: calc(var(--radius) - 2px);`);
+    lines.push(`  --radius-lg: var(--radius);`);
+    lines.push(`  --radius-xl: calc(var(--radius) + 4px);`);
+    lines.push(``);
+    lines.push(`  --shadow-2xs: var(--shadow-2xs);`);
+    lines.push(`  --shadow-xs: var(--shadow-xs);`);
+    lines.push(`  --shadow-sm: var(--shadow-sm);`);
+    lines.push(`  --shadow: var(--shadow);`);
+    lines.push(`  --shadow-md: var(--shadow-md);`);
+    lines.push(`  --shadow-lg: var(--shadow-lg);`);
+    lines.push(`  --shadow-xl: var(--shadow-xl);`);
+    lines.push(`  --shadow-2xl: var(--shadow-2xl);`);
+    lines.push(`}`);
+    lines.push("```");
+
+    return lines.join("\n");
+  } catch (error) {
+    return "";
+  }
+};
+
 export const processContent = (
   content: string,
   filePath: string,
@@ -395,6 +681,24 @@ export const processContent = (
         "\n\n" +
         generateRouteMapAscii(appStructure)
       );
+    }
+  );
+
+  processedContent = processedContent.replace(
+    /<!-- component-LayoutAndStructure -->/g,
+    () => {
+      return (
+        generateAppStructureAscii(appStructure) +
+        "\n\n" +
+        generateRouteMapAscii(appStructure)
+      );
+    }
+  );
+
+  processedContent = processedContent.replace(
+    /<!-- component-ThemeConfiguration -->/g,
+    () => {
+      return generateThemeCss();
     }
   );
 

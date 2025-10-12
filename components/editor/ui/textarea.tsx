@@ -1,30 +1,23 @@
-"use client";
-
 import * as React from "react"
 
 import { cn } from "@/lib/tailwind.utils"
-import { useTheme } from "@/app/(components)/ThemeConfiguration.hooks"
 
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,
   React.ComponentProps<"textarea">
 >(({ className, style, ...props }, ref) => {
-  const theme = useTheme()
-
   return (
     <textarea
       className={cn(
-        "flex min-h-[60px] w-full border bg-transparent text-base focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "flex min-h-[60px] w-full border-2 bg-transparent px-3 py-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
         className
       )}
       style={{
-        borderRadius: theme.radiusRem,
-        borderColor: theme.hsl(theme.colors.input),
-        paddingLeft: `${theme.other.spacing * 0.75}rem`,
-        paddingRight: `${theme.other.spacing * 0.75}rem`,
-        paddingTop: `${theme.other.spacing * 0.5}rem`,
-        paddingBottom: `${theme.other.spacing * 0.5}rem`,
-        boxShadow: `${theme.other.shadow.offsetX}px ${theme.other.shadow.offsetY}px ${theme.other.shadow.blurRadius}px ${theme.other.shadow.spread}px hsl(${theme.other.shadow.color} / ${theme.other.shadow.opacity * 0.5})`,
+        borderRadius: "var(--theme-radius)",
+        borderColor: "var(--theme-input)",
+        color: "var(--theme-foreground)",
+        boxShadow: "var(--theme-shadow)",
+        padding: "calc(var(--theme-spacing) * 2)",
         ...style
       }}
       ref={ref}

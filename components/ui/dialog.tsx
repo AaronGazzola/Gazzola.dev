@@ -5,8 +5,8 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "@/lib/tailwind.utils";
 import { useThemeStore } from "@/app/layout.stores";
+import { cn } from "@/lib/tailwind.utils";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -65,15 +65,15 @@ const DialogContent = React.forwardRef<
         {...props}
       >
         <div
-          className="bg-black border-transparent p-5 px-6"
+          className="bg-black border-transparent p-5 px-6 relative"
           style={{
             borderRadius: ".5rem",
           }}
         >
           {children}
         </div>
-        <DialogPrimitive.Close className="fixed right-12 top-8 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-          <X className="h-4 w-4" />
+        <DialogPrimitive.Close className="fixed right-3 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+          <X className="h-5 w-5" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>

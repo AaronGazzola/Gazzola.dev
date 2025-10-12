@@ -19,13 +19,7 @@ import {
 import { useEditorStore } from "../layout.stores";
 import { useWalkthroughStore } from "../layout.walkthrough.stores";
 import { WalkthroughStep } from "../layout.walkthrough.types";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Info } from "lucide-react";
+import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 
 export interface SerializedPlaceholderNode
   extends Spread<
@@ -267,8 +261,8 @@ function PlaceholderNodeComponent({
         </span>
       )}
       {showPlaceholderHelp && (
-        <Popover
-          open={popoverOpen}
+        <WalkthroughHelper
+          isOpen={popoverOpen}
           onOpenChange={(open) => {
             setPopoverOpen(open);
             if (!open && isStepOpen(WalkthroughStep.PLACEHOLDER)) {
@@ -277,35 +271,12 @@ function PlaceholderNodeComponent({
               setStepOpen(WalkthroughStep.PLACEHOLDER, true);
             }
           }}
-        >
-          <PopoverTrigger asChild>
-            <div className="relative inline-block ml-1 align-middle">
-              {!isStepOpen(WalkthroughStep.PLACEHOLDER) && (
-                <div className="absolute inset-0 flex items-center justify-center z-0">
-                  <Info className="h-3 w-3 text-blue-500 animate-ping" />
-                </div>
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-5 w-5 bg-transparent hover:bg-transparent relative z-10 inline-flex items-center justify-center"
-                style={{ borderRadius: "3px" }}
-              >
-                <Info className="h-3 w-3 text-blue-500" />
-              </Button>
-            </div>
-          </PopoverTrigger>
-          <PopoverContent className="w-80">
-            <div className="space-y-2">
-              <h4 className="font-semibold">Placeholder Values</h4>
-              <p className="text-sm">
-                Click on any placeholder like this to edit it. When you change
-                a placeholder value, it will automatically update everywhere it
-                appears throughout your roadmap documents.
-              </p>
-            </div>
-          </PopoverContent>
-        </Popover>
+          showAnimation={!isStepOpen(WalkthroughStep.PLACEHOLDER)}
+          title="Placeholder Values"
+          description="Click on any placeholder like this to edit it. When you change a placeholder value, it will automatically update everywhere it appears throughout your roadmap documents."
+          iconSize="sm"
+          className="ml-1 align-middle"
+        />
       )}
     </span>
   );

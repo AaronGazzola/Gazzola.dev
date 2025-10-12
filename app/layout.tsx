@@ -19,6 +19,16 @@ import {
   firaCode,
   ibmPlexMono,
   spaceMono,
+  dmSans,
+  plusJakartaSans,
+  outfit,
+  quicksand,
+  oxanium,
+  libreBaskerville,
+  architectsDaughter,
+  robotoMono,
+  ubuntuMono,
+  geistMono,
 } from "@/styles/fonts";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
@@ -76,6 +86,16 @@ export default function RootLayout({
           firaCode.variable,
           ibmPlexMono.variable,
           spaceMono.variable,
+          dmSans.variable,
+          plusJakartaSans.variable,
+          outfit.variable,
+          quicksand.variable,
+          oxanium.variable,
+          libreBaskerville.variable,
+          architectsDaughter.variable,
+          robotoMono.variable,
+          ubuntuMono.variable,
+          geistMono.variable,
           inter.className,
           "antialiased text-gray-100 bg-black"
         )}

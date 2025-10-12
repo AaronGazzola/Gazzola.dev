@@ -29,12 +29,7 @@ import {
 import { useState } from "react";
 import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
 import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import {
   SiCypress,
   SiNextdotjs,
@@ -841,15 +836,15 @@ export const InitialConfiguration = () => {
   return (
     <TooltipProvider>
       <div
-        className="p-2 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))]"
+        style={{ padding: "calc(var(--theme-spacing) * 2)", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: "var(--theme-card)", color: "var(--theme-card-foreground)" }}
         data-walkthrough="initial-configuration"
       >
         {enabledTechnologies.length > 0 && (
-          <div className="sticky -top-6 z-50 mb-2 p-2 rounded-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <h4 className="text-base font-semibold mb-1.5 text-[hsl(var(--card-foreground))]">
+          <div style={{ position: "sticky", top: "-24px", zIndex: "50", marginBottom: "calc(var(--theme-spacing) * 1)", padding: "calc(var(--theme-spacing) * 1.5)", borderRadius: "var(--theme-radius)", backgroundColor: "var(--theme-background)", backdropFilter: "blur(8px)" }}>
+            <h4 style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1)", color: "var(--theme-card-foreground)" }}>
               Required Technologies
             </h4>
-            <div className="flex flex-wrap gap-1">
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "calc(var(--theme-spacing) * 0.5)" }}>
               {enabledTechnologies.map((tech) => {
                 const Icon = tech.icon;
                 const requiredBy = getRequiredByFeatures(tech.id);
@@ -857,15 +852,15 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold cursor-help border bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] border-[hsl(var(--border))]">
-                        <Icon className="w-4 h-4" />
+                      <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1)", padding: "calc(var(--theme-spacing) * 0.5) calc(var(--theme-spacing) * 2)", borderRadius: "9999px", fontSize: "0.75rem", fontWeight: "600", cursor: "help", border: "1px solid var(--theme-border)", backgroundColor: "var(--theme-secondary)", color: "var(--theme-secondary-foreground)", whiteSpace: "nowrap" }}>
+                        <Icon style={{ width: "12px", height: "12px" }} />
                         <span>{tech.name}</span>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <div className="max-w-48">
-                        <p className="font-medium mb-1">Required by:</p>
-                        <ul className="text-sm">
+                      <div style={{ maxWidth: "12rem" }}>
+                        <p style={{ fontWeight: "500", marginBottom: "calc(var(--theme-spacing) * 0.25)" }}>Required by:</p>
+                        <ul style={{ fontSize: "0.875rem" }}>
                           {requiredBy.map((feature, index) => (
                             <li key={index}>• {feature}</li>
                           ))}
@@ -882,7 +877,7 @@ export const InitialConfiguration = () => {
         <Accordion
           type="single"
           collapsible
-          className="space-y-1"
+          style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 0.25)" }}
           onValueChange={(value) => {
             if (value === "databaseChoice" && showConfigHelp) {
               markStepComplete(WalkthroughStep.CONFIGURATION);
@@ -961,64 +956,48 @@ export const InitialConfiguration = () => {
               <AccordionItem
                 key={question.id}
                 value={question.id}
-                className="transition-all duration-200 data-[state=open]:rounded-lg border-none data-[state=open]:bg-[hsl(var(--muted))]"
+                style={{ transition: "all 200ms", border: "none" }}
               >
                 <div
-                  className={cn(
-                    "flex items-center justify-between w-full py-1 px-2",
-                    isQuestionDisabled && "opacity-50"
-                  )}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    padding: "calc(var(--theme-spacing) * 0.25) calc(var(--theme-spacing) * 2)",
+                    opacity: isQuestionDisabled ? "0.5" : "1",
+                  }}
                 >
-                  <div className="flex-grow flex items-center gap-2">
+                  <div style={{ flexGrow: "1", display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
                     <AccordionTrigger
-                      className="hover:no-underline flex-1 justify-between mr-2 group"
+                      style={{ flex: "1", justifyContent: "space-between", marginRight: "calc(var(--theme-spacing) * 2)" }}
                       disabled={isQuestionDisabled}
                     >
-                      <div className="flex items-center gap-2">
-                        <Icon className="w-5 h-5 transition-colors duration-200 text-[hsl(var(--foreground))] group-data-[state=open]:text-[hsl(var(--primary))]" />
-                        <div className="text-left">
-                          <span className="text-lg font-semibold block text-[hsl(var(--foreground))]">
+                      <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
+                        <Icon style={{ width: "20px", height: "20px", transition: "colors 200ms", color: "var(--theme-foreground)" }} />
+                        <div style={{ textAlign: "left" }}>
+                          <span style={{ fontSize: "1.125rem", fontWeight: "600", display: "block", color: "var(--theme-foreground)" }}>
                             {question.question}
                           </span>
                         </div>
-                        <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200" />
                       </div>
                     </AccordionTrigger>
                     {question.id === "databaseChoice" && showConfigHelp && (
-                      <Popover open={configHelpOpen} onOpenChange={(open) => {
-                        setConfigHelpOpen(open);
-                        if (!open && isStepOpen(WalkthroughStep.CONFIGURATION)) {
-                          markStepComplete(WalkthroughStep.CONFIGURATION);
-                        } else if (open && !isStepOpen(WalkthroughStep.CONFIGURATION)) {
-                          setStepOpen(WalkthroughStep.CONFIGURATION, true);
-                        }
-                      }}>
-                        <div className="relative inline-block">
-                          {!isStepOpen(WalkthroughStep.CONFIGURATION) && (
-                            <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-                              <Info className="h-3 w-3 text-blue-500 animate-ping" />
-                            </div>
-                          )}
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-5 w-5 bg-transparent hover:bg-transparent relative z-10"
-                              style={{ borderRadius: "3px" }}
-                            >
-                              <Info className="h-3 w-3 text-blue-500" />
-                            </Button>
-                          </PopoverTrigger>
-                        </div>
-                        <PopoverContent className="w-80">
-                          <div className="space-y-2">
-                            <h4 className="font-semibold">Technology Selection</h4>
-                            <p className="text-sm">
-                              Select options in these questions to customize your technology stack. Your selections will automatically determine which technologies are required for your web application.
-                            </p>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                      <WalkthroughHelper
+                        isOpen={configHelpOpen}
+                        onOpenChange={(open) => {
+                          setConfigHelpOpen(open);
+                          if (!open && isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                            markStepComplete(WalkthroughStep.CONFIGURATION);
+                          } else if (open && !isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                            setStepOpen(WalkthroughStep.CONFIGURATION, true);
+                          }
+                        }}
+                        showAnimation={!isStepOpen(WalkthroughStep.CONFIGURATION)}
+                        title="Technology Selection"
+                        description="Select options in these questions to customize your technology stack. Your selections will automatically determine which technologies are required for your web application."
+                        iconSize="sm"
+                      />
                     )}
                   </div>
 
@@ -1065,9 +1044,9 @@ export const InitialConfiguration = () => {
                   )}
                 </div>
                 <AccordionContent>
-                  <div className="px-2 pb-2">
+                  <div style={{ padding: "0 calc(var(--theme-spacing) * 2) calc(var(--theme-spacing) * 2) calc(var(--theme-spacing) * 2)" }}>
                     {question.subOptions && question.subOptions.length > 0 ? (
-                      <div className="space-y-1">
+                      <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 0.25)" }}>
                         {question.subOptions.map((option) => {
                           const isSubOptionDisabled =
                             option.disabledWhen?.(initialConfiguration) ??
@@ -1075,11 +1054,13 @@ export const InitialConfiguration = () => {
                           return (
                             <label
                               key={option.id}
-                              className={cn(
-                                "flex items-start gap-2 cursor-pointer",
-                                isSubOptionDisabled &&
-                                  "opacity-50 cursor-not-allowed"
-                              )}
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-start",
+                                gap: "calc(var(--theme-spacing) * 2)",
+                                cursor: isSubOptionDisabled ? "not-allowed" : "pointer",
+                                opacity: isSubOptionDisabled ? "0.5" : "1",
+                              }}
                             >
                               {isSubOptionDisabled ? (
                                 <Tooltip>
@@ -1324,10 +1305,10 @@ export const InitialConfiguration = () => {
                                 />
                               )}
                               <div>
-                                <span className="text-base font-medium block text-[hsl(var(--foreground))]">
+                                <span className="text-base font-medium block" style={{ color: "var(--theme-foreground)" }}>
                                   {option.label}
                                 </span>
-                                <span className="text-base block mt-0.5 font-medium text-[hsl(var(--muted-foreground))]">
+                                <span className="text-base block mt-0.5 font-medium" style={{ color: "var(--theme-muted-foreground)" }}>
                                   {option.description}
                                 </span>
                                 <div className="flex flex-wrap gap-1 mt-2">

@@ -63,10 +63,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     if (variant === "outline" || (variant === "ghost" && isActive))
       return (
-        <div className="relative">
+        <div className="relative z-10">
           <div
             className={cn(
-              "group absolute -z-10",
+              "group absolute z-0",
               isActive ? "inset-0" : "-inset-[1px]"
             )}
             style={{
@@ -77,7 +77,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <Comp
             className={cn(
               buttonVariants({ variant, size, className }),
-              isActive && "bg-black/60"
+              isActive && "bg-black/60",
+              "relative z-10"
             )}
             ref={ref}
             {...props}

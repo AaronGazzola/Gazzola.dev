@@ -81,9 +81,9 @@ const defaultDarkColors: ThemeColors = {
 };
 
 const defaultTypography: ThemeTypography = {
-  fontSans: "Inter, system-ui, sans-serif",
+  fontSans: "var(--font-inter)",
   fontSerif: "Georgia, serif",
-  fontMono: "Fira Code, monospace",
+  fontMono: "var(--font-fira-code)",
   letterSpacing: 0,
 };
 
@@ -92,7 +92,7 @@ const defaultOther: ThemeOther = {
   saturationMultiplier: 1,
   lightnessMultiplier: 1,
   radius: 0.5,
-  spacing: 1,
+  spacing: 0.25,
   shadow: {
     color: "0 0% 0%",
     opacity: 0.1,
@@ -155,8 +155,8 @@ export const useThemeStore = create<ThemeState>()(
           theme: {
             ...state.theme,
             typography: {
-              ...state.theme.typography,
-              [mode]: { ...state.theme.typography[mode], ...typography },
+              light: { ...state.theme.typography.light, ...typography },
+              dark: { ...state.theme.typography.dark, ...typography },
             },
           },
         })),
@@ -165,8 +165,8 @@ export const useThemeStore = create<ThemeState>()(
           theme: {
             ...state.theme,
             other: {
-              ...state.theme.other,
-              [mode]: { ...state.theme.other[mode], ...other },
+              light: { ...state.theme.other.light, ...other },
+              dark: { ...state.theme.other.dark, ...other },
             },
           },
         })),
@@ -175,11 +175,17 @@ export const useThemeStore = create<ThemeState>()(
           theme: {
             ...state.theme,
             other: {
-              ...state.theme.other,
-              [mode]: {
-                ...state.theme.other[mode],
+              light: {
+                ...state.theme.other.light,
                 shadow: {
-                  ...state.theme.other[mode].shadow,
+                  ...state.theme.other.light.shadow,
+                  [shadowField]: value,
+                },
+              },
+              dark: {
+                ...state.theme.other.dark,
+                shadow: {
+                  ...state.theme.other.dark.shadow,
                   [shadowField]: value,
                 },
               },

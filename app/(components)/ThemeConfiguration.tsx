@@ -3,18 +3,19 @@
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { ThemeConfigurationSidebar } from "./ThemeConfiguration.sidebar";
 import { ThemeConfigurationPreview } from "./ThemeConfiguration.preview";
-import { useTheme } from "./ThemeConfiguration.hooks";
+import { useThemeCSSVariables } from "./ThemeConfiguration.cssVariables";
 
 export const ThemeConfiguration = () => {
   const { darkMode } = useEditorStore();
-  const theme = useTheme();
+  useThemeCSSVariables();
 
   return (
     <div
       className="flex h-full"
       style={{
-        backgroundColor: theme.hsl(theme.colors.background),
-        color: theme.hsl(theme.colors.foreground)
+        backgroundColor: "var(--theme-background)",
+        color: "var(--theme-foreground)",
+        fontFamily: "var(--theme-font-sans)"
       }}
     >
       <ThemeConfigurationSidebar darkMode={darkMode} />

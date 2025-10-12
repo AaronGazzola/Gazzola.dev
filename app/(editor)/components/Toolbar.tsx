@@ -1,35 +1,8 @@
 "use client";
 
-import { conditionalLog } from "@/lib/log.util";
+import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
-import {
-  Dialog as EditorDialog,
-  DialogContent as EditorDialogContent,
-  DialogDescription as EditorDialogDescription,
-  DialogFooter as EditorDialogFooter,
-  DialogHeader as EditorDialogHeader,
-  DialogTitle as EditorDialogTitle,
-  DialogTrigger as EditorDialogTrigger,
-} from "@/components/editor/ui/dialog";
-import {
-  Popover as EditorPopover,
-  PopoverContent as EditorPopoverContent,
-  PopoverTrigger as EditorPopoverTrigger,
-} from "@/components/editor/ui/popover";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Label } from "@/components/editor/ui/label";
 import { Progress } from "@/components/editor/ui/progress";
 import { Switch } from "@/components/editor/ui/switch";
 import {
@@ -38,31 +11,74 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/editor/ui/tooltip";
-import { Button } from "@/components/editor/ui/button";
-import { Label } from "@/components/editor/ui/label";
-import { cn } from "@/lib/tailwind.utils";
+import { Button as GlobalButton } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Dialog as EditorDialog,
+  DialogContent as EditorDialogContent,
+  DialogDescription as EditorDialogDescription,
+  DialogFooter as EditorDialogFooter,
+  DialogHeader as EditorDialogHeader,
+  DialogTitle as EditorDialogTitle,
+  DialogTrigger as EditorDialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover as EditorPopover,
+  PopoverContent as EditorPopoverContent,
+  PopoverTrigger as EditorPopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { WalkthroughHelper } from "@/components/WalkthroughHelper";
+import { conditionalLog } from "@/lib/log.util";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  ArrowRight,
+  BookDown,
   ChevronLeft,
   ChevronRight,
+  Cpu,
+  Database,
   Eye,
   File,
   Files,
+  FlaskConical,
   Folder,
   Info,
+  LayoutPanelTop,
   ListRestart,
+  Palette,
   RotateCcw,
   Settings,
+  User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { useContentVersionCheck } from "../layout.hooks";
+import { useThemeStore } from "../../layout.stores";
+import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { parseAndGetMarkdownDataAction } from "../layout.actions";
+import { useContentVersionCheck } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 import { useWalkthroughStore } from "../layout.walkthrough.stores";
 import { WalkthroughStep } from "../layout.walkthrough.types";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+
+const nextSteps = [
+  { icon: Cpu, title: "Tech Stack" },
+  { icon: Palette, title: "Theme" },
+  { icon: LayoutPanelTop, title: "Layout" },
+  { icon: Database, title: "Database" },
+  { icon: User, title: "User Flow" },
+  { icon: FlaskConical, title: "Tests" },
+  { icon: BookDown, title: "Download" },
+];
 
 interface ToolbarProps {
   currentContentPath: string;
@@ -90,8 +106,9 @@ const IconButton = ({
         size="icon"
         style={{
           borderRadius: "3px",
+          height: "32px",
+          width: "32px",
         }}
-        className="h-8 w-8"
       >
         {children}
       </Button>
@@ -120,6 +137,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     updateInclusionRules,
     setMarkdownData,
   } = useEditorStore();
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+  const { resetTheme } = useThemeConfigStore();
   const {
     shouldShowStep,
     markStepComplete,
@@ -291,31 +310,48 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         .replace(/\\\\/g, "\\");
       setContent(currentContentPath, originalContent);
     }
-    forceRefresh(); // Force editor refresh to display updated content
+    if (currentContentPath === "start-here.theme") {
+      resetTheme();
+    }
+    forceRefresh();
     setResetPageDialogOpen(false);
   };
 
   const handleResetAll = async () => {
-    conditionalLog("Toolbar.handleResetAll: Starting", { label: "markdown-parse" });
+    conditionalLog("Toolbar.handleResetAll: Starting", {
+      label: "markdown-parse",
+    });
     setResetAllLoading(true);
     try {
       const { data: freshData, error } = await parseAndGetMarkdownDataAction();
 
-      conditionalLog({
-        hasFreshData: !!freshData,
-        hasError: !!error,
-        freshDataNodeCount: freshData ? Object.keys(freshData.flatIndex).length : 0,
-        freshDataVersion: freshData?.contentVersion
-      }, { label: "markdown-parse" });
+      conditionalLog(
+        {
+          hasFreshData: !!freshData,
+          hasError: !!error,
+          freshDataNodeCount: freshData
+            ? Object.keys(freshData.flatIndex).length
+            : 0,
+          freshDataVersion: freshData?.contentVersion,
+        },
+        { label: "markdown-parse" }
+      );
 
       if (error) {
-        conditionalLog({ parseError: String(error) }, { label: "markdown-parse" });
-        alert("Failed to parse markdown files. Please check the console for details.");
+        conditionalLog(
+          { parseError: String(error) },
+          { label: "markdown-parse" }
+        );
+        alert(
+          "Failed to parse markdown files. Please check the console for details."
+        );
         return;
       }
 
       if (freshData) {
-        conditionalLog("Toolbar.handleResetAll: Invalidating queries", { label: "markdown-parse" });
+        conditionalLog("Toolbar.handleResetAll: Invalidating queries", {
+          label: "markdown-parse",
+        });
 
         queryClient.invalidateQueries({ queryKey: ["markdownData"] });
         queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
@@ -326,21 +362,30 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
         const resetKey = Date.now();
 
-        conditionalLog({
-          resetKey,
-          firstPageUrl: firstPagePath?.urlPath,
-          message: "Setting markdown data in store"
-        }, { label: "markdown-parse" });
+        conditionalLog(
+          {
+            resetKey,
+            firstPageUrl: firstPagePath?.urlPath,
+            message: "Setting markdown data in store",
+          },
+          { label: "markdown-parse" }
+        );
 
         setMarkdownData(freshData);
         reset();
+        resetTheme();
         setRefreshKey(resetKey);
 
-        conditionalLog("Toolbar.handleResetAll: Store updated, waiting for state to settle", { label: "markdown-parse" });
+        conditionalLog(
+          "Toolbar.handleResetAll: Store updated, waiting for state to settle",
+          { label: "markdown-parse" }
+        );
 
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
-        conditionalLog("Toolbar.handleResetAll: State settled, navigating", { label: "markdown-parse" });
+        conditionalLog("Toolbar.handleResetAll: State settled, navigating", {
+          label: "markdown-parse",
+        });
 
         if (firstPagePath?.urlPath) {
           router.push(firstPagePath.urlPath);
@@ -348,12 +393,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       }
       setResetAllDialogOpen(false);
     } catch (error) {
-      conditionalLog({ catchError: String(error) }, { label: "markdown-parse" });
+      conditionalLog(
+        { catchError: String(error) },
+        { label: "markdown-parse" }
+      );
       alert("An unexpected error occurred during reset. Please try again.");
       setResetAllDialogOpen(false);
     } finally {
       setResetAllLoading(false);
-      conditionalLog("Toolbar.handleResetAll: Complete", { label: "markdown-parse" });
+      conditionalLog("Toolbar.handleResetAll: Complete", {
+        label: "markdown-parse",
+      });
     }
   };
 
@@ -372,13 +422,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   return (
     <TooltipProvider>
-      <div className="w-full border-b bg-[hsl(var(--background))] border-[hsl(var(--border))]">
+      <div style={{ width: "100%", borderBottom: "1px solid var(--theme-border)", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)" }}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="w-full">
+            <div style={{ width: "100%" }}>
               <Progress
                 value={progressInfo.progressValue}
-                className="h-1 w-full rounded-none"
+                style={{ height: "4px", width: "100%", borderRadius: "0" }}
               />
             </div>
           </TooltipTrigger>
@@ -390,8 +440,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </TooltipContent>
         </Tooltip>
 
-        <div className="flex items-center justify-between h-12 px-4">
-          <div className="flex items-center gap-2">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "48px", padding: "0 calc(var(--theme-spacing) * 4)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
             <IconButton
               onClick={handleBack}
               disabled={!canGoBack}
@@ -399,61 +449,142 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 canGoBack ? `Previous: ${prevPageTitle}` : "No previous page"
               }
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft style={{ height: "16px", width: "16px" }} />
             </IconButton>
             {showInitialDialog ? (
-              <Dialog open={initialDialogOpen || !isStepOpen(WalkthroughStep.INITIAL_DIALOG)} onOpenChange={(open) => {
-                setInitialDialogOpen(open);
-                if (!open && !isStepOpen(WalkthroughStep.INITIAL_DIALOG)) {
-                  setStepOpen(WalkthroughStep.INITIAL_DIALOG, true);
+              <Dialog
+                open={
+                  initialDialogOpen ||
+                  !isStepOpen(WalkthroughStep.INITIAL_DIALOG)
                 }
-              }}>
+                onOpenChange={(open) => {
+                  setInitialDialogOpen(open);
+                  if (!open && !isStepOpen(WalkthroughStep.INITIAL_DIALOG)) {
+                    setStepOpen(WalkthroughStep.INITIAL_DIALOG, true);
+                  }
+                }}
+              >
                 <DialogTrigger asChild>
-                  <div className="relative inline-block">
+                  <div style={{ position: "relative", display: "inline-block", height: "32px", width: "32px" }}>
                     {!isStepOpen(WalkthroughStep.INITIAL_DIALOG) && (
-                      <div className="absolute inset-0 flex items-center justify-center z-0">
-                        <Info className="h-4 w-4 text-blue-500 animate-ping" />
+                      <div style={{ position: "absolute", inset: "0", height: "32px", width: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <div style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: "0", pointerEvents: "none" }}>
+                          <Info style={{ height: "16px", width: "16px", color: "hsl(217 91% 60%)", animation: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite" }} />
+                        </div>
+                        <div
+                          style={{
+                            position: "absolute",
+                            inset: "0",
+                            borderRadius: "9999px",
+                            border: "2px solid hsl(217 91% 60% / 0.3)",
+                            animation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                            transform: "scale(1.2) translateY(2px)",
+                          }}
+                        />
+                        <div
+                          style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: "10", pointerEvents: "none" }}
+                        >
+                          <div
+                            style={{
+                              borderRadius: "9999px",
+                              backgroundColor: "hsl(217 91% 60%)",
+                              width: "4px",
+                              height: "4px",
+                              animation: "breathe 6s ease-in-out infinite",
+                            }}
+                          />
+                        </div>
                       </div>
                     )}
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 bg-transparent hover:bg-transparent relative z-10"
-                      style={{ borderRadius: "3px" }}
+                      style={{ height: "32px", width: "32px", backgroundColor: "transparent", position: "relative", zIndex: "10", borderRadius: "3px" }}
                       onClick={() => setInitialDialogOpen(true)}
                     >
-                      <Info className="h-4 w-4 text-blue-500" />
+                      <Info style={{ height: "16px", width: "16px", color: "hsl(217 91% 60%)" }} />
                     </Button>
                   </div>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent style={{ maxWidth: "56rem", outline: "none", fontSize: "1rem" }}>
                   <DialogHeader>
                     <DialogTitle>Welcome to Gazzola.dev</DialogTitle>
-                    <DialogDescription asChild>
-                      <div className="space-y-3 pt-2">
-                        <div>
-                          This collection of documents provides comprehensive instructions for creating a custom full-stack web application using the latest industry-leading best practices.
-                        </div>
-                        <div>
-                          You can make selections to customize your technology stack, edit content directly in the documents, and then download your personalized roadmap.
-                        </div>
-                        <div className="font-medium">
-                          Would you like a guided walkthrough to help you get started?
-                        </div>
-                      </div>
-                    </DialogDescription>
                   </DialogHeader>
+                  <div style={{ marginTop: "calc(var(--theme-spacing) * 0.75)" }}>
+                    Design and download your full-stack web app roadmap
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 6)" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "calc(var(--theme-spacing) * 2)", position: "relative", margin: "calc(var(--theme-spacing) * 6) 0" }}>
+                      {nextSteps.map((step, index) => (
+                        <div key={index} style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative", zIndex: "10", backgroundColor: "var(--theme-background)", padding: "0 calc(var(--theme-spacing) * 2)" }}>
+                            <svg
+                              style={{ width: "40px", height: "40px" }}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                            >
+                              <defs>
+                                <linearGradient
+                                  id={`gradient-next-toolbar-${index}`}
+                                  x1="0%"
+                                  y1="0%"
+                                  x2="100%"
+                                  y2="100%"
+                                >
+                                  {gradientEnabled ? (
+                                    gradientColors.map((color, colorIndex) => (
+                                      <stop
+                                        key={colorIndex}
+                                        offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                        stopColor={color}
+                                      />
+                                    ))
+                                  ) : (
+                                    <stop offset="0%" stopColor={singleColor} />
+                                  )}
+                                </linearGradient>
+                              </defs>
+                              <step.icon
+                                style={{ width: "40px", height: "40px", strokeWidth: "1" }}
+                                stroke={`url(#gradient-next-toolbar-${index})`}
+                                fill="none"
+                              />
+                            </svg>
+                            <span style={{ fontSize: "1rem", fontWeight: "600", marginTop: "calc(var(--theme-spacing) * 0.25)", textAlign: "center", whiteSpace: "nowrap" }}>
+                              {step.title}
+                            </span>
+                          </div>
+                          {index < nextSteps.length - 1 && (
+                            <ArrowRight
+                              style={{
+                                width: "20px",
+                                height: "20px",
+                                margin: "0 calc(var(--theme-spacing) * 0.25)",
+                                flexShrink: "0",
+                                filter: "drop-shadow(0 0 4px rgba(147, 51, 234, 0.5))",
+                              }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "calc(var(--theme-spacing) * 4)" }}>
+                    Do you want to enable the tutorial?
+                  </div>
                   <DialogFooter>
-                    <Button
-                      variant="destructive"
+                    <GlobalButton
+                      variant="ghost"
+                      style={{ fontSize: "1rem" }}
                       onClick={() => {
                         dismissWalkthrough();
                         setInitialDialogOpen(false);
                       }}
                     >
                       No thanks, I&apos;ll explore on my own
-                    </Button>
-                    <Button
+                    </GlobalButton>
+                    <GlobalButton
+                      style={{ fontSize: "1rem" }}
                       variant="outline"
                       onClick={() => {
                         startWalkthrough();
@@ -462,46 +593,51 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         setInitialDialogOpen(false);
                       }}
                     >
-                      Start Walkthrough
-                    </Button>
+                      Show helpful tips
+                    </GlobalButton>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-            ) : initialDialogShown && (
-              <Popover open={permanentHelperOpen} onOpenChange={setPermanentHelperOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 bg-transparent hover:bg-transparent"
-                    style={{ borderRadius: "3px" }}
-                  >
-                    <Info className="h-4 w-4 text-blue-500" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-3">
-                    <h4 className="font-semibold">Walkthrough Help</h4>
-                    <p className="text-sm">
-                      Need help getting started? Click the button below to restart the walkthrough guide.
-                    </p>
+            ) : (
+              initialDialogShown && (
+                <Popover
+                  open={permanentHelperOpen}
+                  onOpenChange={setPermanentHelperOpen}
+                >
+                  <PopoverTrigger asChild>
                     <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => {
-                        resetWalkthrough();
-                        setPermanentHelperOpen(false);
-                      }}
+                      variant="ghost"
+                      size="icon"
+                      style={{ borderRadius: "3px", height: "32px", width: "32px" }}
                     >
-                      Restart Walkthrough
+                      <Info style={{ height: "16px", width: "16px" }} />
                     </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
+                  </PopoverTrigger>
+                  <PopoverContent style={{ width: "20rem" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 3)" }}>
+                      <h4 style={{ fontWeight: "600" }}>Walkthrough Help</h4>
+                      <p style={{ fontSize: "0.875rem" }}>
+                        Need help getting started? Click the button below to
+                        restart the walkthrough guide.
+                      </p>
+                      <Button
+                        variant="outline"
+                        style={{ width: "100%" }}
+                        onClick={() => {
+                          resetWalkthrough();
+                          setPermanentHelperOpen(false);
+                        }}
+                      >
+                        Restart Walkthrough
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 3)" }}>
             <EditorDialog
               open={resetPageDialogOpen}
               onOpenChange={setResetPageDialogOpen}
@@ -512,7 +648,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     onClick={() => setResetPageDialogOpen(true)}
                     tooltip="Reset current page"
                   >
-                    <RotateCcw className="h-4 w-4" />
+                    <RotateCcw style={{ height: "16px", width: "16px" }} />
                   </IconButton>
                 </div>
               </EditorDialogTrigger>
@@ -531,10 +667,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   >
                     Cancel
                   </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleResetPage}
-                  >
+                  <Button variant="destructive" onClick={handleResetPage}>
                     Reset Page
                   </Button>
                 </EditorDialogFooter>
@@ -545,7 +678,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               onClick={() => setResetAllDialogOpen(true)}
               tooltip="Reset all pages"
             >
-              <ListRestart className="h-4 w-4" />
+              <ListRestart style={{ height: "16px", width: "16px" }} />
             </IconButton>
 
             <EditorDialog
@@ -589,81 +722,81 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       onClick={() => setSectionsPopoverOpen(true)}
                       tooltip="Manage sections"
                     >
-                      <Settings className="h-4 w-4" />
+                      <Settings style={{ height: "16px", width: "16px" }} />
                     </IconButton>
                   </div>
                 </EditorPopoverTrigger>
-              <EditorPopoverContent
-                className="w-80 max-h-96 overflow-y-auto"
-                align="center"
-              >
-                <div className="space-y-4">
-                  <div className="font-semibold text-sm">Section Options</div>
-                  {sectionsData.length === 0 ? (
-                    <div className="text-sm text-gray-500">
-                      No sections found
-                    </div>
-                  ) : (
-                    sectionsData.map((file) => (
-                      <div key={file.filePath} className="space-y-3">
-                        <div className="font-medium text-sm border-b pb-1">
-                          {file.fileName}
-                        </div>
-                        {file.sections.map((section) => (
-                          <div
-                            key={section.sectionId}
-                            className="ml-2 space-y-2"
-                          >
-                            <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                              {section.sectionId}
-                            </div>
-                            {section.options.map((option) => (
-                              <div
-                                key={option.optionId}
-                                className="flex items-center space-x-2 ml-4"
-                              >
-                                <Checkbox
-                                  checked={getSectionInclude(
-                                    file.filePath,
-                                    section.sectionId,
-                                    option.optionId
-                                  )}
-                                  onCheckedChange={(checked) =>
-                                    setSectionInclude(
+                <EditorPopoverContent
+                  style={{ width: "20rem", maxHeight: "24rem", overflowY: "auto" }}
+                  align="center"
+                >
+                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div style={{ fontWeight: "600", fontSize: "0.875rem" }}>Section Options</div>
+                    {sectionsData.length === 0 ? (
+                      <div style={{ fontSize: "0.875rem", color: "hsl(0 0% 45%)" }}>
+                        No sections found
+                      </div>
+                    ) : (
+                      sectionsData.map((file) => (
+                        <div key={file.filePath} style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 3)" }}>
+                          <div style={{ fontWeight: "500", fontSize: "0.875rem", borderBottom: "1px solid var(--theme-border)", paddingBottom: "calc(var(--theme-spacing) * 0.25)" }}>
+                            {file.fileName}
+                          </div>
+                          {file.sections.map((section) => (
+                            <div
+                              key={section.sectionId}
+                              style={{ marginLeft: "calc(var(--theme-spacing) * 2)", display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 2)" }}
+                            >
+                              <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "var(--theme-muted-foreground)" }}>
+                                {section.sectionId}
+                              </div>
+                              {section.options.map((option) => (
+                                <div
+                                  key={option.optionId}
+                                  style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)", marginLeft: "calc(var(--theme-spacing) * 4)" }}
+                                >
+                                  <Checkbox
+                                    checked={getSectionInclude(
                                       file.filePath,
                                       section.sectionId,
-                                      option.optionId,
-                                      checked as boolean
-                                    )
-                                  }
-                                />
-                                <Label
-                                  className="text-sm cursor-pointer"
-                                  onClick={() =>
-                                    setSectionInclude(
-                                      file.filePath,
-                                      section.sectionId,
-                                      option.optionId,
-                                      !getSectionInclude(
+                                      option.optionId
+                                    )}
+                                    onCheckedChange={(checked) =>
+                                      setSectionInclude(
                                         file.filePath,
                                         section.sectionId,
-                                        option.optionId
+                                        option.optionId,
+                                        checked as boolean
                                       )
-                                    )
-                                  }
-                                >
-                                  {option.optionId}
-                                </Label>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    ))
-                  )}
-                </div>
-              </EditorPopoverContent>
-            </EditorPopover>
+                                    }
+                                  />
+                                  <Label
+                                    style={{ fontSize: "0.875rem", cursor: "pointer" }}
+                                    onClick={() =>
+                                      setSectionInclude(
+                                        file.filePath,
+                                        section.sectionId,
+                                        option.optionId,
+                                        !getSectionInclude(
+                                          file.filePath,
+                                          section.sectionId,
+                                          option.optionId
+                                        )
+                                      )
+                                    }
+                                  >
+                                    {option.optionId}
+                                  </Label>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </EditorPopoverContent>
+              </EditorPopover>
             )}
 
             {isDevelopment && (
@@ -677,66 +810,69 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       onClick={() => setFileTreePopoverOpen(true)}
                       tooltip="Manage file inclusion"
                     >
-                      <Files className="h-4 w-4" />
+                      <Files style={{ height: "16px", width: "16px" }} />
                     </IconButton>
                   </div>
                 </EditorPopoverTrigger>
-              <EditorPopoverContent
-                className="w-80 max-h-96 overflow-y-auto"
-                align="center"
-              >
-                <div className="space-y-3">
-                  <div className="font-semibold text-sm">File Inclusion</div>
-                  {fileTreeData.length === 0 ? (
-                    <div className="text-sm text-gray-500">No files found</div>
-                  ) : (
-                    fileTreeData.map((item) => (
-                      <div
-                        key={item.path}
-                        className="flex items-center space-x-2"
-                        style={{ marginLeft: `${item.level * 12}px` }}
-                      >
-                        <Checkbox
-                          checked={item.include}
-                          onCheckedChange={(checked) =>
-                            updateInclusionRules({
-                              [item.path]: checked as boolean,
-                            })
-                          }
-                        />
-                        {item.type === "directory" ? (
-                          <Folder className="h-4 w-4 text-blue-500" />
-                        ) : (
-                          <File className="h-4 w-4 text-gray-500" />
-                        )}
-                        <Label
-                          className="text-sm cursor-pointer flex-1"
-                          onClick={() =>
-                            updateInclusionRules({ [item.path]: !item.include })
-                          }
-                        >
-                          {item.name}
-                        </Label>
+                <EditorPopoverContent
+                  style={{ width: "20rem", maxHeight: "24rem", overflowY: "auto" }}
+                  align="center"
+                >
+                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 3)" }}>
+                    <div style={{ fontWeight: "600", fontSize: "0.875rem" }}>File Inclusion</div>
+                    {fileTreeData.length === 0 ? (
+                      <div style={{ fontSize: "0.875rem", color: "hsl(0 0% 45%)" }}>
+                        No files found
                       </div>
-                    ))
-                  )}
-                </div>
-              </EditorPopoverContent>
-            </EditorPopover>
+                    ) : (
+                      fileTreeData.map((item) => (
+                        <div
+                          key={item.path}
+                          style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)", marginLeft: `${item.level * 12}px` }}
+                        >
+                          <Checkbox
+                            checked={item.include}
+                            onCheckedChange={(checked) =>
+                              updateInclusionRules({
+                                [item.path]: checked as boolean,
+                              })
+                            }
+                          />
+                          {item.type === "directory" ? (
+                            <Folder style={{ height: "16px", width: "16px", color: "hsl(217 91% 60%)" }} />
+                          ) : (
+                            <File style={{ height: "16px", width: "16px", color: "hsl(0 0% 45%)" }} />
+                          )}
+                          <Label
+                            style={{ fontSize: "0.875rem", cursor: "pointer", flex: "1" }}
+                            onClick={() =>
+                              updateInclusionRules({
+                                [item.path]: !item.include,
+                              })
+                            }
+                          >
+                            {item.name}
+                          </Label>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </EditorPopoverContent>
+              </EditorPopover>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
             {previewMode && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5 bg-orange-500/20 border border-orange-500 text-orange-900 dark:text-orange-100">
-                    <Eye className="h-3 w-3" />
+                  <div style={{ padding: "calc(var(--theme-spacing) * 1) calc(var(--theme-spacing) * 3)", fontSize: "0.75rem", fontWeight: "bold", borderRadius: "9999px", display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)", backgroundColor: "hsl(25 95% 53% / 0.2)", border: "1px solid hsl(25 95% 53%)", color: "hsl(25 95% 20%)" }}>
+                    <Eye style={{ height: "12px", width: "12px" }} />
                     Preview mode (read only)
                   </div>
                 </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <div className="space-y-2">
+                <TooltipContent style={{ maxWidth: "20rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 2)" }}>
                     <p>You are currently in preview mode.</p>
                     <p>
                       This shows exactly how your content will look when
@@ -749,45 +885,29 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
 
             {showPreviewHelp && (
-              <Popover open={previewHelpOpen} onOpenChange={(open) => {
-                setPreviewHelpOpen(open);
-                if (!open && isStepOpen(WalkthroughStep.PREVIEW_MODE)) {
-                  markStepComplete(WalkthroughStep.PREVIEW_MODE);
-                } else if (open && !isStepOpen(WalkthroughStep.PREVIEW_MODE)) {
-                  setStepOpen(WalkthroughStep.PREVIEW_MODE, true);
-                }
-              }}>
-                <PopoverTrigger asChild>
-                  <div className="relative inline-block">
-                    {!isStepOpen(WalkthroughStep.PREVIEW_MODE) && (
-                      <div className="absolute inset-0 flex items-center justify-center z-0">
-                        <Info className="h-3 w-3 text-blue-500 animate-ping" />
-                      </div>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 bg-transparent hover:bg-transparent relative z-10"
-                      style={{ borderRadius: "3px" }}
-                    >
-                      <Info className="h-3 w-3 text-blue-500" />
-                    </Button>
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Preview Mode</h4>
-                    <p className="text-sm">
-                      Toggle this switch to preview exactly how your markdown content will look when you download your roadmap. In preview mode, the editor becomes read-only.
-                    </p>
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <WalkthroughHelper
+                isOpen={previewHelpOpen}
+                onOpenChange={(open) => {
+                  setPreviewHelpOpen(open);
+                  if (!open && isStepOpen(WalkthroughStep.PREVIEW_MODE)) {
+                    markStepComplete(WalkthroughStep.PREVIEW_MODE);
+                  } else if (
+                    open &&
+                    !isStepOpen(WalkthroughStep.PREVIEW_MODE)
+                  ) {
+                    setStepOpen(WalkthroughStep.PREVIEW_MODE, true);
+                  }
+                }}
+                showAnimation={!isStepOpen(WalkthroughStep.PREVIEW_MODE)}
+                title="Preview Mode"
+                description="Toggle this switch to preview exactly how your markdown content will look when you download your roadmap. In preview mode, the editor becomes read-only."
+                iconSize="sm"
+              />
             )}
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-[hsl(var(--muted-foreground))]">
+                <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1)" }}>
+                  <span style={{ fontSize: "0.75rem", color: "var(--theme-muted-foreground)" }}>
                     Edit
                   </span>
                   <Switch
@@ -799,7 +919,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       }
                     }}
                   />
-                  <span className="text-xs text-[hsl(var(--muted-foreground))]">
+                  <span style={{ fontSize: "0.75rem", color: "var(--theme-muted-foreground)" }}>
                     Preview
                   </span>
                 </div>
@@ -809,44 +929,28 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               </TooltipContent>
             </Tooltip>
 
-            <div className="relative">
+            <div style={{ position: "relative" }}>
               {showNextButtonHelp && (
-                <Popover open={nextButtonHelpOpen} onOpenChange={(open) => {
-                  setNextButtonHelpOpen(open);
-                  if (!open && isStepOpen(WalkthroughStep.NEXT_BUTTON)) {
-                    markStepComplete(WalkthroughStep.NEXT_BUTTON);
-                  } else if (open && !isStepOpen(WalkthroughStep.NEXT_BUTTON)) {
-                    setStepOpen(WalkthroughStep.NEXT_BUTTON, true);
-                  }
-                }}>
-                  <PopoverTrigger asChild>
-                    <div className="absolute -top-2 -right-2 z-10">
-                      <div className="relative inline-block">
-                        {!isStepOpen(WalkthroughStep.NEXT_BUTTON) && (
-                          <div className="absolute inset-0 flex items-center justify-center z-0">
-                            <Info className="h-3 w-3 text-blue-500 animate-ping" />
-                          </div>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5 bg-transparent hover:bg-transparent relative z-10"
-                          style={{ borderRadius: "3px" }}
-                        >
-                          <Info className="h-3 w-3 text-blue-500" />
-                        </Button>
-                      </div>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="space-y-2">
-                      <h4 className="font-semibold">Progress Through Documents</h4>
-                      <p className="text-sm">
-                        Click the Next button to move through the documents in your roadmap. Each document builds on the previous ones to provide complete instructions for building your web application.
-                      </p>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                <div style={{ position: "absolute", top: "-8px", right: "-8px", zIndex: "10" }}>
+                  <WalkthroughHelper
+                    isOpen={nextButtonHelpOpen}
+                    onOpenChange={(open) => {
+                      setNextButtonHelpOpen(open);
+                      if (!open && isStepOpen(WalkthroughStep.NEXT_BUTTON)) {
+                        markStepComplete(WalkthroughStep.NEXT_BUTTON);
+                      } else if (
+                        open &&
+                        !isStepOpen(WalkthroughStep.NEXT_BUTTON)
+                      ) {
+                        setStepOpen(WalkthroughStep.NEXT_BUTTON, true);
+                      }
+                    }}
+                    showAnimation={!isStepOpen(WalkthroughStep.NEXT_BUTTON)}
+                    title="Progress Through Documents"
+                    description="Click the Next button to move through the documents in your roadmap. Each document builds on the previous ones to provide complete instructions for building your web application."
+                    iconSize="sm"
+                  />
+                </div>
               )}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -861,11 +965,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     variant="outline"
                     style={{
                       borderRadius: "3px",
+                      padding: "calc(var(--theme-spacing) * 0.25) calc(var(--theme-spacing) * 3)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "calc(var(--theme-spacing) * 2)",
+                      fontWeight: "500",
                     }}
-                    className="px-3 py-1 flex items-center gap-2 font-medium"
                   >
                     Next
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight style={{ height: "16px", width: "16px" }} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

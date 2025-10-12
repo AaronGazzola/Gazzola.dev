@@ -1,7 +1,7 @@
-import { parseThemesFromCSS } from "../app/(components)/ThemeConfiguration.utils";
+import { parseThemesFromJSON } from "../app/(components)/ThemeConfiguration.utils";
 import { verifyThemeApplication } from "../app/(components)/ThemeConfiguration.verify";
 
-const themes = parseThemesFromCSS();
+const themes = parseThemesFromJSON();
 
 console.log(JSON.stringify({
   action: "loaded_themes",

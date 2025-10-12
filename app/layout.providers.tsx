@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
-import { ThemeProvider } from "@/app/(components)/ThemeConfiguration.provider";
 
 const queryClient = new QueryClient();
 
@@ -15,10 +14,8 @@ const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <Toaster />
-          <SidebarProvider>{children}</SidebarProvider>
-        </ThemeProvider>
+        <Toaster />
+        <SidebarProvider>{children}</SidebarProvider>
       </QueryClientProvider>
     </NuqsAdapter>
   );

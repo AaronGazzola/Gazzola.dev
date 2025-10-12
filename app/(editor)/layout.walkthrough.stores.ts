@@ -93,8 +93,8 @@ export const useWalkthroughStore = create<WalkthroughState>()(
         completedSteps: Array.from(state.completedSteps),
         initialDialogShown: state.initialDialogShown,
       }),
-      merge: (persistedState: any, currentState) => {
-        const completedSteps = new Set(
+      merge: (persistedState: any, currentState): WalkthroughState => {
+        const completedSteps = new Set<WalkthroughStep>(
           persistedState?.completedSteps || []
         );
         return {
