@@ -32,6 +32,97 @@ const generateId = () => Math.random().toString(36).substring(2, 11);
 
 const PAGE_FILE_ICON = "text-blue-500";
 
+const LayoutInsertionButtons = ({
+  layoutPath,
+  onAddElement,
+  onRemoveElement,
+  hasHeader,
+  hasFooter,
+  hasLeftSidebar,
+  hasRightSidebar,
+}: {
+  layoutPath: string;
+  onAddElement: (type: "header" | "footer" | "sidebar-left" | "sidebar-right") => void;
+  onRemoveElement: (type: "header" | "footer" | "sidebar-left" | "sidebar-right") => void;
+  hasHeader: boolean;
+  hasFooter: boolean;
+  hasLeftSidebar: boolean;
+  hasRightSidebar: boolean;
+}) => {
+  return (
+    <>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          onClick={() => hasHeader ? onRemoveElement("header") : onAddElement("header")}
+          title={hasHeader ? "Remove header" : "Add header"}
+        >
+          {hasHeader ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+        </Button>
+      </div>
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          onClick={() => hasLeftSidebar ? onRemoveElement("sidebar-left") : onAddElement("sidebar-left")}
+          title={hasLeftSidebar ? "Remove left sidebar" : "Add left sidebar"}
+        >
+          {hasLeftSidebar ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+        </Button>
+      </div>
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          onClick={() => hasRightSidebar ? onRemoveElement("sidebar-right") : onAddElement("sidebar-right")}
+          title={hasRightSidebar ? "Remove right sidebar" : "Add right sidebar"}
+        >
+          {hasRightSidebar ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+        </Button>
+      </div>
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          onClick={() => hasFooter ? onRemoveElement("footer") : onAddElement("footer")}
+          title={hasFooter ? "Remove footer" : "Add footer"}
+        >
+          {hasFooter ? <Trash2 className="h-3 w-3 text-red-500" /> : <Plus className="h-3 w-3" />}
+        </Button>
+      </div>
+    </>
+  );
+};
+
+const WireframeElementComponent = ({
+  element,
+}: {
+  element: import("@/app/(editor)/layout.types").WireframeElement;
+}) => {
+  const getElementStyles = () => {
+    const baseStyles = "bg-primary/10 border-2 border-primary/30 rounded";
+
+    switch (element.type) {
+      case "header":
+        return `${baseStyles} w-full h-4`;
+      case "footer":
+        return `${baseStyles} w-full h-4`;
+      case "sidebar-left":
+      case "sidebar-right":
+        return `${baseStyles} w-8 h-full`;
+      default:
+        return baseStyles;
+    }
+  };
+
+  return <div className={getElementStyles()} />;
+};
+
 const LAYOUT_COLORS = [
   {
     border: "border-green-300 dark:border-green-700",
@@ -1416,6 +1507,8 @@ export const LayoutAndStructure = () => {
     wireframeState,
     initializeWireframePages,
     setWireframeCurrentPage,
+    addWireframeElement,
+    removeWireframeElement,
   } = useEditorStore();
 
   useEffect(() => {
@@ -1522,6 +1615,36 @@ export const LayoutAndStructure = () => {
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
+  const handleAddLayoutElement = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+    const layoutData = wireframeState.wireframeData.layouts[layoutPath];
+    const existingElements = layoutData?.elements || [];
+    const existingElement = existingElements.find(el => el.type === elementType);
+
+    if (existingElement) {
+      removeWireframeElement(layoutPath, "layout", existingElement.id);
+    }
+
+    const newElement: import("@/app/(editor)/layout.types").WireframeElement = {
+      id: generateId(),
+      type: elementType,
+      label: elementType.replace("-", " "),
+      config: {
+        position: elementType === "header" ? "top" : elementType === "footer" ? "bottom" : elementType === "sidebar-left" ? "left" : "right",
+      },
+    };
+    addWireframeElement(layoutPath, "layout", newElement);
+  };
+
+  const handleRemoveLayoutElementByType = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+    const layoutData = wireframeState.wireframeData.layouts[layoutPath];
+    const existingElements = layoutData?.elements || [];
+    const existingElement = existingElements.find(el => el.type === elementType);
+
+    if (existingElement) {
+      removeWireframeElement(layoutPath, "layout", existingElement.id);
+    }
+  };
+
   const renderNestedBoxes = () => {
     if (!currentPage) {
       return (
@@ -1547,15 +1670,79 @@ export const LayoutAndStructure = () => {
 
     for (let i = layouts.length - 1; i >= 0; i--) {
       const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+      const layoutPath = layouts[i];
+      const layoutData = wireframeState.wireframeData.layouts[layoutPath];
+      const elements = layoutData?.elements || [];
+
+      const headers = elements.filter(el => el.type === "header");
+      const footers = elements.filter(el => el.type === "footer");
+      const leftSidebars = elements.filter(el => el.type === "sidebar-left");
+      const rightSidebars = elements.filter(el => el.type === "sidebar-right");
+
+      const hasHeader = headers.length > 0;
+      const hasFooter = footers.length > 0;
+      const hasLeftSidebar = leftSidebars.length > 0;
+      const hasRightSidebar = rightSidebars.length > 0;
+
       content = (
         <div
           className={cn(
-            "border-2 border-dashed",
+            "border-2 border-dashed relative",
             colorSet.border,
-            "rounded p-3 h-full flex flex-col"
+            "rounded p-3 h-full flex flex-col gap-2"
           )}
         >
-          {content}
+          <LayoutInsertionButtons
+            layoutPath={layoutPath}
+            onAddElement={(type) => handleAddLayoutElement(layoutPath, type)}
+            onRemoveElement={(type) => handleRemoveLayoutElementByType(layoutPath, type)}
+            hasHeader={hasHeader}
+            hasFooter={hasFooter}
+            hasLeftSidebar={hasLeftSidebar}
+            hasRightSidebar={hasRightSidebar}
+          />
+
+          {headers.map(el => (
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+            />
+          ))}
+
+          <div className="flex-1 flex gap-2">
+            {leftSidebars.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {leftSidebars.map(el => (
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="flex-1">
+              {content}
+            </div>
+
+            {rightSidebars.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {rightSidebars.map(el => (
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {footers.map(el => (
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+            />
+          ))}
         </div>
       );
     }
@@ -1670,6 +1857,8 @@ export const WireFrame = () => {
     wireframeState,
     initializeWireframePages,
     setWireframeCurrentPage,
+    addWireframeElement,
+    removeWireframeElement,
   } = useEditorStore();
 
   useEffect(() => {
@@ -1684,6 +1873,36 @@ export const WireFrame = () => {
     : [];
 
   console.log(JSON.stringify({wireframe:{currentPageIndex,availablePages,currentPage,layoutsCount:layouts.length,layouts}}));
+
+  const handleAddLayoutElement = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+    const layoutData = wireframeState.wireframeData.layouts[layoutPath];
+    const existingElements = layoutData?.elements || [];
+    const existingElement = existingElements.find(el => el.type === elementType);
+
+    if (existingElement) {
+      removeWireframeElement(layoutPath, "layout", existingElement.id);
+    }
+
+    const newElement: import("@/app/(editor)/layout.types").WireframeElement = {
+      id: generateId(),
+      type: elementType,
+      label: elementType.replace("-", " "),
+      config: {
+        position: elementType === "header" ? "top" : elementType === "footer" ? "bottom" : elementType === "sidebar-left" ? "left" : "right",
+      },
+    };
+    addWireframeElement(layoutPath, "layout", newElement);
+  };
+
+  const handleRemoveLayoutElementByType = (layoutPath: string, elementType: "header" | "footer" | "sidebar-left" | "sidebar-right") => {
+    const layoutData = wireframeState.wireframeData.layouts[layoutPath];
+    const existingElements = layoutData?.elements || [];
+    const existingElement = existingElements.find(el => el.type === elementType);
+
+    if (existingElement) {
+      removeWireframeElement(layoutPath, "layout", existingElement.id);
+    }
+  };
 
   const renderNestedBoxes = () => {
     if (!currentPage) {
@@ -1710,15 +1929,79 @@ export const WireFrame = () => {
 
     for (let i = layouts.length - 1; i >= 0; i--) {
       const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
+      const layoutPath = layouts[i];
+      const layoutData = wireframeState.wireframeData.layouts[layoutPath];
+      const elements = layoutData?.elements || [];
+
+      const headers = elements.filter(el => el.type === "header");
+      const footers = elements.filter(el => el.type === "footer");
+      const leftSidebars = elements.filter(el => el.type === "sidebar-left");
+      const rightSidebars = elements.filter(el => el.type === "sidebar-right");
+
+      const hasHeader = headers.length > 0;
+      const hasFooter = footers.length > 0;
+      const hasLeftSidebar = leftSidebars.length > 0;
+      const hasRightSidebar = rightSidebars.length > 0;
+
       content = (
         <div
           className={cn(
-            "border-2 border-dashed",
+            "border-2 border-dashed relative",
             colorSet.border,
-            "rounded p-3 min-h-[200px] flex flex-col"
+            "rounded p-3 min-h-[200px] flex flex-col gap-2"
           )}
         >
-          {content}
+          <LayoutInsertionButtons
+            layoutPath={layoutPath}
+            onAddElement={(type) => handleAddLayoutElement(layoutPath, type)}
+            onRemoveElement={(type) => handleRemoveLayoutElementByType(layoutPath, type)}
+            hasHeader={hasHeader}
+            hasFooter={hasFooter}
+            hasLeftSidebar={hasLeftSidebar}
+            hasRightSidebar={hasRightSidebar}
+          />
+
+          {headers.map(el => (
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+            />
+          ))}
+
+          <div className="flex-1 flex gap-2">
+            {leftSidebars.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {leftSidebars.map(el => (
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="flex-1">
+              {content}
+            </div>
+
+            {rightSidebars.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {rightSidebars.map(el => (
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {footers.map(el => (
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+            />
+          ))}
         </div>
       );
     }

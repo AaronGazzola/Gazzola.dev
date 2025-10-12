@@ -7,8 +7,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Next.js 15** with App Router architecture
 - **TypeScript** for type safety
 - **TailwindCSS v4** for styling
-- **PostgreSQL** database with Prisma ORM
-- **Better Auth** for authentication system
 
 # General rules:
 
