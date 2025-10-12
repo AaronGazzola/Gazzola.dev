@@ -17,6 +17,15 @@ import {
   useState,
 } from "react";
 import { useEditorStore } from "../layout.stores";
+import { useWalkthroughStore } from "../layout.walkthrough.stores";
+import { WalkthroughStep } from "../layout.walkthrough.types";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Info } from "lucide-react";
 
 export interface SerializedPlaceholderNode
   extends Spread<
@@ -30,6 +39,7 @@ export interface SerializedPlaceholderNode
 export class PlaceholderNode extends DecoratorNode<ReactNode> {
   __placeholderKey: string;
   __defaultValue: string;
+  __isFirstPlaceholder: boolean;
 
   static getType(): string {
     return "placeholder";
@@ -39,14 +49,21 @@ export class PlaceholderNode extends DecoratorNode<ReactNode> {
     return new PlaceholderNode(
       node.__placeholderKey,
       node.__defaultValue,
+      node.__isFirstPlaceholder,
       node.__key
     );
   }
 
-  constructor(placeholderKey: string, defaultValue: string, key?: NodeKey) {
+  constructor(
+    placeholderKey: string,
+    defaultValue: string,
+    isFirstPlaceholder: boolean = false,
+    key?: NodeKey
+  ) {
     super(key);
     this.__placeholderKey = placeholderKey;
     this.__defaultValue = defaultValue;
+    this.__isFirstPlaceholder = isFirstPlaceholder;
   }
 
   static importJSON(
@@ -88,8 +105,18 @@ export class PlaceholderNode extends DecoratorNode<ReactNode> {
       <PlaceholderNodeComponent
         placeholderKey={this.__placeholderKey}
         defaultValue={this.__defaultValue}
+        isFirstPlaceholder={this.__isFirstPlaceholder}
       />
     );
+  }
+
+  setIsFirstPlaceholder(isFirst: boolean): void {
+    const writable = this.getWritable();
+    writable.__isFirstPlaceholder = isFirst;
+  }
+
+  getIsFirstPlaceholder(): boolean {
+    return this.__isFirstPlaceholder;
   }
 
   isInline(): true {
@@ -103,9 +130,10 @@ export class PlaceholderNode extends DecoratorNode<ReactNode> {
 
 export function $createPlaceholderNode(
   placeholderKey: string,
-  defaultValue: string
+  defaultValue: string,
+  isFirstPlaceholder: boolean = false
 ): PlaceholderNode {
-  return new PlaceholderNode(placeholderKey, defaultValue);
+  return new PlaceholderNode(placeholderKey, defaultValue, isFirstPlaceholder);
 }
 
 export function $isPlaceholderNode(
@@ -117,21 +145,27 @@ export function $isPlaceholderNode(
 interface PlaceholderNodeComponentProps {
   placeholderKey: string;
   defaultValue: string;
+  isFirstPlaceholder?: boolean;
 }
 
 function PlaceholderNodeComponent({
   placeholderKey,
   defaultValue,
+  isFirstPlaceholder = false,
 }: PlaceholderNodeComponentProps) {
   const { getPlaceholderValue, setPlaceholderValue, darkMode } =
     useEditorStore();
+  const { shouldShowStep, markStepComplete, isStepOpen, setStepOpen } =
+    useWalkthroughStore();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState("");
   const [inputWidth, setInputWidth] = useState(0);
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
 
   const currentValue = getPlaceholderValue(placeholderKey) || defaultValue;
+  const showPlaceholderHelp = isFirstPlaceholder && shouldShowStep(WalkthroughStep.PLACEHOLDER);
 
   useEffect(() => {
     setLocalValue(currentValue);
@@ -163,7 +197,10 @@ function PlaceholderNodeComponent({
 
   const handleBlur = useCallback(() => {
     handleSave();
-  }, [handleSave]);
+    if (isFirstPlaceholder && showPlaceholderHelp) {
+      markStepComplete(WalkthroughStep.PLACEHOLDER);
+    }
+  }, [handleSave, isFirstPlaceholder, showPlaceholderHelp, markStepComplete]);
 
   useLayoutEffect(() => {
     if (measureRef.current) {
@@ -180,7 +217,7 @@ function PlaceholderNodeComponent({
   }, [isEditing]);
 
   return (
-    <>
+    <span className="relative inline-block placeholder-node-container">
       <span
         ref={measureRef}
         className={cn(
@@ -229,6 +266,47 @@ function PlaceholderNodeComponent({
           {currentValue}
         </span>
       )}
-    </>
+      {showPlaceholderHelp && (
+        <Popover
+          open={popoverOpen}
+          onOpenChange={(open) => {
+            setPopoverOpen(open);
+            if (!open && isStepOpen(WalkthroughStep.PLACEHOLDER)) {
+              markStepComplete(WalkthroughStep.PLACEHOLDER);
+            } else if (open && !isStepOpen(WalkthroughStep.PLACEHOLDER)) {
+              setStepOpen(WalkthroughStep.PLACEHOLDER, true);
+            }
+          }}
+        >
+          <PopoverTrigger asChild>
+            <div className="relative inline-block ml-1 align-middle">
+              {!isStepOpen(WalkthroughStep.PLACEHOLDER) && (
+                <div className="absolute inset-0 flex items-center justify-center z-0">
+                  <Info className="h-3 w-3 text-blue-500 animate-ping" />
+                </div>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-5 w-5 bg-transparent hover:bg-transparent relative z-10 inline-flex items-center justify-center"
+                style={{ borderRadius: "3px" }}
+              >
+                <Info className="h-3 w-3 text-blue-500" />
+              </Button>
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="space-y-2">
+              <h4 className="font-semibold">Placeholder Values</h4>
+              <p className="text-sm">
+                Click on any placeholder like this to edit it. When you change
+                a placeholder value, it will automatically update everywhere it
+                appears throughout your roadmap documents.
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
+    </span>
   );
 }

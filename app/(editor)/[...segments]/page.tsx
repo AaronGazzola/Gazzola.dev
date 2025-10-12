@@ -24,7 +24,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ComponentNode } from "../components/ComponentNode";
 import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
 import { PlaceholderNode } from "../components/PlaceholderNode";
-import { PLACEHOLDER_TRANSFORMER } from "../components/PlaceholderTransformer";
+import { PLACEHOLDER_TRANSFORMER, resetPlaceholderTracking } from "../components/PlaceholderTransformer";
 import { ReadOnlyLexicalEditor } from "../components/ReadOnlyLexicalEditor";
 import { SectionNode } from "../components/SectionNode";
 import {
@@ -32,6 +32,7 @@ import {
   setSectionTransformerContext,
 } from "../components/SectionTransformer";
 import { Toolbar } from "../components/Toolbar";
+import { FirstPlaceholderPlugin } from "../components/FirstPlaceholderPlugin";
 import {
   useContentVersionCheck,
   useInitializeMarkdownData,
@@ -224,6 +225,8 @@ const Page = () => {
       };
     }
 
+    resetPlaceholderTracking();
+
     return {
       nodes: [
         HeadingNode,
@@ -391,6 +394,7 @@ const Page = () => {
                 PLACEHOLDER_TRANSFORMER,
               ]}
             />
+            <FirstPlaceholderPlugin />
           </div>
         </LexicalComposer>
       )}

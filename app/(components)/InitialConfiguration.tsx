@@ -21,10 +21,20 @@ import {
   ChevronDown,
   CreditCard,
   Database,
+  Info,
   Settings,
   Upload,
   Users,
 } from "lucide-react";
+import { useState } from "react";
+import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
+import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import {
   SiCypress,
   SiNextdotjs,
@@ -564,6 +574,16 @@ export const InitialConfiguration = () => {
     updateRealTimeNotificationsOption,
   } = useEditorStore();
 
+  const {
+    shouldShowStep,
+    markStepComplete,
+    isStepOpen,
+    setStepOpen,
+  } = useWalkthroughStore();
+
+  const [configHelpOpen, setConfigHelpOpen] = useState(false);
+  const showConfigHelp = shouldShowStep(WalkthroughStep.CONFIGURATION);
+
   const getFeatureEnabled = (featureId: string): boolean => {
     if (featureId === "databaseChoice" || featureId === "deploymentChoice") {
       return true;
@@ -859,7 +879,16 @@ export const InitialConfiguration = () => {
           </div>
         )}
 
-        <Accordion type="single" collapsible className="space-y-1">
+        <Accordion
+          type="single"
+          collapsible
+          className="space-y-1"
+          onValueChange={(value) => {
+            if (value === "databaseChoice" && showConfigHelp) {
+              markStepComplete(WalkthroughStep.CONFIGURATION);
+            }
+          }}
+        >
           {questionConfigs(initialConfiguration).map((question) => {
             const Icon = question.icon;
             const isQuestionDisabled =
@@ -940,7 +969,7 @@ export const InitialConfiguration = () => {
                     isQuestionDisabled && "opacity-50"
                   )}
                 >
-                  <div className="flex-grow ">
+                  <div className="flex-grow flex items-center gap-2">
                     <AccordionTrigger
                       className="hover:no-underline flex-1 justify-between mr-2 group"
                       disabled={isQuestionDisabled}
@@ -955,6 +984,42 @@ export const InitialConfiguration = () => {
                         <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200" />
                       </div>
                     </AccordionTrigger>
+                    {question.id === "databaseChoice" && showConfigHelp && (
+                      <Popover open={configHelpOpen} onOpenChange={(open) => {
+                        setConfigHelpOpen(open);
+                        if (!open && isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                          markStepComplete(WalkthroughStep.CONFIGURATION);
+                        } else if (open && !isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                          setStepOpen(WalkthroughStep.CONFIGURATION, true);
+                        }
+                      }}>
+                        <div className="relative inline-block">
+                          {!isStepOpen(WalkthroughStep.CONFIGURATION) && (
+                            <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
+                              <Info className="h-3 w-3 text-blue-500 animate-ping" />
+                            </div>
+                          )}
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-5 w-5 bg-transparent hover:bg-transparent relative z-10"
+                              style={{ borderRadius: "3px" }}
+                            >
+                              <Info className="h-3 w-3 text-blue-500" />
+                            </Button>
+                          </PopoverTrigger>
+                        </div>
+                        <PopoverContent className="w-80">
+                          <div className="space-y-2">
+                            <h4 className="font-semibold">Technology Selection</h4>
+                            <p className="text-sm">
+                              Select options in these questions to customize your technology stack. Your selections will automatically determine which technologies are required for your web application.
+                            </p>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
                   </div>
 
                   {isQuestionDisabled ? (
