@@ -1,18 +1,23 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { cn } from "@/lib/tailwind.utils";
 import { ThemeConfigurationSidebar } from "./ThemeConfiguration.sidebar";
 import { ThemeConfigurationPreview } from "./ThemeConfiguration.preview";
-import { useApplyTheme } from "./ThemeConfiguration.hooks";
+import { useTheme } from "./ThemeConfiguration.hooks";
 
 export const ThemeConfiguration = () => {
   const { darkMode } = useEditorStore();
-  useApplyTheme(darkMode);
+  const theme = useTheme();
 
   return (
-    <div className="flex h-full bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
-      <ThemeConfigurationSidebar />
+    <div
+      className="flex h-full"
+      style={{
+        backgroundColor: theme.hsl(theme.colors.background),
+        color: theme.hsl(theme.colors.foreground)
+      }}
+    >
+      <ThemeConfigurationSidebar darkMode={darkMode} />
       <ThemeConfigurationPreview />
     </div>
   );

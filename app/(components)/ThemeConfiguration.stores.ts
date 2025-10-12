@@ -7,6 +7,8 @@ import {
   ThemeTypography,
   ThemeOther,
 } from "./ThemeConfiguration.types";
+import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
+import { sanitizeThemeColors, sanitizeThemeOther } from "./ThemeConfiguration.sanitize";
 
 const defaultLightColors: ThemeColors = {
   primary: "222.2 47.4% 11.2%",
@@ -192,33 +194,51 @@ export const useThemeStore = create<ThemeState>()(
           },
         })),
       applyThemePreset: (themeIndex, parsedTheme) => {
-        console.log(JSON.stringify({
-          action: "store_applyThemePreset",
+        const lightColorsSanitized = sanitizeThemeColors(parsedTheme.light.colors);
+        const darkColorsSanitized = sanitizeThemeColors(parsedTheme.dark.colors);
+        const lightOtherSanitized = sanitizeThemeOther(parsedTheme.light.other);
+        const darkOtherSanitized = sanitizeThemeOther(parsedTheme.dark.other);
+
+        conditionalLog({
+          action: "store_applyThemePreset_start",
+          timestamp: Date.now(),
           themeIndex: themeIndex,
-          lightPrimary: parsedTheme.light.colors.primary,
-          darkPrimary: parsedTheme.dark.colors.primary
-        }));
+          themeName: parsedTheme.name,
+          lightColors: parsedTheme.light.colors,
+          darkColors: parsedTheme.dark.colors,
+          lightColorsSanitized: lightColorsSanitized,
+          darkColorsSanitized: darkColorsSanitized,
+          lightTypography: parsedTheme.light.typography,
+          darkTypography: parsedTheme.dark.typography,
+          lightOther: parsedTheme.light.other,
+          darkOther: parsedTheme.dark.other
+        }, { label: LOG_LABELS.THEME });
+
         set(() => {
           const newTheme = {
             selectedTheme: themeIndex,
             colors: {
-              light: parsedTheme.light.colors,
-              dark: parsedTheme.dark.colors,
+              light: lightColorsSanitized,
+              dark: darkColorsSanitized,
             },
             typography: {
               light: parsedTheme.light.typography,
               dark: parsedTheme.dark.typography,
             },
             other: {
-              light: parsedTheme.light.other,
-              dark: parsedTheme.dark.other,
+              light: lightOtherSanitized,
+              dark: darkOtherSanitized,
             },
           };
-          console.log(JSON.stringify({
-            action: "store_setting_new_theme",
-            lightPrimary: newTheme.colors.light.primary,
-            darkPrimary: newTheme.colors.dark.primary
-          }));
+
+          conditionalLog({
+            action: "store_applyThemePreset_complete",
+            timestamp: Date.now(),
+            themeIndex: themeIndex,
+            themeName: parsedTheme.name,
+            newTheme: newTheme
+          }, { label: LOG_LABELS.THEME });
+
           return { theme: newTheme };
         });
       },
@@ -226,9 +246,9 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: "theme-storage",
-      version: 2,
+      version: 3,
       migrate: (persistedState: any, version: number) => {
-        if (version < 2 || !persistedState?.theme?.typography?.light) {
+        if (version < 3 || !persistedState?.theme?.typography?.light) {
           return { theme: defaultTheme };
         }
         return persistedState;

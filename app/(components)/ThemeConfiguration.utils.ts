@@ -1,4 +1,5 @@
 import { ThemeColors, ThemeTypography, ThemeOther, ThemeShadow } from "./ThemeConfiguration.types";
+import { sanitizeThemeColors, sanitizeThemeOther } from "./ThemeConfiguration.sanitize";
 import fs from "fs";
 import path from "path";
 
@@ -19,7 +20,10 @@ export interface ParsedTheme {
 
 const oklchToHsl = (oklch: string): string => {
   const match = oklch.match(/oklch\(([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\)/);
-  if (!match) return "0 0% 0%";
+  if (!match) {
+    console.log(JSON.stringify({action:"oklch_parse_failed",input:oklch}));
+    return "0 0% 0%";
+  }
 
   const [, lStr, cStr, hStr] = match;
   const L = parseFloat(lStr);
@@ -30,7 +34,8 @@ const oklchToHsl = (oklch: string): string => {
   const saturation = C * 100;
   const hue = h;
 
-  return `${hue.toFixed(1)} ${saturation.toFixed(1)}% ${lightness.toFixed(1)}%`;
+  const result = `${hue.toFixed(1)} ${saturation.toFixed(1)}% ${lightness.toFixed(1)}%`;
+  return result;
 };
 
 const oklchToHex = (oklch: string): string => {
@@ -289,22 +294,22 @@ export const parseThemesFromCSS = (): ParsedTheme[] => {
     const lightParsed = parseThemeBlock(lightBlock);
     const darkParsed = parseThemeBlock(darkBlock);
 
-    const lightColors = { ...defaultLightColors, ...lightParsed.colors };
-    const darkColors = { ...defaultDarkColors, ...darkParsed.colors };
+    const lightColors = sanitizeThemeColors({ ...defaultLightColors, ...lightParsed.colors });
+    const darkColors = sanitizeThemeColors({ ...defaultDarkColors, ...darkParsed.colors });
 
     const lightTypography = { ...defaultTypography, ...lightParsed.typography };
     const darkTypography = { ...defaultTypography, ...darkParsed.typography };
 
-    const lightOther = {
+    const lightOther = sanitizeThemeOther({
       ...defaultOther,
       ...lightParsed.other,
       shadow: { ...defaultOther.shadow, ...lightParsed.other.shadow }
-    };
-    const darkOther = {
+    });
+    const darkOther = sanitizeThemeOther({
       ...defaultOther,
       ...darkParsed.other,
       shadow: { ...defaultOther.shadow, ...darkParsed.other.shadow }
-    };
+    });
 
     const primaryMatch = lightBlock.match(/--primary:\s*(oklch\([^)]+\));/);
     const secondaryMatch = lightBlock.match(/--secondary:\s*(oklch\([^)]+\));/);

@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] The theme styles aren't being applied to the correct elements in the shadcn components - go through and update each of the components in "component/editor/ui/\*" to use apply the correct styles to the correct elements.
 - [ ] Add templates for the route structure
 - [ ] expand/improve walkthrough
 - [ ] Add theme presets from tweakcn
@@ -140,3 +141,4 @@ Poll complete: 6 votes
 - Parmededes
 
 - OpenAI agent builder
+- Phoenix live view

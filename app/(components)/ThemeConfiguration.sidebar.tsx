@@ -7,20 +7,25 @@ import { ScrollArea } from "@/components/editor/ui/scroll-area";
 import { Slider } from "@/components/editor/ui/slider";
 import { Switch } from "@/components/editor/ui/switch";
 import { cn } from "@/lib/tailwind.utils";
-import { ChevronLeft, ChevronRight, ChevronDown, Shuffle, CheckCircle2, AlertCircle, Sun, Moon } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Shuffle, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/editor/ui/popover";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/editor/ui/collapsible";
 import { useThemeStore } from "./ThemeConfiguration.stores";
+import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { loadThemesAction } from "./ThemeConfiguration.actions";
 import { ParsedTheme } from "./ThemeConfiguration.types";
-import { verifyThemeApplication, VerificationResult } from "./ThemeConfiguration.verify";
+import { verifyThemeApplication } from "./ThemeConfiguration.verify";
 
 type TabType = "colors" | "typography" | "other";
 
-export const ThemeConfigurationSidebar = () => {
-  const [darkMode, setDarkMode] = useState(false);
+interface ThemeConfigurationSidebarProps {
+  darkMode: boolean;
+}
+
+export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSidebarProps) => {
   const mode = darkMode ? "dark" : "light";
+  const setDarkMode = useEditorStore((state) => state.setDarkMode);
 
   const selectedTheme = useThemeStore((state) => state.theme.selectedTheme);
   const lightColors = useThemeStore((state) => state.theme.colors.light);
@@ -45,7 +50,6 @@ export const ThemeConfigurationSidebar = () => {
   const [activeTab, setActiveTab] = useState<TabType>("colors");
   const [searchQuery, setSearchQuery] = useState("");
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [verification, setVerification] = useState<VerificationResult | null>(null);
 
   useEffect(() => {
     loadThemesAction().then(setThemes);
@@ -65,7 +69,6 @@ export const ThemeConfigurationSidebar = () => {
   useEffect(() => {
     if (themes.length > 0 && themes[selectedTheme]) {
       const result = verifyThemeApplication(fullTheme, themes[selectedTheme], selectedTheme);
-      setVerification(result);
       console.log(JSON.stringify({
         action: "theme_verification",
         isComplete: result.isComplete,
@@ -131,61 +134,8 @@ export const ThemeConfigurationSidebar = () => {
   ];
 
   return (
-    <div className="w-80 border-r flex flex-col bg-[hsl(var(--background))] border-[hsl(var(--border))] max-h-[calc(100vh-200px)] sticky top-0">
-      <div className="p-3 border-b border-[hsl(var(--border))] space-y-2">
-        {verification && !verification.isComplete && (
-          <Collapsible>
-            <CollapsibleTrigger className="w-full">
-              <div className="flex items-start gap-2 p-2 rounded-md bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/15 transition-colors">
-                <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" />
-                <div className="text-xs space-y-1 flex-1 text-left">
-                  <div className="font-medium text-yellow-900 dark:text-yellow-100">Theme Verification Failed</div>
-                  {verification.mismatchedFields.length > 0 && (
-                    <div className="text-yellow-800 dark:text-yellow-200">
-                      {verification.mismatchedFields.length} field{verification.mismatchedFields.length !== 1 ? "s" : ""} mismatch
-                    </div>
-                  )}
-                  {verification.missingFields.length > 0 && (
-                    <div className="text-yellow-800 dark:text-yellow-200">
-                      {verification.missingFields.length} field{verification.missingFields.length !== 1 ? "s" : ""} missing
-                    </div>
-                  )}
-                </div>
-                <ChevronDown className="h-3 w-3 text-yellow-600 mt-0.5 transition-transform group-data-[state=open]:rotate-180" />
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <div className="mt-2 p-2 rounded-md bg-yellow-500/5 border border-yellow-500/20 text-xs space-y-2 max-h-60 overflow-y-auto">
-                {verification.mismatchedFields.length > 0 && (
-                  <div>
-                    <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">Mismatched Fields:</div>
-                    {verification.mismatchedFields.map((mismatch, idx) => (
-                      <div key={idx} className="mb-2 pb-2 border-b border-yellow-500/20 last:border-0">
-                        <div className="font-medium text-yellow-800 dark:text-yellow-200">
-                          {mismatch.field} ({mismatch.mode})
-                        </div>
-                        <div className="text-yellow-700 dark:text-yellow-300 font-mono text-[10px] mt-1">
-                          Store: {JSON.stringify(mismatch.storeValue)}
-                        </div>
-                        <div className="text-yellow-700 dark:text-yellow-300 font-mono text-[10px]">
-                          Theme: {JSON.stringify(mismatch.themeValue)}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {verification.missingFields.length > 0 && (
-                  <div>
-                    <div className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">Missing Fields:</div>
-                    <div className="text-yellow-800 dark:text-yellow-200">
-                      {verification.missingFields.join(", ")}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        )}
+    <div className="w-80 border-r flex flex-col bg-[hsl(var(--sidebar-background))] border-[hsl(var(--sidebar-border))] max-h-[calc(100vh-200px)] sticky top-0">
+      <div className="p-3 border-b border-[hsl(var(--sidebar-border))]">
         <div className="flex items-center gap-2">
           <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>

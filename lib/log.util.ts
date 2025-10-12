@@ -12,6 +12,7 @@ export enum LOG_LABELS {
   PAGINATION = "pagination",
   SHOPIFY_ANALYTICS = "shopify-analytics",
   REALTIME = "realtime",
+  THEME = "theme",
 }
 
 interface ConditionalLogOptions {

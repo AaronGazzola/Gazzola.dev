@@ -43,6 +43,8 @@ app/
 
 # Hook, action, store and type patterns
 
+DB <-> Action <-> hook <-> store <-> client
+
 - Better-auth client methods are called directly in the react-query hooks.
 - Prisma client queries are called in actions via getAuthenticatedClient.
 - Actions are called via react-query hooks.

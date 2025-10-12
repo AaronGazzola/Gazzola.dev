@@ -1,33 +1,43 @@
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { useThemeStore } from "./ThemeConfiguration.stores";
+import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { ThemeColors, ThemeTypography, ThemeOther } from "./ThemeConfiguration.types";
 
-export const useApplyTheme = (darkMode: boolean) => {
-  const { theme } = useThemeStore();
+interface UseThemeReturn {
+  colors: ThemeColors;
+  typography: ThemeTypography;
+  other: ThemeOther;
+  darkMode: boolean;
+  hsl: (color: string) => string;
+  radiusRem: string;
+  spacingRem: string;
+  shadowStyle: string;
+}
 
-  useEffect(() => {
-    const root = document.documentElement;
+export const useTheme = (): UseThemeReturn => {
+  const theme = useThemeStore((state) => state.theme);
+  const darkMode = useEditorStore((state) => state.darkMode);
+
+  return useMemo(() => {
     const mode = darkMode ? "dark" : "light";
     const colors = theme.colors[mode];
     const typography = theme.typography[mode];
     const other = theme.other[mode];
 
-    Object.entries(colors).forEach(([key, value]) => {
-      const cssVarName = key.replace(/([A-Z])/g, "-$1").toLowerCase();
-      root.style.setProperty(`--${cssVarName}`, value);
-    });
+    const hsl = (color: string) => `hsl(${color})`;
+    const radiusRem = `${other.radius}rem`;
+    const spacingRem = `${other.spacing}rem`;
+    const shadowStyle = `${other.shadow.offsetX}px ${other.shadow.offsetY}px ${other.shadow.blurRadius}px ${other.shadow.spread}px hsl(${other.shadow.color} / ${other.shadow.opacity})`;
 
-    root.style.setProperty("--font-sans", typography.fontSans);
-    root.style.setProperty("--font-serif", typography.fontSerif);
-    root.style.setProperty("--font-mono", typography.fontMono);
-    root.style.setProperty("--tracking-normal", `${typography.letterSpacing}em`);
-
-    root.style.setProperty("--radius", `${other.radius}rem`);
-    root.style.setProperty("--spacing", `${other.spacing}`);
-    root.style.setProperty("--shadow-x", `${other.shadow.offsetX}px`);
-    root.style.setProperty("--shadow-y", `${other.shadow.offsetY}px`);
-    root.style.setProperty("--shadow-blur", `${other.shadow.blurRadius}px`);
-    root.style.setProperty("--shadow-spread", `${other.shadow.spread}px`);
-    root.style.setProperty("--shadow-opacity", `${other.shadow.opacity}`);
-    root.style.setProperty("--shadow-color", other.shadow.color);
+    return {
+      colors,
+      typography,
+      other,
+      darkMode,
+      hsl,
+      radiusRem,
+      spacingRem,
+      shadowStyle,
+    };
   }, [theme, darkMode]);
 };
