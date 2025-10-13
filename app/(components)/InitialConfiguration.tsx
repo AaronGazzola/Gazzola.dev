@@ -26,7 +26,7 @@ import {
   Upload,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
 import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
 import { WalkthroughHelper } from "@/components/WalkthroughHelper";
@@ -577,7 +577,13 @@ export const InitialConfiguration = () => {
   } = useWalkthroughStore();
 
   const [configHelpOpen, setConfigHelpOpen] = useState(false);
-  const showConfigHelp = shouldShowStep(WalkthroughStep.CONFIGURATION);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const showConfigHelp = mounted && shouldShowStep(WalkthroughStep.CONFIGURATION);
 
   const getFeatureEnabled = (featureId: string): boolean => {
     if (featureId === "databaseChoice" || featureId === "deploymentChoice") {

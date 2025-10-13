@@ -2,7 +2,21 @@
 
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
+import {
+  Dialog as EditorDialog,
+  DialogContent as EditorDialogContent,
+  DialogDescription as EditorDialogDescription,
+  DialogFooter as EditorDialogFooter,
+  DialogHeader as EditorDialogHeader,
+  DialogTitle as EditorDialogTitle,
+  DialogTrigger as EditorDialogTrigger,
+} from "@/components/editor/ui/dialog";
 import { Label } from "@/components/editor/ui/label";
+import {
+  Popover as EditorPopover,
+  PopoverContent as EditorPopoverContent,
+  PopoverTrigger as EditorPopoverTrigger,
+} from "@/components/editor/ui/popover";
 import { Progress } from "@/components/editor/ui/progress";
 import { Switch } from "@/components/editor/ui/switch";
 import {
@@ -19,18 +33,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Dialog as EditorDialog,
-  DialogContent as EditorDialogContent,
-  DialogDescription as EditorDialogDescription,
-  DialogFooter as EditorDialogFooter,
-  DialogHeader as EditorDialogHeader,
-  DialogTitle as EditorDialogTitle,
-  DialogTrigger as EditorDialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Popover as EditorPopover,
-  PopoverContent as EditorPopoverContent,
-  PopoverTrigger as EditorPopoverTrigger,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -53,15 +57,17 @@ import {
   Info,
   LayoutPanelTop,
   ListRestart,
+  Moon,
   Palette,
   RotateCcw,
   Settings,
+  Sun,
   User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { useThemeStore } from "../../layout.stores";
+import { useEffect, useMemo, useState } from "react";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
+import { useThemeStore } from "../../layout.stores";
 import { parseAndGetMarkdownDataAction } from "../layout.actions";
 import { useContentVersionCheck } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
@@ -132,6 +138,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setSectionInclude,
     updateInclusionRules,
     setMarkdownData,
+    darkMode,
+    setDarkMode,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme } = useThemeConfigStore();
@@ -150,10 +158,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [resetAllLoading, setResetAllLoading] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const showInitialDialog = shouldShowStep(WalkthroughStep.INITIAL_DIALOG);
-  const showPreviewHelp = shouldShowStep(WalkthroughStep.PREVIEW_MODE);
-  const showNextButtonHelp = shouldShowStep(WalkthroughStep.NEXT_BUTTON);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const showInitialDialog = mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG);
+  const showPreviewHelp = mounted && shouldShowStep(WalkthroughStep.PREVIEW_MODE);
+  const showNextButtonHelp = mounted && shouldShowStep(WalkthroughStep.NEXT_BUTTON);
 
   const [initialDialogOpen, setInitialDialogOpen] = useState(false);
   const [previewHelpOpen, setPreviewHelpOpen] = useState(false);
@@ -483,18 +496,20 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     </Button>
                   </div>
                 </DialogTrigger>
-                <DialogContent className="max-w-[56rem] outline-none text-base theme-bg-popover theme-text-popover-foreground theme-shadow">
-                  <DialogHeader>
-                    <DialogTitle className="theme-text-foreground">Welcome to Gazzola.dev</DialogTitle>
+                <DialogContent className="max-w-[56rem] outline-none text-base bg-popover  text-popover-foreground  shadow">
+                  <DialogHeader className="gap-[calc(var(--theme-spacing)*3)]">
+                    <DialogTitle className=" text-foreground">
+                      Welcome to Gazzola.dev
+                    </DialogTitle>
                   </DialogHeader>
-                  <div className="mt-[calc(var(--theme-spacing)*0.75)] theme-text-foreground">
+                  <div className="text-foreground mt-[calc(var(--theme-spacing)*2)]">
                     Design and download your full-stack web app roadmap
                   </div>
-                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*6)]">
-                    <div className="flex items-center justify-center gap-[calc(var(--theme-spacing)*2)] relative my-[calc(var(--theme-spacing)*6)]">
+                  <div className="flex flex-col my-[calc(var(--theme-spacing)*4)]">
+                    <div className="flex items-center justify-center relative gap-[calc(var(--theme-spacing)*3)]">
                       {nextSteps.map((step, index) => (
-                        <div key={index} className="relative flex items-center">
-                          <div className="flex flex-col items-center relative z-10 theme-bg-background px-[calc(var(--theme-spacing)*2)]">
+                        <div key={index} className="relative flex items-center gap-[calc(var(--theme-spacing)*3)]">
+                          <div className="flex flex-col items-center relative z-10 ">
                             <svg
                               className="w-10 h-10"
                               viewBox="0 0 24 24"
@@ -527,21 +542,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                                 fill="none"
                               />
                             </svg>
-                            <span className="text-base font-semibold mt-[calc(var(--theme-spacing)*0.25)] text-center whitespace-nowrap theme-text-foreground">
+                            <span className="text-base font-semibold text-center whitespace-nowrap text-foreground">
                               {step.title}
                             </span>
                           </div>
                           {index < nextSteps.length - 1 && (
-                            <ArrowRight className="w-5 h-5 mx-[calc(var(--theme-spacing)*0.25)] shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)]" />
+                            <ArrowRight className="w-5 h-5 shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)]" />
                           )}
                         </div>
                       ))}
                     </div>
                   </div>
-                  <div className="w-full flex justify-end mb-[calc(var(--theme-spacing)*4)] theme-text-foreground">
+                  <div className="w-full flex justify-end text-foreground mt-[calc(var(--theme-spacing)*6)]">
                     Do you want to enable the tutorial?
                   </div>
-                  <DialogFooter>
+                  <DialogFooter className="mt-[calc(var(--theme-spacing)*4)]">
                     <GlobalButton
                       variant="ghost"
                       className="text-base"
@@ -584,12 +599,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   </PopoverTrigger>
                   <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow">
                     <div className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
-                      <h4 className="font-semibold theme-text-foreground">Walkthrough Help</h4>
-                      <p className="text-sm theme-text-muted-foreground">
+                      <h4 className="font-semibold text-foreground">
+                        Walkthrough Help
+                      </h4>
+                      <p className="text-sm text-foreground">
                         Need help getting started? Click the button below to
                         restart the walkthrough guide.
                       </p>
-                      <Button
+                      <GlobalButton
                         variant="outline"
                         className="w-full"
                         onClick={() => {
@@ -598,12 +615,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         }}
                       >
                         Restart Walkthrough
-                      </Button>
+                      </GlobalButton>
                     </div>
                   </PopoverContent>
                 </Popover>
               )
             )}
+            <div className="flex items-center theme-spacing">
+              <Sun
+                className={`w-4 h-4 ${!darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`}
+              />
+              <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+              <Moon
+                className={`w-4 h-4 ${darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`}
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-[calc(var(--theme-spacing)*3)]">
@@ -700,14 +726,19 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   align="center"
                 >
                   <div className="flex flex-col gap-[calc(var(--theme-spacing)*4)]">
-                    <div className="font-semibold text-sm theme-text-foreground">Section Options</div>
+                    <div className="font-semibold text-sm theme-text-foreground">
+                      Section Options
+                    </div>
                     {sectionsData.length === 0 ? (
                       <div className="text-sm theme-text-muted-foreground">
                         No sections found
                       </div>
                     ) : (
                       sectionsData.map((file) => (
-                        <div key={file.filePath} className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
+                        <div
+                          key={file.filePath}
+                          className="flex flex-col gap-[calc(var(--theme-spacing)*3)]"
+                        >
                           <div className="font-medium text-sm border-b theme-border-border pb-[calc(var(--theme-spacing)*0.25)] theme-text-foreground">
                             {file.fileName}
                           </div>
@@ -788,7 +819,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   align="center"
                 >
                   <div className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
-                    <div className="font-semibold text-sm theme-text-foreground">File Inclusion</div>
+                    <div className="font-semibold text-sm theme-text-foreground">
+                      File Inclusion
+                    </div>
                     {fileTreeData.length === 0 ? (
                       <div className="text-sm theme-text-muted-foreground">
                         No files found

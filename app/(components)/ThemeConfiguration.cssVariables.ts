@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useThemeStore } from "./ThemeConfiguration.stores";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 
 export const useThemeCSSVariables = () => {
   const theme = useThemeStore((state) => state.theme);
   const darkMode = useEditorStore((state) => state.darkMode);
+  const [themeReady, setThemeReady] = useState(false);
 
   useEffect(() => {
     const mode = darkMode ? "dark" : "light";
@@ -77,5 +78,9 @@ export const useThemeCSSVariables = () => {
       : other.shadow.color.replace(/rgb\(([^)]+)\)/, `rgba($1, ${other.shadow.opacity})`);
 
     root.style.setProperty("--theme-shadow", `${other.shadow.offsetX}px ${other.shadow.offsetY}px ${other.shadow.blurRadius}px ${other.shadow.spread}px ${shadowColor}`);
+
+    setThemeReady(true);
   }, [theme, darkMode]);
+
+  return themeReady;
 };

@@ -155,11 +155,16 @@ function PlaceholderNodeComponent({
   const [localValue, setLocalValue] = useState("");
   const [inputWidth, setInputWidth] = useState(0);
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const currentValue = getPlaceholderValue(placeholderKey) || defaultValue;
-  const showPlaceholderHelp = isFirstPlaceholder && shouldShowStep(WalkthroughStep.PLACEHOLDER);
+  const showPlaceholderHelp = mounted && isFirstPlaceholder && shouldShowStep(WalkthroughStep.PLACEHOLDER);
 
   useEffect(() => {
     setLocalValue(currentValue);

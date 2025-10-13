@@ -205,9 +205,14 @@ const Sidebar = () => {
   } = useWalkthroughStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [downloadHelpOpen, setDownloadHelpOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const params = useParams();
 
-  const showDownloadHelp = shouldShowStep(WalkthroughStep.DOWNLOAD);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const showDownloadHelp = mounted && shouldShowStep(WalkthroughStep.DOWNLOAD);
 
   const navigationData = useMemo(
     () => generateNavigationFromMarkdownData(data.root.children),

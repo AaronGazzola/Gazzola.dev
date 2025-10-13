@@ -36,9 +36,13 @@ export const WalkthroughHelper = ({
       <PopoverTrigger asChild>
         <div className={`relative inline-block ${containerSize} ${className}`}>
           {showAnimation && (
-            <div className={`absolute inset-0 ${containerSize} flex items-center justify-center`}>
+            <div
+              className={`absolute inset-0 ${containerSize} flex items-center justify-center`}
+            >
               <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-                <Info className={`${iconClassName} text-blue-500 animate-ping`} />
+                <Info
+                  className={`${iconClassName} text-blue-500 animate-ping`}
+                />
               </div>
               <div
                 className="absolute inset-0 rounded-full border-2 border-blue-500/30"
@@ -47,18 +51,6 @@ export const WalkthroughHelper = ({
                   transform: "scale(1.2) translateY(2px)",
                 }}
               />
-              <div
-                className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
-              >
-                <div
-                  className="rounded-full bg-blue-500"
-                  style={{
-                    width: "4px",
-                    height: "4px",
-                    animation: "breathe 6s ease-in-out infinite",
-                  }}
-                />
-              </div>
             </div>
           )}
           <Button

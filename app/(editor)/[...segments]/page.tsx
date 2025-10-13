@@ -1,5 +1,6 @@
 "use client";
 
+import { useThemeCSSVariables } from "@/app/(components)/ThemeConfiguration.cssVariables";
 import { processContent } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
 import { CodeNode } from "@lexical/code";
@@ -42,6 +43,7 @@ import { useEditorStore } from "../layout.stores";
 const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
+  const themeReady = useThemeCSSVariables();
   const {
     updateContent,
     getNode,
@@ -72,7 +74,7 @@ const Page = () => {
   }, []);
 
   const canRender =
-    mounted && versionChecked && !versionCheckLoading && !isResetting;
+    mounted && themeReady && versionChecked && !versionCheckLoading && !isResetting;
 
   useEffect(() => {
     conditionalLog(
@@ -301,11 +303,13 @@ const Page = () => {
         <div className="theme-text-muted-foreground">
           {!mounted
             ? "Loading editor..."
-            : versionCheckLoading
-              ? "Checking content version..."
-              : isResetting
-                ? "Updating content..."
-                : "Loading content..."}
+            : !themeReady
+              ? "Applying theme..."
+              : versionCheckLoading
+                ? "Checking content version..."
+                : isResetting
+                  ? "Updating content..."
+                  : "Loading content..."}
         </div>
       </div>
     );
