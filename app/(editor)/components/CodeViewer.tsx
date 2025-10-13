@@ -29,6 +29,8 @@ export const CodeViewer = ({
           fontSize: "0.875rem",
           lineHeight: "1.5",
           height: "100%",
+          width: "100%",
+          maxWidth: "100%",
           background: "transparent",
         }}
         lineNumberStyle={{

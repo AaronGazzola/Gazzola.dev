@@ -228,7 +228,7 @@ const Sidebar = () => {
 
     const getFirstPagePath = () => {
       const pages = Object.values(data.flatIndex)
-        .filter((node) => node.type === "file" && node.include !== false)
+        .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
       return pages.length > 0 ? pages[0].path : "";
     };

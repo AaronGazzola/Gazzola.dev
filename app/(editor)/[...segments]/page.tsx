@@ -22,19 +22,22 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { EditorState } from "lexical";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { CodeViewer } from "../components/CodeViewer";
 import { ComponentNode } from "../components/ComponentNode";
 import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
+import { FirstPlaceholderPlugin } from "../components/FirstPlaceholderPlugin";
 import { PlaceholderNode } from "../components/PlaceholderNode";
-import { PLACEHOLDER_TRANSFORMER, resetPlaceholderTracking } from "../components/PlaceholderTransformer";
+import {
+  PLACEHOLDER_TRANSFORMER,
+  resetPlaceholderTracking,
+} from "../components/PlaceholderTransformer";
 import { ReadOnlyLexicalEditor } from "../components/ReadOnlyLexicalEditor";
 import { SectionNode } from "../components/SectionNode";
-import { CodeViewer } from "../components/CodeViewer";
 import {
   SECTION_TRANSFORMER,
   setSectionTransformerContext,
 } from "../components/SectionTransformer";
 import { Toolbar } from "../components/Toolbar";
-import { FirstPlaceholderPlugin } from "../components/FirstPlaceholderPlugin";
 import {
   useContentVersionCheck,
   useInitializeMarkdownData,
@@ -58,6 +61,7 @@ const Page = () => {
     appStructure,
     getPlaceholderValue,
     getInitialConfiguration,
+    markPageVisited,
   } = useEditorStore();
   const {
     isResetting,
@@ -75,7 +79,11 @@ const Page = () => {
   }, []);
 
   const canRender =
-    mounted && themeReady && versionChecked && !versionCheckLoading && !isResetting;
+    mounted &&
+    themeReady &&
+    versionChecked &&
+    !versionCheckLoading &&
+    !isResetting;
 
   useEffect(() => {
     conditionalLog(
@@ -103,7 +111,12 @@ const Page = () => {
 
   const getFirstPagePath = useCallback((): string => {
     const pages = Object.values(data.flatIndex)
-      .filter((node) => node.type === "file" && node.include !== false)
+      .filter(
+        (node) =>
+          node.type === "file" &&
+          node.include !== false &&
+          !(node as any).previewOnly
+      )
       .sort((a, b) => (a.order || 0) - (b.order || 0));
 
     return pages.length > 0 ? pages[0].path : "";
@@ -151,13 +164,22 @@ const Page = () => {
     });
   }, [contentPath, getSectionOptions]);
 
+  useEffect(() => {
+    if (contentPath && canRender) {
+      markPageVisited(contentPath);
+    }
+  }, [contentPath, canRender, markPageVisited]);
+
   const currentNode = useMemo(() => {
     if (!canRender || !contentPath) return null;
     return getNode(contentPath);
   }, [canRender, contentPath, getNode, refreshKey, data]);
 
   const isTsxFile = useMemo(() => {
-    return currentNode?.type === "file" && (currentNode as any).fileExtension === "tsx";
+    return (
+      currentNode?.type === "file" &&
+      (currentNode as any).fileExtension === "tsx"
+    );
   }, [currentNode]);
 
   const currentContent = useMemo(() => {
@@ -169,7 +191,10 @@ const Page = () => {
         contentPath,
         hasNode: !!currentNode,
         nodeType: currentNode?.type,
-        contentLength: currentNode && currentNode.type === "file" ? currentNode.content.length : 0,
+        contentLength:
+          currentNode && currentNode.type === "file"
+            ? currentNode.content.length
+            : 0,
       },
       { label: "markdown-parse" }
     );
@@ -186,7 +211,10 @@ const Page = () => {
   }, [currentNode, contentPath, refreshKey, data]);
 
   const editorContent = useMemo(() => {
-    return currentContent.replace(/<!-- Themed components start -->[\s\S]*?<!-- Themed components end -->/g, "");
+    return currentContent.replace(
+      /<!-- Themed components start -->[\s\S]*?<!-- Themed components end -->/g,
+      ""
+    );
   }, [currentContent]);
 
   const processedContent = useMemo(() => {
@@ -352,7 +380,9 @@ const Page = () => {
   if (!isInitialized) {
     return (
       <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
-        <div className="theme-text-muted-foreground theme-font-sans theme-tracking">Initializing editor...</div>
+        <div className="theme-text-muted-foreground theme-font-sans theme-tracking">
+          Initializing editor...
+        </div>
       </div>
     );
   }
@@ -363,7 +393,11 @@ const Page = () => {
         <div className="relative h-full flex flex-col">
           <Toolbar currentContentPath={contentPath} />
           <div className="w-full flex-1 overflow-auto">
-            <CodeViewer code={currentContent} language="tsx" darkMode={darkMode} />
+            <CodeViewer
+              code={currentContent}
+              language="tsx"
+              darkMode={darkMode}
+            />
           </div>
         </div>
       </div>
@@ -388,9 +422,7 @@ const Page = () => {
             <Toolbar currentContentPath={contentPath} />
             <RichTextPlugin
               contentEditable={
-                <ContentEditable
-                  className="w-full flex-1 p-6 outline-none resize-none overflow-auto min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing"
-                />
+                <ContentEditable className="w-full flex-1 p-6 outline-none resize-none overflow-auto min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing" />
               }
               placeholder={
                 <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing theme-font-sans theme-tracking">

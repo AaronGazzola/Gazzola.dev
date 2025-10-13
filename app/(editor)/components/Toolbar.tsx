@@ -374,7 +374,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
         const firstPagePath = Object.values(freshData.flatIndex)
-          .filter((node) => node.type === "file" && node.include !== false)
+          .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly)
           .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
         const resetKey = Date.now();
