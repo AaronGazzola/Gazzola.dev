@@ -28,6 +28,7 @@ import { PlaceholderNode } from "../components/PlaceholderNode";
 import { PLACEHOLDER_TRANSFORMER, resetPlaceholderTracking } from "../components/PlaceholderTransformer";
 import { ReadOnlyLexicalEditor } from "../components/ReadOnlyLexicalEditor";
 import { SectionNode } from "../components/SectionNode";
+import { CodeViewer } from "../components/CodeViewer";
 import {
   SECTION_TRANSFORMER,
   setSectionTransformerContext,
@@ -150,23 +151,31 @@ const Page = () => {
     });
   }, [contentPath, getSectionOptions]);
 
-  const currentContent = useMemo(() => {
-    if (!canRender || !contentPath) return "";
+  const currentNode = useMemo(() => {
+    if (!canRender || !contentPath) return null;
+    return getNode(contentPath);
+  }, [canRender, contentPath, getNode, refreshKey, data]);
 
-    const node = getNode(contentPath);
+  const isTsxFile = useMemo(() => {
+    return currentNode?.type === "file" && (currentNode as any).fileExtension === "tsx";
+  }, [currentNode]);
+
+  const currentContent = useMemo(() => {
+    if (!currentNode) return "";
+
     conditionalLog(
       {
         message: "Getting current content",
         contentPath,
-        hasNode: !!node,
-        nodeType: node?.type,
-        contentLength: node && node.type === "file" ? node.content.length : 0,
+        hasNode: !!currentNode,
+        nodeType: currentNode?.type,
+        contentLength: currentNode && currentNode.type === "file" ? currentNode.content.length : 0,
       },
       { label: "markdown-parse" }
     );
 
-    if (node && node.type === "file") {
-      return node.content
+    if (currentNode && currentNode.type === "file") {
+      return currentNode.content
         .replace(/\\n/g, "\n")
         .replace(/\\`/g, "`")
         .replace(/\\\$/g, "$")
@@ -174,7 +183,7 @@ const Page = () => {
     }
     return "";
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canRender, contentPath, getNode, refreshKey, data]);
+  }, [currentNode, contentPath, refreshKey, data]);
 
   const editorContent = useMemo(() => {
     return currentContent.replace(/<!-- Themed components start -->[\s\S]*?<!-- Themed components end -->/g, "");
@@ -344,6 +353,19 @@ const Page = () => {
     return (
       <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
         <div className="theme-text-muted-foreground">Initializing editor...</div>
+      </div>
+    );
+  }
+
+  if (isTsxFile) {
+    return (
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
+        <div className="relative h-full flex flex-col">
+          <Toolbar currentContentPath={contentPath} />
+          <div className="w-full flex-1 overflow-auto">
+            <CodeViewer code={currentContent} language="tsx" darkMode={darkMode} />
+          </div>
+        </div>
       </div>
     );
   }

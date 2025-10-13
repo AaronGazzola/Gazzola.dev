@@ -9,6 +9,9 @@ export interface BaseNode {
   path: string;
   urlPath: string;
   include: boolean;
+  previewOnly?: boolean;
+  includeInToolbar?: boolean;
+  fileExtension?: string;
 }
 
 export interface DirectoryNode extends BaseNode {

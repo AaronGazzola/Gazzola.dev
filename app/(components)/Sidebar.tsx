@@ -108,7 +108,10 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   if (item.type === "page") {
-    if (!item.path || !isPageVisited(item.path)) {
+    const node = data.flatIndex[item.path || ""];
+    const isComponentFile = node?.type === "file" && node.previewOnly === true;
+
+    if (!item.path || (!isPageVisited(item.path) && !isComponentFile)) {
       return null;
     }
 
@@ -139,12 +142,17 @@ const TreeItem: React.FC<TreeItemProps> = ({
     ?.filter((child) => child.include !== false)
     .some((child) => {
       if (child.type === "page" && child.path) {
-        return isPageVisited(child.path);
+        const childNode = data.flatIndex[child.path];
+        const isComponentFile = childNode?.type === "file" && childNode.previewOnly === true;
+        return isPageVisited(child.path) || isComponentFile;
       }
       return false;
     });
 
-  if (!hasVisitedChildren) {
+  const itemNode = data.flatIndex[itemPath];
+  const isComponentDir = itemNode?.type === "directory" && itemNode.previewOnly === true;
+
+  if (!hasVisitedChildren && !isComponentDir) {
     return null;
   }
 

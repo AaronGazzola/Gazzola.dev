@@ -27,6 +27,7 @@ import { Slider } from "@/components/editor/ui/slider";
 import { fontOptions } from "@/styles/fonts";
 import { ChevronDown, ChevronLeft, ChevronRight, Shuffle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ColorPicker } from "./ColorPicker";
 import { loadThemesAction } from "./ThemeConfiguration.actions";
 import { useThemeStore } from "./ThemeConfiguration.stores";
 import { ParsedTheme } from "./ThemeConfiguration.types";
@@ -148,7 +149,7 @@ export const ThemeConfigurationSidebar = ({
     <div
       className="flex flex-col theme-bg-background theme-border-border theme-radius theme-shadow sticky top-0"
       style={{
-        width: "440px",
+        width: "360px",
         borderRightWidth: "1px",
         maxHeight: "calc(100vh - 200px)",
       }}
@@ -316,69 +317,45 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Primary
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.primary}
-                          onChange={(e) => {
-                            console.log(
-                              JSON.stringify({
-                                action: "input_change",
-                                newValue: e.target.value,
-                              })
-                            );
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "primary",
-                              e.target.value
-                            );
-                          }}
-                          onFocus={() =>
-                            console.log(
-                              JSON.stringify({
-                                action: "input_focus",
-                                currentValue: currentColors.primary,
-                              })
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.primary,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.primary}
+                        onChange={(value) => {
+                          console.log(
+                            JSON.stringify({
+                              action: "input_change",
+                              newValue: value,
+                            })
+                          );
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "primary",
+                            value
+                          );
+                        }}
+                        onFocus={() =>
+                          console.log(
+                            JSON.stringify({
+                              action: "input_focus",
+                              currentValue: currentColors.primary,
+                            })
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Primary Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.primaryForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "primaryForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.primaryForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.primaryForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "primaryForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -397,55 +374,31 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Secondary
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.secondary}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "secondary",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.secondary,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.secondary}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "secondary",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Secondary Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.secondaryForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "secondaryForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.secondaryForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.secondaryForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "secondaryForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -464,55 +417,31 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Accent
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.accent}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "accent",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.accent,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.accent}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "accent",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Accent Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.accentForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "accentForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.accentForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.accentForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "accentForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -531,55 +460,31 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Background
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.background}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "background",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.background,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.background}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "background",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.foreground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "foreground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.foreground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.foreground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "foreground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -598,55 +503,31 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Card Background
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.card}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "card",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.card,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.card}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "card",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Card Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.cardForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "cardForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.cardForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.cardForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "cardForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -665,55 +546,31 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Popover Background
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.popover}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "popover",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.popover,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.popover}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "popover",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Popover Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.popoverForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "popoverForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.popoverForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.popoverForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "popoverForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -732,55 +589,31 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Muted
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.muted}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "muted",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.muted,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.muted}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "muted",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Muted Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.mutedForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "mutedForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.mutedForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.mutedForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "mutedForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -799,56 +632,31 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Destructive
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.destructive}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "destructive",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.destructive,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.destructive}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "destructive",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Destructive Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.destructiveForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "destructiveForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor:
-                              currentColors.destructiveForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.destructiveForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "destructiveForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -867,82 +675,46 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Border
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.border}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "border",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.border,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.border}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "border",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Input
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.input}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "input",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.input,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.input}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "input",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Ring
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.ring}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "ring",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.ring,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.ring}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "ring",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -965,28 +737,16 @@ export const ThemeConfigurationSidebar = ({
                           <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                             Chart {num}
                           </Label>
-                          <div className="flex theme-gap-3">
-                            <Input
-                              value={currentColors[chartKey]}
-                              onChange={(e) =>
-                                updateColor(
-                                  darkMode ? "dark" : "light",
-                                  chartKey,
-                                  e.target.value
-                                )
-                              }
-                              className="h-9 text-xs font-mono flex-1"
-                            />
-                            <div
-                              className="theme-radius theme-border-border"
-                              style={{
-                                width: "36px",
-                                height: "36px",
-                                borderWidth: "1px",
-                                backgroundColor: currentColors[chartKey],
-                              }}
-                            />
-                          </div>
+                          <ColorPicker
+                            value={currentColors[chartKey]}
+                            onChange={(value) =>
+                              updateColor(
+                                darkMode ? "dark" : "light",
+                                chartKey,
+                                value
+                              )
+                            }
+                          />
                         </div>
                       );
                     })}
@@ -1007,219 +767,121 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Background
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarBackground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarBackground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.sidebarBackground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarBackground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarBackground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.sidebarForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Primary
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarPrimary}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarPrimary",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.sidebarPrimary,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarPrimary}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarPrimary",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Primary Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarPrimaryForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarPrimaryForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor:
-                              currentColors.sidebarPrimaryForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarPrimaryForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarPrimaryForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Accent
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarAccent}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarAccent",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.sidebarAccent,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarAccent}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarAccent",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Accent Foreground
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarAccentForeground}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarAccentForeground",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor:
-                              currentColors.sidebarAccentForeground,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarAccentForeground}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarAccentForeground",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Border
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarBorder}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarBorder",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.sidebarBorder,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarBorder}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarBorder",
+                            value
+                          )
+                        }
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Sidebar Ring
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentColors.sidebarRing}
-                          onChange={(e) =>
-                            updateColor(
-                              darkMode ? "dark" : "light",
-                              "sidebarRing",
-                              e.target.value
-                            )
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentColors.sidebarRing,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentColors.sidebarRing}
+                        onChange={(value) =>
+                          updateColor(
+                            darkMode ? "dark" : "light",
+                            "sidebarRing",
+                            value
+                          )
+                        }
+                      />
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -1563,24 +1225,10 @@ export const ThemeConfigurationSidebar = ({
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">
                         Shadow Color
                       </Label>
-                      <div className="flex theme-gap-3">
-                        <Input
-                          value={currentOther.shadow.color}
-                          onChange={(e) =>
-                            updateShadow(mode, "color", e.target.value)
-                          }
-                          className="h-9 text-xs font-mono flex-1"
-                        />
-                        <div
-                          className="theme-radius theme-border-border"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderWidth: "1px",
-                            backgroundColor: currentOther.shadow.color,
-                          }}
-                        />
-                      </div>
+                      <ColorPicker
+                        value={currentOther.shadow.color}
+                        onChange={(value) => updateShadow(mode, "color", value)}
+                      />
                     </div>
                     <div>
                       <Label className="text-xs block theme-text-muted-foreground theme-mb-2">

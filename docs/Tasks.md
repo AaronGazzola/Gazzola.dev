@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] extend walkthrough
 - [ ] fix the ability to create a app directory and page file from adding a route segment in AppStructure
 - [ ] The theme styles aren't being applied to the correct elements in the shadcn components - go through and update each of the components in "component/editor/ui/\*" to use apply the correct styles to the correct elements.
 - [ ] Add templates for the route structure

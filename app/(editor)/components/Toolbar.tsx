@@ -184,12 +184,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       }
 
       if (node.type === "file") {
-        pages.push({
-          path: node.path,
-          url: node.urlPath,
-          title: node.displayName,
-          order: node.order || 0,
-        });
+        if (node.includeInToolbar !== false) {
+          pages.push({
+            path: node.path,
+            url: node.urlPath,
+            title: node.displayName,
+            order: node.order || 0,
+          });
+        }
       } else if (node.type === "directory" && node.children) {
         for (const child of node.children) {
           extractPages(child, node.urlPath);
@@ -284,6 +286,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const currentPageIndex = useMemo(() => {
     return allPages.findIndex((page) => page.path === currentContentPath);
   }, [allPages, currentContentPath]);
+
+  const isViewingComponentFile = useMemo(() => {
+    const currentNode = data.flatIndex[currentContentPath];
+    return currentNode?.type === "file" && currentNode.previewOnly === true;
+  }, [data, currentContentPath]);
 
   const nextPage =
     currentPageIndex < allPages.length - 1
@@ -889,13 +896,16 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               />
             )}
             <EditModeSwitch
-              previewMode={previewMode}
+              previewMode={isViewingComponentFile ? true : previewMode}
               onToggle={(checked) => {
-                setPreviewMode(checked);
-                if (showPreviewHelp) {
-                  markStepComplete(WalkthroughStep.PREVIEW_MODE);
+                if (!isViewingComponentFile) {
+                  setPreviewMode(checked);
+                  if (showPreviewHelp) {
+                    markStepComplete(WalkthroughStep.PREVIEW_MODE);
+                  }
                 }
               }}
+              disabled={isViewingComponentFile}
             />
 
             <div className="relative">

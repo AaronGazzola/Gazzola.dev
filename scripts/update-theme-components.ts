@@ -1,66 +1,26 @@
-import { readFileSync, writeFileSync, readdirSync } from "fs";
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, cpSync } from "fs";
 import { join } from "path";
 
-const THEME_MD_PATH = join(
-  process.cwd(),
-  "public/data/markdown/Start_here/2-Theme.md"
-);
-const COMPONENTS_DIR = join(process.cwd(), "components/editor/ui");
+const SOURCE_DIR = join(process.cwd(), "components/editor/ui");
+const DEST_DIR = join(process.cwd(), "public/data/components/ui");
 
-const START_COMMENT = "<!-- Themed components start -->";
-const END_COMMENT = "<!-- Themed components end -->";
-
-function getComponentName(filename: string): string {
-  return filename
-    .replace(".tsx", "")
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join("");
-}
-
-function removeThemePrefix(content: string): string {
-  return content.replace(/theme-/g, "");
-}
-
-function generateComponentsContent(): string {
-  const files = readdirSync(COMPONENTS_DIR)
-    .filter((file) => file.endsWith(".tsx"))
-    .sort();
-
-  const components = files.map((file) => {
-    const componentPath = join(COMPONENTS_DIR, file);
-    const content = readFileSync(componentPath, "utf-8");
-    const contentWithoutThemePrefix = removeThemePrefix(content);
-    const componentName = getComponentName(file);
-
-    return `### ${componentName}\n\n\`\`\`tsx\n${contentWithoutThemePrefix}\n\`\`\``;
-  });
-
-  return components.join("\n\n");
-}
-
-function updateThemeMarkdown(): void {
-  const themeContent = readFileSync(THEME_MD_PATH, "utf-8");
-
-  const startIndex = themeContent.indexOf(START_COMMENT);
-  const endIndex = themeContent.indexOf(END_COMMENT);
-
-  if (startIndex === -1 || endIndex === -1) {
-    throw new Error(
-      "Could not find comment markers in Theme.md file"
-    );
+function copyComponentFiles(): void {
+  if (existsSync(DEST_DIR)) {
+    cpSync(DEST_DIR, DEST_DIR + "_backup", { recursive: true, force: true });
   }
 
-  const beforeComments = themeContent.substring(0, startIndex + START_COMMENT.length);
-  const afterComments = themeContent.substring(endIndex);
+  mkdirSync(DEST_DIR, { recursive: true });
 
-  const componentsContent = generateComponentsContent();
+  const files = readdirSync(SOURCE_DIR).filter((file) => file.endsWith(".tsx"));
 
-  const updatedContent = `${beforeComments}\n\n${componentsContent}\n\n${afterComments}`;
+  files.forEach((file) => {
+    const sourcePath = join(SOURCE_DIR, file);
+    const destPath = join(DEST_DIR, file);
+    const content = readFileSync(sourcePath, "utf-8");
+    writeFileSync(destPath, content, "utf-8");
+  });
 
-  writeFileSync(THEME_MD_PATH, updatedContent, "utf-8");
-
-  console.log(JSON.stringify({success:true,componentsUpdated:readdirSync(COMPONENTS_DIR).filter((f) => f.endsWith(".tsx")).length}));
+  console.log(JSON.stringify({success:true,componentsCopied:files.length}));
 }
 
-updateThemeMarkdown();
+copyComponentFiles();

@@ -445,7 +445,7 @@ const generateThemeCss = (): string => {
   }
 
   try {
-    const themeStoreState = localStorage.getItem("storage");
+    const themeStoreState = localStorage.getItem("theme-storage");
     if (!themeStoreState) {
       return "";
     }
@@ -491,9 +491,15 @@ const generateThemeCss = (): string => {
       { key: "sidebarBackground", css: "--sidebar" },
       { key: "sidebarForeground", css: "--sidebar-foreground" },
       { key: "sidebarPrimary", css: "--sidebar-primary" },
-      { key: "sidebarPrimaryForeground", css: "--sidebar-primary-foreground" },
+      {
+        key: "sidebarPrimaryForeground",
+        css: "--sidebar-primary-foreground",
+      },
       { key: "sidebarAccent", css: "--sidebar-accent" },
-      { key: "sidebarAccentForeground", css: "--sidebar-accent-foreground" },
+      {
+        key: "sidebarAccentForeground",
+        css: "--sidebar-accent-foreground",
+      },
       { key: "sidebarBorder", css: "--sidebar-border" },
       { key: "sidebarRing", css: "--sidebar-ring" },
     ];
@@ -518,7 +524,9 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-blur: ${lightOther.shadow.blurRadius}px;`);
     lines.push(`  --shadow-spread: ${lightOther.shadow.spread}px;`);
     lines.push(`  --shadow-opacity: ${lightOther.shadow.opacity};`);
-    lines.push(`  --shadow-color: ${hslToOklch(lightOther.shadow.color)};`);
+    lines.push(
+      `  --shadow-color: ${hslToOklch(lightOther.shadow.color)};`
+    );
     lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-sm:`);
@@ -541,7 +549,9 @@ const generateThemeCss = (): string => {
       `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`
     );
     lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
-    lines.push(`  --tracking-normal: ${lightTypography.letterSpacing}em;`);
+    lines.push(
+      `  --tracking-normal: ${lightTypography.letterSpacing}em;`
+    );
     lines.push(`  --spacing: ${lightOther.spacing}rem;`);
     lines.push(`}`);
     lines.push(``);
@@ -565,7 +575,9 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-blur: ${darkOther.shadow.blurRadius}px;`);
     lines.push(`  --shadow-spread: ${darkOther.shadow.spread}px;`);
     lines.push(`  --shadow-opacity: ${darkOther.shadow.opacity};`);
-    lines.push(`  --shadow-color: ${hslToOklch(darkOther.shadow.color)};`);
+    lines.push(
+      `  --shadow-color: ${hslToOklch(darkOther.shadow.color)};`
+    );
     lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-sm:`);
@@ -596,11 +608,17 @@ const generateThemeCss = (): string => {
     lines.push(`  --color-card: var(--card);`);
     lines.push(`  --color-card-foreground: var(--card-foreground);`);
     lines.push(`  --color-popover: var(--popover);`);
-    lines.push(`  --color-popover-foreground: var(--popover-foreground);`);
+    lines.push(
+      `  --color-popover-foreground: var(--popover-foreground);`
+    );
     lines.push(`  --color-primary: var(--primary);`);
-    lines.push(`  --color-primary-foreground: var(--primary-foreground);`);
+    lines.push(
+      `  --color-primary-foreground: var(--primary-foreground);`
+    );
     lines.push(`  --color-secondary: var(--secondary);`);
-    lines.push(`  --color-secondary-foreground: var(--secondary-foreground);`);
+    lines.push(
+      `  --color-secondary-foreground: var(--secondary-foreground);`
+    );
     lines.push(`  --color-muted: var(--muted);`);
     lines.push(`  --color-muted-foreground: var(--muted-foreground);`);
     lines.push(`  --color-accent: var(--accent);`);
@@ -618,7 +636,9 @@ const generateThemeCss = (): string => {
     lines.push(`  --color-chart-4: var(--chart-4);`);
     lines.push(`  --color-chart-5: var(--chart-5);`);
     lines.push(`  --color-sidebar: var(--sidebar);`);
-    lines.push(`  --color-sidebar-foreground: var(--sidebar-foreground);`);
+    lines.push(
+      `  --color-sidebar-foreground: var(--sidebar-foreground);`
+    );
     lines.push(`  --color-sidebar-primary: var(--sidebar-primary);`);
     lines.push(
       `  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);`
@@ -647,6 +667,71 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-lg: var(--shadow-lg);`);
     lines.push(`  --shadow-xl: var(--shadow-xl);`);
     lines.push(`  --shadow-2xl: var(--shadow-2xl);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.theme-radius {`);
+    lines.push(`  border-radius: var(--radius);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.theme-shadow {`);
+    lines.push(`  box-shadow: var(--shadow);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-state="checked"].theme-data-checked-bg-primary {`);
+    lines.push(`  background-color: var(--primary);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-state="checked"].theme-data-checked-text-primary-foreground {`);
+    lines.push(`  color: var(--primary-foreground);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-state="unchecked"].theme-data-unchecked-bg-input {`);
+    lines.push(`  background-color: var(--input);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.theme-focus-ring:focus-visible {`);
+    lines.push(`  outline: none;`);
+    lines.push(`  box-shadow: 0 0 0 2px var(--ring);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-selected-single="true"].theme-data-selected-single-bg-primary {`);
+    lines.push(`  background-color: var(--primary);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-selected-single="true"].theme-data-selected-single-text-primary-foreground {`);
+    lines.push(`  color: var(--primary-foreground);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-range-start="true"].theme-data-range-start-bg-primary {`);
+    lines.push(`  background-color: var(--primary);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-range-start="true"].theme-data-range-start-text-primary-foreground {`);
+    lines.push(`  color: var(--primary-foreground);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-range-end="true"].theme-data-range-end-bg-primary {`);
+    lines.push(`  background-color: var(--primary);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-range-end="true"].theme-data-range-end-text-primary-foreground {`);
+    lines.push(`  color: var(--primary-foreground);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-range-middle="true"].theme-data-range-middle-bg-accent {`);
+    lines.push(`  background-color: var(--accent);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-range-middle="true"].theme-data-range-middle-text-accent-foreground {`);
+    lines.push(`  color: var(--accent-foreground);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.theme-focus-border-ring:focus-visible {`);
+    lines.push(`  border-color: var(--ring);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.theme-focus-ring-color:focus-visible {`);
+    lines.push(`  --tw-ring-color: var(--ring);`);
     lines.push(`}`);
     lines.push("```");
 
@@ -793,25 +878,36 @@ const processNode = (
       });
     }
   } else if (node.type === "file") {
-    const processedContent = processContent(
-      node.content,
-      node.path,
-      getSectionInclude,
-      getSectionContent,
-      getSectionOptions,
-      appStructure,
-      getPlaceholderValue,
-      getInitialConfiguration
-    );
+    const fileExtension = (node as any).fileExtension || "md";
+    const isComponentFile = fileExtension === "tsx";
 
-    const cleanContent = processedContent
-      .replace(/\\`/g, "`")
-      .replace(/\\n/g, "\n")
-      .replace(/\\\\/g, "\\")
-      .replace(/<!-- Themed components start -->\n?/g, "")
-      .replace(/<!-- Themed components end -->\n?/g, "");
+    let cleanContent: string;
 
-    currentFolder.file(`${node.name}.md`, cleanContent);
+    if (isComponentFile) {
+      cleanContent = node.content
+        .replace(/\\`/g, "`")
+        .replace(/\\n/g, "\n")
+        .replace(/\\\$/g, "$")
+        .replace(/\\\\/g, "\\");
+    } else {
+      const processedContent = processContent(
+        node.content,
+        node.path,
+        getSectionInclude,
+        getSectionContent,
+        getSectionOptions,
+        appStructure,
+        getPlaceholderValue,
+        getInitialConfiguration
+      );
+
+      cleanContent = processedContent
+        .replace(/\\`/g, "`")
+        .replace(/\\n/g, "\n")
+        .replace(/\\\\/g, "\\");
+    }
+
+    currentFolder.file(`${node.name}.${fileExtension}`, cleanContent);
   }
 };
 
