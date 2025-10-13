@@ -1,6 +1,8 @@
 "use client";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
+import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
+import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
 import { useThemeStore } from "@/app/layout.stores";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +23,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { generateAndDownloadZip } from "@/lib/download.utils";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
@@ -28,9 +31,6 @@ import { ChevronDown, ChevronRight, Download, Info, Menu } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
-import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
-import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 
 const generateNavigationFromMarkdownData = (
   nodes: MarkdownNode[]
@@ -197,12 +197,8 @@ const Sidebar = () => {
     getPlaceholderValue,
     getInitialConfiguration,
   } = useEditorStore();
-  const {
-    shouldShowStep,
-    markStepComplete,
-    isStepOpen,
-    setStepOpen,
-  } = useWalkthroughStore();
+  const { shouldShowStep, markStepComplete, isStepOpen, setStepOpen } =
+    useWalkthroughStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [downloadHelpOpen, setDownloadHelpOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -378,24 +374,30 @@ const Sidebar = () => {
                   <div className="space-y-2">
                     <h4 className="font-semibold">Work in Progress</h4>
                     <p className="text-sm text-gray-300">
-                      This app is a work in progress and will likely change often. When the source material changes, the editor content will be reset.
+                      This app is a work in progress and will likely change
+                      often. When the source material changes, the editor
+                      content will be reset.
                     </p>
                     <p className="text-sm text-gray-300 font-medium">
-                      Please download your roadmap frequently to avoid losing your progress.
+                      Please download your roadmap frequently to avoid losing
+                      your progress.
                     </p>
                   </div>
                 </PopoverContent>
               </Popover>
               <div className="relative w-full">
                 {showDownloadHelp && (
-                  <div className="absolute -top-2 -right-2 z-10">
+                  <div className="absolute -top-2 -right-2 z-30">
                     <WalkthroughHelper
                       isOpen={downloadHelpOpen}
                       onOpenChange={(open) => {
                         setDownloadHelpOpen(open);
                         if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
                           markStepComplete(WalkthroughStep.DOWNLOAD);
-                        } else if (open && !isStepOpen(WalkthroughStep.DOWNLOAD)) {
+                        } else if (
+                          open &&
+                          !isStepOpen(WalkthroughStep.DOWNLOAD)
+                        ) {
                           setStepOpen(WalkthroughStep.DOWNLOAD, true);
                         }
                       }}
@@ -408,7 +410,7 @@ const Sidebar = () => {
                 )}
                 <Button
                   variant="outline"
-                  className="w-full text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500"
+                  className="w-full text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500 z-10"
                   onClick={() => {
                     handleDownload();
                     if (showDownloadHelp) {

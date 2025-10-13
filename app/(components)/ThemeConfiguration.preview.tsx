@@ -255,10 +255,10 @@ export const ThemeConfigurationPreview = () => {
                     </p>
                     <RadioGroup
                       defaultValue="starter"
-                      className="grid theme-gap-2"
+                      className="flex theme-gap-2"
                     >
                       <label
-                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-6"
+                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 "
                         style={{ borderWidth: "1px" }}
                       >
                         <RadioGroupItem value="starter" id="starter" />
@@ -270,7 +270,7 @@ export const ThemeConfigurationPreview = () => {
                         </div>
                       </label>
                       <label
-                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-6"
+                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3"
                         style={{ borderWidth: "1px" }}
                       >
                         <RadioGroupItem value="pro" id="pro" />

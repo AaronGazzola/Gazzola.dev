@@ -1,5 +1,6 @@
 "use client";
 
+import { EditModeSwitch } from "@/components/EditModeSwitch";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import {
@@ -18,7 +19,6 @@ import {
   PopoverTrigger as EditorPopoverTrigger,
 } from "@/components/editor/ui/popover";
 import { Progress } from "@/components/editor/ui/progress";
-import { Switch } from "@/components/editor/ui/switch";
 import {
   Tooltip,
   TooltipContent,
@@ -44,18 +44,17 @@ import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { conditionalLog } from "@/lib/log.util";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  AlertCircle,
   ArrowRight,
   BookDown,
   ChevronLeft,
   ChevronRight,
   Cpu,
   Database,
-  Eye,
   File,
   Files,
   FlaskConical,
   Folder,
-  Info,
   LayoutPanelTop,
   ListRestart,
   Palette,
@@ -451,17 +450,24 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </TooltipContent>
         </Tooltip>
 
-        <div className="flex items-center justify-between h-12 theme-px-4">
-          <div className="flex items-center theme-gap-2">
-            <IconButton
-              onClick={handleBack}
+        <div className="flex items-center justify-between h-12 theme-px-2">
+          <div className="flex items-center theme-gap-4">
+            <Button
+              onClick={() => {
+                handleBack();
+              }}
               disabled={!canGoBack}
-              tooltip={
-                canGoBack ? `Previous: ${prevPageTitle}` : "No previous page"
-              }
+              variant="outline"
+              className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium"
             >
               <ChevronLeft className="h-4 w-4" />
-            </IconButton>
+              Back
+            </Button>
+
+            <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+          </div>
+
+          <div className="flex items-center theme-gap-3">
             {showInitialDialog ? (
               <Dialog
                 open={
@@ -476,99 +482,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 }}
               >
                 <DialogTrigger asChild>
-                  <div className="relative inline-block h-8 w-8">
-                    {!isStepOpen(WalkthroughStep.INITIAL_DIALOG) && (
-                      <div className="absolute inset-0 h-8 w-8 flex items-center justify-center">
-                        <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-                          <svg
-                            className="w-4 h-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                          >
-                            <defs>
-                              <linearGradient
-                                id="gradient-toolbar-info-ping"
-                                x1="0%"
-                                y1="0%"
-                                x2="100%"
-                                y2="100%"
-                              >
-                                {gradientEnabled ? (
-                                  gradientColors.map((color, colorIndex) => (
-                                    <stop
-                                      key={colorIndex}
-                                      offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                      stopColor={color}
-                                    />
-                                  ))
-                                ) : (
-                                  <stop offset="0%" stopColor={singleColor} />
-                                )}
-                              </linearGradient>
-                            </defs>
-                            <Info
-                              className="h-4 w-4 animate-ping"
-                              stroke="url(#gradient-toolbar-info-ping)"
-                              fill="none"
-                            />
-                          </svg>
-                        </div>
-                        <div
-                          className="absolute inset-0 rounded-full border-2 animate-pulse scale-[1.2] translate-y-[2px]"
-                          style={{
-                            borderColor: gradientEnabled
-                              ? `${gradientColors[0]}30`
-                              : `${singleColor}30`,
-                          }}
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                          <div
-                            className="rounded-full w-1 h-1 animate-[breathe_6s_ease-in-out_infinite]"
-                            style={{
-                              backgroundColor: gradientEnabled
-                                ? gradientColors[0]
-                                : singleColor,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 bg-transparent relative z-10 rounded-[3px]"
-                      onClick={() => setInitialDialogOpen(true)}
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                        <defs>
-                          <linearGradient
-                            id="gradient-toolbar-info-icon"
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="100%"
-                          >
-                            {gradientEnabled ? (
-                              gradientColors.map((color, colorIndex) => (
-                                <stop
-                                  key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                  stopColor={color}
-                                />
-                              ))
-                            ) : (
-                              <stop offset="0%" stopColor={singleColor} />
-                            )}
-                          </linearGradient>
-                        </defs>
-                        <Info
-                          className="h-4 w-4"
-                          stroke="url(#gradient-toolbar-info-icon)"
-                          fill="none"
-                        />
-                      </svg>
-                    </Button>
-                  </div>
+                  <WalkthroughHelper />
                 </DialogTrigger>
                 <DialogContent className="max-w-[56rem] outline-none text-base bg-popover  text-popover-foreground  shadow">
                   <DialogHeader className="gap-3">
@@ -636,7 +550,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <DialogFooter className="mt-4">
                     <GlobalButton
                       variant="ghost"
-                      className="text-base"
+                      className="text-base focus-visible:ring-none"
                       onClick={() => {
                         dismissWalkthrough();
                         setInitialDialogOpen(false);
@@ -665,15 +579,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   open={permanentHelperOpen}
                   onOpenChange={setPermanentHelperOpen}
                 >
-                  <PopoverTrigger>
-                    <WalkthroughHelper />
+                  <PopoverTrigger asChild>
+                    <button className="bg-transparent border-none p-0 cursor-pointer">
+                      <WalkthroughHelper />
+                    </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow">
                     <div className="flex flex-col theme-gap-3">
-                      <h4 className="font-semibold text-sm theme-text-foreground">
+                      <h4 className="font-semibold text-sm text-foreground">
                         Walkthrough Help
                       </h4>
-                      <p className="text-sm theme-text-foreground">
+                      <p className="text-sm text-foreground">
                         Need help getting started? Click the button below to
                         restart the walkthrough guide.
                       </p>
@@ -692,23 +608,19 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </Popover>
               )
             )}
-            <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
-          </div>
-
-          <div className="flex items-center theme-gap-3">
             <EditorDialog
               open={resetPageDialogOpen}
               onOpenChange={setResetPageDialogOpen}
             >
               <EditorDialogTrigger asChild>
-                <div>
+                <span>
                   <IconButton
                     onClick={() => setResetPageDialogOpen(true)}
                     tooltip="Reset current page"
                   >
                     <RotateCcw className="h-4 w-4" />
                   </IconButton>
-                </div>
+                </span>
               </EditorDialogTrigger>
               <EditorDialogContent>
                 <EditorDialogHeader>
@@ -775,14 +687,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 onOpenChange={setSectionsPopoverOpen}
               >
                 <EditorPopoverTrigger asChild>
-                  <div>
+                  <span>
                     <IconButton
                       onClick={() => setSectionsPopoverOpen(true)}
                       tooltip="Manage sections"
                     >
                       <Settings className="h-4 w-4" />
                     </IconButton>
-                  </div>
+                  </span>
                 </EditorPopoverTrigger>
                 <EditorPopoverContent
                   className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
@@ -868,14 +780,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 onOpenChange={setFileTreePopoverOpen}
               >
                 <EditorPopoverTrigger asChild>
-                  <div>
+                  <span>
                     <IconButton
                       onClick={() => setFileTreePopoverOpen(true)}
                       tooltip="Manage file inclusion"
                     >
                       <Files className="h-4 w-4" />
                     </IconButton>
-                  </div>
+                  </span>
                 </EditorPopoverTrigger>
                 <EditorPopoverContent
                   className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
@@ -928,26 +840,32 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
           </div>
 
-          <div className="flex items-center theme-gap-2">
+          <div className="flex items-center theme-gap-4">
             {previewMode && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="theme-py-1 theme-px-3 text-xs font-bold rounded-full flex items-center theme-gap-6 bg-[hsl(25,95%,53%,0.2)] border border-[hsl(25,95%,53%)] text-[hsl(25,95%,20%)]">
-                    <Eye className="h-3 w-3" />
-                    Preview mode (read only)
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs theme-bg-popover theme-text-popover-foreground theme-shadow">
+              <EditorPopover>
+                <EditorPopoverTrigger asChild>
+                  <button className=" rounded-full flex items-center justify-center theme-bg-card  cursor-pointer hover:opacity-80 transition-opacity">
+                    <AlertCircle className="h-6 w-6 theme-text-primary" />
+                  </button>
+                </EditorPopoverTrigger>
+                <EditorPopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow">
                   <div className="flex flex-col theme-gap-2">
-                    <p>You are currently in preview mode.</p>
-                    <p>
+                    <h4 className="font-semibold text-sm">
+                      Preview Mode (Read Only)
+                    </h4>
+                    <p className="text-sm">
+                      You are currently in preview mode.
+                    </p>
+                    <p className="text-sm">
                       This shows exactly how your content will look when
                       downloaded.
                     </p>
-                    <p>Switch back to Edit mode to continue making changes.</p>
+                    <p className="text-sm">
+                      Switch back to Edit mode to continue making changes.
+                    </p>
                   </div>
-                </TooltipContent>
-              </Tooltip>
+                </EditorPopoverContent>
+              </EditorPopover>
             )}
 
             {showPreviewHelp && (
@@ -970,30 +888,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 iconSize="sm"
               />
             )}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center theme-gap-1">
-                  <span className="text-xs theme-text-muted-foreground">
-                    Edit
-                  </span>
-                  <Switch
-                    checked={previewMode}
-                    onCheckedChange={(checked) => {
-                      setPreviewMode(checked);
-                      if (showPreviewHelp) {
-                        markStepComplete(WalkthroughStep.PREVIEW_MODE);
-                      }
-                    }}
-                  />
-                  <span className="text-xs theme-text-muted-foreground">
-                    Preview
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow">
-                <p>Toggle between edit mode and processed preview</p>
-              </TooltipContent>
-            </Tooltip>
+            <EditModeSwitch
+              previewMode={previewMode}
+              onToggle={(checked) => {
+                setPreviewMode(checked);
+                if (showPreviewHelp) {
+                  markStepComplete(WalkthroughStep.PREVIEW_MODE);
+                }
+              }}
+            />
 
             <div className="relative">
               {showNextButtonHelp && (
@@ -1029,7 +932,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     }}
                     disabled={!canGoNext}
                     variant="outline"
-                    className="rounded-[3px] theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium"
+                    className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium"
                   >
                     Next
                     <ChevronRight className="h-4 w-4" />

@@ -5,7 +5,8 @@ import * as React from "react";
 
 import { cn } from "@/lib/tailwind.utils";
 
-interface SwitchProps extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {
+interface SwitchProps
+  extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {
   size?: "default" | "lg";
 }
 
@@ -24,14 +25,12 @@ const Switch = React.forwardRef<
   >
     <SwitchPrimitives.Thumb
       className={cn(
-        "pointer-events-none block ring-0 transition-transform rounded-full theme-bg-background theme-shadow border theme-border-primary",
+        "pointer-events-none block ring-0 transition-transform rounded-full theme-bg-background theme-shadow border theme-border-primary ",
         size === "default"
           ? "h-4 w-4 data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
           : "h-5 w-5 data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
       )}
-    >
-      <div className="theme-shadow rounded-full absolute inset-0"></div>
-    </SwitchPrimitives.Thumb>
+    ></SwitchPrimitives.Thumb>
   </SwitchPrimitives.Root>
 ));
 Switch.displayName = SwitchPrimitives.Root.displayName;

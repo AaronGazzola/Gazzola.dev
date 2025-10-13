@@ -175,17 +175,11 @@ export const useThemeStore = create<ThemeState>()(
           theme: {
             ...state.theme,
             other: {
-              light: {
-                ...state.theme.other.light,
+              ...state.theme.other,
+              [mode]: {
+                ...state.theme.other[mode],
                 shadow: {
-                  ...state.theme.other.light.shadow,
-                  [shadowField]: value,
-                },
-              },
-              dark: {
-                ...state.theme.other.dark,
-                shadow: {
-                  ...state.theme.other.dark.shadow,
+                  ...state.theme.other[mode].shadow,
                   [shadowField]: value,
                 },
               },

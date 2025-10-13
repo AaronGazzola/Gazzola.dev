@@ -2,6 +2,8 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
+import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
+import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
 import {
   Accordion,
   AccordionContent,
@@ -15,21 +17,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/editor/ui/tooltip";
+import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { cn } from "@/lib/tailwind.utils";
 import {
   Bell,
   ChevronDown,
   CreditCard,
   Database,
-  Info,
   Settings,
   Upload,
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
-import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
-import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import {
   SiCypress,
   SiNextdotjs,
@@ -219,7 +218,8 @@ const questionConfigs: (
       },
       {
         id: "supabaseWithBetter",
-        label: "Yes, I want to use Supabase with Better-Auth for authentication",
+        label:
+          "Yes, I want to use Supabase with Better-Auth for authentication",
         description: "More options for authentication and integration",
       },
       {
@@ -309,14 +309,18 @@ const questionConfigs: (
         label: "Organization access is limited to organization members",
         description:
           "Have read access to content related to their organizations",
-        disabledWhen: (config) => config.questions.useSupabase !== "withBetterAuth" && config.questions.useSupabase !== "no",
+        disabledWhen: (config) =>
+          config.questions.useSupabase !== "withBetterAuth" &&
+          config.questions.useSupabase !== "no",
       },
       {
         id: "orgAdmins",
         label: "Organization admins have elevated access to organizations",
         description:
           "Invited by super admins, org admins can manage their own organizations and the members they contain",
-        disabledWhen: (config) => config.questions.useSupabase !== "withBetterAuth" && config.questions.useSupabase !== "no",
+        disabledWhen: (config) =>
+          config.questions.useSupabase !== "withBetterAuth" &&
+          config.questions.useSupabase !== "no",
       },
     ],
   },
@@ -327,7 +331,9 @@ const questionConfigs: (
       "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
     icon: Upload,
     requiredTechnologies: ["supabase"],
-    disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none",
+    disabledWhen: (config) =>
+      config.questions.useSupabase === "no" ||
+      config.questions.useSupabase === "none",
   },
   {
     id: "payments",
@@ -351,7 +357,10 @@ const questionConfigs: (
         label: "Subscription management with Stripe",
         description:
           "Recurring subscription billing with Stripe and Better Auth",
-        disabledWhen: (config) => config.questions.useSupabase !== "withBetterAuth" && config.questions.useSupabase !== "no" || !config.features.authentication.enabled,
+        disabledWhen: (config) =>
+          (config.questions.useSupabase !== "withBetterAuth" &&
+            config.questions.useSupabase !== "no") ||
+          !config.features.authentication.enabled,
       },
     ],
   },
@@ -366,7 +375,9 @@ const questionConfigs: (
         id: "imageGeneration",
         label: "Yes I need to generate and store images",
         description: "Generate and store AI-generated images",
-        disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none",
+        disabledWhen: (config) =>
+          config.questions.useSupabase === "no" ||
+          config.questions.useSupabase === "none",
       },
       {
         id: "textGeneration",
@@ -382,7 +393,9 @@ const questionConfigs: (
       "Live updates and push notifications using Supabase Realtime for instant data synchronization.",
     icon: Bell,
     requiredTechnologies: ["supabase"],
-    disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none",
+    disabledWhen: (config) =>
+      config.questions.useSupabase === "no" ||
+      config.questions.useSupabase === "none",
     subOptions: [
       {
         id: "emailNotifications",
@@ -571,14 +584,20 @@ const getDisabledReason = (
     }
   }
 
-  if (questionId === "realTimeNotifications" && optionId === "emailNotifications") {
+  if (
+    questionId === "realTimeNotifications" &&
+    optionId === "emailNotifications"
+  ) {
     if (!config.features.authentication.enabled) {
       return "Requires user authentication (Question 3)";
     }
   }
 
   if (questionId === "aiIntegration" && optionId === "imageGeneration") {
-    if (config.questions.useSupabase === "no" || config.questions.useSupabase === "none") {
+    if (
+      config.questions.useSupabase === "no" ||
+      config.questions.useSupabase === "none"
+    ) {
       return "Requires Supabase (Question 1)";
     }
   }
@@ -597,12 +616,8 @@ export const InitialConfiguration = () => {
     updateRealTimeNotificationsOption,
   } = useEditorStore();
 
-  const {
-    shouldShowStep,
-    markStepComplete,
-    isStepOpen,
-    setStepOpen,
-  } = useWalkthroughStore();
+  const { shouldShowStep, markStepComplete, isStepOpen, setStepOpen } =
+    useWalkthroughStore();
 
   const [configHelpOpen, setConfigHelpOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -611,7 +626,8 @@ export const InitialConfiguration = () => {
     setMounted(true);
   }, []);
 
-  const showConfigHelp = mounted && shouldShowStep(WalkthroughStep.CONFIGURATION);
+  const showConfigHelp =
+    mounted && shouldShowStep(WalkthroughStep.CONFIGURATION);
 
   const getFeatureEnabled = (featureId: string): boolean => {
     if (featureId === "databaseChoice" || featureId === "deploymentChoice") {
@@ -637,11 +653,15 @@ export const InitialConfiguration = () => {
       keyof InitialConfigurationType["technologies"]
     >();
 
-    Object.entries(initialConfiguration.technologies).forEach(([techId, isEnabled]) => {
-      if (isEnabled) {
-        enabledTechs.add(techId as keyof InitialConfigurationType["technologies"]);
+    Object.entries(initialConfiguration.technologies).forEach(
+      ([techId, isEnabled]) => {
+        if (isEnabled) {
+          enabledTechs.add(
+            techId as keyof InitialConfigurationType["technologies"]
+          );
+        }
       }
-    });
+    );
 
     return Array.from(enabledTechs)
       .map((techId) => technologies.find((t) => t.id === techId))
@@ -992,11 +1012,11 @@ export const InitialConfiguration = () => {
               <AccordionItem
                 key={question.id}
                 value={question.id}
-                className="transition-all duration-200 border-none"
+                className="transition-all duration-200 border-none relative"
               >
                 <AccordionTrigger
                   className={cn(
-                    "flex items-center justify-between w-full theme-py-1 theme-px-2 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180",
+                    "flex items-center w-full theme-py-1 theme-px-2 theme-pr-10 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180",
                     isQuestionDisabled && "opacity-50"
                   )}
                   disabled={isQuestionDisabled}
@@ -1006,77 +1026,90 @@ export const InitialConfiguration = () => {
                     <span className="theme-text-foreground text-lg font-semibold">
                       {question.question}
                     </span>
-                    <ChevronDown className="chevron h-4 w-4 shrink-0 transition-transform duration-200" />
-                  </div>
-
-                  <div className="flex items-center theme-gap-2 shrink-0">
                     {question.id === "databaseChoice" && showConfigHelp && (
                       <div onClick={(e) => e.stopPropagation()}>
                         <WalkthroughHelper
                           isOpen={configHelpOpen}
                           onOpenChange={(open) => {
                             setConfigHelpOpen(open);
-                            if (!open && isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                            if (
+                              !open &&
+                              isStepOpen(WalkthroughStep.CONFIGURATION)
+                            ) {
                               markStepComplete(WalkthroughStep.CONFIGURATION);
-                            } else if (open && !isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                            } else if (
+                              open &&
+                              !isStepOpen(WalkthroughStep.CONFIGURATION)
+                            ) {
                               setStepOpen(WalkthroughStep.CONFIGURATION, true);
                             }
                           }}
-                          showAnimation={!isStepOpen(WalkthroughStep.CONFIGURATION)}
+                          showAnimation={
+                            !isStepOpen(WalkthroughStep.CONFIGURATION)
+                          }
                           title="Technology Selection"
                           description="Select options in these questions to customize your technology stack. Your selections will automatically determine which technologies are required for your web application."
                           iconSize="sm"
                         />
                       </div>
                     )}
+                  </div>
 
-                    {isQuestionDisabled ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <Checkbox
-                              checked={isEnabled}
-                              disabled={true}
-                              className={cn(
-                                "size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
-                              )}
-                            />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            {getDisabledReason(question.id, null, initialConfiguration) || "Question not available"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <Checkbox
-                          checked={isEnabled}
-                          disabled={
-                            question.subOptions && question.subOptions.length > 0
-                          }
-                          onCheckedChange={(checked) => {
-                            if (
-                              question.subOptions && question.subOptions.length > 0
-                            ) {
-                              return;
-                            }
-
-                            const isChecking = checked === true;
-                            updateFeature(question.id, isChecking);
-                          }}
-                          className={cn(
-                            "size-5 border border-gray-500 select-none",
-                            question.subOptions && question.subOptions.length > 0
-                              ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
-                              : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
-                          )}
-                        />
-                      </div>
-                    )}
+                  <div className="flex items-center theme-gap-2 shrink-0">
+                    <ChevronDown className="chevron h-4 w-4 shrink-0 transition-transform duration-200" />
                   </div>
                 </AccordionTrigger>
+
+                <div className="absolute right-2 top-0 theme-pt-5 z-10">
+                  {isQuestionDisabled ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>
+                          <Checkbox
+                            checked={isEnabled}
+                            disabled={true}
+                            className={cn(
+                              "size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                            )}
+                          />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {getDisabledReason(
+                            question.id,
+                            null,
+                            initialConfiguration
+                          ) || "Question not available"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <Checkbox
+                      checked={isEnabled}
+                      disabled={
+                        question.subOptions && question.subOptions.length > 0
+                      }
+                      onCheckedChange={(checked) => {
+                        if (
+                          question.subOptions &&
+                          question.subOptions.length > 0
+                        ) {
+                          return;
+                        }
+
+                        const isChecking = checked === true;
+                        updateFeature(question.id, isChecking);
+                      }}
+                      className={cn(
+                        "size-5 border border-gray-500 select-none",
+                        question.subOptions && question.subOptions.length > 0
+                          ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                          : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
+                      )}
+                    />
+                  )}
+                </div>
                 <AccordionContent>
                   <div className="theme-px-2 theme-pb-2 theme-pt-0">
                     {question.subOptions && question.subOptions.length > 0 ? (
@@ -1090,7 +1123,9 @@ export const InitialConfiguration = () => {
                               key={option.id}
                               className={cn(
                                 "flex items-start theme-gap-2",
-                                isSubOptionDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                                isSubOptionDisabled
+                                  ? "cursor-not-allowed opacity-50"
+                                  : "cursor-pointer"
                               )}
                             >
                               {isSubOptionDisabled ? (
@@ -1112,7 +1147,8 @@ export const InitialConfiguration = () => {
                                                   .payments[
                                                   option.id as keyof typeof initialConfiguration.features.payments
                                                 ] || false
-                                              : question.id === "realTimeNotifications"
+                                              : question.id ===
+                                                  "realTimeNotifications"
                                                 ? initialConfiguration.features
                                                     .realTimeNotifications[
                                                     option.id as keyof typeof initialConfiguration.features.realTimeNotifications
@@ -1125,7 +1161,11 @@ export const InitialConfiguration = () => {
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p>
-                                      {getDisabledReason(question.id, option.id, initialConfiguration) || "Option not available"}
+                                      {getDisabledReason(
+                                        question.id,
+                                        option.id,
+                                        initialConfiguration
+                                      ) || "Option not available"}
                                     </p>
                                   </TooltipContent>
                                 </Tooltip>
@@ -1196,8 +1236,12 @@ export const InitialConfiguration = () => {
                                         | "no"
                                         | "withBetterAuth"
                                         | "authOnly" = "none";
-                                      const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
-                                      const featureUpdates: Partial<InitialConfigurationType["features"]> = {};
+                                      const techUpdates: Partial<
+                                        InitialConfigurationType["technologies"]
+                                      > = {};
+                                      const featureUpdates: Partial<
+                                        InitialConfigurationType["features"]
+                                      > = {};
 
                                       if (option.id === "noDatabase") {
                                         useSupabaseValue = "none";
@@ -1207,16 +1251,19 @@ export const InitialConfiguration = () => {
                                         techUpdates.prisma = false;
                                         techUpdates.postgresql = false;
                                         featureUpdates.authentication = {
-                                          ...initialConfiguration.features.authentication,
+                                          ...initialConfiguration.features
+                                            .authentication,
                                           enabled: false,
                                         };
                                         featureUpdates.admin = {
-                                          ...initialConfiguration.features.admin,
+                                          ...initialConfiguration.features
+                                            .admin,
                                           enabled: false,
                                         };
                                         featureUpdates.fileStorage = false;
                                         featureUpdates.realTimeNotifications = {
-                                          ...initialConfiguration.features.realTimeNotifications,
+                                          ...initialConfiguration.features
+                                            .realTimeNotifications,
                                           enabled: false,
                                         };
                                       } else if (option.id === "neondb") {
@@ -1228,7 +1275,8 @@ export const InitialConfiguration = () => {
                                         techUpdates.supabase = false;
                                         featureUpdates.fileStorage = false;
                                         featureUpdates.realTimeNotifications = {
-                                          ...initialConfiguration.features.realTimeNotifications,
+                                          ...initialConfiguration.features
+                                            .realTimeNotifications,
                                           enabled: false,
                                         };
                                       } else if (
@@ -1248,9 +1296,13 @@ export const InitialConfiguration = () => {
                                         techUpdates.betterAuth = false;
                                         techUpdates.neondb = false;
                                         const adminUpdates = {
-                                          ...initialConfiguration.features.admin,
+                                          ...initialConfiguration.features
+                                            .admin,
                                         };
-                                        if (adminUpdates.orgAdmins || adminUpdates.orgMembers) {
+                                        if (
+                                          adminUpdates.orgAdmins ||
+                                          adminUpdates.orgMembers
+                                        ) {
                                           adminUpdates.orgAdmins = false;
                                           adminUpdates.orgMembers = false;
                                         }
@@ -1266,8 +1318,8 @@ export const InitialConfiguration = () => {
                                             useSupabaseValue === "none"
                                               ? "postgresql"
                                               : useSupabaseValue === "no"
-                                              ? "neondb"
-                                              : "supabase",
+                                                ? "neondb"
+                                                : "supabase",
                                         },
                                         technologies: {
                                           ...initialConfiguration.technologies,

@@ -218,6 +218,50 @@ function sanitizeThemeOther(other: ThemeOther): ThemeOther {
   return other;
 }
 
+function hslToOklch(hsl: string): string {
+  const match = hsl.match(/hsl\((\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%(?:\s*\/\s*(\d+(?:\.\d+)?%?))?\)/);
+  if (!match) return "oklch(0 0 0)";
+
+  const h = parseFloat(match[1]) / 360;
+  const s = parseFloat(match[2]) / 100;
+  const l = parseFloat(match[3]) / 100;
+  const alpha = match[4] ? (match[4].endsWith('%') ? parseFloat(match[4]) / 100 : parseFloat(match[4])) : undefined;
+
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h * 12) % 12;
+    return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+  };
+
+  let r = f(0);
+  let g = f(8);
+  let b = f(4);
+
+  const linearize = (c: number) => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  r = linearize(r);
+  g = linearize(g);
+  b = linearize(b);
+
+  const l_ = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+  const m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+  const s_ = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+  const l3 = Math.cbrt(l_);
+  const m3 = Math.cbrt(m);
+  const s3 = Math.cbrt(s_);
+
+  const L = 0.2104542553 * l3 + 0.7936177850 * m3 - 0.0040720468 * s3;
+  const A = 1.9779984951 * l3 - 2.4285922050 * m3 + 0.4505937099 * s3;
+  const B = 0.0259040371 * l3 + 0.7827717662 * m3 - 0.8086757660 * s3;
+
+  const C = Math.sqrt(A * A + B * B);
+  let H = Math.atan2(B, A) * 180 / Math.PI;
+  if (H < 0) H += 360;
+
+  const result = `oklch(${L.toFixed(4)} ${C.toFixed(4)} ${H.toFixed(4)})`;
+  return alpha !== undefined ? result.replace(/\)$/, ` / ${alpha})`) : result;
+}
+
 function oklchToHex(oklch: string): string {
   const match = oklch.match(/oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\)/);
   if (!match) return "#000000";
@@ -284,7 +328,7 @@ const parseThemeObject = (themeObj: Record<string, string>): {
       if (hslMatch) {
         const varName = key.replace(/^--/, "");
         if (varName === "shadow-color") {
-          other.shadow.color = value;
+          other.shadow.color = hslToOklch(value);
         }
       }
     } else if (key === "--font-sans") {

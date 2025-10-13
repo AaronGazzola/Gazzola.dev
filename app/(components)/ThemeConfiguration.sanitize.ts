@@ -2,6 +2,10 @@ import { ThemeColors, ThemeOther } from "./ThemeConfiguration.types";
 
 export const sanitizeColorValue = (value: string): string => {
   if (value.startsWith("oklch(")) {
+    const matchWithAlpha = value.match(/oklch\(([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s*\/\s*([0-9.]+)\)/);
+    if (matchWithAlpha) {
+      return `oklch(${matchWithAlpha[1]} ${matchWithAlpha[2]} ${matchWithAlpha[3]} / ${matchWithAlpha[4]})`;
+    }
     const match = value.match(/oklch\(([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\)/);
     if (match) {
       return `oklch(${match[1]} ${match[2]} ${match[3]})`;

@@ -44,7 +44,14 @@ export const WalkthroughHelper = ({
         ...backgroundStyle,
       }}
     >
-      <div className="absolute inset-0 animate-ping"></div>
+      {showAnimation && (
+        <div
+          className="absolute inset-0 animate-ping rounded-full"
+          style={{
+            ...backgroundStyle,
+          }}
+        ></div>
+      )}
       <HelpCircle className="h-full w-full cursor-pointer text-white" />
     </div>
   );

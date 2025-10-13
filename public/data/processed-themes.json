@@ -187,7 +187,7 @@
         "radius": 0.375,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -1,
@@ -249,7 +249,7 @@
         "radius": 0.375,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -1,
@@ -320,7 +320,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.06,
           "blurRadius": 5,
           "spread": 1,
@@ -382,7 +382,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.06,
           "blurRadius": 5,
           "spread": 1,
@@ -453,7 +453,7 @@
         "radius": 0.625,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(255 86% 66%)",
+          "color": "oklch(0.5986 0.2129 289.9395)",
           "opacity": 0.2,
           "blurRadius": 4,
           "spread": 0,
@@ -515,7 +515,7 @@
         "radius": 0.625,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(255 86% 66%)",
+          "color": "oklch(0.5986 0.2129 289.9395)",
           "opacity": 0.2,
           "blurRadius": 4,
           "spread": 0,
@@ -586,7 +586,7 @@
         "radius": 0.4,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(325.78 58.18% 56.86% / 0.5)",
+          "color": "oklch(0.6251 0.1787 348.2109 / 0.5)",
           "opacity": 1,
           "blurRadius": 0,
           "spread": 0,
@@ -985,7 +985,7 @@
         "radius": 0.35,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(240 30% 25%)",
+          "color": "oklch(0.3158 0.0674 281.8360)",
           "opacity": 0.12,
           "blurRadius": 6,
           "spread": 0,
@@ -1047,7 +1047,7 @@
         "radius": 0.35,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(240 30% 25%)",
+          "color": "oklch(0.3158 0.0674 281.8360)",
           "opacity": 0.12,
           "blurRadius": 6,
           "spread": 0,
@@ -1251,7 +1251,7 @@
         "radius": 1.25,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(240 4% 60%)",
+          "color": "oklch(0.6722 0.0119 286.0753)",
           "opacity": 0.18,
           "blurRadius": 10,
           "spread": 4,
@@ -1313,7 +1313,7 @@
         "radius": 1.25,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.18,
           "blurRadius": 10,
           "spread": 4,
@@ -1384,7 +1384,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -1,
@@ -1446,7 +1446,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -1,
@@ -1517,7 +1517,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(240 30% 25%)",
+          "color": "oklch(0.3158 0.0674 281.8360)",
           "opacity": 0.12,
           "blurRadius": 10,
           "spread": 0,
@@ -1579,7 +1579,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(240 30% 25%)",
+          "color": "oklch(0.3158 0.0674 281.8360)",
           "opacity": 0.12,
           "blurRadius": 10,
           "spread": 0,
@@ -1650,7 +1650,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -2,
@@ -1712,7 +1712,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -2,
@@ -1916,7 +1916,7 @@
         "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.4,
           "blurRadius": 4,
           "spread": 0,
@@ -1978,7 +1978,7 @@
         "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.6,
           "blurRadius": 5,
           "spread": 0,
@@ -2049,7 +2049,7 @@
         "radius": 0.375,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 63% 18%)",
+          "color": "oklch(0.2787 0.0872 24.8204)",
           "opacity": 0.12,
           "blurRadius": 16,
           "spread": -2,
@@ -2111,7 +2111,7 @@
         "radius": 0.375,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 63% 18%)",
+          "color": "oklch(0.2787 0.0872 24.8204)",
           "opacity": 0.12,
           "blurRadius": 16,
           "spread": -2,
@@ -2182,7 +2182,7 @@
         "radius": 0.35,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 20% / 0.1)",
+          "color": "oklch(0.3211 0.0000 89.8756 / 0.1)",
           "opacity": 0.15,
           "blurRadius": 0,
           "spread": 0,
@@ -2244,7 +2244,7 @@
         "radius": 0.35,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 20% / 0.1)",
+          "color": "oklch(0.3211 0.0000 89.8756 / 0.1)",
           "opacity": 0.15,
           "blurRadius": 0,
           "spread": 0,
@@ -2315,7 +2315,7 @@
         "radius": 0.425,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(88 22% 35% / 0.15)",
+          "color": "oklch(0.5085 0.0630 128.7755 / 0.15)",
           "opacity": 0.15,
           "blurRadius": 2,
           "spread": 0,
@@ -2377,7 +2377,7 @@
         "radius": 0.425,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(88 22% 35% / 0.15)",
+          "color": "oklch(0.5085 0.0630 128.7755 / 0.15)",
           "opacity": 0.15,
           "blurRadius": 2,
           "spread": 0,
@@ -2448,7 +2448,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 10,
           "spread": -2,
@@ -2510,7 +2510,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 10,
           "spread": -2,
@@ -2581,7 +2581,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(20 18% 51% / 0.4)",
+          "color": "oklch(0.6059 0.0436 47.9808 / 0.4)",
           "opacity": 0.11,
           "blurRadius": 0,
           "spread": 0,
@@ -2643,7 +2643,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(20 18% 30% / 0.5)",
+          "color": "oklch(0.4177 0.0293 47.9991 / 0.5)",
           "opacity": 0.11,
           "blurRadius": 0,
           "spread": 0,
@@ -2847,7 +2847,7 @@
         "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0,
           "blurRadius": 0,
           "spread": 0,
@@ -2909,7 +2909,7 @@
         "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0,
           "blurRadius": 0,
           "spread": 0,
@@ -3113,7 +3113,7 @@
         "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 1,
           "blurRadius": 0,
           "spread": 0,
@@ -3175,7 +3175,7 @@
         "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 1,
           "blurRadius": 0,
           "spread": 0,
@@ -3512,7 +3512,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -1,
@@ -3574,7 +3574,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 8,
           "spread": -1,
@@ -3645,7 +3645,7 @@
         "radius": 1.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.08,
           "blurRadius": 16,
           "spread": -4,
@@ -3707,7 +3707,7 @@
         "radius": 1.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.08,
           "blurRadius": 16,
           "spread": -4,
@@ -3778,7 +3778,7 @@
         "radius": 0.125,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(185 70% 30% / 0.15)",
+          "color": "oklch(0.5282 0.0845 204.4832 / 0.15)",
           "opacity": 0.15,
           "blurRadius": 2,
           "spread": 0,
@@ -3840,7 +3840,7 @@
         "radius": 0.125,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(180 70% 60% / 0.2)",
+          "color": "oklch(0.8327 0.1203 195.0908 / 0.2)",
           "opacity": 0.2,
           "blurRadius": 2,
           "spread": 0,
@@ -3911,7 +3911,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(330 70% 30% / 0.12)",
+          "color": "oklch(0.4086 0.1479 356.0057 / 0.12)",
           "opacity": 0.18,
           "blurRadius": 0,
           "spread": 0,
@@ -3973,7 +3973,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(300 80% 50% / 0.25)",
+          "color": "oklch(0.6532 0.2907 328.2926 / 0.25)",
           "opacity": 0.18,
           "blurRadius": 0,
           "spread": 0,
@@ -4044,7 +4044,7 @@
         "radius": 0.25,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(196 83% 10%)",
+          "color": "oklch(0.2414 0.0415 226.3732)",
           "opacity": 0.15,
           "blurRadius": 4,
           "spread": 0,
@@ -4106,7 +4106,7 @@
         "radius": 0.25,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(196 83% 10%)",
+          "color": "oklch(0.2414 0.0415 226.3732)",
           "opacity": 0.15,
           "blurRadius": 4,
           "spread": 0,
@@ -4310,7 +4310,7 @@
         "radius": 0.3,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(28 18% 25%)",
+          "color": "oklch(0.3771 0.0245 63.1679)",
           "opacity": 0.18,
           "blurRadius": 3,
           "spread": 0,
@@ -4372,7 +4372,7 @@
         "radius": 0.3,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 5%)",
+          "color": "oklch(0.1579 0.0000 89.8756)",
           "opacity": 0.18,
           "blurRadius": 3,
           "spread": 0,
@@ -4576,7 +4576,7 @@
         "radius": 0.625,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.09,
           "blurRadius": 12,
           "spread": -3,
@@ -4638,7 +4638,7 @@
         "radius": 0.625,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.09,
           "blurRadius": 12,
           "spread": -3,
@@ -4975,7 +4975,7 @@
         "radius": 0.75,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 3,
           "spread": 0,
@@ -5037,7 +5037,7 @@
         "radius": 0.75,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.1,
           "blurRadius": 3,
           "spread": 0,
@@ -5241,7 +5241,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.18,
           "blurRadius": 2,
           "spread": 0,
@@ -5303,7 +5303,7 @@
         "radius": 0.5,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.18,
           "blurRadius": 2,
           "spread": 0,
@@ -5374,7 +5374,7 @@
         "radius": 0.25,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(28 13% 20%)",
+          "color": "oklch(0.3248 0.0147 63.4787)",
           "opacity": 0.12,
           "blurRadius": 5,
           "spread": 0,
@@ -5436,7 +5436,7 @@
         "radius": 0.25,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(28 13% 20%)",
+          "color": "oklch(0.3248 0.0147 63.4787)",
           "opacity": 0.12,
           "blurRadius": 5,
           "spread": 0,
@@ -5507,7 +5507,7 @@
         "radius": 1.4,
         "spacing": 0.27,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.16,
           "blurRadius": 3,
           "spread": 0,
@@ -5569,7 +5569,7 @@
         "radius": 1.4,
         "spacing": 0.25,
         "shadow": {
-          "color": "hsl(0 0% 0%)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 0.16,
           "blurRadius": 3,
           "spread": 0,
