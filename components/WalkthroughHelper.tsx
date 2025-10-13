@@ -1,5 +1,6 @@
 "use client";
 
+import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -27,28 +28,58 @@ export const WalkthroughHelper = ({
   iconSize = "sm",
   className = "",
 }: WalkthroughHelperProps) => {
-  const iconClassName = iconSize === "sm" ? "h-3 w-3" : "h-4 w-4";
-  const buttonSize = iconSize === "sm" ? "h-5 w-5" : "h-6 w-6";
-  const containerSize = iconSize === "sm" ? "h-5 w-5" : "h-6 w-6";
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+  const iconClassName = iconSize === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const buttonSize = iconSize === "sm" ? "h-6 w-6" : "h-7 w-7";
+  const containerSize = iconSize === "sm" ? "h-6 w-6" : "h-7 w-7";
+  const svgSize = iconSize === "sm" ? "w-4 h-4" : "w-5 h-5";
 
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <div className={`relative inline-block ${containerSize} ${className}`}>
+        <div
+          className={`relative inline-block borde ${containerSize} ${className}`}
+        >
           {showAnimation && (
             <div
               className={`absolute inset-0 ${containerSize} flex items-center justify-center`}
             >
               <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-                <Info
-                  className={`${iconClassName} text-blue-500 animate-ping`}
-                />
+                <svg className={svgSize} viewBox="0 0 24 24" fill="none">
+                  <defs>
+                    <linearGradient
+                      id="gradient-info-ping"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      {gradientEnabled ? (
+                        gradientColors.map((color, colorIndex) => (
+                          <stop
+                            key={colorIndex}
+                            offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                            stopColor={color}
+                          />
+                        ))
+                      ) : (
+                        <stop offset="0%" stopColor={singleColor} />
+                      )}
+                    </linearGradient>
+                  </defs>
+                  <Info
+                    className={`${iconClassName} animate-ping`}
+                    stroke="url(#gradient-info-ping)"
+                    fill="none"
+                  />
+                </svg>
               </div>
               <div
-                className="absolute inset-0 rounded-full border-2 border-blue-500/30"
+                className="absolute inset-0 rounded-full border-2 animate-[scale-pulse_6s_ease-in-out_infinite]"
                 style={{
-                  animation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-                  transform: "scale(1.2) translateY(2px)",
+                  borderColor: gradientEnabled
+                    ? `${gradientColors[0]}80`
+                    : `${singleColor}80`,
                 }}
               />
             </div>
@@ -56,10 +87,37 @@ export const WalkthroughHelper = ({
           <Button
             variant="ghost"
             size="icon"
-            className={`${buttonSize} bg-transparent hover:bg-transparent relative z-10`}
+            className={`${buttonSize} bg-transparent hover:bg-transparent z-10 absolute inset-0`}
             style={{ borderRadius: "3px" }}
           >
-            <Info className={`${iconClassName} text-blue-500`} />
+            <svg className={svgSize} viewBox="0 0 24 24" fill="none">
+              <defs>
+                <linearGradient
+                  id="gradient-info-icon"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  {gradientEnabled ? (
+                    gradientColors.map((color, colorIndex) => (
+                      <stop
+                        key={colorIndex}
+                        offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                        stopColor={color}
+                      />
+                    ))
+                  ) : (
+                    <stop offset="0%" stopColor={singleColor} />
+                  )}
+                </linearGradient>
+              </defs>
+              <Info
+                className={iconClassName}
+                stroke="url(#gradient-info-icon)"
+                fill="none"
+              />
+            </svg>
           </Button>
         </div>
       </PopoverTrigger>

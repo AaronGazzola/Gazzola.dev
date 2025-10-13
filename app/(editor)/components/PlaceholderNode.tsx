@@ -1,5 +1,6 @@
 "use client";
 
+import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { cn } from "@/lib/tailwind.utils";
 import {
   DecoratorNode,
@@ -19,7 +20,6 @@ import {
 import { useEditorStore } from "../layout.stores";
 import { useWalkthroughStore } from "../layout.walkthrough.stores";
 import { WalkthroughStep } from "../layout.walkthrough.types";
-import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 
 export interface SerializedPlaceholderNode
   extends Spread<
@@ -164,7 +164,10 @@ function PlaceholderNodeComponent({
   }, []);
 
   const currentValue = getPlaceholderValue(placeholderKey) || defaultValue;
-  const showPlaceholderHelp = mounted && isFirstPlaceholder && shouldShowStep(WalkthroughStep.PLACEHOLDER);
+  const showPlaceholderHelp =
+    mounted &&
+    isFirstPlaceholder &&
+    shouldShowStep(WalkthroughStep.PLACEHOLDER);
 
   useEffect(() => {
     setLocalValue(currentValue);
@@ -280,7 +283,6 @@ function PlaceholderNodeComponent({
           title="Placeholder Values"
           description="Click on any placeholder like this to edit it. When you change a placeholder value, it will automatically update everywhere it appears throughout your roadmap documents."
           iconSize="sm"
-          className="ml-1 align-middle"
         />
       )}
     </span>

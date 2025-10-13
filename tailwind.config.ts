@@ -112,11 +112,20 @@ const config: Config = {
   				to: {
   					height: '0'
   				}
+  			},
+  			'scale-pulse': {
+  				'0%, 100%': {
+  					transform: 'scale(1)'
+  				},
+  				'50%': {
+  					transform: 'scale(1.3)'
+  				}
   			}
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+  			'scale-pulse': 'scale-pulse 6s ease-in-out infinite'
   		}
   	}
   },

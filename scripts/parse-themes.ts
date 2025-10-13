@@ -1,24 +1,69 @@
-import { ThemeColors, ThemeTypography, ThemeOther, ThemeShadow } from "./ThemeConfiguration.types";
-import { sanitizeThemeColors, sanitizeThemeOther } from "./ThemeConfiguration.sanitize";
-import { oklchToHex } from "./ThemeConfiguration.colorUtils";
 import fs from "fs";
 import path from "path";
+import { ParsedTheme } from "../app/(components)/ThemeConfiguration.types";
 
-export interface ParsedTheme {
-  name: string;
-  light: {
-    colors: ThemeColors;
-    typography: ThemeTypography;
-    other: ThemeOther;
-  };
-  dark: {
-    colors: ThemeColors;
-    typography: ThemeTypography;
-    other: ThemeOther;
-  };
-  previewColors: string[];
+interface ThemeColors {
+  primary: string;
+  primaryForeground: string;
+  secondary: string;
+  secondaryForeground: string;
+  accent: string;
+  accentForeground: string;
+  background: string;
+  foreground: string;
+  card: string;
+  cardForeground: string;
+  popover: string;
+  popoverForeground: string;
+  muted: string;
+  mutedForeground: string;
+  destructive: string;
+  destructiveForeground: string;
+  border: string;
+  input: string;
+  ring: string;
+  chart1: string;
+  chart2: string;
+  chart3: string;
+  chart4: string;
+  chart5: string;
+  sidebarBackground: string;
+  sidebarForeground: string;
+  sidebarPrimary: string;
+  sidebarPrimaryForeground: string;
+  sidebarAccent: string;
+  sidebarAccentForeground: string;
+  sidebarBorder: string;
+  sidebarRing: string;
 }
 
+interface ThemeTypography {
+  fontSans: string;
+  fontSerif: string;
+  fontMono: string;
+  letterSpacing: number;
+}
+
+interface ThemeShadow {
+  color: string;
+  opacity: number;
+  blurRadius: number;
+  spread: number;
+  offsetX: number;
+  offsetY: number;
+}
+
+interface ThemeOther {
+  hueShift: number;
+  saturationMultiplier: number;
+  lightnessMultiplier: number;
+  radius: number;
+  spacing: number;
+  shadow: ThemeShadow;
+}
+
+const THEMES_INPUT = path.join(process.cwd(), "public", "data", "themes.json");
+const THEMES_OUTPUT = path.join(process.cwd(), "public", "data", "processed-themes.json");
 
 const defaultLightColors: ThemeColors = {
   primary: "oklch(0.2050 0 0)",
@@ -165,6 +210,61 @@ const normalizeFontValue = (fontValue: string): string => {
   return fontMap[fontValue] || fontValue;
 };
 
+function sanitizeThemeColors(colors: ThemeColors): ThemeColors {
+  return colors;
+}
+
+function sanitizeThemeOther(other: ThemeOther): ThemeOther {
+  return other;
+}
+
+function oklchToHex(oklch: string): string {
+  const match = oklch.match(/oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\)/);
+  if (!match) return "#000000";
+
+  const l = parseFloat(match[1]);
+  const c = parseFloat(match[2]);
+  const h = parseFloat(match[3]);
+
+  const hRad = (h * Math.PI) / 180;
+  const a = c * Math.cos(hRad);
+  const b = c * Math.sin(hRad);
+
+  const fy = (l + 0.16) / 1.16;
+  const fx = fy + (a / 500);
+  const fz = fy - (b / 200);
+
+  const epsilon = 216 / 24389;
+  const kappa = 24389 / 27;
+
+  const xr = Math.pow(fx, 3) > epsilon ? Math.pow(fx, 3) : (116 * fx - 16) / kappa;
+  const yr = l > kappa * epsilon ? Math.pow((l + 0.16) / 1.16, 3) : l / kappa;
+  const zr = Math.pow(fz, 3) > epsilon ? Math.pow(fz, 3) : (116 * fz - 16) / kappa;
+
+  const x = xr * 0.95047;
+  const y = yr * 1.00000;
+  const z = zr * 1.08883;
+
+  let r = x * 3.2406 + y * -1.5372 + z * -0.4986;
+  let g = x * -0.9689 + y * 1.8758 + z * 0.0415;
+  let bl = x * 0.0557 + y * -0.2040 + z * 1.0570;
+
+  const gammaCorrect = (c: number) => {
+    return c > 0.0031308 ? 1.055 * Math.pow(c, 1 / 2.4) - 0.055 : 12.92 * c;
+  };
+
+  r = gammaCorrect(r);
+  g = gammaCorrect(g);
+  bl = gammaCorrect(bl);
+
+  const toHex = (n: number) => {
+    const clamped = Math.max(0, Math.min(255, Math.round(n * 255)));
+    return clamped.toString(16).padStart(2, '0');
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
+}
+
 const parseThemeObject = (themeObj: Record<string, string>): {
   colors: Partial<ThemeColors>;
   typography: Partial<ThemeTypography>;
@@ -226,9 +326,8 @@ const parseThemeObject = (themeObj: Record<string, string>): {
   return { colors, typography, other };
 };
 
-export const parseThemesFromJSON = (): ParsedTheme[] => {
-  const jsonPath = path.join(process.cwd(), "public", "data", "themes.json");
-  const jsonContent = fs.readFileSync(jsonPath, "utf-8");
+const parseThemesFromJSON = (): ParsedTheme[] => {
+  const jsonContent = fs.readFileSync(THEMES_INPUT, "utf-8");
   const data = JSON.parse(jsonContent);
 
   const themes: ParsedTheme[] = data.themes.map((theme: any) => {
@@ -277,3 +376,25 @@ export const parseThemesFromJSON = (): ParsedTheme[] => {
 
   return themes;
 };
+
+function main(): void {
+  try {
+    console.log("Starting theme processing...");
+
+    const themes = parseThemesFromJSON();
+
+    console.log(`Processed ${themes.length} themes`);
+
+    fs.mkdirSync(path.dirname(THEMES_OUTPUT), { recursive: true });
+    fs.writeFileSync(THEMES_OUTPUT, JSON.stringify(themes, null, 2), "utf8");
+
+    console.log(`✅ Theme data written to: ${THEMES_OUTPUT}`);
+  } catch (error) {
+    console.error("Error during theme processing:", error);
+    process.exit(1);
+  }
+}
+
+if (require.main === module) {
+  main();
+}

@@ -478,11 +478,52 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     {!isStepOpen(WalkthroughStep.INITIAL_DIALOG) && (
                       <div className="absolute inset-0 h-8 w-8 flex items-center justify-center">
                         <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-                          <Info className="h-4 w-4 text-[hsl(217,91%,60%)] animate-ping" />
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                              <linearGradient
+                                id="gradient-toolbar-info-ping"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="100%"
+                              >
+                                {gradientEnabled ? (
+                                  gradientColors.map((color, colorIndex) => (
+                                    <stop
+                                      key={colorIndex}
+                                      offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                      stopColor={color}
+                                    />
+                                  ))
+                                ) : (
+                                  <stop offset="0%" stopColor={singleColor} />
+                                )}
+                              </linearGradient>
+                            </defs>
+                            <Info
+                              className="h-4 w-4 animate-ping"
+                              stroke="url(#gradient-toolbar-info-ping)"
+                              fill="none"
+                            />
+                          </svg>
                         </div>
-                        <div className="absolute inset-0 rounded-full border-2 border-[hsl(217,91%,60%,0.3)] animate-pulse scale-[1.2] translate-y-[2px]" />
+                        <div
+                          className="absolute inset-0 rounded-full border-2 animate-pulse scale-[1.2] translate-y-[2px]"
+                          style={{
+                            borderColor: gradientEnabled
+                              ? `${gradientColors[0]}30`
+                              : `${singleColor}30`,
+                          }}
+                        />
                         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                          <div className="rounded-full bg-[hsl(217,91%,60%)] w-1 h-1 animate-[breathe_6s_ease-in-out_infinite]" />
+                          <div
+                            className="rounded-full w-1 h-1 animate-[breathe_6s_ease-in-out_infinite]"
+                            style={{
+                              backgroundColor: gradientEnabled
+                                ? gradientColors[0]
+                                : singleColor,
+                            }}
+                          />
                         </div>
                       </div>
                     )}
@@ -492,7 +533,34 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       className="h-8 w-8 bg-transparent relative z-10 rounded-[3px]"
                       onClick={() => setInitialDialogOpen(true)}
                     >
-                      <Info className="h-4 w-4 text-[hsl(217,91%,60%)]" />
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                        <defs>
+                          <linearGradient
+                            id="gradient-toolbar-info-icon"
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                          >
+                            {gradientEnabled ? (
+                              gradientColors.map((color, colorIndex) => (
+                                <stop
+                                  key={colorIndex}
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                  stopColor={color}
+                                />
+                              ))
+                            ) : (
+                              <stop offset="0%" stopColor={singleColor} />
+                            )}
+                          </linearGradient>
+                        </defs>
+                        <Info
+                          className="h-4 w-4"
+                          stroke="url(#gradient-toolbar-info-icon)"
+                          fill="none"
+                        />
+                      </svg>
                     </Button>
                   </div>
                 </DialogTrigger>
