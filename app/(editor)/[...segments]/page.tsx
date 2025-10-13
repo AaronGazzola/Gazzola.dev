@@ -313,7 +313,7 @@ const Page = () => {
   if (!canRender || (needsInitialization && isLoading)) {
     return (
       <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
-        <div className="theme-text-muted-foreground">
+        <div className="theme-text-muted-foreground theme-font-sans theme-tracking">
           {!mounted
             ? "Loading editor..."
             : !themeReady
@@ -332,15 +332,15 @@ const Page = () => {
     return (
       <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
         <div className="text-center flex flex-col gap-4 theme-spacing">
-          <div className="theme-text-destructive text-lg font-medium">
+          <div className="theme-text-destructive text-lg font-medium theme-font-sans theme-tracking">
             Failed to load editor content
           </div>
-          <div className="theme-text-muted-foreground">
+          <div className="theme-text-muted-foreground theme-font-sans theme-tracking">
             {error.message || "An error occurred while loading the content"}
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 theme-radius theme-bg-primary theme-text-primary-foreground theme-shadow transition-opacity hover:opacity-90"
+            className="px-4 py-2 theme-radius theme-bg-primary theme-text-primary-foreground theme-shadow transition-opacity hover:opacity-90 theme-font-sans theme-tracking"
           >
             Retry
           </button>
@@ -352,7 +352,7 @@ const Page = () => {
   if (!isInitialized) {
     return (
       <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
-        <div className="theme-text-muted-foreground">Initializing editor...</div>
+        <div className="theme-text-muted-foreground theme-font-sans theme-tracking">Initializing editor...</div>
       </div>
     );
   }
@@ -393,7 +393,7 @@ const Page = () => {
                 />
               }
               placeholder={
-                <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing">
+                <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing theme-font-sans theme-tracking">
                   Start typing your markdown content...
                 </div>
               }

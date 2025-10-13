@@ -314,7 +314,7 @@ const parseThemeObject = (themeObj: Record<string, string>): {
   for (const [key, value] of Object.entries(themeObj)) {
     if (value.startsWith("oklch(")) {
       const varName = key.replace(/^--/, "");
-      const camelCase = varName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      const camelCase = varName.replace(/-([a-z0-9])/gi, (_, letter) => letter.toUpperCase());
 
       if (varName === "sidebar") {
         colors.sidebarBackground = value;

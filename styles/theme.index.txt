@@ -108,9 +108,12 @@ Examples:
 ## Typography Classes
 
 ### Font Family
-- `theme-font-sans` - Uses `var(--theme-font-sans)`
-- `theme-font-serif` - Uses `var(--theme-font-serif)`
-- `theme-font-mono` - Uses `var(--theme-font-mono)`
+- `theme-font-sans` - Uses `var(--theme-font-sans)` (maps to `font-sans`)
+- `theme-font-serif` - Uses `var(--theme-font-serif)` (maps to `font-serif`)
+- `theme-font-mono` - Uses `var(--theme-font-mono)` (maps to `font-mono`)
+
+### Letter Spacing
+- `theme-tracking` - Uses `var(--theme-letter-spacing)` (maps to `tracking-*`)
 
 ## Usage Examples
 

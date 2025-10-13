@@ -892,12 +892,12 @@ export const InitialConfiguration = () => {
   return (
     <TooltipProvider>
       <div
-        className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow theme-p-2 border"
+        className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow theme-p-2 border theme-font-sans theme-tracking"
         data-walkthrough="initial-configuration"
       >
         {enabledTechnologies.length > 0 && (
           <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 theme-mb-1 theme-p-6 backdrop-blur-lg">
-            <h4 className="theme-text-card-foreground text-sm font-semibold theme-mb-1">
+            <h4 className="theme-text-card-foreground text-sm font-semibold theme-mb-1 theme-font-sans theme-tracking">
               Required Technologies
             </h4>
             <div className="flex flex-wrap theme-gap-2">
@@ -908,12 +908,12 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-2 theme-py-0\.5 rounded-full text-xs font-semibold cursor-help border whitespace-nowrap">
+                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-2 theme-py-0\.5 rounded-full text-xs font-semibold cursor-help border whitespace-nowrap theme-font-sans theme-tracking">
                         <Icon className="w-3 h-3" />
                         <span>{tech.name}</span>
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow">
+                    <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow theme-font-sans theme-tracking">
                       <div className="max-w-[12rem]">
                         <p className="font-medium theme-mb-1">Required by:</p>
                         <ul className="text-sm">
@@ -1023,7 +1023,7 @@ export const InitialConfiguration = () => {
                 >
                   <div className="flex items-center theme-gap-2 flex-1 min-w-0">
                     <Icon className="theme-text-foreground w-5 h-5 transition-colors duration-200 shrink-0" />
-                    <span className="theme-text-foreground text-lg font-semibold">
+                    <span className="theme-text-foreground text-lg font-semibold theme-font-sans theme-tracking">
                       {question.question}
                     </span>
                     {question.id === "databaseChoice" && showConfigHelp && (
@@ -1074,7 +1074,7 @@ export const InitialConfiguration = () => {
                           />
                         </span>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent className="theme-font-sans theme-tracking">
                         <p>
                           {getDisabledReason(
                             question.id,
@@ -1159,7 +1159,7 @@ export const InitialConfiguration = () => {
                                       className="size-4 theme-mt-0\.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
                                     />
                                   </TooltipTrigger>
-                                  <TooltipContent>
+                                  <TooltipContent className="theme-font-sans theme-tracking">
                                     <p>
                                       {getDisabledReason(
                                         question.id,
@@ -1388,10 +1388,10 @@ export const InitialConfiguration = () => {
                                 />
                               )}
                               <div>
-                                <span className="theme-text-foreground text-base font-medium block">
+                                <span className="theme-text-foreground text-base font-medium block theme-font-sans theme-tracking">
                                   {option.label}
                                 </span>
-                                <span className="theme-text-muted-foreground text-base block theme-mt-0\.5 font-medium">
+                                <span className="theme-text-muted-foreground text-base block theme-mt-0\.5 font-medium theme-font-sans theme-tracking">
                                   {option.description}
                                 </span>
                                 <div className="flex flex-wrap theme-gap-1 theme-mt-2">
@@ -1471,7 +1471,7 @@ export const InitialConfiguration = () => {
                                       <div
                                         key={techId}
                                         className={cn(
-                                          "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1\.5 theme-py-0\.5 text-xs font-medium border",
+                                          "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1\.5 theme-py-0\.5 text-xs font-medium border theme-font-sans theme-tracking",
                                           !isAvailable
                                             ? "theme-bg-muted theme-text-muted-foreground theme-border-border line-through opacity-50"
                                             : isBadgeActive
@@ -1491,7 +1491,7 @@ export const InitialConfiguration = () => {
                         })}
                       </div>
                     ) : (
-                      <p className="theme-text-foreground text-sm font-medium">
+                      <p className="theme-text-foreground text-sm font-medium theme-font-sans theme-tracking">
                         {question.description}
                       </p>
                     )}

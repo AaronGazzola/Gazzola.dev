@@ -1511,12 +1511,12 @@ const TreeNode = ({
                   <span className="text-sm">Add...</span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border" align="start">
+              <PopoverContent className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border theme-font-sans theme-tracking" align="start">
                 <div className="flex flex-col theme-spacing">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start theme-spacing theme-shadow"
+                    className="justify-start theme-spacing theme-shadow theme-font-sans theme-tracking"
                     onClick={() => {
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "page.tsx");
@@ -1532,7 +1532,7 @@ const TreeNode = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start theme-spacing theme-shadow"
+                    className="justify-start theme-spacing theme-shadow theme-font-sans theme-tracking"
                     onClick={() => {
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "layout.tsx");
@@ -1548,7 +1548,7 @@ const TreeNode = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start theme-spacing theme-shadow"
+                    className="justify-start theme-spacing theme-shadow theme-font-sans theme-tracking"
                     onClick={() => onAddDirectory(node.id)}
                   >
                     <Folder className="h-4 w-4 theme-text-chart-2" />
@@ -1742,7 +1742,7 @@ export const LayoutAndStructure = () => {
   const renderNestedBoxes = () => {
     if (!currentPage) {
       return (
-        <div className="text-center theme-py-8 theme-text-muted-foreground">
+        <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
           No pages available
         </div>
       );
@@ -1835,11 +1835,11 @@ export const LayoutAndStructure = () => {
   };
 
   return (
-    <div className="theme-p theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow">
+    <div className="theme-p theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
       <div className="grid grid-cols-[minmax(400px,2fr)_minmax(400px,3fr)] theme-spacing min-h-[calc(100vh-400px)] max-xl:grid-cols-1">
         <div className="flex flex-col theme-spacing h-full">
           <div className="flex flex-col flex-1 min-h-0">
-            <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground">
+            <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground theme-font-sans theme-tracking">
               App Directory Structure
             </h3>
 
@@ -1860,7 +1860,7 @@ export const LayoutAndStructure = () => {
               ))}
 
               {appStructure.length === 0 && (
-                <div className="text-center theme-py-8 theme-text-muted-foreground">
+                <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
                   Click the buttons above to start building your app structure
                 </div>
               )}
@@ -1869,7 +1869,7 @@ export const LayoutAndStructure = () => {
 
           {routes.length > 0 && (
             <div className="flex flex-col flex-1 min-h-0">
-              <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground">
+              <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground theme-font-sans theme-tracking">
                 Site Map (Resulting Routes)
               </h3>
 
@@ -1892,7 +1892,7 @@ export const LayoutAndStructure = () => {
 
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between theme-mb">
-            <h3 className="text-lg font-semibold theme-text-card-foreground">
+            <h3 className="text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
               Layout Wireframe {currentPage && `- ${currentPage}`}
             </h3>
             <div className="flex items-center theme-spacing">

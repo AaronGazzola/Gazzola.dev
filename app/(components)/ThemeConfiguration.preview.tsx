@@ -22,13 +22,13 @@ export const ThemeConfigurationPreview = () => {
           <div className="flex-1 flex flex-col theme-gap-6">
             <Card>
               <div className="flex flex-col theme-gap-3  theme-p-6">
-                <div className="text-sm theme-text-muted-foreground">
+                <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                   Total Revenue
                 </div>
-                <div className="text-3xl font-bold theme-text-foreground">
+                <div className="text-3xl font-bold theme-text-foreground theme-font-sans theme-tracking">
                   $15,231.89
                 </div>
-                <div className="text-xs theme-text-muted-foreground theme-mb-2">
+                <div className="text-xs theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
                   +20.1% from last month
                 </div>
                 <svg
@@ -73,10 +73,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground">
+                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
                     Move Goal
                   </div>
-                  <div className="text-sm theme-text-muted-foreground">
+                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                     Set your daily activity goal.
                   </div>
                 </div>
@@ -87,13 +87,15 @@ export const ThemeConfigurationPreview = () => {
                     className="size-7 rounded-full"
                   >
                     <Minus className="h-4 w-4" />
-                    <span className="sr-only">Decrease</span>
+                    <span className="sr-only theme-font-sans theme-tracking">
+                      Decrease
+                    </span>
                   </Button>
                   <div className="text-center flex flex-col theme-gap-1">
-                    <div className="text-4xl font-bold tracking-tighter tabular-nums">
+                    <div className="text-4xl font-bold tracking-tighter tabular-nums theme-font-sans theme-tracking">
                       350
                     </div>
-                    <div className="text-xs uppercase theme-text-muted-foreground">
+                    <div className="text-xs uppercase theme-text-muted-foreground theme-font-sans theme-tracking">
                       Calories/day
                     </div>
                   </div>
@@ -103,7 +105,9 @@ export const ThemeConfigurationPreview = () => {
                     className="size-7 rounded-full"
                   >
                     <Plus className="h-4 w-4" />
-                    <span className="sr-only">Increase</span>
+                    <span className="sr-only theme-font-sans theme-tracking">
+                      Increase
+                    </span>
                   </Button>
                 </div>
                 <div
@@ -119,7 +123,7 @@ export const ThemeConfigurationPreview = () => {
                   ].map((height, i) => (
                     <div
                       key={i}
-                      className="theme-bg-primary theme-radius"
+                      className="theme-stroke-chart-2 theme-radius"
                       style={{
                         height: `calc(var(--theme-spacing) * ${height})`,
                         opacity: i < 7 ? "1" : "0.3",
@@ -128,7 +132,10 @@ export const ThemeConfigurationPreview = () => {
                     />
                   ))}
                 </div>
-                <Button variant="secondary" className="w-full">
+                <Button
+                  variant="secondary"
+                  className="w-full theme-font-sans theme-tracking"
+                >
                   Set Goal
                 </Button>
               </div>
@@ -137,10 +144,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground">
+                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
                     Exercise Minutes
                   </div>
-                  <div className="text-sm theme-text-muted-foreground">
+                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                     Your exercise minutes are ahead of where you normally are.
                   </div>
                 </div>
@@ -150,21 +157,21 @@ export const ThemeConfigurationPreview = () => {
                 >
                   <polyline
                     fill="none"
-                    className="theme-text-chart-1"
+                    className="theme-stroke-chart-1"
                     stroke="currentColor"
                     strokeWidth="2"
                     points="0,150 71,120 142,100 213,50 284,80 355,90 426,100 500,110"
                   />
                   <polyline
                     fill="none"
-                    className="theme-text-chart-2"
+                    className="theme-stroke-chart-2"
                     stroke="currentColor"
                     strokeWidth="2"
                     points="0,180 71,170 142,165 213,160 284,155 355,150 426,155 500,160"
                   />
                   <polyline
                     fill="none"
-                    className="theme-text-chart-3"
+                    className="theme-stroke-chart-3"
                     stroke="currentColor"
                     strokeWidth="2"
                     points="0,160 71,155 142,145 213,140 284,135 355,145 426,150 500,145"
@@ -204,10 +211,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground">
+                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
                     Upgrade your subscription
                   </div>
-                  <div className="text-sm theme-text-muted-foreground">
+                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                     You are currently on the free plan. Upgrade to the pro plan
                     to get access to all features.
                   </div>
@@ -215,22 +222,36 @@ export const ThemeConfigurationPreview = () => {
                 <div className="flex flex-col theme-gap-4">
                   <div className="flex theme-gap-4">
                     <div className="flex-1 flex flex-col theme-gap-2">
-                      <label className="text-sm font-medium" htmlFor="name">
+                      <label
+                        className="text-sm font-medium theme-font-sans theme-tracking"
+                        htmlFor="name"
+                      >
                         Name
                       </label>
-                      <Input id="name" placeholder="Evil Rabbit" />
+                      <Input
+                        id="name"
+                        placeholder="Evil Rabbit"
+                        className="theme-font-sans theme-tracking"
+                      />
                     </div>
                     <div className="flex-1 flex flex-col theme-gap-2">
-                      <label className="text-sm font-medium" htmlFor="email">
+                      <label
+                        className="text-sm font-medium theme-font-sans theme-tracking"
+                        htmlFor="email"
+                      >
                         Email
                       </label>
-                      <Input id="email" placeholder="example@acme.com" />
+                      <Input
+                        id="email"
+                        placeholder="example@acme.com"
+                        className="theme-font-sans theme-tracking"
+                      />
                     </div>
                   </div>
 
                   <div className="flex flex-col theme-gap-2">
                     <label
-                      className="text-sm font-medium"
+                      className="text-sm font-medium theme-font-sans theme-tracking"
                       htmlFor="card-number"
                     >
                       Card Number
@@ -242,15 +263,26 @@ export const ThemeConfigurationPreview = () => {
                       <Input
                         id="card-number"
                         placeholder="1234 1234 1234 1234"
+                        className="theme-font-sans theme-tracking"
                       />
-                      <Input id="card-expiry" placeholder="MM/YY" />
-                      <Input id="card-cvc" placeholder="CVC" />
+                      <Input
+                        id="card-expiry"
+                        placeholder="MM/YY"
+                        className="theme-font-sans theme-tracking"
+                      />
+                      <Input
+                        id="card-cvc"
+                        placeholder="CVC"
+                        className="theme-font-sans theme-tracking"
+                      />
                     </div>
                   </div>
 
                   <fieldset className="flex flex-col theme-gap-2">
-                    <legend className="text-sm font-medium">Plan</legend>
-                    <p className="text-sm theme-text-muted-foreground theme-mb-2">
+                    <legend className="text-sm font-medium theme-font-sans theme-tracking">
+                      Plan
+                    </legend>
+                    <p className="text-sm theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
                       Select the plan that best fits your needs.
                     </p>
                     <RadioGroup
@@ -258,25 +290,29 @@ export const ThemeConfigurationPreview = () => {
                       className="flex theme-gap-2"
                     >
                       <label
-                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 "
+                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 theme-font-sans theme-tracking"
                         style={{ borderWidth: "1px" }}
                       >
                         <RadioGroupItem value="starter" id="starter" />
                         <div className="grid theme-gap-1">
-                          <div className="font-medium">Starter Plan</div>
-                          <div className="text-xs theme-text-muted-foreground">
+                          <div className="font-medium theme-font-sans theme-tracking">
+                            Starter Plan
+                          </div>
+                          <div className="text-xs theme-text-muted-foreground theme-font-sans theme-tracking">
                             Perfect for small businesses.
                           </div>
                         </div>
                       </label>
                       <label
-                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3"
+                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 theme-font-sans theme-tracking"
                         style={{ borderWidth: "1px" }}
                       >
                         <RadioGroupItem value="pro" id="pro" />
                         <div className="grid theme-gap-1">
-                          <div className="font-medium">Pro Plan</div>
-                          <div className="text-xs theme-text-muted-foreground">
+                          <div className="font-medium theme-font-sans theme-tracking">
+                            Pro Plan
+                          </div>
+                          <div className="text-xs theme-text-muted-foreground theme-font-sans theme-tracking">
                             More features and storage.
                           </div>
                         </div>
@@ -285,22 +321,35 @@ export const ThemeConfigurationPreview = () => {
                   </fieldset>
 
                   <div className="flex flex-col theme-gap-2">
-                    <label className="text-sm font-medium" htmlFor="notes">
+                    <label
+                      className="text-sm font-medium theme-font-sans theme-tracking"
+                      htmlFor="notes"
+                    >
                       Notes
                     </label>
-                    <Textarea id="notes" placeholder="Enter notes" />
+                    <Textarea
+                      id="notes"
+                      placeholder="Enter notes"
+                      className="theme-font-sans theme-tracking"
+                    />
                   </div>
 
                   <div className="flex flex-col theme-gap-2">
                     <div className="flex items-center theme-gap-2">
                       <Checkbox id="terms" />
-                      <label className="text-sm" htmlFor="terms">
+                      <label
+                        className="text-sm theme-font-sans theme-tracking"
+                        htmlFor="terms"
+                      >
                         I agree to the terms and conditions
                       </label>
                     </div>
                     <div className="flex items-center theme-gap-2">
                       <Checkbox id="marketing" defaultChecked />
-                      <label className="text-sm" htmlFor="marketing">
+                      <label
+                        className="text-sm theme-font-sans theme-tracking"
+                        htmlFor="marketing"
+                      >
                         Allow us to send you emails
                       </label>
                     </div>
@@ -312,10 +361,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground">
+                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
                     Payments
                   </div>
-                  <div className="text-sm theme-text-muted-foreground">
+                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                     Manage your payments.
                   </div>
                 </div>
@@ -358,14 +407,15 @@ export const ThemeConfigurationPreview = () => {
                                 : "destructive"
                           }
                           style={{ width: "fit-content" }}
+                          className="theme-font-sans theme-tracking"
                         >
                           {item.status}
                         </Badge>
-                        <div className="text-sm theme-text-foreground">
+                        <div className="text-sm theme-text-foreground theme-font-sans theme-tracking">
                           {item.email}
                         </div>
                       </div>
-                      <div className="font-semibold theme-text-foreground">
+                      <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
                         {item.amount}
                       </div>
                     </div>

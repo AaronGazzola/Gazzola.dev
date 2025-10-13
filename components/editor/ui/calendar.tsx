@@ -66,7 +66,7 @@ function Calendar({
           defaultClassNames.month_caption
         ),
         dropdowns: cn(
-          "flex h-[--cell-size] w-full items-center justify-center gap-1.5 text-sm font-medium",
+          "flex h-[--cell-size] w-full items-center justify-center gap-1.5 text-sm font-medium theme-font-sans theme-tracking",
           defaultClassNames.dropdowns
         ),
         dropdown_root: cn(
@@ -78,7 +78,7 @@ function Calendar({
           defaultClassNames.dropdown
         ),
         caption_label: cn(
-          "select-none font-medium",
+          "select-none font-medium theme-font-sans theme-tracking",
           captionLayout === "label"
             ? "text-sm"
             : "[&>svg]:theme-text-muted-foreground flex h-8 items-center gap-1 rounded-md pl-2 pr-1 text-sm [&>svg]:size-3.5",
@@ -87,7 +87,7 @@ function Calendar({
         table: "w-full border-collapse",
         weekdays: cn("flex", defaultClassNames.weekdays),
         weekday: cn(
-          "theme-text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal",
+          "theme-text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal theme-font-sans theme-tracking",
           defaultClassNames.weekday
         ),
         week: cn("mt-2 flex w-full", defaultClassNames.week),
@@ -96,7 +96,7 @@ function Calendar({
           defaultClassNames.week_number_header
         ),
         week_number: cn(
-          "theme-text-muted-foreground select-none text-[0.8rem]",
+          "theme-text-muted-foreground select-none text-[0.8rem] theme-font-sans theme-tracking",
           defaultClassNames.week_number
         ),
         day: cn(
@@ -201,7 +201,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "theme-data-selected-single-bg-primary theme-data-selected-single-text-primary-foreground theme-data-range-middle-bg-accent theme-data-range-middle-text-accent-foreground theme-data-range-start-bg-primary theme-data-range-start-text-primary-foreground theme-data-range-end-bg-primary theme-data-range-end-text-primary-foreground group-data-[focused=true]/day:theme-border-ring group-data-[focused=true]/day:theme-focus-ring-color/50 flex aspect-square h-auto w-full min-w-[--cell-size] flex-col gap-1 font-normal leading-none data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] [&>span]:text-xs [&>span]:opacity-70",
+        "theme-data-selected-single-bg-primary theme-data-selected-single-text-primary-foreground theme-data-range-middle-bg-accent theme-data-range-middle-text-accent-foreground theme-data-range-start-bg-primary theme-data-range-start-text-primary-foreground theme-data-range-end-bg-primary theme-data-range-end-text-primary-foreground group-data-[focused=true]/day:theme-border-ring group-data-[focused=true]/day:theme-focus-ring-color/50 flex aspect-square h-auto w-full min-w-[--cell-size] flex-col gap-1 font-normal leading-none data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] [&>span]:text-xs [&>span]:opacity-70 theme-font-sans theme-tracking",
         defaultClassNames.day,
         className
       )}

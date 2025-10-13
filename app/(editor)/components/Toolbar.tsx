@@ -439,7 +439,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   return (
     <TooltipProvider>
-      <div className="w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow">
+      <div className="w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow theme-font-sans theme-tracking">
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="w-full">
@@ -449,7 +449,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               />
             </div>
           </TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent className="theme-font-sans theme-tracking">
             <p>
               {progressInfo.currentTitle} ({progressInfo.currentStep} of{" "}
               {progressInfo.totalSteps})
@@ -465,7 +465,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               }}
               disabled={!canGoBack}
               variant="outline"
-              className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium"
+              className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking"
             >
               <ChevronLeft className="h-4 w-4" />
               Back
@@ -491,13 +491,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 <DialogTrigger asChild>
                   <WalkthroughHelper />
                 </DialogTrigger>
-                <DialogContent className="max-w-[56rem] outline-none text-base bg-popover  text-popover-foreground  shadow">
+                <DialogContent className="max-w-[56rem] outline-none text-base bg-popover  text-popover-foreground  shadow theme-font-sans theme-tracking">
                   <DialogHeader className="gap-3">
-                    <DialogTitle className=" text-foreground">
+                    <DialogTitle className=" text-foreground theme-font-sans theme-tracking">
                       Welcome to Gazzola.dev
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="text-foreground mt-2">
+                  <div className="text-foreground mt-2 theme-font-sans theme-tracking">
                     Design and download your full-stack web app roadmap
                   </div>
                   <div className="flex flex-col my-4">
@@ -540,7 +540,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                                 fill="none"
                               />
                             </svg>
-                            <span className="text-base font-semibold text-center whitespace-nowrap text-foreground">
+                            <span className="text-base font-semibold text-center whitespace-nowrap text-foreground theme-font-sans theme-tracking">
                               {step.title}
                             </span>
                           </div>
@@ -551,13 +551,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       ))}
                     </div>
                   </div>
-                  <div className="w-full flex justify-end text-foreground mt-6">
+                  <div className="w-full flex justify-end text-foreground mt-6 theme-font-sans theme-tracking">
                     Do you want to enable the tutorial?
                   </div>
                   <DialogFooter className="mt-4">
                     <GlobalButton
                       variant="ghost"
-                      className="text-base focus-visible:ring-none"
+                      className="text-base focus-visible:ring-none theme-font-sans theme-tracking"
                       onClick={() => {
                         dismissWalkthrough();
                         setInitialDialogOpen(false);
@@ -566,7 +566,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       No thanks, I&apos;ll explore on my own
                     </GlobalButton>
                     <GlobalButton
-                      className="text-base"
+                      className="text-base theme-font-sans theme-tracking"
                       variant="outline"
                       onClick={() => {
                         startWalkthrough();
@@ -591,18 +591,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       <WalkthroughHelper />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow">
+                  <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
                     <div className="flex flex-col theme-gap-3">
-                      <h4 className="font-semibold text-sm text-foreground">
+                      <h4 className="font-semibold text-sm text-foreground theme-font-sans theme-tracking">
                         Walkthrough Help
                       </h4>
-                      <p className="text-sm text-foreground">
+                      <p className="text-sm text-foreground theme-font-sans theme-tracking">
                         Need help getting started? Click the button below to
                         restart the walkthrough guide.
                       </p>
                       <GlobalButton
                         variant="outline"
-                        className="w-full"
+                        className="w-full theme-font-sans theme-tracking"
                         onClick={() => {
                           resetWalkthrough();
                           setPermanentHelperOpen(false);
@@ -641,10 +641,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <Button
                     variant="outline"
                     onClick={() => setResetPageDialogOpen(false)}
+                    className="theme-font-sans theme-tracking"
                   >
                     Cancel
                   </Button>
-                  <Button variant="destructive" onClick={handleResetPage}>
+                  <Button variant="destructive" onClick={handleResetPage} className="theme-font-sans theme-tracking">
                     Reset Page
                   </Button>
                 </EditorDialogFooter>
@@ -674,6 +675,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <Button
                     variant="outline"
                     onClick={() => setResetAllDialogOpen(false)}
+                    className="theme-font-sans theme-tracking"
                   >
                     Cancel
                   </Button>
@@ -681,6 +683,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     variant="destructive"
                     onClick={handleResetAll}
                     disabled={resetAllLoading}
+                    className="theme-font-sans theme-tracking"
                   >
                     {resetAllLoading ? "Resetting..." : "Reset All"}
                   </Button>
@@ -704,15 +707,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   </span>
                 </EditorPopoverTrigger>
                 <EditorPopoverContent
-                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
+                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow theme-font-sans theme-tracking"
                   align="center"
                 >
                   <div className="flex flex-col theme-gap-4">
-                    <div className="font-semibold text-sm theme-text-foreground">
+                    <div className="font-semibold text-sm theme-text-foreground theme-font-sans theme-tracking">
                       Section Options
                     </div>
                     {sectionsData.length === 0 ? (
-                      <div className="text-sm theme-text-muted-foreground">
+                      <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                         No sections found
                       </div>
                     ) : (
@@ -721,7 +724,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                           key={file.filePath}
                           className="flex flex-col theme-gap-3"
                         >
-                          <div className="font-medium text-sm border-b theme-border-border theme-pb-1 theme-text-foreground">
+                          <div className="font-medium text-sm border-b theme-border-border theme-pb-1 theme-text-foreground theme-font-sans theme-tracking">
                             {file.fileName}
                           </div>
                           {file.sections.map((section) => (
@@ -729,7 +732,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                               key={section.sectionId}
                               className="theme-ml-2 flex flex-col theme-gap-2"
                             >
-                              <div className="text-sm font-medium theme-text-muted-foreground">
+                              <div className="text-sm font-medium theme-text-muted-foreground theme-font-sans theme-tracking">
                                 {section.sectionId}
                               </div>
                               {section.options.map((option) => (
@@ -753,7 +756,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                                     }
                                   />
                                   <Label
-                                    className="text-sm cursor-pointer theme-text-foreground"
+                                    className="text-sm cursor-pointer theme-text-foreground theme-font-sans theme-tracking"
                                     onClick={() =>
                                       setSectionInclude(
                                         file.filePath,
@@ -797,15 +800,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   </span>
                 </EditorPopoverTrigger>
                 <EditorPopoverContent
-                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
+                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow theme-font-sans theme-tracking"
                   align="center"
                 >
                   <div className="flex flex-col theme-gap-3">
-                    <div className="font-semibold text-sm theme-text-foreground">
+                    <div className="font-semibold text-sm theme-text-foreground theme-font-sans theme-tracking">
                       File Inclusion
                     </div>
                     {fileTreeData.length === 0 ? (
-                      <div className="text-sm theme-text-muted-foreground">
+                      <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                         No files found
                       </div>
                     ) : (
@@ -829,7 +832,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                             <File className="h-4 w-4 theme-text-muted-foreground" />
                           )}
                           <Label
-                            className="text-sm cursor-pointer flex-1 theme-text-foreground"
+                            className="text-sm cursor-pointer flex-1 theme-text-foreground theme-font-sans theme-tracking"
                             onClick={() =>
                               updateInclusionRules({
                                 [item.path]: !item.include,
@@ -855,19 +858,19 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <AlertCircle className="h-6 w-6 theme-text-primary" />
                   </button>
                 </EditorPopoverTrigger>
-                <EditorPopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow">
+                <EditorPopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
                   <div className="flex flex-col theme-gap-2">
-                    <h4 className="font-semibold text-sm">
+                    <h4 className="font-semibold text-sm theme-font-sans theme-tracking">
                       Preview Mode (Read Only)
                     </h4>
-                    <p className="text-sm">
+                    <p className="text-sm theme-font-sans theme-tracking">
                       You are currently in preview mode.
                     </p>
-                    <p className="text-sm">
+                    <p className="text-sm theme-font-sans theme-tracking">
                       This shows exactly how your content will look when
                       downloaded.
                     </p>
-                    <p className="text-sm">
+                    <p className="text-sm theme-font-sans theme-tracking">
                       Switch back to Edit mode to continue making changes.
                     </p>
                   </div>
@@ -942,13 +945,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     }}
                     disabled={!canGoNext}
                     variant="outline"
-                    className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium"
+                    className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking"
                   >
                     Next
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow">
+                <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
                   <p>{canGoNext ? `Next: ${nextPageTitle}` : "No next page"}</p>
                 </TooltipContent>
               </Tooltip>
