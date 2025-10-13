@@ -222,32 +222,25 @@ function oklchToHex(oklch: string): string {
   const match = oklch.match(/oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\)/);
   if (!match) return "#000000";
 
-  const l = parseFloat(match[1]);
-  const c = parseFloat(match[2]);
-  const h = parseFloat(match[3]);
+  const L = parseFloat(match[1]);
+  const C = parseFloat(match[2]);
+  const H = parseFloat(match[3]);
 
-  const hRad = (h * Math.PI) / 180;
-  const a = c * Math.cos(hRad);
-  const b = c * Math.sin(hRad);
+  const hRad = (H * Math.PI) / 180;
+  const a = C * Math.cos(hRad);
+  const b = C * Math.sin(hRad);
 
-  const fy = (l + 0.16) / 1.16;
-  const fx = fy + (a / 500);
-  const fz = fy - (b / 200);
+  const l = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s = L - 0.0894841775 * a - 1.2914855480 * b;
 
-  const epsilon = 216 / 24389;
-  const kappa = 24389 / 27;
+  const l3 = l * l * l;
+  const m3 = m * m * m;
+  const s3 = s * s * s;
 
-  const xr = Math.pow(fx, 3) > epsilon ? Math.pow(fx, 3) : (116 * fx - 16) / kappa;
-  const yr = l > kappa * epsilon ? Math.pow((l + 0.16) / 1.16, 3) : l / kappa;
-  const zr = Math.pow(fz, 3) > epsilon ? Math.pow(fz, 3) : (116 * fz - 16) / kappa;
-
-  const x = xr * 0.95047;
-  const y = yr * 1.00000;
-  const z = zr * 1.08883;
-
-  let r = x * 3.2406 + y * -1.5372 + z * -0.4986;
-  let g = x * -0.9689 + y * 1.8758 + z * 0.0415;
-  let bl = x * 0.0557 + y * -0.2040 + z * 1.0570;
+  let r = +4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
+  let g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
+  let bl = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3;
 
   const gammaCorrect = (c: number) => {
     return c > 0.0031308 ? 1.055 * Math.pow(c, 1 / 2.4) - 0.055 : 12.92 * c;
@@ -353,9 +346,9 @@ const parseThemesFromJSON = (): ParsedTheme[] => {
 
     const previewColors = [
       theme.light["--primary"] ? oklchToHex(theme.light["--primary"]) : "#09090b",
-      theme.light["--secondary"] ? oklchToHex(theme.light["--secondary"]) : "#fafafa",
       theme.light["--accent"] ? oklchToHex(theme.light["--accent"]) : "#f4f4f5",
-      theme.light["--background"] ? oklchToHex(theme.light["--background"]) : "#18181b",
+      theme.light["--chart-1"] ? oklchToHex(theme.light["--chart-1"]) : "#6366f1",
+      theme.light["--destructive"] ? oklchToHex(theme.light["--destructive"]) : "#ef4444",
     ];
 
     return {

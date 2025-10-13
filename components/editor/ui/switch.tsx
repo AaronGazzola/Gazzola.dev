@@ -5,13 +5,18 @@ import * as React from "react";
 
 import { cn } from "@/lib/tailwind.utils";
 
+interface SwitchProps extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {
+  size?: "default" | "lg";
+}
+
 const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
->(({ className, ...props }, ref) => (
+  SwitchProps
+>(({ className, size = "default", ...props }, ref) => (
   <SwitchPrimitives.Root
     className={cn(
-      "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 rounded-full data-[state=checked]:bg-primary data-[state=unchecked]:bg-input ",
+      "peer inline-flex shrink-0 cursor-pointer items-center border transition-colors disabled:cursor-not-allowed disabled:opacity-50 rounded-full theme-data-checked-bg-primary theme-data-unchecked-bg-input theme-focus-ring theme-border-primary",
+      size === "default" ? "h-5 w-9" : "h-6 w-11",
       className
     )}
     {...props}
@@ -19,9 +24,14 @@ const Switch = React.forwardRef<
   >
     <SwitchPrimitives.Thumb
       className={cn(
-        "pointer-events-none block h-4 w-4 ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0 rounded-full theme-bg-background theme-shadow"
+        "pointer-events-none block ring-0 transition-transform rounded-full theme-bg-background theme-shadow border theme-border-primary",
+        size === "default"
+          ? "h-4 w-4 data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+          : "h-5 w-5 data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
       )}
-    />
+    >
+      <div className="theme-shadow rounded-full absolute inset-0"></div>
+    </SwitchPrimitives.Thumb>
   </SwitchPrimitives.Root>
 ));
 Switch.displayName = SwitchPrimitives.Root.displayName;

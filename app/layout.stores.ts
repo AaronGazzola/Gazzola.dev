@@ -20,6 +20,21 @@ const initialState = {
   headerIsCollapsed: true,
 };
 
+export const getBackgroundStyle = (
+  gradientColors: string[],
+  singleColor: string,
+  gradientEnabled: boolean
+) => {
+  if (gradientEnabled) {
+    return {
+      background: `linear-gradient(to right, ${gradientColors.join(", ")})`,
+    };
+  }
+  return {
+    background: singleColor,
+  };
+};
+
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({

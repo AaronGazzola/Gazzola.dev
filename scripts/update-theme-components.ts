@@ -18,6 +18,10 @@ function getComponentName(filename: string): string {
     .join("");
 }
 
+function removeThemePrefix(content: string): string {
+  return content.replace(/theme-/g, "");
+}
+
 function generateComponentsContent(): string {
   const files = readdirSync(COMPONENTS_DIR)
     .filter((file) => file.endsWith(".tsx"))
@@ -26,9 +30,10 @@ function generateComponentsContent(): string {
   const components = files.map((file) => {
     const componentPath = join(COMPONENTS_DIR, file);
     const content = readFileSync(componentPath, "utf-8");
+    const contentWithoutThemePrefix = removeThemePrefix(content);
     const componentName = getComponentName(file);
 
-    return `### ${componentName}\n\n\`\`\`tsx\n${content}\n\`\`\``;
+    return `### ${componentName}\n\n\`\`\`tsx\n${contentWithoutThemePrefix}\n\`\`\``;
   });
 
   return components.join("\n\n");

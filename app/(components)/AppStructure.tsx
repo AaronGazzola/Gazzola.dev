@@ -1141,7 +1141,7 @@ const SiteMapNode = ({
                 onChange={(e) => setTempValue(e.target.value)}
                 onBlur={handleSegmentSubmit}
                 onKeyDown={handleKeyDown}
-                className="h-6 px-2 py-0 text-sm w-20 min-w-fit theme-shadow"
+                className="h-6 theme-px-2 theme-py-0 text-sm w-20 min-w-fit theme-shadow"
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
@@ -1421,7 +1421,7 @@ const TreeNode = ({
               defaultValue={node.name}
               onBlur={(e) => handleNameSubmit(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="h-6 px-2 py-0 text-sm theme-shadow"
+              className="h-6 theme-px-2 theme-py-0 text-sm theme-shadow"
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
@@ -1505,13 +1505,13 @@ const TreeNode = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 theme-spacing theme-text-muted-foreground hover:theme-text-foreground theme-shadow"
+                  className="h-6 theme-px-2 theme-spacing theme-text-muted-foreground hover:theme-text-foreground theme-shadow"
                 >
                   <Plus className="h-3 w-3" />
                   <span className="text-sm">Add...</span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-48 p-2 theme-shadow theme-bg-popover theme-border-border" align="start">
+              <PopoverContent className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border" align="start">
                 <div className="flex flex-col theme-spacing">
                   <Button
                     variant="ghost"
@@ -1742,7 +1742,7 @@ export const LayoutAndStructure = () => {
   const renderNestedBoxes = () => {
     if (!currentPage) {
       return (
-        <div className="text-center py-8 theme-text-muted-foreground">
+        <div className="text-center theme-py-8 theme-text-muted-foreground">
           No pages available
         </div>
       );
@@ -1860,7 +1860,7 @@ export const LayoutAndStructure = () => {
               ))}
 
               {appStructure.length === 0 && (
-                <div className="text-center py-8 theme-text-muted-foreground">
+                <div className="text-center theme-py-8 theme-text-muted-foreground">
                   Click the buttons above to start building your app structure
                 </div>
               )}
@@ -2018,7 +2018,7 @@ export const WireFrame = () => {
   const renderNestedBoxes = () => {
     if (!currentPage) {
       return (
-        <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
+        <div className="text-center theme-py-8 text-[hsl(var(--muted-foreground))]">
           No pages available
         </div>
       );
@@ -2030,7 +2030,7 @@ export const WireFrame = () => {
           className={cn(
             "border-2 border-dashed",
             PAGE_FILE_ICON.replace("text-", "border-"),
-            "rounded p-3 min-h-[200px] flex flex-col"
+            "rounded theme-p-3 min-h-[200px] flex flex-col"
           )}
         />
       );
@@ -2061,7 +2061,7 @@ export const WireFrame = () => {
           className={cn(
             "border-2 border-dashed relative",
             colorSet.border,
-            "rounded p-3 min-h-[200px] flex flex-col gap-2"
+            "rounded theme-p-3 min-h-[200px] flex flex-col theme-gap-2"
           )}
         >
           <LayoutInsertionButtons
@@ -2080,9 +2080,9 @@ export const WireFrame = () => {
             <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
           ))}
 
-          <div className="flex-1 flex gap-2">
+          <div className="flex-1 flex theme-gap-2">
             {leftSidebars.length > 0 && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col theme-gap-2">
                 {leftSidebars.map((el) => (
                   <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
@@ -2092,7 +2092,7 @@ export const WireFrame = () => {
             <div className="flex-1">{content}</div>
 
             {rightSidebars.length > 0 && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col theme-gap-2">
                 {rightSidebars.map((el) => (
                   <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
@@ -2111,12 +2111,12 @@ export const WireFrame = () => {
   };
 
   return (
-    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[calc(100vh-200px)] flex flex-col">
-      <div className="flex items-center justify-between mb-4">
+    <div className="theme-p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[calc(100vh-200px)] flex flex-col">
+      <div className="flex items-center justify-between theme-mb-4">
         <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
           Layout Wireframe {currentPage && `- ${currentPage}`}
         </h3>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center theme-gap-1">
           <Button
             variant="ghost"
             size="icon"
@@ -2147,7 +2147,7 @@ export const WireFrame = () => {
           </Button>
         </div>
       </div>
-      <div className="p-4 rounded bg-[hsl(var(--muted))] flex-1">
+      <div className="theme-p-4 rounded bg-[hsl(var(--muted))] flex-1">
         {renderNestedBoxes()}
       </div>
     </div>
@@ -2255,12 +2255,12 @@ export const AppStructure = () => {
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
   return (
-    <div className="p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[calc(100vh-200px)] flex flex-col">
-      <h3 className="text-lg font-semibold mb-4 text-[hsl(var(--card-foreground))]">
+    <div className="theme-p-4 rounded-lg border bg-[hsl(var(--card))] border-[hsl(var(--border))] min-h-[calc(100vh-200px)] flex flex-col">
+      <h3 className="text-lg font-semibold theme-mb-4 text-[hsl(var(--card-foreground))]">
         App Directory Structure
       </h3>
 
-      <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto">
+      <div className="font-mono text-base bg-[hsl(var(--muted))] theme-p-3 rounded overflow-x-auto">
         {appStructure.map((node, index) => (
           <TreeNode
             key={node.id}
@@ -2277,7 +2277,7 @@ export const AppStructure = () => {
         ))}
 
         {appStructure.length === 0 && (
-          <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
+          <div className="text-center theme-py-8 text-[hsl(var(--muted-foreground))]">
             Click the buttons above to start building your app structure
           </div>
         )}
@@ -2285,13 +2285,13 @@ export const AppStructure = () => {
 
       {routes.length > 0 && (
         <>
-          <div className="mt-6 mb-4">
+          <div className="theme-mt-6 theme-mb-4">
             <h3 className="text-lg font-semibold text-[hsl(var(--card-foreground))]">
               Site Map (Resulting Routes)
             </h3>
           </div>
 
-          <div className="font-mono text-base bg-[hsl(var(--muted))] p-3 rounded overflow-x-auto">
+          <div className="font-mono text-base bg-[hsl(var(--muted))] theme-p-3 rounded overflow-x-auto">
             {routes.map((route, index) => (
               <SiteMapNode
                 key={route.path}
@@ -2304,7 +2304,7 @@ export const AppStructure = () => {
               />
             ))}
 
-            <div className="mt-2 flex items-center gap-2 rounded dark:border-gray-700 ">
+            <div className="theme-mt-2 flex items-center theme-gap-2 rounded dark:border-gray-700 ">
               <Input
                 ref={routeInputRef}
                 value={routeInputValue}
@@ -2312,7 +2312,7 @@ export const AppStructure = () => {
                 onKeyDown={handleRouteKeyDown}
                 onBlur={handleRouteSubmit}
                 placeholder="Enter route path (e.g., /register/)"
-                className="h-6 px-2 py-0 text-sm flex-1 font-mono"
+                className="h-6 theme-px-2 theme-py-0 text-sm flex-1 font-mono"
               />
             </div>
           </div>

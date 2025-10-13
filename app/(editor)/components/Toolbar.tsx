@@ -25,6 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/editor/ui/tooltip";
+import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { Button as GlobalButton } from "@/components/ui/button";
 import {
   Dialog,
@@ -57,11 +58,9 @@ import {
   Info,
   LayoutPanelTop,
   ListRestart,
-  Moon,
   Palette,
   RotateCcw,
   Settings,
-  Sun,
   User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -164,9 +163,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setMounted(true);
   }, []);
 
-  const showInitialDialog = mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG);
-  const showPreviewHelp = mounted && shouldShowStep(WalkthroughStep.PREVIEW_MODE);
-  const showNextButtonHelp = mounted && shouldShowStep(WalkthroughStep.NEXT_BUTTON);
+  const showInitialDialog =
+    mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG);
+  const showPreviewHelp =
+    mounted && shouldShowStep(WalkthroughStep.PREVIEW_MODE);
+  const showNextButtonHelp =
+    mounted && shouldShowStep(WalkthroughStep.NEXT_BUTTON);
 
   const [initialDialogOpen, setInitialDialogOpen] = useState(false);
   const [previewHelpOpen, setPreviewHelpOpen] = useState(false);
@@ -449,8 +451,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </TooltipContent>
         </Tooltip>
 
-        <div className="flex items-center justify-between h-12 px-[calc(var(--theme-spacing)*4)]">
-          <div className="flex items-center gap-[calc(var(--theme-spacing)*2)]">
+        <div className="flex items-center justify-between h-12 theme-px-4">
+          <div className="flex items-center theme-gap-2">
             <IconButton
               onClick={handleBack}
               disabled={!canGoBack}
@@ -478,7 +480,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     {!isStepOpen(WalkthroughStep.INITIAL_DIALOG) && (
                       <div className="absolute inset-0 h-8 w-8 flex items-center justify-center">
                         <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                          <svg
+                            className="w-4 h-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
                             <defs>
                               <linearGradient
                                 id="gradient-toolbar-info-ping"
@@ -565,18 +571,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   </div>
                 </DialogTrigger>
                 <DialogContent className="max-w-[56rem] outline-none text-base bg-popover  text-popover-foreground  shadow">
-                  <DialogHeader className="gap-[calc(var(--theme-spacing)*3)]">
+                  <DialogHeader className="gap-3">
                     <DialogTitle className=" text-foreground">
                       Welcome to Gazzola.dev
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="text-foreground mt-[calc(var(--theme-spacing)*2)]">
+                  <div className="text-foreground mt-2">
                     Design and download your full-stack web app roadmap
                   </div>
-                  <div className="flex flex-col my-[calc(var(--theme-spacing)*4)]">
-                    <div className="flex items-center justify-center relative gap-[calc(var(--theme-spacing)*3)]">
+                  <div className="flex flex-col my-4">
+                    <div className="flex items-center justify-center relative gap-3">
                       {nextSteps.map((step, index) => (
-                        <div key={index} className="relative flex items-center gap-[calc(var(--theme-spacing)*3)]">
+                        <div
+                          key={index}
+                          className="relative flex items-center gap-3"
+                        >
                           <div className="flex flex-col items-center relative z-10 ">
                             <svg
                               className="w-10 h-10"
@@ -621,10 +630,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       ))}
                     </div>
                   </div>
-                  <div className="w-full flex justify-end text-foreground mt-[calc(var(--theme-spacing)*6)]">
+                  <div className="w-full flex justify-end text-foreground mt-6">
                     Do you want to enable the tutorial?
                   </div>
-                  <DialogFooter className="mt-[calc(var(--theme-spacing)*4)]">
+                  <DialogFooter className="mt-4">
                     <GlobalButton
                       variant="ghost"
                       className="text-base"
@@ -656,21 +665,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   open={permanentHelperOpen}
                   onOpenChange={setPermanentHelperOpen}
                 >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="rounded-[3px] h-8 w-8"
-                    >
-                      <Info className="h-4 w-4" />
-                    </Button>
+                  <PopoverTrigger>
+                    <WalkthroughHelper />
                   </PopoverTrigger>
                   <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow">
-                    <div className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
-                      <h4 className="font-semibold text-foreground">
+                    <div className="flex flex-col theme-gap-3">
+                      <h4 className="font-semibold text-sm theme-text-foreground">
                         Walkthrough Help
                       </h4>
-                      <p className="text-sm text-foreground">
+                      <p className="text-sm theme-text-foreground">
                         Need help getting started? Click the button below to
                         restart the walkthrough guide.
                       </p>
@@ -689,18 +692,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </Popover>
               )
             )}
-            <div className="flex items-center theme-spacing">
-              <Sun
-                className={`w-4 h-4 ${!darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`}
-              />
-              <Switch checked={darkMode} onCheckedChange={setDarkMode} />
-              <Moon
-                className={`w-4 h-4 ${darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`}
-              />
-            </div>
+            <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
           </div>
 
-          <div className="flex items-center gap-[calc(var(--theme-spacing)*3)]">
+          <div className="flex items-center theme-gap-3">
             <EditorDialog
               open={resetPageDialogOpen}
               onOpenChange={setResetPageDialogOpen}
@@ -793,7 +788,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
                   align="center"
                 >
-                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*4)]">
+                  <div className="flex flex-col theme-gap-4">
                     <div className="font-semibold text-sm theme-text-foreground">
                       Section Options
                     </div>
@@ -805,15 +800,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       sectionsData.map((file) => (
                         <div
                           key={file.filePath}
-                          className="flex flex-col gap-[calc(var(--theme-spacing)*3)]"
+                          className="flex flex-col theme-gap-3"
                         >
-                          <div className="font-medium text-sm border-b theme-border-border pb-[calc(var(--theme-spacing)*0.25)] theme-text-foreground">
+                          <div className="font-medium text-sm border-b theme-border-border theme-pb-1 theme-text-foreground">
                             {file.fileName}
                           </div>
                           {file.sections.map((section) => (
                             <div
                               key={section.sectionId}
-                              className="ml-[calc(var(--theme-spacing)*2)] flex flex-col gap-[calc(var(--theme-spacing)*2)]"
+                              className="theme-ml-2 flex flex-col theme-gap-2"
                             >
                               <div className="text-sm font-medium theme-text-muted-foreground">
                                 {section.sectionId}
@@ -821,7 +816,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                               {section.options.map((option) => (
                                 <div
                                   key={option.optionId}
-                                  className="flex items-center gap-[calc(var(--theme-spacing)*2)] ml-[calc(var(--theme-spacing)*4)]"
+                                  className="flex items-center theme-gap-2 theme-ml-4"
                                 >
                                   <Checkbox
                                     checked={getSectionInclude(
@@ -886,7 +881,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
                   align="center"
                 >
-                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
+                  <div className="flex flex-col theme-gap-3">
                     <div className="font-semibold text-sm theme-text-foreground">
                       File Inclusion
                     </div>
@@ -898,7 +893,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       fileTreeData.map((item) => (
                         <div
                           key={item.path}
-                          className="flex items-center gap-[calc(var(--theme-spacing)*2)]"
+                          className="flex items-center theme-gap-2"
                           style={{ marginLeft: `${item.level * 12}px` }}
                         >
                           <Checkbox
@@ -933,17 +928,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
           </div>
 
-          <div className="flex items-center gap-[calc(var(--theme-spacing)*2)]">
+          <div className="flex items-center theme-gap-2">
             {previewMode && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="py-[calc(var(--theme-spacing)*1)] px-[calc(var(--theme-spacing)*3)] text-xs font-bold rounded-full flex items-center gap-[calc(var(--theme-spacing)*1.5)] bg-[hsl(25,95%,53%,0.2)] border border-[hsl(25,95%,53%)] text-[hsl(25,95%,20%)]">
+                  <div className="theme-py-1 theme-px-3 text-xs font-bold rounded-full flex items-center theme-gap-6 bg-[hsl(25,95%,53%,0.2)] border border-[hsl(25,95%,53%)] text-[hsl(25,95%,20%)]">
                     <Eye className="h-3 w-3" />
                     Preview mode (read only)
                   </div>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs theme-bg-popover theme-text-popover-foreground theme-shadow">
-                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*2)]">
+                  <div className="flex flex-col theme-gap-2">
                     <p>You are currently in preview mode.</p>
                     <p>
                       This shows exactly how your content will look when
@@ -977,7 +972,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center gap-[calc(var(--theme-spacing)*1)]">
+                <div className="flex items-center theme-gap-1">
                   <span className="text-xs theme-text-muted-foreground">
                     Edit
                   </span>
@@ -1034,7 +1029,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     }}
                     disabled={!canGoNext}
                     variant="outline"
-                    className="rounded-[3px] py-[calc(var(--theme-spacing)*0.25)] px-[calc(var(--theme-spacing)*3)] flex items-center gap-[calc(var(--theme-spacing)*2)] font-medium"
+                    className="rounded-[3px] theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium"
                   >
                     Next
                     <ChevronRight className="h-4 w-4" />

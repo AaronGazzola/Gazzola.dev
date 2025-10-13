@@ -711,6 +711,9 @@ export const useEditorStore = create<EditorState>()(
 
           if (enabled) {
             techUpdates.openrouter = true;
+            if (optionId === "imageGeneration") {
+              techUpdates.supabase = true;
+            }
           }
 
           return {

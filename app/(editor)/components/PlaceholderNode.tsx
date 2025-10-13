@@ -269,21 +269,23 @@ function PlaceholderNodeComponent({
         </span>
       )}
       {showPlaceholderHelp && (
-        <WalkthroughHelper
-          isOpen={popoverOpen}
-          onOpenChange={(open) => {
-            setPopoverOpen(open);
-            if (!open && isStepOpen(WalkthroughStep.PLACEHOLDER)) {
-              markStepComplete(WalkthroughStep.PLACEHOLDER);
-            } else if (open && !isStepOpen(WalkthroughStep.PLACEHOLDER)) {
-              setStepOpen(WalkthroughStep.PLACEHOLDER, true);
-            }
-          }}
-          showAnimation={!isStepOpen(WalkthroughStep.PLACEHOLDER)}
-          title="Placeholder Values"
-          description="Click on any placeholder like this to edit it. When you change a placeholder value, it will automatically update everywhere it appears throughout your roadmap documents."
-          iconSize="sm"
-        />
+        <div className="absolute -top-3 right-0">
+          <WalkthroughHelper
+            isOpen={popoverOpen}
+            onOpenChange={(open) => {
+              setPopoverOpen(open);
+              if (!open && isStepOpen(WalkthroughStep.PLACEHOLDER)) {
+                markStepComplete(WalkthroughStep.PLACEHOLDER);
+              } else if (open && !isStepOpen(WalkthroughStep.PLACEHOLDER)) {
+                setStepOpen(WalkthroughStep.PLACEHOLDER, true);
+              }
+            }}
+            showAnimation={!isStepOpen(WalkthroughStep.PLACEHOLDER)}
+            title="Placeholder Values"
+            description="Click on any placeholder like this to edit it. When you change a placeholder value, it will automatically update everywhere it appears throughout your roadmap documents."
+            iconSize="sm"
+          />
+        </div>
       )}
     </span>
   );

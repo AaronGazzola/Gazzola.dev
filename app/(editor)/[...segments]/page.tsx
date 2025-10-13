@@ -176,6 +176,10 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canRender, contentPath, getNode, refreshKey, data]);
 
+  const editorContent = useMemo(() => {
+    return currentContent.replace(/<!-- Themed components start -->[\s\S]*?<!-- Themed components end -->/g, "");
+  }, [currentContent]);
+
   const processedContent = useMemo(() => {
     if (!previewMode) return "";
     return processContent(
@@ -273,14 +277,14 @@ const Page = () => {
       },
       onError: (error: Error) => {},
       editorState: () =>
-        $convertFromMarkdownString(currentContent, [
+        $convertFromMarkdownString(editorContent, [
           ...TRANSFORMERS,
           SECTION_TRANSFORMER,
           COMPONENT_TRANSFORMER,
           PLACEHOLDER_TRANSFORMER,
         ]),
     };
-  }, [canRender, currentContent, darkMode]);
+  }, [canRender, editorContent, darkMode]);
 
   const onChange = useCallback(
     (editorState: EditorState) => {

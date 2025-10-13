@@ -65,9 +65,7 @@ const OUTPUT_FILE = path.join(process.cwd(), "public", "data", "processed-markdo
 const VERSION_FILE = path.join(process.cwd(), "public", "data", "content-version.json");
 
 function removeThemedComponentComments(content: string): string {
-  return content
-    .replace(/<!-- Themed components start -->\n?/g, "")
-    .replace(/<!-- Themed components end -->\n?/g, "");
+  return content;
 }
 
 function escapeForJavaScript(content: string): string {

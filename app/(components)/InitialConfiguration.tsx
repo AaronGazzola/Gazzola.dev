@@ -360,7 +360,20 @@ const questionConfigs: (
     question: "Do you need AI integration?",
     description: "AI-powered features for enhanced user experience.",
     icon: Settings,
-    requiredTechnologies: ["openrouter"],
+    requiredTechnologies: [],
+    subOptions: [
+      {
+        id: "imageGeneration",
+        label: "Yes I need to generate and store images",
+        description: "Generate and store AI-generated images",
+        disabledWhen: (config) => config.questions.useSupabase === "no" || config.questions.useSupabase === "none",
+      },
+      {
+        id: "textGeneration",
+        label: "Yes I need to generate text or analyse images",
+        description: "Generate text content or analyze images using AI",
+      },
+    ],
   },
   {
     id: "realTimeNotifications",
@@ -442,7 +455,11 @@ const getRequiredTechnologiesForSubOption = (
       required.push("betterAuth");
     }
   } else if (questionId === "aiIntegration") {
-    required.push("openrouter");
+    if (optionId === "imageGeneration") {
+      required.push("openrouter", "supabase");
+    } else if (optionId === "textGeneration") {
+      required.push("openrouter");
+    }
   } else if (questionId === "realTimeNotifications") {
     required.push("supabase");
     if (optionId === "emailNotifications") {
@@ -487,6 +504,11 @@ const hasAnyChildrenSelected = (
     return (
       initialConfiguration.features.realTimeNotifications.emailNotifications ||
       initialConfiguration.features.realTimeNotifications.inAppNotifications
+    );
+  } else if (questionId === "aiIntegration") {
+    return (
+      initialConfiguration.features.aiIntegration.imageGeneration ||
+      initialConfiguration.features.aiIntegration.textGeneration
     );
   }
 
@@ -552,6 +574,12 @@ const getDisabledReason = (
   if (questionId === "realTimeNotifications" && optionId === "emailNotifications") {
     if (!config.features.authentication.enabled) {
       return "Requires user authentication (Question 3)";
+    }
+  }
+
+  if (questionId === "aiIntegration" && optionId === "imageGeneration") {
+    if (config.questions.useSupabase === "no" || config.questions.useSupabase === "none") {
+      return "Requires Supabase (Question 1)";
     }
   }
 
@@ -704,11 +732,13 @@ export const InitialConfiguration = () => {
       }
     }
 
-    if (
-      techId === "openrouter" &&
-      initialConfiguration.features.aiIntegration.enabled
-    ) {
-      requiredBy.push("Do you need AI integration?");
+    if (techId === "openrouter") {
+      if (initialConfiguration.features.aiIntegration.imageGeneration) {
+        requiredBy.push("AI image generation");
+      }
+      if (initialConfiguration.features.aiIntegration.textGeneration) {
+        requiredBy.push("AI text generation or image analysis");
+      }
     }
 
     if (initialConfiguration.features.payments.enabled) {
@@ -842,15 +872,15 @@ export const InitialConfiguration = () => {
   return (
     <TooltipProvider>
       <div
-        className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow p-[calc(var(--theme-spacing)*2)] border"
+        className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow theme-p-2 border"
         data-walkthrough="initial-configuration"
       >
         {enabledTechnologies.length > 0 && (
-          <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 mb-[calc(var(--theme-spacing)*1)] p-[calc(var(--theme-spacing)*1.5)] backdrop-blur-lg">
-            <h4 className="theme-text-card-foreground theme-font-sans theme-letter-spacing text-sm font-semibold mb-[calc(var(--theme-spacing)*1)]">
+          <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 theme-mb-1 theme-p-6 backdrop-blur-lg">
+            <h4 className="theme-text-card-foreground text-sm font-semibold theme-mb-1">
               Required Technologies
             </h4>
-            <div className="flex flex-wrap gap-[calc(var(--theme-spacing)*0.5)]">
+            <div className="flex flex-wrap theme-gap-2">
               {enabledTechnologies.map((tech) => {
                 const Icon = tech.icon;
                 const requiredBy = getRequiredByFeatures(tech.id);
@@ -858,15 +888,15 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center gap-[calc(var(--theme-spacing)*1)] px-[calc(var(--theme-spacing)*2)] py-[calc(var(--theme-spacing)*0.5)] rounded-full text-xs font-semibold cursor-help border whitespace-nowrap">
+                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-2 theme-py-0\.5 rounded-full text-xs font-semibold cursor-help border whitespace-nowrap">
                         <Icon className="w-3 h-3" />
-                        <span className="theme-font-sans theme-letter-spacing">{tech.name}</span>
+                        <span>{tech.name}</span>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow">
                       <div className="max-w-[12rem]">
-                        <p className="theme-font-sans theme-letter-spacing font-medium mb-[calc(var(--theme-spacing)*0.25)]">Required by:</p>
-                        <ul className="theme-font-sans theme-letter-spacing text-sm">
+                        <p className="font-medium theme-mb-1">Required by:</p>
+                        <ul className="text-sm">
                           {requiredBy.map((feature, index) => (
                             <li key={index}>• {feature}</li>
                           ))}
@@ -883,7 +913,7 @@ export const InitialConfiguration = () => {
         <Accordion
           type="single"
           collapsible
-          className="flex flex-col gap-[calc(var(--theme-spacing)*0.25)]"
+          className="flex flex-col theme-gap-1"
           onValueChange={(value) => {
             if (value === "databaseChoice" && showConfigHelp) {
               markStepComplete(WalkthroughStep.CONFIGURATION);
@@ -964,91 +994,93 @@ export const InitialConfiguration = () => {
                 value={question.id}
                 className="transition-all duration-200 border-none"
               >
-                <div
+                <AccordionTrigger
                   className={cn(
-                    "flex items-center justify-between w-full py-[calc(var(--theme-spacing)*0.25)] px-[calc(var(--theme-spacing)*2)]",
+                    "flex items-center justify-between w-full theme-py-1 theme-px-2 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180",
                     isQuestionDisabled && "opacity-50"
                   )}
+                  disabled={isQuestionDisabled}
                 >
-                  <div className="flex-grow flex items-center gap-[calc(var(--theme-spacing)*2)]">
-                    <AccordionTrigger
-                      className="flex-1 justify-between mr-[calc(var(--theme-spacing)*2)]"
-                      disabled={isQuestionDisabled}
-                    >
-                      <div className="flex items-center gap-[calc(var(--theme-spacing)*2)]">
-                        <Icon className="theme-text-foreground w-5 h-5 transition-colors duration-200" />
-                        <div className="text-left">
-                          <span className="theme-text-foreground theme-font-sans theme-letter-spacing text-lg font-semibold block">
-                            {question.question}
-                          </span>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    {question.id === "databaseChoice" && showConfigHelp && (
-                      <WalkthroughHelper
-                        isOpen={configHelpOpen}
-                        onOpenChange={(open) => {
-                          setConfigHelpOpen(open);
-                          if (!open && isStepOpen(WalkthroughStep.CONFIGURATION)) {
-                            markStepComplete(WalkthroughStep.CONFIGURATION);
-                          } else if (open && !isStepOpen(WalkthroughStep.CONFIGURATION)) {
-                            setStepOpen(WalkthroughStep.CONFIGURATION, true);
-                          }
-                        }}
-                        showAnimation={!isStepOpen(WalkthroughStep.CONFIGURATION)}
-                        title="Technology Selection"
-                        description="Select options in these questions to customize your technology stack. Your selections will automatically determine which technologies are required for your web application."
-                        iconSize="sm"
-                      />
-                    )}
+                  <div className="flex items-center theme-gap-2 flex-1 min-w-0">
+                    <Icon className="theme-text-foreground w-5 h-5 transition-colors duration-200 shrink-0" />
+                    <span className="theme-text-foreground text-lg font-semibold">
+                      {question.question}
+                    </span>
+                    <ChevronDown className="chevron h-4 w-4 shrink-0 transition-transform duration-200" />
                   </div>
 
-                  {isQuestionDisabled ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
+                  <div className="flex items-center theme-gap-2 shrink-0">
+                    {question.id === "databaseChoice" && showConfigHelp && (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <WalkthroughHelper
+                          isOpen={configHelpOpen}
+                          onOpenChange={(open) => {
+                            setConfigHelpOpen(open);
+                            if (!open && isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                              markStepComplete(WalkthroughStep.CONFIGURATION);
+                            } else if (open && !isStepOpen(WalkthroughStep.CONFIGURATION)) {
+                              setStepOpen(WalkthroughStep.CONFIGURATION, true);
+                            }
+                          }}
+                          showAnimation={!isStepOpen(WalkthroughStep.CONFIGURATION)}
+                          title="Technology Selection"
+                          description="Select options in these questions to customize your technology stack. Your selections will automatically determine which technologies are required for your web application."
+                          iconSize="sm"
+                        />
+                      </div>
+                    )}
+
+                    {isQuestionDisabled ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <Checkbox
+                              checked={isEnabled}
+                              disabled={true}
+                              className={cn(
+                                "size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                              )}
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            {getDisabledReason(question.id, null, initialConfiguration) || "Question not available"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <div onClick={(e) => e.stopPropagation()}>
                         <Checkbox
                           checked={isEnabled}
-                          disabled={true}
+                          disabled={
+                            question.subOptions && question.subOptions.length > 0
+                          }
+                          onCheckedChange={(checked) => {
+                            if (
+                              question.subOptions && question.subOptions.length > 0
+                            ) {
+                              return;
+                            }
+
+                            const isChecking = checked === true;
+                            updateFeature(question.id, isChecking);
+                          }}
                           className={cn(
-                            "size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                            "size-5 border border-gray-500 select-none",
+                            question.subOptions && question.subOptions.length > 0
+                              ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                              : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
                           )}
                         />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          {getDisabledReason(question.id, null, initialConfiguration) || "Question not available"}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <Checkbox
-                      checked={isEnabled}
-                      disabled={
-                        question.subOptions && question.subOptions.length > 0
-                      }
-                      onCheckedChange={(checked) => {
-                        if (
-                          question.subOptions && question.subOptions.length > 0
-                        ) {
-                          return;
-                        }
-
-                        const isChecking = checked === true;
-                        updateFeature(question.id, isChecking);
-                      }}
-                      className={cn(
-                        "size-5 border border-gray-500 select-none",
-                        question.subOptions && question.subOptions.length > 0
-                          ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
-                          : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
-                      )}
-                    />
-                  )}
-                </div>
+                      </div>
+                    )}
+                  </div>
+                </AccordionTrigger>
                 <AccordionContent>
-                  <div className="px-[calc(var(--theme-spacing)*2)] pb-[calc(var(--theme-spacing)*2)] pt-0">
+                  <div className="theme-px-2 theme-pb-2 theme-pt-0">
                     {question.subOptions && question.subOptions.length > 0 ? (
-                      <div className="flex flex-col gap-[calc(var(--theme-spacing)*0.25)]">
+                      <div className="flex flex-col theme-gap-1">
                         {question.subOptions.map((option) => {
                           const isSubOptionDisabled =
                             option.disabledWhen?.(initialConfiguration) ??
@@ -1057,7 +1089,7 @@ export const InitialConfiguration = () => {
                             <label
                               key={option.id}
                               className={cn(
-                                "flex items-start gap-[calc(var(--theme-spacing)*2)]",
+                                "flex items-start theme-gap-2",
                                 isSubOptionDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
                               )}
                             >
@@ -1088,7 +1120,7 @@ export const InitialConfiguration = () => {
                                                 : false
                                       }
                                       disabled={true}
-                                      className="size-4 mt-0.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
+                                      className="size-4 theme-mt-0\.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
                                     />
                                   </TooltipTrigger>
                                   <TooltipContent>
@@ -1304,13 +1336,13 @@ export const InitialConfiguration = () => {
                                 />
                               )}
                               <div>
-                                <span className="theme-text-foreground theme-font-sans theme-letter-spacing text-base font-medium block">
+                                <span className="theme-text-foreground text-base font-medium block">
                                   {option.label}
                                 </span>
-                                <span className="theme-text-muted-foreground theme-font-sans theme-letter-spacing text-base block mt-0.5 font-medium">
+                                <span className="theme-text-muted-foreground text-base block theme-mt-0\.5 font-medium">
                                   {option.description}
                                 </span>
-                                <div className="flex flex-wrap gap-1 mt-2">
+                                <div className="flex flex-wrap theme-gap-1 theme-mt-2">
                                   {getRequiredTechnologiesForSubOption(
                                     question.id,
                                     option.id
@@ -1387,7 +1419,7 @@ export const InitialConfiguration = () => {
                                       <div
                                         key={techId}
                                         className={cn(
-                                          "theme-font-sans theme-letter-spacing theme-radius theme-shadow flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium border",
+                                          "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1\.5 theme-py-0\.5 text-xs font-medium border",
                                           !isAvailable
                                             ? "theme-bg-muted theme-text-muted-foreground theme-border-border line-through opacity-50"
                                             : isBadgeActive
@@ -1407,7 +1439,7 @@ export const InitialConfiguration = () => {
                         })}
                       </div>
                     ) : (
-                      <p className="theme-text-foreground theme-font-sans theme-letter-spacing text-sm font-medium">
+                      <p className="theme-text-foreground text-sm font-medium">
                         {question.description}
                       </p>
                     )}

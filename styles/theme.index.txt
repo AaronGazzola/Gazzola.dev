@@ -1,0 +1,140 @@
+# Theme Class Index
+
+This file provides a comprehensive index of all theme classes available in `styles/theme.css` and their relationship to standard shadcn/Tailwind classes and CSS variables defined in `app/(components)/ThemeConfiguration.cssVariables.ts`.
+
+## Core Principle
+
+All theme classes follow the pattern: `theme-{standard-class-name}`
+
+Where `{standard-class-name}` is the exact name of a standard shadcn/Tailwind class. This ensures consistency and predictability.
+
+## CSS Variables
+
+All theme classes use CSS custom properties that can be dynamically updated:
+
+### Color Variables
+- `--theme-primary` / `--theme-primary-foreground`
+- `--theme-secondary` / `--theme-secondary-foreground`
+- `--theme-accent` / `--theme-accent-foreground`
+- `--theme-background` / `--theme-foreground`
+- `--theme-card` / `--theme-card-foreground`
+- `--theme-popover` / `--theme-popover-foreground`
+- `--theme-muted` / `--theme-muted-foreground`
+- `--theme-destructive` / `--theme-destructive-foreground`
+- `--theme-border` / `--theme-input` / `--theme-ring`
+- `--theme-chart-1` through `--theme-chart-5`
+- `--theme-sidebar-*` (8 variants)
+
+### Typography Variables
+- `--theme-font-sans` / `--theme-font-serif` / `--theme-font-mono`
+- `--theme-letter-spacing`
+
+### Layout Variables
+- `--theme-radius` - Border radius (rem)
+- `--theme-spacing` - Base spacing unit (0.25rem default)
+- `--theme-shadow` - Complete shadow definition
+- `--theme-shadow-color` / `--theme-shadow-opacity` / `--theme-shadow-blur` / `--theme-shadow-spread` / `--theme-shadow-x` / `--theme-shadow-y`
+
+## Color Classes
+
+### Background Colors
+Pattern: `theme-bg-{color}`
+Maps to: `bg-{color}`
+Available: primary, secondary, accent, background, card, popover, muted, destructive, sidebar-background, sidebar-accent
+
+### Text Colors
+Pattern: `theme-text-{color}`
+Maps to: `text-{color}` or `text-{color}-foreground`
+Available: primary, primary-foreground, secondary, secondary-foreground, accent, accent-foreground, foreground, card-foreground, popover-foreground, muted, muted-foreground, destructive, destructive-foreground, chart-1, chart-2, chart-3, chart-4, chart-5, sidebar-foreground, sidebar-primary, sidebar-primary-foreground, sidebar-accent-foreground
+
+### Border Colors
+Pattern: `theme-border-{color}`
+Maps to: `border-{color}`
+Available: primary, secondary, accent, border, muted, destructive, sidebar-border
+
+## Spacing Classes
+
+All spacing classes use `calc(var(--theme-spacing) * N)` where N is the Tailwind scale value.
+
+### Gap Classes (102 classes)
+Pattern: `theme-gap-{value}`, `theme-gap-x-{value}`, `theme-gap-y-{value}`
+Maps to: `gap-{value}`, `gap-x-{value}`, `gap-y-{value}`
+Values: 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96
+
+Examples:
+- `theme-gap-0` → `gap-0` (gap: 0)
+- `theme-gap-1` → `gap-1` (gap: calc(var(--theme-spacing) * 1))
+- `theme-gap-4` → `gap-4` (gap: calc(var(--theme-spacing) * 4))
+- `theme-gap-x-2` → `gap-x-2` (column-gap: calc(var(--theme-spacing) * 2))
+- `theme-gap-y-3` → `gap-y-3` (row-gap: calc(var(--theme-spacing) * 3))
+
+### Padding Classes (238 classes)
+Pattern: `theme-p-{value}`, `theme-px-{value}`, `theme-py-{value}`, `theme-pt-{value}`, `theme-pr-{value}`, `theme-pb-{value}`, `theme-pl-{value}`
+Maps to: `p-{value}`, `px-{value}`, `py-{value}`, `pt-{value}`, `pr-{value}`, `pb-{value}`, `pl-{value}`
+Values: Same as gap (0, 0.5, 1, 1.5, ..., 96)
+
+Examples:
+- `theme-p-4` → `p-4` (padding: calc(var(--theme-spacing) * 4))
+- `theme-px-6` → `px-6` (padding-left/right: calc(var(--theme-spacing) * 6))
+- `theme-py-2` → `py-2` (padding-top/bottom: calc(var(--theme-spacing) * 2))
+- `theme-pt-8` → `pt-8` (padding-top: calc(var(--theme-spacing) * 8))
+
+### Margin Classes (238 classes)
+Pattern: `theme-m-{value}`, `theme-mx-{value}`, `theme-my-{value}`, `theme-mt-{value}`, `theme-mr-{value}`, `theme-mb-{value}`, `theme-ml-{value}`
+Maps to: `m-{value}`, `mx-{value}`, `my-{value}`, `mt-{value}`, `mr-{value}`, `mb-{value}`, `ml-{value}`
+Values: Same as gap + auto variant
+
+Examples:
+- `theme-m-4` → `m-4` (margin: calc(var(--theme-spacing) * 4))
+- `theme-mx-auto` → `mx-auto` (margin-left/right: auto)
+- `theme-mt-2` → `mt-2` (margin-top: calc(var(--theme-spacing) * 2))
+
+## Appearance Classes
+
+### Border Radius
+- `theme-radius` - Uses `var(--theme-radius)`
+
+### Shadow
+- `theme-shadow` - Uses `var(--theme-shadow)`
+
+### Data Attributes
+- `theme-data-[checked]:bg-primary` - Checked state background
+- `theme-data-[state=checked]:border-primary` - Checked state border
+
+### Focus States
+- `theme-focus-visible:outline-ring` - Focus outline color
+- `theme-focus-visible:ring-ring` - Focus ring color
+
+## Typography Classes
+
+### Font Family
+- `theme-font-sans` - Uses `var(--theme-font-sans)`
+- `theme-font-serif` - Uses `var(--theme-font-serif)`
+- `theme-font-mono` - Uses `var(--theme-font-mono)`
+
+## Usage Examples
+
+### Replacing Standard Classes
+```tsx
+// Before
+<div className="bg-primary text-primary-foreground p-4 gap-2 rounded shadow">
+
+// After
+<div className="theme-bg-primary theme-text-primary-foreground theme-p-4 theme-gap-2 theme-radius theme-shadow">
+```
+
+### Mixed Usage (when appropriate)
+```tsx
+// Theme-controlled spacing, standard color
+<div className="bg-blue-500 theme-p-4 theme-gap-2">
+
+// Theme-controlled colors, standard spacing
+<div className="theme-bg-primary p-4 gap-2">
+```
+
+## Notes
+
+- Decimal values in class names use escaped dots: `theme-gap-0\.5`
+- All spacing follows the standard Tailwind spacing scale
+- CSS variables are set in `app/(components)/ThemeConfiguration.cssVariables.ts`
+- The base spacing unit (`--theme-spacing`) defaults to 0.25rem (4px)

@@ -3,7 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
-import { useThemeStore } from "@/app/layout.stores";
+import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
 import { cn } from "@/lib/tailwind.utils";
 
 const buttonVariants = cva(
@@ -49,17 +49,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : "button";
     const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
-
-    const getBackgroundStyle = () => {
-      if (gradientEnabled) {
-        return {
-          background: `linear-gradient(to right, ${gradientColors.join(", ")})`,
-        };
-      }
-      return {
-        background: singleColor,
-      };
-    };
+    const backgroundStyle = getBackgroundStyle(
+      gradientColors,
+      singleColor,
+      gradientEnabled
+    );
 
     if (variant === "outline" || (variant === "ghost" && isActive))
       return (
@@ -71,7 +65,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             )}
             style={{
               borderRadius: "0.375rem",
-              ...getBackgroundStyle(),
+              ...backgroundStyle,
             }}
           />
           <Comp

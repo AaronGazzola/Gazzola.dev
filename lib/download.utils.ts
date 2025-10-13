@@ -112,7 +112,11 @@ export const generateAppStructureAscii = (
     }
 
     const layoutData = wireframeData.layouts[layoutPath];
-    if (!layoutData || !layoutData.elements || layoutData.elements.length === 0) {
+    if (
+      !layoutData ||
+      !layoutData.elements ||
+      layoutData.elements.length === 0
+    ) {
       return "";
     }
 
@@ -163,17 +167,18 @@ export const generateAppStructureAscii = (
 
       if (entry.children && entry.children.length > 0) {
         const isAppDir = entry.name === "app" && isRoot;
-        const isRouteGroup = entry.name.startsWith("(") && entry.name.endsWith(")");
+        const isRouteGroup =
+          entry.name.startsWith("(") && entry.name.endsWith(")");
 
         const newPath = isAppDir
           ? "/"
           : isRouteGroup
-          ? currentPath
-          : currentPath === "/"
-          ? `/${entry.name}`
-          : currentPath
-          ? `${currentPath}/${entry.name}`
-          : `/${entry.name}`;
+            ? currentPath
+            : currentPath === "/"
+              ? `/${entry.name}`
+              : currentPath
+                ? `${currentPath}/${entry.name}`
+                : `/${entry.name}`;
 
         renderTree(
           entry.children,
@@ -335,9 +340,7 @@ const generateInitialConfigurationContent = (
           authMethods.push("password-only");
 
         const methodsList =
-          authMethods.length > 0
-            ? ` supporting ${authMethods.join(", ")}`
-            : "";
+          authMethods.length > 0 ? ` supporting ${authMethods.join(", ")}` : "";
         return `Authentication library providing secure user authentication and session management${methodsList}.`;
       }
 
@@ -442,7 +445,7 @@ const generateThemeCss = (): string => {
   }
 
   try {
-    const themeStoreState = localStorage.getItem("theme-storage");
+    const themeStoreState = localStorage.getItem("storage");
     if (!themeStoreState) {
       return "";
     }
@@ -519,14 +522,24 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-sm:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
+    );
+    lines.push(
+      `  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-md:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-lg:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-xl:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
     lines.push(`  --tracking-normal: ${lightTypography.letterSpacing}em;`);
     lines.push(`  --spacing: ${lightOther.spacing}rem;`);
@@ -556,14 +569,24 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-sm:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
+    );
+    lines.push(
+      `  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-md:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-lg:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-xl:`);
-    lines.push(`    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(
+      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`
+    );
     lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
     lines.push(`}`);
     lines.push(``);
@@ -583,7 +606,9 @@ const generateThemeCss = (): string => {
     lines.push(`  --color-accent: var(--accent);`);
     lines.push(`  --color-accent-foreground: var(--accent-foreground);`);
     lines.push(`  --color-destructive: var(--destructive);`);
-    lines.push(`  --color-destructive-foreground: var(--destructive-foreground);`);
+    lines.push(
+      `  --color-destructive-foreground: var(--destructive-foreground);`
+    );
     lines.push(`  --color-border: var(--border);`);
     lines.push(`  --color-input: var(--input);`);
     lines.push(`  --color-ring: var(--ring);`);
@@ -595,9 +620,13 @@ const generateThemeCss = (): string => {
     lines.push(`  --color-sidebar: var(--sidebar);`);
     lines.push(`  --color-sidebar-foreground: var(--sidebar-foreground);`);
     lines.push(`  --color-sidebar-primary: var(--sidebar-primary);`);
-    lines.push(`  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);`);
+    lines.push(
+      `  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);`
+    );
     lines.push(`  --color-sidebar-accent: var(--sidebar-accent);`);
-    lines.push(`  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);`);
+    lines.push(
+      `  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);`
+    );
     lines.push(`  --color-sidebar-border: var(--sidebar-border);`);
     lines.push(`  --color-sidebar-ring: var(--sidebar-ring);`);
     lines.push(``);
@@ -778,7 +807,9 @@ const processNode = (
     const cleanContent = processedContent
       .replace(/\\`/g, "`")
       .replace(/\\n/g, "\n")
-      .replace(/\\\\/g, "\\");
+      .replace(/\\\\/g, "\\")
+      .replace(/<!-- Themed components start -->\n?/g, "")
+      .replace(/<!-- Themed components end -->\n?/g, "");
 
     currentFolder.file(`${node.name}.md`, cleanContent);
   }
