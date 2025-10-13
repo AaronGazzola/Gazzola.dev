@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/tailwind.utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 theme-radius theme-border-ring",
   {
     variants: {
       variant: {
         default:
-          "border-2 shadow hover:bg-[var(--theme-primary)]/90",
+          "border-2 theme-bg-primary theme-text-primary-foreground theme-border-primary theme-shadow hover:opacity-90",
         destructive:
-          "border-2 shadow-sm hover:bg-[var(--theme-destructive)]/90",
+          "border-2 theme-bg-destructive theme-text-destructive-foreground theme-border-destructive theme-shadow hover:opacity-90",
         outline:
-          "border-2 shadow-sm hover:bg-[var(--theme-accent)]",
+          "border-2 theme-border-input theme-bg-background theme-text-foreground theme-shadow hover:theme-bg-accent hover:theme-text-accent-foreground",
         secondary:
-          "border-2 shadow-sm hover:bg-[var(--theme-secondary)]/80",
-        ghost: "hover:bg-[var(--theme-accent)]",
-        link: "underline-offset-4 hover:underline",
+          "border-2 theme-bg-secondary theme-text-secondary-foreground theme-border-secondary theme-shadow hover:opacity-80",
+        ghost: "hover:theme-bg-accent hover:theme-text-accent-foreground",
+        link: "theme-text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-9 px-4 py-2",
@@ -41,26 +41,12 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, style, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    const variantStyles = variant === "default"
-      ? { backgroundColor: "var(--theme-primary)", color: "var(--theme-primary-foreground)", borderRadius: "var(--theme-radius)", borderColor: "var(--theme-border)", boxShadow: "var(--theme-shadow)" }
-      : variant === "destructive"
-      ? { backgroundColor: "var(--theme-destructive)", color: "var(--theme-destructive-foreground)", borderRadius: "var(--theme-radius)", borderColor: "var(--theme-border)", boxShadow: "var(--theme-shadow)" }
-      : variant === "outline"
-      ? { borderColor: "var(--theme-border)", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)", borderRadius: "var(--theme-radius)", boxShadow: "var(--theme-shadow)" }
-      : variant === "secondary"
-      ? { backgroundColor: "var(--theme-secondary)", color: "var(--theme-secondary-foreground)", borderRadius: "var(--theme-radius)", borderColor: "var(--theme-border)", boxShadow: "var(--theme-shadow)" }
-      : variant === "ghost"
-      ? { color: "var(--theme-foreground)", borderRadius: "var(--theme-radius)" }
-      : variant === "link"
-      ? { color: "var(--theme-primary)", borderRadius: "var(--theme-radius)" }
-      : {};
 
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        style={{ ...variantStyles, ...style }}
+        className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
         {...props}
       />

@@ -836,15 +836,15 @@ export const InitialConfiguration = () => {
   return (
     <TooltipProvider>
       <div
-        style={{ padding: "calc(var(--theme-spacing) * 2)", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: "var(--theme-card)", color: "var(--theme-card-foreground)" }}
+        className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow p-[calc(var(--theme-spacing)*2)] border"
         data-walkthrough="initial-configuration"
       >
         {enabledTechnologies.length > 0 && (
-          <div style={{ position: "sticky", top: "-24px", zIndex: "50", marginBottom: "calc(var(--theme-spacing) * 1)", padding: "calc(var(--theme-spacing) * 1.5)", borderRadius: "var(--theme-radius)", backgroundColor: "var(--theme-background)", backdropFilter: "blur(8px)" }}>
-            <h4 style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1)", color: "var(--theme-card-foreground)" }}>
+          <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 mb-[calc(var(--theme-spacing)*1)] p-[calc(var(--theme-spacing)*1.5)] backdrop-blur-lg">
+            <h4 className="theme-text-card-foreground theme-font-sans theme-letter-spacing text-sm font-semibold mb-[calc(var(--theme-spacing)*1)]">
               Required Technologies
             </h4>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "calc(var(--theme-spacing) * 0.5)" }}>
+            <div className="flex flex-wrap gap-[calc(var(--theme-spacing)*0.5)]">
               {enabledTechnologies.map((tech) => {
                 const Icon = tech.icon;
                 const requiredBy = getRequiredByFeatures(tech.id);
@@ -852,15 +852,15 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1)", padding: "calc(var(--theme-spacing) * 0.5) calc(var(--theme-spacing) * 2)", borderRadius: "9999px", fontSize: "0.75rem", fontWeight: "600", cursor: "help", border: "1px solid var(--theme-border)", backgroundColor: "var(--theme-secondary)", color: "var(--theme-secondary-foreground)", whiteSpace: "nowrap" }}>
-                        <Icon style={{ width: "12px", height: "12px" }} />
-                        <span>{tech.name}</span>
+                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center gap-[calc(var(--theme-spacing)*1)] px-[calc(var(--theme-spacing)*2)] py-[calc(var(--theme-spacing)*0.5)] rounded-full text-xs font-semibold cursor-help border whitespace-nowrap">
+                        <Icon className="w-3 h-3" />
+                        <span className="theme-font-sans theme-letter-spacing">{tech.name}</span>
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <div style={{ maxWidth: "12rem" }}>
-                        <p style={{ fontWeight: "500", marginBottom: "calc(var(--theme-spacing) * 0.25)" }}>Required by:</p>
-                        <ul style={{ fontSize: "0.875rem" }}>
+                    <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow">
+                      <div className="max-w-[12rem]">
+                        <p className="theme-font-sans theme-letter-spacing font-medium mb-[calc(var(--theme-spacing)*0.25)]">Required by:</p>
+                        <ul className="theme-font-sans theme-letter-spacing text-sm">
                           {requiredBy.map((feature, index) => (
                             <li key={index}>• {feature}</li>
                           ))}
@@ -877,7 +877,7 @@ export const InitialConfiguration = () => {
         <Accordion
           type="single"
           collapsible
-          style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 0.25)" }}
+          className="flex flex-col gap-[calc(var(--theme-spacing)*0.25)]"
           onValueChange={(value) => {
             if (value === "databaseChoice" && showConfigHelp) {
               markStepComplete(WalkthroughStep.CONFIGURATION);
@@ -956,27 +956,23 @@ export const InitialConfiguration = () => {
               <AccordionItem
                 key={question.id}
                 value={question.id}
-                style={{ transition: "all 200ms", border: "none" }}
+                className="transition-all duration-200 border-none"
               >
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    padding: "calc(var(--theme-spacing) * 0.25) calc(var(--theme-spacing) * 2)",
-                    opacity: isQuestionDisabled ? "0.5" : "1",
-                  }}
+                  className={cn(
+                    "flex items-center justify-between w-full py-[calc(var(--theme-spacing)*0.25)] px-[calc(var(--theme-spacing)*2)]",
+                    isQuestionDisabled && "opacity-50"
+                  )}
                 >
-                  <div style={{ flexGrow: "1", display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
+                  <div className="flex-grow flex items-center gap-[calc(var(--theme-spacing)*2)]">
                     <AccordionTrigger
-                      style={{ flex: "1", justifyContent: "space-between", marginRight: "calc(var(--theme-spacing) * 2)" }}
+                      className="flex-1 justify-between mr-[calc(var(--theme-spacing)*2)]"
                       disabled={isQuestionDisabled}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
-                        <Icon style={{ width: "20px", height: "20px", transition: "colors 200ms", color: "var(--theme-foreground)" }} />
-                        <div style={{ textAlign: "left" }}>
-                          <span style={{ fontSize: "1.125rem", fontWeight: "600", display: "block", color: "var(--theme-foreground)" }}>
+                      <div className="flex items-center gap-[calc(var(--theme-spacing)*2)]">
+                        <Icon className="theme-text-foreground w-5 h-5 transition-colors duration-200" />
+                        <div className="text-left">
+                          <span className="theme-text-foreground theme-font-sans theme-letter-spacing text-lg font-semibold block">
                             {question.question}
                           </span>
                         </div>
@@ -1044,9 +1040,9 @@ export const InitialConfiguration = () => {
                   )}
                 </div>
                 <AccordionContent>
-                  <div style={{ padding: "0 calc(var(--theme-spacing) * 2) calc(var(--theme-spacing) * 2) calc(var(--theme-spacing) * 2)" }}>
+                  <div className="px-[calc(var(--theme-spacing)*2)] pb-[calc(var(--theme-spacing)*2)] pt-0">
                     {question.subOptions && question.subOptions.length > 0 ? (
-                      <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 0.25)" }}>
+                      <div className="flex flex-col gap-[calc(var(--theme-spacing)*0.25)]">
                         {question.subOptions.map((option) => {
                           const isSubOptionDisabled =
                             option.disabledWhen?.(initialConfiguration) ??
@@ -1054,13 +1050,10 @@ export const InitialConfiguration = () => {
                           return (
                             <label
                               key={option.id}
-                              style={{
-                                display: "flex",
-                                alignItems: "flex-start",
-                                gap: "calc(var(--theme-spacing) * 2)",
-                                cursor: isSubOptionDisabled ? "not-allowed" : "pointer",
-                                opacity: isSubOptionDisabled ? "0.5" : "1",
-                              }}
+                              className={cn(
+                                "flex items-start gap-[calc(var(--theme-spacing)*2)]",
+                                isSubOptionDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                              )}
                             >
                               {isSubOptionDisabled ? (
                                 <Tooltip>
@@ -1305,10 +1298,10 @@ export const InitialConfiguration = () => {
                                 />
                               )}
                               <div>
-                                <span className="text-base font-medium block" style={{ color: "var(--theme-foreground)" }}>
+                                <span className="theme-text-foreground theme-font-sans theme-letter-spacing text-base font-medium block">
                                   {option.label}
                                 </span>
-                                <span className="text-base block mt-0.5 font-medium" style={{ color: "var(--theme-muted-foreground)" }}>
+                                <span className="theme-text-muted-foreground theme-font-sans theme-letter-spacing text-base block mt-0.5 font-medium">
                                   {option.description}
                                 </span>
                                 <div className="flex flex-wrap gap-1 mt-2">
@@ -1388,12 +1381,12 @@ export const InitialConfiguration = () => {
                                       <div
                                         key={techId}
                                         className={cn(
-                                          "flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border",
+                                          "theme-font-sans theme-letter-spacing theme-radius theme-shadow flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium border",
                                           !isAvailable
-                                            ? "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))] line-through opacity-50"
+                                            ? "theme-bg-muted theme-text-muted-foreground theme-border-border line-through opacity-50"
                                             : isBadgeActive
-                                              ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))]"
-                                              : "bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] border-[hsl(var(--border))]"
+                                              ? "theme-bg-primary theme-text-primary-foreground theme-border-primary"
+                                              : "theme-bg-secondary theme-text-secondary-foreground theme-border-border"
                                         )}
                                       >
                                         <Icon className="w-3 h-3" />
@@ -1408,7 +1401,7 @@ export const InitialConfiguration = () => {
                         })}
                       </div>
                     ) : (
-                      <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                      <p className="theme-text-foreground theme-font-sans theme-letter-spacing text-sm font-medium">
                         {question.description}
                       </p>
                     )}

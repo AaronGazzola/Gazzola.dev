@@ -1,5 +1,6 @@
 import { ThemeColors, ThemeTypography, ThemeOther, ThemeShadow } from "./ThemeConfiguration.types";
 import { sanitizeThemeColors, sanitizeThemeOther } from "./ThemeConfiguration.sanitize";
+import { oklchToHex } from "./ThemeConfiguration.colorUtils";
 import fs from "fs";
 import path from "path";
 
@@ -18,134 +19,75 @@ export interface ParsedTheme {
   previewColors: string[];
 }
 
-const oklchToHsl = (oklch: string): string => {
-  const match = oklch.match(/oklch\(([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\)/);
-  if (!match) {
-    console.log(JSON.stringify({action:"oklch_parse_failed",input:oklch}));
-    return "0 0% 0%";
-  }
-
-  const [, lStr, cStr, hStr] = match;
-  const L = parseFloat(lStr);
-  const C = parseFloat(cStr);
-  const h = parseFloat(hStr);
-
-  const lightness = L * 100;
-  const saturation = C * 100;
-  const hue = h;
-
-  const result = `${hue.toFixed(1)} ${saturation.toFixed(1)}% ${lightness.toFixed(1)}%`;
-  return result;
-};
-
-const oklchToHex = (oklch: string): string => {
-  const match = oklch.match(/oklch\(([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\)/);
-  if (!match) return "#000000";
-
-  const [, lStr, cStr, hStr] = match;
-  const L = parseFloat(lStr);
-  const C = parseFloat(cStr);
-  const H = parseFloat(hStr);
-
-  const aLab = C * Math.cos((H * Math.PI) / 180);
-  const bLab = C * Math.sin((H * Math.PI) / 180);
-
-  const fy = (L + 0.16) / 1.16;
-  const fx = aLab / 5.0 + fy;
-  const fz = fy - bLab / 2.0;
-
-  const xr = fx ** 3 > 0.008856 ? fx ** 3 : (fx - 16 / 116) / 7.787;
-  const yr = L > 0.08 ? ((L + 0.16) / 1.16) ** 3 : L / 9.033;
-  const zr = fz ** 3 > 0.008856 ? fz ** 3 : (fz - 16 / 116) / 7.787;
-
-  const X = xr * 95.047;
-  const Y = yr * 100.0;
-  const Z = zr * 108.883;
-
-  let R = X * 0.032406 + Y * -0.015372 + Z * -0.004986;
-  let G = X * -0.009689 + Y * 0.018758 + Z * 0.000415;
-  let B = X * 0.000557 + Y * -0.00204 + Z * 0.01057;
-
-  R = R > 0.0031308 ? 1.055 * R ** (1 / 2.4) - 0.055 : 12.92 * R;
-  G = G > 0.0031308 ? 1.055 * G ** (1 / 2.4) - 0.055 : 12.92 * G;
-  B = B > 0.0031308 ? 1.055 * B ** (1 / 2.4) - 0.055 : 12.92 * B;
-
-  const r = Math.max(0, Math.min(255, Math.round(R * 255)));
-  const g = Math.max(0, Math.min(255, Math.round(G * 255)));
-  const b = Math.max(0, Math.min(255, Math.round(B * 255)));
-
-  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-};
-
 
 const defaultLightColors: ThemeColors = {
-  primary: "222.2 47.4% 11.2%",
-  primaryForeground: "210 40% 98%",
-  secondary: "210 40% 96.1%",
-  secondaryForeground: "222.2 47.4% 11.2%",
-  accent: "210 40% 96.1%",
-  accentForeground: "222.2 47.4% 11.2%",
-  background: "0 0% 100%",
-  foreground: "222.2 47.4% 11.2%",
-  card: "0 0% 100%",
-  cardForeground: "222.2 47.4% 11.2%",
-  popover: "0 0% 100%",
-  popoverForeground: "222.2 47.4% 11.2%",
-  muted: "210 40% 96.1%",
-  mutedForeground: "215.4 16.3% 46.9%",
-  destructive: "0 84.2% 60.2%",
-  destructiveForeground: "210 40% 98%",
-  border: "214.3 31.8% 91.4%",
-  input: "214.3 31.8% 91.4%",
-  ring: "222.2 47.4% 11.2%",
-  chart1: "40 70% 50%",
-  chart2: "80 70% 50%",
-  chart3: "120 70% 50%",
-  chart4: "160 70% 50%",
-  chart5: "200 70% 50%",
-  sidebarBackground: "0 0% 98%",
-  sidebarForeground: "240 5.3% 26.1%",
-  sidebarPrimary: "240 5.9% 10%",
-  sidebarPrimaryForeground: "0 0% 98%",
-  sidebarAccent: "240 4.8% 95.9%",
-  sidebarAccentForeground: "240 5.9% 10%",
-  sidebarBorder: "220 13% 91%",
-  sidebarRing: "217.2 91.2% 59.8%",
+  primary: "oklch(0.2050 0 0)",
+  primaryForeground: "oklch(0.9850 0 0)",
+  secondary: "oklch(0.9700 0 0)",
+  secondaryForeground: "oklch(0.2050 0 0)",
+  accent: "oklch(0.9700 0 0)",
+  accentForeground: "oklch(0.2050 0 0)",
+  background: "oklch(1 0 0)",
+  foreground: "oklch(0.1450 0 0)",
+  card: "oklch(1 0 0)",
+  cardForeground: "oklch(0.1450 0 0)",
+  popover: "oklch(1 0 0)",
+  popoverForeground: "oklch(0.1450 0 0)",
+  muted: "oklch(0.9700 0 0)",
+  mutedForeground: "oklch(0.5560 0 0)",
+  destructive: "oklch(0.5770 0.2450 27.3250)",
+  destructiveForeground: "oklch(1 0 0)",
+  border: "oklch(0.9220 0 0)",
+  input: "oklch(0.9220 0 0)",
+  ring: "oklch(0.7080 0 0)",
+  chart1: "oklch(0.8100 0.1000 252)",
+  chart2: "oklch(0.6200 0.1900 260)",
+  chart3: "oklch(0.5500 0.2200 263)",
+  chart4: "oklch(0.4900 0.2200 264)",
+  chart5: "oklch(0.4200 0.1800 266)",
+  sidebarBackground: "oklch(0.9850 0 0)",
+  sidebarForeground: "oklch(0.1450 0 0)",
+  sidebarPrimary: "oklch(0.2050 0 0)",
+  sidebarPrimaryForeground: "oklch(0.9850 0 0)",
+  sidebarAccent: "oklch(0.9700 0 0)",
+  sidebarAccentForeground: "oklch(0.2050 0 0)",
+  sidebarBorder: "oklch(0.9220 0 0)",
+  sidebarRing: "oklch(0.7080 0 0)",
 };
 
 const defaultDarkColors: ThemeColors = {
-  primary: "210 40% 98%",
-  primaryForeground: "222.2 47.4% 11.2%",
-  secondary: "217.2 32.6% 17.5%",
-  secondaryForeground: "210 40% 98%",
-  accent: "217.2 32.6% 17.5%",
-  accentForeground: "210 40% 98%",
-  background: "222.2 84% 4.9%",
-  foreground: "210 40% 98%",
-  card: "222.2 84% 4.9%",
-  cardForeground: "210 40% 98%",
-  popover: "222.2 84% 4.9%",
-  popoverForeground: "210 40% 98%",
-  muted: "217.2 32.6% 17.5%",
-  mutedForeground: "215 20.2% 65.1%",
-  destructive: "0 62.8% 30.6%",
-  destructiveForeground: "210 40% 98%",
-  border: "217.2 32.6% 17.5%",
-  input: "217.2 32.6% 17.5%",
-  ring: "212.7 26.8% 83.9%",
-  chart1: "40 70% 50%",
-  chart2: "80 70% 50%",
-  chart3: "120 70% 50%",
-  chart4: "160 70% 50%",
-  chart5: "200 70% 50%",
-  sidebarBackground: "222.2 84% 4.9%",
-  sidebarForeground: "210 40% 98%",
-  sidebarPrimary: "210 40% 98%",
-  sidebarPrimaryForeground: "222.2 47.4% 11.2%",
-  sidebarAccent: "217.2 32.6% 17.5%",
-  sidebarAccentForeground: "210 40% 98%",
-  sidebarBorder: "217.2 32.6% 17.5%",
-  sidebarRing: "217.2 91.2% 59.8%",
+  primary: "oklch(0.9220 0 0)",
+  primaryForeground: "oklch(0.2050 0 0)",
+  secondary: "oklch(0.2690 0 0)",
+  secondaryForeground: "oklch(0.9850 0 0)",
+  accent: "oklch(0.3710 0 0)",
+  accentForeground: "oklch(0.9850 0 0)",
+  background: "oklch(0.1450 0 0)",
+  foreground: "oklch(0.9850 0 0)",
+  card: "oklch(0.2050 0 0)",
+  cardForeground: "oklch(0.9850 0 0)",
+  popover: "oklch(0.2690 0 0)",
+  popoverForeground: "oklch(0.9850 0 0)",
+  muted: "oklch(0.2690 0 0)",
+  mutedForeground: "oklch(0.7080 0 0)",
+  destructive: "oklch(0.7040 0.1910 22.2160)",
+  destructiveForeground: "oklch(0.9850 0 0)",
+  border: "oklch(0.2750 0 0)",
+  input: "oklch(0.3250 0 0)",
+  ring: "oklch(0.5560 0 0)",
+  chart1: "oklch(0.8100 0.1000 252)",
+  chart2: "oklch(0.6200 0.1900 260)",
+  chart3: "oklch(0.5500 0.2200 263)",
+  chart4: "oklch(0.4900 0.2200 264)",
+  chart5: "oklch(0.4200 0.1800 266)",
+  sidebarBackground: "oklch(0.2050 0 0)",
+  sidebarForeground: "oklch(0.9850 0 0)",
+  sidebarPrimary: "oklch(0.4880 0.2430 264.3760)",
+  sidebarPrimaryForeground: "oklch(0.9850 0 0)",
+  sidebarAccent: "oklch(0.2690 0 0)",
+  sidebarAccentForeground: "oklch(0.9850 0 0)",
+  sidebarBorder: "oklch(0.2750 0 0)",
+  sidebarRing: "oklch(0.4390 0 0)",
 };
 
 const defaultTypography: ThemeTypography = {
@@ -162,7 +104,7 @@ const defaultOther: ThemeOther = {
   radius: 0.5,
   spacing: 0.25,
   shadow: {
-    color: "0 0% 0%",
+    color: "oklch(0 0 0)",
     opacity: 0.1,
     blurRadius: 10,
     spread: 0,
@@ -232,23 +174,22 @@ const parseThemeObject = (themeObj: Record<string, string>): {
 
   for (const [key, value] of Object.entries(themeObj)) {
     if (value.startsWith("oklch(")) {
-      const hsl = oklchToHsl(value);
       const varName = key.replace(/^--/, "");
       const camelCase = varName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 
       if (varName === "sidebar") {
-        colors.sidebarBackground = hsl;
+        colors.sidebarBackground = value;
       } else if (varName.startsWith("shadow-color")) {
-        other.shadow.color = hsl;
+        other.shadow.color = value;
       } else {
-        (colors as any)[camelCase] = hsl;
+        (colors as any)[camelCase] = value;
       }
     } else if (value.startsWith("hsl(")) {
       const hslMatch = value.match(/hsl\(([^)]+)\)/);
       if (hslMatch) {
         const varName = key.replace(/^--/, "");
         if (varName === "shadow-color") {
-          other.shadow.color = hslMatch[1];
+          other.shadow.color = value;
         }
       }
     } else if (key === "--font-sans") {

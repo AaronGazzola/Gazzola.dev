@@ -8,27 +8,20 @@ import { cn } from "@/lib/tailwind.utils"
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, style, ...props }, ref) => (
+>(({ className, value, ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      "relative h-2 w-full overflow-hidden",
+      "relative h-2 w-full overflow-hidden theme-bg-secondary theme-radius",
       className
     )}
-    style={{
-      borderRadius: "var(--theme-radius)",
-      backgroundColor: "var(--theme-primary)",
-      opacity: 0.2,
-      ...style
-    }}
     {...props}
   >
     <ProgressPrimitive.Indicator
-      className="h-full w-full flex-1 transition-all"
-      style={{
-        backgroundColor: "var(--theme-primary)",
-        transform: `translateX(-${100 - (value || 0)}%)`
-      }}
+      className={cn(
+        "h-full w-full flex-1 transition-all theme-bg-primary",
+        `translate-x-[-${100 - (value || 0)}%]`
+      )}
     />
   </ProgressPrimitive.Root>
 ))

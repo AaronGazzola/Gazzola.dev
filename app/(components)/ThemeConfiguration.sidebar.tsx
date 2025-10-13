@@ -17,6 +17,7 @@ import { loadThemesAction } from "./ThemeConfiguration.actions";
 import { ParsedTheme } from "./ThemeConfiguration.types";
 import { verifyThemeApplication } from "./ThemeConfiguration.verify";
 import { fontOptions } from "@/styles/fonts";
+import { oklchToHex } from "./ThemeConfiguration.colorUtils";
 
 type TabType = "colors" | "typography" | "other";
 
@@ -97,33 +98,6 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
     setIsPopoverOpen(false);
   };
 
-  const hslToHex = (hsl: string): string => {
-    const parts = hsl.match(/[\d.]+/g);
-    if (!parts || parts.length < 3) return "#000000";
-
-    const h = parseFloat(parts[0]) / 360;
-    const s = parseFloat(parts[1]) / 100;
-    const l = parseFloat(parts[2]) / 100;
-
-    const hueToRgb = (p: number, q: number, t: number) => {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    };
-
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-
-    const r = Math.round(hueToRgb(p, q, h + 1 / 3) * 255);
-    const g = Math.round(hueToRgb(p, q, h) * 255);
-    const b = Math.round(hueToRgb(p, q, h - 1 / 3) * 255);
-
-    return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-  };
-
   const filteredThemes = themes.filter((theme) =>
     theme.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -135,18 +109,19 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
   ];
 
   return (
-    <div style={{ width: "440px", borderRight: "1px solid var(--theme-border)", display: "flex", flexDirection: "column", backgroundColor: "var(--theme-card)", maxHeight: "calc(100vh - 200px)", position: "sticky", top: 0 }}>
-      <div style={{ padding: "calc(var(--theme-spacing) * 3)", borderBottom: "1px solid var(--theme-border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 4)" }}>
+    <div className="flex flex-col theme-bg-card theme-border-border theme-shadow sticky top-0" style={{ width: "440px", borderRightWidth: "1px", maxHeight: "calc(100vh - 200px)" }}>
+      <div className="theme-border-border" style={{ padding: "calc(var(--theme-spacing) * 3)", borderBottomWidth: "1px" }}>
+        <div className="flex items-center theme-spacing">
           <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
-              <button style={{ flex: "1", minWidth: "0", height: "36px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.875rem", fontWeight: "500", color: "var(--theme-foreground)", backgroundColor: "transparent" }}>
-                <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: "0" }}>{themes[selectedTheme]?.name || "Loading..."}</span>
-                <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 4)", marginLeft: "calc(var(--theme-spacing) * 4)", flexShrink: "0" }}>
+              <button className="flex-1 min-w-0 h-9 flex items-center justify-between text-sm font-medium theme-text-foreground bg-transparent">
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0">{themes[selectedTheme]?.name || "Loading..."}</span>
+                <div className="flex items-center theme-spacing flex-shrink-0" style={{ marginLeft: "calc(var(--theme-spacing) * 4)" }}>
                   {themes[selectedTheme]?.previewColors.map((color, idx) => (
                     <div
                       key={idx}
-                      style={{ width: "12px", height: "12px", borderRadius: "calc(var(--theme-radius) * 0.5)", border: "1px solid var(--theme-border)", backgroundColor: color }}
+                      className="theme-radius theme-border-border"
+                      style={{ width: "12px", height: "12px", borderRadius: "calc(var(--theme-radius) * 0.5)", borderWidth: "1px", backgroundColor: color }}
                     />
                   ))}
                 </div>
@@ -156,8 +131,8 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               className="w-80 p-0"
               align="start"
             >
-              <div style={{ padding: "calc(var(--theme-spacing) * 1.5)", borderBottom: "1px solid var(--theme-border)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 4)", marginBottom: "calc(var(--theme-spacing) * 4)" }}>
+              <div className="theme-border-border" style={{ padding: "calc(var(--theme-spacing) * 1.5)", borderBottomWidth: "1px" }}>
+                <div className="flex items-center theme-spacing" style={{ marginBottom: "calc(var(--theme-spacing) * 4)" }}>
                   <Input
                     placeholder="Search themes..."
                     value={searchQuery}
@@ -175,7 +150,7 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                 </div>
               </div>
               <ScrollArea className="h-64">
-                <div style={{ padding: "calc(var(--theme-spacing) * 4)", display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 4)" }}>
+                <div className="flex flex-col theme-spacing" style={{ padding: "calc(var(--theme-spacing) * 4)" }}>
                   {filteredThemes.map((themeItem) => {
                     const themeIndex = themes.findIndex(t => t.name === themeItem.name);
                     const isSelected = selectedTheme === themeIndex;
@@ -194,24 +169,16 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                           setIsPopoverOpen(false);
                           setSearchQuery("");
                         }}
-                        style={{
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "calc(var(--theme-spacing) * 1.5) calc(var(--theme-spacing) * 1.5)",
-                          borderRadius: "var(--theme-radius)",
-                          fontSize: "0.875rem",
-                          backgroundColor: isSelected ? "var(--theme-accent)" : "transparent",
-                          color: isSelected ? "var(--theme-accent-foreground)" : "var(--theme-foreground)"
-                        }}
+                        className={`w-full flex items-center justify-between text-sm theme-radius ${isSelected ? "theme-bg-accent theme-text-accent-foreground" : "bg-transparent theme-text-foreground"}`}
+                        style={{ padding: "calc(var(--theme-spacing) * 1.5)" }}
                       >
                         <span>{themeItem.name}</span>
-                        <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 4)" }}>
+                        <div className="flex items-center theme-spacing">
                           {themeItem.previewColors.map((color, colorIdx) => (
                             <div
                               key={colorIdx}
-                              style={{ width: "12px", height: "12px", borderRadius: "calc(var(--theme-radius) * 0.5)", border: "1px solid var(--theme-border)", backgroundColor: color }}
+                              className="theme-radius theme-border-border"
+                              style={{ width: "12px", height: "12px", borderRadius: "calc(var(--theme-radius) * 0.5)", borderWidth: "1px", backgroundColor: color }}
                             />
                           ))}
                         </div>
@@ -241,21 +208,18 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
         </div>
       </div>
 
-      <div style={{ borderBottom: "1px solid var(--theme-border)" }}>
-        <div style={{ display: "flex" }}>
+      <div className="theme-border-border" style={{ borderBottomWidth: "1px" }}>
+        <div className="flex">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 text-xs font-medium ${isActive ? "theme-border-primary theme-text-foreground" : "theme-text-muted-foreground"}`}
                 style={{
-                  flex: "1",
                   padding: "calc(var(--theme-spacing) * 1.5) 0",
-                  fontSize: "0.75rem",
-                  fontWeight: "500",
-                  borderBottom: isActive ? "2px solid var(--theme-primary)" : "2px solid transparent",
-                  color: isActive ? "var(--theme-foreground)" : "var(--theme-muted-foreground)"
+                  borderBottom: isActive ? "2px solid" : "2px solid transparent"
                 }}
               >
                 {tab.label}
@@ -268,26 +232,26 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
       <ScrollArea className="flex-1">
         <div style={{ padding: "calc(var(--theme-spacing) * 3)" }}>
           {activeTab === "colors" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 4)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "calc(var(--theme-spacing) * 1.5)", paddingBottom: "calc(var(--theme-spacing) * 4)", borderBottom: "1px solid var(--theme-border)" }}>
-                <Sun style={{ width: "16px", height: "16px", color: !darkMode ? "var(--theme-foreground)" : "var(--theme-muted-foreground)" }} />
+            <div className="flex flex-col theme-spacing">
+              <div className="flex items-center justify-center theme-spacing theme-border-border" style={{ paddingBottom: "calc(var(--theme-spacing) * 4)", borderBottomWidth: "1px" }}>
+                <Sun className={`w-4 h-4 ${!darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`} />
                 <Switch checked={darkMode} onCheckedChange={setDarkMode} />
-                <Moon style={{ width: "16px", height: "16px", color: darkMode ? "var(--theme-foreground)" : "var(--theme-muted-foreground)" }} />
+                <Moon className={`w-4 h-4 ${darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`} />
               </div>
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
-                  <h3 style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}>
+                  <h3 className="text-sm font-semibold flex items-center justify-between theme-text-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                     <span>Primary Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 4)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 4)" }}>
                       Primary
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.primary}
                         onChange={(e) => {
@@ -298,22 +262,24 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.primary) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.primary) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Primary Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.primaryForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "primaryForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.primaryForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.primaryForeground) }}
                       />
                     </div>
                   </div>
@@ -323,40 +289,42 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
 
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
-                  <h3 style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}>
+                  <h3 className="text-sm font-semibold flex items-center justify-between theme-text-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                     <span>Secondary Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Secondary
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.secondary}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "secondary", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.secondary) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.secondary) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Secondary Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.secondaryForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "secondaryForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.secondaryForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.secondaryForeground) }}
                       />
                     </div>
                   </div>
@@ -366,40 +334,42 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
 
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
-                  <h3 style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}>
+                  <h3 className="text-sm font-semibold flex items-center justify-between theme-text-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                     <span>Accent Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Accent
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.accent}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "accent", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.accent) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.accent) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Accent Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.accentForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "accentForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.accentForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.accentForeground) }}
                       />
                     </div>
                   </div>
@@ -410,41 +380,44 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Base Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Background
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.background}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "background", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.background) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.background) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.foreground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "foreground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.foreground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.foreground) }}
                       />
                     </div>
                   </div>
@@ -455,41 +428,44 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Card Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Card Background
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.card}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "card", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.card) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.card) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Card Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.cardForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "cardForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.cardForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.cardForeground) }}
                       />
                     </div>
                   </div>
@@ -500,41 +476,44 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Popover Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Popover Background
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.popover}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "popover", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.popover) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.popover) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Popover Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.popoverForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "popoverForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.popoverForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.popoverForeground) }}
                       />
                     </div>
                   </div>
@@ -545,41 +524,44 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Muted Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Muted
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.muted}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "muted", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.muted) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.muted) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Muted Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.mutedForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "mutedForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.mutedForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.mutedForeground) }}
                       />
                     </div>
                   </div>
@@ -590,41 +572,44 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Destructive Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Destructive
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.destructive}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "destructive", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.destructive) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.destructive) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Destructive Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.destructiveForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "destructiveForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.destructiveForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.destructiveForeground) }}
                       />
                     </div>
                   </div>
@@ -635,56 +620,60 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Border & Input Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Border
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.border}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "border", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.border) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.border) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Input
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.input}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "input", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.input) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.input) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Ring
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.ring}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "ring", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.ring) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.ring) }}
                       />
                     </div>
                   </div>
@@ -695,29 +684,31 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Chart Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   {([1, 2, 3, 4, 5] as const).map((num) => {
                     const chartKey = `chart${num}` as keyof typeof currentColors;
                     return (
                       <div key={num}>
-                        <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                        <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                           Chart {num}
                         </Label>
-                        <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                        <div className="flex theme-spacing">
                           <Input
                             value={currentColors[chartKey]}
                             onChange={(e) => updateColor(darkMode ? "dark" : "light", chartKey, e.target.value)}
                             className="h-9 text-xs font-mono flex-1"
                           />
                           <div
-                            style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors[chartKey]) }}
+                            className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors[chartKey]) }}
                           />
                         </div>
                       </div>
@@ -730,131 +721,140 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Sidebar Colors</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Background
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarBackground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarBackground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarBackground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarBackground) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarForeground) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Primary
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarPrimary}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarPrimary", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarPrimary) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarPrimary) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Primary Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarPrimaryForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarPrimaryForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarPrimaryForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarPrimaryForeground) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Accent
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarAccent}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarAccent", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarAccent) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarAccent) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Accent Foreground
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarAccentForeground}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarAccentForeground", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarAccentForeground) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarAccentForeground) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Border
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarBorder}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarBorder", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarBorder) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarBorder) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sidebar Ring
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentColors.sidebarRing}
                         onChange={(e) => updateColor(darkMode ? "dark" : "light", "sidebarRing", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentColors.sidebarRing) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentColors.sidebarRing) }}
                       />
                     </div>
                   </div>
@@ -865,25 +865,26 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
           )}
 
           {activeTab === "typography" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 2)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "calc(var(--theme-spacing) * 1.5)", paddingBottom: "calc(var(--theme-spacing) * 2)", borderBottom: "1px solid var(--theme-border)" }}>
-                <Sun style={{ width: "16px", height: "16px", color: !darkMode ? "var(--theme-foreground)" : "var(--theme-muted-foreground)" }} />
+            <div className="flex flex-col theme-spacing">
+              <div className="flex items-center justify-center theme-spacing theme-border-border" style={{ paddingBottom: "calc(var(--theme-spacing) * 2)", borderBottomWidth: "1px" }}>
+                <Sun className={`w-4 h-4 ${!darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`} />
                 <Switch checked={darkMode} onCheckedChange={setDarkMode} />
-                <Moon style={{ width: "16px", height: "16px", color: darkMode ? "var(--theme-foreground)" : "var(--theme-muted-foreground)" }} />
+                <Moon className={`w-4 h-4 ${darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`} />
               </div>
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Font Family</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Sans-Serif Font
                     </Label>
                     <Select
@@ -903,7 +904,7 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                     </Select>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Serif Font
                     </Label>
                     <Select
@@ -923,7 +924,7 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                     </Select>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Monospace Font
                     </Label>
                     <Select
@@ -949,20 +950,22 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Letter Spacing</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                 <div>
                   <Label
-                    style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}
+                    className="text-xs block theme-text-muted-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     Letter Spacing
                   </Label>
-                  <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                  <div className="flex items-center theme-spacing">
                     <Slider
                       value={[currentTypography.letterSpacing]}
                       onValueChange={([value]) => updateTypography(mode, { letterSpacing: value })}
@@ -985,31 +988,33 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
           )}
 
           {activeTab === "other" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 2)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "calc(var(--theme-spacing) * 1.5)", paddingBottom: "calc(var(--theme-spacing) * 2)", borderBottom: "1px solid var(--theme-border)" }}>
-                <Sun style={{ width: "16px", height: "16px", color: !darkMode ? "var(--theme-foreground)" : "var(--theme-muted-foreground)" }} />
+            <div className="flex flex-col theme-spacing">
+              <div className="flex items-center justify-center theme-spacing theme-border-border" style={{ paddingBottom: "calc(var(--theme-spacing) * 2)", borderBottomWidth: "1px" }}>
+                <Sun className={`w-4 h-4 ${!darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`} />
                 <Switch checked={darkMode} onCheckedChange={setDarkMode} />
-                <Moon style={{ width: "16px", height: "16px", color: darkMode ? "var(--theme-foreground)" : "var(--theme-muted-foreground)" }} />
+                <Moon className={`w-4 h-4 ${darkMode ? "theme-text-foreground" : "theme-text-muted-foreground"}`} />
               </div>
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>HSL Adjustments</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
                     <Label
-                      style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                      style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                     >
                       <span>Hue Shift</span>
-                      <span style={{ fontSize: "10px" }}>deg</span>
+                      <span className="text-[10px] theme-text-muted-foreground">deg</span>
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.hueShift]}
                         onValueChange={([value]) => updateOther(mode, { hueShift: value })}
@@ -1028,12 +1033,13 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                   </div>
                   <div>
                     <Label
-                      style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                      style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                     >
                       <span>Saturation Multiplier</span>
-                      <span style={{ fontSize: "10px" }}>x</span>
+                      <span className="text-[10px] theme-text-muted-foreground">x</span>
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.saturationMultiplier]}
                         onValueChange={([value]) => updateOther(mode, { saturationMultiplier: value })}
@@ -1053,12 +1059,13 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                   </div>
                   <div>
                     <Label
-                      style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                      style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                     >
                       <span>Lightness Multiplier</span>
-                      <span style={{ fontSize: "10px" }}>x</span>
+                      <span className="text-[10px] theme-text-muted-foreground">x</span>
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.lightnessMultiplier]}
                         onValueChange={([value]) => updateOther(mode, { lightnessMultiplier: value })}
@@ -1083,21 +1090,23 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Radius</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                 <div>
                   <Label
-                    style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                    className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Radius</span>
                     <span style={{ fontSize: "10px" }}>rem</span>
                   </Label>
-                  <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                  <div className="flex items-center theme-spacing">
                     <Slider
                       value={[currentOther.radius]}
                       onValueChange={([value]) => updateOther(mode, { radius: value })}
@@ -1121,21 +1130,23 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Spacing</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                 <div>
                   <Label
-                    style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                    className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Spacing</span>
                     <span style={{ fontSize: "10px" }}>rem</span>
                   </Label>
-                  <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                  <div className="flex items-center theme-spacing">
                     <Slider
                       value={[currentOther.spacing]}
                       onValueChange={([value]) => updateOther(mode, { spacing: value })}
@@ -1164,34 +1175,36 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
               <Collapsible>
                 <CollapsibleTrigger className="w-full">
                   <h3
-                    style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between", color: "var(--theme-foreground)" }}
+                    className="text-sm font-semibold flex items-center justify-between theme-text-foreground"
+                    style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                   >
                     <span>Shadow</span>
-                    <ChevronDown style={{ width: "16px", height: "16px", color: "var(--theme-muted-foreground)" }} />
+                    <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </h3>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                <div className="flex flex-col theme-spacing">
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Shadow Color
                     </Label>
-                    <div style={{ display: "flex", gap: "calc(var(--theme-spacing) * 4)" }}>
+                    <div className="flex theme-spacing">
                       <Input
                         value={currentOther.shadow.color}
                         onChange={(e) => updateShadow(mode, "color", e.target.value)}
                         className="h-9 text-xs font-mono flex-1"
                       />
                       <div
-                        style={{ width: "36px", height: "36px", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: hslToHex(currentOther.shadow.color) }}
+                        className="theme-radius theme-border-border"
+                        style={{ width: "36px", height: "36px", borderWidth: "1px", backgroundColor: oklchToHex(currentOther.shadow.color) }}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "block", color: "var(--theme-muted-foreground)" }}>
+                    <Label className="text-xs block theme-text-muted-foreground" style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}>
                       Shadow Opacity
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.shadow.opacity]}
                         onValueChange={([value]) => updateShadow(mode, "opacity", value)}
@@ -1211,12 +1224,13 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                   </div>
                   <div>
                     <Label
-                      style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                      style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                     >
                       <span>Blur Radius</span>
-                      <span style={{ fontSize: "10px" }}>px</span>
+                      <span className="text-[10px] theme-text-muted-foreground">px</span>
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.shadow.blurRadius]}
                         onValueChange={([value]) => updateShadow(mode, "blurRadius", value)}
@@ -1235,12 +1249,13 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                   </div>
                   <div>
                     <Label
-                      style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                      style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                     >
                       <span>Spread</span>
-                      <span style={{ fontSize: "10px" }}>px</span>
+                      <span className="text-[10px] theme-text-muted-foreground">px</span>
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.shadow.spread]}
                         onValueChange={([value]) => updateShadow(mode, "spread", value)}
@@ -1259,12 +1274,13 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                   </div>
                   <div>
                     <Label
-                      style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                      style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                     >
                       <span>Offset X</span>
-                      <span style={{ fontSize: "10px" }}>px</span>
+                      <span className="text-[10px] theme-text-muted-foreground">px</span>
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.shadow.offsetX]}
                         onValueChange={([value]) => updateShadow(mode, "offsetX", value)}
@@ -1283,12 +1299,13 @@ export const ThemeConfigurationSidebar = ({ darkMode }: ThemeConfigurationSideba
                   </div>
                   <div>
                     <Label
-                      style={{ fontSize: "0.75rem", marginBottom: "calc(var(--theme-spacing) * 1.5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      className="text-xs flex items-center justify-between theme-text-muted-foreground"
+                      style={{ marginBottom: "calc(var(--theme-spacing) * 1.5)" }}
                     >
                       <span>Offset Y</span>
-                      <span style={{ fontSize: "10px" }}>px</span>
+                      <span className="text-[10px] theme-text-muted-foreground">px</span>
                     </Label>
-                    <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)" }}>
+                    <div className="flex items-center theme-spacing">
                       <Slider
                         value={[currentOther.shadow.offsetY]}
                         onValueChange={([value]) => updateShadow(mode, "offsetY", value)}

@@ -20,7 +20,7 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead ref={ref} className={cn("[&_tr]:border-b [&_tr]:theme-border-border", className)} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -39,14 +39,13 @@ TableBody.displayName = "TableBody"
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, style, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
     className={cn(
-      "border-t font-medium [&>tr]:last:border-b-0",
+      "border-t font-medium [&>tr]:last:border-b-0 theme-border-border theme-bg-muted theme-text-muted-foreground",
       className
     )}
-    style={{ backgroundColor: "var(--theme-muted)", opacity: 0.5, borderColor: "var(--theme-border)", ...style }}
     {...props}
   />
 ))
@@ -55,14 +54,13 @@ TableFooter.displayName = "TableFooter"
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
->(({ className, style, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      "border-b transition-colors",
+      "border-b transition-colors theme-border-border hover:theme-bg-muted",
       className
     )}
-    style={{ borderColor: "var(--theme-border)", ...style }}
     {...props}
   />
 ))
@@ -71,14 +69,13 @@ TableRow.displayName = "TableRow"
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, style, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <th
     ref={ref}
     className={cn(
-      "h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] theme-text-muted-foreground",
       className
     )}
-    style={{ color: "var(--theme-muted-foreground)", ...style }}
     {...props}
   />
 ))
@@ -102,11 +99,10 @@ TableCell.displayName = "TableCell"
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
   React.HTMLAttributes<HTMLTableCaptionElement>
->(({ className, style, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn("mt-4 text-sm", className)}
-    style={{ color: "var(--theme-muted-foreground)", ...style }}
+    className={cn("mt-4 text-sm theme-text-muted-foreground", className)}
     {...props}
   />
 ))

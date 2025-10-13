@@ -64,6 +64,12 @@ const MARKDOWN_DIR = path.join(process.cwd(), "public", "data", "markdown");
 const OUTPUT_FILE = path.join(process.cwd(), "public", "data", "processed-markdown.json");
 const VERSION_FILE = path.join(process.cwd(), "public", "data", "content-version.json");
 
+function removeThemedComponentComments(content: string): string {
+  return content
+    .replace(/<!-- Themed components start -->\n?/g, "")
+    .replace(/<!-- Themed components end -->\n?/g, "");
+}
+
 function escapeForJavaScript(content: string): string {
   return content
     .replace(/\\/g, "\\\\")
@@ -173,7 +179,8 @@ function extractOptionsFromSection(content: string): Record<string, { content: s
 }
 
 function parseMarkdownFile(filePath: string, relativePath: string, parentInclude: boolean = true): FileNode {
-  const content = fs.readFileSync(filePath, "utf8");
+  let content = fs.readFileSync(filePath, "utf8");
+  content = removeThemedComponentComments(content);
   const fileName = path.basename(filePath);
   const orderMatch = fileName.match(/^(\d+)-(.+)\.md$/);
   const order = orderMatch ? parseInt(orderMatch[1], 10) : undefined;

@@ -1,0 +1,231 @@
+.theme-bg-primary {
+  background-color: var(--theme-primary);
+}
+
+.theme-bg-secondary {
+  background-color: var(--theme-secondary);
+}
+
+.theme-bg-accent {
+  background-color: var(--theme-accent);
+}
+
+.theme-bg-background {
+  background-color: var(--theme-background);
+}
+
+.theme-bg-card {
+  background-color: var(--theme-card);
+}
+
+.theme-bg-popover {
+  background-color: var(--theme-popover);
+}
+
+.theme-bg-muted {
+  background-color: var(--theme-muted);
+}
+
+.theme-bg-destructive {
+  background-color: var(--theme-destructive);
+}
+
+.theme-bg-border {
+  background-color: var(--theme-border);
+}
+
+.theme-bg-input {
+  background-color: var(--theme-input);
+}
+
+.theme-bg-ring {
+  background-color: var(--theme-ring);
+}
+
+.theme-bg-chart-1 {
+  background-color: var(--theme-chart-1);
+}
+
+.theme-bg-chart-2 {
+  background-color: var(--theme-chart-2);
+}
+
+.theme-bg-chart-3 {
+  background-color: var(--theme-chart-3);
+}
+
+.theme-bg-chart-4 {
+  background-color: var(--theme-chart-4);
+}
+
+.theme-bg-chart-5 {
+  background-color: var(--theme-chart-5);
+}
+
+.theme-bg-sidebar-background {
+  background-color: var(--theme-sidebar-background);
+}
+
+.theme-bg-sidebar-primary {
+  background-color: var(--theme-sidebar-primary);
+}
+
+.theme-bg-sidebar-accent {
+  background-color: var(--theme-sidebar-accent);
+}
+
+.theme-text-primary {
+  color: var(--theme-primary);
+}
+
+.theme-text-primary-foreground {
+  color: var(--theme-primary-foreground);
+}
+
+.theme-text-secondary {
+  color: var(--theme-secondary);
+}
+
+.theme-text-secondary-foreground {
+  color: var(--theme-secondary-foreground);
+}
+
+.theme-text-accent {
+  color: var(--theme-accent);
+}
+
+.theme-text-accent-foreground {
+  color: var(--theme-accent-foreground);
+}
+
+.theme-text-foreground {
+  color: var(--theme-foreground);
+}
+
+.theme-text-card-foreground {
+  color: var(--theme-card-foreground);
+}
+
+.theme-text-popover-foreground {
+  color: var(--theme-popover-foreground);
+}
+
+.theme-text-muted-foreground {
+  color: var(--theme-muted-foreground);
+}
+
+.theme-text-destructive {
+  color: var(--theme-destructive);
+}
+
+.theme-text-destructive-foreground {
+  color: var(--theme-destructive-foreground);
+}
+
+.theme-text-sidebar-foreground {
+  color: var(--theme-sidebar-foreground);
+}
+
+.theme-text-sidebar-primary {
+  color: var(--theme-sidebar-primary);
+}
+
+.theme-text-sidebar-primary-foreground {
+  color: var(--theme-sidebar-primary-foreground);
+}
+
+.theme-text-sidebar-accent {
+  color: var(--theme-sidebar-accent);
+}
+
+.theme-text-sidebar-accent-foreground {
+  color: var(--theme-sidebar-accent-foreground);
+}
+
+.theme-border-primary {
+  border-color: var(--theme-primary);
+}
+
+.theme-border-secondary {
+  border-color: var(--theme-secondary);
+}
+
+.theme-border-accent {
+  border-color: var(--theme-accent);
+}
+
+.theme-border-destructive {
+  border-color: var(--theme-destructive);
+}
+
+.theme-border-border {
+  border-color: var(--theme-border);
+}
+
+.theme-border-input {
+  border-color: var(--theme-input);
+}
+
+.theme-border-ring {
+  border-color: var(--theme-ring);
+}
+
+.theme-border-sidebar-border {
+  border-color: var(--theme-sidebar-border);
+}
+
+.theme-border-sidebar-ring {
+  border-color: var(--theme-sidebar-ring);
+}
+
+.theme-font-sans {
+  font-family: var(--theme-font-sans);
+}
+
+.theme-font-serif {
+  font-family: var(--theme-font-serif);
+}
+
+.theme-font-mono {
+  font-family: var(--theme-font-mono);
+}
+
+.theme-letter-spacing {
+  letter-spacing: var(--theme-letter-spacing);
+}
+
+.theme-radius {
+  border-radius: var(--theme-radius);
+}
+
+.theme-spacing {
+  gap: var(--theme-spacing);
+}
+
+.theme-shadow {
+  box-shadow: var(--theme-shadow);
+}
+
+.theme-shadow-color {
+  color: var(--theme-shadow-color);
+}
+
+.theme-shadow-opacity {
+  opacity: var(--theme-shadow-opacity);
+}
+
+.theme-shadow-blur {
+  filter: blur(var(--theme-shadow-blur));
+}
+
+.theme-shadow-spread {
+  box-shadow: 0 0 var(--theme-shadow-spread) currentColor;
+}
+
+.theme-shadow-x {
+  transform: translateX(var(--theme-shadow-x));
+}
+
+.theme-shadow-y {
+  transform: translateY(var(--theme-shadow-y));
+}

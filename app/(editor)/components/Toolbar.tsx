@@ -104,11 +104,7 @@ const IconButton = ({
         disabled={disabled}
         variant="ghost"
         size="icon"
-        style={{
-          borderRadius: "3px",
-          height: "32px",
-          width: "32px",
-        }}
+        className="rounded-[3px] h-8 w-8"
       >
         {children}
       </Button>
@@ -422,13 +418,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   return (
     <TooltipProvider>
-      <div style={{ width: "100%", borderBottom: "1px solid var(--theme-border)", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)" }}>
+      <div className="w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow">
         <Tooltip>
           <TooltipTrigger asChild>
-            <div style={{ width: "100%" }}>
+            <div className="w-full">
               <Progress
                 value={progressInfo.progressValue}
-                style={{ height: "4px", width: "100%", borderRadius: "0" }}
+                className="h-1 w-full rounded-none"
               />
             </div>
           </TooltipTrigger>
@@ -440,8 +436,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </TooltipContent>
         </Tooltip>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "48px", padding: "0 calc(var(--theme-spacing) * 4)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
+        <div className="flex items-center justify-between h-12 px-[calc(var(--theme-spacing)*4)]">
+          <div className="flex items-center gap-[calc(var(--theme-spacing)*2)]">
             <IconButton
               onClick={handleBack}
               disabled={!canGoBack}
@@ -449,7 +445,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 canGoBack ? `Previous: ${prevPageTitle}` : "No previous page"
               }
             >
-              <ChevronLeft style={{ height: "16px", width: "16px" }} />
+              <ChevronLeft className="h-4 w-4" />
             </IconButton>
             {showInitialDialog ? (
               <Dialog
@@ -465,61 +461,42 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 }}
               >
                 <DialogTrigger asChild>
-                  <div style={{ position: "relative", display: "inline-block", height: "32px", width: "32px" }}>
+                  <div className="relative inline-block h-8 w-8">
                     {!isStepOpen(WalkthroughStep.INITIAL_DIALOG) && (
-                      <div style={{ position: "absolute", inset: "0", height: "32px", width: "32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <div style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: "0", pointerEvents: "none" }}>
-                          <Info style={{ height: "16px", width: "16px", color: "hsl(217 91% 60%)", animation: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite" }} />
+                      <div className="absolute inset-0 h-8 w-8 flex items-center justify-center">
+                        <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
+                          <Info className="h-4 w-4 text-[hsl(217,91%,60%)] animate-ping" />
                         </div>
-                        <div
-                          style={{
-                            position: "absolute",
-                            inset: "0",
-                            borderRadius: "9999px",
-                            border: "2px solid hsl(217 91% 60% / 0.3)",
-                            animation: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-                            transform: "scale(1.2) translateY(2px)",
-                          }}
-                        />
-                        <div
-                          style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center", zIndex: "10", pointerEvents: "none" }}
-                        >
-                          <div
-                            style={{
-                              borderRadius: "9999px",
-                              backgroundColor: "hsl(217 91% 60%)",
-                              width: "4px",
-                              height: "4px",
-                              animation: "breathe 6s ease-in-out infinite",
-                            }}
-                          />
+                        <div className="absolute inset-0 rounded-full border-2 border-[hsl(217,91%,60%,0.3)] animate-pulse scale-[1.2] translate-y-[2px]" />
+                        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                          <div className="rounded-full bg-[hsl(217,91%,60%)] w-1 h-1 animate-[breathe_6s_ease-in-out_infinite]" />
                         </div>
                       </div>
                     )}
                     <Button
                       variant="ghost"
                       size="icon"
-                      style={{ height: "32px", width: "32px", backgroundColor: "transparent", position: "relative", zIndex: "10", borderRadius: "3px" }}
+                      className="h-8 w-8 bg-transparent relative z-10 rounded-[3px]"
                       onClick={() => setInitialDialogOpen(true)}
                     >
-                      <Info style={{ height: "16px", width: "16px", color: "hsl(217 91% 60%)" }} />
+                      <Info className="h-4 w-4 text-[hsl(217,91%,60%)]" />
                     </Button>
                   </div>
                 </DialogTrigger>
-                <DialogContent style={{ maxWidth: "56rem", outline: "none", fontSize: "1rem" }}>
+                <DialogContent className="max-w-[56rem] outline-none text-base theme-bg-popover theme-text-popover-foreground theme-shadow">
                   <DialogHeader>
-                    <DialogTitle>Welcome to Gazzola.dev</DialogTitle>
+                    <DialogTitle className="theme-text-foreground">Welcome to Gazzola.dev</DialogTitle>
                   </DialogHeader>
-                  <div style={{ marginTop: "calc(var(--theme-spacing) * 0.75)" }}>
+                  <div className="mt-[calc(var(--theme-spacing)*0.75)] theme-text-foreground">
                     Design and download your full-stack web app roadmap
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 6)" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "calc(var(--theme-spacing) * 2)", position: "relative", margin: "calc(var(--theme-spacing) * 6) 0" }}>
+                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*6)]">
+                    <div className="flex items-center justify-center gap-[calc(var(--theme-spacing)*2)] relative my-[calc(var(--theme-spacing)*6)]">
                       {nextSteps.map((step, index) => (
-                        <div key={index} style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative", zIndex: "10", backgroundColor: "var(--theme-background)", padding: "0 calc(var(--theme-spacing) * 2)" }}>
+                        <div key={index} className="relative flex items-center">
+                          <div className="flex flex-col items-center relative z-10 theme-bg-background px-[calc(var(--theme-spacing)*2)]">
                             <svg
-                              style={{ width: "40px", height: "40px" }}
+                              className="w-10 h-10"
                               viewBox="0 0 24 24"
                               fill="none"
                             >
@@ -545,37 +522,29 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                                 </linearGradient>
                               </defs>
                               <step.icon
-                                style={{ width: "40px", height: "40px", strokeWidth: "1" }}
+                                className="w-10 h-10 [stroke-width:1]"
                                 stroke={`url(#gradient-next-toolbar-${index})`}
                                 fill="none"
                               />
                             </svg>
-                            <span style={{ fontSize: "1rem", fontWeight: "600", marginTop: "calc(var(--theme-spacing) * 0.25)", textAlign: "center", whiteSpace: "nowrap" }}>
+                            <span className="text-base font-semibold mt-[calc(var(--theme-spacing)*0.25)] text-center whitespace-nowrap theme-text-foreground">
                               {step.title}
                             </span>
                           </div>
                           {index < nextSteps.length - 1 && (
-                            <ArrowRight
-                              style={{
-                                width: "20px",
-                                height: "20px",
-                                margin: "0 calc(var(--theme-spacing) * 0.25)",
-                                flexShrink: "0",
-                                filter: "drop-shadow(0 0 4px rgba(147, 51, 234, 0.5))",
-                              }}
-                            />
+                            <ArrowRight className="w-5 h-5 mx-[calc(var(--theme-spacing)*0.25)] shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)]" />
                           )}
                         </div>
                       ))}
                     </div>
                   </div>
-                  <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "calc(var(--theme-spacing) * 4)" }}>
+                  <div className="w-full flex justify-end mb-[calc(var(--theme-spacing)*4)] theme-text-foreground">
                     Do you want to enable the tutorial?
                   </div>
                   <DialogFooter>
                     <GlobalButton
                       variant="ghost"
-                      style={{ fontSize: "1rem" }}
+                      className="text-base"
                       onClick={() => {
                         dismissWalkthrough();
                         setInitialDialogOpen(false);
@@ -584,7 +553,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       No thanks, I&apos;ll explore on my own
                     </GlobalButton>
                     <GlobalButton
-                      style={{ fontSize: "1rem" }}
+                      className="text-base"
                       variant="outline"
                       onClick={() => {
                         startWalkthrough();
@@ -608,21 +577,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      style={{ borderRadius: "3px", height: "32px", width: "32px" }}
+                      className="rounded-[3px] h-8 w-8"
                     >
-                      <Info style={{ height: "16px", width: "16px" }} />
+                      <Info className="h-4 w-4" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent style={{ width: "20rem" }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 3)" }}>
-                      <h4 style={{ fontWeight: "600" }}>Walkthrough Help</h4>
-                      <p style={{ fontSize: "0.875rem" }}>
+                  <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow">
+                    <div className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
+                      <h4 className="font-semibold theme-text-foreground">Walkthrough Help</h4>
+                      <p className="text-sm theme-text-muted-foreground">
                         Need help getting started? Click the button below to
                         restart the walkthrough guide.
                       </p>
                       <Button
                         variant="outline"
-                        style={{ width: "100%" }}
+                        className="w-full"
                         onClick={() => {
                           resetWalkthrough();
                           setPermanentHelperOpen(false);
@@ -637,7 +606,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 3)" }}>
+          <div className="flex items-center gap-[calc(var(--theme-spacing)*3)]">
             <EditorDialog
               open={resetPageDialogOpen}
               onOpenChange={setResetPageDialogOpen}
@@ -648,7 +617,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     onClick={() => setResetPageDialogOpen(true)}
                     tooltip="Reset current page"
                   >
-                    <RotateCcw style={{ height: "16px", width: "16px" }} />
+                    <RotateCcw className="h-4 w-4" />
                   </IconButton>
                 </div>
               </EditorDialogTrigger>
@@ -678,7 +647,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               onClick={() => setResetAllDialogOpen(true)}
               tooltip="Reset all pages"
             >
-              <ListRestart style={{ height: "16px", width: "16px" }} />
+              <ListRestart className="h-4 w-4" />
             </IconButton>
 
             <EditorDialog
@@ -722,38 +691,38 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       onClick={() => setSectionsPopoverOpen(true)}
                       tooltip="Manage sections"
                     >
-                      <Settings style={{ height: "16px", width: "16px" }} />
+                      <Settings className="h-4 w-4" />
                     </IconButton>
                   </div>
                 </EditorPopoverTrigger>
                 <EditorPopoverContent
-                  style={{ width: "20rem", maxHeight: "24rem", overflowY: "auto" }}
+                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
                   align="center"
                 >
-                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 4)" }}>
-                    <div style={{ fontWeight: "600", fontSize: "0.875rem" }}>Section Options</div>
+                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*4)]">
+                    <div className="font-semibold text-sm theme-text-foreground">Section Options</div>
                     {sectionsData.length === 0 ? (
-                      <div style={{ fontSize: "0.875rem", color: "hsl(0 0% 45%)" }}>
+                      <div className="text-sm theme-text-muted-foreground">
                         No sections found
                       </div>
                     ) : (
                       sectionsData.map((file) => (
-                        <div key={file.filePath} style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 3)" }}>
-                          <div style={{ fontWeight: "500", fontSize: "0.875rem", borderBottom: "1px solid var(--theme-border)", paddingBottom: "calc(var(--theme-spacing) * 0.25)" }}>
+                        <div key={file.filePath} className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
+                          <div className="font-medium text-sm border-b theme-border-border pb-[calc(var(--theme-spacing)*0.25)] theme-text-foreground">
                             {file.fileName}
                           </div>
                           {file.sections.map((section) => (
                             <div
                               key={section.sectionId}
-                              style={{ marginLeft: "calc(var(--theme-spacing) * 2)", display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 2)" }}
+                              className="ml-[calc(var(--theme-spacing)*2)] flex flex-col gap-[calc(var(--theme-spacing)*2)]"
                             >
-                              <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "var(--theme-muted-foreground)" }}>
+                              <div className="text-sm font-medium theme-text-muted-foreground">
                                 {section.sectionId}
                               </div>
                               {section.options.map((option) => (
                                 <div
                                   key={option.optionId}
-                                  style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)", marginLeft: "calc(var(--theme-spacing) * 4)" }}
+                                  className="flex items-center gap-[calc(var(--theme-spacing)*2)] ml-[calc(var(--theme-spacing)*4)]"
                                 >
                                   <Checkbox
                                     checked={getSectionInclude(
@@ -771,7 +740,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                                     }
                                   />
                                   <Label
-                                    style={{ fontSize: "0.875rem", cursor: "pointer" }}
+                                    className="text-sm cursor-pointer theme-text-foreground"
                                     onClick={() =>
                                       setSectionInclude(
                                         file.filePath,
@@ -810,25 +779,26 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       onClick={() => setFileTreePopoverOpen(true)}
                       tooltip="Manage file inclusion"
                     >
-                      <Files style={{ height: "16px", width: "16px" }} />
+                      <Files className="h-4 w-4" />
                     </IconButton>
                   </div>
                 </EditorPopoverTrigger>
                 <EditorPopoverContent
-                  style={{ width: "20rem", maxHeight: "24rem", overflowY: "auto" }}
+                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow"
                   align="center"
                 >
-                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 3)" }}>
-                    <div style={{ fontWeight: "600", fontSize: "0.875rem" }}>File Inclusion</div>
+                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*3)]">
+                    <div className="font-semibold text-sm theme-text-foreground">File Inclusion</div>
                     {fileTreeData.length === 0 ? (
-                      <div style={{ fontSize: "0.875rem", color: "hsl(0 0% 45%)" }}>
+                      <div className="text-sm theme-text-muted-foreground">
                         No files found
                       </div>
                     ) : (
                       fileTreeData.map((item) => (
                         <div
                           key={item.path}
-                          style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)", marginLeft: `${item.level * 12}px` }}
+                          className="flex items-center gap-[calc(var(--theme-spacing)*2)]"
+                          style={{ marginLeft: `${item.level * 12}px` }}
                         >
                           <Checkbox
                             checked={item.include}
@@ -839,12 +809,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                             }
                           />
                           {item.type === "directory" ? (
-                            <Folder style={{ height: "16px", width: "16px", color: "hsl(217 91% 60%)" }} />
+                            <Folder className="h-4 w-4 text-[hsl(217,91%,60%)] theme-text-primary" />
                           ) : (
-                            <File style={{ height: "16px", width: "16px", color: "hsl(0 0% 45%)" }} />
+                            <File className="h-4 w-4 theme-text-muted-foreground" />
                           )}
                           <Label
-                            style={{ fontSize: "0.875rem", cursor: "pointer", flex: "1" }}
+                            className="text-sm cursor-pointer flex-1 theme-text-foreground"
                             onClick={() =>
                               updateInclusionRules({
                                 [item.path]: !item.include,
@@ -862,17 +832,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 2)" }}>
+          <div className="flex items-center gap-[calc(var(--theme-spacing)*2)]">
             {previewMode && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div style={{ padding: "calc(var(--theme-spacing) * 1) calc(var(--theme-spacing) * 3)", fontSize: "0.75rem", fontWeight: "bold", borderRadius: "9999px", display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1.5)", backgroundColor: "hsl(25 95% 53% / 0.2)", border: "1px solid hsl(25 95% 53%)", color: "hsl(25 95% 20%)" }}>
-                    <Eye style={{ height: "12px", width: "12px" }} />
+                  <div className="py-[calc(var(--theme-spacing)*1)] px-[calc(var(--theme-spacing)*3)] text-xs font-bold rounded-full flex items-center gap-[calc(var(--theme-spacing)*1.5)] bg-[hsl(25,95%,53%,0.2)] border border-[hsl(25,95%,53%)] text-[hsl(25,95%,20%)]">
+                    <Eye className="h-3 w-3" />
                     Preview mode (read only)
                   </div>
                 </TooltipTrigger>
-                <TooltipContent style={{ maxWidth: "20rem" }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 2)" }}>
+                <TooltipContent className="max-w-xs theme-bg-popover theme-text-popover-foreground theme-shadow">
+                  <div className="flex flex-col gap-[calc(var(--theme-spacing)*2)]">
                     <p>You are currently in preview mode.</p>
                     <p>
                       This shows exactly how your content will look when
@@ -906,8 +876,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
             <Tooltip>
               <TooltipTrigger asChild>
-                <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1)" }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--theme-muted-foreground)" }}>
+                <div className="flex items-center gap-[calc(var(--theme-spacing)*1)]">
+                  <span className="text-xs theme-text-muted-foreground">
                     Edit
                   </span>
                   <Switch
@@ -919,19 +889,19 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       }
                     }}
                   />
-                  <span style={{ fontSize: "0.75rem", color: "var(--theme-muted-foreground)" }}>
+                  <span className="text-xs theme-text-muted-foreground">
                     Preview
                   </span>
                 </div>
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow">
                 <p>Toggle between edit mode and processed preview</p>
               </TooltipContent>
             </Tooltip>
 
-            <div style={{ position: "relative" }}>
+            <div className="relative">
               {showNextButtonHelp && (
-                <div style={{ position: "absolute", top: "-8px", right: "-8px", zIndex: "10" }}>
+                <div className="absolute -top-2 -right-2 z-10">
                   <WalkthroughHelper
                     isOpen={nextButtonHelpOpen}
                     onOpenChange={(open) => {
@@ -963,20 +933,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     }}
                     disabled={!canGoNext}
                     variant="outline"
-                    style={{
-                      borderRadius: "3px",
-                      padding: "calc(var(--theme-spacing) * 0.25) calc(var(--theme-spacing) * 3)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "calc(var(--theme-spacing) * 2)",
-                      fontWeight: "500",
-                    }}
+                    className="rounded-[3px] py-[calc(var(--theme-spacing)*0.25)] px-[calc(var(--theme-spacing)*3)] flex items-center gap-[calc(var(--theme-spacing)*2)] font-medium"
                   >
                     Next
-                    <ChevronRight style={{ height: "16px", width: "16px" }} />
+                    <ChevronRight className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow">
                   <p>{canGoNext ? `Next: ${nextPageTitle}` : "No next page"}</p>
                 </TooltipContent>
               </Tooltip>

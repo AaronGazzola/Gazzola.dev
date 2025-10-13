@@ -4,13 +4,13 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/tailwind.utils"
 
 const alertVariants = cva(
-  "relative w-full border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7",
+  "relative w-full border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7 theme-radius theme-shadow",
   {
     variants: {
       variant: {
-        default: "",
+        default: "theme-bg-background theme-text-foreground theme-border-border",
         destructive:
-          "",
+          "theme-bg-destructive theme-text-destructive-foreground theme-border-destructive",
       },
     },
     defaultVariants: {
@@ -22,17 +22,12 @@ const alertVariants = cva(
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, style, ...props }, ref) => {
-  const variantStyles = variant === "destructive"
-    ? { borderColor: "var(--theme-destructive)", color: "var(--theme-destructive)", backgroundColor: "var(--theme-background)" }
-    : { backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)", borderColor: "var(--theme-border)" };
-
+>(({ className, variant, ...props }, ref) => {
   return (
     <div
       ref={ref}
       role="alert"
       className={cn(alertVariants({ variant }), className)}
-      style={{ borderRadius: "var(--theme-radius)", ...variantStyles, ...style }}
       {...props}
     />
   );

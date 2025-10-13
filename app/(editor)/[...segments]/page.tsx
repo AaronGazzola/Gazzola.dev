@@ -297,10 +297,8 @@ const Page = () => {
 
   if (!canRender || (needsInitialization && isLoading)) {
     return (
-      <div
-        style={{ width: "100%", height: "100%", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--theme-font-sans)" }}
-      >
-        <div style={{ color: "var(--theme-muted-foreground)" }}>
+      <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
+        <div className="theme-text-muted-foreground">
           {!mounted
             ? "Loading editor..."
             : versionCheckLoading
@@ -315,21 +313,17 @@ const Page = () => {
 
   if (error) {
     return (
-      <div
-        style={{ width: "100%", height: "100%", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--theme-font-sans)" }}
-      >
-        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 4)" }}>
-          <div style={{ color: "var(--theme-destructive)", fontSize: "1.125rem", fontWeight: "500" }}>
+      <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
+        <div className="text-center flex flex-col gap-4 theme-spacing">
+          <div className="theme-text-destructive text-lg font-medium">
             Failed to load editor content
           </div>
-          <div style={{ color: "var(--theme-muted-foreground)" }}>
+          <div className="theme-text-muted-foreground">
             {error.message || "An error occurred while loading the content"}
           </div>
           <button
             onClick={() => window.location.reload()}
-            style={{ padding: "calc(var(--theme-spacing) * 2) calc(var(--theme-spacing) * 4)", borderRadius: "var(--theme-radius)", backgroundColor: "var(--theme-primary)", color: "var(--theme-primary-foreground)", transition: "opacity 0.2s" }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+            className="px-4 py-2 theme-radius theme-bg-primary theme-text-primary-foreground theme-shadow transition-opacity hover:opacity-90"
           >
             Retry
           </button>
@@ -340,22 +334,18 @@ const Page = () => {
 
   if (!isInitialized) {
     return (
-      <div
-        style={{ width: "100%", height: "100%", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--theme-font-sans)" }}
-      >
-        <div style={{ color: "var(--theme-muted-foreground)" }}>Initializing editor...</div>
+      <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
+        <div className="theme-text-muted-foreground">Initializing editor...</div>
       </div>
     );
   }
 
   return (
-    <div
-      style={{ width: "100%", height: "100%", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)", fontFamily: "var(--theme-font-sans)" }}
-    >
+    <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
       {previewMode ? (
-        <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column" }}>
+        <div className="relative h-full flex flex-col">
           <Toolbar currentContentPath={contentPath} />
-          <div style={{ width: "100%", flex: "1", overflow: "auto" }}>
+          <div className="w-full flex-1 overflow-auto">
             <ReadOnlyLexicalEditor
               content={processedContent}
               darkMode={darkMode}
@@ -364,18 +354,16 @@ const Page = () => {
         </div>
       ) : (
         <LexicalComposer key={refreshKey} initialConfig={initialConfig}>
-          <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column" }}>
+          <div className="relative h-full flex flex-col">
             <Toolbar currentContentPath={contentPath} />
             <RichTextPlugin
               contentEditable={
                 <ContentEditable
-                  style={{ width: "100%", flex: "1", padding: "calc(var(--theme-spacing) * 6)", outline: "none", resize: "none", overflow: "auto", minHeight: "0", fontFamily: "var(--theme-font-sans)", backgroundColor: "var(--theme-background)", color: "var(--theme-foreground)" }}
+                  className="w-full flex-1 p-6 outline-none resize-none overflow-auto min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing"
                 />
               }
               placeholder={
-                <div
-                  style={{ position: "absolute", top: "calc(var(--theme-spacing) * 6)", left: "calc(var(--theme-spacing) * 6)", pointerEvents: "none", color: "var(--theme-muted-foreground)" }}
-                >
+                <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing">
                   Start typing your markdown content...
                 </div>
               }

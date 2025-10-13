@@ -14,38 +14,38 @@ export const useThemeCSSVariables = () => {
 
     const root = document.documentElement;
 
-    root.style.setProperty("--theme-primary", `hsl(${colors.primary})`);
-    root.style.setProperty("--theme-primary-foreground", `hsl(${colors.primaryForeground})`);
-    root.style.setProperty("--theme-secondary", `hsl(${colors.secondary})`);
-    root.style.setProperty("--theme-secondary-foreground", `hsl(${colors.secondaryForeground})`);
-    root.style.setProperty("--theme-accent", `hsl(${colors.accent})`);
-    root.style.setProperty("--theme-accent-foreground", `hsl(${colors.accentForeground})`);
-    root.style.setProperty("--theme-background", `hsl(${colors.background})`);
-    root.style.setProperty("--theme-foreground", `hsl(${colors.foreground})`);
-    root.style.setProperty("--theme-card", `hsl(${colors.card})`);
-    root.style.setProperty("--theme-card-foreground", `hsl(${colors.cardForeground})`);
-    root.style.setProperty("--theme-popover", `hsl(${colors.popover})`);
-    root.style.setProperty("--theme-popover-foreground", `hsl(${colors.popoverForeground})`);
-    root.style.setProperty("--theme-muted", `hsl(${colors.muted})`);
-    root.style.setProperty("--theme-muted-foreground", `hsl(${colors.mutedForeground})`);
-    root.style.setProperty("--theme-destructive", `hsl(${colors.destructive})`);
-    root.style.setProperty("--theme-destructive-foreground", `hsl(${colors.destructiveForeground})`);
-    root.style.setProperty("--theme-border", `hsl(${colors.border})`);
-    root.style.setProperty("--theme-input", `hsl(${colors.input})`);
-    root.style.setProperty("--theme-ring", `hsl(${colors.ring})`);
-    root.style.setProperty("--theme-chart-1", `hsl(${colors.chart1})`);
-    root.style.setProperty("--theme-chart-2", `hsl(${colors.chart2})`);
-    root.style.setProperty("--theme-chart-3", `hsl(${colors.chart3})`);
-    root.style.setProperty("--theme-chart-4", `hsl(${colors.chart4})`);
-    root.style.setProperty("--theme-chart-5", `hsl(${colors.chart5})`);
-    root.style.setProperty("--theme-sidebar-background", `hsl(${colors.sidebarBackground})`);
-    root.style.setProperty("--theme-sidebar-foreground", `hsl(${colors.sidebarForeground})`);
-    root.style.setProperty("--theme-sidebar-primary", `hsl(${colors.sidebarPrimary})`);
-    root.style.setProperty("--theme-sidebar-primary-foreground", `hsl(${colors.sidebarPrimaryForeground})`);
-    root.style.setProperty("--theme-sidebar-accent", `hsl(${colors.sidebarAccent})`);
-    root.style.setProperty("--theme-sidebar-accent-foreground", `hsl(${colors.sidebarAccentForeground})`);
-    root.style.setProperty("--theme-sidebar-border", `hsl(${colors.sidebarBorder})`);
-    root.style.setProperty("--theme-sidebar-ring", `hsl(${colors.sidebarRing})`);
+    root.style.setProperty("--theme-primary", colors.primary);
+    root.style.setProperty("--theme-primary-foreground", colors.primaryForeground);
+    root.style.setProperty("--theme-secondary", colors.secondary);
+    root.style.setProperty("--theme-secondary-foreground", colors.secondaryForeground);
+    root.style.setProperty("--theme-accent", colors.accent);
+    root.style.setProperty("--theme-accent-foreground", colors.accentForeground);
+    root.style.setProperty("--theme-background", colors.background);
+    root.style.setProperty("--theme-foreground", colors.foreground);
+    root.style.setProperty("--theme-card", colors.card);
+    root.style.setProperty("--theme-card-foreground", colors.cardForeground);
+    root.style.setProperty("--theme-popover", colors.popover);
+    root.style.setProperty("--theme-popover-foreground", colors.popoverForeground);
+    root.style.setProperty("--theme-muted", colors.muted);
+    root.style.setProperty("--theme-muted-foreground", colors.mutedForeground);
+    root.style.setProperty("--theme-destructive", colors.destructive);
+    root.style.setProperty("--theme-destructive-foreground", colors.destructiveForeground);
+    root.style.setProperty("--theme-border", colors.border);
+    root.style.setProperty("--theme-input", colors.input);
+    root.style.setProperty("--theme-ring", colors.ring);
+    root.style.setProperty("--theme-chart-1", colors.chart1);
+    root.style.setProperty("--theme-chart-2", colors.chart2);
+    root.style.setProperty("--theme-chart-3", colors.chart3);
+    root.style.setProperty("--theme-chart-4", colors.chart4);
+    root.style.setProperty("--theme-chart-5", colors.chart5);
+    root.style.setProperty("--theme-sidebar-background", colors.sidebarBackground);
+    root.style.setProperty("--theme-sidebar-foreground", colors.sidebarForeground);
+    root.style.setProperty("--theme-sidebar-primary", colors.sidebarPrimary);
+    root.style.setProperty("--theme-sidebar-primary-foreground", colors.sidebarPrimaryForeground);
+    root.style.setProperty("--theme-sidebar-accent", colors.sidebarAccent);
+    root.style.setProperty("--theme-sidebar-accent-foreground", colors.sidebarAccentForeground);
+    root.style.setProperty("--theme-sidebar-border", colors.sidebarBorder);
+    root.style.setProperty("--theme-sidebar-ring", colors.sidebarRing);
 
     const resolveFontVariable = (fontValue: string): string => {
       if (fontValue.startsWith("var(--font-")) {
@@ -65,12 +65,17 @@ export const useThemeCSSVariables = () => {
     root.style.setProperty("--theme-radius", `${other.radius}rem`);
     root.style.setProperty("--theme-spacing", `${other.spacing}rem`);
 
-    root.style.setProperty("--theme-shadow-color", `hsl(${other.shadow.color})`);
+    root.style.setProperty("--theme-shadow-color", other.shadow.color);
     root.style.setProperty("--theme-shadow-opacity", `${other.shadow.opacity}`);
     root.style.setProperty("--theme-shadow-blur", `${other.shadow.blurRadius}px`);
     root.style.setProperty("--theme-shadow-spread", `${other.shadow.spread}px`);
     root.style.setProperty("--theme-shadow-x", `${other.shadow.offsetX}px`);
     root.style.setProperty("--theme-shadow-y", `${other.shadow.offsetY}px`);
-    root.style.setProperty("--theme-shadow", `${other.shadow.offsetX}px ${other.shadow.offsetY}px ${other.shadow.blurRadius}px ${other.shadow.spread}px hsl(${other.shadow.color} / ${other.shadow.opacity})`);
+
+    const shadowColor = other.shadow.color.startsWith("#")
+      ? `${other.shadow.color}${Math.round(other.shadow.opacity * 255).toString(16).padStart(2, "0")}`
+      : other.shadow.color.replace(/rgb\(([^)]+)\)/, `rgba($1, ${other.shadow.opacity})`);
+
+    root.style.setProperty("--theme-shadow", `${other.shadow.offsetX}px ${other.shadow.offsetY}px ${other.shadow.blurRadius}px ${other.shadow.spread}px ${shadowColor}`);
   }, [theme, darkMode]);
 };

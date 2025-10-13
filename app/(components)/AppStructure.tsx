@@ -59,14 +59,14 @@ const LayoutInsertionButtons = ({
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity theme-bg-background theme-border-border theme-shadow"
           onClick={() =>
             hasHeader ? onRemoveElement("header") : onAddElement("header")
           }
           title={hasHeader ? "Remove header" : "Add header"}
         >
           {hasHeader ? (
-            <Trash2 className="h-3 w-3 text-red-500" />
+            <Trash2 className="h-3 w-3 theme-text-destructive" />
           ) : (
             <Plus className="h-3 w-3" />
           )}
@@ -76,7 +76,7 @@ const LayoutInsertionButtons = ({
         <Button
           variant="ghost"
           size="icon"
-          className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity theme-bg-background theme-border-border theme-shadow"
           onClick={() =>
             hasLeftSidebar
               ? onRemoveElement("sidebar-left")
@@ -85,7 +85,7 @@ const LayoutInsertionButtons = ({
           title={hasLeftSidebar ? "Remove left sidebar" : "Add left sidebar"}
         >
           {hasLeftSidebar ? (
-            <Trash2 className="h-3 w-3 text-red-500" />
+            <Trash2 className="h-3 w-3 theme-text-destructive" />
           ) : (
             <Plus className="h-3 w-3" />
           )}
@@ -95,7 +95,7 @@ const LayoutInsertionButtons = ({
         <Button
           variant="ghost"
           size="icon"
-          className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          className="h-20 w-6 opacity-60 hover:opacity-100 transition-opacity theme-bg-background theme-border-border theme-shadow"
           onClick={() =>
             hasRightSidebar
               ? onRemoveElement("sidebar-right")
@@ -104,7 +104,7 @@ const LayoutInsertionButtons = ({
           title={hasRightSidebar ? "Remove right sidebar" : "Add right sidebar"}
         >
           {hasRightSidebar ? (
-            <Trash2 className="h-3 w-3 text-red-500" />
+            <Trash2 className="h-3 w-3 theme-text-destructive" />
           ) : (
             <Plus className="h-3 w-3" />
           )}
@@ -114,14 +114,14 @@ const LayoutInsertionButtons = ({
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity bg-background border border-border"
+          className="h-6 w-20 opacity-60 hover:opacity-100 transition-opacity theme-bg-background theme-border-border theme-shadow"
           onClick={() =>
             hasFooter ? onRemoveElement("footer") : onAddElement("footer")
           }
           title={hasFooter ? "Remove footer" : "Add footer"}
         >
           {hasFooter ? (
-            <Trash2 className="h-3 w-3 text-red-500" />
+            <Trash2 className="h-3 w-3 theme-text-destructive" />
           ) : (
             <Plus className="h-3 w-3" />
           )}
@@ -158,7 +158,7 @@ const WireframeElementComponent = ({
   };
 
   return (
-    <div className={cn("border rounded", colorSet.border, getBgColorClass(), getElementStyles())} />
+    <div className={cn("border theme-radius theme-shadow", colorSet.border, getBgColorClass(), getElementStyles())} />
   );
 };
 
@@ -1126,12 +1126,12 @@ const SiteMapNode = ({
 
   const renderPathSegments = () => {
     if (route.path === "/") {
-      return <span className="text-sm font-mono" style={{ color: "var(--theme-foreground)" }}>/</span>;
+      return <span className="text-sm font-mono theme-text-foreground">/</span>;
     }
 
     return (
-      <div className="flex items-center">
-        <span className="text-sm font-mono" style={{ color: "var(--theme-muted-foreground)" }}>/</span>
+      <div className="flex items-center theme-spacing">
+        <span className="text-sm font-mono theme-text-muted-foreground">/</span>
         {pathSegments.map((segment, index) => (
           <div key={index} className="flex items-center">
             {editingSegmentIndex === index ? (
@@ -1141,20 +1141,19 @@ const SiteMapNode = ({
                 onChange={(e) => setTempValue(e.target.value)}
                 onBlur={handleSegmentSubmit}
                 onKeyDown={handleKeyDown}
-                className="h-6 px-2 py-0 text-sm w-20 min-w-fit"
+                className="h-6 px-2 py-0 text-sm w-20 min-w-fit theme-shadow"
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
               <span
-                className="text-sm font-mono cursor-pointer hover:bg-accent/50 px-1 py-0.5 rounded"
-                style={{ color: "var(--theme-foreground)" }}
+                className="text-sm font-mono cursor-pointer hover:theme-bg-accent theme-px theme-py theme-radius theme-text-foreground"
                 onClick={() => handleSegmentClick(index)}
               >
                 {segment}
               </span>
             )}
             {index < pathSegments.length - 1 && (
-              <span className="text-sm font-mono" style={{ color: "var(--theme-muted-foreground)" }}>/</span>
+              <span className="text-sm font-mono theme-text-muted-foreground">/</span>
             )}
           </div>
         ))}
@@ -1172,9 +1171,9 @@ const SiteMapNode = ({
 
   return (
     <>
-      <div className="group flex items-center justify-between gap-1 hover:bg-accent/50 rounded px-1" style={{ color: "var(--theme-foreground)" }}>
-        <div className="flex items-center gap-1">
-          <span className="font-mono text-base select-none" style={{ color: "var(--theme-muted-foreground)" }}>
+      <div className="group flex items-center justify-between theme-spacing hover:theme-bg-accent theme-radius theme-px theme-text-foreground">
+        <div className="flex items-center theme-spacing">
+          <span className="font-mono text-base select-none theme-text-muted-foreground">
             {getLinePrefix()}
             {getTreeChar()}
             {depth > 0 && "─ "}
@@ -1182,11 +1181,11 @@ const SiteMapNode = ({
           {renderPathSegments()}
         </div>
 
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center theme-spacing opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6"
+            className="h-6 w-6 theme-shadow"
             onClick={handleAddSegment}
             title="Add segment"
           >
@@ -1195,11 +1194,11 @@ const SiteMapNode = ({
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6"
+            className="h-6 w-6 theme-shadow"
             onClick={handleDeleteRoute}
             title="Delete route"
           >
-            <Trash2 className="h-3 w-3 text-red-500" />
+            <Trash2 className="h-3 w-3 theme-text-destructive" />
           </Button>
         </div>
       </div>
@@ -1375,10 +1374,10 @@ const TreeNode = ({
     <div>
       <div
         className={cn(
-          "group flex items-center gap-1 rounded px-1 text-[hsl(var(--foreground))]",
-          isPageFile && "cursor-pointer hover:bg-primary/15",
-          !isPageFile && "hover:bg-accent/50",
-          isCurrentPage && "border border-gray-300 dark:border-gray-600"
+          "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground theme-shadow",
+          isPageFile && "cursor-pointer hover:theme-bg-primary",
+          !isPageFile && "hover:theme-bg-accent",
+          isCurrentPage && "theme-border-border"
         )}
         onClick={(e) => {
           if (isPageFile) {
@@ -1387,23 +1386,23 @@ const TreeNode = ({
           }
         }}
       >
-        <span className="font-mono text-base select-none text-[hsl(var(--muted-foreground))]">
+        <span className="font-mono text-base select-none theme-text-muted-foreground">
           {getLinePrefix()}
           {getTreeChar()}
           {depth > 0 && "─ "}
         </span>
 
-        <div className="flex items-center gap-1 flex-1 min-w-0 px-2">
+        <div className="flex items-center theme-spacing flex-1 min-w-0 theme-px">
           {node.type === "directory" ? (
             node.isExpanded ? (
-              <FolderOpen className="h-4 w-4 flex-shrink-0" style={{ color: "var(--theme-chart-2)" }} />
+              <FolderOpen className="h-4 w-4 flex-shrink-0 theme-text-chart-2" />
             ) : (
-              <Folder className="h-4 w-4 flex-shrink-0" style={{ color: "var(--theme-chart-2)" }} />
+              <Folder className="h-4 w-4 flex-shrink-0 theme-text-chart-2" />
             )
           ) : (
             <File
               className={cn(
-                "h-4 w-4 flex-shrink-0 text-[var(--theme-chart-3)]",
+                "h-4 w-4 flex-shrink-0 theme-text-chart-3",
                 getFileIconColor(),
                 isPageFile && "cursor-pointer hover:opacity-70"
               )}
@@ -1422,13 +1421,12 @@ const TreeNode = ({
               defaultValue={node.name}
               onBlur={(e) => handleNameSubmit(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="h-6 px-2 py-0 text-sm"
+              className="h-6 px-2 py-0 text-sm theme-shadow"
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
             <span
-              className="text-sm truncate cursor-pointer hover:underline"
-              style={{ color: "var(--theme-foreground)" }}
+              className="text-sm truncate cursor-pointer hover:underline theme-text-foreground"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsEditing(true);
@@ -1441,7 +1439,7 @@ const TreeNode = ({
 
         <div
           className={cn(
-            "flex items-center gap-0.5 transition-opacity",
+            "flex items-center theme-spacing transition-opacity",
             isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           )}
         >
@@ -1449,20 +1447,20 @@ const TreeNode = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6"
+              className="h-6 w-6 theme-shadow"
               title="Save"
             >
-              <Save className="h-3 w-3" style={{ color: "var(--theme-muted-foreground)" }} />
+              <Save className="h-3 w-3 theme-text-muted-foreground" />
             </Button>
           )}
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6"
+            className="h-6 w-6 theme-shadow"
             onClick={() => onDelete(node.id)}
             title="Delete"
           >
-            <Trash2 className="h-3 w-3 text-red-500" />
+            <Trash2 className="h-3 w-3 theme-text-destructive" />
           </Button>
         </div>
       </div>
@@ -1487,8 +1485,8 @@ const TreeNode = ({
             />
           ))}
 
-          <div className="flex items-center gap-1 rounded px-1 text-[hsl(var(--foreground))]">
-            <span className="font-mono text-base select-none text-[hsl(var(--muted-foreground))]">
+          <div className="flex items-center theme-spacing theme-radius theme-px theme-text-foreground">
+            <span className="font-mono text-base select-none theme-text-muted-foreground">
               {(() => {
                 const lines = [];
                 for (let i = 0; i < depth - 1; i++) {
@@ -1507,18 +1505,18 @@ const TreeNode = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 gap-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+                  className="h-6 px-2 theme-spacing theme-text-muted-foreground hover:theme-text-foreground theme-shadow"
                 >
                   <Plus className="h-3 w-3" />
                   <span className="text-sm">Add...</span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-48 p-2" align="start">
-                <div className="flex flex-col gap-1">
+              <PopoverContent className="w-48 p-2 theme-shadow theme-bg-popover theme-border-border" align="start">
+                <div className="flex flex-col theme-spacing">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start gap-2"
+                    className="justify-start theme-spacing theme-shadow"
                     onClick={() => {
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "page.tsx");
@@ -1528,13 +1526,13 @@ const TreeNode = ({
                       (child) => child.name === "page.tsx"
                     )}
                   >
-                    <File className="h-4 w-4" style={{ color: "var(--theme-chart-1)" }} />
+                    <File className="h-4 w-4 theme-text-chart-1" />
                     <span>page.tsx</span>
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start gap-2"
+                    className="justify-start theme-spacing theme-shadow"
                     onClick={() => {
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "layout.tsx");
@@ -1544,16 +1542,16 @@ const TreeNode = ({
                       (child) => child.name === "layout.tsx"
                     )}
                   >
-                    <File className="h-4 w-4 text-green-500" />
+                    <File className="h-4 w-4 theme-text-secondary" />
                     <span>layout.tsx</span>
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start gap-2"
+                    className="justify-start theme-spacing theme-shadow"
                     onClick={() => onAddDirectory(node.id)}
                   >
-                    <Folder className="h-4 w-4" style={{ color: "var(--theme-chart-2)" }} />
+                    <Folder className="h-4 w-4 theme-text-chart-2" />
                     <span>directory</span>
                   </Button>
                 </div>
@@ -1744,7 +1742,7 @@ export const LayoutAndStructure = () => {
   const renderNestedBoxes = () => {
     if (!currentPage) {
       return (
-        <div className="text-center py-8 text-[hsl(var(--muted-foreground))]">
+        <div className="text-center py-8 theme-text-muted-foreground">
           No pages available
         </div>
       );
@@ -1754,9 +1752,9 @@ export const LayoutAndStructure = () => {
       return (
         <div
           className={cn(
-            "border-2 border-dashed",
+            "border-2 border-dashed theme-shadow",
             PAGE_FILE_ICON.replace("text-", "border-"),
-            "rounded p-3 h-full flex flex-col"
+            "theme-radius theme-p h-full flex flex-col"
           )}
         />
       );
@@ -1785,9 +1783,9 @@ export const LayoutAndStructure = () => {
       content = (
         <div
           className={cn(
-            "border-2 border-dashed relative",
+            "border-2 border-dashed relative theme-shadow",
             colorSet.border,
-            "rounded p-3 h-full flex flex-col gap-2"
+            "theme-radius theme-p h-full flex flex-col theme-spacing"
           )}
         >
           <LayoutInsertionButtons
@@ -1806,9 +1804,9 @@ export const LayoutAndStructure = () => {
             <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
           ))}
 
-          <div className="flex-1 flex gap-2">
+          <div className="flex-1 flex theme-spacing">
             {leftSidebars.length > 0 && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col theme-spacing">
                 {leftSidebars.map((el) => (
                   <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
@@ -1818,7 +1816,7 @@ export const LayoutAndStructure = () => {
             <div className="flex-1">{content}</div>
 
             {rightSidebars.length > 0 && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col theme-spacing">
                 {rightSidebars.map((el) => (
                   <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
                 ))}
@@ -1837,15 +1835,15 @@ export const LayoutAndStructure = () => {
   };
 
   return (
-    <div style={{ padding: "calc(var(--theme-spacing) * 4)", borderRadius: "var(--theme-radius)", border: "1px solid var(--theme-border)", backgroundColor: "var(--theme-card)", color: "var(--theme-card-foreground)" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(400px, 2fr) minmax(400px, 3fr)", gap: "calc(var(--theme-spacing) * 4)", minHeight: "calc(100vh - 400px)" }} className="max-xl:grid-cols-1">
-        <div style={{ display: "flex", flexDirection: "column", gap: "calc(var(--theme-spacing) * 4)", height: "100%" }}>
-          <div style={{ display: "flex", flexDirection: "column", flex: "1", minHeight: "0" }}>
-            <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 4)", color: "var(--theme-card-foreground)" }}>
+    <div className="theme-p theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow">
+      <div className="grid grid-cols-[minmax(400px,2fr)_minmax(400px,3fr)] theme-spacing min-h-[calc(100vh-400px)] max-xl:grid-cols-1">
+        <div className="flex flex-col theme-spacing h-full">
+          <div className="flex flex-col flex-1 min-h-0">
+            <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground">
               App Directory Structure
             </h3>
 
-            <div style={{ fontFamily: "var(--theme-font-mono)", fontSize: "1rem", backgroundColor: "var(--theme-muted)", padding: "calc(var(--theme-spacing) * 3)", borderRadius: "var(--theme-radius)", overflowX: "auto", overflowY: "auto", flex: "1" }}>
+            <div className="theme-font-mono text-base theme-bg-muted theme-p theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
               {appStructure.map((node, index) => (
                 <TreeNode
                   key={node.id}
@@ -1862,7 +1860,7 @@ export const LayoutAndStructure = () => {
               ))}
 
               {appStructure.length === 0 && (
-                <div style={{ textAlign: "center", padding: "calc(var(--theme-spacing) * 8) 0", color: "var(--theme-muted-foreground)" }}>
+                <div className="text-center py-8 theme-text-muted-foreground">
                   Click the buttons above to start building your app structure
                 </div>
               )}
@@ -1870,12 +1868,12 @@ export const LayoutAndStructure = () => {
           </div>
 
           {routes.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", flex: "1", minHeight: "0" }}>
-              <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "calc(var(--theme-spacing) * 4)", color: "var(--theme-card-foreground)" }}>
+            <div className="flex flex-col flex-1 min-h-0">
+              <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground">
                 Site Map (Resulting Routes)
               </h3>
 
-              <div style={{ fontFamily: "var(--theme-font-mono)", fontSize: "1rem", backgroundColor: "var(--theme-muted)", padding: "calc(var(--theme-spacing) * 3)", borderRadius: "var(--theme-radius)", overflowX: "auto", overflowY: "auto", flex: "1" }}>
+              <div className="theme-font-mono text-base theme-bg-muted theme-p theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
                 {routes.map((route, index) => (
                   <SiteMapNode
                     key={route.path}
@@ -1892,16 +1890,16 @@ export const LayoutAndStructure = () => {
           )}
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "calc(var(--theme-spacing) * 4)" }}>
-            <h3 style={{ fontSize: "1.125rem", fontWeight: "600", color: "var(--theme-card-foreground)" }}>
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between theme-mb">
+            <h3 className="text-lg font-semibold theme-text-card-foreground">
               Layout Wireframe {currentPage && `- ${currentPage}`}
             </h3>
-            <div style={{ display: "flex", alignItems: "center", gap: "calc(var(--theme-spacing) * 1)" }}>
+            <div className="flex items-center theme-spacing">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6"
+                className="h-6 w-6 theme-shadow"
                 onClick={() => {
                   if (currentPageIndex > 0) {
                     setWireframeCurrentPage(currentPageIndex - 1);
@@ -1915,7 +1913,7 @@ export const LayoutAndStructure = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6"
+                className="h-6 w-6 theme-shadow"
                 onClick={() => {
                   if (currentPageIndex < availablePages.length - 1) {
                     setWireframeCurrentPage(currentPageIndex + 1);
@@ -1928,7 +1926,7 @@ export const LayoutAndStructure = () => {
               </Button>
             </div>
           </div>
-          <div style={{ padding: "calc(var(--theme-spacing) * 4)", borderRadius: "var(--theme-radius)", backgroundColor: "var(--theme-muted)", flex: "1", overflowY: "auto" }}>
+          <div className="theme-p theme-radius theme-bg-muted flex-1 overflow-y-auto theme-shadow">
             {renderNestedBoxes()}
           </div>
         </div>

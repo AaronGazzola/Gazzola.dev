@@ -14,7 +14,8 @@
     "dev:test": "APP_ENV=test next dev",
     "parse": "npx tsx scripts/parse-markdown.ts",
     "parse:v": "npx tsx scripts/increment-version.ts",
-    "components": "npx tsx scripts/update-theme-components.ts"
+    "components": "npx tsx scripts/update-theme-components.ts",
+    "mcp:toggle": "npx tsx scripts/toggle-playwright-mcp.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
