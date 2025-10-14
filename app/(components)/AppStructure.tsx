@@ -10,6 +10,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/editor/ui/select";
 import { cn } from "@/lib/tailwind.utils";
 import {
   ChevronDown,
@@ -31,6 +38,184 @@ type RouteEntry = {
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
 const PAGE_FILE_ICON = "text-[var(--theme-chart-1)]";
+
+type AppStructureTemplate = {
+  id: string;
+  name: string;
+  structure: FileSystemEntry[];
+};
+
+const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
+  {
+    id: "blank",
+    name: "Blank",
+    structure: [
+      {
+        id: "app-blank",
+        name: "app",
+        type: "directory",
+        isExpanded: true,
+        children: [
+          { id: "layout-blank", name: "layout.tsx", type: "file" },
+          { id: "page-blank", name: "page.tsx", type: "file" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "auth",
+    name: "Auth (grouped routes)",
+    structure: [
+      {
+        id: "app-auth",
+        name: "app",
+        type: "directory",
+        isExpanded: true,
+        children: [
+          { id: "layout-auth", name: "layout.tsx", type: "file" },
+          {
+            id: "auth-group",
+            name: "(auth)",
+            type: "directory",
+            isExpanded: true,
+            children: [
+              { id: "auth-layout", name: "layout.tsx", type: "file" },
+              {
+                id: "login-dir",
+                name: "login",
+                type: "directory",
+                isExpanded: true,
+                children: [
+                  { id: "login-page", name: "page.tsx", type: "file" },
+                ],
+              },
+              {
+                id: "register-dir",
+                name: "register",
+                type: "directory",
+                isExpanded: true,
+                children: [
+                  { id: "register-page", name: "page.tsx", type: "file" },
+                ],
+              },
+            ],
+          },
+          {
+            id: "dashboard-group",
+            name: "(dashboard)",
+            type: "directory",
+            isExpanded: true,
+            children: [
+              { id: "dashboard-layout", name: "layout.tsx", type: "file" },
+              { id: "dashboard-page", name: "page.tsx", type: "file" },
+              {
+                id: "settings-dir",
+                name: "settings",
+                type: "directory",
+                isExpanded: true,
+                children: [
+                  { id: "settings-page", name: "page.tsx", type: "file" },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "nested",
+    name: "Nested layouts",
+    structure: [
+      {
+        id: "app-nested",
+        name: "app",
+        type: "directory",
+        isExpanded: true,
+        children: [
+          { id: "layout-nested", name: "layout.tsx", type: "file" },
+          { id: "page-nested", name: "page.tsx", type: "file" },
+          {
+            id: "products-dir",
+            name: "products",
+            type: "directory",
+            isExpanded: true,
+            children: [
+              { id: "products-layout", name: "layout.tsx", type: "file" },
+              { id: "products-page", name: "page.tsx", type: "file" },
+              {
+                id: "category-dir",
+                name: "[category]",
+                type: "directory",
+                isExpanded: true,
+                children: [
+                  { id: "category-layout", name: "layout.tsx", type: "file" },
+                  { id: "category-page", name: "page.tsx", type: "file" },
+                  {
+                    id: "product-dir",
+                    name: "[id]",
+                    type: "directory",
+                    isExpanded: true,
+                    children: [
+                      { id: "product-page", name: "page.tsx", type: "file" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "blog",
+    name: "Blog structure",
+    structure: [
+      {
+        id: "app-blog",
+        name: "app",
+        type: "directory",
+        isExpanded: true,
+        children: [
+          { id: "layout-blog", name: "layout.tsx", type: "file" },
+          { id: "page-blog", name: "page.tsx", type: "file" },
+          {
+            id: "blog-dir",
+            name: "blog",
+            type: "directory",
+            isExpanded: true,
+            children: [
+              { id: "blog-layout", name: "layout.tsx", type: "file" },
+              { id: "blog-page", name: "page.tsx", type: "file" },
+              {
+                id: "slug-dir",
+                name: "[slug]",
+                type: "directory",
+                isExpanded: true,
+                children: [{ id: "slug-page", name: "page.tsx", type: "file" }],
+              },
+            ],
+          },
+          {
+            id: "about-dir",
+            name: "about",
+            type: "directory",
+            isExpanded: true,
+            children: [{ id: "about-page", name: "page.tsx", type: "file" }],
+          },
+          {
+            id: "contact-dir",
+            name: "contact",
+            type: "directory",
+            isExpanded: true,
+            children: [{ id: "contact-page", name: "page.tsx", type: "file" }],
+          },
+        ],
+      },
+    ],
+  },
+];
 
 const LayoutInsertionButtons = ({
   layoutPath,
@@ -158,7 +343,14 @@ const WireframeElementComponent = ({
   };
 
   return (
-    <div className={cn("border theme-radius theme-shadow", colorSet.border, getBgColorClass(), getElementStyles())} />
+    <div
+      className={cn(
+        "border theme-radius theme-shadow",
+        colorSet.border,
+        getBgColorClass(),
+        getElementStyles()
+      )}
+    />
   );
 };
 
@@ -1153,7 +1345,9 @@ const SiteMapNode = ({
               </span>
             )}
             {index < pathSegments.length - 1 && (
-              <span className="text-sm font-mono theme-text-muted-foreground">/</span>
+              <span className="text-sm font-mono theme-text-muted-foreground">
+                /
+              </span>
             )}
           </div>
         ))}
@@ -1266,21 +1460,78 @@ const TreeNode = ({
       const normalizedPath = fullPath.startsWith("/")
         ? fullPath.substring(1)
         : fullPath;
-      const layoutPath =
-        normalizedPath.replace("/layout.tsx", "").replace("app", "") || "/";
-      const layouts = findLayoutsForPagePath(
-        appStructure,
-        layoutPath,
-        "",
-        true
-      );
-      const layoutIndex = layouts.findIndex((l) => {
-        const expectedFile =
-          l === "/" ? "app/layout.tsx" : `app${l}/layout.tsx`;
-        return normalizedPath === expectedFile;
-      });
-      if (layoutIndex !== -1) {
-        return LAYOUT_COLORS[layoutIndex % LAYOUT_COLORS.length].icon;
+
+      let directoryPath = normalizedPath.replace("/layout.tsx", "").replace(/^app/, "");
+      const directoryPathWithGroups = directoryPath || "/";
+      directoryPath = directoryPath.replace(/\/\([^)]+\)/g, "");
+      if (!directoryPath.startsWith("/")) {
+        directoryPath = "/" + directoryPath;
+      }
+      if (directoryPath === "//" || directoryPath === "") {
+        directoryPath = "/";
+      }
+
+      const findFirstDescendantPage = (
+        entries: FileSystemEntry[],
+        currentPath: string = "",
+        searchPath: string = "",
+        insideApp: boolean = false
+      ): string | null => {
+        for (const entry of entries) {
+          if (entry.name === "app" && !insideApp) {
+            const result = findFirstDescendantPage(entry.children || [], "", searchPath, true);
+            if (result) return result;
+            continue;
+          }
+
+          if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+            const groupPath = currentPath ? `${currentPath}/${entry.name}` : `/${entry.name}`;
+
+            if (searchPath === groupPath) {
+              const hasPage = (entry.children || []).some(child => child.type === "file" && child.name === "page.tsx");
+              if (hasPage) return currentPath || "/";
+
+              const result = findFirstDescendantPage(entry.children || [], currentPath, "/", true);
+              if (result) return result;
+            }
+
+            if (searchPath === "/" || searchPath.startsWith(groupPath + "/")) {
+              const strippedSearchPath = searchPath.replace(groupPath, currentPath || "");
+              const result = findFirstDescendantPage(entry.children || [], currentPath, strippedSearchPath, true);
+              if (result) return result;
+            }
+            continue;
+          }
+
+          if (entry.type === "directory" && entry.children) {
+            const newPath = currentPath ? `${currentPath}/${entry.name}` : `/${entry.name}`;
+
+            const hasPage = entry.children.some(child => child.type === "file" && child.name === "page.tsx");
+            if (hasPage && (searchPath === "/" || searchPath === newPath || newPath.startsWith(searchPath + "/"))) {
+              return newPath;
+            }
+
+            if (searchPath === "/" || searchPath === newPath || searchPath.startsWith(newPath + "/") || newPath.startsWith(searchPath + "/")) {
+              const result = findFirstDescendantPage(entry.children, newPath, searchPath, true);
+              if (result) return result;
+            }
+          }
+        }
+        return null;
+      };
+
+      const descendantPagePath = findFirstDescendantPage(appStructure, "", directoryPathWithGroups, false);
+
+      if (descendantPagePath) {
+        const layouts = findLayoutsForPagePath(appStructure, descendantPagePath, "", true);
+        const layoutIndex = layouts.findIndex((l) => {
+          const expectedFile = l === "/" ? "app/layout.tsx" : `app${l}/layout.tsx`;
+          return normalizedPath === expectedFile;
+        });
+
+        if (layoutIndex !== -1) {
+          return LAYOUT_COLORS[layoutIndex % LAYOUT_COLORS.length].icon;
+        }
       }
     }
     return "";
@@ -1334,41 +1585,36 @@ const TreeNode = ({
 
   const getPagePath = () => {
     const fullPath = parentPath + "/" + node.name;
-    const normalizedPath = fullPath.startsWith("/")
+    let normalizedPath = fullPath.startsWith("/")
       ? fullPath.substring(1)
       : fullPath;
-    let pagePath = normalizedPath.replace("/page.tsx", "").replace(/^app/, "");
-    pagePath = pagePath.replace(/\/\([^)]+\)/g, "");
-    if (!pagePath.startsWith("/")) {
+    normalizedPath = normalizedPath.replace("/page.tsx", "");
+    normalizedPath = normalizedPath.replace(/^app\/?/, "");
+    normalizedPath = normalizedPath.replace(/\(([^)]+)\)/g, "");
+    normalizedPath = normalizedPath.replace(/\/+/g, "/");
+    normalizedPath = normalizedPath.replace(/\/$/, "");
+    let pagePath = normalizedPath;
+    if (!pagePath.startsWith("/") && pagePath !== "") {
       pagePath = "/" + pagePath;
     }
-    if (pagePath === "//" || pagePath === "") {
+    if (pagePath === "" || pagePath === "//") {
       pagePath = "/";
     }
     return pagePath;
   };
 
-  const handlePageFileClick = () => {
-    if (!isPageFile) return;
-    const pagePath = getPagePath();
-    console.log(
-      JSON.stringify({
-        pagePath,
-        availablePages: wireframeState.availablePages,
-      })
-    );
-    const pageIndex = wireframeState.availablePages.indexOf(pagePath);
-    console.log(JSON.stringify({ pageIndex }));
-    if (pageIndex !== -1) {
-      setWireframeCurrentPage(pageIndex);
-      console.log(JSON.stringify({ setPageIndexTo: pageIndex }));
-    }
-  };
-
+  const pagePath = isPageFile ? getPagePath() : "";
   const isCurrentPage =
     isPageFile &&
-    wireframeState.availablePages[wireframeState.currentPageIndex] ===
-      getPagePath();
+    wireframeState.availablePages[wireframeState.currentPageIndex] === pagePath;
+
+  const handlePageFileClick = () => {
+    if (!isPageFile) return;
+    const pageIndex = wireframeState.availablePages.indexOf(pagePath);
+    if (pageIndex !== -1) {
+      setWireframeCurrentPage(pageIndex);
+    }
+  };
 
   return (
     <div>
@@ -1377,7 +1623,7 @@ const TreeNode = ({
           "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground theme-shadow",
           isPageFile && "cursor-pointer hover:theme-bg-primary",
           !isPageFile && "hover:theme-bg-accent",
-          isCurrentPage && "theme-border-border"
+          isCurrentPage && "theme-border-primary border-2"
         )}
         onClick={(e) => {
           if (isPageFile) {
@@ -1429,7 +1675,11 @@ const TreeNode = ({
               className="text-sm truncate cursor-pointer hover:underline theme-text-foreground"
               onClick={(e) => {
                 e.stopPropagation();
-                setIsEditing(true);
+                if (isPageFile) {
+                  handlePageFileClick();
+                } else {
+                  setIsEditing(true);
+                }
               }}
             >
               {node.name}
@@ -1505,18 +1755,21 @@ const TreeNode = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 theme-px-2 theme-spacing theme-text-muted-foreground hover:theme-text-foreground theme-shadow"
+                  className="h-6 theme-px-2 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-shadow theme-font-mono"
                 >
                   <Plus className="h-3 w-3" />
                   <span className="text-sm">Add...</span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border theme-font-sans theme-tracking" align="start">
-                <div className="flex flex-col theme-spacing">
+              <PopoverContent
+                className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border theme-font-mono theme-tracking"
+                align="start"
+              >
+                <div className="flex flex-col theme-gap-1">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start theme-spacing theme-shadow theme-font-sans theme-tracking"
+                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
                     onClick={() => {
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "page.tsx");
@@ -1532,7 +1785,7 @@ const TreeNode = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start theme-spacing theme-shadow theme-font-sans theme-tracking"
+                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
                     onClick={() => {
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "layout.tsx");
@@ -1548,7 +1801,7 @@ const TreeNode = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="justify-start theme-spacing theme-shadow theme-font-sans theme-tracking"
+                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
                     onClick={() => onAddDirectory(node.id)}
                   >
                     <Folder className="h-4 w-4 theme-text-chart-2" />
@@ -1589,21 +1842,18 @@ export const LayoutAndStructure = () => {
     ? findLayoutsForPagePath(appStructure, currentPage, "", true)
     : [];
 
-  console.log(
-    JSON.stringify({
-      wireframe: {
-        currentPageIndex,
-        availablePages,
-        currentPage,
-        layoutsCount: layouts.length,
-        layouts,
-      },
-    })
-  );
-
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("blank");
+
+  const handleTemplateChange = (templateId: string) => {
+    setSelectedTemplate(templateId);
+    const template = APP_STRUCTURE_TEMPLATES.find((t) => t.id === templateId);
+    if (template) {
+      setAppStructure(template.structure);
+    }
+  };
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -1785,7 +2035,7 @@ export const LayoutAndStructure = () => {
           className={cn(
             "border-2 border-dashed relative theme-shadow",
             colorSet.border,
-            "theme-radius theme-p h-full flex flex-col theme-spacing"
+            "theme-radius theme-p-4 h-full flex flex-col theme-gap-4"
           )}
         >
           <LayoutInsertionButtons
@@ -1801,14 +2051,22 @@ export const LayoutAndStructure = () => {
           />
 
           {headers.map((el) => (
-            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+              colorSet={colorSet}
+            />
           ))}
 
-          <div className="flex-1 flex theme-spacing">
+          <div className="flex-1 flex theme-gap-4">
             {leftSidebars.length > 0 && (
-              <div className="flex flex-col theme-spacing">
+              <div className="flex flex-col theme-gap-4">
                 {leftSidebars.map((el) => (
-                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                    colorSet={colorSet}
+                  />
                 ))}
               </div>
             )}
@@ -1816,16 +2074,24 @@ export const LayoutAndStructure = () => {
             <div className="flex-1">{content}</div>
 
             {rightSidebars.length > 0 && (
-              <div className="flex flex-col theme-spacing">
+              <div className="flex flex-col theme-gap-4">
                 {rightSidebars.map((el) => (
-                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                    colorSet={colorSet}
+                  />
                 ))}
               </div>
             )}
           </div>
 
           {footers.map((el) => (
-            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+              colorSet={colorSet}
+            />
           ))}
         </div>
       );
@@ -1835,15 +2101,32 @@ export const LayoutAndStructure = () => {
   };
 
   return (
-    <div className="theme-p theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
-      <div className="grid grid-cols-[minmax(400px,2fr)_minmax(400px,3fr)] theme-spacing min-h-[calc(100vh-400px)] max-xl:grid-cols-1">
-        <div className="flex flex-col theme-spacing h-full">
-          <div className="flex flex-col flex-1 min-h-0">
-            <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground theme-font-sans theme-tracking">
-              App Directory Structure
-            </h3>
+    <div className="theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
+      <div className="grid grid-cols-[minmax(400px,2fr)_minmax(400px,3fr)] theme-gap-4 min-h-[calc(100vh-400px)] max-xl:grid-cols-1">
+        <div className="flex flex-col theme-gap-4 h-full overflow-hidden">
+          <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
+            <div className="flex items-center justify-between theme-mb-2">
+              <h3 className="text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
+                App Directory Structure
+              </h3>
+              <Select
+                value={selectedTemplate}
+                onValueChange={handleTemplateChange}
+              >
+                <SelectTrigger className="w-[180px] h-8 theme-font-mono text-sm">
+                  <SelectValue placeholder="Select template" />
+                </SelectTrigger>
+                <SelectContent>
+                  {APP_STRUCTURE_TEMPLATES.map((template) => (
+                    <SelectItem key={template.id} value={template.id}>
+                      {template.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <div className="theme-font-mono text-base theme-bg-muted theme-p theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+            <div className="theme-font-mono text-base theme-bg-muted theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
               {appStructure.map((node, index) => (
                 <TreeNode
                   key={node.id}
@@ -1861,22 +2144,22 @@ export const LayoutAndStructure = () => {
 
               {appStructure.length === 0 && (
                 <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
-                  Click the buttons above to start building your app structure
+                  Select a template above to start building your app structure
                 </div>
               )}
             </div>
           </div>
 
           {routes.length > 0 && (
-            <div className="flex flex-col flex-1 min-h-0">
-              <h3 className="text-lg font-semibold theme-mb theme-text-card-foreground theme-font-sans theme-tracking">
+            <div className="flex flex-col flex-[1] min-h-0 overflow-hidden">
+              <h3 className="text-lg font-semibold theme-mb-2 theme-text-card-foreground theme-font-sans theme-tracking">
                 Site Map (Resulting Routes)
               </h3>
 
-              <div className="theme-font-mono text-base theme-bg-muted theme-p theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+              <div className="theme-font-mono text-base theme-bg-muted theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
                 {routes.map((route, index) => (
                   <SiteMapNode
-                    key={route.path}
+                    key={`${route.path}-${index}`}
                     route={route}
                     isLast={index === routes.length - 1}
                     appStructure={appStructure}
@@ -1890,12 +2173,12 @@ export const LayoutAndStructure = () => {
           )}
         </div>
 
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between theme-mb">
+        <div className="flex flex-col h-full overflow-hidden">
+          <div className="flex items-center justify-between theme-mb-2">
             <h3 className="text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
               Layout Wireframe {currentPage && `- ${currentPage}`}
             </h3>
-            <div className="flex items-center theme-spacing">
+            <div className="flex items-center theme-gap-1">
               <Button
                 variant="ghost"
                 size="icon"
@@ -1926,7 +2209,7 @@ export const LayoutAndStructure = () => {
               </Button>
             </div>
           </div>
-          <div className="theme-p theme-radius theme-bg-muted flex-1 overflow-y-auto theme-shadow">
+          <div className="theme-p-3 theme-radius theme-bg-muted flex-1 overflow-y-auto theme-shadow">
             {renderNestedBoxes()}
           </div>
         </div>
@@ -1955,18 +2238,6 @@ export const WireFrame = () => {
   const layouts = currentPage
     ? findLayoutsForPagePath(appStructure, currentPage, "", true)
     : [];
-
-  console.log(
-    JSON.stringify({
-      wireframe: {
-        currentPageIndex,
-        availablePages,
-        currentPage,
-        layoutsCount: layouts.length,
-        layouts,
-      },
-    })
-  );
 
   const handleAddLayoutElement = (
     layoutPath: string,
@@ -2061,7 +2332,7 @@ export const WireFrame = () => {
           className={cn(
             "border-2 border-dashed relative",
             colorSet.border,
-            "rounded theme-p-3 min-h-[200px] flex flex-col theme-gap-2"
+            "rounded theme-p-4 min-h-[200px] flex flex-col theme-gap-4"
           )}
         >
           <LayoutInsertionButtons
@@ -2077,14 +2348,22 @@ export const WireFrame = () => {
           />
 
           {headers.map((el) => (
-            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+              colorSet={colorSet}
+            />
           ))}
 
-          <div className="flex-1 flex theme-gap-2">
+          <div className="flex-1 flex theme-gap-4">
             {leftSidebars.length > 0 && (
-              <div className="flex flex-col theme-gap-2">
+              <div className="flex flex-col theme-gap-4">
                 {leftSidebars.map((el) => (
-                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                    colorSet={colorSet}
+                  />
                 ))}
               </div>
             )}
@@ -2092,16 +2371,24 @@ export const WireFrame = () => {
             <div className="flex-1">{content}</div>
 
             {rightSidebars.length > 0 && (
-              <div className="flex flex-col theme-gap-2">
+              <div className="flex flex-col theme-gap-4">
                 {rightSidebars.map((el) => (
-                  <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+                  <WireframeElementComponent
+                    key={el.id}
+                    element={el}
+                    colorSet={colorSet}
+                  />
                 ))}
               </div>
             )}
           </div>
 
           {footers.map((el) => (
-            <WireframeElementComponent key={el.id} element={el} colorSet={colorSet} />
+            <WireframeElementComponent
+              key={el.id}
+              element={el}
+              colorSet={colorSet}
+            />
           ))}
         </div>
       );

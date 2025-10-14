@@ -9,16 +9,6 @@
     "include": true,
     "children": [
       {
-        "id": "css",
-        "name": "css",
-        "displayName": "css",
-        "type": "directory",
-        "path": "css",
-        "urlPath": "/css",
-        "include": true,
-        "children": []
-      },
-      {
         "id": "robots",
         "name": "robots",
         "displayName": "Robots",
@@ -125,21 +115,21 @@
             "include": true
           },
           {
-            "id": "start-here.database-schema",
-            "name": "database-schema",
-            "displayName": "Database Schema",
+            "id": "start-here.database",
+            "name": "database",
+            "displayName": "Database",
             "type": "file",
             "order": 4,
-            "path": "start-here.database-schema",
-            "urlPath": "/start-here/database-schema",
-            "content": "# Database schema\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+            "path": "start-here.database",
+            "urlPath": "/start-here/database",
+            "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
             "components": [
               {
                 "id": "component-DatabaseConfiguration",
                 "name": "DatabaseConfiguration",
                 "displayName": "DatabaseConfiguration",
                 "type": "component",
-                "path": "database-schema.component.DatabaseConfiguration",
+                "path": "database.component.DatabaseConfiguration",
                 "urlPath": "",
                 "componentId": "DatabaseConfiguration",
                 "include": true
@@ -641,16 +631,6 @@
       "include": true,
       "children": [
         {
-          "id": "css",
-          "name": "css",
-          "displayName": "css",
-          "type": "directory",
-          "path": "css",
-          "urlPath": "/css",
-          "include": true,
-          "children": []
-        },
-        {
           "id": "robots",
           "name": "robots",
           "displayName": "Robots",
@@ -757,21 +737,21 @@
               "include": true
             },
             {
-              "id": "start-here.database-schema",
-              "name": "database-schema",
-              "displayName": "Database Schema",
+              "id": "start-here.database",
+              "name": "database",
+              "displayName": "Database",
               "type": "file",
               "order": 4,
-              "path": "start-here.database-schema",
-              "urlPath": "/start-here/database-schema",
-              "content": "# Database schema\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+              "path": "start-here.database",
+              "urlPath": "/start-here/database",
+              "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
               "components": [
                 {
                   "id": "component-DatabaseConfiguration",
                   "name": "DatabaseConfiguration",
                   "displayName": "DatabaseConfiguration",
                   "type": "component",
-                  "path": "database-schema.component.DatabaseConfiguration",
+                  "path": "database.component.DatabaseConfiguration",
                   "urlPath": "",
                   "componentId": "DatabaseConfiguration",
                   "include": true
@@ -1262,16 +1242,6 @@
         }
       ]
     },
-    "css": {
-      "id": "css",
-      "name": "css",
-      "displayName": "css",
-      "type": "directory",
-      "path": "css",
-      "urlPath": "/css",
-      "include": true,
-      "children": []
-    },
     "robots": {
       "id": "robots",
       "name": "robots",
@@ -1392,21 +1362,21 @@
           "include": true
         },
         {
-          "id": "start-here.database-schema",
-          "name": "database-schema",
-          "displayName": "Database Schema",
+          "id": "start-here.database",
+          "name": "database",
+          "displayName": "Database",
           "type": "file",
           "order": 4,
-          "path": "start-here.database-schema",
-          "urlPath": "/start-here/database-schema",
-          "content": "# Database schema\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+          "path": "start-here.database",
+          "urlPath": "/start-here/database",
+          "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
           "components": [
             {
               "id": "component-DatabaseConfiguration",
               "name": "DatabaseConfiguration",
               "displayName": "DatabaseConfiguration",
               "type": "component",
-              "path": "database-schema.component.DatabaseConfiguration",
+              "path": "database.component.DatabaseConfiguration",
               "urlPath": "",
               "componentId": "DatabaseConfiguration",
               "include": true
@@ -1580,22 +1550,22 @@
       "componentId": "LayoutAndStructure",
       "include": true
     },
-    "start-here.database-schema": {
-      "id": "start-here.database-schema",
-      "name": "database-schema",
-      "displayName": "Database Schema",
+    "start-here.database": {
+      "id": "start-here.database",
+      "name": "database",
+      "displayName": "Database",
       "type": "file",
       "order": 4,
-      "path": "start-here.database-schema",
-      "urlPath": "/start-here/database-schema",
-      "content": "# Database schema\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+      "path": "start-here.database",
+      "urlPath": "/start-here/database",
+      "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
       "components": [
         {
           "id": "component-DatabaseConfiguration",
           "name": "DatabaseConfiguration",
           "displayName": "DatabaseConfiguration",
           "type": "component",
-          "path": "database-schema.component.DatabaseConfiguration",
+          "path": "database.component.DatabaseConfiguration",
           "urlPath": "",
           "componentId": "DatabaseConfiguration",
           "include": true
@@ -1604,12 +1574,12 @@
       "sections": {},
       "include": true
     },
-    "database-schema.component.DatabaseConfiguration": {
+    "database.component.DatabaseConfiguration": {
       "id": "component-DatabaseConfiguration",
       "name": "DatabaseConfiguration",
       "displayName": "DatabaseConfiguration",
       "type": "component",
-      "path": "database-schema.component.DatabaseConfiguration",
+      "path": "database.component.DatabaseConfiguration",
       "urlPath": "",
       "componentId": "DatabaseConfiguration",
       "include": true
@@ -2906,5 +2876,5 @@
       "fileExtension": "tsx"
     }
   },
-  "contentVersion": 27
+  "contentVersion": 28
 }

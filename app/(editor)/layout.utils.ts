@@ -1,5 +1,16 @@
 import { FileSystemEntry } from "./layout.types";
 
+const stripGroupSegments = (path: string): string => {
+  let stripped = path.replace(/\/\([^)]+\)/g, "");
+  if (!stripped.startsWith("/")) {
+    stripped = "/" + stripped;
+  }
+  if (stripped === "//" || stripped === "") {
+    stripped = "/";
+  }
+  return stripped;
+};
+
 export const findLayoutsForPagePath = (
   entries: FileSystemEntry[],
   pagePath: string,
@@ -18,13 +29,18 @@ export const findLayoutsForPagePath = (
     targetPath: string,
     currentDir: string
   ): boolean => {
+    const currentDirNormalized = currentDir || "/";
+    if (targetPath === currentDirNormalized) {
+      const hasPageFile = nodes.some(
+        (child) => child.type === "file" && child.name === "page.tsx"
+      );
+      if (hasPageFile) return true;
+    }
+
     for (const entry of nodes) {
       if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
         if (entry.children) {
-          const routeGroupPath = currentDir
-            ? `${currentDir}/${entry.name}`
-            : `/${entry.name}`;
-          if (pathExistsInSubtree(entry.children, targetPath, routeGroupPath)) {
+          if (pathExistsInSubtree(entry.children, targetPath, currentDir)) {
             return true;
           }
         }
@@ -84,7 +100,7 @@ export const findLayoutsForPagePath = (
           const targetPathExistsInGroup = pathExistsInSubtree(
             entry.children,
             targetPath,
-            routeGroupPath
+            currentDir
           );
 
           if (hasLayout && targetPathExistsInGroup) {
@@ -100,8 +116,9 @@ export const findLayoutsForPagePath = (
         const newPath = currentDir
           ? `${currentDir}/${entry.name}`
           : `/${entry.name}`;
+        const newPathUrl = stripGroupSegments(newPath);
 
-        if (targetPath === newPath || targetPath.startsWith(newPath + "/")) {
+        if (targetPath === newPathUrl || targetPath.startsWith(newPathUrl + "/")) {
           const hasLayout = entry.children.some(
             (child) => child.type === "file" && child.name === "layout.tsx"
           );

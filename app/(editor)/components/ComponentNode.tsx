@@ -55,6 +55,11 @@ const componentMap: Record<string, any> = {
       default: m.ThemeConfiguration,
     }))
   ),
+  DatabaseConfiguration: lazy(() =>
+    import("@/app/(components)/DatabaseConfiguration").then((m) => ({
+      default: m.DatabaseConfiguration,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

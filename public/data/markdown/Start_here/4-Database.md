@@ -1,4 +1,4 @@
-# Database schema
+# Database
 
 Define your schema, client files and Row Level Security to configure your database.
 

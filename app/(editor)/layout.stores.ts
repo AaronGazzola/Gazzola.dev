@@ -931,10 +931,13 @@ export const useEditorStore = create<EditorState>()(
 
               if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
                 if (entry.children) {
-                  const routeGroupPath = parentPath
-                    ? `${parentPath}/${entry.name}`
-                    : `/${entry.name}`;
-                  paths.push(...extractPagePaths(entry.children, routeGroupPath, false));
+                  const hasPageFile = entry.children.some(
+                    (child) => child.type === "file" && child.name === "page.tsx"
+                  );
+                  if (hasPageFile && parentPath === "") {
+                    paths.push("/");
+                  }
+                  paths.push(...extractPagePaths(entry.children, parentPath, false));
                 }
                 return;
               }
