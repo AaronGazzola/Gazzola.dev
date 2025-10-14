@@ -50,6 +50,7 @@ import {
   Files,
   FlaskConical,
   Folder,
+  Home,
   LayoutPanelTop,
   ListRestart,
   Palette,
@@ -202,6 +203,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     return pages.sort((a, b) => a.order - b.order);
   }, [data]);
 
+  const numberedPages = useMemo(() => {
+    return allPages.filter((page) => page.order > 0);
+  }, [allPages]);
+
   const sectionsData = useMemo(() => {
     const filesWithSections: {
       filePath: string;
@@ -278,8 +283,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   }, [data]);
 
   const currentPageIndex = useMemo(() => {
-    return allPages.findIndex((page) => page.path === currentContentPath);
-  }, [allPages, currentContentPath]);
+    return numberedPages.findIndex((page) => page.path === currentContentPath);
+  }, [numberedPages, currentContentPath]);
 
   const isViewingComponentFile = useMemo(() => {
     const currentNode = data.flatIndex[currentContentPath];
@@ -287,20 +292,36 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   }, [data, currentContentPath]);
 
   const nextPage =
-    currentPageIndex < allPages.length - 1
-      ? allPages[currentPageIndex + 1]
+    currentPageIndex >= 0 && currentPageIndex < numberedPages.length - 1
+      ? numberedPages[currentPageIndex + 1]
       : null;
 
   const canGoBack = currentPageIndex > 0;
   const canGoNext = Boolean(nextPage);
 
-  const prevPageTitle = canGoBack ? allPages[currentPageIndex - 1]?.title : "";
+  const prevPageTitle = canGoBack ? numberedPages[currentPageIndex - 1]?.title : "";
   const nextPageTitle = nextPage?.title || "";
 
   const handleBack = () => {
     if (canGoBack) {
-      const prevPage = allPages[currentPageIndex - 1];
+      const prevPage = numberedPages[currentPageIndex - 1];
       router.push(prevPage.url);
+    }
+  };
+
+  const handleHome = () => {
+    conditionalLog(JSON.stringify({numberedPagesLength:numberedPages.length,numberedPages:numberedPages.map(p=>({title:p.title,order:p.order,url:p.url,path:p.path}))}),{label:"toolbar"});
+    const homePage = numberedPages.find((page) => page.order === 1);
+    conditionalLog(JSON.stringify({foundHomePage:!!homePage,homePage:homePage?{title:homePage.title,order:homePage.order,url:homePage.url}:null}),{label:"toolbar"});
+    if (homePage) {
+      conditionalLog(JSON.stringify({action:"pushing to router",url:homePage.url}),{label:"toolbar"});
+      router.push(homePage.url);
+    } else {
+      conditionalLog(JSON.stringify({action:"no home page found, using first",firstPage:numberedPages[0]}),{label:"toolbar"});
+      const firstPage = numberedPages[0];
+      if (firstPage) {
+        router.push(firstPage.url);
+      }
     }
   };
 
@@ -368,7 +389,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
         const firstPagePath = Object.values(freshData.flatIndex)
-          .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly)
+          .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
           .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
         const resetKey = Date.now();
@@ -419,17 +440,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const progressInfo = useMemo(() => {
-    const currentStep = currentPageIndex + 1;
-    const totalSteps = allPages.length;
-    const progressValue = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+    const currentStep = currentPageIndex >= 0 ? currentPageIndex + 1 : 0;
+    const totalSteps = numberedPages.length;
+    const progressValue = totalSteps > 0 && currentStep > 0 ? (currentStep / totalSteps) * 100 : 0;
 
     return {
       currentStep,
       totalSteps,
       progressValue,
-      currentTitle: allPages[currentPageIndex]?.title || "Unknown",
+      currentTitle: currentPageIndex >= 0 ? numberedPages[currentPageIndex]?.title || "Unknown" : "Unknown",
     };
-  }, [allPages, currentPageIndex]);
+  }, [numberedPages, currentPageIndex]);
 
   return (
     <TooltipProvider>
@@ -464,6 +485,22 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               <ChevronLeft className="h-4 w-4" />
               Back
             </Button>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleHome}
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9"
+                >
+                  <Home className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Go to first page</p>
+              </TooltipContent>
+            </Tooltip>
 
             <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
           </div>

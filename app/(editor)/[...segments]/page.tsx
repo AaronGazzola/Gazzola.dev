@@ -115,7 +115,8 @@ const Page = () => {
         (node) =>
           node.type === "file" &&
           node.include !== false &&
-          !(node as any).previewOnly
+          !(node as any).previewOnly &&
+          !(node as any).visibleAfterPage
       )
       .sort((a, b) => (a.order || 0) - (b.order || 0));
 

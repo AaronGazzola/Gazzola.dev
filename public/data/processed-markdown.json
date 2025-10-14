@@ -19,16 +19,29 @@
         "children": []
       },
       {
-        "id": "robot-readme",
-        "name": "robot-readme",
-        "displayName": "ROBOT README",
-        "type": "file",
-        "path": "robot-readme",
-        "urlPath": "/robot-readme",
-        "content": "# Robot README\n\nThis file provides instructions for AI to implement the project roadmap.\n",
-        "components": [],
-        "sections": {},
-        "include": true
+        "id": "robots",
+        "name": "robots",
+        "displayName": "Robots",
+        "type": "directory",
+        "path": "robots",
+        "urlPath": "/robots",
+        "include": true,
+        "children": [
+          {
+            "id": "robots.robot-readme",
+            "name": "robot-readme",
+            "displayName": "ROBOT README",
+            "type": "file",
+            "path": "robots.robot-readme",
+            "urlPath": "/robots/robot-readme",
+            "content": "# Robot README\n\nThis file provides instructions for AI to implement the project roadmap.\n",
+            "components": [],
+            "sections": {},
+            "include": true,
+            "visibleAfterPage": "start-here.next-steps"
+          }
+        ],
+        "visibleAfterPage": "start-here.next-steps"
       },
       {
         "id": "start-here",
@@ -638,16 +651,29 @@
           "children": []
         },
         {
-          "id": "robot-readme",
-          "name": "robot-readme",
-          "displayName": "ROBOT README",
-          "type": "file",
-          "path": "robot-readme",
-          "urlPath": "/robot-readme",
-          "content": "# Robot README\n\nThis file provides instructions for AI to implement the project roadmap.\n",
-          "components": [],
-          "sections": {},
-          "include": true
+          "id": "robots",
+          "name": "robots",
+          "displayName": "Robots",
+          "type": "directory",
+          "path": "robots",
+          "urlPath": "/robots",
+          "include": true,
+          "children": [
+            {
+              "id": "robots.robot-readme",
+              "name": "robot-readme",
+              "displayName": "ROBOT README",
+              "type": "file",
+              "path": "robots.robot-readme",
+              "urlPath": "/robots/robot-readme",
+              "content": "# Robot README\n\nThis file provides instructions for AI to implement the project roadmap.\n",
+              "components": [],
+              "sections": {},
+              "include": true,
+              "visibleAfterPage": "start-here.next-steps"
+            }
+          ],
+          "visibleAfterPage": "start-here.next-steps"
         },
         {
           "id": "start-here",
@@ -1246,17 +1272,43 @@
       "include": true,
       "children": []
     },
-    "robot-readme": {
-      "id": "robot-readme",
+    "robots": {
+      "id": "robots",
+      "name": "robots",
+      "displayName": "Robots",
+      "type": "directory",
+      "path": "robots",
+      "urlPath": "/robots",
+      "include": true,
+      "children": [
+        {
+          "id": "robots.robot-readme",
+          "name": "robot-readme",
+          "displayName": "ROBOT README",
+          "type": "file",
+          "path": "robots.robot-readme",
+          "urlPath": "/robots/robot-readme",
+          "content": "# Robot README\n\nThis file provides instructions for AI to implement the project roadmap.\n",
+          "components": [],
+          "sections": {},
+          "include": true,
+          "visibleAfterPage": "start-here.next-steps"
+        }
+      ],
+      "visibleAfterPage": "start-here.next-steps"
+    },
+    "robots.robot-readme": {
+      "id": "robots.robot-readme",
       "name": "robot-readme",
       "displayName": "ROBOT README",
       "type": "file",
-      "path": "robot-readme",
-      "urlPath": "/robot-readme",
+      "path": "robots.robot-readme",
+      "urlPath": "/robots/robot-readme",
       "content": "# Robot README\n\nThis file provides instructions for AI to implement the project roadmap.\n",
       "components": [],
       "sections": {},
-      "include": true
+      "include": true,
+      "visibleAfterPage": "start-here.next-steps"
     },
     "start-here": {
       "id": "start-here",
@@ -2854,5 +2906,5 @@
       "fileExtension": "tsx"
     }
   },
-  "contentVersion": 26
+  "contentVersion": 27
 }

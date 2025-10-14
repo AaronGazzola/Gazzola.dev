@@ -27,6 +27,7 @@ export interface SectionOption {
 
 export interface FileNode extends BaseNode {
   type: "file";
+  visibleAfterPage?: string;
   content: string;
   components: ComponentRef[];
   sections: Record<string, Record<string, SectionOption>>;

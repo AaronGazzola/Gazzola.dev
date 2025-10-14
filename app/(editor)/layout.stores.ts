@@ -15,7 +15,7 @@ const generateId = () => Math.random().toString(36).substring(2, 11);
 
 const getFirstPagePath = (data: MarkdownData): string => {
   const pages = Object.values(data.flatIndex)
-    .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly)
+    .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   return pages.length > 0 ? pages[0].path : "";
@@ -305,7 +305,7 @@ export const useEditorStore = create<EditorState>()(
       getNextUnvisitedPage: (currentPath) => {
         const state = get();
         const pages = Object.values(state.data.flatIndex)
-          .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly)
+          .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
           .sort((a, b) => (a.order || 0) - (b.order || 0));
 
         const currentIndex = pages.findIndex((p) => p.path === currentPath);

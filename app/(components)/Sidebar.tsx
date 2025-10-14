@@ -61,6 +61,25 @@ const generateNavigationFromMarkdownData = (
   return items;
 };
 
+const hasPreviewOnlyDescendants = (
+  item: NavigationItem,
+  flatIndex: Record<string, MarkdownNode>
+): boolean => {
+  if (!item.children) return false;
+
+  for (const child of item.children.filter((c) => c.include !== false)) {
+    const childNode = flatIndex[child.path || ""];
+    if (childNode && (childNode as any).previewOnly === true) {
+      return true;
+    }
+    if (child.type === "segment" && hasPreviewOnlyDescendants(child, flatIndex)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 interface TreeItemProps {
   item: NavigationItem;
   level: number;
@@ -108,8 +127,20 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   if (item.type === "page") {
-    if (!item.path || !isPageVisited(item.path)) {
+    const node = data.flatIndex[item.path || ""];
+
+    if (!item.path) {
       return null;
+    }
+
+    if (node?.type === "file" && node.visibleAfterPage) {
+      if (!isPageVisited(node.visibleAfterPage)) {
+        return null;
+      }
+    } else if (node?.type === "file" && !node.previewOnly) {
+      if (!isPageVisited(item.path)) {
+        return null;
+      }
     }
 
     const isActive = currentPath === item.path;
@@ -154,7 +185,9 @@ const TreeItem: React.FC<TreeItemProps> = ({
       return false;
     });
 
-  if (!hasVisitedChildren && !hasRequiredPageVisit) {
+  const hasPreviewDescendants = hasPreviewOnlyDescendants(item, data.flatIndex);
+
+  if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
     return null;
   }
 
@@ -230,7 +263,7 @@ const Sidebar = () => {
 
     const getFirstPagePath = () => {
       const pages = Object.values(data.flatIndex)
-        .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly)
+        .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
       return pages.length > 0 ? pages[0].path : "";
     };

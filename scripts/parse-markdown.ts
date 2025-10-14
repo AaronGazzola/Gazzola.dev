@@ -40,6 +40,7 @@ interface FileNode {
   include: boolean;
   previewOnly?: boolean;
   includeInToolbar?: boolean;
+  visibleAfterPage?: string;
   fileExtension?: string;
 }
 
@@ -271,7 +272,7 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     include
   );
 
-  return {
+  const fileNode: FileNode = {
     id: sanitizedName,
     name: sanitizedName,
     displayName: displayName,
@@ -284,6 +285,12 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     sections: sections,
     include: include,
   };
+
+  if (sanitizedName === "robot-readme") {
+    fileNode.visibleAfterPage = "start-here.next-steps";
+  }
+
+  return fileNode;
 }
 
 function buildMarkdownTree(
@@ -314,6 +321,8 @@ function buildMarkdownTree(
       const hasAsterisk = dirName.includes("*");
       const include = !hasAsterisk && parentInclude;
 
+      const children = buildMarkdownTree(fullPath, itemRelativePath, nodePath, include);
+
       const directoryNode: DirectoryNode = {
         id: nodePath,
         name: sanitizedName,
@@ -323,8 +332,12 @@ function buildMarkdownTree(
         path: nodePath,
         urlPath: generateUrlPath(itemRelativePath),
         include: include,
-        children: buildMarkdownTree(fullPath, itemRelativePath, nodePath, include),
+        children: children,
       };
+
+      if (sanitizedName === "robots") {
+        directoryNode.visibleAfterPage = "start-here.next-steps";
+      }
 
       nodes.push(directoryNode);
     } else if (
