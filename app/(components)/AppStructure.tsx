@@ -356,20 +356,16 @@ const WireframeElementComponent = ({
 
 const LAYOUT_COLORS = [
   {
-    border: "border-green-300 dark:border-green-700",
-    icon: "text-green-500",
+    border: "theme-border-chart-5",
+    icon: "theme-text-chart-5",
   },
   {
-    border: "border-purple-300 dark:border-purple-700",
-    icon: "text-purple-500",
+    border: "theme-border-chart-2",
+    icon: "theme-text-chart-2",
   },
   {
-    border: "border-orange-300 dark:border-orange-700",
-    icon: "text-orange-500",
-  },
-  {
-    border: "border-red-300 dark:border-red-700",
-    icon: "text-red-500",
+    border: "theme-border-chart-3",
+    icon: "theme-text-chart-3",
   },
 ];
 
@@ -1461,7 +1457,9 @@ const TreeNode = ({
         ? fullPath.substring(1)
         : fullPath;
 
-      let directoryPath = normalizedPath.replace("/layout.tsx", "").replace(/^app/, "");
+      let directoryPath = normalizedPath
+        .replace("/layout.tsx", "")
+        .replace(/^app/, "");
       const directoryPathWithGroups = directoryPath || "/";
       directoryPath = directoryPath.replace(/\/\([^)]+\)/g, "");
       if (!directoryPath.startsWith("/")) {
@@ -1479,40 +1477,81 @@ const TreeNode = ({
       ): string | null => {
         for (const entry of entries) {
           if (entry.name === "app" && !insideApp) {
-            const result = findFirstDescendantPage(entry.children || [], "", searchPath, true);
+            const result = findFirstDescendantPage(
+              entry.children || [],
+              "",
+              searchPath,
+              true
+            );
             if (result) return result;
             continue;
           }
 
           if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
-            const groupPath = currentPath ? `${currentPath}/${entry.name}` : `/${entry.name}`;
+            const groupPath = currentPath
+              ? `${currentPath}/${entry.name}`
+              : `/${entry.name}`;
 
             if (searchPath === groupPath) {
-              const hasPage = (entry.children || []).some(child => child.type === "file" && child.name === "page.tsx");
+              const hasPage = (entry.children || []).some(
+                (child) => child.type === "file" && child.name === "page.tsx"
+              );
               if (hasPage) return currentPath || "/";
 
-              const result = findFirstDescendantPage(entry.children || [], currentPath, "/", true);
+              const result = findFirstDescendantPage(
+                entry.children || [],
+                currentPath,
+                "/",
+                true
+              );
               if (result) return result;
             }
 
             if (searchPath === "/" || searchPath.startsWith(groupPath + "/")) {
-              const strippedSearchPath = searchPath.replace(groupPath, currentPath || "");
-              const result = findFirstDescendantPage(entry.children || [], currentPath, strippedSearchPath, true);
+              const strippedSearchPath = searchPath.replace(
+                groupPath,
+                currentPath || ""
+              );
+              const result = findFirstDescendantPage(
+                entry.children || [],
+                currentPath,
+                strippedSearchPath,
+                true
+              );
               if (result) return result;
             }
             continue;
           }
 
           if (entry.type === "directory" && entry.children) {
-            const newPath = currentPath ? `${currentPath}/${entry.name}` : `/${entry.name}`;
+            const newPath = currentPath
+              ? `${currentPath}/${entry.name}`
+              : `/${entry.name}`;
 
-            const hasPage = entry.children.some(child => child.type === "file" && child.name === "page.tsx");
-            if (hasPage && (searchPath === "/" || searchPath === newPath || newPath.startsWith(searchPath + "/"))) {
+            const hasPage = entry.children.some(
+              (child) => child.type === "file" && child.name === "page.tsx"
+            );
+            if (
+              hasPage &&
+              (searchPath === "/" ||
+                searchPath === newPath ||
+                newPath.startsWith(searchPath + "/"))
+            ) {
               return newPath;
             }
 
-            if (searchPath === "/" || searchPath === newPath || searchPath.startsWith(newPath + "/") || newPath.startsWith(searchPath + "/")) {
-              const result = findFirstDescendantPage(entry.children, newPath, searchPath, true);
+            if (
+              searchPath === "/" ||
+              searchPath === newPath ||
+              searchPath.startsWith(newPath + "/") ||
+              newPath.startsWith(searchPath + "/")
+            ) {
+              const result = findFirstDescendantPage(
+                entry.children,
+                newPath,
+                searchPath,
+                true
+              );
               if (result) return result;
             }
           }
@@ -1520,12 +1559,23 @@ const TreeNode = ({
         return null;
       };
 
-      const descendantPagePath = findFirstDescendantPage(appStructure, "", directoryPathWithGroups, false);
+      const descendantPagePath = findFirstDescendantPage(
+        appStructure,
+        "",
+        directoryPathWithGroups,
+        false
+      );
 
       if (descendantPagePath) {
-        const layouts = findLayoutsForPagePath(appStructure, descendantPagePath, "", true);
+        const layouts = findLayoutsForPagePath(
+          appStructure,
+          descendantPagePath,
+          "",
+          true
+        );
         const layoutIndex = layouts.findIndex((l) => {
-          const expectedFile = l === "/" ? "app/layout.tsx" : `app${l}/layout.tsx`;
+          const expectedFile =
+            l === "/" ? "app/layout.tsx" : `app${l}/layout.tsx`;
           return normalizedPath === expectedFile;
         });
 
@@ -1620,7 +1670,7 @@ const TreeNode = ({
     <div>
       <div
         className={cn(
-          "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground theme-shadow",
+          "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground ",
           isPageFile && "cursor-pointer hover:theme-bg-primary",
           !isPageFile && "hover:theme-bg-accent",
           isCurrentPage && "theme-border-primary border-2"
@@ -1675,11 +1725,7 @@ const TreeNode = ({
               className="text-sm truncate cursor-pointer hover:underline theme-text-foreground"
               onClick={(e) => {
                 e.stopPropagation();
-                if (isPageFile) {
-                  handlePageFileClick();
-                } else {
-                  setIsEditing(true);
-                }
+                setIsEditing(true);
               }}
             >
               {node.name}
@@ -1694,24 +1740,20 @@ const TreeNode = ({
           )}
         >
           {isEditing && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 theme-shadow"
+            <div
+              className="h-6 w-6 theme-shadow flex items-center justify-center"
               title="Save"
             >
               <Save className="h-3 w-3 theme-text-muted-foreground" />
-            </Button>
+            </div>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 theme-shadow"
+          <div
+            className="h-6 w-6 theme-shadow flex items-center justify-center cursor-pointer hover:theme-bg-accent theme-radius"
             onClick={() => onDelete(node.id)}
             title="Delete"
           >
             <Trash2 className="h-3 w-3 theme-text-destructive" />
-          </Button>
+          </div>
         </div>
       </div>
 
@@ -1755,7 +1797,7 @@ const TreeNode = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 theme-px-2 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-shadow theme-font-mono"
+                  className="h-6 theme-px-2 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono"
                 >
                   <Plus className="h-3 w-3" />
                   <span className="text-sm">Add...</span>
@@ -2126,7 +2168,7 @@ export const LayoutAndStructure = () => {
               </Select>
             </div>
 
-            <div className="theme-font-mono text-base theme-bg-muted theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+            <div className="theme-font-mono text-base theme-bg-background theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
               {appStructure.map((node, index) => (
                 <TreeNode
                   key={node.id}
@@ -2156,7 +2198,7 @@ export const LayoutAndStructure = () => {
                 Site Map (Resulting Routes)
               </h3>
 
-              <div className="theme-font-mono text-base theme-bg-muted theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+              <div className="theme-font-mono text-base theme-bg-background theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
                 {routes.map((route, index) => (
                   <SiteMapNode
                     key={`${route.path}-${index}`}
@@ -2209,7 +2251,7 @@ export const LayoutAndStructure = () => {
               </Button>
             </div>
           </div>
-          <div className="theme-p-3 theme-radius theme-bg-muted flex-1 overflow-y-auto theme-shadow">
+          <div className="theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow">
             {renderNestedBoxes()}
           </div>
         </div>

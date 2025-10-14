@@ -62,6 +62,45 @@
   stroke: var(--theme-chart-5);
 }
 
+.theme-border-chart-1 {
+  border-color: var(--theme-chart-1);
+}
+
+.theme-border-chart-2 {
+  border-color: var(--theme-chart-2);
+}
+
+.theme-border-chart-3 {
+  border-color: var(--theme-chart-3);
+}
+
+.theme-border-chart-4 {
+  border-color: var(--theme-chart-4);
+}
+
+.theme-border-chart-5 {
+  border-color: var(--theme-chart-5);
+}
+.theme-text-chart-1 {
+  color: var(--theme-chart-1);
+}
+
+.theme-text-chart-2 {
+  color: var(--theme-chart-2);
+}
+
+.theme-text-chart-3 {
+  color: var(--theme-chart-3);
+}
+
+.theme-text-chart-4 {
+  color: var(--theme-chart-4);
+}
+
+.theme-text-chart-5 {
+  color: var(--theme-chart-5);
+}
+
 .theme-bg-chart-1 {
   background-color: var(--theme-chart-1);
 }
