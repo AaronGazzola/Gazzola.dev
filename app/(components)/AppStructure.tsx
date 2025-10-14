@@ -1673,7 +1673,7 @@ const TreeNode = ({
           "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground ",
           isPageFile && "cursor-pointer hover:theme-bg-primary",
           !isPageFile && "hover:theme-bg-accent",
-          isCurrentPage && "theme-border-primary border-2"
+          isCurrentPage && " theme-bg-muted "
         )}
         onClick={(e) => {
           if (isPageFile) {

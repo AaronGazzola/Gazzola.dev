@@ -134,7 +134,9 @@ const TreeItem: React.FC<TreeItemProps> = ({
     }
 
     if (node?.type === "file" && node.visibleAfterPage) {
-      if (!isPageVisited(node.visibleAfterPage)) {
+      const hasVisitedRequiredPage = isPageVisited(node.visibleAfterPage);
+      const isPageIncluded = node.include === true;
+      if (!hasVisitedRequiredPage || !isPageIncluded) {
         return null;
       }
     } else if (node?.type === "file" && !node.previewOnly) {

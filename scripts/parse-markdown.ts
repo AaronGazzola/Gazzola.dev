@@ -250,9 +250,15 @@ function buildComponentsTree(): DirectoryNode | null {
   return componentsDir;
 }
 
+function stripFrontmatter(content: string): string {
+  const frontmatterRegex = /^---\n[\s\S]*?\n---\n\n/;
+  return content.replace(frontmatterRegex, '');
+}
+
 function parseMarkdownFile(filePath: string, relativePath: string, parentInclude: boolean = true): FileNode {
   let content = fs.readFileSync(filePath, "utf8");
   content = removeThemedComponentComments(content);
+  content = stripFrontmatter(content);
   const fileName = path.basename(filePath);
   const orderMatch = fileName.match(/^(\d+)-(.+)\.md$/);
   const order = orderMatch ? parseInt(orderMatch[1], 10) : undefined;
@@ -288,6 +294,10 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
 
   if (sanitizedName === "robot-readme") {
     fileNode.visibleAfterPage = "start-here.next-steps";
+  }
+
+  if (sanitizedName === "database") {
+    fileNode.visibleAfterPage = "start-here.layout-routes";
   }
 
   return fileNode;
