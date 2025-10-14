@@ -35,11 +35,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { conditionalLog } from "@/lib/log.util";
 import { useQueryClient } from "@tanstack/react-query";
@@ -146,7 +141,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     markStepComplete,
     dismissWalkthrough,
     startWalkthrough,
-    resetWalkthrough,
     isStepOpen,
     setStepOpen,
     initialDialogShown,
@@ -483,8 +477,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 }
                 onOpenChange={(open) => {
                   setInitialDialogOpen(open);
-                  if (!open && !isStepOpen(WalkthroughStep.INITIAL_DIALOG)) {
-                    setStepOpen(WalkthroughStep.INITIAL_DIALOG, true);
+                  if (!open) {
+                    if (!isStepOpen(WalkthroughStep.INITIAL_DIALOG)) {
+                      setStepOpen(WalkthroughStep.INITIAL_DIALOG, true);
+                    }
+                    dismissWalkthrough();
                   }
                 }}
               >
@@ -582,37 +579,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               </Dialog>
             ) : (
               initialDialogShown && (
-                <Popover
-                  open={permanentHelperOpen}
+                <WalkthroughHelper
+                  isOpen={permanentHelperOpen}
                   onOpenChange={setPermanentHelperOpen}
-                >
-                  <PopoverTrigger asChild>
-                    <button className="bg-transparent border-none p-0 cursor-pointer">
-                      <WalkthroughHelper />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
-                    <div className="flex flex-col theme-gap-3">
-                      <h4 className="font-semibold text-sm text-foreground theme-font-sans theme-tracking">
-                        Walkthrough Help
-                      </h4>
-                      <p className="text-sm text-foreground theme-font-sans theme-tracking">
-                        Need help getting started? Click the button below to
-                        restart the walkthrough guide.
-                      </p>
-                      <GlobalButton
-                        variant="outline"
-                        className="w-full theme-font-sans theme-tracking"
-                        onClick={() => {
-                          resetWalkthrough();
-                          setPermanentHelperOpen(false);
-                        }}
-                      >
-                        Restart Walkthrough
-                      </GlobalButton>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                  title="Walkthrough Help"
+                  description="Need help getting started? Click the button below to restart the walkthrough guide."
+                  showRestartButton={true}
+                />
               )
             )}
             <EditorDialog

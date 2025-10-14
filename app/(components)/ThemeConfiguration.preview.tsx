@@ -49,7 +49,7 @@ export const ThemeConfigurationPreview = () => {
                         key={i}
                         cx={x}
                         cy={y}
-                        r="3"
+                        r="5"
                         className="theme-text-primary"
                         fill="currentColor"
                       />
@@ -123,7 +123,7 @@ export const ThemeConfigurationPreview = () => {
                   ].map((height, i) => (
                     <div
                       key={i}
-                      className="theme-stroke-chart-2 theme-radius"
+                      className="theme-bg-primary theme-radius"
                       style={{
                         height: `calc(var(--theme-spacing) * ${height})`,
                         opacity: i < 7 ? "1" : "0.3",

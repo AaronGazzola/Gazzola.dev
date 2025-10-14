@@ -54,6 +54,7 @@ interface DirectoryNode {
   include: boolean;
   previewOnly?: boolean;
   includeInToolbar?: boolean;
+  visibleAfterPage?: string;
   children: MarkdownNode[];
 }
 
@@ -197,6 +198,7 @@ function buildComponentsTree(): DirectoryNode | null {
     include: true,
     previewOnly: true,
     includeInToolbar: false,
+    visibleAfterPage: "start-here.theme",
     children: [],
   };
 

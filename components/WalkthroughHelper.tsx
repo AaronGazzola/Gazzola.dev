@@ -1,6 +1,8 @@
 "use client";
 
 import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
+import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -17,6 +19,7 @@ interface WalkthroughHelperProps {
   description?: string;
   iconSize?: "sm" | "md";
   className?: string;
+  showRestartButton?: boolean;
 }
 
 export const WalkthroughHelper = ({
@@ -27,8 +30,10 @@ export const WalkthroughHelper = ({
   description,
   iconSize = "sm",
   className = "",
+  showRestartButton = false,
 }: WalkthroughHelperProps) => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+  const { resetWalkthrough } = useWalkthroughStore();
   const backgroundStyle = getBackgroundStyle(
     gradientColors,
     singleColor,
@@ -59,10 +64,22 @@ export const WalkthroughHelper = ({
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-      <PopoverContent className="w-80">
-        <div className="space-y-2">
-          <h4 className="font-semibold">{title}</h4>
-          <p className="text-sm">{description}</p>
+      <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
+        <div className="flex flex-col theme-gap-3">
+          <h4 className="font-semibold text-sm theme-font-sans theme-tracking">{title}</h4>
+          <p className="text-sm theme-font-sans theme-tracking">{description}</p>
+          {showRestartButton && (
+            <Button
+              variant="outline"
+              className="w-full theme-font-sans theme-tracking"
+              onClick={() => {
+                resetWalkthrough();
+                onOpenChange?.(false);
+              }}
+            >
+              Restart Walkthrough
+            </Button>
+          )}
         </div>
       </PopoverContent>
     </Popover>

@@ -16,6 +16,7 @@ export interface BaseNode {
 
 export interface DirectoryNode extends BaseNode {
   type: "directory";
+  visibleAfterPage?: string;
   children: MarkdownNode[];
 }
 

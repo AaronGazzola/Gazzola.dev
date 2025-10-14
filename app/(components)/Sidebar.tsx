@@ -108,10 +108,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   if (item.type === "page") {
-    const node = data.flatIndex[item.path || ""];
-    const isComponentFile = node?.type === "file" && node.previewOnly === true;
-
-    if (!item.path || (!isPageVisited(item.path) && !isComponentFile)) {
+    if (!item.path || !isPageVisited(item.path)) {
       return null;
     }
 
@@ -138,21 +135,26 @@ const TreeItem: React.FC<TreeItemProps> = ({
     );
   }
 
+  const itemNode = data.flatIndex[itemPath];
+
+  const hasRequiredPageVisit = itemNode?.type === "directory" && itemNode.visibleAfterPage
+    ? isPageVisited(itemNode.visibleAfterPage)
+    : false;
+
+  if (itemNode?.type === "directory" && itemNode.visibleAfterPage && !hasRequiredPageVisit) {
+    return null;
+  }
+
   const hasVisitedChildren = item.children
     ?.filter((child) => child.include !== false)
     .some((child) => {
       if (child.type === "page" && child.path) {
-        const childNode = data.flatIndex[child.path];
-        const isComponentFile = childNode?.type === "file" && childNode.previewOnly === true;
-        return isPageVisited(child.path) || isComponentFile;
+        return isPageVisited(child.path);
       }
       return false;
     });
 
-  const itemNode = data.flatIndex[itemPath];
-  const isComponentDir = itemNode?.type === "directory" && itemNode.previewOnly === true;
-
-  if (!hasVisitedChildren && !isComponentDir) {
+  if (!hasVisitedChildren && !hasRequiredPageVisit) {
     return null;
   }
 
