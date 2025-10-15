@@ -185,6 +185,32 @@ const addNode = (
   });
 };
 
+const addNodeAfterSibling = (
+  nodes: FileSystemEntry[],
+  siblingId: string,
+  newNode: FileSystemEntry
+): FileSystemEntry[] => {
+  return nodes.map((node) => {
+    if (node.children) {
+      const siblingIndex = node.children.findIndex((child) => child.id === siblingId);
+      if (siblingIndex !== -1) {
+        const newChildren = [...node.children];
+        newChildren.splice(siblingIndex + 1, 0, newNode);
+        return {
+          ...node,
+          children: newChildren,
+          isExpanded: true,
+        };
+      }
+      return {
+        ...node,
+        children: addNodeAfterSibling(node.children, siblingId, newNode),
+      };
+    }
+    return node;
+  });
+};
+
 const STORE_VERSION = 2;
 
 const migrateSections = (data: any): any => {
@@ -426,6 +452,11 @@ export const useEditorStore = create<EditorState>()(
       addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => {
         set((state) => ({
           appStructure: addNode(state.appStructure, parentId, newNode),
+        }));
+      },
+      addAppStructureNodeAfterSibling: (siblingId: string, newNode: FileSystemEntry) => {
+        set((state) => ({
+          appStructure: addNodeAfterSibling(state.appStructure, siblingId, newNode),
         }));
       },
       updateInclusionRules: (inclusionConfig: Record<string, boolean>) => {

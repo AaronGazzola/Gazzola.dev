@@ -35,6 +35,7 @@ export interface RLSPolicy {
   operation: "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "ALL";
   using: string;
   withCheck?: string;
+  isEditing: boolean;
 }
 
 export interface CodeSection {
@@ -42,16 +43,28 @@ export interface CodeSection {
   questionId?: string;
 }
 
+export interface Plugin {
+  id: string;
+  name: string;
+  enabled: boolean;
+  file: "auth" | "auth-client";
+  config?: Record<string, unknown>;
+  questionId?: string;
+  description?: string;
+}
+
 export interface DatabaseConfigurationState {
-  activeTab: "schema" | "auth" | "auth-client" | "rls" | "network";
+  activeTab: "network" | "schema" | "plugins" | "rls";
   tables: PrismaTable[];
   rlsPolicies: RLSPolicy[];
+  plugins: Plugin[];
 
   setActiveTab: (tab: DatabaseConfigurationState["activeTab"]) => void;
 
   addTable: (name: string, schema: "auth" | "public") => void;
   deleteTable: (tableId: string) => void;
   updateTableName: (tableId: string, name: string) => void;
+  updateTableSchema: (tableId: string, schema: "auth" | "public") => void;
 
   addColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
   deleteColumn: (tableId: string, columnId: string) => void;
@@ -65,11 +78,12 @@ export interface DatabaseConfigurationState {
   deleteRLSPolicy: (policyId: string) => void;
   updateRLSPolicy: (policyId: string, updates: Partial<RLSPolicy>) => void;
 
+  addPlugin: (plugin: Omit<Plugin, "id">) => void;
+  deletePlugin: (pluginId: string) => void;
+  updatePlugin: (pluginId: string, updates: Partial<Plugin>) => void;
+  getPluginsByFile: (file: "auth" | "auth-client") => Plugin[];
+
   generatePrismaSchema: () => string;
-  generateAuthConfig: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => string;
-  generateAuthClientConfig: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => string;
-  generateAuthConfigSections: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => CodeSection[];
-  generateAuthClientConfigSections: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => CodeSection[];
   generateRLSPolicies: () => string;
 
   initializeFromConfig: (

@@ -60,6 +60,11 @@ const componentMap: Record<string, any> = {
       default: m.DatabaseConfiguration,
     }))
   ),
+  UserExperience: lazy(() =>
+    import("@/app/(components)/UserExperience").then((m) => ({
+      default: m.UserExperience,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

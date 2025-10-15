@@ -2,6 +2,12 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/editor/ui/accordion";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
@@ -31,32 +37,27 @@ import {
 } from "@/components/editor/ui/tooltip";
 import { cn } from "@/lib/tailwind.utils";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/editor/ui/accordion";
-import {
+  AlertTriangle,
   Bell,
   ChevronDown,
-  Copy,
   CreditCard,
   Database,
   Lock,
   Plus,
+  Save,
   Trash2,
   Upload,
   Users,
-  X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { NetworkVisualization } from "./DatabaseConfiguration.network";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import type {
   PRISMA_TYPES,
   PrismaColumn,
   PrismaTable,
+  RLSPolicy,
 } from "./DatabaseConfiguration.types";
-import { NetworkVisualization } from "./DatabaseConfiguration.network";
 
 const PRISMA_TYPE_OPTIONS: (typeof PRISMA_TYPES)[number][] = [
   "String",
@@ -152,55 +153,293 @@ const ColumnLine = ({
   ) => void;
   onDelete: (tableId: string, columnId: string) => void;
 }) => {
-  const typeStr = column.isArray ? `${column.type}[]` : column.type;
-  const optionalStr = column.isOptional ? "?" : "";
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(column.name);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { tables } = useDatabaseStore();
+
+  useEffect(() => {
+    if (isEditingName && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditingName]);
+
+  const handleNameSubmit = () => {
+    if (tempName.trim()) {
+      onUpdate(table.id, column.id, { name: tempName.trim() });
+    }
+    setIsEditingName(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleNameSubmit();
+    }
+    if (e.key === "Escape") {
+      setTempName(column.name);
+      setIsEditingName(false);
+    }
+  };
+
+  const isRelation = column.relation !== undefined;
+  const relationTables = tables.filter((t) => t.id !== table.id);
 
   return (
-    <div className="group flex items-center hover:theme-bg-accent theme-px-2 theme-py-0.5 theme-radius theme-font-mono text-sm">
-      <span className="theme-text-muted-foreground theme-mr-2"> </span>
-      <EditableText
-        value={column.name}
-        onChange={(name) => onUpdate(table.id, column.id, { name })}
-        disabled={column.isDefault}
-        className="theme-text-foreground min-w-[120px]"
-      />
-      <span className="theme-text-muted-foreground theme-mx-2">{"  "}</span>
-      {column.isDefault ? (
-        <span className="theme-text-chart-3">{typeStr}</span>
-      ) : (
-        <Select
-          value={column.type}
-          onValueChange={(type) => onUpdate(table.id, column.id, { type })}
-        >
-          <SelectTrigger className="h-5 w-auto theme-px-1 border-none shadow-none theme-bg-transparent theme-text-chart-3 theme-font-mono text-sm">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {PRISMA_TYPE_OPTIONS.map((type) => (
-              <SelectItem key={type} value={type}>
-                {type}
-              </SelectItem>
+    <div className="group flex items-center theme-gap-2 theme-px-3 theme-py-1 hover:theme-bg-accent theme-radius">
+      <div className="flex-1 flex items-center theme-gap-2">
+        {isEditingName ? (
+          <Input
+            ref={inputRef}
+            value={tempName}
+            onChange={(e) => setTempName(e.target.value)}
+            onBlur={handleNameSubmit}
+            onKeyDown={handleKeyDown}
+            className="h-7 theme-px-2 text-sm w-32 theme-shadow theme-font-mono"
+          />
+        ) : (
+          <span
+            className="text-sm theme-font-mono theme-text-foreground min-w-[8rem] cursor-pointer hover:underline"
+            onClick={() => setIsEditingName(true)}
+          >
+            {column.name}
+          </span>
+        )}
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 theme-px-2 theme-gap-1 theme-font-mono text-xs"
+            >
+              <span className="theme-text-chart-3">
+                {column.type}
+                {column.isArray ? "[]" : ""}
+                {column.isOptional ? "?" : ""}
+              </span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 theme-p-3 theme-shadow" align="start">
+            <div className="flex flex-col theme-gap-3">
+              <div>
+                <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                  Type
+                </label>
+                {isRelation ? (
+                  <Select
+                    value={column.relation?.table || ""}
+                    onValueChange={(tableName) => {
+                      const targetTable = relationTables.find(
+                        (t) => t.name === tableName
+                      );
+                      if (targetTable) {
+                        onUpdate(table.id, column.id, {
+                          type: targetTable.name,
+                          relation: {
+                            table: targetTable.name,
+                            field: "id",
+                            onDelete: column.relation?.onDelete || "Cascade",
+                          },
+                        });
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="h-7 text-xs">
+                      <SelectValue placeholder="Select table" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {relationTables.map((t) => (
+                        <SelectItem key={t.id} value={t.name}>
+                          {t.schema}.{t.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Select
+                    value={column.type}
+                    onValueChange={(type) =>
+                      onUpdate(table.id, column.id, { type })
+                    }
+                  >
+                    <SelectTrigger className="h-7 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRISMA_TYPE_OPTIONS.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+
+              <div className="flex items-center theme-gap-2">
+                <Checkbox
+                  id={`${column.id}-optional`}
+                  checked={column.isOptional}
+                  onCheckedChange={(checked) =>
+                    onUpdate(table.id, column.id, {
+                      isOptional: checked === true,
+                    })
+                  }
+                />
+                <label
+                  htmlFor={`${column.id}-optional`}
+                  className="text-xs theme-text-foreground cursor-pointer"
+                >
+                  Optional (?)
+                </label>
+              </div>
+
+              <div className="flex items-center theme-gap-2">
+                <Checkbox
+                  id={`${column.id}-array`}
+                  checked={column.isArray}
+                  onCheckedChange={(checked) =>
+                    onUpdate(table.id, column.id, { isArray: checked === true })
+                  }
+                />
+                <label
+                  htmlFor={`${column.id}-array`}
+                  className="text-xs theme-text-foreground cursor-pointer"
+                >
+                  Array ([])
+                </label>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {column.attributes.length > 0 && (
+          <div className="flex items-center theme-gap-1">
+            {column.attributes.map((attr, i) => (
+              <span
+                key={i}
+                className="text-xs theme-font-mono theme-text-chart-4"
+              >
+                {attr}
+              </span>
             ))}
-          </SelectContent>
-        </Select>
-      )}
-      <span className="theme-text-chart-3">{optionalStr}</span>
-      <span className="theme-text-muted-foreground theme-mx-2">{"  "}</span>
-      {column.attributes.map((attr, i) => (
-        <span key={i} className="theme-text-chart-4 theme-mr-1">
-          {attr}
-        </span>
-      ))}
-      {!column.isDefault && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-4 w-4 opacity-0 group-hover:opacity-100 theme-ml-auto"
-          onClick={() => onDelete(table.id, column.id)}
-        >
-          <X className="h-3 w-3 theme-text-destructive" />
-        </Button>
-      )}
+          </div>
+        )}
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 opacity-60 hover:opacity-100"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 theme-p-3 theme-shadow" align="start">
+            <div className="flex flex-col theme-gap-3">
+              <div>
+                <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                  Attributes
+                </label>
+                <div className="flex flex-col theme-gap-2">
+                  <div className="flex items-center theme-gap-2">
+                    <Checkbox
+                      id={`${column.id}-id`}
+                      checked={column.isId}
+                      onCheckedChange={(checked) =>
+                        onUpdate(table.id, column.id, {
+                          isId: checked === true,
+                        })
+                      }
+                    />
+                    <label
+                      htmlFor={`${column.id}-id`}
+                      className="text-xs theme-text-foreground cursor-pointer theme-font-mono"
+                    >
+                      @id
+                    </label>
+                  </div>
+
+                  <div className="flex items-center theme-gap-2">
+                    <Checkbox
+                      id={`${column.id}-unique`}
+                      checked={column.isUnique}
+                      onCheckedChange={(checked) =>
+                        onUpdate(table.id, column.id, {
+                          isUnique: checked === true,
+                        })
+                      }
+                    />
+                    <label
+                      htmlFor={`${column.id}-unique`}
+                      className="text-xs theme-text-foreground cursor-pointer theme-font-mono"
+                    >
+                      @unique
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                  Default Value
+                </label>
+                <Input
+                  value={column.defaultValue || ""}
+                  onChange={(e) =>
+                    onUpdate(table.id, column.id, {
+                      defaultValue: e.target.value || undefined,
+                    })
+                  }
+                  placeholder="e.g., cuid(), now()"
+                  className="h-7 text-xs theme-shadow theme-font-mono"
+                />
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 opacity-0 group-hover:opacity-100"
+          >
+            <Trash2 className="h-3 w-3 theme-text-destructive" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+          <div className="flex flex-col theme-gap-2">
+            <p className="text-sm theme-text-foreground">
+              Delete column {column.name}?
+            </p>
+            <div className="flex theme-gap-2">
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  onDelete(table.id, column.id);
+                  setDeleteConfirmOpen(false);
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDeleteConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };
@@ -282,105 +521,6 @@ const AddColumnPopover = ({
         </div>
       </PopoverContent>
     </Popover>
-  );
-};
-
-const ModelBlock = ({
-  table,
-  onUpdateTableName,
-  onDeleteTable,
-  onUpdateColumn,
-  onDeleteColumn,
-  onAddColumn,
-  borderColor,
-}: {
-  table: PrismaTable;
-  onUpdateTableName: (tableId: string, name: string) => void;
-  onDeleteTable: (tableId: string) => void;
-  onUpdateColumn: (
-    tableId: string,
-    columnId: string,
-    updates: Partial<PrismaColumn>
-  ) => void;
-  onDeleteColumn: (tableId: string, columnId: string) => void;
-  onAddColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
-  borderColor?: string;
-}) => {
-  return (
-    <div className={cn("theme-mb-4 theme-p-2 theme-radius border-2", borderColor)}>
-      <div className="group flex items-center theme-px-2 theme-py-1 hover:theme-bg-accent theme-radius theme-font-mono text-sm">
-        <span className="theme-text-keyword font-bold">model</span>
-        <span className="theme-mx-2"></span>
-        {table.isDefault && (
-          <Lock className="w-3 h-3 theme-text-muted-foreground theme-mr-1" />
-        )}
-        <EditableText
-          value={table.name}
-          onChange={(name) => onUpdateTableName(table.id, name)}
-          disabled={table.isDefault}
-          className="theme-text-foreground font-semibold"
-        />
-        <span className="theme-mx-2 theme-text-foreground">{" {"}</span>
-        {!table.isDefault && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4 opacity-0 group-hover:opacity-100 theme-ml-auto"
-            onClick={() => onDeleteTable(table.id)}
-          >
-            <Trash2 className="h-3 w-3 theme-text-destructive" />
-          </Button>
-        )}
-      </div>
-
-      {table.columns.map((column) => (
-        <ColumnLine
-          key={column.id}
-          table={table}
-          column={column}
-          onUpdate={onUpdateColumn}
-          onDelete={onDeleteColumn}
-        />
-      ))}
-
-      {!table.isDefault && (
-        <div className="theme-pl-2">
-          <AddColumnPopover table={table} onAddColumn={onAddColumn} />
-        </div>
-      )}
-
-      {table.uniqueConstraints.length > 0 && (
-        <>
-          <div className="theme-px-2 theme-py-0.5 theme-font-mono text-sm">
-            <span className="theme-text-muted-foreground"> </span>
-          </div>
-          {table.uniqueConstraints.map((constraint, i) => (
-            <div
-              key={i}
-              className="theme-px-2 theme-py-0.5 theme-font-mono text-sm"
-            >
-              <span className="theme-text-muted-foreground"> </span>
-              <span className="theme-text-chart-4">
-                @@unique([{constraint.join(", ")}])
-              </span>
-            </div>
-          ))}
-        </>
-      )}
-
-      <div className="theme-px-2 theme-py-0.5 theme-font-mono text-sm">
-        <span className="theme-text-muted-foreground"> </span>
-      </div>
-      <div className="theme-px-2 theme-py-0.5 theme-font-mono text-sm">
-        <span className="theme-text-muted-foreground"> </span>
-        <span className="theme-text-chart-4">
-          @@schema(&quot;{table.schema}&quot;)
-        </span>
-      </div>
-      <div className="theme-px-2 theme-py-1 theme-font-mono text-sm">
-        <span className="theme-text-foreground">{"}"}</span>
-      </div>
-    </div>
   );
 };
 
@@ -507,6 +647,22 @@ const ConfigurationSummary = () => {
           label: "Email & Password",
         },
         {
+          id: "otp",
+          label: "OTP",
+        },
+        {
+          id: "twoFactor",
+          label: "Two-Factor (2FA)",
+        },
+        {
+          id: "passkey",
+          label: "Passkey",
+        },
+        {
+          id: "anonymous",
+          label: "Anonymous Sessions",
+        },
+        {
           id: "googleAuth",
           label: "Google OAuth",
         },
@@ -597,7 +753,8 @@ const ConfigurationSummary = () => {
       );
     } else if (questionId === "realTimeNotifications") {
       return (
-        initialConfiguration.features.realTimeNotifications.emailNotifications ||
+        initialConfiguration.features.realTimeNotifications
+          .emailNotifications ||
         initialConfiguration.features.realTimeNotifications.inAppNotifications
       );
     }
@@ -605,7 +762,8 @@ const ConfigurationSummary = () => {
     return false;
   };
 
-  const isNoDatabaseSelected = initialConfiguration.questions.useSupabase === "none";
+  const isNoDatabaseSelected =
+    initialConfiguration.questions.useSupabase === "none";
 
   return (
     <TooltipProvider>
@@ -623,7 +781,8 @@ const ConfigurationSummary = () => {
                   question.id as keyof typeof initialConfiguration.features
                 ] as boolean);
 
-          const isQuestionDisabled = isNoDatabaseSelected && question.id !== "databaseChoice";
+          const isQuestionDisabled =
+            isNoDatabaseSelected && question.id !== "databaseChoice";
 
           return (
             <AccordionItem
@@ -641,7 +800,12 @@ const ConfigurationSummary = () => {
                 disabled={isQuestionDisabled}
               >
                 <div className="flex items-center theme-gap-2 flex-1 min-w-0">
-                  <Icon className={cn(question.iconColor, "w-5 h-5 transition-colors duration-200 shrink-0")} />
+                  <Icon
+                    className={cn(
+                      question.iconColor,
+                      "w-5 h-5 transition-colors duration-200 shrink-0"
+                    )}
+                  />
                   <span className="theme-text-foreground text-sm font-medium theme-font-sans theme-tracking">
                     {question.question}
                   </span>
@@ -655,7 +819,9 @@ const ConfigurationSummary = () => {
               <div className="absolute right-2 top-0 theme-pt-5 z-10">
                 <Checkbox
                   checked={isEnabled}
-                  disabled={question.subOptions && question.subOptions.length > 0}
+                  disabled={
+                    question.subOptions && question.subOptions.length > 0
+                  }
                   onCheckedChange={(checked) => {
                     if (question.subOptions && question.subOptions.length > 0) {
                       return;
@@ -768,7 +934,8 @@ const ConfigurationSummary = () => {
                                             .authentication[
                                             option.id as keyof typeof initialConfiguration.features.authentication
                                           ] || false
-                                        : question.id === "realTimeNotifications"
+                                        : question.id ===
+                                            "realTimeNotifications"
                                           ? initialConfiguration.features
                                               .realTimeNotifications[
                                               option.id as keyof typeof initialConfiguration.features.realTimeNotifications
@@ -928,277 +1095,580 @@ const SchemaTab = () => {
     addTable,
     deleteTable,
     updateTableName,
+    updateTableSchema,
     addColumn,
     deleteColumn,
     updateColumn,
   } = useDatabaseStore();
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const getQuestionColor = (questionId?: string): string => {
     if (!questionId) return "";
     const colorMap: Record<string, string> = {
-      databaseChoice: "theme-border-chart-1",
-      authentication: "theme-border-chart-2",
-      fileStorage: "theme-border-chart-3",
-      payments: "theme-border-chart-4",
-      realTimeNotifications: "theme-border-chart-5",
+      databaseChoice: "theme-border-l-chart-1 border-l-4",
+      authentication: "theme-border-l-chart-2 border-l-4",
+      fileStorage: "theme-border-l-chart-3 border-l-4",
+      payments: "theme-border-l-chart-4 border-l-4",
+      realTimeNotifications: "theme-border-l-chart-5 border-l-4",
     };
     return colorMap[questionId] || "";
   };
 
   return (
-    <div className="theme-font-mono text-sm theme-bg-muted theme-p-4 theme-radius overflow-auto theme-shadow">
-      <div className="theme-mb-4">
-        <div className="theme-text-keyword font-bold">datasource</div>
-        <div className="theme-pl-2">
-          <div className="theme-text-foreground">db {"{"}</div>
-          <div className="theme-pl-2">
-            <span className="theme-text-chart-3">provider</span>
-            <span className="theme-text-muted-foreground"> = </span>
-            <span className="theme-text-chart-1">&quot;postgresql&quot;</span>
-          </div>
-          <div className="theme-pl-2">
-            <span className="theme-text-chart-3">url</span>
-            <span className="theme-text-muted-foreground"> = </span>
-            <span className="theme-text-chart-4">env(</span>
-            <span className="theme-text-chart-1">&quot;DATABASE_URL&quot;</span>
-            <span className="theme-text-chart-4">)</span>
-          </div>
-          <div className="theme-pl-2">
-            <span className="theme-text-chart-3">schemas</span>
-            <span className="theme-text-muted-foreground"> = </span>
-            <span className="theme-text-foreground">[</span>
-            <span className="theme-text-chart-1">&quot;auth&quot;</span>
-            <span className="theme-text-foreground">, </span>
-            <span className="theme-text-chart-1">&quot;public&quot;</span>
-            <span className="theme-text-foreground">]</span>
-          </div>
-          <div className="theme-text-foreground">{"}"}</div>
-        </div>
+    <div className="theme-bg-muted theme-radius overflow-auto theme-shadow theme-p-4">
+      <Accordion type="multiple" className="flex flex-col theme-gap-2">
+        {tables.map((table) => (
+          <AccordionItem
+            key={table.id}
+            value={table.id}
+            className={cn(
+              "theme-bg-card theme-border-border theme-radius theme-shadow",
+              getQuestionColor(table.questionId)
+            )}
+          >
+            <AccordionTrigger className="hover:no-underline theme-px-4 theme-py-2">
+              <div className="flex items-center theme-gap-2 w-full">
+                {table.isDefault && (
+                  <Lock className="w-4 h-4 theme-text-muted-foreground" />
+                )}
+                <span className="theme-text-foreground font-semibold">
+                  {table.schema}.{table.name}
+                </span>
+                {!table.isDefault && (
+                  <Popover
+                    open={deleteConfirmId === table.id}
+                    onOpenChange={(open) =>
+                      setDeleteConfirmId(open ? table.id : null)
+                    }
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 theme-ml-auto"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Trash2 className="h-4 w-4 theme-text-destructive" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-64 theme-p-3 theme-shadow"
+                      align="end"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex flex-col theme-gap-2">
+                        <p className="text-sm theme-text-foreground">
+                          Delete table {table.name}?
+                        </p>
+                        <div className="flex theme-gap-2">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => {
+                              deleteTable(table.id);
+                              setDeleteConfirmId(null);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDeleteConfirmId(null)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="theme-px-4 theme-pb-4">
+              <div className="flex flex-col theme-gap-1">
+                {table.columns.map((column) => (
+                  <ColumnLine
+                    key={column.id}
+                    table={table}
+                    column={column}
+                    onUpdate={updateColumn}
+                    onDelete={deleteColumn}
+                  />
+                ))}
+                <AddColumnPopover table={table} onAddColumn={addColumn} />
+                <div className="theme-mt-2 theme-pt-2 border-t theme-border-border">
+                  <div className="flex items-center theme-gap-2">
+                    <span className="text-xs theme-text-muted-foreground">
+                      Schema:
+                    </span>
+                    <Select
+                      value={table.schema}
+                      onValueChange={(schema) =>
+                        updateTableSchema(table.id, schema as "auth" | "public")
+                      }
+                    >
+                      <SelectTrigger className="h-6 w-24 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="auth">auth</SelectItem>
+                        <SelectItem value="public">public</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+      <div className="theme-mt-4">
+        <AddTablePopover onAddTable={addTable} />
       </div>
-
-      <div className="theme-mb-6">
-        <div className="theme-text-keyword font-bold">generator</div>
-        <div className="theme-pl-2">
-          <div className="theme-text-foreground">client {"{"}</div>
-          <div className="theme-pl-2">
-            <span className="theme-text-chart-3">provider</span>
-            <span className="theme-text-muted-foreground"> = </span>
-            <span className="theme-text-chart-1">
-              &quot;prisma-client-js&quot;
-            </span>
-          </div>
-          <div className="theme-text-foreground">{"}"}</div>
-        </div>
-      </div>
-
-      {tables.map((table) => (
-        <ModelBlock
-          key={table.id}
-          table={table}
-          onUpdateTableName={updateTableName}
-          onDeleteTable={deleteTable}
-          onUpdateColumn={updateColumn}
-          onDeleteColumn={deleteColumn}
-          onAddColumn={addColumn}
-          borderColor={getQuestionColor(table.questionId)}
-        />
-      ))}
-
-      <AddTablePopover onAddTable={addTable} />
     </div>
   );
 };
 
-const CodeTab = ({ code, title, sections }: { code?: string; title: string; sections?: Array<{text: string; questionId?: string}> }) => {
-  const [copied, setCopied] = useState(false);
+const PluginsTab = () => {
+  const { plugins } = useDatabaseStore();
 
   const getQuestionColor = (questionId?: string): string => {
     if (!questionId) return "";
     const colorMap: Record<string, string> = {
-      databaseChoice: "theme-border-l-chart-1",
-      authentication: "theme-border-l-chart-2",
-      fileStorage: "theme-border-l-chart-3",
-      payments: "theme-border-l-chart-4",
-      realTimeNotifications: "theme-border-l-chart-5",
+      databaseChoice: "theme-border-l-chart-1 border-l-4",
+      authentication: "theme-border-l-chart-2 border-l-4",
+      fileStorage: "theme-border-l-chart-3 border-l-4",
+      payments: "theme-border-l-chart-4 border-l-4",
+      realTimeNotifications: "theme-border-l-chart-5 border-l-4",
     };
     return colorMap[questionId] || "";
   };
 
-  const displayCode = code || (sections ? sections.map(s => s.text).join('\n') : '');
+  const authPlugins = plugins.filter((p) => p.file === "auth" && p.enabled);
+  const authClientPlugins = plugins.filter((p) => p.file === "auth-client" && p.enabled);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(displayCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const renderPluginCard = (plugin: typeof plugins[0]) => {
+    return (
+      <div
+        key={plugin.id}
+        className={cn(
+          "flex items-center theme-px-3 theme-py-2 theme-bg-muted theme-radius theme-gap-2",
+          getQuestionColor(plugin.questionId)
+        )}
+      >
+        <div className="flex-1">
+          <div className="font-medium text-sm theme-text-foreground">
+            {plugin.name}
+          </div>
+          {plugin.description && (
+            <div className="text-xs theme-text-muted-foreground theme-font-sans theme-tracking">
+              {plugin.description}
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="relative theme-bg-muted theme-radius overflow-auto theme-shadow">
-      <div className="theme-bg-info theme-text-info-foreground theme-px-4 theme-py-2 text-sm theme-font-sans theme-tracking">
-        ✨ Auto-generated from your configuration
-      </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute top-2 right-2 h-6 w-6 theme-shadow"
-        onClick={handleCopy}
-      >
-        <Copy className="h-3 w-3" />
-      </Button>
-      {copied && (
-        <span className="absolute top-2 right-10 text-xs theme-text-success theme-font-sans theme-tracking">
-          Copied!
-        </span>
-      )}
-      {sections ? (
-        <div className="theme-p-4">
-          {sections.map((section, idx) => (
-            <pre
-              key={idx}
-              className={cn(
-                "theme-font-mono text-sm theme-text-foreground border-l-4 theme-pl-2 theme-my-1",
-                getQuestionColor(section.questionId)
-              )}
-            >
-              <code>{section.text}</code>
-            </pre>
-          ))}
+    <div className="theme-bg-muted theme-radius overflow-auto theme-shadow theme-p-4 flex flex-col theme-gap-4">
+      <div className="theme-bg-card theme-border-border theme-radius theme-shadow">
+        <div className="theme-bg-foreground-muted theme-px-4 theme-py-3 theme-font-mono font-semibold text-sm border-b theme-border-border">
+          lib/auth.ts
         </div>
-      ) : (
-        <pre className="theme-p-4 theme-font-mono text-sm overflow-x-auto theme-text-foreground">
-          <code>{code}</code>
-        </pre>
-      )}
+        <div className="theme-p-4 flex flex-col theme-gap-2">
+          {authPlugins.length === 0 ? (
+            <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+              No plugins configured
+            </p>
+          ) : (
+            <>
+              <div className="theme-mb-2">
+                <p className="text-xs theme-text-muted-foreground theme-font-sans theme-tracking">
+                  {authPlugins.length} plugin{authPlugins.length !== 1 ? 's' : ''} configured
+                </p>
+              </div>
+              {authPlugins.map(renderPluginCard)}
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="theme-bg-card theme-border-border theme-radius theme-shadow">
+        <div className="theme-bg-foreground-muted theme-px-4 theme-py-3 theme-font-mono font-semibold text-sm border-b theme-border-border">
+          lib/auth-client.ts
+        </div>
+        <div className="theme-p-4 flex flex-col theme-gap-2">
+          {authClientPlugins.length === 0 ? (
+            <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+              No plugins configured
+            </p>
+          ) : (
+            <>
+              <div className="theme-mb-2">
+                <p className="text-xs theme-text-muted-foreground theme-font-sans theme-tracking">
+                  {authClientPlugins.length} plugin{authClientPlugins.length !== 1 ? 's' : ''} configured
+                </p>
+              </div>
+              {authClientPlugins.map(renderPluginCard)}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
 const RLSTab = () => {
-  const { rlsPolicies, tables, addRLSPolicy, deleteRLSPolicy } =
-    useDatabaseStore();
-  const [selectedTable, setSelectedTable] = useState<string>("");
+  const {
+    rlsPolicies,
+    tables,
+    addRLSPolicy,
+    deleteRLSPolicy,
+    updateRLSPolicy,
+  } = useDatabaseStore();
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  const handleAddPolicy = () => {
-    if (!selectedTable) return;
-
-    addRLSPolicy({
-      tableId: selectedTable,
-      name: "New policy",
-      operation: "SELECT",
-      using: "true",
-    });
-  };
+  const publicTables = tables.filter((t) => t.schema === "public");
 
   return (
-    <div className="theme-font-mono text-sm theme-bg-muted theme-p-4 theme-radius overflow-auto theme-shadow">
-      <div className="theme-mb-4 theme-font-sans theme-tracking theme-text-muted-foreground text-xs">
-        Row Level Security policies for your Prisma tables
+    <div className="theme-bg-muted theme-radius overflow-auto theme-shadow theme-p-4">
+      <div className="theme-mb-4">
+        <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+          Row Level Security policies for public schema tables
+        </p>
       </div>
 
-      {rlsPolicies.map((policy) => {
-        const table = tables.find((t) => t.id === policy.tableId);
-        if (!table) return null;
+      <Accordion type="multiple" className="flex flex-col theme-gap-2">
+        {publicTables.map((table) => {
+          const tablePolicies = rlsPolicies.filter(
+            (p) => p.tableId === table.id
+          );
 
-        return (
-          <div
-            key={policy.id}
-            className="group theme-mb-4 hover:theme-bg-accent theme-p-2 theme-radius"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="theme-text-keyword">CREATE POLICY </span>
-                <span className="theme-text-chart-1">
-                  &quot;{policy.name}&quot;
-                </span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 opacity-0 group-hover:opacity-100"
-                onClick={() => deleteRLSPolicy(policy.id)}
-              >
-                <Trash2 className="h-3 w-3 theme-text-destructive" />
-              </Button>
-            </div>
-            <div className="theme-pl-2">
-              <div>
-                <span className="theme-text-keyword">ON </span>
-                <span className="theme-text-chart-3">
-                  {table.schema}.{table.name}
-                </span>
-              </div>
-              <div>
-                <span className="theme-text-keyword">FOR </span>
-                <span className="theme-text-chart-3">{policy.operation}</span>
-              </div>
-              <div>
-                <span className="theme-text-keyword">USING </span>
-                <span className="theme-text-foreground">({policy.using})</span>
-              </div>
-              {policy.withCheck && (
-                <div>
-                  <span className="theme-text-keyword">WITH CHECK </span>
-                  <span className="theme-text-foreground">
-                    ({policy.withCheck})
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      })}
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="theme-text-muted-foreground hover:theme-text-foreground"
-          >
-            <Plus className="h-3 w-3 theme-mr-1" />
-            Add policy...
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-64 theme-p-3 theme-shadow" align="start">
-          <div className="flex flex-col theme-gap-2">
-            <Select value={selectedTable} onValueChange={setSelectedTable}>
-              <SelectTrigger className="h-7">
-                <SelectValue placeholder="Select table" />
-              </SelectTrigger>
-              <SelectContent>
-                {tables.map((table) => (
-                  <SelectItem key={table.id} value={table.id}>
-                    {table.schema}.{table.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button
-              onClick={handleAddPolicy}
-              size="sm"
-              disabled={!selectedTable}
+          return (
+            <AccordionItem
+              key={table.id}
+              value={table.id}
+              className="theme-bg-card theme-border-border theme-radius theme-shadow"
             >
-              Add Policy
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
+              <AccordionTrigger className="hover:no-underline theme-px-4 theme-py-2">
+                <div className="flex items-center theme-gap-2 w-full">
+                  <span className="theme-text-foreground font-semibold">
+                    {table.schema}.{table.name}
+                  </span>
+                  <span className="theme-text-muted-foreground text-xs theme-font-sans theme-tracking">
+                    ({tablePolicies.length} policies)
+                  </span>
+                  {tablePolicies.length === 0 && (
+                    <Popover>
+                      <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5 theme-ml-1"
+                        >
+                          <AlertTriangle className="h-4 w-4 theme-text-warning" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-80 theme-p-3 theme-shadow"
+                        align="start"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex flex-col theme-gap-2">
+                          <div className="flex items-start theme-gap-2">
+                            <AlertTriangle className="h-4 w-4 theme-text-warning theme-mt-0.5 shrink-0" />
+                            <div className="flex flex-col theme-gap-1">
+                              <p className="text-sm font-semibold theme-text-foreground">
+                                No RLS Policies
+                              </p>
+                              <p className="text-xs theme-text-muted-foreground">
+                                All public schema tables should have Row Level Security (RLS) policies applied to protect data access. Without RLS policies, this table may be accessible to unauthorized users.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="theme-px-4 theme-pb-4">
+                <div className="flex flex-col theme-gap-2">
+                  {tablePolicies.length === 0 ? (
+                    <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                      No policies defined
+                    </p>
+                  ) : (
+                    tablePolicies.map((policy) => {
+                      const handleSave = () => {
+                        if (policy.name.trim() && policy.using.trim()) {
+                          updateRLSPolicy(policy.id, { isEditing: false });
+                        }
+                      };
+
+                      const handleKeyDown = (e: React.KeyboardEvent) => {
+                        if (e.key === "Enter") {
+                          handleSave();
+                        }
+                      };
+
+                      if (!policy.isEditing) {
+                        return (
+                          <div
+                            key={policy.id}
+                            className="theme-bg-muted theme-radius theme-p-3 cursor-pointer hover:theme-bg-accent transition-colors"
+                            onClick={() => updateRLSPolicy(policy.id, { isEditing: true })}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center theme-gap-2 theme-mb-1">
+                                  <span className="text-sm font-medium theme-text-foreground">
+                                    {policy.name}
+                                  </span>
+                                  <span className="text-xs theme-font-mono theme-text-chart-3">
+                                    {policy.operation}
+                                  </span>
+                                </div>
+                                <div className="text-xs theme-text-muted-foreground theme-font-mono theme-truncate">
+                                  USING: {policy.using}
+                                  {policy.withCheck && ` | WITH CHECK: ${policy.withCheck}`}
+                                </div>
+                              </div>
+                              <Popover
+                                open={deleteConfirmId === policy.id}
+                                onOpenChange={(open) =>
+                                  setDeleteConfirmId(open ? policy.id : null)
+                                }
+                              >
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 theme-ml-2"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Trash2 className="h-4 w-4 theme-text-destructive" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-64 theme-p-3 theme-shadow"
+                                  align="end"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <div className="flex flex-col theme-gap-2">
+                                    <p className="text-sm theme-text-foreground">
+                                      Delete policy {policy.name}?
+                                    </p>
+                                    <div className="flex theme-gap-2">
+                                      <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        onClick={() => {
+                                          deleteRLSPolicy(policy.id);
+                                          setDeleteConfirmId(null);
+                                        }}
+                                      >
+                                        Delete
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setDeleteConfirmId(null)}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={policy.id}
+                          className="theme-bg-muted theme-radius theme-p-3 relative"
+                        >
+                          <div className="flex items-center justify-between theme-mb-2">
+                            <Input
+                              value={policy.name}
+                              onChange={(e) =>
+                                updateRLSPolicy(policy.id, {
+                                  name: e.target.value,
+                                })
+                              }
+                              onKeyDown={handleKeyDown}
+                              className="h-7 text-sm font-medium theme-shadow"
+                              placeholder="Policy name"
+                            />
+                            <Popover
+                              open={deleteConfirmId === policy.id}
+                              onOpenChange={(open) =>
+                                setDeleteConfirmId(open ? policy.id : null)
+                              }
+                            >
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 theme-ml-2"
+                                >
+                                  <Trash2 className="h-4 w-4 theme-text-destructive" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-64 theme-p-3 theme-shadow"
+                                align="end"
+                              >
+                                <div className="flex flex-col theme-gap-2">
+                                  <p className="text-sm theme-text-foreground">
+                                    Delete policy {policy.name}?
+                                  </p>
+                                  <div className="flex theme-gap-2">
+                                    <Button
+                                      variant="destructive"
+                                      size="sm"
+                                      onClick={() => {
+                                        deleteRLSPolicy(policy.id);
+                                        setDeleteConfirmId(null);
+                                      }}
+                                    >
+                                      Delete
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setDeleteConfirmId(null)}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+
+                          <div className="flex flex-col theme-gap-2">
+                            <div>
+                              <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                                Operation
+                              </label>
+                              <Select
+                                value={policy.operation}
+                                onValueChange={(operation) =>
+                                  updateRLSPolicy(policy.id, {
+                                    operation:
+                                      operation as RLSPolicy["operation"],
+                                  })
+                                }
+                              >
+                                <SelectTrigger className="h-7 text-sm">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="SELECT">SELECT</SelectItem>
+                                  <SelectItem value="INSERT">INSERT</SelectItem>
+                                  <SelectItem value="UPDATE">UPDATE</SelectItem>
+                                  <SelectItem value="DELETE">DELETE</SelectItem>
+                                  <SelectItem value="ALL">ALL</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                                USING clause
+                              </label>
+                              <Input
+                                value={policy.using}
+                                onChange={(e) =>
+                                  updateRLSPolicy(policy.id, {
+                                    using: e.target.value,
+                                  })
+                                }
+                                onKeyDown={handleKeyDown}
+                                className="h-7 text-sm theme-font-mono theme-shadow"
+                                placeholder="true"
+                              />
+                            </div>
+
+                            {(policy.operation === "INSERT" ||
+                              policy.operation === "UPDATE" ||
+                              policy.operation === "ALL") && (
+                              <div>
+                                <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                                  WITH CHECK clause (optional)
+                                </label>
+                                <Input
+                                  value={policy.withCheck || ""}
+                                  onChange={(e) =>
+                                    updateRLSPolicy(policy.id, {
+                                      withCheck: e.target.value || undefined,
+                                    })
+                                  }
+                                  onKeyDown={handleKeyDown}
+                                  className="h-7 text-sm theme-font-mono theme-shadow"
+                                  placeholder="Leave empty to use USING clause"
+                                />
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex justify-end theme-mt-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleSave}
+                              disabled={!policy.name.trim() || !policy.using.trim()}
+                              className="h-7 theme-gap-1"
+                            >
+                              <Save className="h-3 w-3" />
+                              Save
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="theme-mt-2"
+                    onClick={() =>
+                      addRLSPolicy({
+                        tableId: table.id,
+                        name: "New policy",
+                        operation: "SELECT",
+                        using: "true",
+                      })
+                    }
+                  >
+                    <Plus className="h-3 w-3 theme-mr-1" />
+                    Add policy
+                  </Button>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+
+      {publicTables.length === 0 && (
+        <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+          No public schema tables found. Add tables in the Schema tab.
+        </p>
+      )}
     </div>
   );
 };
 
 export const DatabaseConfiguration = () => {
-  const {
-    activeTab,
-    setActiveTab,
-    generatePrismaSchema,
-    generateAuthConfig,
-    generateAuthClientConfig,
-    generateAuthConfigSections,
-    generateAuthClientConfigSections,
-    generateRLSPolicies,
-    initializeFromConfig,
-  } = useDatabaseStore();
+  const { activeTab, setActiveTab, initializeFromConfig } = useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
   useEffect(() => {
@@ -1235,22 +1705,18 @@ export const DatabaseConfiguration = () => {
               Network
             </TabsTrigger>
             <TabsTrigger value="schema" disabled={isNoDatabaseSelected}>
-              Prisma Schema
+              Schema
             </TabsTrigger>
             <TabsTrigger
-              value="auth"
-              disabled={!isBetterAuthEnabled || isSupabaseOnly || isNoDatabaseSelected}
+              value="plugins"
+              disabled={
+                !isBetterAuthEnabled || isSupabaseOnly || isNoDatabaseSelected
+              }
             >
-              auth.ts
-            </TabsTrigger>
-            <TabsTrigger
-              value="auth-client"
-              disabled={!isBetterAuthEnabled || isSupabaseOnly || isNoDatabaseSelected}
-            >
-              auth-client.ts
+              Plugins
             </TabsTrigger>
             <TabsTrigger value="rls" disabled={isNoDatabaseSelected}>
-              RLS_Policies.SQL
+              RLS
             </TabsTrigger>
           </TabsList>
 
@@ -1262,22 +1728,8 @@ export const DatabaseConfiguration = () => {
             {isNoDatabaseSelected ? null : <SchemaTab />}
           </TabsContent>
 
-          <TabsContent value="auth">
-            {isNoDatabaseSelected ? null : (
-              <CodeTab
-                sections={generateAuthConfigSections(initialConfiguration)}
-                title="lib/auth.ts"
-              />
-            )}
-          </TabsContent>
-
-          <TabsContent value="auth-client">
-            {isNoDatabaseSelected ? null : (
-              <CodeTab
-                sections={generateAuthClientConfigSections(initialConfiguration)}
-                title="lib/auth-client.ts"
-              />
-            )}
+          <TabsContent value="plugins">
+            {isNoDatabaseSelected ? null : <PluginsTab />}
           </TabsContent>
 
           <TabsContent value="rls">

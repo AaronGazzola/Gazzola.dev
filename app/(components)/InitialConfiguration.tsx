@@ -269,6 +269,26 @@ const questionConfigs: (
         description: "Traditional email and password authentication",
       },
       {
+        id: "otp",
+        label: "OTP (One-Time Password)",
+        description: "Email-based one-time password authentication",
+      },
+      {
+        id: "twoFactor",
+        label: "Two-Factor Authentication (2FA)",
+        description: "TOTP/OTP two-factor authentication for enhanced security",
+      },
+      {
+        id: "passkey",
+        label: "Passkey (WebAuthn)",
+        description: "Passwordless authentication using biometrics or security keys",
+      },
+      {
+        id: "anonymous",
+        label: "Anonymous Sessions",
+        description: "Allow users to use the app without authentication",
+      },
+      {
         id: "googleAuth",
         label: "Google OAuth",
         description: "Sign in with Google accounts",
@@ -460,7 +480,7 @@ const getRequiredTechnologiesForSubOption = (
       required.push("stripe", "betterAuth");
     }
   } else if (questionId === "authentication") {
-    if (optionId === "magicLink" || optionId === "emailPassword") {
+    if (optionId === "magicLink" || optionId === "emailPassword" || optionId === "otp") {
       required.push("resend");
     }
   } else if (questionId === "admin") {
@@ -508,6 +528,9 @@ const hasAnyChildrenSelected = (
       initialConfiguration.features.authentication.magicLink ||
       initialConfiguration.features.authentication.emailPassword ||
       initialConfiguration.features.authentication.otp ||
+      initialConfiguration.features.authentication.twoFactor ||
+      initialConfiguration.features.authentication.passkey ||
+      initialConfiguration.features.authentication.anonymous ||
       initialConfiguration.features.authentication.googleAuth ||
       initialConfiguration.features.authentication.githubAuth ||
       initialConfiguration.features.authentication.appleAuth ||

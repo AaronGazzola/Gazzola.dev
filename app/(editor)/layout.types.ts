@@ -88,6 +88,9 @@ export interface InitialConfigurationType {
       magicLink: boolean;
       emailPassword: boolean;
       otp: boolean;
+      twoFactor: boolean;
+      passkey: boolean;
+      anonymous: boolean;
       googleAuth: boolean;
       githubAuth: boolean;
       appleAuth: boolean;
@@ -179,6 +182,7 @@ export interface EditorState {
   ) => void;
   deleteAppStructureNode: (id: string) => void;
   addAppStructureNode: (parentId: string, newNode: FileSystemEntry) => void;
+  addAppStructureNodeAfterSibling: (siblingId: string, newNode: FileSystemEntry) => void;
   updateInclusionRules: (inclusionConfig: Record<string, boolean>) => void;
   getInitialConfiguration: () => InitialConfigurationType;
   setInitialConfiguration: (config: InitialConfigurationType) => void;

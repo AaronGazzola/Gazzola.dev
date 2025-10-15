@@ -6,6 +6,7 @@ import type {
   PrismaColumn,
   PrismaTable,
   RLSPolicy,
+  Plugin,
 } from "./DatabaseConfiguration.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
@@ -1176,6 +1177,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
       activeTab: "schema",
       tables: [],
       rlsPolicies: [],
+      plugins: [],
 
       setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -1203,6 +1205,14 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         set((state) => ({
           tables: state.tables.map((t) =>
             t.id === tableId && t.isEditable ? { ...t, name } : t
+          ),
+        }));
+      },
+
+      updateTableSchema: (tableId, schema) => {
+        set((state) => ({
+          tables: state.tables.map((t) =>
+            t.id === tableId && t.isEditable ? { ...t, schema } : t
           ),
         }));
       },
@@ -1242,9 +1252,28 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             t.id === tableId
               ? {
                   ...t,
-                  columns: t.columns.map((c) =>
-                    c.id === columnId && c.isEditable ? { ...c, ...updates } : c
-                  ),
+                  columns: t.columns.map((c) => {
+                    if (c.id !== columnId) return c;
+
+                    const updated = { ...c, ...updates };
+                    const attrs: string[] = [];
+
+                    if (updated.isId) attrs.push("@id");
+                    if (updated.isUnique) attrs.push("@unique");
+                    if (updated.defaultValue) {
+                      attrs.push(`@default(${updated.defaultValue})`);
+                    }
+                    if (c.attributes.includes("@updatedAt")) attrs.push("@updatedAt");
+                    if (updated.relation) {
+                      const rel = updated.relation;
+                      attrs.push(
+                        `@relation(fields: [${c.name}Id], references: [${rel.field}]${rel.onDelete ? `, onDelete: ${rel.onDelete}` : ""})`
+                      );
+                    }
+
+                    updated.attributes = attrs;
+                    return updated;
+                  }),
                 }
               : t
           ),
@@ -1255,6 +1284,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         const newPolicy: RLSPolicy = {
           ...policy,
           id: generateId(),
+          isEditing: true,
         };
         set((state) => ({
           rlsPolicies: [...state.rlsPolicies, newPolicy],
@@ -1273,6 +1303,35 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             p.id === policyId ? { ...p, ...updates } : p
           ),
         }));
+      },
+
+      addPlugin: (plugin) => {
+        const newPlugin: Plugin = {
+          ...plugin,
+          id: generateId(),
+        };
+        set((state) => ({
+          plugins: [...state.plugins, newPlugin],
+        }));
+      },
+
+      deletePlugin: (pluginId) => {
+        set((state) => ({
+          plugins: state.plugins.filter((p) => p.id !== pluginId),
+        }));
+      },
+
+      updatePlugin: (pluginId, updates) => {
+        set((state) => ({
+          plugins: state.plugins.map((p) =>
+            p.id === pluginId ? { ...p, ...updates } : p
+          ),
+        }));
+      },
+
+      getPluginsByFile: (file) => {
+        const { plugins } = get();
+        return plugins.filter((p) => p.file === file && p.enabled);
       },
 
       generatePrismaSchema: () => {
@@ -1305,345 +1364,6 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         return schema;
       },
 
-      generateAuthConfig: (config?: InitialConfigurationType) => {
-        if (!config) return "";
-
-        const state = get();
-        const hasMagicLink = config.features.authentication.magicLink && state.tables.some((t) => t.name === "MagicLink");
-        const hasOrganization = (config.features.admin.orgAdmins || config.features.admin.orgMembers) && state.tables.some((t) => t.name === "organization");
-        const hasAdmin = config.features.admin.superAdmins && state.tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"));
-        const hasEmailPassword = config.features.authentication.emailPassword;
-        const hasPasswordOnly = config.features.authentication.passwordOnly;
-        const hasGoogleAuth = config.features.authentication.googleAuth;
-        const hasGithubAuth = config.features.authentication.githubAuth;
-        const hasAppleAuth = config.features.authentication.appleAuth;
-        const needsResend = config.technologies.resend && (hasMagicLink || hasEmailPassword);
-
-        const plugins: string[] = [];
-        const imports: string[] = [];
-
-        if (hasMagicLink) {
-          imports.push("magicLink");
-          plugins.push(`    magicLink({
-      sendMagicLink: async ({ email, url }) => {
-        await resend.emails.send({
-          from: process.env.FROM_EMAIL || "noreply@example.com",
-          to: email,
-          subject: "Sign in to your account",
-          html: \`<a href="\${url}">Sign In</a>\`,
-        });
-      },
-      expiresIn: 300,
-      disableSignUp: false,
-    })`);
-        }
-
-        if (hasAdmin) {
-          imports.push("admin");
-          plugins.push("    admin()");
-        }
-
-        if (hasOrganization) {
-          imports.push("organization");
-          plugins.push(`    organization({
-      sendInvitationEmail: async (data) => {
-        const { email, organization, inviter, invitation } = data;
-        await resend.emails.send({
-          from: process.env.FROM_EMAIL || "noreply@example.com",
-          to: email,
-          subject: \`You've been invited to join \${organization.name}\`,
-          html: \`<a href="\${process.env.BETTER_AUTH_URL}/api/auth/accept-invitation?invitationId=\${invitation.id}">Accept Invitation</a>\`,
-        });
-      },
-    })`);
-        }
-
-        const socialProvidersLines: string[] = [];
-        if (hasGoogleAuth) {
-          socialProvidersLines.push(`    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }`);
-        }
-
-        if (hasGithubAuth) {
-          socialProvidersLines.push(`    github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    }`);
-        }
-
-        if (hasAppleAuth) {
-          socialProvidersLines.push(`    apple: {
-      clientId: process.env.APPLE_CLIENT_ID!,
-      clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    }`);
-        }
-
-        const importLine = imports.length > 0 ? `import { ${imports.join(", ")} } from "better-auth/plugins";\n` : "";
-        const resendImport = needsResend ? `import { Resend } from "resend";\n` : "";
-        const resendInit = needsResend ? `const resend = new Resend(process.env.RESEND_API_KEY);\n` : "";
-        const pluginsArray = plugins.length > 0 ? `  plugins: [\n${plugins.join(",\n")},\n  ],\n` : "";
-        const emailPasswordConfig = (hasEmailPassword || hasPasswordOnly) ? `  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: ${hasEmailPassword && needsResend ? "true" : "false"},
-  },\n` : "";
-        const socialProvidersConfig = socialProvidersLines.length > 0 ? `  socialProviders: {\n${socialProvidersLines.join(",\n")},\n  },\n` : "";
-
-        return `import { PrismaClient } from "@prisma/client";
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-${importLine}${resendImport}
-const prisma = new PrismaClient();
-${resendInit}
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-${emailPasswordConfig}${socialProvidersConfig}${pluginsArray}});
-`;
-      },
-
-      generateAuthConfigSections: (config?: InitialConfigurationType) => {
-        if (!config) return [];
-
-        const state = get();
-        const sections: Array<{text: string; questionId?: string}> = [];
-        const hasMagicLink = config.features.authentication.magicLink && state.tables.some((t) => t.name === "MagicLink");
-        const hasOrganization = (config.features.admin.orgAdmins || config.features.admin.orgMembers) && state.tables.some((t) => t.name === "organization");
-        const hasAdmin = config.features.admin.superAdmins && state.tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"));
-        const hasEmailPassword = config.features.authentication.emailPassword;
-        const hasPasswordOnly = config.features.authentication.passwordOnly;
-        const hasGoogleAuth = config.features.authentication.googleAuth;
-        const hasGithubAuth = config.features.authentication.githubAuth;
-        const hasAppleAuth = config.features.authentication.appleAuth;
-        const needsResend = config.technologies.resend && (hasMagicLink || hasEmailPassword);
-
-        const imports: string[] = [];
-
-        if (hasMagicLink) imports.push("magicLink");
-        if (hasAdmin) imports.push("admin");
-        if (hasOrganization) imports.push("organization");
-
-        const importLine = imports.length > 0 ? `import { ${imports.join(", ")} } from "better-auth/plugins";` : "";
-        const resendImport = needsResend ? `import { Resend } from "resend";` : "";
-        const resendInit = needsResend ? `const resend = new Resend(process.env.RESEND_API_KEY);` : "";
-
-        sections.push({
-          text: `import { PrismaClient } from "@prisma/client";
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-${importLine}${resendImport ? '\n' + resendImport : ''}
-const prisma = new PrismaClient();
-${resendInit ? resendInit + '\n' : ''}`,
-          questionId: "databaseChoice",
-        });
-
-        const authConfigStart = `export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),`;
-
-        sections.push({ text: authConfigStart, questionId: "authentication" });
-
-        if (hasEmailPassword || hasPasswordOnly) {
-          sections.push({
-            text: `  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: ${hasEmailPassword && needsResend ? "true" : "false"},
-  },`,
-            questionId: "authentication",
-          });
-        }
-
-        if (hasGoogleAuth || hasGithubAuth || hasAppleAuth) {
-          let socialProvidersText = "  socialProviders: {\n";
-          if (hasGoogleAuth) {
-            socialProvidersText += `    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    },\n`;
-          }
-          if (hasGithubAuth) {
-            socialProvidersText += `    github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    },\n`;
-          }
-          if (hasAppleAuth) {
-            socialProvidersText += `    apple: {
-      clientId: process.env.APPLE_CLIENT_ID!,
-      clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    },\n`;
-          }
-          socialProvidersText += "  },";
-          sections.push({ text: socialProvidersText, questionId: "authentication" });
-        }
-
-        const pluginsSections: string[] = [];
-        if (hasMagicLink) {
-          pluginsSections.push(`    magicLink({
-      sendMagicLink: async ({ email, url }) => {
-        await resend.emails.send({
-          from: process.env.FROM_EMAIL || "noreply@example.com",
-          to: email,
-          subject: "Sign in to your account",
-          html: \`<a href="\${url}">Sign In</a>\`,
-        });
-      },
-      expiresIn: 300,
-      disableSignUp: false,
-    })`);
-        }
-        if (hasAdmin) pluginsSections.push("    admin()");
-        if (hasOrganization) {
-          pluginsSections.push(`    organization({
-      sendInvitationEmail: async (data) => {
-        const { email, organization, inviter, invitation } = data;
-        await resend.emails.send({
-          from: process.env.FROM_EMAIL || "noreply@example.com",
-          to: email,
-          subject: \`You've been invited to join \${organization.name}\`,
-          html: \`<a href="\${process.env.BETTER_AUTH_URL}/api/auth/accept-invitation?invitationId=\${invitation.id}">Accept Invitation</a>\`,
-        });
-      },
-    })`);
-        }
-
-        if (pluginsSections.length > 0) {
-          sections.push({
-            text: `  plugins: [\n${pluginsSections.join(",\n")},\n  ],`,
-            questionId: "authentication",
-          });
-        }
-
-        sections.push({ text: "});", questionId: "authentication" });
-
-        return sections;
-      },
-
-      generateAuthClientConfigSections: (config?: InitialConfigurationType) => {
-        if (!config) return [];
-
-        const state = get();
-        const sections: Array<{text: string; questionId?: string}> = [];
-        const hasMagicLink = config.features.authentication.magicLink && state.tables.some((t) => t.name === "MagicLink");
-        const hasOrganization = (config.features.admin.orgAdmins || config.features.admin.orgMembers) && state.tables.some((t) => t.name === "organization");
-        const hasAdmin = config.features.admin.superAdmins && state.tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"));
-
-        const plugins: string[] = [];
-        const imports: string[] = [];
-        const exports: string[] = ["useSession", "getSession", "signOut"];
-
-        const hasAuth = config.features.authentication.emailPassword ||
-                       config.features.authentication.passwordOnly ||
-                       config.features.authentication.googleAuth ||
-                       config.features.authentication.githubAuth ||
-                       config.features.authentication.appleAuth;
-
-        if (hasAuth) {
-          exports.push("signIn", "signUp");
-        }
-
-        if (hasMagicLink) {
-          imports.push("magicLinkClient");
-          plugins.push("magicLinkClient()");
-        }
-        if (hasAdmin) {
-          imports.push("adminClient");
-          plugins.push("adminClient()");
-          exports.push("admin");
-        }
-        if (hasOrganization) {
-          imports.push("organizationClient");
-          plugins.push("organizationClient()");
-          exports.push("organization");
-        }
-
-        const uniqueExports = Array.from(new Set(exports));
-        const importLine = imports.length > 0 ? `import {\n  ${imports.join(",\n  ")},\n} from "better-auth/client/plugins";\n` : "";
-        const pluginsArray = plugins.length > 0 ? `[${plugins.join(", ")}]` : "[]";
-
-        sections.push({
-          text: `import { createAuthClient } from "better-auth/client";
-${importLine}`,
-          questionId: "databaseChoice",
-        });
-
-        sections.push({
-          text: `export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
-  plugins: ${pluginsArray},
-});`,
-          questionId: "authentication",
-        });
-
-        sections.push({
-          text: `
-export const {
-  ${uniqueExports.join(",\n  ")},
-} = authClient;`,
-          questionId: "authentication",
-        });
-
-        return sections;
-      },
-
-      generateAuthClientConfig: (config?: InitialConfigurationType) => {
-        if (!config) return "";
-
-        const state = get();
-        const hasMagicLink = config.features.authentication.magicLink && state.tables.some((t) => t.name === "MagicLink");
-        const hasOrganization = (config.features.admin.orgAdmins || config.features.admin.orgMembers) && state.tables.some((t) => t.name === "organization");
-        const hasAdmin = config.features.admin.superAdmins && state.tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"));
-
-        const plugins: string[] = [];
-        const imports: string[] = [];
-        const exports: string[] = ["useSession", "getSession", "signOut"];
-
-        const hasAuth = config.features.authentication.emailPassword ||
-                       config.features.authentication.passwordOnly ||
-                       config.features.authentication.googleAuth ||
-                       config.features.authentication.githubAuth ||
-                       config.features.authentication.appleAuth;
-
-        if (hasAuth) {
-          exports.push("signIn", "signUp");
-        }
-
-        if (hasMagicLink) {
-          imports.push("magicLinkClient");
-          plugins.push("magicLinkClient()");
-        }
-
-        if (hasAdmin) {
-          imports.push("adminClient");
-          plugins.push("adminClient()");
-          exports.push("admin");
-        }
-
-        if (hasOrganization) {
-          imports.push("organizationClient");
-          plugins.push("organizationClient()");
-          exports.push("organization");
-        }
-
-        const uniqueExports = Array.from(new Set(exports));
-
-        const importLine = imports.length > 0 ? `import {\n  ${imports.join(",\n  ")},\n} from "better-auth/client/plugins";\n\n` : "";
-        const pluginsArray = plugins.length > 0 ? `[${plugins.join(", ")}]` : "[]";
-
-        return `import { createAuthClient } from "better-auth/client";
-${importLine}export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
-  plugins: ${pluginsArray},
-});
-
-export const {
-  ${uniqueExports.join(",\n  ")},
-} = authClient;
-`;
-      },
 
       generateRLSPolicies: () => {
         const { rlsPolicies, tables } = get();
@@ -1667,7 +1387,13 @@ export const {
       },
 
       initializeFromConfig: (config: InitialConfigurationType) => {
+        const currentState = get();
+        if (currentState.tables.length > 0) {
+          return;
+        }
+
         let tables: PrismaTable[] = [];
+        const plugins: Plugin[] = [];
 
         const isBetterAuthEnabled =
           (config.questions.useSupabase === "no" || config.questions.useSupabase === "withBetterAuth") &&
@@ -1686,12 +1412,258 @@ export const {
           ) {
             tables = [...tables, ...getOrganizationTables()];
           }
+
+          if (config.features.authentication.magicLink && tables.some((t) => t.name === "MagicLink")) {
+            plugins.push({
+              id: generateId(),
+              name: "magicLink",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Email-based authentication with magic links"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "magicLinkClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "authentication",
+              description: "Client-side magic link functionality"
+            });
+          }
+
+          if (config.features.authentication.otp) {
+            plugins.push({
+              id: generateId(),
+              name: "emailOTP",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "One-time password via email"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "emailOTPClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "authentication",
+              description: "Client-side OTP functionality"
+            });
+          }
+
+          if (config.features.admin.superAdmins && tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"))) {
+            plugins.push({
+              id: generateId(),
+              name: "admin",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Admin role management and impersonation"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "adminClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "authentication",
+              description: "Client-side admin functionality"
+            });
+          }
+
+          if ((config.features.admin.orgAdmins || config.features.admin.orgMembers) && tables.some((t) => t.name === "organization")) {
+            plugins.push({
+              id: generateId(),
+              name: "organization",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Organization and member management with invitations"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "organizationClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "authentication",
+              description: "Client-side organization functionality"
+            });
+          }
+
+          if (config.features.authentication.emailPassword) {
+            plugins.push({
+              id: generateId(),
+              name: "emailAndPassword",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Email and password authentication"
+            });
+          }
+
+          if (config.features.authentication.passwordOnly) {
+            plugins.push({
+              id: generateId(),
+              name: "username",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Username-based authentication"
+            });
+          }
+
+          if (config.features.authentication.googleAuth) {
+            plugins.push({
+              id: generateId(),
+              name: "google",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Google OAuth social authentication"
+            });
+          }
+
+          if (config.features.authentication.githubAuth) {
+            plugins.push({
+              id: generateId(),
+              name: "github",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "GitHub OAuth social authentication"
+            });
+          }
+
+          if (config.features.authentication.appleAuth) {
+            plugins.push({
+              id: generateId(),
+              name: "apple",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Apple Sign In social authentication"
+            });
+          }
+
+          if (config.features.payments.stripePayments || config.features.payments.stripeSubscriptions) {
+            plugins.push({
+              id: generateId(),
+              name: "stripe",
+              enabled: true,
+              file: "auth",
+              questionId: "payments",
+              description: "Stripe payment and subscription management"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "stripeClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "payments",
+              description: "Client-side Stripe functionality"
+            });
+          }
+
+          if (config.features.realTimeNotifications.emailNotifications) {
+            plugins.push({
+              id: generateId(),
+              name: "emailVerification",
+              enabled: true,
+              file: "auth",
+              questionId: "realTimeNotifications",
+              description: "Email verification and notifications"
+            });
+          }
+
+          if (config.features.fileStorage && config.questions.useSupabase === "withBetterAuth") {
+            plugins.push({
+              id: generateId(),
+              name: "supabaseStorage",
+              enabled: true,
+              file: "auth",
+              questionId: "fileStorage",
+              description: "Supabase file storage integration"
+            });
+          }
+
+          if (config.features.authentication.twoFactor) {
+            plugins.push({
+              id: generateId(),
+              name: "twoFactor",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Two-factor authentication with TOTP/OTP"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "twoFactorClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "authentication",
+              description: "Client-side 2FA functionality"
+            });
+          }
+
+          if (config.features.authentication.passkey) {
+            plugins.push({
+              id: generateId(),
+              name: "passkey",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Passwordless authentication with passkeys"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "passkeyClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "authentication",
+              description: "Client-side passkey support"
+            });
+          }
+
+          if (config.features.authentication.anonymous) {
+            plugins.push({
+              id: generateId(),
+              name: "anonymous",
+              enabled: true,
+              file: "auth",
+              questionId: "authentication",
+              description: "Anonymous user authentication"
+            });
+            plugins.push({
+              id: generateId(),
+              name: "anonymousClient",
+              enabled: true,
+              file: "auth-client",
+              questionId: "authentication",
+              description: "Client-side anonymous authentication"
+            });
+          }
+
+          plugins.push({
+            id: generateId(),
+            name: "multiSession",
+            enabled: true,
+            file: "auth",
+            questionId: "authentication",
+            description: "Multiple active sessions across different accounts"
+          });
+          plugins.push({
+            id: generateId(),
+            name: "multiSessionClient",
+            enabled: true,
+            file: "auth-client",
+            questionId: "authentication",
+            description: "Client-side multi-session support"
+          });
         }
 
-        set({ tables, rlsPolicies: [] });
+        set({ tables, rlsPolicies: [], plugins });
       },
 
-      reset: () => set({ tables: [], rlsPolicies: [], activeTab: "schema" }),
+      reset: () => set({ tables: [], rlsPolicies: [], plugins: [], activeTab: "schema" }),
     }),
     {
       name: "database-configuration-storage",
