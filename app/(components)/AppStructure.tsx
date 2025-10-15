@@ -2144,7 +2144,7 @@ export const LayoutAndStructure = () => {
 
   return (
     <div className="theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
-      <div className="grid grid-cols-[minmax(400px,2fr)_minmax(400px,3fr)] theme-gap-4 min-h-[calc(100vh-400px)] max-xl:grid-cols-1">
+      <div className="grid grid-cols-[minmax(400px,2fr)_minmax(400px,3fr)] theme-gap-4 min-h-[calc(100vh-800px)] max-xl:grid-cols-1">
         <div className="flex flex-col theme-gap-4 h-full overflow-hidden">
           <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
             <div className="flex items-center justify-between theme-mb-2">

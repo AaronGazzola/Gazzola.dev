@@ -51,6 +51,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@types/pg": "^8.15.5",
     "@vercel/analytics": "^1.2.2",
+    "@xyflow/react": "^12.8.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

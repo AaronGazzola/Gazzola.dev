@@ -25,6 +25,7 @@ export interface PrismaTable {
   isEditable: boolean;
   columns: PrismaColumn[];
   uniqueConstraints: string[][];
+  questionId?: string;
 }
 
 export interface RLSPolicy {
@@ -36,8 +37,13 @@ export interface RLSPolicy {
   withCheck?: string;
 }
 
+export interface CodeSection {
+  text: string;
+  questionId?: string;
+}
+
 export interface DatabaseConfigurationState {
-  activeTab: "schema" | "auth" | "auth-client" | "rls";
+  activeTab: "schema" | "auth" | "auth-client" | "rls" | "network";
   tables: PrismaTable[];
   rlsPolicies: RLSPolicy[];
 
@@ -62,6 +68,8 @@ export interface DatabaseConfigurationState {
   generatePrismaSchema: () => string;
   generateAuthConfig: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => string;
   generateAuthClientConfig: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => string;
+  generateAuthConfigSections: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => CodeSection[];
+  generateAuthClientConfigSections: (config?: import("@/app/(editor)/layout.types").InitialConfigurationType) => CodeSection[];
   generateRLSPolicies: () => string;
 
   initializeFromConfig: (

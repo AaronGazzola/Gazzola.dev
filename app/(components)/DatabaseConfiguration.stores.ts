@@ -18,6 +18,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    questionId: "authentication",
     columns: [
       {
         id: "user-id",
@@ -224,6 +225,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    questionId: "authentication",
     columns: [
       {
         id: "session-id",
@@ -375,6 +377,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["providerId", "accountId"]],
+    questionId: "authentication",
     columns: [
       {
         id: "account-id",
@@ -562,6 +565,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["identifier", "value"]],
+    questionId: "authentication",
     columns: [
       {
         id: "verification-id",
@@ -646,6 +650,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    questionId: "authentication",
     columns: [
       {
         id: "magiclink-id",
@@ -752,6 +757,7 @@ const getOrganizationTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    questionId: "authentication",
     columns: [
       {
         id: "organization-id",
@@ -872,6 +878,7 @@ const getOrganizationTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["userId", "organizationId"]],
+    questionId: "authentication",
     columns: [
       {
         id: "member-id",
@@ -995,6 +1002,7 @@ const getOrganizationTables = (): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["email", "organizationId"]],
+    questionId: "authentication",
     columns: [
       {
         id: "invitation-id",
@@ -1305,6 +1313,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         const hasOrganization = (config.features.admin.orgAdmins || config.features.admin.orgMembers) && state.tables.some((t) => t.name === "organization");
         const hasAdmin = config.features.admin.superAdmins && state.tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"));
         const hasEmailPassword = config.features.authentication.emailPassword;
+        const hasPasswordOnly = config.features.authentication.passwordOnly;
         const hasGoogleAuth = config.features.authentication.googleAuth;
         const hasGithubAuth = config.features.authentication.githubAuth;
         const hasAppleAuth = config.features.authentication.appleAuth;
@@ -1312,7 +1321,6 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
 
         const plugins: string[] = [];
         const imports: string[] = [];
-        const socialProviders: string[] = [];
 
         if (hasMagicLink) {
           imports.push("magicLink");
@@ -1350,36 +1358,37 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
     })`);
         }
 
+        const socialProvidersLines: string[] = [];
         if (hasGoogleAuth) {
-          socialProviders.push(`    google({
+          socialProvidersLines.push(`    google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    })`);
+    }`);
         }
 
         if (hasGithubAuth) {
-          socialProviders.push(`    github({
+          socialProvidersLines.push(`    github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    })`);
+    }`);
         }
 
         if (hasAppleAuth) {
-          socialProviders.push(`    apple({
+          socialProvidersLines.push(`    apple: {
       clientId: process.env.APPLE_CLIENT_ID!,
       clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    })`);
+    }`);
         }
 
         const importLine = imports.length > 0 ? `import { ${imports.join(", ")} } from "better-auth/plugins";\n` : "";
         const resendImport = needsResend ? `import { Resend } from "resend";\n` : "";
         const resendInit = needsResend ? `const resend = new Resend(process.env.RESEND_API_KEY);\n` : "";
         const pluginsArray = plugins.length > 0 ? `  plugins: [\n${plugins.join(",\n")},\n  ],\n` : "";
-        const emailPasswordConfig = hasEmailPassword ? `  emailAndPassword: {
+        const emailPasswordConfig = (hasEmailPassword || hasPasswordOnly) ? `  emailAndPassword: {
     enabled: true,
     requireEmailVerification: ${hasEmailPassword && needsResend ? "true" : "false"},
   },\n` : "";
-        const socialProvidersConfig = socialProviders.length > 0 ? `  socialProviders: {\n${socialProviders.join(",\n")},\n  },\n` : "";
+        const socialProvidersConfig = socialProvidersLines.length > 0 ? `  socialProviders: {\n${socialProvidersLines.join(",\n")},\n  },\n` : "";
 
         return `import { PrismaClient } from "@prisma/client";
 import { betterAuth } from "better-auth";
@@ -1395,6 +1404,191 @@ ${emailPasswordConfig}${socialProvidersConfig}${pluginsArray}});
 `;
       },
 
+      generateAuthConfigSections: (config?: InitialConfigurationType) => {
+        if (!config) return [];
+
+        const state = get();
+        const sections: Array<{text: string; questionId?: string}> = [];
+        const hasMagicLink = config.features.authentication.magicLink && state.tables.some((t) => t.name === "MagicLink");
+        const hasOrganization = (config.features.admin.orgAdmins || config.features.admin.orgMembers) && state.tables.some((t) => t.name === "organization");
+        const hasAdmin = config.features.admin.superAdmins && state.tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"));
+        const hasEmailPassword = config.features.authentication.emailPassword;
+        const hasPasswordOnly = config.features.authentication.passwordOnly;
+        const hasGoogleAuth = config.features.authentication.googleAuth;
+        const hasGithubAuth = config.features.authentication.githubAuth;
+        const hasAppleAuth = config.features.authentication.appleAuth;
+        const needsResend = config.technologies.resend && (hasMagicLink || hasEmailPassword);
+
+        const imports: string[] = [];
+
+        if (hasMagicLink) imports.push("magicLink");
+        if (hasAdmin) imports.push("admin");
+        if (hasOrganization) imports.push("organization");
+
+        const importLine = imports.length > 0 ? `import { ${imports.join(", ")} } from "better-auth/plugins";` : "";
+        const resendImport = needsResend ? `import { Resend } from "resend";` : "";
+        const resendInit = needsResend ? `const resend = new Resend(process.env.RESEND_API_KEY);` : "";
+
+        sections.push({
+          text: `import { PrismaClient } from "@prisma/client";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+${importLine}${resendImport ? '\n' + resendImport : ''}
+const prisma = new PrismaClient();
+${resendInit ? resendInit + '\n' : ''}`,
+          questionId: "databaseChoice",
+        });
+
+        const authConfigStart = `export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),`;
+
+        sections.push({ text: authConfigStart, questionId: "authentication" });
+
+        if (hasEmailPassword || hasPasswordOnly) {
+          sections.push({
+            text: `  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: ${hasEmailPassword && needsResend ? "true" : "false"},
+  },`,
+            questionId: "authentication",
+          });
+        }
+
+        if (hasGoogleAuth || hasGithubAuth || hasAppleAuth) {
+          let socialProvidersText = "  socialProviders: {\n";
+          if (hasGoogleAuth) {
+            socialProvidersText += `    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },\n`;
+          }
+          if (hasGithubAuth) {
+            socialProvidersText += `    github: {
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    },\n`;
+          }
+          if (hasAppleAuth) {
+            socialProvidersText += `    apple: {
+      clientId: process.env.APPLE_CLIENT_ID!,
+      clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    },\n`;
+          }
+          socialProvidersText += "  },";
+          sections.push({ text: socialProvidersText, questionId: "authentication" });
+        }
+
+        const pluginsSections: string[] = [];
+        if (hasMagicLink) {
+          pluginsSections.push(`    magicLink({
+      sendMagicLink: async ({ email, url }) => {
+        await resend.emails.send({
+          from: process.env.FROM_EMAIL || "noreply@example.com",
+          to: email,
+          subject: "Sign in to your account",
+          html: \`<a href="\${url}">Sign In</a>\`,
+        });
+      },
+      expiresIn: 300,
+      disableSignUp: false,
+    })`);
+        }
+        if (hasAdmin) pluginsSections.push("    admin()");
+        if (hasOrganization) {
+          pluginsSections.push(`    organization({
+      sendInvitationEmail: async (data) => {
+        const { email, organization, inviter, invitation } = data;
+        await resend.emails.send({
+          from: process.env.FROM_EMAIL || "noreply@example.com",
+          to: email,
+          subject: \`You've been invited to join \${organization.name}\`,
+          html: \`<a href="\${process.env.BETTER_AUTH_URL}/api/auth/accept-invitation?invitationId=\${invitation.id}">Accept Invitation</a>\`,
+        });
+      },
+    })`);
+        }
+
+        if (pluginsSections.length > 0) {
+          sections.push({
+            text: `  plugins: [\n${pluginsSections.join(",\n")},\n  ],`,
+            questionId: "authentication",
+          });
+        }
+
+        sections.push({ text: "});", questionId: "authentication" });
+
+        return sections;
+      },
+
+      generateAuthClientConfigSections: (config?: InitialConfigurationType) => {
+        if (!config) return [];
+
+        const state = get();
+        const sections: Array<{text: string; questionId?: string}> = [];
+        const hasMagicLink = config.features.authentication.magicLink && state.tables.some((t) => t.name === "MagicLink");
+        const hasOrganization = (config.features.admin.orgAdmins || config.features.admin.orgMembers) && state.tables.some((t) => t.name === "organization");
+        const hasAdmin = config.features.admin.superAdmins && state.tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"));
+
+        const plugins: string[] = [];
+        const imports: string[] = [];
+        const exports: string[] = ["useSession", "getSession", "signOut"];
+
+        const hasAuth = config.features.authentication.emailPassword ||
+                       config.features.authentication.passwordOnly ||
+                       config.features.authentication.googleAuth ||
+                       config.features.authentication.githubAuth ||
+                       config.features.authentication.appleAuth;
+
+        if (hasAuth) {
+          exports.push("signIn", "signUp");
+        }
+
+        if (hasMagicLink) {
+          imports.push("magicLinkClient");
+          plugins.push("magicLinkClient()");
+        }
+        if (hasAdmin) {
+          imports.push("adminClient");
+          plugins.push("adminClient()");
+          exports.push("admin");
+        }
+        if (hasOrganization) {
+          imports.push("organizationClient");
+          plugins.push("organizationClient()");
+          exports.push("organization");
+        }
+
+        const uniqueExports = Array.from(new Set(exports));
+        const importLine = imports.length > 0 ? `import {\n  ${imports.join(",\n  ")},\n} from "better-auth/client/plugins";\n` : "";
+        const pluginsArray = plugins.length > 0 ? `[${plugins.join(", ")}]` : "[]";
+
+        sections.push({
+          text: `import { createAuthClient } from "better-auth/client";
+${importLine}`,
+          questionId: "databaseChoice",
+        });
+
+        sections.push({
+          text: `export const authClient = createAuthClient({
+  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+  plugins: ${pluginsArray},
+});`,
+          questionId: "authentication",
+        });
+
+        sections.push({
+          text: `
+export const {
+  ${uniqueExports.join(",\n  ")},
+} = authClient;`,
+          questionId: "authentication",
+        });
+
+        return sections;
+      },
+
       generateAuthClientConfig: (config?: InitialConfigurationType) => {
         if (!config) return "";
 
@@ -1405,17 +1599,17 @@ ${emailPasswordConfig}${socialProvidersConfig}${pluginsArray}});
 
         const plugins: string[] = [];
         const imports: string[] = [];
-        const exports: string[] = ["useSession", "getSession"];
+        const exports: string[] = ["useSession", "getSession", "signOut"];
 
-        if (config.features.authentication.emailPassword || config.features.authentication.passwordOnly) {
+        const hasAuth = config.features.authentication.emailPassword ||
+                       config.features.authentication.passwordOnly ||
+                       config.features.authentication.googleAuth ||
+                       config.features.authentication.githubAuth ||
+                       config.features.authentication.appleAuth;
+
+        if (hasAuth) {
           exports.push("signIn", "signUp");
         }
-
-        if (config.features.authentication.googleAuth || config.features.authentication.githubAuth || config.features.authentication.appleAuth) {
-          exports.push("signIn");
-        }
-
-        exports.push("signOut");
 
         if (hasMagicLink) {
           imports.push("magicLinkClient");

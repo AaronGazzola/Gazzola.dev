@@ -81,6 +81,27 @@
 .theme-border-chart-5 {
   border-color: var(--theme-chart-5);
 }
+
+.theme-border-l-chart-1 {
+  border-left-color: var(--theme-chart-1);
+}
+
+.theme-border-l-chart-2 {
+  border-left-color: var(--theme-chart-2);
+}
+
+.theme-border-l-chart-3 {
+  border-left-color: var(--theme-chart-3);
+}
+
+.theme-border-l-chart-4 {
+  border-left-color: var(--theme-chart-4);
+}
+
+.theme-border-l-chart-5 {
+  border-left-color: var(--theme-chart-5);
+}
+
 .theme-text-chart-1 {
   color: var(--theme-chart-1);
 }

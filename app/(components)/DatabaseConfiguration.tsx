@@ -56,6 +56,7 @@ import type {
   PrismaColumn,
   PrismaTable,
 } from "./DatabaseConfiguration.types";
+import { NetworkVisualization } from "./DatabaseConfiguration.network";
 
 const PRISMA_TYPE_OPTIONS: (typeof PRISMA_TYPES)[number][] = [
   "String",
@@ -291,6 +292,7 @@ const ModelBlock = ({
   onUpdateColumn,
   onDeleteColumn,
   onAddColumn,
+  borderColor,
 }: {
   table: PrismaTable;
   onUpdateTableName: (tableId: string, name: string) => void;
@@ -302,9 +304,10 @@ const ModelBlock = ({
   ) => void;
   onDeleteColumn: (tableId: string, columnId: string) => void;
   onAddColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
+  borderColor?: string;
 }) => {
   return (
-    <div className="theme-mb-4">
+    <div className={cn("theme-mb-4 theme-p-2 theme-radius border-2", borderColor)}>
       <div className="group flex items-center theme-px-2 theme-py-1 hover:theme-bg-accent theme-radius theme-font-mono text-sm">
         <span className="theme-text-keyword font-bold">model</span>
         <span className="theme-mx-2"></span>
@@ -456,6 +459,7 @@ const ConfigurationSummary = () => {
     id: string;
     question: string;
     icon: React.ComponentType<{ className?: string }>;
+    iconColor: string;
     subOptions?: {
       id: string;
       label: string;
@@ -468,6 +472,7 @@ const ConfigurationSummary = () => {
       id: "databaseChoice",
       question: "Do you want to use a database?",
       icon: Database,
+      iconColor: "theme-text-chart-1",
       subOptions: [
         {
           id: "noDatabase",
@@ -491,6 +496,7 @@ const ConfigurationSummary = () => {
       id: "authentication",
       question: "Can users sign in to your app?",
       icon: Users,
+      iconColor: "theme-text-chart-2",
       subOptions: [
         {
           id: "magicLink",
@@ -522,11 +528,13 @@ const ConfigurationSummary = () => {
       id: "fileStorage",
       question: "Can users upload files?",
       icon: Upload,
+      iconColor: "theme-text-chart-3",
     },
     {
       id: "payments",
       question: "Does your app process payments?",
       icon: CreditCard,
+      iconColor: "theme-text-chart-4",
       subOptions: [
         {
           id: "paypalPayments",
@@ -550,6 +558,7 @@ const ConfigurationSummary = () => {
       id: "realTimeNotifications",
       question: "Do you need realtime notifications?",
       icon: Bell,
+      iconColor: "theme-text-chart-5",
       subOptions: [
         {
           id: "emailNotifications",
@@ -596,6 +605,8 @@ const ConfigurationSummary = () => {
     return false;
   };
 
+  const isNoDatabaseSelected = initialConfiguration.questions.useSupabase === "none";
+
   return (
     <TooltipProvider>
       <Accordion
@@ -612,19 +623,25 @@ const ConfigurationSummary = () => {
                   question.id as keyof typeof initialConfiguration.features
                 ] as boolean);
 
+          const isQuestionDisabled = isNoDatabaseSelected && question.id !== "databaseChoice";
+
           return (
             <AccordionItem
               key={question.id}
               value={question.id}
-              className="transition-all duration-200 border-none relative"
+              className={cn(
+                "transition-all duration-200 border-none relative",
+                isQuestionDisabled && "opacity-50 pointer-events-none"
+              )}
             >
               <AccordionTrigger
                 className={cn(
                   "flex items-center w-full theme-py-1 theme-px-2 theme-pr-10 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180"
                 )}
+                disabled={isQuestionDisabled}
               >
                 <div className="flex items-center theme-gap-2 flex-1 min-w-0">
-                  <Icon className="theme-text-foreground w-5 h-5 transition-colors duration-200 shrink-0" />
+                  <Icon className={cn(question.iconColor, "w-5 h-5 transition-colors duration-200 shrink-0")} />
                   <span className="theme-text-foreground text-sm font-medium theme-font-sans theme-tracking">
                     {question.question}
                   </span>
@@ -916,6 +933,18 @@ const SchemaTab = () => {
     updateColumn,
   } = useDatabaseStore();
 
+  const getQuestionColor = (questionId?: string): string => {
+    if (!questionId) return "";
+    const colorMap: Record<string, string> = {
+      databaseChoice: "theme-border-chart-1",
+      authentication: "theme-border-chart-2",
+      fileStorage: "theme-border-chart-3",
+      payments: "theme-border-chart-4",
+      realTimeNotifications: "theme-border-chart-5",
+    };
+    return colorMap[questionId] || "";
+  };
+
   return (
     <div className="theme-font-mono text-sm theme-bg-muted theme-p-4 theme-radius overflow-auto theme-shadow">
       <div className="theme-mb-4">
@@ -971,6 +1000,7 @@ const SchemaTab = () => {
           onUpdateColumn={updateColumn}
           onDeleteColumn={deleteColumn}
           onAddColumn={addColumn}
+          borderColor={getQuestionColor(table.questionId)}
         />
       ))}
 
@@ -979,11 +1009,25 @@ const SchemaTab = () => {
   );
 };
 
-const CodeTab = ({ code, title }: { code: string; title: string }) => {
+const CodeTab = ({ code, title, sections }: { code?: string; title: string; sections?: Array<{text: string; questionId?: string}> }) => {
   const [copied, setCopied] = useState(false);
 
+  const getQuestionColor = (questionId?: string): string => {
+    if (!questionId) return "";
+    const colorMap: Record<string, string> = {
+      databaseChoice: "theme-border-l-chart-1",
+      authentication: "theme-border-l-chart-2",
+      fileStorage: "theme-border-l-chart-3",
+      payments: "theme-border-l-chart-4",
+      realTimeNotifications: "theme-border-l-chart-5",
+    };
+    return colorMap[questionId] || "";
+  };
+
+  const displayCode = code || (sections ? sections.map(s => s.text).join('\n') : '');
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(code);
+    navigator.clipboard.writeText(displayCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -1006,9 +1050,25 @@ const CodeTab = ({ code, title }: { code: string; title: string }) => {
           Copied!
         </span>
       )}
-      <pre className="theme-p-4 theme-font-mono text-sm overflow-x-auto theme-text-foreground">
-        <code>{code}</code>
-      </pre>
+      {sections ? (
+        <div className="theme-p-4">
+          {sections.map((section, idx) => (
+            <pre
+              key={idx}
+              className={cn(
+                "theme-font-mono text-sm theme-text-foreground border-l-4 theme-pl-2 theme-my-1",
+                getQuestionColor(section.questionId)
+              )}
+            >
+              <code>{section.text}</code>
+            </pre>
+          ))}
+        </div>
+      ) : (
+        <pre className="theme-p-4 theme-font-mono text-sm overflow-x-auto theme-text-foreground">
+          <code>{code}</code>
+        </pre>
+      )}
     </div>
   );
 };
@@ -1134,6 +1194,8 @@ export const DatabaseConfiguration = () => {
     generatePrismaSchema,
     generateAuthConfig,
     generateAuthClientConfig,
+    generateAuthConfigSections,
+    generateAuthClientConfigSections,
     generateRLSPolicies,
     initializeFromConfig,
   } = useDatabaseStore();
@@ -1154,6 +1216,8 @@ export const DatabaseConfiguration = () => {
   const isBetterAuthEnabled = initialConfiguration.technologies.betterAuth;
   const isSupabaseOnly =
     initialConfiguration.questions.useSupabase === "authOnly";
+  const isNoDatabaseSelected =
+    initialConfiguration.questions.useSupabase === "none";
 
   return (
     <div className="flex theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
@@ -1167,42 +1231,57 @@ export const DatabaseConfiguration = () => {
           onValueChange={(v) => setActiveTab(v as typeof activeTab)}
         >
           <TabsList className="theme-mb-4">
-            <TabsTrigger value="schema">Prisma Schema</TabsTrigger>
+            <TabsTrigger value="network" disabled={isNoDatabaseSelected}>
+              Network
+            </TabsTrigger>
+            <TabsTrigger value="schema" disabled={isNoDatabaseSelected}>
+              Prisma Schema
+            </TabsTrigger>
             <TabsTrigger
               value="auth"
-              disabled={!isBetterAuthEnabled || isSupabaseOnly}
+              disabled={!isBetterAuthEnabled || isSupabaseOnly || isNoDatabaseSelected}
             >
               auth.ts
             </TabsTrigger>
             <TabsTrigger
               value="auth-client"
-              disabled={!isBetterAuthEnabled || isSupabaseOnly}
+              disabled={!isBetterAuthEnabled || isSupabaseOnly || isNoDatabaseSelected}
             >
               auth-client.ts
             </TabsTrigger>
-            <TabsTrigger value="rls">RLS_Policies.SQL</TabsTrigger>
+            <TabsTrigger value="rls" disabled={isNoDatabaseSelected}>
+              RLS_Policies.SQL
+            </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="network">
+            {isNoDatabaseSelected ? null : <NetworkVisualization />}
+          </TabsContent>
+
           <TabsContent value="schema">
-            <SchemaTab />
+            {isNoDatabaseSelected ? null : <SchemaTab />}
           </TabsContent>
 
           <TabsContent value="auth">
-            <CodeTab
-              code={generateAuthConfig(initialConfiguration)}
-              title="lib/auth.ts"
-            />
+            {isNoDatabaseSelected ? null : (
+              <CodeTab
+                sections={generateAuthConfigSections(initialConfiguration)}
+                title="lib/auth.ts"
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="auth-client">
-            <CodeTab
-              code={generateAuthClientConfig(initialConfiguration)}
-              title="lib/auth-client.ts"
-            />
+            {isNoDatabaseSelected ? null : (
+              <CodeTab
+                sections={generateAuthClientConfigSections(initialConfiguration)}
+                title="lib/auth-client.ts"
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="rls">
-            <RLSTab />
+            {isNoDatabaseSelected ? null : <RLSTab />}
           </TabsContent>
         </Tabs>
       </div>
