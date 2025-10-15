@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] Update the theme components script to remove the "-theme" prefix and change tailwind util file import to the default
 - [ ] fix letter spacing in light mode
 - [ ] extend walkthrough
 - [ ] fix the ability to create a app directory and page file from adding a route segment in AppStructure

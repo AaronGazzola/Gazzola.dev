@@ -120,16 +120,25 @@ export const useThemeCSSVariables = () => {
           .toString(16)
           .padStart(2, "0")}`
       : other.shadow.color.startsWith("oklch(")
-      ? other.shadow.color.includes(" / ")
-        ? other.shadow.color.replace(/\s*\/\s*[0-9.]+\s*\)$/, ` / ${other.shadow.opacity})`)
-        : other.shadow.color.replace(/\)$/, ` / ${other.shadow.opacity})`)
-      : other.shadow.color.startsWith("hsl(")
-      ? other.shadow.color.includes(" / ")
-        ? other.shadow.color.replace(/\s*\/\s*[0-9.]+%?\s*\)$/, ` / ${other.shadow.opacity})`)
-        : other.shadow.color.replace(/\)$/, ` / ${other.shadow.opacity})`)
-      : other.shadow.color.startsWith("rgb(")
-      ? other.shadow.color.replace(/rgb\(([^)]+)\)/, `rgba($1, ${other.shadow.opacity})`)
-      : other.shadow.color;
+        ? other.shadow.color.includes(" / ")
+          ? other.shadow.color.replace(
+              /\s*\/\s*[0-9.]+\s*\)$/,
+              ` / ${other.shadow.opacity})`
+            )
+          : other.shadow.color.replace(/\)$/, ` / ${other.shadow.opacity})`)
+        : other.shadow.color.startsWith("hsl(")
+          ? other.shadow.color.includes(" / ")
+            ? other.shadow.color.replace(
+                /\s*\/\s*[0-9.]+%?\s*\)$/,
+                ` / ${other.shadow.opacity})`
+              )
+            : other.shadow.color.replace(/\)$/, ` / ${other.shadow.opacity})`)
+          : other.shadow.color.startsWith("rgb(")
+            ? other.shadow.color.replace(
+                /rgb\(([^)]+)\)/,
+                `rgba($1, ${other.shadow.opacity})`
+              )
+            : other.shadow.color;
 
     root.style.setProperty(
       "--theme-shadow",

@@ -339,7 +339,6 @@ const Page = () => {
     },
     [setCurrentContent]
   );
-
   if (!canRender || (needsInitialization && isLoading)) {
     return (
       <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">

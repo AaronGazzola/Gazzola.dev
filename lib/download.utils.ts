@@ -420,25 +420,6 @@ const generateInitialConfigurationContent = (
   return lines.join("\n");
 };
 
-const hslToOklch = (hsl: string): string => {
-  const match = hsl.match(/([0-9.]+)\s+([0-9.]+)%\s+([0-9.]+)%/);
-  if (!match) return "oklch(0 0 0)";
-
-  const [, hStr, sStr, lStr] = match;
-  const h = parseFloat(hStr);
-  const s = parseFloat(sStr) / 100;
-  const l = parseFloat(lStr) / 100;
-
-  const a = s * Math.cos((h * Math.PI) / 180);
-  const b = s * Math.sin((h * Math.PI) / 180);
-
-  const L = l;
-  const C = Math.sqrt(a * a + b * b);
-  const H = h;
-
-  return `oklch(${L.toFixed(3)} ${C.toFixed(3)} ${H.toFixed(3)})`;
-};
-
 const generateThemeCss = (): string => {
   if (typeof window === "undefined") {
     return "";
@@ -507,9 +488,9 @@ const generateThemeCss = (): string => {
     const lines: string[] = ["```css", "", ":root {"];
 
     colorKeys.forEach(({ key, css }) => {
-      const hsl = (lightColors as any)[key];
-      if (hsl) {
-        lines.push(`  ${css}: ${hslToOklch(hsl)};`);
+      const color = (lightColors as any)[key];
+      if (color) {
+        lines.push(`  ${css}: ${color};`);
       }
     });
 
@@ -525,7 +506,7 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-spread: ${lightOther.shadow.spread}px;`);
     lines.push(`  --shadow-opacity: ${lightOther.shadow.opacity};`);
     lines.push(
-      `  --shadow-color: ${hslToOklch(lightOther.shadow.color)};`
+      `  --shadow-color: ${lightOther.shadow.color};`
     );
     lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
@@ -558,9 +539,9 @@ const generateThemeCss = (): string => {
     lines.push(`.dark {`);
 
     colorKeys.forEach(({ key, css }) => {
-      const hsl = (darkColors as any)[key];
-      if (hsl) {
-        lines.push(`  ${css}: ${hslToOklch(hsl)};`);
+      const color = (darkColors as any)[key];
+      if (color) {
+        lines.push(`  ${css}: ${color};`);
       }
     });
 
@@ -576,7 +557,7 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-spread: ${darkOther.shadow.spread}px;`);
     lines.push(`  --shadow-opacity: ${darkOther.shadow.opacity};`);
     lines.push(
-      `  --shadow-color: ${hslToOklch(darkOther.shadow.color)};`
+      `  --shadow-color: ${darkOther.shadow.color};`
     );
     lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
     lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
