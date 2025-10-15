@@ -1645,6 +1645,7 @@ const RLSTab = () => {
                         name: "New policy",
                         operation: "SELECT",
                         using: "true",
+                        isEditing: false,
                       })
                     }
                   >

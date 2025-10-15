@@ -174,6 +174,7 @@ const Page = () => {
   const currentNode = useMemo(() => {
     if (!canRender || !contentPath) return null;
     return getNode(contentPath);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canRender, contentPath, getNode, refreshKey, data]);
 
   const isTsxFile = useMemo(() => {

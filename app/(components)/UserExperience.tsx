@@ -3,19 +3,26 @@
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { FileSystemEntry } from "@/app/(editor)/layout.types";
 import { Button } from "@/components/editor/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/editor/ui/popover";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
 import { cn } from "@/lib/tailwind.utils";
-import { File, Folder, FolderOpen, Plus, Trash2, Save } from "lucide-react";
+import { File, Folder, FolderOpen, Plus, Save, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Feature, UserExperienceFileType } from "./UserExperience.types";
 import { useUserExperienceStore } from "./UserExperience.stores";
+import { Feature, UserExperienceFileType } from "./UserExperience.types";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
-const getFileExtension = (fileType: UserExperienceFileType, isPage: boolean): string => {
+const getFileExtension = (
+  fileType: UserExperienceFileType,
+  isPage: boolean
+): string => {
   if (fileType === "stores") return ".stores.ts";
   if (fileType === "hooks") return ".hooks.tsx";
   if (fileType === "actions") return ".actions.ts";
@@ -43,7 +50,8 @@ const TreeNode = ({
   appStructure: FileSystemEntry[];
 }) => {
   const { addAppStructureNodeAfterSibling } = useEditorStore();
-  const { setSelectedFile, addUtilityFile, getUtilityFiles } = useUserExperienceStore();
+  const { setSelectedFile, addUtilityFile, getUtilityFiles } =
+    useUserExperienceStore();
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const isPageFile = node.type === "file" && node.name === "page.tsx";
@@ -99,8 +107,15 @@ const TreeNode = ({
   };
 
   const utilityFiles = getUtilityFiles(node.id);
-  const availableOptions: UserExperienceFileType[] = ["stores", "hooks", "actions", "types"];
-  const remainingOptions = availableOptions.filter((opt) => !utilityFiles.includes(opt));
+  const availableOptions: UserExperienceFileType[] = [
+    "stores",
+    "hooks",
+    "actions",
+    "types",
+  ];
+  const remainingOptions = availableOptions.filter(
+    (opt) => !utilityFiles.includes(opt)
+  );
 
   return (
     <div>
@@ -208,7 +223,7 @@ const TreeNode = ({
 const FeatureCard = ({
   feature,
   fileId,
-  utilityFiles
+  utilityFiles,
 }: {
   feature: Feature;
   fileId: string;
@@ -217,7 +232,8 @@ const FeatureCard = ({
   const { updateFeature, removeFeature } = useUserExperienceStore();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
-  const canSave = feature.title.trim() !== "" && feature.description.trim() !== "";
+  const canSave =
+    feature.title.trim() !== "" && feature.description.trim() !== "";
 
   const handleSave = () => {
     if (canSave) {
@@ -319,18 +335,16 @@ const FeatureCard = ({
       <div className="flex items-center justify-between theme-mb-2">
         <Input
           value={feature.title}
-          onChange={(e) => updateFeature(fileId, feature.id, { title: e.target.value })}
+          onChange={(e) =>
+            updateFeature(fileId, feature.id, { title: e.target.value })
+          }
           onKeyDown={handleKeyDown}
           className="h-7 text-sm font-medium theme-shadow"
           placeholder="Feature title"
         />
         <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
           <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 theme-ml-2"
-            >
+            <Button variant="ghost" size="icon" className="h-6 w-6 theme-ml-2">
               <Trash2 className="h-4 w-4 theme-text-destructive" />
             </Button>
           </PopoverTrigger>
@@ -370,7 +384,9 @@ const FeatureCard = ({
           </label>
           <Textarea
             value={feature.description}
-            onChange={(e) => updateFeature(fileId, feature.id, { description: e.target.value })}
+            onChange={(e) =>
+              updateFeature(fileId, feature.id, { description: e.target.value })
+            }
             onKeyDown={handleKeyDown}
             placeholder="Enter feature description"
             className="text-sm theme-shadow min-h-[80px]"
@@ -424,7 +440,13 @@ const FeatureCard = ({
 
 export const UserExperience = () => {
   const { appStructure } = useEditorStore();
-  const { selectedFilePath, selectedFileId, getUtilityFiles, getFeatures, addFeature } = useUserExperienceStore();
+  const {
+    selectedFilePath,
+    selectedFileId,
+    getUtilityFiles,
+    getFeatures,
+    addFeature,
+  } = useUserExperienceStore();
 
   const utilityFiles = selectedFileId ? getUtilityFiles(selectedFileId) : [];
   const features = selectedFileId ? getFeatures(selectedFileId) : [];
@@ -452,7 +474,8 @@ export const UserExperience = () => {
 
               {appStructure.length === 0 && (
                 <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
-                  No app structure defined. Visit the App Structure page to create one.
+                  No app structure defined. Visit the App Structure page to
+                  create one.
                 </div>
               )}
             </div>
@@ -498,7 +521,7 @@ export const UserExperience = () => {
                 ) : (
                   <div className="flex items-center justify-center theme-py-8">
                     <span className="theme-text-muted-foreground theme-font-sans theme-tracking">
-                      No features added. Click "Add Feature" to begin.
+                      No features added. Click &quot;Add Feature&quot; to begin.
                     </span>
                   </div>
                 )}
