@@ -7,13 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Next.js 15** with App Router architecture
 - **TypeScript** for type safety
 - **TailwindCSS v4** for styling
+- **Jest & Playwright** for testing
 
 # General rules:
 
 - Don't include any comments in any files.
-- All errors should be thrown - never include any "Fallback" functionality
+- All errors should be thrown - no "fallback" functionality
 - Import "cn" from "@/lib/shadcn.utils" to concatinate classes.
-- All console.logs should be stringified and minified.
 
 # File Organization and Naming Conventions
 
@@ -41,7 +41,7 @@ app/
 
 # Hook, action, store and type patterns
 
-DB <-> Action <-> hook <-> store <-> client
+DB <-> Action <-> hook <-> store
 
 - Better-auth client methods are called directly in the react-query hooks.
 - Prisma client queries are called in actions via getAuthenticatedClient.

@@ -4,6 +4,25 @@
 
 - [ ] Write a prompt on lecture to quiz learning method.
 
+.theme-radius {
+border-radius: var(--theme-radius);
+}
+
+.theme-shadow {
+box-shadow: var(--theme-shadow);
+}
+
+|
+v
+
+.radius {
+border-radius: var(--radius);
+}
+
+.shadow {
+box-shadow: var(--shadow);
+}
+
 - [ ] fix layout wireframe in app structure
 - [ ] Update the theme components script to remove the "-theme" prefix and change tailwind util file import to the default
 - [ ] fix letter spacing in light mode
