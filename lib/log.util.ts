@@ -13,6 +13,7 @@ export enum LOG_LABELS {
   SHOPIFY_ANALYTICS = "shopify-analytics",
   REALTIME = "realtime",
   THEME = "theme",
+  APP_STRUCTURE = "app-structure",
 }
 
 interface ConditionalLogOptions {

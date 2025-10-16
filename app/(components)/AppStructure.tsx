@@ -1,7 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { FileSystemEntry } from "@/app/(editor)/layout.types";
+import { Feature, FileSystemEntry, UserExperienceFileType } from "@/app/(editor)/layout.types";
 import { findLayoutsForPagePath } from "@/app/(editor)/layout.utils";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
@@ -17,6 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/editor/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/editor/ui/tabs";
+import { Textarea } from "@/components/editor/ui/textarea";
+import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { cn } from "@/lib/tailwind.utils";
 import {
   ChevronDown,
@@ -38,6 +46,21 @@ type RouteEntry = {
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
 const PAGE_FILE_ICON = "text-[var(--theme-chart-1)]";
+
+const getFileExtension = (
+  fileType: UserExperienceFileType,
+  isPage: boolean
+): string => {
+  if (fileType === "stores") return ".stores.ts";
+  if (fileType === "hooks") return ".hooks.tsx";
+  if (fileType === "actions") return ".actions.ts";
+  if (fileType === "types") return ".types.ts";
+  return "";
+};
+
+const getBaseFileName = (fileName: string): string => {
+  return fileName.replace(/\.(tsx|ts)$/, "");
+};
 
 type AppStructureTemplate = {
   id: string;
@@ -368,6 +391,358 @@ const LAYOUT_COLORS = [
     icon: "theme-text-chart-3",
   },
 ];
+
+const isQualifyingFile = (
+  fileName: string,
+  fileType: UserExperienceFileType
+): boolean => {
+  const patterns: Record<UserExperienceFileType, RegExp> = {
+    stores: /\.stores\.ts$/,
+    hooks: /\.hooks\.tsx$/,
+    actions: /\.actions\.ts$/,
+    types: /\.types\.ts$/,
+  };
+  return patterns[fileType].test(fileName);
+};
+
+const getQualifyingFiles = (
+  appStructure: FileSystemEntry[],
+  selectedFilePath: string | null,
+  fileType: UserExperienceFileType
+): string[] => {
+  if (!selectedFilePath) {
+    conditionalLog({ message: "No selected file path", selectedFilePath, fileType }, { label: LOG_LABELS.APP_STRUCTURE });
+    return [];
+  }
+
+  const selectedDirectory = selectedFilePath.substring(
+    0,
+    selectedFilePath.lastIndexOf("/")
+  );
+
+  const qualifyingFiles: string[] = [];
+
+  const isAncestorOrSameDirectory = (fileDir: string, selectedDir: string): boolean => {
+    if (fileDir === selectedDir) return true;
+
+    if (selectedDir.startsWith(fileDir + "/")) return true;
+
+    return false;
+  };
+
+  const traverseStructure = (
+    entries: FileSystemEntry[],
+    currentPath: string = ""
+  ) => {
+    for (const entry of entries) {
+      const entryPath = currentPath ? `${currentPath}/${entry.name}` : `/${entry.name}`;
+
+      if (entry.type === "file" && isQualifyingFile(entry.name, fileType)) {
+        const fileDirectory = entryPath.substring(0, entryPath.lastIndexOf("/"));
+        const isQualified = isAncestorOrSameDirectory(fileDirectory, selectedDirectory);
+
+        conditionalLog({
+          fileName: entry.name,
+          entryPath,
+          fileDirectory,
+          selectedDirectory,
+          isQualified,
+          fileType,
+        }, { label: LOG_LABELS.APP_STRUCTURE });
+
+        if (isQualified) {
+          qualifyingFiles.push(entryPath);
+        }
+      }
+
+      if (entry.type === "directory" && entry.children) {
+        traverseStructure(entry.children, entryPath);
+      }
+    }
+  };
+
+  traverseStructure(appStructure);
+
+  conditionalLog({
+    message: "Qualifying files result",
+    selectedFilePath,
+    selectedDirectory,
+    fileType,
+    qualifyingFiles,
+    totalQualifying: qualifyingFiles.length,
+  }, { label: LOG_LABELS.APP_STRUCTURE });
+
+  return qualifyingFiles;
+};
+
+const FeatureCard = ({
+  feature,
+  fileId,
+}: {
+  feature: Feature;
+  fileId: string;
+}) => {
+  const { updateFeature, removeFeature, linkFeatureFile, unlinkFeatureFile, setFeatureFileSelection } = useEditorStore();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+
+  const canSave =
+    feature.title.trim() !== "" && feature.description.trim() !== "";
+
+  const handleSave = () => {
+    if (canSave) {
+      updateFeature(fileId, feature.id, { isEditing: false });
+    }
+  };
+
+  const handleEdit = () => {
+    updateFeature(fileId, feature.id, { isEditing: true });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey && canSave) {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
+  const fileTypes: UserExperienceFileType[] = ["stores", "hooks", "actions", "types"];
+
+  const handlePlaceholderClick = (fileType: UserExperienceFileType) => {
+    setFeatureFileSelection(fileId, feature.id, fileType);
+  };
+
+  const handleUnlinkFile = (fileType: UserExperienceFileType, e: React.MouseEvent) => {
+    e.stopPropagation();
+    unlinkFeatureFile(fileId, feature.id, fileType);
+  };
+
+  if (!feature.isEditing) {
+    return (
+      <div className="theme-bg-muted theme-radius theme-p-3">
+        <div
+          className="cursor-pointer hover:theme-bg-accent transition-colors theme-p-2 theme-radius"
+          onClick={handleEdit}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="flex items-center theme-gap-2 theme-mb-1">
+                <span className="text-sm font-medium theme-text-foreground">
+                  {feature.title}
+                </span>
+              </div>
+              <div className="text-xs theme-text-muted-foreground theme-truncate">
+                {feature.description}
+              </div>
+            </div>
+            <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 theme-ml-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Trash2 className="h-4 w-4 theme-text-destructive" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-64 theme-p-3 theme-shadow"
+                align="end"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex flex-col theme-gap-2">
+                  <p className="text-sm theme-text-foreground">
+                    Delete feature {feature.title}?
+                  </p>
+                  <div className="flex theme-gap-2">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        removeFeature(fileId, feature.id);
+                        setDeleteConfirmOpen(false);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteConfirmOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 theme-gap-2 theme-mt-3">
+          {fileTypes.map((fileType) => {
+            const linkedFile = feature.linkedFiles[fileType];
+            return (
+              <div
+                key={fileType}
+                className={cn(
+                  "theme-p-2 theme-radius border-2 transition-colors min-h-[60px] flex flex-col justify-between",
+                  linkedFile
+                    ? "theme-border-border theme-bg-background cursor-pointer hover:theme-bg-accent"
+                    : "border-dashed theme-border-muted-foreground/30 theme-bg-background/50 cursor-pointer hover:theme-bg-accent/50"
+                )}
+                onClick={() => handlePlaceholderClick(fileType)}
+              >
+                <div className="text-xs theme-font-mono theme-text-muted-foreground capitalize theme-mb-1">
+                  {fileType}
+                </div>
+                {linkedFile ? (
+                  <div className="flex items-center justify-between theme-gap-1">
+                    <div className="text-xs theme-font-mono theme-text-foreground truncate flex-1">
+                      {linkedFile.split("/").pop()}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-4 w-4 flex-shrink-0"
+                      onClick={(e) => handleUnlinkFile(fileType, e)}
+                    >
+                      <Trash2 className="h-3 w-3 theme-text-destructive" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-xs theme-text-muted-foreground/50">
+                    Click to select
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="theme-bg-muted theme-radius theme-p-3 relative">
+      <div className="flex items-center justify-between theme-mb-2">
+        <Input
+          value={feature.title}
+          onChange={(e) =>
+            updateFeature(fileId, feature.id, { title: e.target.value })
+          }
+          onKeyDown={handleKeyDown}
+          className="h-7 text-sm font-medium theme-shadow"
+          placeholder="Feature title"
+        />
+        <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-6 w-6 theme-ml-2">
+              <Trash2 className="h-4 w-4 theme-text-destructive" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+            <div className="flex flex-col theme-gap-2">
+              <p className="text-sm theme-text-foreground">
+                Delete feature {feature.title}?
+              </p>
+              <div className="flex theme-gap-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    removeFeature(fileId, feature.id);
+                    setDeleteConfirmOpen(false);
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDeleteConfirmOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="flex flex-col theme-gap-2">
+        <div>
+          <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+            Description
+          </label>
+          <Textarea
+            value={feature.description}
+            onChange={(e) =>
+              updateFeature(fileId, feature.id, { description: e.target.value })
+            }
+            onKeyDown={handleKeyDown}
+            placeholder="Enter feature description"
+            className="text-sm theme-shadow min-h-[80px]"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 theme-gap-2 theme-mt-3">
+        {fileTypes.map((fileType) => {
+          const linkedFile = feature.linkedFiles[fileType];
+          return (
+            <div
+              key={fileType}
+              className={cn(
+                "theme-p-2 theme-radius border-2 transition-colors min-h-[60px] flex flex-col justify-between",
+                linkedFile
+                  ? "theme-border-border theme-bg-background cursor-pointer hover:theme-bg-accent"
+                  : "border-dashed theme-border-muted-foreground/30 theme-bg-background/50 cursor-pointer hover:theme-bg-accent/50"
+              )}
+              onClick={() => handlePlaceholderClick(fileType)}
+            >
+              <div className="text-xs theme-font-mono theme-text-muted-foreground capitalize theme-mb-1">
+                {fileType}
+              </div>
+              {linkedFile ? (
+                <div className="flex items-center justify-between theme-gap-1">
+                  <div className="text-xs theme-font-mono theme-text-foreground truncate flex-1">
+                    {linkedFile.split("/").pop()}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4 flex-shrink-0"
+                    onClick={(e) => handleUnlinkFile(fileType, e)}
+                  >
+                    <Trash2 className="h-3 w-3 theme-text-destructive" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-xs theme-text-muted-foreground/50">
+                  Click to select
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex justify-end theme-mt-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleSave}
+          disabled={!canSave}
+          className="h-7 theme-gap-1"
+        >
+          <Save className="h-3 w-3" />
+          Save
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const generateRoutesFromFileSystem = (
   entries: FileSystemEntry[],
@@ -1426,6 +1801,7 @@ const TreeNode = ({
   ancestorIsLast = [],
   onAddSpecificFile,
   newNodeId,
+  qualifyingFilePaths = [],
 }: {
   node: FileSystemEntry;
   depth?: number;
@@ -1439,13 +1815,31 @@ const TreeNode = ({
   ancestorIsLast?: boolean[];
   onAddSpecificFile?: (parentId: string, fileName: string) => void;
   newNodeId?: string | null;
+  qualifyingFilePaths?: string[];
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { wireframeState, setWireframeCurrentPage } = useEditorStore();
+  const {
+    wireframeState,
+    setWireframeCurrentPage,
+    addAppStructureNodeAfterSibling,
+    setSelectedFile,
+    addUtilityFile,
+    getUtilityFiles,
+    featureFileSelection,
+    linkFeatureFile,
+    clearFeatureFileSelection,
+    selectedFilePath,
+  } = useEditorStore();
   const [isEditing, setIsEditing] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const isPageFile = node.type === "file" && node.name === "page.tsx";
   const isLayoutFile = node.type === "file" && node.name === "layout.tsx";
+  const isClickableFile = isPageFile || isLayoutFile;
+
+  const currentFilePath = parentPath ? `${parentPath}/${node.name}` : node.name;
+  const isQualified = qualifyingFilePaths.includes(currentFilePath);
+  const isInSelectionMode = featureFileSelection.fileType !== null;
 
   const getFileIconColor = (): string => {
     if (isPageFile) {
@@ -1666,19 +2060,74 @@ const TreeNode = ({
     }
   };
 
+  const handleFileClick = () => {
+    if (isInSelectionMode && isQualified && featureFileSelection.fileId && featureFileSelection.featureId && featureFileSelection.fileType) {
+      linkFeatureFile(
+        featureFileSelection.fileId,
+        featureFileSelection.featureId,
+        featureFileSelection.fileType,
+        currentFilePath
+      );
+      clearFeatureFileSelection();
+      return;
+    }
+
+    if (!isClickableFile) return;
+    const fullPath = parentPath ? `${parentPath}/${node.name}` : node.name;
+    setSelectedFile(fullPath, node.id);
+  };
+
+  const handleAddUtilityFile = (fileType: UserExperienceFileType) => {
+    if (!isClickableFile) return;
+
+    const baseFileName = getBaseFileName(node.name);
+    const extension = getFileExtension(fileType, isPageFile);
+    const newFileName = `${baseFileName}${extension}`;
+
+    const newFile: FileSystemEntry = {
+      id: generateId(),
+      name: newFileName,
+      type: "file",
+    };
+
+    addAppStructureNodeAfterSibling(node.id, newFile);
+    addUtilityFile(node.id, node.name, fileType);
+    setPopoverOpen(false);
+  };
+
+  const utilityFiles = getUtilityFiles(node.id);
+  const availableOptions: UserExperienceFileType[] = [
+    "stores",
+    "hooks",
+    "actions",
+    "types",
+  ];
+  const remainingOptions = availableOptions.filter(
+    (opt) => !utilityFiles.includes(opt)
+  );
+
   return (
     <div>
       <div
         className={cn(
-          "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground ",
-          isPageFile && "cursor-pointer hover:theme-bg-primary",
-          !isPageFile && "hover:theme-bg-accent",
-          isCurrentPage && " theme-bg-muted "
+          "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground",
+          isClickableFile && "cursor-pointer hover:theme-bg-primary",
+          !isClickableFile && "hover:theme-bg-accent",
+          isCurrentPage && " theme-bg-muted ",
+          isQualified && isInSelectionMode && "border-2 border-dashed theme-border-chart-4 theme-bg-accent/20 cursor-pointer"
         )}
         onClick={(e) => {
-          if (isPageFile) {
+          if (isQualified && isInSelectionMode) {
             e.stopPropagation();
-            handlePageFileClick();
+            handleFileClick();
+            return;
+          }
+          if (isClickableFile) {
+            e.stopPropagation();
+            if (isPageFile) {
+              handlePageFileClick();
+            }
+            handleFileClick();
           }
         }}
       >
@@ -1731,6 +2180,53 @@ const TreeNode = ({
               {node.name}
             </span>
           )}
+
+          {isClickableFile && remainingOptions.length > 0 && (
+            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 opacity-0 group-hover:opacity-100 theme-ml-auto"
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border"
+                align="start"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex flex-col theme-gap-1">
+                  {remainingOptions.map((option) => (
+                    <Button
+                      key={option}
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start theme-gap-2 theme-shadow"
+                      onClick={() => handleAddUtilityFile(option)}
+                    >
+                      <File className="h-4 w-4 theme-text-chart-4" />
+                      <span>{option}</span>
+                    </Button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+
+          {isClickableFile && utilityFiles.length > 0 && (
+            <div className="flex items-center theme-gap-1 theme-ml-2">
+              {utilityFiles.map((fileType, i) => (
+                <span
+                  key={i}
+                  className="text-xs theme-font-mono theme-px-1 theme-py-0.5 theme-bg-accent theme-radius theme-text-muted-foreground"
+                >
+                  {fileType[0]}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <div
@@ -1774,6 +2270,7 @@ const TreeNode = ({
               ancestorIsLast={[...ancestorIsLast, false]}
               onAddSpecificFile={onAddSpecificFile}
               newNodeId={newNodeId}
+              qualifyingFilePaths={qualifyingFilePaths}
             />
           ))}
 
@@ -1871,6 +2368,12 @@ export const LayoutAndStructure = () => {
     setWireframeCurrentPage,
     addWireframeElement,
     removeWireframeElement,
+    selectedFilePath,
+    selectedFileId,
+    getUtilityFiles,
+    getFeatures,
+    addFeature,
+    featureFileSelection,
   } = useEditorStore();
 
   useEffect(() => {
@@ -1888,6 +2391,14 @@ export const LayoutAndStructure = () => {
   const routeInputRef = useRef<HTMLInputElement>(null);
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("blank");
+  const [activeTab, setActiveTab] = useState<string>("layouts");
+
+  const utilityFiles = selectedFileId ? getUtilityFiles(selectedFileId) : [];
+  const features = selectedFileId ? getFeatures(selectedFileId) : [];
+
+  const qualifyingFilePaths = featureFileSelection.fileType
+    ? getQualifyingFiles(appStructure, selectedFilePath, featureFileSelection.fileType)
+    : [];
 
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -2181,6 +2692,7 @@ export const LayoutAndStructure = () => {
                   appStructure={appStructure}
                   onAddSpecificFile={handleAddSpecificFile}
                   newNodeId={newNodeId}
+                  qualifyingFilePaths={qualifyingFilePaths}
                 />
               ))}
 
@@ -2216,44 +2728,105 @@ export const LayoutAndStructure = () => {
         </div>
 
         <div className="flex flex-col h-full overflow-hidden">
-          <div className="flex items-center justify-between theme-mb-2">
-            <h3 className="text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
-              Layout Wireframe {currentPage && `- ${currentPage}`}
-            </h3>
-            <div className="flex items-center theme-gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 theme-shadow"
-                onClick={() => {
-                  if (currentPageIndex > 0) {
-                    setWireframeCurrentPage(currentPageIndex - 1);
-                  }
-                }}
-                disabled={currentPageIndex === 0}
-                title="Previous page"
-              >
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 theme-shadow"
-                onClick={() => {
-                  if (currentPageIndex < availablePages.length - 1) {
-                    setWireframeCurrentPage(currentPageIndex + 1);
-                  }
-                }}
-                disabled={currentPageIndex === availablePages.length - 1}
-                title="Next page"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
+            <div className="flex items-center justify-between theme-mb-2">
+              <TabsList>
+                <TabsTrigger value="layouts">Layouts</TabsTrigger>
+                <TabsTrigger value="features">Features</TabsTrigger>
+              </TabsList>
+              {activeTab === "layouts" && (
+                <div className="flex items-center theme-gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 theme-shadow"
+                    onClick={() => {
+                      if (currentPageIndex > 0) {
+                        setWireframeCurrentPage(currentPageIndex - 1);
+                      }
+                    }}
+                    disabled={currentPageIndex === 0}
+                    title="Previous page"
+                  >
+                    <ChevronUp className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 theme-shadow"
+                    onClick={() => {
+                      if (currentPageIndex < availablePages.length - 1) {
+                        setWireframeCurrentPage(currentPageIndex + 1);
+                      }
+                    }}
+                    disabled={currentPageIndex === availablePages.length - 1}
+                    title="Next page"
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              {activeTab === "features" && selectedFileId && (
+                <Button
+                  onClick={() => addFeature(selectedFileId)}
+                  size="sm"
+                  className="theme-gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Feature
+                </Button>
+              )}
             </div>
-          </div>
-          <div className="theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow">
-            {renderNestedBoxes()}
-          </div>
+
+            <TabsContent value="layouts" className="flex-1 overflow-hidden theme-mt-0">
+              <div className="flex flex-col h-full">
+                <h3 className="text-sm font-semibold theme-text-card-foreground theme-font-sans theme-tracking theme-mb-2">
+                  {currentPage && `${currentPage}`}
+                </h3>
+                <div className="theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow">
+                  {renderNestedBoxes()}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="features" className="flex-1 overflow-hidden theme-mt-0">
+              <div className="theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow h-full">
+                {selectedFilePath ? (
+                  <div className="flex flex-col theme-gap-3 h-full">
+                    <div className="theme-mb-2">
+                      <span className="text-sm theme-font-mono theme-text-muted-foreground">
+                        {selectedFilePath}
+                      </span>
+                    </div>
+
+                    {features.length > 0 ? (
+                      <div className="flex flex-col theme-gap-3">
+                        {features.map((feature) => (
+                          <FeatureCard
+                            key={feature.id}
+                            feature={feature}
+                            fileId={selectedFileId!}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center theme-py-8">
+                        <span className="theme-text-muted-foreground theme-font-sans theme-tracking">
+                          No features added. Click &quot;Add Feature&quot; to begin.
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <span className="theme-text-muted-foreground theme-font-sans theme-tracking">
+                      Select a page.tsx or layout.tsx file to begin
+                    </span>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

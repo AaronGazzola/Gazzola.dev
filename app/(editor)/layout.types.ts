@@ -223,6 +223,27 @@ export interface EditorState {
   setWireframeConfigPopover: (open: boolean, elementType?: WireframeElementType) => void;
   selectWireframeItem: (type: "page" | "layout", path: string) => void;
   clearWireframeSelection: () => void;
+  selectedFilePath: string | null;
+  selectedFileId: string | null;
+  userExperienceFiles: Record<string, UserExperienceFileType[]>;
+  features: Record<string, Feature[]>;
+  featureFileSelection: {
+    fileId: string | null;
+    featureId: string | null;
+    fileType: UserExperienceFileType | null;
+  };
+  setSelectedFile: (filePath: string | null, fileId: string | null) => void;
+  addUtilityFile: (parentFileId: string, parentFileName: string, fileType: UserExperienceFileType) => void;
+  getUtilityFiles: (fileId: string) => UserExperienceFileType[];
+  clearSelection: () => void;
+  addFeature: (fileId: string) => void;
+  updateFeature: (fileId: string, featureId: string, updates: Partial<Feature>) => void;
+  removeFeature: (fileId: string, featureId: string) => void;
+  getFeatures: (fileId: string) => Feature[];
+  linkFeatureFile: (fileId: string, featureId: string, fileType: UserExperienceFileType, filePath: string) => void;
+  unlinkFeatureFile: (fileId: string, featureId: string, fileType: UserExperienceFileType) => void;
+  setFeatureFileSelection: (fileId: string | null, featureId: string | null, fileType: UserExperienceFileType | null) => void;
+  clearFeatureFileSelection: () => void;
 }
 
 export interface NavigationItem {
@@ -294,5 +315,15 @@ export interface WireframeState {
   selectedElementType: WireframeElementType | null;
   selectedType: "page" | "layout" | null;
   selectedPath: string | null;
+}
+
+export type UserExperienceFileType = "stores" | "hooks" | "actions" | "types";
+
+export interface Feature {
+  id: string;
+  title: string;
+  description: string;
+  linkedFiles: Partial<Record<UserExperienceFileType, string>>;
+  isEditing: boolean;
 }
 

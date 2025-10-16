@@ -2,9 +2,11 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
   EditorState,
+  Feature,
   FileSystemEntry,
   InitialConfigurationType,
   MarkdownData,
+  UserExperienceFileType,
   WireframeData,
   WireframeElement,
   WireframeElementType,
@@ -265,6 +267,15 @@ const createInitialState = (data: MarkdownData) => ({
   initialConfiguration: defaultInitialConfiguration,
   storedContentVersion: data.contentVersion,
   wireframeState: defaultWireframeState,
+  selectedFilePath: null,
+  selectedFileId: null,
+  userExperienceFiles: {},
+  features: {},
+  featureFileSelection: {
+    fileId: null,
+    featureId: null,
+    fileType: null,
+  },
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -1036,6 +1047,137 @@ export const useEditorStore = create<EditorState>()(
           },
         }));
       },
+      setSelectedFile: (filePath, fileId) => {
+        set({ selectedFilePath: filePath, selectedFileId: fileId });
+      },
+      addUtilityFile: (parentFileId, parentFileName, fileType) => {
+        set((state) => {
+          const existing = state.userExperienceFiles[parentFileId] || [];
+          if (existing.includes(fileType)) {
+            return state;
+          }
+          return {
+            userExperienceFiles: {
+              ...state.userExperienceFiles,
+              [parentFileId]: [...existing, fileType],
+            },
+          };
+        });
+      },
+      getUtilityFiles: (fileId) => {
+        const state = get();
+        return state.userExperienceFiles[fileId] || [];
+      },
+      clearSelection: () => {
+        set({ selectedFilePath: null, selectedFileId: null });
+      },
+      addFeature: (fileId) => {
+        set((state) => {
+          const existingFeatures = state.features[fileId] || [];
+
+          const newFeature: Feature = {
+            id: generateId(),
+            title: "",
+            description: "",
+            linkedFiles: {},
+            isEditing: true,
+          };
+
+          return {
+            features: {
+              ...state.features,
+              [fileId]: [...existingFeatures, newFeature],
+            },
+          };
+        });
+      },
+      updateFeature: (fileId, featureId, updates) => {
+        set((state) => {
+          const features = state.features[fileId] || [];
+          return {
+            features: {
+              ...state.features,
+              [fileId]: features.map((feature) =>
+                feature.id === featureId ? { ...feature, ...updates } : feature
+              ),
+            },
+          };
+        });
+      },
+      removeFeature: (fileId, featureId) => {
+        set((state) => {
+          const features = state.features[fileId] || [];
+          return {
+            features: {
+              ...state.features,
+              [fileId]: features.filter((feature) => feature.id !== featureId),
+            },
+          };
+        });
+      },
+      getFeatures: (fileId) => {
+        const state = get();
+        return state.features[fileId] || [];
+      },
+      linkFeatureFile: (fileId, featureId, fileType, filePath) => {
+        set((state) => {
+          const features = state.features[fileId] || [];
+          return {
+            features: {
+              ...state.features,
+              [fileId]: features.map((feature) =>
+                feature.id === featureId
+                  ? {
+                      ...feature,
+                      linkedFiles: {
+                        ...feature.linkedFiles,
+                        [fileType]: filePath,
+                      },
+                    }
+                  : feature
+              ),
+            },
+          };
+        });
+      },
+      unlinkFeatureFile: (fileId, featureId, fileType) => {
+        set((state) => {
+          const features = state.features[fileId] || [];
+          return {
+            features: {
+              ...state.features,
+              [fileId]: features.map((feature) => {
+                if (feature.id === featureId) {
+                  const { [fileType]: _, ...remainingFiles } = feature.linkedFiles;
+                  return {
+                    ...feature,
+                    linkedFiles: remainingFiles,
+                  };
+                }
+                return feature;
+              }),
+            },
+          };
+        });
+      },
+      setFeatureFileSelection: (fileId, featureId, fileType) => {
+        set({
+          featureFileSelection: {
+            fileId,
+            featureId,
+            fileType,
+          },
+        });
+      },
+      clearFeatureFileSelection: () => {
+        set({
+          featureFileSelection: {
+            fileId: null,
+            featureId: null,
+            fileType: null,
+          },
+        });
+      },
     }),
     {
       name: "editor-storage",
@@ -1051,6 +1193,11 @@ export const useEditorStore = create<EditorState>()(
         initialConfiguration: state.initialConfiguration,
         storedContentVersion: state.storedContentVersion,
         wireframeState: state.wireframeState,
+        selectedFilePath: state.selectedFilePath,
+        selectedFileId: state.selectedFileId,
+        userExperienceFiles: state.userExperienceFiles,
+        features: state.features,
+        featureFileSelection: state.featureFileSelection,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {
