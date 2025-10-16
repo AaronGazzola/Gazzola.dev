@@ -9,6 +9,16 @@
     "include": true,
     "children": [
       {
+        "id": "css",
+        "name": "css",
+        "displayName": "css",
+        "type": "directory",
+        "path": "css",
+        "urlPath": "/css",
+        "include": true,
+        "children": []
+      },
+      {
         "id": "robots",
         "name": "robots",
         "displayName": "Robots",
@@ -140,35 +150,11 @@
             "visibleAfterPage": "start-here.layout-routes"
           },
           {
-            "id": "start-here.user-experience",
-            "name": "user-experience",
-            "displayName": "User Experience",
-            "type": "file",
-            "order": 5,
-            "path": "start-here.user-experience",
-            "urlPath": "/start-here/user-experience",
-            "content": "# User Experience\n\nOutline the functionality of each page in your app to specify the actions, hooks, stores, and types required to implement the user experience\n\n<!-- component-UserExperience -->\n",
-            "components": [
-              {
-                "id": "component-UserExperience",
-                "name": "UserExperience",
-                "displayName": "UserExperience",
-                "type": "component",
-                "path": "user-experience.component.UserExperience",
-                "urlPath": "",
-                "componentId": "UserExperience",
-                "include": true
-              }
-            ],
-            "sections": {},
-            "include": true
-          },
-          {
             "id": "start-here.tests",
             "name": "tests",
             "displayName": "Tests",
             "type": "file",
-            "order": 6,
+            "order": 5,
             "path": "start-here.tests",
             "urlPath": "/start-here/tests",
             "content": "# Tests\n\nDescribe the expected behaviour of your app verify the functionality and stress-test the security.\n\n<!-- component-Tests -->\n",
@@ -192,7 +178,7 @@
             "name": "next-steps",
             "displayName": "Next Steps",
             "type": "file",
-            "order": 7,
+            "order": 6,
             "path": "start-here.next-steps",
             "urlPath": "/start-here/next-steps",
             "content": "# Next steps\n\n1. Download your Roadmap\n2. Run \\`npx create-next-app@latest\\` to create your project repository.\n3. Paste your Roadmap into your project repository.\n4. Refer your AI to the \\`ROBOT_README.md\\` file\n5. Start building!\n",
@@ -857,6 +843,16 @@
       "include": true,
       "children": [
         {
+          "id": "css",
+          "name": "css",
+          "displayName": "css",
+          "type": "directory",
+          "path": "css",
+          "urlPath": "/css",
+          "include": true,
+          "children": []
+        },
+        {
           "id": "robots",
           "name": "robots",
           "displayName": "Robots",
@@ -988,35 +984,11 @@
               "visibleAfterPage": "start-here.layout-routes"
             },
             {
-              "id": "start-here.user-experience",
-              "name": "user-experience",
-              "displayName": "User Experience",
-              "type": "file",
-              "order": 5,
-              "path": "start-here.user-experience",
-              "urlPath": "/start-here/user-experience",
-              "content": "# User Experience\n\nOutline the functionality of each page in your app to specify the actions, hooks, stores, and types required to implement the user experience\n\n<!-- component-UserExperience -->\n",
-              "components": [
-                {
-                  "id": "component-UserExperience",
-                  "name": "UserExperience",
-                  "displayName": "UserExperience",
-                  "type": "component",
-                  "path": "user-experience.component.UserExperience",
-                  "urlPath": "",
-                  "componentId": "UserExperience",
-                  "include": true
-                }
-              ],
-              "sections": {},
-              "include": true
-            },
-            {
               "id": "start-here.tests",
               "name": "tests",
               "displayName": "Tests",
               "type": "file",
-              "order": 6,
+              "order": 5,
               "path": "start-here.tests",
               "urlPath": "/start-here/tests",
               "content": "# Tests\n\nDescribe the expected behaviour of your app verify the functionality and stress-test the security.\n\n<!-- component-Tests -->\n",
@@ -1040,7 +1012,7 @@
               "name": "next-steps",
               "displayName": "Next Steps",
               "type": "file",
-              "order": 7,
+              "order": 6,
               "path": "start-here.next-steps",
               "urlPath": "/start-here/next-steps",
               "content": "# Next steps\n\n1. Download your Roadmap\n2. Run \\`npx create-next-app@latest\\` to create your project repository.\n3. Paste your Roadmap into your project repository.\n4. Refer your AI to the \\`ROBOT_README.md\\` file\n5. Start building!\n",
@@ -1694,6 +1666,16 @@
         }
       ]
     },
+    "css": {
+      "id": "css",
+      "name": "css",
+      "displayName": "css",
+      "type": "directory",
+      "path": "css",
+      "urlPath": "/css",
+      "include": true,
+      "children": []
+    },
     "robots": {
       "id": "robots",
       "name": "robots",
@@ -1839,35 +1821,11 @@
           "visibleAfterPage": "start-here.layout-routes"
         },
         {
-          "id": "start-here.user-experience",
-          "name": "user-experience",
-          "displayName": "User Experience",
-          "type": "file",
-          "order": 5,
-          "path": "start-here.user-experience",
-          "urlPath": "/start-here/user-experience",
-          "content": "# User Experience\n\nOutline the functionality of each page in your app to specify the actions, hooks, stores, and types required to implement the user experience\n\n<!-- component-UserExperience -->\n",
-          "components": [
-            {
-              "id": "component-UserExperience",
-              "name": "UserExperience",
-              "displayName": "UserExperience",
-              "type": "component",
-              "path": "user-experience.component.UserExperience",
-              "urlPath": "",
-              "componentId": "UserExperience",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true
-        },
-        {
           "id": "start-here.tests",
           "name": "tests",
           "displayName": "Tests",
           "type": "file",
-          "order": 6,
+          "order": 5,
           "path": "start-here.tests",
           "urlPath": "/start-here/tests",
           "content": "# Tests\n\nDescribe the expected behaviour of your app verify the functionality and stress-test the security.\n\n<!-- component-Tests -->\n",
@@ -1891,7 +1849,7 @@
           "name": "next-steps",
           "displayName": "Next Steps",
           "type": "file",
-          "order": 7,
+          "order": 6,
           "path": "start-here.next-steps",
           "urlPath": "/start-here/next-steps",
           "content": "# Next steps\n\n1. Download your Roadmap\n2. Run \\`npx create-next-app@latest\\` to create your project repository.\n3. Paste your Roadmap into your project repository.\n4. Refer your AI to the \\`ROBOT_README.md\\` file\n5. Start building!\n",
@@ -2038,46 +1996,12 @@
       "componentId": "DatabaseConfiguration",
       "include": false
     },
-    "start-here.user-experience": {
-      "id": "start-here.user-experience",
-      "name": "user-experience",
-      "displayName": "User Experience",
-      "type": "file",
-      "order": 5,
-      "path": "start-here.user-experience",
-      "urlPath": "/start-here/user-experience",
-      "content": "# User Experience\n\nOutline the functionality of each page in your app to specify the actions, hooks, stores, and types required to implement the user experience\n\n<!-- component-UserExperience -->\n",
-      "components": [
-        {
-          "id": "component-UserExperience",
-          "name": "UserExperience",
-          "displayName": "UserExperience",
-          "type": "component",
-          "path": "user-experience.component.UserExperience",
-          "urlPath": "",
-          "componentId": "UserExperience",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true
-    },
-    "user-experience.component.UserExperience": {
-      "id": "component-UserExperience",
-      "name": "UserExperience",
-      "displayName": "UserExperience",
-      "type": "component",
-      "path": "user-experience.component.UserExperience",
-      "urlPath": "",
-      "componentId": "UserExperience",
-      "include": true
-    },
     "start-here.tests": {
       "id": "start-here.tests",
       "name": "tests",
       "displayName": "Tests",
       "type": "file",
-      "order": 6,
+      "order": 5,
       "path": "start-here.tests",
       "urlPath": "/start-here/tests",
       "content": "# Tests\n\nDescribe the expected behaviour of your app verify the functionality and stress-test the security.\n\n<!-- component-Tests -->\n",
@@ -2111,7 +2035,7 @@
       "name": "next-steps",
       "displayName": "Next Steps",
       "type": "file",
-      "order": 7,
+      "order": 6,
       "path": "start-here.next-steps",
       "urlPath": "/start-here/next-steps",
       "content": "# Next steps\n\n1. Download your Roadmap\n2. Run \\`npx create-next-app@latest\\` to create your project repository.\n3. Paste your Roadmap into your project repository.\n4. Refer your AI to the \\`ROBOT_README.md\\` file\n5. Start building!\n",
