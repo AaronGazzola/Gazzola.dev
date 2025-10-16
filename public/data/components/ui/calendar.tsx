@@ -8,8 +8,8 @@ import {
 } from "lucide-react"
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 
-import { cn } from "@/lib/tailwind.utils"
-import { Button, buttonVariants } from "@/components/editor/ui/button"
+import { cn } from "@/lib/utils"
+import { Button, buttonVariants } from "@/components/ui/button"
 
 function Calendar({
   className,
@@ -29,7 +29,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        "group/calendar [--cell-size:calc(var(--theme-spacing)*9)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+        "group/calendar [--cell-size:calc(var(--spacing)*9)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
@@ -66,28 +66,28 @@ function Calendar({
           defaultClassNames.month_caption
         ),
         dropdowns: cn(
-          "flex h-[--cell-size] w-full items-center justify-center gap-1.5 text-sm font-medium theme-font-sans theme-tracking",
+          "flex h-[--cell-size] w-full items-center justify-center gap-1.5 text-sm font-medium font-sans tracking",
           defaultClassNames.dropdowns
         ),
         dropdown_root: cn(
-          "has-focus:theme-border-ring theme-border-input shadow-xs has-focus:theme-focus-ring-color/50 has-focus:ring-[3px] relative rounded-md border",
+          "has-focus:border-ring border-input shadow-xs has-focus:focus-ring-color/50 has-focus:ring-[3px] relative rounded-md border",
           defaultClassNames.dropdown_root
         ),
         dropdown: cn(
-          "theme-bg-popover absolute inset-0 opacity-0",
+          "bg-popover absolute inset-0 opacity-0",
           defaultClassNames.dropdown
         ),
         caption_label: cn(
-          "select-none font-medium theme-font-sans theme-tracking",
+          "select-none font-medium font-sans tracking",
           captionLayout === "label"
             ? "text-sm"
-            : "[&>svg]:theme-text-muted-foreground flex h-8 items-center gap-1 rounded-md pl-2 pr-1 text-sm [&>svg]:size-3.5",
+            : "[&>svg]:text-muted-foreground flex h-8 items-center gap-1 rounded-md pl-2 pr-1 text-sm [&>svg]:size-3.5",
           defaultClassNames.caption_label
         ),
         table: "w-full border-collapse",
         weekdays: cn("flex", defaultClassNames.weekdays),
         weekday: cn(
-          "theme-text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal theme-font-sans theme-tracking",
+          "text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal font-sans tracking",
           defaultClassNames.weekday
         ),
         week: cn("mt-2 flex w-full", defaultClassNames.week),
@@ -96,7 +96,7 @@ function Calendar({
           defaultClassNames.week_number_header
         ),
         week_number: cn(
-          "theme-text-muted-foreground select-none text-[0.8rem] theme-font-sans theme-tracking",
+          "text-muted-foreground select-none text-[0.8rem] font-sans tracking",
           defaultClassNames.week_number
         ),
         day: cn(
@@ -104,21 +104,21 @@ function Calendar({
           defaultClassNames.day
         ),
         range_start: cn(
-          "theme-bg-accent rounded-l-md",
+          "bg-accent rounded-l-md",
           defaultClassNames.range_start
         ),
         range_middle: cn("rounded-none", defaultClassNames.range_middle),
-        range_end: cn("theme-bg-accent rounded-r-md", defaultClassNames.range_end),
+        range_end: cn("bg-accent rounded-r-md", defaultClassNames.range_end),
         today: cn(
-          "theme-bg-accent theme-text-accent-foreground rounded-md data-[selected=true]:rounded-none",
+          "bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none",
           defaultClassNames.today
         ),
         outside: cn(
-          "theme-text-muted-foreground aria-selected:theme-text-muted-foreground",
+          "text-muted-foreground aria-selected:text-muted-foreground",
           defaultClassNames.outside
         ),
         disabled: cn(
-          "theme-text-muted-foreground opacity-50",
+          "text-muted-foreground opacity-50",
           defaultClassNames.disabled
         ),
         hidden: cn("invisible", defaultClassNames.hidden),
@@ -201,7 +201,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "theme-data-selected-single-bg-primary theme-data-selected-single-text-primary-foreground theme-data-range-middle-bg-accent theme-data-range-middle-text-accent-foreground theme-data-range-start-bg-primary theme-data-range-start-text-primary-foreground theme-data-range-end-bg-primary theme-data-range-end-text-primary-foreground group-data-[focused=true]/day:theme-border-ring group-data-[focused=true]/day:theme-focus-ring-color/50 flex aspect-square h-auto w-full min-w-[--cell-size] flex-col gap-1 font-normal leading-none data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] [&>span]:text-xs [&>span]:opacity-70 theme-font-sans theme-tracking",
+        "data-selected-single-bg-primary data-selected-single-text-primary-foreground data-range-middle-bg-accent data-range-middle-text-accent-foreground data-range-start-bg-primary data-range-start-text-primary-foreground data-range-end-bg-primary data-range-end-text-primary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:focus-ring-color/50 flex aspect-square h-auto w-full min-w-[--cell-size] flex-col gap-1 font-normal leading-none data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] [&>span]:text-xs [&>span]:opacity-70 font-sans tracking",
         defaultClassNames.day,
         className
       )}

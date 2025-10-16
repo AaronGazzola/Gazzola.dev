@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwind.utils"
+import { cn } from "@/lib/utils"
 
 function Skeleton({
   className,
@@ -6,7 +6,7 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse theme-bg-muted theme-radius", className)}
+      className={cn("animate-pulse bg-muted radius", className)}
       {...props}
     />
   )

@@ -2,23 +2,23 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 theme-radius theme-font-sans theme-tracking",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 radius font-sans tracking",
   {
     variants: {
       variant: {
         default:
-          "border-2 theme-bg-primary theme-text-primary-foreground theme-border-primary theme-shadow hover:opacity-90",
+          "border-2 bg-primary text-primary-foreground border-primary shadow hover:opacity-90",
         destructive:
-          "border-2 theme-bg-destructive theme-text-destructive-foreground theme-border-destructive theme-shadow hover:opacity-90",
+          "border-2 bg-destructive text-destructive-foreground border-destructive shadow hover:opacity-90",
         outline:
-          "border-2 theme-border-input theme-bg-background theme-text-foreground theme-shadow hover:theme-bg-accent hover:theme-text-accent-foreground",
+          "border-2 border-input bg-background text-foreground shadow hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "border-2 theme-bg-secondary theme-text-secondary-foreground theme-border-secondary theme-shadow hover:opacity-80",
-        ghost: "hover:theme-bg-accent hover:theme-text-accent-foreground",
-        link: "theme-text-primary underline-offset-4 hover:underline",
+          "border-2 bg-secondary text-secondary-foreground border-secondary shadow hover:opacity-80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-9 px-4 py-2",

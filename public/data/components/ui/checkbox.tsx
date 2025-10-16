@@ -4,7 +4,7 @@ import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import { Check } from "lucide-react"
 
-import { cn } from "@/lib/tailwind.utils"
+import { cn } from "@/lib/utils"
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -13,7 +13,7 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "peer h-4 w-4 shrink-0 border theme-border-primary theme-radius theme-shadow focus-visible:outline-none focus-visible:ring-1 theme-border-ring disabled:cursor-not-allowed disabled:opacity-50 theme-data-checked-bg-primary theme-data-checked-text-primary-foreground",
+      "peer h-4 w-4 shrink-0 border border-primary radius shadow focus-visible:outline-none focus-visible:ring-1 border-ring disabled:cursor-not-allowed disabled:opacity-50 data-checked-bg-primary data-checked-text-primary-foreground",
       className
     )}
     {...props}

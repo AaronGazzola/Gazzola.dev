@@ -15,6 +15,7 @@
     "parse": "npx tsx scripts/update-theme-components.ts && npx tsx scripts/parse-markdown.ts",
     "parse:v": "npx tsx scripts/increment-version.ts",
     "parse:theme": "npx tsx scripts/parse-themes.ts",
+    "parse:files": "npx tsx scripts/parse-files.ts",
     "components": "npx tsx scripts/update-theme-components.ts",
     "mcp:toggle": "npx tsx scripts/toggle-playwright-mcp.ts"
   },

@@ -3,7 +3,7 @@
 import * as React from "react"
 import * as ProgressPrimitive from "@radix-ui/react-progress"
 
-import { cn } from "@/lib/tailwind.utils"
+import { cn } from "@/lib/utils"
 
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
@@ -12,14 +12,14 @@ const Progress = React.forwardRef<
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      "relative h-2 w-full overflow-hidden theme-bg-secondary theme-radius",
+      "relative h-2 w-full overflow-hidden bg-secondary radius",
       className
     )}
     {...props}
   >
     <ProgressPrimitive.Indicator
       className={cn(
-        "h-full w-full flex-1 transition-all theme-bg-primary",
+        "h-full w-full flex-1 transition-all bg-primary",
         `translate-x-[-${100 - (value || 0)}%]`
       )}
     />

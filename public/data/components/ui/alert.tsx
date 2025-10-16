@@ -1,16 +1,16 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/tailwind.utils"
+import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-  "relative w-full border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7 theme-radius theme-shadow theme-font-sans theme-tracking",
+  "relative w-full border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7 radius shadow font-sans tracking",
   {
     variants: {
       variant: {
-        default: "theme-bg-background theme-text-foreground theme-border-border",
+        default: "bg-background text-foreground border-border",
         destructive:
-          "theme-bg-destructive theme-text-destructive-foreground theme-border-destructive",
+          "bg-destructive text-destructive-foreground border-destructive",
       },
     },
     defaultVariants: {
@@ -40,7 +40,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("mb-1 font-medium leading-none tracking-tight theme-font-sans theme-tracking", className)}
+    className={cn("mb-1 font-medium leading-none tracking-tight font-sans tracking", className)}
     {...props}
   />
 ))
@@ -52,7 +52,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed theme-font-sans theme-tracking", className)}
+    className={cn("text-sm [&_p]:leading-relaxed font-sans tracking", className)}
     {...props}
   />
 ))
