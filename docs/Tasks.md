@@ -2,6 +2,8 @@
 
 ## Active tasks
 
+- [ ] Write a prompt on lecture to quiz learning method.
+
 - [ ] Update the theme components script to remove the "-theme" prefix and change tailwind util file import to the default
 - [ ] fix letter spacing in light mode
 - [ ] extend walkthrough
