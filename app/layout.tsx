@@ -1,4 +1,3 @@
-//-| File path: app/layout.tsx
 import Providers from "@/app/layout.providers";
 import {
   architectsDaughter,
