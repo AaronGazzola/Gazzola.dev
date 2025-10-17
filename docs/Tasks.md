@@ -2,11 +2,10 @@
 
 ## Active tasks
 
-- [ ] Write a prompt on lecture to quiz learning method.
-
-.theme-radius {
-border-radius: var(--theme-radius);
-}
+- [ ] fix globals.css output:
+      .theme-radius {
+      border-radius: var(--theme-radius);
+      }
 
 .theme-shadow {
 box-shadow: var(--theme-shadow);
@@ -23,6 +22,7 @@ border-radius: var(--radius);
 box-shadow: var(--shadow);
 }
 
+- [ ] Portfolio videos
 - [ ] fix layout wireframe in app structure
 - [ ] Update the theme components script to remove the "-theme" prefix and change tailwind util file import to the default
 - [ ] fix letter spacing in light mode
@@ -61,6 +61,7 @@ box-shadow: var(--shadow);
 
 ## Completed tasks
 
+- [x] Write a prompt on lecture to quiz learning method.
 - [x] Add dynamic component theme and styling page
 - [x] Fix bug: when switching between preview and edit mode in the editor, the editor changes are lost.
 - [x] rename "default" shadcn directory to "editor"
