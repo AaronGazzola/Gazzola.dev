@@ -58,6 +58,11 @@ Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on h
 
 All tests should be performed with Jest or Playwright and documented in the `Test.md` document
 
+## Test rules:
+
+- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`
+- Do not use wait in the tests. Only use timeouts.
+
 ## Test.md
 
 The test document should list all tests in the repo, with each test case listed in a single line with an indented line below with the pass condition.
