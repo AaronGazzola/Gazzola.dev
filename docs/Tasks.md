@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] The power of opinionation
 - [ ] fix globals.css output:
       .theme-radius {
       border-radius: var(--theme-radius);
