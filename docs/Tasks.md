@@ -2,7 +2,8 @@
 
 ## Active tasks
 
-- [ ] The power of opinionation
+- [ ] Add banner + popup to connect github
+- [ ] Don't skip database file, just disabled it
 - [ ] fix globals.css output:
       .theme-radius {
       border-radius: var(--theme-radius);
