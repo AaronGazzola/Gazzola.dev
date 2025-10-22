@@ -73,6 +73,8 @@ export const CodeReviewDialog = ({
     message: false,
   });
 
+  const [termsPopoverOpen, setTermsPopoverOpen] = useState(false);
+
   const { mutate: submitReview, isPending } = useSubmitCodeReview(() => {
     onOpenChange(false);
     setFormData({
@@ -419,10 +421,13 @@ export const CodeReviewDialog = ({
                 className="font-normal cursor-pointer text-sm"
               >
                 I have read and agree to the{" "}
-                <Popover>
+                <Popover open={termsPopoverOpen} onOpenChange={setTermsPopoverOpen}>
                   <PopoverTrigger
                     type="button"
-                    className="underline hover:text-primary"
+                    className={cn(
+                      "underline hover:bg-white hover:text-black rounded px-1",
+                      termsPopoverOpen && "bg-white text-black"
+                    )}
                     data-cy={
                       FooterDataAttributes.CODE_REVIEW_TERMS_POPOVER_TRIGGER
                     }
