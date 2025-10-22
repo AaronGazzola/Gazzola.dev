@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getMarkdownDataAction } from "./layout.actions";
 
-const getFirstPageUrl = async (): Promise<string | null> => {
+const getFirstPageUrl = async (): Promise<string> => {
   const { data, error } = await getMarkdownDataAction();
   if (!data || error) {
     throw new Error("Failed to load markdown data: " + (error || "Unknown error"));
@@ -15,7 +15,12 @@ const getFirstPageUrl = async (): Promise<string | null> => {
     throw new Error("No valid pages found in markdown data");
   }
 
-  return pages[0].urlPath;
+  const firstPageUrl = pages[0].urlPath;
+  if (!firstPageUrl) {
+    throw new Error("First page has no urlPath");
+  }
+
+  return firstPageUrl;
 };
 
 const page = async () => {
