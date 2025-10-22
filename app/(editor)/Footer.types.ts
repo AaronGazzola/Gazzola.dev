@@ -9,6 +9,8 @@ export interface CodeReviewFormData {
   email: string;
   visibility: RepositoryVisibility;
   hasInvitedCollaborator?: boolean;
+  agreedToTerms: boolean;
+  allowLivestream?: boolean;
 }
 
 export enum FooterDataAttributes {
@@ -21,6 +23,9 @@ export enum FooterDataAttributes {
   CODE_REVIEW_PUBLIC_RADIO = "code-review-public-radio",
   CODE_REVIEW_PRIVATE_RADIO = "code-review-private-radio",
   CODE_REVIEW_COLLABORATOR_CHECKBOX = "code-review-collaborator-checkbox",
+  CODE_REVIEW_LIVESTREAM_CHECKBOX = "code-review-livestream-checkbox",
+  CODE_REVIEW_TERMS_CHECKBOX = "code-review-terms-checkbox",
+  CODE_REVIEW_TERMS_POPOVER_TRIGGER = "code-review-terms-popover-trigger",
   CODE_REVIEW_SUBMIT_BUTTON = "code-review-submit-button",
   CODE_REVIEW_CANCEL_BUTTON = "code-review-cancel-button",
   SUCCESS_CODE_REVIEW_SUBMIT = "success-code-review-submit",
