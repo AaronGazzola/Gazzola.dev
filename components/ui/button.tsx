@@ -7,7 +7,7 @@ import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
 import { cn } from "@/lib/tailwind.utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[0.375rem] text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[0.375rem] text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -44,7 +44,15 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant, size, asChild = false, isActive = false, ...props },
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      isActive = false,
+      disabled,
+      ...props
+    },
     ref
   ) => {
     const Comp = asChild ? Slot : "button";
@@ -61,7 +69,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <div
             className={cn(
               "group absolute z-0",
-              isActive ? "inset-0" : "-inset-[1px]"
+              isActive || disabled ? "inset-0" : "-inset-[1px]"
             )}
             style={{
               borderRadius: "0.375rem",

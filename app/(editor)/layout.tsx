@@ -5,6 +5,7 @@ import Sidebar from "@/app/(components)/Sidebar";
 import Stars from "@/app/(components)/Stars";
 import { useThemeStore } from "@/app/layout.stores";
 import { cn } from "@/lib/tailwind.utils";
+import Footer from "./Footer";
 
 import { ReactNode } from "react";
 
@@ -20,7 +21,10 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         )}
       >
         <Sidebar />
-        <main className="w-full h-full bg-black">{children}</main>
+        <div className="w-full flex flex-col">
+          <main className="w-full h-full bg-black">{children}</main>
+          <Footer />
+        </div>
       </div>
       <Stars />
     </div>

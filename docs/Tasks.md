@@ -131,6 +131,7 @@ box-shadow: var(--shadow);
 
 ## Live stream notes
 
+- [ ] checkout GPT Atlas
 - [ ] payload cms
   - [ ] https://payloadcms.com/get-started
 - [ ] playright mcp (needs policy change to change setting)
