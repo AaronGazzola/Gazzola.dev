@@ -1,6 +1,6 @@
 "use client";
 
-import { useThemeStore } from "@/app/layout.stores";
+import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
 import { cn } from "@/lib/tailwind.utils";
 import { useState } from "react";
 import { CodeReviewDialog } from "./CodeReviewDialog";
@@ -10,32 +10,31 @@ const Footer = () => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const getBorderStyle = () => {
-    if (gradientEnabled) {
-      return {
-        borderImage: `linear-gradient(to right, ${gradientColors.join(", ")}) 1`,
-      };
-    }
-    return {
-      borderColor: singleColor,
-    };
-  };
+  const backgroundStyle = getBackgroundStyle(
+    gradientColors,
+    singleColor,
+    gradientEnabled
+  );
 
   return (
     <>
       <footer
         className={cn(
-          "w-full h-10 border-t flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+          "w-full h-6 flex items-center justify-center cursor-pointertransition-opacity flex-schrink-0 relative group hover:cursor-pointer"
         )}
-        style={getBorderStyle()}
         onClick={() => setDialogOpen(true)}
         data-cy={FooterDataAttributes.FOOTER}
       >
+        <div
+          className="absolute group-hover:opacity-60 opacity-20 inset-0 z-0"
+          style={backgroundStyle}
+        />
+
         <p
-          className="text-sm text-muted-foreground"
+          className="text-sm italic font-bold text-primary-foreground relative z-10  "
           data-cy={FooterDataAttributes.FOOTER_TRIGGER}
         >
-          Apply for a free code review and test results
+          Need a code review?
         </p>
       </footer>
       <CodeReviewDialog open={dialogOpen} onOpenChange={setDialogOpen} />

@@ -5,6 +5,7 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import { Circle } from "lucide-react"
 
 import { cn } from "@/lib/tailwind.utils"
+import { useThemeStore } from "@/app/layout.stores"
 
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
@@ -24,19 +25,51 @@ const RadioGroupItem = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>
 >(({ className, ...props }, ref) => {
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+  const getBackgroundStyle = () => {
+    if (gradientEnabled) {
+      return {
+        background: `linear-gradient(to right, ${gradientColors.join(", ")})`,
+      };
+    }
+    return {
+      background: singleColor,
+    };
+  };
+
+  const getCircleFillStyle = () => {
+    if (gradientEnabled) {
+      return {
+        fill: gradientColors[0],
+      };
+    }
+    return {
+      fill: singleColor,
+    };
+  };
+
   return (
-    <RadioGroupPrimitive.Item
-      ref={ref}
+    <div
       className={cn(
-        "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+        "h-[18px] w-[18px] p-[1px] relative rounded-full",
         className
       )}
-      {...props}
+      style={getBackgroundStyle()}
     >
-      <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-3.5 w-3.5 fill-primary" />
-      </RadioGroupPrimitive.Indicator>
-    </RadioGroupPrimitive.Item>
+      <RadioGroupPrimitive.Item
+        ref={ref}
+        className={cn(
+          "aspect-square h-4 w-4 rounded-full bg-background shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 absolute inset-[1px]",
+          className
+        )}
+        {...props}
+      >
+        <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
+          <Circle className="h-3.5 w-3.5" style={getCircleFillStyle()} />
+        </RadioGroupPrimitive.Indicator>
+      </RadioGroupPrimitive.Item>
+    </div>
   )
 })
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName

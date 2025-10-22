@@ -21,8 +21,8 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         )}
       >
         <Sidebar />
-        <div className="w-full flex flex-col">
-          <main className="w-full h-full bg-black">{children}</main>
+        <div className="w-full flex flex-col h-full">
+          <main className="w-full flex-1 bg-black min-h-0">{children}</main>
           <Footer />
         </div>
       </div>

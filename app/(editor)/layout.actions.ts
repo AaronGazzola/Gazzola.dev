@@ -2,6 +2,8 @@
 
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { conditionalLog } from "@/lib/log.util";
+import { readFileSync } from "fs";
+import { join } from "path";
 import { MarkdownData } from "./layout.types";
 
 function getAbsoluteUrl(path: string): string {
@@ -135,26 +137,20 @@ export const getMarkdownDataAction = async (): Promise<
       label: "markdown-parse",
     });
 
-    const url = getAbsoluteUrl("/data/processed-markdown.json");
+    const filePath = join(
+      process.cwd(),
+      "public",
+      "data",
+      "processed-markdown.json"
+    );
 
     conditionalLog(
-      { message: "Fetching from URL", url },
+      { message: "Reading from file system", filePath },
       { label: "markdown-parse" }
     );
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      conditionalLog(
-        { error: "Processed markdown file not found" },
-        { label: "markdown-parse" }
-      );
-      return getActionResponse({
-        error: "Processed markdown file not found. Run 'npm run parse' first.",
-      });
-    }
-
-    const data: MarkdownData = await response.json();
+    const fileContent = readFileSync(filePath, "utf-8");
+    const data: MarkdownData = JSON.parse(fileContent);
 
     conditionalLog(
       {
@@ -166,7 +162,10 @@ export const getMarkdownDataAction = async (): Promise<
 
     return getActionResponse({ data });
   } catch (error) {
-    conditionalLog({ error: String(error) }, { label: "markdown-parse" });
-    return getActionResponse({ error });
+    conditionalLog(
+      { error: String(error), type: typeof error },
+      { label: "markdown-parse" }
+    );
+    return getActionResponse({ error: String(error) });
   }
 };

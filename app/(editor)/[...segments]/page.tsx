@@ -423,7 +423,7 @@ const Page = () => {
             <Toolbar currentContentPath={contentPath} />
             <RichTextPlugin
               contentEditable={
-                <ContentEditable className="w-full flex-1 p-6 outline-none resize-none overflow-auto min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing" />
+                <ContentEditable className="w-full flex-1 p-6 outline-none resize-none overflow-auto min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing h-24 border  " />
               }
               placeholder={
                 <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing theme-font-sans theme-tracking">

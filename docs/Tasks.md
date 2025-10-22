@@ -2,7 +2,9 @@
 
 ## Active tasks
 
+- [ ] Fix theme config popover bug
 - [ ] Add banner + popup to connect github
+- [ ] Fix single color button border
 - [ ] Don't skip database file, just disabled it
 - [ ] fix globals.css output:
       .theme-radius {
