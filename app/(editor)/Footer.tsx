@@ -25,10 +25,8 @@ const Footer = () => {
         onClick={() => setDialogOpen(true)}
         data-cy={FooterDataAttributes.FOOTER}
       >
-        <div
-          className="absolute group-hover:opacity-60 opacity-20 inset-0 z-0"
-          style={backgroundStyle}
-        />
+        <div className="absolute inset-0 z-0" style={backgroundStyle} />
+        <div className="bg-black absolute inset-0 top-[1px] group-hover:opacity-50"></div>
 
         <p
           className="text-sm italic font-bold text-primary-foreground relative z-10  "
