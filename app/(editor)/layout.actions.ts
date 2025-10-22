@@ -2,6 +2,8 @@
 
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { conditionalLog } from "@/lib/log.util";
+import { readFileSync } from "fs";
+import { join } from "path";
 import { MarkdownData } from "./layout.types";
 
 function getAbsoluteUrl(path: string): string {
@@ -135,36 +137,73 @@ export const getMarkdownDataAction = async (): Promise<
       label: "markdown-parse",
     });
 
-    const url = getAbsoluteUrl("/data/processed-markdown.json");
-
-    conditionalLog(
-      { message: "Fetching from URL", url },
-      { label: "markdown-parse" }
+    const filePath = join(
+      process.cwd(),
+      "public",
+      "data",
+      "processed-markdown.json"
     );
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
+    try {
       conditionalLog(
-        { error: "Processed markdown file not found" },
+        { message: "Attempting filesystem read", filePath },
         { label: "markdown-parse" }
       );
-      return getActionResponse({
-        error: "Processed markdown file not found. Run 'npm run parse' first.",
-      });
+
+      const fileContent = readFileSync(filePath, "utf-8");
+      const data: MarkdownData = JSON.parse(fileContent);
+
+      conditionalLog(
+        {
+          method: "filesystem",
+          nodeCount: Object.keys(data.flatIndex).length,
+          contentVersion: data.contentVersion,
+        },
+        { label: "markdown-parse" }
+      );
+
+      return getActionResponse({ data });
+    } catch (fsError) {
+      conditionalLog(
+        {
+          message: "Filesystem read failed, trying fetch",
+          error: String(fsError)
+        },
+        { label: "markdown-parse" }
+      );
+
+      const url = getAbsoluteUrl("/data/processed-markdown.json");
+
+      conditionalLog(
+        { message: "Fetching from URL", url },
+        { label: "markdown-parse" }
+      );
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        conditionalLog(
+          { error: "Processed markdown file not found via fetch" },
+          { label: "markdown-parse" }
+        );
+        return getActionResponse({
+          error: "Processed markdown file not found. Run 'npm run parse' first.",
+        });
+      }
+
+      const data: MarkdownData = await response.json();
+
+      conditionalLog(
+        {
+          method: "fetch",
+          nodeCount: Object.keys(data.flatIndex).length,
+          contentVersion: data.contentVersion,
+        },
+        { label: "markdown-parse" }
+      );
+
+      return getActionResponse({ data });
     }
-
-    const data: MarkdownData = await response.json();
-
-    conditionalLog(
-      {
-        nodeCount: Object.keys(data.flatIndex).length,
-        contentVersion: data.contentVersion,
-      },
-      { label: "markdown-parse" }
-    );
-
-    return getActionResponse({ data });
   } catch (error) {
     conditionalLog(
       { error: String(error), type: typeof error },
