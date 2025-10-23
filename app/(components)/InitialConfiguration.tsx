@@ -1290,7 +1290,6 @@ export const InitialConfiguration = () => {
                                             .realTimeNotifications,
                                           enabled: false,
                                         };
-                                        updateInclusionRules({ "start-here.database": false });
                                       } else if (option.id === "neondb") {
                                         useSupabaseValue = "no";
                                         techUpdates.neondb = true;
@@ -1304,7 +1303,6 @@ export const InitialConfiguration = () => {
                                             .realTimeNotifications,
                                           enabled: false,
                                         };
-                                        updateInclusionRules({ "start-here.database": true });
                                       } else if (
                                         option.id === "supabaseWithBetter"
                                       ) {
@@ -1314,7 +1312,6 @@ export const InitialConfiguration = () => {
                                         techUpdates.prisma = true;
                                         techUpdates.postgresql = true;
                                         techUpdates.neondb = false;
-                                        updateInclusionRules({ "start-here.database": true });
                                       } else if (option.id === "supabaseOnly") {
                                         useSupabaseValue = "authOnly";
                                         techUpdates.supabase = true;
@@ -1322,7 +1319,6 @@ export const InitialConfiguration = () => {
                                         techUpdates.postgresql = true;
                                         techUpdates.betterAuth = false;
                                         techUpdates.neondb = false;
-                                        updateInclusionRules({ "start-here.database": true });
                                         const adminUpdates = {
                                           ...initialConfiguration.features
                                             .admin,

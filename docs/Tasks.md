@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] Remove "visibleAfterPage" from parse logic (AI added without consent!)
 - [ ] Fix theme config popover bug
 - [ ] Add banner + popup to connect github
 - [ ] Fix single color button border

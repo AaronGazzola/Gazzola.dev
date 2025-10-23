@@ -8,6 +8,10 @@ import { CodeReviewFormData, FooterDataAttributes } from "./Footer.types";
 export const useSubmitCodeReview = (onSuccess?: () => void) => {
   return useMutation({
     mutationFn: async (formData: CodeReviewFormData) => {
+      if (process.env.NODE_ENV === "development") {
+        return null;
+      }
+
       const { data, error } = await submitCodeReviewAction(formData);
 
       if (error) throw new Error(error);

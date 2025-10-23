@@ -296,10 +296,6 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     fileNode.visibleAfterPage = "start-here.next-steps";
   }
 
-  if (sanitizedName === "database") {
-    fileNode.visibleAfterPage = "start-here.layout-routes";
-  }
-
   return fileNode;
 }
 
