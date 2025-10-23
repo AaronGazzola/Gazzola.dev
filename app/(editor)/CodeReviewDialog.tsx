@@ -421,7 +421,10 @@ export const CodeReviewDialog = ({
                 className="font-normal cursor-pointer text-sm"
               >
                 I have read and agree to the{" "}
-                <Popover open={termsPopoverOpen} onOpenChange={setTermsPopoverOpen}>
+                <Popover
+                  open={termsPopoverOpen}
+                  onOpenChange={setTermsPopoverOpen}
+                >
                   <PopoverTrigger
                     type="button"
                     className={cn(

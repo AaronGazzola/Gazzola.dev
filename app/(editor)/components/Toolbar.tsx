@@ -59,6 +59,7 @@ import {
   User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { useThemeStore } from "../../layout.stores";
@@ -119,6 +120,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   useContentVersionCheck();
+  const [codeReviewDialogOpen] = useQueryState("codeReview", {
+    parse: (value) => value === "yesPlease",
+  });
   const {
     previewMode,
     setPreviewMode,
@@ -158,7 +162,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   }, []);
 
   const showInitialDialog =
-    mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG);
+    mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG) && !codeReviewDialogOpen;
   const showPreviewHelp =
     mounted && shouldShowStep(WalkthroughStep.PREVIEW_MODE);
   const showNextButtonHelp =

@@ -8,9 +8,9 @@ import { FooterDataAttributes } from "./Footer.types";
 
 const Footer = () => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
-  const [dialogOpen, setDialogOpen] = useQueryState("review", {
-    parse: (value) => value === "open",
-    serialize: (value) => (value ? "open" : ""),
+  const [dialogOpen, setDialogOpen] = useQueryState("codeReview", {
+    parse: (value) => value === "yesPlease",
+    serialize: (value) => (value ? "yesPlease" : ""),
     clearOnDefault: true,
   });
 

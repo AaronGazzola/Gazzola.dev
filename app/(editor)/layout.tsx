@@ -7,7 +7,7 @@ import { useThemeStore } from "@/app/layout.stores";
 import { cn } from "@/lib/tailwind.utils";
 import Footer from "./Footer";
 
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
   const { headerIsCollapsed } = useThemeStore();
@@ -23,7 +23,9 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         <Sidebar />
         <div className="w-full flex flex-col h-full">
           <main className="w-full flex-1 bg-black min-h-0">{children}</main>
-          <Footer />
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
         </div>
       </div>
       <Stars />
