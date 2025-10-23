@@ -2,13 +2,17 @@
 
 import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
 import { cn } from "@/lib/tailwind.utils";
-import { useState } from "react";
+import { useQueryState } from "nuqs";
 import { CodeReviewDialog } from "./CodeReviewDialog";
 import { FooterDataAttributes } from "./Footer.types";
 
 const Footer = () => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useQueryState("review", {
+    parse: (value) => value === "open",
+    serialize: (value) => (value ? "open" : ""),
+    clearOnDefault: true,
+  });
 
   const backgroundStyle = getBackgroundStyle(
     gradientColors,
@@ -35,7 +39,7 @@ const Footer = () => {
           Need a code review?
         </p>
       </footer>
-      <CodeReviewDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <CodeReviewDialog open={!!dialogOpen} onOpenChange={setDialogOpen} />
     </>
   );
 };

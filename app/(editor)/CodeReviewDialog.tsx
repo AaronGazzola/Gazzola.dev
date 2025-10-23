@@ -38,7 +38,7 @@ import {
 
 interface CodeReviewDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (open: boolean | null) => void;
 }
 
 export const CodeReviewDialog = ({
