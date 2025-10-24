@@ -2,11 +2,10 @@
 
 ## Active tasks
 
+- [ ] Remove the temporary RESEND_API_KEY bypass
 - [ ] Remove "visibleAfterPage" from parse logic (AI added without consent!)
-- [ ] Fix theme config popover bug
-- [ ] Add banner + popup to connect github
+- [ ] Fix theme config popover bug (fixed?)
 - [ ] Fix single color button border
-- [ ] Don't skip database file, just disabled it
 - [ ] fix globals.css output:
       .theme-radius {
       border-radius: var(--theme-radius);
@@ -34,15 +33,13 @@ box-shadow: var(--shadow);
 - [ ] extend walkthrough
 - [ ] fix the ability to create a app directory and page file from adding a route segment in AppStructure
 - [ ] The theme styles aren't being applied to the correct elements in the shadcn components - go through and update each of the components in "component/editor/ui/\*" to use apply the correct styles to the correct elements.
-- [ ] Add templates for the route structure
 - [ ] expand/improve walkthrough
 - [ ] Add theme presets from tweakcn
 - [ ] fix editor reset bug on editor store state change (eg. after updating the ThemeConfiugration)
-- [ ] Landing page
+- [-] Landing page
 - [-] improve App Directory page UX
-- [ ] Update the tech stack page
-  - [ ] Add a database question and hosting service selection that will include/exclude Supabase, Vercel and Railway
-- [ ] Add reminder icon/badge to download the roadmap in case the content changes (and explaining that the app is in development)
+
+- [x] Add reminder icon/badge to download the roadmap in case the content changes (and explaining that the app is in development)
 - [-] Update `markdown-data.md`
 - [ ] fix: reset placeholder data with reset all
 - [ ] test: set and reset single page and all data local and deployed.
@@ -66,6 +63,11 @@ box-shadow: var(--shadow);
 
 ## Completed tasks
 
+- [x] Add templates for the route structure
+- [x] Update the tech stack page
+  - [x] Add a database question and hosting service selection that will include/exclude Supabase, Vercel and Railway
+- [x] Add banner + popup to connect github
+- [x] Don't skip database file, just disabled it
 - [x] Write a prompt on lecture to quiz learning method.
 - [x] Add dynamic component theme and styling page
 - [x] Fix bug: when switching between preview and edit mode in the editor, the editor changes are lost.
