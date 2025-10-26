@@ -3,6 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Collapsible,
+  CollapsibleContent,
+} from "@/components/ui/collapsible";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -25,7 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/tailwind.utils";
-import { Copy } from "lucide-react";
+import { ChevronDown, Copy, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Toast } from "../(components)/Toast";
@@ -35,6 +39,7 @@ import {
   FooterDataAttributes,
   RepositoryVisibility,
 } from "./Footer.types";
+import { downloadNDAPDF } from "./nda.utils";
 
 interface CodeReviewDialogProps {
   open: boolean;
@@ -50,10 +55,17 @@ export const CodeReviewDialog = ({
     message: "",
     email: "",
     visibility: RepositoryVisibility.PUBLIC,
-    hasInvitedCollaborator: false,
     agreedToTerms: false,
     allowLivestream: false,
+    nda: {
+      requestNDA: false,
+      legalEntityName: "",
+      jurisdiction: "Victoria, Australia",
+      effectiveDate: new Date().toISOString().split("T")[0],
+    },
   });
+
+  const [ndaCollapsibleOpen, setNdaCollapsibleOpen] = useState(false);
 
   const [touched, setTouched] = useState({
     githubUrl: false,
@@ -82,11 +94,37 @@ export const CodeReviewDialog = ({
       message: "",
       email: "",
       visibility: RepositoryVisibility.PUBLIC,
-      hasInvitedCollaborator: false,
       agreedToTerms: false,
       allowLivestream: false,
+      nda: {
+        requestNDA: false,
+        legalEntityName: "",
+        jurisdiction: "Victoria, Australia",
+        effectiveDate: new Date().toISOString().split("T")[0],
+      },
     });
   });
+
+  const handlePreviewNDA = () => {
+    if (!formData.nda.legalEntityName) {
+      toast.custom(() => (
+        <Toast
+          variant="error"
+          title="Missing Information"
+          message="Please enter your legal entity name before previewing"
+        />
+      ));
+      return;
+    }
+    downloadNDAPDF(formData.nda);
+    toast.custom(() => (
+      <Toast
+        variant="success"
+        title="NDA Downloaded"
+        message="Review the NDA. It will be automatically attached to your submission."
+      />
+    ));
+  };
 
   const handleCopyUsername = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -119,7 +157,6 @@ export const CodeReviewDialog = ({
     isGithubUrlValid &&
     isEmailValid &&
     isMessageValid &&
-    (!isPrivate || formData.hasInvitedCollaborator) &&
     formData.agreedToTerms;
 
   useEffect(() => {
@@ -342,6 +379,83 @@ export const CodeReviewDialog = ({
               </RadioGroup>
             </div>
 
+            {isPrivate && (
+              <Collapsible
+                open={ndaCollapsibleOpen}
+                onOpenChange={setNdaCollapsibleOpen}
+                className="space-y-2"
+                data-cy={FooterDataAttributes.CODE_REVIEW_NDA_COLLAPSIBLE}
+              >
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="requestNDA"
+                    checked={formData.nda.requestNDA}
+                    onCheckedChange={(checked) => {
+                      const requestNDA = checked === true;
+                      setFormData({
+                        ...formData,
+                        nda: {
+                          ...formData.nda,
+                          requestNDA,
+                        },
+                      });
+                      setNdaCollapsibleOpen(requestNDA);
+                    }}
+                    data-cy={FooterDataAttributes.CODE_REVIEW_NDA_REQUEST_CHECKBOX}
+                  />
+                  <Label
+                    htmlFor="requestNDA"
+                    className="font-normal cursor-pointer flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    I would like to request a Non-Disclosure Agreement (NDA)
+                  </Label>
+                </div>
+
+                <CollapsibleContent className="space-y-3 pl-6 pt-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="legalEntityName">
+                      Legal Entity Name (Individual or Company)
+                    </Label>
+                    <Input
+                      id="legalEntityName"
+                      placeholder="John Doe or Acme Corporation"
+                      value={formData.nda.legalEntityName}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          nda: {
+                            ...formData.nda,
+                            legalEntityName: e.target.value,
+                          },
+                        })
+                      }
+                      data-cy={FooterDataAttributes.CODE_REVIEW_NDA_LEGAL_NAME_INPUT}
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handlePreviewNDA}
+                      disabled={!formData.nda.legalEntityName}
+                      className="gap-2"
+                      data-cy={FooterDataAttributes.CODE_REVIEW_NDA_PREVIEW_BUTTON}
+                    >
+                      <FileText className="w-4 h-4" />
+                      Preview & Download NDA
+                    </Button>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    The NDA will be automatically attached to your submission email. Jurisdiction: Victoria, Australia.
+                  </p>
+                </CollapsibleContent>
+              </Collapsible>
+            )}
+
             {!isPrivate && (
               <div className="flex items-start">
                 <div className="pr-2">
@@ -366,39 +480,6 @@ export const CodeReviewDialog = ({
                   I consent to my code being shared on public YouTube live
                   streams and permanently available in video-on-demand
                   recordings
-                </Label>
-              </div>
-            )}
-
-            {isPrivate && (
-              <div className="flex items-start space-x-2">
-                <Checkbox
-                  id="collaborator"
-                  checked={formData.hasInvitedCollaborator}
-                  onCheckedChange={(checked) =>
-                    setFormData({
-                      ...formData,
-                      hasInvitedCollaborator: checked === true,
-                    })
-                  }
-                  required={isPrivate}
-                  data-cy={
-                    FooterDataAttributes.CODE_REVIEW_COLLABORATOR_CHECKBOX
-                  }
-                />
-                <Label
-                  htmlFor="collaborator"
-                  className="font-normal cursor-pointer text-sm"
-                >
-                  I have invited the GitHub user{" "}
-                  <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded cursor-pointer transition-all border-2 border-white bg-black text-white hover:bg-white hover:text-black"
-                    onClick={handleCopyUsername}
-                  >
-                    <span className="font-bold">AaronGazzola</span>
-                    <Copy className="w-3 h-3" />
-                  </span>{" "}
-                  as a collaborator
                 </Label>
               </div>
             )}
@@ -517,6 +598,10 @@ export const CodeReviewDialog = ({
                             faith
                           </li>
                           <li>
+                            Payment will be made through PayPal, providing you
+                            with PayPal Buyer Protection coverage
+                          </li>
+                          <li>
                             Payment terms will be discussed and agreed upon
                             separately
                           </li>
@@ -581,23 +666,55 @@ export const CodeReviewDialog = ({
                           does not affect your eligibility for code review.
                         </p>
 
-                        <h4 className="font-semibold">11. Confidentiality</h4>
+                        <h4 className="font-semibold">
+                          11. Non-Disclosure Agreement (NDA)
+                        </h4>
+                        <p>
+                          For private repositories, you may request a mutual
+                          Non-Disclosure Agreement (NDA) during the submission
+                          process. If requested, a pre-filled NDA will be
+                          available for download directly through this form.
+                          The NDA can be executed electronically or physically,
+                          and should be signed and returned with your
+                          submission. The NDA provides legal assurance that
+                          your code, business logic, and proprietary
+                          information will remain confidential and will not be
+                          used for any purpose other than the agreed-upon
+                          services.
+                        </p>
+
+                        <h4 className="font-semibold">12. Confidentiality</h4>
                         <p>
                           For private repositories or public repositories
                           without livestream consent, the reviewer agrees to
                           maintain confidentiality of your code and will not
                           share, distribute, or use your code for any purpose
                           other than the agreed-upon review and refactoring
-                          services.
+                          services. This commitment applies regardless of
+                          whether a formal NDA is executed.
                         </p>
 
-                        <h4 className="font-semibold">12. Liability</h4>
+                        <h4 className="font-semibold">13. Liability</h4>
                         <p>
                           The reviewer provides services on an
                           &ldquo;as-is&rdquo; basis and makes no warranties
                           regarding the code review or refactoring work. The
                           reviewer shall not be liable for any damages arising
                           from the use of the services or delivered code.
+                        </p>
+
+                        <h4 className="font-semibold">14. Refunds</h4>
+                        <p>
+                          Refunds can be provided within 30 days of final code
+                          delivery. During this 30-day window, the reviewer
+                          will provide ongoing messaging support to ensure that
+                          the code is fully functional and bug-free. All
+                          payments are processed through PayPal, which provides
+                          PayPal Buyer Protection for eligible transactions,
+                          giving you additional security and confidence in your
+                          purchase. Refund requests must be submitted in
+                          writing via email and will be evaluated on a
+                          case-by-case basis.
                         </p>
                       </div>
                     </div>

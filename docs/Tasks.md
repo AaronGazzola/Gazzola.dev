@@ -2,6 +2,8 @@
 
 ## Active tasks
 
+- Add a map to the first page. vertical flowchart that parses to ASCII
+- Stepping on flowers
 - [ ] Remove the temporary RESEND_API_KEY bypass
 - [ ] Remove "visibleAfterPage" from parse logic (AI added without consent!)
 - [ ] Fix theme config popover bug (fixed?)

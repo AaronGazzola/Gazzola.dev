@@ -9,6 +9,16 @@
     "include": true,
     "children": [
       {
+        "id": "css",
+        "name": "css",
+        "displayName": "css",
+        "type": "directory",
+        "path": "css",
+        "urlPath": "/css",
+        "include": true,
+        "children": []
+      },
+      {
         "id": "robots",
         "name": "robots",
         "displayName": "Robots",
@@ -832,6 +842,16 @@
       "include": true,
       "children": [
         {
+          "id": "css",
+          "name": "css",
+          "displayName": "css",
+          "type": "directory",
+          "path": "css",
+          "urlPath": "/css",
+          "include": true,
+          "children": []
+        },
+        {
           "id": "robots",
           "name": "robots",
           "displayName": "Robots",
@@ -1643,6 +1663,16 @@
           ]
         }
       ]
+    },
+    "css": {
+      "id": "css",
+      "name": "css",
+      "displayName": "css",
+      "type": "directory",
+      "path": "css",
+      "urlPath": "/css",
+      "include": true,
+      "children": []
     },
     "robots": {
       "id": "robots",
