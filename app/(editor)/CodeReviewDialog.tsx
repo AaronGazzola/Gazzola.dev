@@ -3,10 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Collapsible,
-  CollapsibleContent,
-} from "@/components/ui/collapsible";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -21,6 +17,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
@@ -29,12 +32,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/tailwind.utils";
-import { ChevronDown, Copy, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Toast } from "../(components)/Toast";
 import { useSubmitCodeReview } from "./Footer.hooks";
 import {
+  BusinessNumberType,
   CodeReviewFormData,
   FooterDataAttributes,
   RepositoryVisibility,
@@ -58,14 +62,11 @@ export const CodeReviewDialog = ({
     agreedToTerms: false,
     allowLivestream: false,
     nda: {
-      requestNDA: false,
       legalEntityName: "",
       jurisdiction: "Victoria, Australia",
       effectiveDate: new Date().toISOString().split("T")[0],
     },
   });
-
-  const [ndaCollapsibleOpen, setNdaCollapsibleOpen] = useState(false);
 
   const [touched, setTouched] = useState({
     githubUrl: false,
@@ -97,7 +98,6 @@ export const CodeReviewDialog = ({
       agreedToTerms: false,
       allowLivestream: false,
       nda: {
-        requestNDA: false,
         legalEntityName: "",
         jurisdiction: "Victoria, Australia",
         effectiveDate: new Date().toISOString().split("T")[0],
@@ -157,7 +157,8 @@ export const CodeReviewDialog = ({
     isGithubUrlValid &&
     isEmailValid &&
     isMessageValid &&
-    formData.agreedToTerms;
+    formData.agreedToTerms &&
+    (!isPrivate || formData.nda.legalEntityName.trim() !== "");
 
   useEffect(() => {
     if (touched.githubUrl && !isGithubUrlValid) {
@@ -380,80 +381,122 @@ export const CodeReviewDialog = ({
             </div>
 
             {isPrivate && (
-              <Collapsible
-                open={ndaCollapsibleOpen}
-                onOpenChange={setNdaCollapsibleOpen}
-                className="space-y-2"
-                data-cy={FooterDataAttributes.CODE_REVIEW_NDA_COLLAPSIBLE}
-              >
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="requestNDA"
-                    checked={formData.nda.requestNDA}
-                    onCheckedChange={(checked) => {
-                      const requestNDA = checked === true;
+              <div className="space-y-3 border border-border rounded-md p-4 bg-muted/20">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  <Label className="text-base font-semibold">
+                    Non-Disclosure Agreement (NDA)
+                  </Label>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="legalEntityName">
+                    Legal Entity Name (Individual or Company)
+                  </Label>
+                  <Input
+                    id="legalEntityName"
+                    placeholder="John Doe or Acme Corporation"
+                    value={formData.nda.legalEntityName}
+                    onChange={(e) =>
                       setFormData({
                         ...formData,
                         nda: {
                           ...formData.nda,
-                          requestNDA,
+                          legalEntityName: e.target.value,
                         },
-                      });
-                      setNdaCollapsibleOpen(requestNDA);
-                    }}
-                    data-cy={FooterDataAttributes.CODE_REVIEW_NDA_REQUEST_CHECKBOX}
+                      })
+                    }
+                    required={isPrivate}
+                    data-cy={
+                      FooterDataAttributes.CODE_REVIEW_NDA_LEGAL_NAME_INPUT
+                    }
                   />
-                  <Label
-                    htmlFor="requestNDA"
-                    className="font-normal cursor-pointer flex items-center gap-2"
-                  >
-                    <FileText className="w-4 h-4" />
-                    I would like to request a Non-Disclosure Agreement (NDA)
-                  </Label>
                 </div>
 
-                <CollapsibleContent className="space-y-3 pl-6 pt-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="legalEntityName">
-                      Legal Entity Name (Individual or Company)
-                    </Label>
-                    <Input
-                      id="legalEntityName"
-                      placeholder="John Doe or Acme Corporation"
-                      value={formData.nda.legalEntityName}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          nda: {
-                            ...formData.nda,
-                            legalEntityName: e.target.value,
-                          },
-                        })
+                <div className="space-y-2">
+                  <Label htmlFor="businessNumberType">
+                    Business Number Type (Optional)
+                  </Label>
+                  <Select
+                    value={formData.nda.businessNumberType}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        nda: {
+                          ...formData.nda,
+                          businessNumberType: value as BusinessNumberType,
+                        },
+                      })
+                    }
+                  >
+                    <SelectTrigger
+                      id="businessNumberType"
+                      data-cy={
+                        FooterDataAttributes.CODE_REVIEW_NDA_BUSINESS_NUMBER_TYPE_SELECT
                       }
-                      data-cy={FooterDataAttributes.CODE_REVIEW_NDA_LEGAL_NAME_INPUT}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handlePreviewNDA}
-                      disabled={!formData.nda.legalEntityName}
-                      className="gap-2"
-                      data-cy={FooterDataAttributes.CODE_REVIEW_NDA_PREVIEW_BUTTON}
                     >
-                      <FileText className="w-4 h-4" />
-                      Preview & Download NDA
-                    </Button>
-                  </div>
+                      <SelectValue placeholder="Select business number type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(BusinessNumberType).map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                  <p className="text-xs text-muted-foreground">
-                    The NDA will be automatically attached to your submission email. Jurisdiction: Victoria, Australia.
-                  </p>
-                </CollapsibleContent>
-              </Collapsible>
+                {formData.nda.businessNumberType &&
+                  formData.nda.businessNumberType !==
+                    BusinessNumberType.NONE && (
+                    <div className="space-y-2">
+                      <Label htmlFor="businessNumber">
+                        {formData.nda.businessNumberType}
+                      </Label>
+                      <Input
+                        id="businessNumber"
+                        placeholder={`Enter your ${formData.nda.businessNumberType}`}
+                        value={formData.nda.businessNumber || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            nda: {
+                              ...formData.nda,
+                              businessNumber: e.target.value,
+                            },
+                          })
+                        }
+                        data-cy={
+                          FooterDataAttributes.CODE_REVIEW_NDA_BUSINESS_NUMBER_INPUT
+                        }
+                      />
+                    </div>
+                  )}
+
+                <div className="flex items-center gap-2 pt-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handlePreviewNDA}
+                    disabled={!formData.nda.legalEntityName}
+                    className="gap-2"
+                    data-cy={
+                      FooterDataAttributes.CODE_REVIEW_NDA_PREVIEW_BUTTON
+                    }
+                  >
+                    <FileText className="w-4 h-4" />
+                    Preview & Download NDA
+                  </Button>
+                </div>
+
+                <p className="text-sm italic text-muted-foreground">
+                  An NDA is required for private repositories, it will be
+                  automatically attached to your submission email. Jurisdiction:
+                  Victoria, Australia.
+                </p>
+              </div>
             )}
 
             {!isPrivate && (
@@ -529,41 +572,92 @@ export const CodeReviewDialog = ({
 
                       <div className="space-y-2 text-sm">
                         <h4 className="font-semibold">
-                          1. Code Review Request
+                          1. Service Model and Free Code Review
                         </h4>
                         <p>
-                          By submitting this form, you grant the reviewer access
-                          to your GitHub repository for the purpose of
-                          conducting a code review. The reviewer will assess
-                          your codebase at their sole discretion.
+                          The code review and quote are provided completely free
+                          of charge. No payment is required to receive:
                         </p>
-
-                        <h4 className="font-semibold">
-                          2. No Obligation to Respond
-                        </h4>
-                        <p>
-                          The reviewer is under no obligation to provide a code
-                          review or any response to your submission. Code review
-                          requests are reviewed on a case-by-case basis, and
-                          acceptance is not guaranteed.
-                        </p>
-
-                        <h4 className="font-semibold">
-                          3. Code Review Deliverables
-                        </h4>
-                        <p>If selected, you will receive:</p>
                         <ul className="list-disc pl-5 space-y-1">
-                          <li>End-to-end test results</li>
-                          <li>Documentation review</li>
-                          <li>Concise code review findings</li>
+                          <li>End-to-end and unit test results</li>
+                          <li>Code review findings</li>
+                          <li>Fixed-price quote for refactoring work</li>
+                        </ul>
+                        <p className="mt-2">
+                          If you choose to proceed with the refactoring work,
+                          the reviewer will complete the work and demonstrate
+                          the completed implementation to you. At that point,
+                          you may purchase the completed refactored code as a
+                          product.
+                        </p>
+
+                        <h4 className="font-semibold">
+                          2. Payment via PayPal Goods & Services
+                        </h4>
+                        <p>
+                          All payments are processed exclusively through{" "}
+                          <strong>PayPal Goods & Services</strong>, which
+                          provides:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-1">
                           <li>
-                            Fixed-price quote for refactoring, fixing, and
-                            improving your repository
+                            <strong>PayPal Buyer Protection:</strong> If the
+                            delivered code doesn&apos;t match the agreed
+                            specification or has significant issues, you can
+                            open a dispute through PayPal&apos;s resolution
+                            process.
+                          </li>
+
+                          <li>
+                            <strong>Third-Party Refund Processing:</strong>{" "}
+                            Refund requests are processed through PayPal as the
+                            independent third party, providing you with
+                            confidence that refunds are handled fairly and
+                            tracked properly for tax purposes.
                           </li>
                         </ul>
 
                         <h4 className="font-semibold">
-                          4. Development Environment
+                          3. Private Repository Access and NDA Requirements
+                        </h4>
+                        <p>
+                          For private repositories, a mutual Non-Disclosure
+                          Agreement (NDA) is required before your code will be
+                          reviewed. You will provide your legal entity name
+                          through this form, and a pre-filled NDA will be
+                          generated for download. Alternatively, you may request
+                          to use your own NDA. After signing and returning the
+                          NDA via email, you can grant collaborator access to
+                          the GitHub user <strong>AaronGazzola</strong> with
+                          read access to your private repository.
+                        </p>
+
+                        <h4 className="font-semibold">
+                          4. 30-Day Support and Money-Back Guarantee
+                        </h4>
+                        <p>
+                          Upon purchasing the refactored code, you receive 30
+                          days of comprehensive support including:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-1">
+                          <li>Ongoing email/messaging assistance</li>
+                          <li>
+                            Bug fixes and clarifications at no additional cost
+                          </li>
+                          <li>
+                            <strong>Full refund</strong> if you have any issues
+                            with the delivered code within 30 days of purchase
+                          </li>
+                        </ul>
+                        <p className="mt-2">
+                          Submit refund requests in writing via email before the
+                          30-day period expires. Refunds are processed through
+                          PayPal Goods & Services, you may utilize PayPal&apos;s
+                          Buyer Protection if needed.
+                        </p>
+
+                        <h4 className="font-semibold">
+                          5. Development Environment
                         </h4>
                         <p>
                           The reviewer will clone your repository and use their
@@ -574,50 +668,7 @@ export const CodeReviewDialog = ({
                         </p>
 
                         <h4 className="font-semibold">
-                          5. Testing and Implementation Exclusions
-                        </h4>
-                        <p>
-                          Any changes made to your repository during the review
-                          process, including test suites, improvements, or
-                          modifications, will not be included in the initial
-                          code review deliverables.
-                        </p>
-
-                        <h4 className="font-semibold">6. Project Agreement</h4>
-                        <p>
-                          If you choose to proceed with the quoted refactoring
-                          work, the following terms apply:
-                        </p>
-                        <ul className="list-disc pl-5 space-y-1">
-                          <li>
-                            Work will be completed for the agreed fixed price
-                          </li>
-                          <li>No formal contract will be executed</li>
-                          <li>
-                            Agreement is based on mutual understanding and good
-                            faith
-                          </li>
-                          <li>
-                            Payment will be made through PayPal, providing you
-                            with PayPal Buyer Protection coverage
-                          </li>
-                          <li>
-                            Payment terms will be discussed and agreed upon
-                            separately
-                          </li>
-                        </ul>
-
-                        <h4 className="font-semibold">7. Code Delivery</h4>
-                        <p>
-                          Upon completion of the refactoring work, the reviewer
-                          will offer to push all changes directly to your
-                          repository for an additional fixed fee. Until payment
-                          is received, all modified code remains the property of
-                          the reviewer.
-                        </p>
-
-                        <h4 className="font-semibold">
-                          8. Intellectual Property
+                          6. Intellectual Property
                         </h4>
                         <p>
                           Your original code remains your intellectual property.
@@ -627,7 +678,7 @@ export const CodeReviewDialog = ({
                         </p>
 
                         <h4 className="font-semibold">
-                          9. Privacy and Email Usage
+                          7. Privacy and Email Usage
                         </h4>
                         <p>
                           Your email address will only be used for direct
@@ -638,7 +689,7 @@ export const CodeReviewDialog = ({
                         </p>
 
                         <h4 className="font-semibold">
-                          10. Public Livestream Consent
+                          8. Public Livestream Consent
                         </h4>
                         <p>
                           If you consent to livestream sharing (applicable only
@@ -666,55 +717,15 @@ export const CodeReviewDialog = ({
                           does not affect your eligibility for code review.
                         </p>
 
-                        <h4 className="font-semibold">
-                          11. Non-Disclosure Agreement (NDA)
-                        </h4>
-                        <p>
-                          For private repositories, you may request a mutual
-                          Non-Disclosure Agreement (NDA) during the submission
-                          process. If requested, a pre-filled NDA will be
-                          available for download directly through this form.
-                          The NDA can be executed electronically or physically,
-                          and should be signed and returned with your
-                          submission. The NDA provides legal assurance that
-                          your code, business logic, and proprietary
-                          information will remain confidential and will not be
-                          used for any purpose other than the agreed-upon
-                          services.
-                        </p>
-
-                        <h4 className="font-semibold">12. Confidentiality</h4>
+                        <h4 className="font-semibold">9. Confidentiality</h4>
                         <p>
                           For private repositories or public repositories
                           without livestream consent, the reviewer agrees to
                           maintain confidentiality of your code and will not
                           share, distribute, or use your code for any purpose
                           other than the agreed-upon review and refactoring
-                          services. This commitment applies regardless of
-                          whether a formal NDA is executed.
-                        </p>
-
-                        <h4 className="font-semibold">13. Liability</h4>
-                        <p>
-                          The reviewer provides services on an
-                          &ldquo;as-is&rdquo; basis and makes no warranties
-                          regarding the code review or refactoring work. The
-                          reviewer shall not be liable for any damages arising
-                          from the use of the services or delivered code.
-                        </p>
-
-                        <h4 className="font-semibold">14. Refunds</h4>
-                        <p>
-                          Refunds can be provided within 30 days of final code
-                          delivery. During this 30-day window, the reviewer
-                          will provide ongoing messaging support to ensure that
-                          the code is fully functional and bug-free. All
-                          payments are processed through PayPal, which provides
-                          PayPal Buyer Protection for eligible transactions,
-                          giving you additional security and confidence in your
-                          purchase. Refund requests must be submitted in
-                          writing via email and will be evaluated on a
-                          case-by-case basis.
+                          services. For private repositories, this commitment is
+                          legally enforced through the required mutual NDA.
                         </p>
                       </div>
                     </div>

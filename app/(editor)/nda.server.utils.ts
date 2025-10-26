@@ -40,8 +40,11 @@ export const generateNDAPDFServer = (
   );
 
   y += 2;
+  const partyAInfo = ndaData.businessNumber && ndaData.businessNumberType
+    ? `${ndaData.legalEntityName} (${ndaData.businessNumberType}: ${ndaData.businessNumber})`
+    : ndaData.legalEntityName;
   addText(
-    `Party A: ${ndaData.legalEntityName} ("Disclosing Party")`,
+    `Party A: ${partyAInfo} ("Disclosing Party")`,
     11,
     true
   );
@@ -176,6 +179,9 @@ export const generateNDAPDFServer = (
   addText("Party A (Disclosing Party):", 11, true);
   y += 2;
   addText(`Name: ${ndaData.legalEntityName}`, 11);
+  if (ndaData.businessNumber && ndaData.businessNumberType) {
+    addText(`${ndaData.businessNumberType}: ${ndaData.businessNumber}`, 10);
+  }
   y += 8;
   addText("Signature: _________________________", 11);
   y += 8;

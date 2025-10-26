@@ -38,7 +38,10 @@ export const generateNDAPDF = (ndaData: NDAFormData): Blob => {
   );
 
   y += 2;
-  addText(`Party A: ${ndaData.legalEntityName} ("Disclosing Party")`, 11, true);
+  const partyAInfo = ndaData.businessNumber && ndaData.businessNumberType
+    ? `${ndaData.legalEntityName} (${ndaData.businessNumberType}: ${ndaData.businessNumber})`
+    : ndaData.legalEntityName;
+  addText(`Party A: ${partyAInfo} ("Disclosing Party")`, 11, true);
   addText(`Party B: Aaron Gazzola ("Receiving Party")`, 11, true);
 
   y += 3;
@@ -176,6 +179,9 @@ export const generateNDAPDF = (ndaData: NDAFormData): Blob => {
   addText("Party A (Disclosing Party):", 11, true);
   y += 2;
   addText(`Name: ${ndaData.legalEntityName}`, 11);
+  if (ndaData.businessNumber && ndaData.businessNumberType) {
+    addText(`${ndaData.businessNumberType}: ${ndaData.businessNumber}`, 10);
+  }
   y += 8;
   addText("Signature: _________________________", 11);
   y += 8;

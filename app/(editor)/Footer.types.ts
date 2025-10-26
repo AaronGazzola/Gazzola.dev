@@ -3,11 +3,25 @@ export enum RepositoryVisibility {
   PRIVATE = "private",
 }
 
+export enum BusinessNumberType {
+  ABN = "ABN (Australia)",
+  ACN = "ACN (Australia)",
+  EIN = "EIN (USA)",
+  VAT_UK = "VAT (UK)",
+  VAT_EU = "VAT (EU)",
+  GST_NZ = "GST (New Zealand)",
+  GST_CANADA = "GST/HST (Canada)",
+  CRN_INDIA = "CIN/CRN (India)",
+  COMPANY_UK = "Company Number (UK)",
+  NONE = "No Business Number",
+}
+
 export interface NDAFormData {
-  requestNDA: boolean;
   legalEntityName: string;
   jurisdiction: string;
   effectiveDate: string;
+  businessNumberType?: BusinessNumberType;
+  businessNumber?: string;
 }
 
 export interface CodeReviewFormData {
@@ -39,5 +53,7 @@ export enum FooterDataAttributes {
   CODE_REVIEW_NDA_COLLAPSIBLE = "code-review-nda-collapsible",
   CODE_REVIEW_NDA_REQUEST_CHECKBOX = "code-review-nda-request-checkbox",
   CODE_REVIEW_NDA_LEGAL_NAME_INPUT = "code-review-nda-legal-name-input",
+  CODE_REVIEW_NDA_BUSINESS_NUMBER_TYPE_SELECT = "code-review-nda-business-number-type-select",
+  CODE_REVIEW_NDA_BUSINESS_NUMBER_INPUT = "code-review-nda-business-number-input",
   CODE_REVIEW_NDA_PREVIEW_BUTTON = "code-review-nda-preview-button",
 }
