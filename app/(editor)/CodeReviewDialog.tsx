@@ -739,8 +739,7 @@ export const CodeReviewDialog = ({
                         <p className="mt-2">
                           Environment variables, API keys, credentials, and
                           other sensitive configuration files will be excluded
-                          from any public sharing. This consent is optional and
-                          does not affect your eligibility for code review.
+                          from any public sharing.
                         </p>
 
                         <h4 className="font-semibold">9. Confidentiality</h4>
@@ -752,6 +751,36 @@ export const CodeReviewDialog = ({
                           other than the agreed-upon review and refactoring
                           services. For private repositories, this commitment is
                           legally enforced through the required mutual NDA.
+                        </p>
+
+                        <h4 className="font-semibold">
+                          10. Service Availability and Discretion
+                        </h4>
+                        <p>
+                          The code review service is provided on a discretionary
+                          basis. The reviewer reserves the right to accept or
+                          decline any code review request without explanation.
+                          Submission of a code review request does not
+                          guarantee:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-1">
+                          <li>
+                            That the reviewer will respond to your request
+                          </li>
+                          <li>
+                            That a code review will be initiated or completed
+                          </li>
+                          <li>
+                            That a quote for refactoring work will be provided
+                          </li>
+                        </ul>
+                        <p className="mt-2">
+                          The reviewer may discontinue a code review at any time
+                          for any reason, including after initial review has
+                          commenced. No compensation or consideration is owed
+                          for incomplete or declined reviews, as the service is
+                          provided entirely free of charge at the
+                          reviewer&apos;s discretion.
                         </p>
                       </div>
                     </div>
