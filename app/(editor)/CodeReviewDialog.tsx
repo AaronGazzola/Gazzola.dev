@@ -200,7 +200,9 @@ export const CodeReviewDialog = ({
           </DialogTitle>
           <DialogDescription asChild>
             <div className="!text-gray-100 font-medium">
-              <p className="text-base">Apply here for a <strong>free</strong> code review!</p>
+              <p className="text-base">
+                Apply here for a <strong>free</strong> code review!
+              </p>
               <p className="mt-2 text-sm">You will receive:</p>
               <ul className="list-disc list-inside text-sm">
                 <li>
@@ -617,26 +619,24 @@ export const CodeReviewDialog = ({
                           product.
                         </p>
 
-                        <h4 className="font-semibold">
-                          2. Payment via Stripe
-                        </h4>
+                        <h4 className="font-semibold">2. Payment via Stripe</h4>
                         <p>
                           All payments are processed exclusively through{" "}
                           <strong>Stripe</strong>, which provides:
                         </p>
                         <ul className="list-disc pl-5 space-y-1">
                           <li>
-                            <strong>Dispute Resolution:</strong>{" "}
-                            If the delivered code doesn&apos;t match the agreed
+                            <strong>Dispute Resolution:</strong> If the
+                            delivered code doesn&apos;t match the agreed
                             specification or has significant issues, you can
                             initiate a dispute through Stripe&apos;s resolution
                             process with documented evidence.
                           </li>
 
                           <li>
-                            <strong>Transaction Records:</strong>{" "}
-                            All payments and refunds are tracked and documented
-                            for tax and accounting purposes.
+                            <strong>Transaction Records:</strong> All payments
+                            and refunds are tracked and documented for tax and
+                            accounting purposes.
                           </li>
                         </ul>
 
@@ -664,14 +664,21 @@ export const CodeReviewDialog = ({
                         </p>
                         <ul className="list-disc pl-5 space-y-1">
                           <li>Ongoing email/messaging assistance</li>
-                          <li>
-                            Bug fixes and clarifications at no additional cost
-                          </li>
+                          <li>Bug fixes</li>
+                          <li>Troubleshooting</li>
+                          <li>Additional documentation</li>
                           <li>
                             <strong>Full refund</strong> if you have any issues
                             with the delivered code within 30 days of purchase
                           </li>
                         </ul>
+                        <p className="mt-2">
+                          The 30-day guarantee applies only to the{" "}
+                          <strong>unaltered code</strong> as delivered. The
+                          reviewer can independently verify this by
+                          demonstrating the deployment process and providing the
+                          deployment URL.
+                        </p>
                         <p className="mt-2">
                           Submit refund requests in writing via email before the
                           30-day period expires. Refunds are processed through
