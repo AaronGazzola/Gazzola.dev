@@ -200,7 +200,7 @@ export const CodeReviewDialog = ({
           </DialogTitle>
           <DialogDescription asChild>
             <div className="!text-gray-100 font-medium">
-              <p className="text-base">Apply here for a free code review!</p>
+              <p className="text-base">Apply here for a <strong>free</strong> code review!</p>
               <p className="mt-2 text-sm">You will receive:</p>
               <ul className="list-disc list-inside text-sm">
                 <li>
