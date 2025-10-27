@@ -36,10 +36,13 @@ const Footer = () => {
           className="text-sm italic font-bold text-primary-foreground relative z-10  "
           data-cy={FooterDataAttributes.FOOTER_TRIGGER}
         >
-          Need a code review?
+          Are you a vibe coder? Get a free code review!
         </p>
       </footer>
-      <CodeReviewDialog open={!!dialogOpen} onOpenChange={handleDialogOpenChange} />
+      <CodeReviewDialog
+        open={!!dialogOpen}
+        onOpenChange={handleDialogOpenChange}
+      />
     </>
   );
 };

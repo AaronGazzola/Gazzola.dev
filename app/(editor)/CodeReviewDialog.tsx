@@ -154,7 +154,7 @@ export const CodeReviewDialog = ({
   const isMessageValid = formData.message.trim() !== "";
 
   const isFormValid =
-    isGithubUrlValid &&
+    (!isPrivate ? isGithubUrlValid : true) &&
     isEmailValid &&
     isMessageValid &&
     formData.agreedToTerms &&
@@ -165,7 +165,7 @@ export const CodeReviewDialog = ({
       setTooltipVisible((prev) => ({ ...prev, githubUrl: true }));
       const timer = setTimeout(() => {
         setTooltipVisible((prev) => ({ ...prev, githubUrl: false }));
-      }, 5000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [touched.githubUrl, isGithubUrlValid]);
@@ -193,65 +193,29 @@ export const CodeReviewDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-cy={FooterDataAttributes.CODE_REVIEW_DIALOG}>
-        <DialogHeader className="flex flex-col gap-4 pb-4">
-          <DialogTitle>Do you have a Typescript web app?</DialogTitle>
+        <DialogHeader className="flex flex-col gap-1 pb-4">
+          <DialogTitle>
+            Are you a vibe coder? (eg. <strong>Lovable</strong>,{" "}
+            <strong>Replit</strong>)
+          </DialogTitle>
           <DialogDescription asChild>
             <div className="!text-gray-100 font-medium">
-              <p className="text-base"></p>
-              <p className="text-base">
-                Submit your github repository to apply for a free code review.
-                <br />
-                If selected, you will get end-to-end test results and a project
-                quote to refactor your web app!
-              </p>
+              <p className="text-base">Apply here for a free code review!</p>
+              <p className="mt-2 text-sm">You will receive:</p>
+              <ul className="list-disc list-inside text-sm">
+                <li>
+                  Comprehensive <strong> test results</strong> from a custom
+                  testing suite
+                </li>
+                <li>
+                  A <strong>project quote </strong> to reach 100% pass rate
+                </li>
+              </ul>
             </div>
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <TooltipProvider>
-            <div className="space-y-2">
-              <Tooltip
-                open={
-                  touched.githubUrl && !isGithubUrlValid
-                    ? tooltipVisible.githubUrl || tooltipHovered.githubUrl
-                    : undefined
-                }
-              >
-                <TooltipTrigger asChild>
-                  <Label
-                    htmlFor="githubUrl"
-                    onMouseEnter={() =>
-                      setTooltipHovered({ ...tooltipHovered, githubUrl: true })
-                    }
-                    onMouseLeave={() =>
-                      setTooltipHovered({ ...tooltipHovered, githubUrl: false })
-                    }
-                  >
-                    GitHub Repository URL
-                  </Label>
-                </TooltipTrigger>
-                <TooltipContent side="left" className="bg-destructive">
-                  Please enter a valid GitHub repository URL (e.g.,
-                  https://github.com/username/repo)
-                </TooltipContent>
-              </Tooltip>
-              <Input
-                id="githubUrl"
-                type="url"
-                placeholder="https://github.com/username/repo"
-                value={formData.githubUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, githubUrl: e.target.value })
-                }
-                onBlur={() => setTouched({ ...touched, githubUrl: true })}
-                required
-                data-cy={FooterDataAttributes.CODE_REVIEW_GITHUB_URL_INPUT}
-                className={cn(
-                  touched.githubUrl && !isGithubUrlValid && "border-destructive"
-                )}
-              />
-            </div>
-
             <div className="space-y-2">
               <Tooltip
                 open={
@@ -351,18 +315,80 @@ export const CodeReviewDialog = ({
                   })
                 }
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value={RepositoryVisibility.PUBLIC}
-                    id="public"
-                    data-cy={FooterDataAttributes.CODE_REVIEW_PUBLIC_RADIO}
-                  />
-                  <Label
-                    htmlFor="public"
-                    className="font-normal cursor-pointer"
-                  >
-                    This repository is public
-                  </Label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value={RepositoryVisibility.PUBLIC}
+                      id="public"
+                      data-cy={FooterDataAttributes.CODE_REVIEW_PUBLIC_RADIO}
+                    />
+                    <Label
+                      htmlFor="public"
+                      className="font-normal cursor-pointer"
+                    >
+                      This repository is public
+                    </Label>
+                  </div>
+                  {formData.visibility === RepositoryVisibility.PUBLIC && (
+                    <div className="pl-6 space-y-2">
+                      <Tooltip
+                        open={
+                          touched.githubUrl && !isGithubUrlValid
+                            ? tooltipVisible.githubUrl ||
+                              tooltipHovered.githubUrl
+                            : undefined
+                        }
+                      >
+                        <TooltipTrigger asChild>
+                          <Label
+                            htmlFor="githubUrl"
+                            onMouseEnter={() =>
+                              setTooltipHovered({
+                                ...tooltipHovered,
+                                githubUrl: true,
+                              })
+                            }
+                            onMouseLeave={() =>
+                              setTooltipHovered({
+                                ...tooltipHovered,
+                                githubUrl: false,
+                              })
+                            }
+                          >
+                            GitHub Repository URL
+                          </Label>
+                        </TooltipTrigger>
+                        <TooltipContent side="left" className="bg-destructive">
+                          Please enter a valid GitHub repository URL (e.g.,
+                          https://github.com/username/repo)
+                        </TooltipContent>
+                      </Tooltip>
+                      <Input
+                        id="githubUrl"
+                        type="url"
+                        placeholder="https://github.com/username/repo"
+                        value={formData.githubUrl}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            githubUrl: e.target.value,
+                          })
+                        }
+                        onBlur={() =>
+                          setTouched({ ...touched, githubUrl: true })
+                        }
+                        required
+                        data-cy={
+                          FooterDataAttributes.CODE_REVIEW_GITHUB_URL_INPUT
+                        }
+                        className={cn(
+                          touched.githubUrl &&
+                            !isGithubUrlValid &&
+                            "border-destructive"
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem
