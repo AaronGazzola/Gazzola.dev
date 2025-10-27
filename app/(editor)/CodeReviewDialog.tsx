@@ -618,28 +618,25 @@ export const CodeReviewDialog = ({
                         </p>
 
                         <h4 className="font-semibold">
-                          2. Payment via PayPal Goods & Services
+                          2. Payment via Stripe
                         </h4>
                         <p>
                           All payments are processed exclusively through{" "}
-                          <strong>PayPal Goods & Services</strong>, which
-                          provides:
+                          <strong>Stripe</strong>, which provides:
                         </p>
                         <ul className="list-disc pl-5 space-y-1">
                           <li>
-                            <strong>PayPal Buyer Protection:</strong> If the
-                            delivered code doesn&apos;t match the agreed
+                            <strong>Dispute Resolution:</strong>{" "}
+                            If the delivered code doesn&apos;t match the agreed
                             specification or has significant issues, you can
-                            open a dispute through PayPal&apos;s resolution
-                            process.
+                            initiate a dispute through Stripe&apos;s resolution
+                            process with documented evidence.
                           </li>
 
                           <li>
-                            <strong>Third-Party Refund Processing:</strong>{" "}
-                            Refund requests are processed through PayPal as the
-                            independent third party, providing you with
-                            confidence that refunds are handled fairly and
-                            tracked properly for tax purposes.
+                            <strong>Transaction Records:</strong>{" "}
+                            All payments and refunds are tracked and documented
+                            for tax and accounting purposes.
                           </li>
                         </ul>
 
@@ -678,8 +675,8 @@ export const CodeReviewDialog = ({
                         <p className="mt-2">
                           Submit refund requests in writing via email before the
                           30-day period expires. Refunds are processed through
-                          PayPal Goods & Services, you may utilize PayPal&apos;s
-                          Buyer Protection if needed.
+                          Stripe, and you may initiate a dispute through
+                          Stripe&apos;s resolution process if needed.
                         </p>
 
                         <h4 className="font-semibold">
