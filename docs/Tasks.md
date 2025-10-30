@@ -2,6 +2,7 @@
 
 ## Active tasks
 
+- [ ] Add testing
 - [ ] Remove the temporary RESEND_API_KEY bypass
 - [ ] Remove "visibleAfterPage" from parse logic (AI added without consent!)
 - [ ] Fix theme config popover bug (fixed?)
@@ -136,6 +137,7 @@ box-shadow: var(--shadow);
 
 ## Live stream notes
 
+- [ ] The mind illuminated
 - [ ] checkout GPT Atlas
 - [ ] payload cms
   - [ ] https://payloadcms.com/get-started
