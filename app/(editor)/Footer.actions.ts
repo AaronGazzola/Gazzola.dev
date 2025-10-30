@@ -4,6 +4,7 @@ import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { Resend } from "resend";
 import { CodeReviewRequestEmail } from "@/emails/CodeReviewRequest";
 import { CodeReviewFormData, RepositoryVisibility } from "./Footer.types";
+import { generateNDAPDFServer } from "./nda.server.utils";
 
 export const submitCodeReviewAction = async (
   formData: CodeReviewFormData
@@ -19,36 +20,50 @@ export const submitCodeReviewAction = async (
       throw new Error("Invalid email format");
     }
 
-    if (formData.visibility === RepositoryVisibility.PRIVATE && !formData.hasInvitedCollaborator) {
-      throw new Error("You must invite AaronGazzola as a collaborator for private repositories");
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      throw new Error("RESEND_API_KEY environment variable is not set");
     }
 
-    if (process.env.RESEND_API_KEY) {
-      const adminEmail = process.env.ADMIN_EMAIL;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) {
+      throw new Error("ADMIN_EMAIL environment variable is not set");
+    }
 
-      if (!adminEmail) {
-        throw new Error("ADMIN_EMAIL environment variable is not set");
-      }
+    const resend = new Resend(resendApiKey);
 
-      const resend = new Resend(process.env.RESEND_API_KEY);
+    const isPrivate = formData.visibility === RepositoryVisibility.PRIVATE;
+    const ndaRequired = isPrivate && !!formData.nda.legalEntityName;
 
-      const { error } = await resend.emails.send({
-        from: "Code Review Requests <onboarding@resend.dev>",
-        to: adminEmail,
-        replyTo: formData.email,
-        subject: `Code Review Request from ${formData.email}`,
-        react: CodeReviewRequestEmail({
-          githubUrl: formData.githubUrl,
-          message: formData.message,
-          userEmail: formData.email,
-          isPrivate: formData.visibility === RepositoryVisibility.PRIVATE,
-          hasInvitedCollaborator: formData.hasInvitedCollaborator,
-        }),
-      });
+    const emailData: any = {
+      from: "Code Review Requests <onboarding@resend.dev>",
+      to: adminEmail,
+      replyTo: formData.email,
+      subject: `Code Review Request from ${formData.email}${isPrivate ? " [Private - NDA Required]" : ""}`,
+      react: CodeReviewRequestEmail({
+        githubUrl: formData.githubUrl,
+        message: formData.message,
+        userEmail: formData.email,
+        isPrivate,
+        ndaRequested: ndaRequired,
+        ndaDetails: ndaRequired ? formData.nda : undefined,
+      }),
+    };
 
-      if (error) {
-        throw new Error(error.message);
-      }
+    if (ndaRequired && formData.nda.jurisdiction) {
+      const { content, filename } = generateNDAPDFServer(formData.nda);
+      emailData.attachments = [
+        {
+          filename,
+          content,
+        },
+      ];
+    }
+
+    const { error } = await resend.emails.send(emailData);
+
+    if (error) {
+      throw new Error(error.message);
     }
 
     return getActionResponse({ data: { success: true } });

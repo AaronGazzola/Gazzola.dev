@@ -8,11 +8,7 @@ import { FooterDataAttributes } from "./Footer.types";
 
 const Footer = () => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
-  const [dialogOpen, setDialogOpen] = useQueryState("codeReview", {
-    parse: (value) => value === "yesPlease",
-    serialize: (value) => (value ? "yesPlease" : ""),
-    clearOnDefault: true,
-  });
+  const [dialogOpen, setDialogOpen] = useQueryState("codeReview");
 
   const backgroundStyle = getBackgroundStyle(
     gradientColors,
@@ -20,13 +16,17 @@ const Footer = () => {
     gradientEnabled
   );
 
+  const handleDialogOpenChange = (open: boolean | null) => {
+    setDialogOpen(open ? "yesPlease" : null);
+  };
+
   return (
     <>
       <footer
         className={cn(
           "w-full h-6 flex items-center justify-center cursor-pointertransition-opacity flex-schrink-0 relative group hover:cursor-pointer"
         )}
-        onClick={() => setDialogOpen(true)}
+        onClick={() => setDialogOpen("yesPlease")}
         data-cy={FooterDataAttributes.FOOTER}
       >
         <div className="absolute inset-0 z-0" style={backgroundStyle} />
@@ -36,10 +36,13 @@ const Footer = () => {
           className="text-sm italic font-bold text-primary-foreground relative z-10  "
           data-cy={FooterDataAttributes.FOOTER_TRIGGER}
         >
-          Need a code review?
+          Are you a vibe coder? Get a free code review!
         </p>
       </footer>
-      <CodeReviewDialog open={!!dialogOpen} onOpenChange={setDialogOpen} />
+      <CodeReviewDialog
+        open={!!dialogOpen}
+        onOpenChange={handleDialogOpenChange}
+      />
     </>
   );
 };

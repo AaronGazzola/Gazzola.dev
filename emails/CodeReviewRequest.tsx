@@ -10,13 +10,15 @@ import {
   Text,
 } from "@react-email/components";
 import * as React from "react";
+import { NDAFormData } from "@/app/(editor)/Footer.types";
 
 interface CodeReviewRequestEmailProps {
   githubUrl: string;
   message: string;
   userEmail: string;
   isPrivate: boolean;
-  hasInvitedCollaborator?: boolean;
+  ndaRequested?: boolean;
+  ndaDetails?: NDAFormData;
 }
 
 export const CodeReviewRequestEmail = ({
@@ -24,7 +26,8 @@ export const CodeReviewRequestEmail = ({
   message,
   userEmail,
   isPrivate,
-  hasInvitedCollaborator,
+  ndaRequested,
+  ndaDetails,
 }: CodeReviewRequestEmailProps) => (
   <Html>
     <Head />
@@ -46,13 +49,29 @@ export const CodeReviewRequestEmail = ({
           <Text style={label}>Repository Type:</Text>
           <Text style={text}>{isPrivate ? "Private" : "Public"}</Text>
         </Section>
-        {isPrivate && (
-          <Section style={section}>
-            <Text style={label}>Collaborator Invited:</Text>
-            <Text style={text}>
-              {hasInvitedCollaborator ? "Yes" : "No"}
-            </Text>
-          </Section>
+        {ndaRequested && (
+          <>
+            <Section style={section}>
+              <Text style={label}>NDA Requested:</Text>
+              <Text style={text}>Yes</Text>
+            </Section>
+            {ndaDetails && (
+              <>
+                <Section style={section}>
+                  <Text style={label}>Legal Entity Name:</Text>
+                  <Text style={text}>{ndaDetails.legalEntityName}</Text>
+                </Section>
+                <Section style={section}>
+                  <Text style={label}>Jurisdiction:</Text>
+                  <Text style={text}>{ndaDetails.jurisdiction}</Text>
+                </Section>
+                <Section style={section}>
+                  <Text style={label}>Effective Date:</Text>
+                  <Text style={text}>{ndaDetails.effectiveDate}</Text>
+                </Section>
+              </>
+            )}
+          </>
         )}
         <Section style={section}>
           <Text style={label}>Message:</Text>

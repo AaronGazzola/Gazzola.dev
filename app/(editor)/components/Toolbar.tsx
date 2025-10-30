@@ -120,9 +120,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   useContentVersionCheck();
-  const [codeReviewDialogOpen] = useQueryState("codeReview", {
-    parse: (value) => value === "yesPlease",
-  });
+  const [codeReviewDialogOpen] = useQueryState("codeReview");
   const {
     previewMode,
     setPreviewMode,
