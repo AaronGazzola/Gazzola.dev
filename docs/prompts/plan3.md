@@ -28,14 +28,16 @@ Create a new zustand persist store alongside Header.tsx following the pattern fr
 **Store interface** (define in `Header.types.ts`):
 - `HeaderState` interface containing:
   - `isExpanded: boolean` - Whether header is in expanded state
+  - `hasBeenCollapsed: boolean` - Whether header has ever been collapsed (used to control walkthrough dialog)
   - `setIsExpanded: (isExpanded: boolean) => void` - Update expanded state
   - `reset: () => void` - Reset to initial state
 
 **Store implementation**:
 - Use `create` from `zustand`
 - Use `persist` middleware from `zustand/middleware`
-- Initial state: `{ isExpanded: true }`
+- Initial state: `{ isExpanded: true, hasBeenCollapsed: false }`
 - Persist to localStorage with name: `header-state`
+- When `setIsExpanded(false)` is called, also set `hasBeenCollapsed: true`
 
 ### 2. Create Testimonial Data Structure
 
@@ -334,6 +336,20 @@ Alternative icons: `FileCheck`, `ClipboardCheck`, `Code2`
    - Add CodeReviewDialog integration
 2. `app/(components)/Header.hooks.ts` - Add useAutoScroll and useHeaderCollapseOnScroll hooks
 3. `app/globals.css` - Add scrollbar hiding utility
+4. `app/(editor)/components/Toolbar.tsx` - Update walkthrough dialog condition
+   - Import `useHeaderStore` from `@/app/(components)/Header.store`
+   - Add condition to `showInitialDialog`: only show if `hasBeenCollapsed` is true
+   - Change line 163 from:
+     ```tsx
+     const showInitialDialog =
+       mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG) && !codeReviewDialogOpen;
+     ```
+     To:
+     ```tsx
+     const { hasBeenCollapsed } = useHeaderStore();
+     const showInitialDialog =
+       mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG) && !codeReviewDialogOpen && hasBeenCollapsed;
+     ```
 
 ### Dependencies
 No new dependencies required. Using existing:
@@ -363,13 +379,14 @@ Per CLAUDE.md testing guidelines:
 
 1. Create `Header.types.ts` with:
    - `Testimonial` interface
-   - `HeaderState` interface
-   - `testimonials` constant array (13 testimonials)
+   - `HeaderState` interface (with `hasBeenCollapsed` field)
+   - `testimonials` constant array (12 testimonials)
 2. Create `Header.store.ts` with zustand persist store
+   - Implement logic to set `hasBeenCollapsed: true` when header collapses
 3. Create `TestimonialCard.tsx` component
 4. Add hooks to `Header.hooks.ts`:
    - `useAutoScroll`
-   - `useHeaderCollapseOnScroll`
+   - `useHeaderCollapseOnScroll` (should update both `isExpanded` and `hasBeenCollapsed`)
 5. Add scrollbar hiding CSS to `app/globals.css`
 6. Refactor Header.tsx:
    - Replace local state with zustand store
@@ -378,10 +395,14 @@ Per CLAUDE.md testing guidelines:
    - Replace floating elements with carousel
    - Add CTA section
    - Add CodeReviewDialog component
-7. Test functionality across breakpoints
-8. Test auto-collapse on scroll to bottom
-9. Test persist store functionality
-10. Add tests if required
+7. Update Toolbar.tsx:
+   - Import `useHeaderStore`
+   - Add `hasBeenCollapsed` check to `showInitialDialog` condition
+8. Test functionality across breakpoints
+9. Test auto-collapse on scroll to bottom
+10. Test persist store functionality
+11. Test walkthrough dialog only shows after header has been collapsed
+12. Add tests if required
 
 ## Notes
 
@@ -393,6 +414,7 @@ Per CLAUDE.md testing guidelines:
 - Preserve existing YouTube button and theme controls
 - Ensure no layout shift when header collapses
 - Consider performance: virtualize testimonials if carousel becomes laggy
-- Initial state: header is expanded (`isExpanded: true`)
+- Initial state: header is expanded (`isExpanded: true, hasBeenCollapsed: false`)
 - Auto-collapse behavior: header collapses when user scrolls to bottom of page
 - Persist behavior: header state survives page reloads via localStorage
+- Walkthrough dialog behavior: The walkthrough dialog in Toolbar.tsx should ONLY display after the header has been collapsed at least once (i.e., when `hasBeenCollapsed` is true). This ensures users see the testimonial carousel before being shown the walkthrough.
