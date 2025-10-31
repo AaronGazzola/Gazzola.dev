@@ -1,6 +1,4 @@
-import { Feature, TestCase, TestSuite } from "@/app/(editor)/layout.types";
-
-const generateId = () => Math.random().toString(36).substring(2, 11);
+import { TestCase, TestSuite } from "@/app/(editor)/layout.types";
 
 export const kebabCase = (str: string): string => {
   return str
@@ -11,54 +9,6 @@ export const kebabCase = (str: string): string => {
 
 export const generateTestCommand = (title: string): string => {
   return `npm run test:${kebabCase(title)}`;
-};
-
-export const generateDefaultTestCases = (feature: Feature): TestCase[] => {
-  const cases: TestCase[] = [];
-
-  if (feature.linkedFiles.stores) {
-    cases.push({
-      id: generateId(),
-      description: `should update ${feature.title} store correctly`,
-      passCondition: `Store contains expected data after operation`,
-    });
-  }
-
-  if (feature.linkedFiles.hooks) {
-    cases.push({
-      id: generateId(),
-      description: `should handle loading state in ${feature.title} hook`,
-      passCondition: `Loading state transitions correctly`,
-    });
-  }
-
-  if (feature.linkedFiles.actions) {
-    cases.push({
-      id: generateId(),
-      description: `should execute ${feature.title} actions successfully`,
-      passCondition: `Actions complete without errors`,
-    });
-  }
-
-  cases.push(
-    {
-      id: generateId(),
-      description: `should create ${feature.title} successfully`,
-      passCondition: `New item appears in list after creation`,
-    },
-    {
-      id: generateId(),
-      description: `should update ${feature.title} successfully`,
-      passCondition: `Changes reflected in UI after update`,
-    },
-    {
-      id: generateId(),
-      description: `should delete ${feature.title} successfully`,
-      passCondition: `Item removed from list after deletion`,
-    }
-  );
-
-  return cases;
 };
 
 export const generateTestsMarkdown = (testSuites: TestSuite[]): string => {
