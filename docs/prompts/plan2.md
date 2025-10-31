@@ -7,6 +7,7 @@ Create a `Tests` component that displays an editable index of test suites, pre-p
 ## Reference Architecture
 
 **Working Example:** `app/(components)/AppStructure.tsx`
+
 - WireFrame component: Visual layout representation
 - AppStructure component: File system tree with CRUD operations
 - LayoutAndStructure component: Combined view wrapper
@@ -20,12 +21,14 @@ Create a `Tests` component that displays an editable index of test suites, pre-p
 **File:** `app/(components)/Tests.tsx`
 
 **Responsibilities:**
+
 - Display test index with add/remove/edit capabilities
 - Sync with features from AppStructure store
 - Provide reset functionality to regenerate from features
 - Render test structure following Tests.md format
 
 **State Management:**
+
 ```typescript
 interface TestSuite {
   id: string;
@@ -50,17 +53,22 @@ interface TestCase {
 **File:** `app/(editor)/layout.stores.ts`
 
 **New State:**
+
 ```typescript
 interface EditorStore {
   // Existing state...
   testSuites: TestSuite[];
 
   // New actions
-  addTestSuite: (suite: Omit<TestSuite, 'id'>) => void;
+  addTestSuite: (suite: Omit<TestSuite, "id">) => void;
   updateTestSuite: (id: string, updates: Partial<TestSuite>) => void;
   removeTestSuite: (id: string) => void;
-  addTestCase: (suiteId: string, testCase: Omit<TestCase, 'id'>) => void;
-  updateTestCase: (suiteId: string, caseId: string, updates: Partial<TestCase>) => void;
+  addTestCase: (suiteId: string, testCase: Omit<TestCase, "id">) => void;
+  updateTestCase: (
+    suiteId: string,
+    caseId: string,
+    updates: Partial<TestCase>
+  ) => void;
   removeTestCase: (suiteId: string, caseId: string) => void;
   resetTestsFromFeatures: () => void;
   reorderTestSuites: (fromIndex: number, toIndex: number) => void;
@@ -72,6 +80,7 @@ interface EditorStore {
 **Function:** `generateTestsFromFeatures()`
 
 **Algorithm:**
+
 1. Iterate through all features in AppStructure
 2. For each feature, create a TestSuite:
    - name: Feature title
@@ -84,6 +93,7 @@ interface EditorStore {
    - Data validation tests
 
 **Example Mapping:**
+
 ```typescript
 Feature: "User Authentication"
 ├─ stores: auth.stores.ts
@@ -174,6 +184,7 @@ TestSuite: "User Authentication Tests"
 ### Step 1: Extend Store (layout.stores.ts)
 
 **Tasks:**
+
 - Add testSuites array to EditorStore interface
 - Implement testSuite CRUD actions
 - Implement testCase CRUD actions within suites
@@ -181,6 +192,7 @@ TestSuite: "User Authentication Tests"
 - Add reorderTestSuites action for drag-and-drop
 
 **Key Function:**
+
 ```typescript
 resetTestsFromFeatures: () => {
   const features = get().features;
@@ -188,20 +200,20 @@ resetTestsFromFeatures: () => {
 
   // Iterate through file system to find all features
   Object.entries(features).forEach(([fileId, featureList]) => {
-    featureList.forEach(feature => {
+    featureList.forEach((feature) => {
       testSuites.push({
         id: generateId(),
         name: `${feature.title} Tests`,
         featureId: feature.id,
         description: feature.description,
         command: `npm run test:${kebabCase(feature.title)}`,
-        testCases: generateDefaultTestCases(feature)
+        testCases: generateDefaultTestCases(feature),
       });
     });
   });
 
   set({ testSuites });
-}
+};
 ```
 
 ### Step 2: Create Helper Utilities
@@ -209,6 +221,7 @@ resetTestsFromFeatures: () => {
 **File:** `app/(components)/Tests.utils.ts`
 
 **Functions:**
+
 - `generateDefaultTestCases(feature: Feature): TestCase[]`
 - `generateTestCommand(title: string): string`
 - `kebabCase(str: string): string`
@@ -216,6 +229,7 @@ resetTestsFromFeatures: () => {
 - `validateTestSuite(suite: TestSuite): boolean`
 
 **Example:**
+
 ```typescript
 const generateDefaultTestCases = (feature: Feature): TestCase[] => {
   const cases: TestCase[] = [];
@@ -224,7 +238,7 @@ const generateDefaultTestCases = (feature: Feature): TestCase[] => {
     cases.push({
       id: generateId(),
       description: `should update ${feature.title} store correctly`,
-      passCondition: `Store contains expected data after operation`
+      passCondition: `Store contains expected data after operation`,
     });
   }
 
@@ -232,7 +246,7 @@ const generateDefaultTestCases = (feature: Feature): TestCase[] => {
     cases.push({
       id: generateId(),
       description: `should handle loading state in ${feature.title} hook`,
-      passCondition: `Loading state transitions correctly`
+      passCondition: `Loading state transitions correctly`,
     });
   }
 
@@ -241,12 +255,12 @@ const generateDefaultTestCases = (feature: Feature): TestCase[] => {
     {
       id: generateId(),
       description: `should create ${feature.title} successfully`,
-      passCondition: `New item appears in list after creation`
+      passCondition: `New item appears in list after creation`,
     },
     {
       id: generateId(),
       description: `should update ${feature.title} successfully`,
-      passCondition: `Changes reflected in UI after update`
+      passCondition: `Changes reflected in UI after update`,
     }
   );
 
@@ -259,12 +273,14 @@ const generateDefaultTestCases = (feature: Feature): TestCase[] => {
 **File:** `app/(components)/Tests.tsx`
 
 **Sub-Components:**
+
 1. `TestSuiteCard` - Individual test suite display/edit
 2. `TestCaseItem` - Individual test case display/edit
 3. `TestIndexHeader` - Action buttons and controls
 4. `TestsMarkdownPreview` - Preview of generated Tests.md content
 
 **Main Component Structure:**
+
 ```typescript
 export const Tests = () => {
   const {
@@ -328,18 +344,21 @@ export const Tests = () => {
 ### Step 4: Implement TestSuiteCard Component
 
 **Responsibilities:**
+
 - Display test suite information
 - Toggle between view and edit modes
 - Manage test cases within suite
 - Handle reordering
 
 **Features:**
+
 - Collapsible test case list
 - Inline editing for all fields
 - Drag handles for reordering (future enhancement)
 - Visual indication of linked feature
 
 **Example:**
+
 ```typescript
 const TestSuiteCard = ({
   suite,
@@ -460,6 +479,7 @@ const TestSuiteCard = ({
 **File:** `app/(editor)/components/ComponentNode.tsx`
 
 **Add to componentMap:**
+
 ```typescript
 const componentMap: Record<string, any> = {
   // Existing components...
@@ -476,6 +496,7 @@ const componentMap: Record<string, any> = {
 **File:** `public/data/markdown/Start_here/5-Tests.md`
 
 **Verify comment exists:**
+
 ```md
 # Tests
 
@@ -524,109 +545,33 @@ Format as Tests.md structure
 Copy to clipboard / Download file
 ```
 
-## Testing Strategy
-
-### Unit Tests
-
-**File:** `__tests__/tests-component.test.ts`
-
-**Test Cases:**
-- should generate test suite from feature
-- should create default test cases based on linked files
-- should format test command correctly
-- should generate valid Tests.md markdown
-- should sync with features on reset
-
-### E2E Tests
-
-**File:** `e2e/tests-component.spec.ts`
-
-**Test Cases:**
-- should add new test suite
-- should edit test suite name and description
-- should remove test suite
-- should reorder test suites
-- should add test case to suite
-- should reset tests from features
-- should preserve manual edits after feature changes
-
-## Edge Cases to Handle
-
-1. **No Features Defined**
-   - Display empty state message
-   - Disable "Reset from Features" button
-   - Allow manual test suite creation
-
-2. **Feature Deleted**
-   - Keep test suite but mark as orphaned
-   - Show warning indicator
-   - Offer to remove orphaned tests
-
-3. **Feature Renamed**
-   - Update linked test suite name automatically
-   - Show notification of auto-update
-   - Allow user to override auto-update
-
-4. **Duplicate Test Names**
-   - Validate uniqueness before saving
-   - Show error message
-   - Suggest alternative name
-
-5. **Empty Test Suite**
-   - Validate at least one test case exists
-   - Show warning before allowing save
-   - Allow empty suite but mark as incomplete
-
 ## UI/UX Considerations
 
 ### Theme Integration
+
 - Use theme tokens: `theme-bg-background`, `theme-text-foreground`
 - Support dark mode via useEditorStore().darkMode
 - Match AppStructure component styling
 
 ### Responsive Design
+
 - Stack vertically on mobile
 - Collapse test cases by default on small screens
 - Horizontal scroll for long command strings
 
 ### User Feedback
+
 - Loading state during generation
 - Success toast after reset
 - Confirmation dialog before destructive actions
 - Validation errors inline with fields
 
 ### Accessibility
+
 - Proper ARIA labels for all buttons
 - Keyboard navigation support
 - Screen reader announcements for state changes
 - Focus management in edit mode
-
-## Future Enhancements
-
-1. **Drag and Drop Reordering**
-   - Use dnd-kit library
-   - Visual feedback during drag
-   - Persist order in store
-
-2. **Test Templates**
-   - Predefined test case templates
-   - Category-based suggestions (auth, CRUD, validation)
-   - Import/export test templates
-
-3. **Test Coverage Visualization**
-   - Show which features have tests
-   - Coverage percentage indicator
-   - Visual gaps in test coverage
-
-4. **Test Execution Integration**
-   - Run tests directly from UI
-   - Display results inline
-   - Link to test files in codebase
-
-5. **AI-Assisted Test Generation**
-   - Use LLM to generate test cases from feature descriptions
-   - Suggest edge cases automatically
-   - Generate test code scaffolding
 
 ## Success Criteria
 
@@ -638,39 +583,28 @@ Copy to clipboard / Download file
 - [ ] State persists in Zustand store
 - [ ] Component styling matches AppStructure theme
 - [ ] All interactions work in both light and dark modes
-- [ ] Unit tests pass for utility functions
-- [ ] E2E tests pass for user workflows
 - [ ] Documentation updated in relevant files
 
 ## Files to Create/Modify
 
 ### New Files
+
 - `app/(components)/Tests.tsx` - Main component
 - `app/(components)/Tests.utils.ts` - Helper functions
 - `__tests__/tests-component.test.ts` - Unit tests
 - `e2e/tests-component.spec.ts` - E2E tests
 
 ### Modified Files
+
 - `app/(editor)/layout.stores.ts` - Add test state and actions
 - `app/(editor)/layout.types.ts` - Add TestSuite and TestCase types
 - `app/(editor)/components/ComponentNode.tsx` - Register Tests component
 - `public/data/markdown/Start_here/5-Tests.md` - Already has component comment
 
 ### Documentation Updates
+
 - `docs/Testing.md` - Add section on Tests component usage
 - `CLAUDE.md` - Add reference to Tests component pattern
-
-## Timeline Estimate
-
-- Step 1 (Store): 1 hour
-- Step 2 (Utils): 1 hour
-- Step 3 (Main Component): 2-3 hours
-- Step 4 (Sub-components): 2-3 hours
-- Step 5 (Registration): 15 minutes
-- Step 6 (Testing): 2 hours
-- Polish & Documentation: 1 hour
-
-**Total: 9-11 hours**
 
 ## Dependencies
 

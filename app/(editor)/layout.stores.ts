@@ -276,6 +276,7 @@ const createInitialState = (data: MarkdownData) => ({
     featureId: null,
     fileType: null,
   },
+  testSuites: [],
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -1178,6 +1179,141 @@ export const useEditorStore = create<EditorState>()(
           },
         });
       },
+      addTestSuite: (suite) => {
+        set((state) => ({
+          testSuites: [...state.testSuites, { ...suite, id: generateId() }],
+        }));
+      },
+      updateTestSuite: (id, updates) => {
+        set((state) => ({
+          testSuites: state.testSuites.map((suite) =>
+            suite.id === id ? { ...suite, ...updates } : suite
+          ),
+        }));
+      },
+      removeTestSuite: (id) => {
+        set((state) => ({
+          testSuites: state.testSuites.filter((suite) => suite.id !== id),
+        }));
+      },
+      addTestCase: (suiteId, testCase) => {
+        set((state) => ({
+          testSuites: state.testSuites.map((suite) =>
+            suite.id === suiteId
+              ? {
+                  ...suite,
+                  testCases: [...suite.testCases, { ...testCase, id: generateId() }],
+                }
+              : suite
+          ),
+        }));
+      },
+      updateTestCase: (suiteId, caseId, updates) => {
+        set((state) => ({
+          testSuites: state.testSuites.map((suite) =>
+            suite.id === suiteId
+              ? {
+                  ...suite,
+                  testCases: suite.testCases.map((testCase) =>
+                    testCase.id === caseId ? { ...testCase, ...updates } : testCase
+                  ),
+                }
+              : suite
+          ),
+        }));
+      },
+      removeTestCase: (suiteId, caseId) => {
+        set((state) => ({
+          testSuites: state.testSuites.map((suite) =>
+            suite.id === suiteId
+              ? {
+                  ...suite,
+                  testCases: suite.testCases.filter((testCase) => testCase.id !== caseId),
+                }
+              : suite
+          ),
+        }));
+      },
+      resetTestsFromFeatures: () => {
+        const state = get();
+        const allFeatures: Array<{ feature: Feature; fileId: string }> = [];
+
+        Object.entries(state.features).forEach(([fileId, featureList]) => {
+          featureList.forEach((feature) => {
+            allFeatures.push({ feature, fileId });
+          });
+        });
+
+        const newTestSuites = allFeatures.map(({ feature }) => {
+          const kebabCaseName = feature.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+
+          const testCases = [];
+
+          if (feature.linkedFiles.stores) {
+            testCases.push({
+              id: generateId(),
+              description: `should update ${feature.title} store correctly`,
+              passCondition: `Store contains expected data after operation`,
+            });
+          }
+
+          if (feature.linkedFiles.hooks) {
+            testCases.push({
+              id: generateId(),
+              description: `should handle loading state in ${feature.title} hook`,
+              passCondition: `Loading state transitions correctly`,
+            });
+          }
+
+          if (feature.linkedFiles.actions) {
+            testCases.push({
+              id: generateId(),
+              description: `should execute ${feature.title} actions successfully`,
+              passCondition: `Actions complete without errors`,
+            });
+          }
+
+          testCases.push(
+            {
+              id: generateId(),
+              description: `should create ${feature.title} successfully`,
+              passCondition: `New item appears in list after creation`,
+            },
+            {
+              id: generateId(),
+              description: `should update ${feature.title} successfully`,
+              passCondition: `Changes reflected in UI after update`,
+            },
+            {
+              id: generateId(),
+              description: `should delete ${feature.title} successfully`,
+              passCondition: `Item removed from list after deletion`,
+            }
+          );
+
+          return {
+            id: generateId(),
+            name: `${feature.title} Tests`,
+            featureId: feature.id,
+            description: feature.description,
+            command: `npm run test:${kebabCaseName}`,
+            testCases,
+          };
+        });
+
+        set({ testSuites: newTestSuites });
+      },
+      reorderTestSuites: (fromIndex, toIndex) => {
+        set((state) => {
+          const newSuites = [...state.testSuites];
+          const [removed] = newSuites.splice(fromIndex, 1);
+          newSuites.splice(toIndex, 0, removed);
+          return { testSuites: newSuites };
+        });
+      },
     }),
     {
       name: "editor-storage",
@@ -1198,6 +1334,7 @@ export const useEditorStore = create<EditorState>()(
         userExperienceFiles: state.userExperienceFiles,
         features: state.features,
         featureFileSelection: state.featureFileSelection,
+        testSuites: state.testSuites,
       }),
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {

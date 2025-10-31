@@ -244,6 +244,15 @@ export interface EditorState {
   unlinkFeatureFile: (fileId: string, featureId: string, fileType: UserExperienceFileType) => void;
   setFeatureFileSelection: (fileId: string | null, featureId: string | null, fileType: UserExperienceFileType | null) => void;
   clearFeatureFileSelection: () => void;
+  testSuites: TestSuite[];
+  addTestSuite: (suite: Omit<TestSuite, "id">) => void;
+  updateTestSuite: (id: string, updates: Partial<TestSuite>) => void;
+  removeTestSuite: (id: string) => void;
+  addTestCase: (suiteId: string, testCase: Omit<TestCase, "id">) => void;
+  updateTestCase: (suiteId: string, caseId: string, updates: Partial<TestCase>) => void;
+  removeTestCase: (suiteId: string, caseId: string) => void;
+  resetTestsFromFeatures: () => void;
+  reorderTestSuites: (fromIndex: number, toIndex: number) => void;
 }
 
 export interface NavigationItem {
@@ -325,5 +334,22 @@ export interface Feature {
   description: string;
   linkedFiles: Partial<Record<UserExperienceFileType, string>>;
   isEditing: boolean;
+}
+
+export interface TestCase {
+  id: string;
+  description: string;
+  passCondition: string;
+  isEditing?: boolean;
+}
+
+export interface TestSuite {
+  id: string;
+  name: string;
+  featureId?: string;
+  description: string;
+  command: string;
+  testCases: TestCase[];
+  isEditing?: boolean;
 }
 

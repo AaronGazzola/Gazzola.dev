@@ -2,13 +2,29 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-### Core Technologies
+## Core Technologies
 
-- **Vite 5** with React Router
-- **TypeScript** for type safety
-- **TailwindCSS & Shadcn** for styling
-- **Jest & Playwright** for testing
-- **Supabase** for database and authentication _(remote DB only)_
+<!-- section-1 -->
+
+## Database & Authentication
+
+<!-- section-2 -->
+
+## Deployment Platform
+
+<!-- section-3 -->
+
+## Authentication Methods
+
+<!-- section-4 -->
+
+## Additional Features
+
+<!-- section-5 -->
+
+## Testing Framework
+
+<!-- section-6 -->
 
 # General rules:
 
