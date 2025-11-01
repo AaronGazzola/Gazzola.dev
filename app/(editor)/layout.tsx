@@ -1,9 +1,9 @@
 "use client";
 
 import Header from "@/app/(components)/Header";
+import { useHeaderStore } from "@/app/(components)/Header.store";
 import Sidebar from "@/app/(components)/Sidebar";
 import Stars from "@/app/(components)/Stars";
-import { useHeaderStore } from "@/app/(components)/Header.store";
 import { cn } from "@/lib/tailwind.utils";
 import Footer from "./Footer";
 
@@ -17,7 +17,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
       <div
         className={cn(
           "flex w-full relative overflow-hidden",
-          isExpanded ? "h-screen" : "h-[calc(100vh-100px)]"
+          "h-[calc(100vh-100px)]"
         )}
       >
         <Sidebar />

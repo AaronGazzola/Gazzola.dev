@@ -238,7 +238,8 @@ const Header = () => {
               }}
             >
               <div className="flex px-2 h-full relative">
-                {[...shuffledTestimonials, ...shuffledTestimonials].map((testimonial, index) => {
+                {[...shuffledTestimonials, ...shuffledTestimonials].map(
+                  (testimonial, index) => {
                     const yPositions = [
                       "30%",
                       "70%",
@@ -272,7 +273,9 @@ const Header = () => {
                           marginRight: xGaps[index % xGaps.length],
                         }}
                       >
-                        <ScrollParallax strength={parallaxStrengths[actualIndex]}>
+                        <ScrollParallax
+                          strength={parallaxStrengths[actualIndex]}
+                        >
                           <div
                             style={{
                               position: "relative",
@@ -285,11 +288,12 @@ const Header = () => {
                         </ScrollParallax>
                       </div>
                     );
-                  })}
+                  }
+                )}
               </div>
             </div>
 
-            <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center">
+            <div className="absolute bottom-7 left-0 right-0 z-20 flex justify-center">
               <Button
                 variant="outline"
                 className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 text-xl px-8 py-6"
