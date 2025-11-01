@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { SiYoutube } from "react-icons/si";
 import { ScrollParallax } from "react-just-parallax";
 import { CodeReviewDialog } from "../(editor)/CodeReviewDialog";
@@ -48,6 +48,14 @@ const Header = () => {
   const [codeReviewDialogOpen, setCodeReviewDialogOpen] = useState(false);
 
   useHeaderCollapseOnScroll();
+
+  const shuffledTestimonials = useMemo(() => {
+    return [...testimonials].sort(() => Math.random() - 0.5);
+  }, []);
+
+  const parallaxStrengths = useMemo(() => {
+    return shuffledTestimonials.map(() => Math.random() * 0.15 + 0.05);
+  }, [shuffledTestimonials]);
 
   const handleDialogOpenChange = (open: boolean | null) => {
     setCodeReviewDialogOpen(!!open);
@@ -229,37 +237,55 @@ const Header = () => {
                 WebkitOverflowScrolling: "touch",
               }}
             >
-              <div className="flex gap-8 px-2 h-full relative">
-                {testimonials.map((testimonial, index) => {
-                  const yPositions = [
-                    "42%",
-                    "58%",
-                    "45%",
-                    "55%",
-                    "48%",
-                    "52%",
-                    "43%",
-                    "57%",
-                    "46%",
-                    "54%",
-                    "44%",
-                    "56%",
-                  ];
-                  return (
-                    <ScrollParallax key={index} strength={0.05}>
+              <div className="flex px-2 h-full relative">
+                {[...shuffledTestimonials, ...shuffledTestimonials].map((testimonial, index) => {
+                    const yPositions = [
+                      "30%",
+                      "70%",
+                      "42%",
+                      "65%",
+                      "35%",
+                      "58%",
+                      "48%",
+                      "75%",
+                      "38%",
+                      "62%",
+                      "52%",
+                      "45%",
+                    ];
+                    const xGaps = [
+                      "32px",
+                      "56px",
+                      "40px",
+                      "64px",
+                      "48px",
+                      "44px",
+                      "52px",
+                      "36px",
+                    ];
+                    const actualIndex = index % shuffledTestimonials.length;
+                    return (
                       <div
+                        key={index}
                         className="flex-shrink-0"
                         style={{
-                          position: "relative",
-                          top: yPositions[index % yPositions.length],
-                          transform: "translateY(-50%)",
+                          marginRight: xGaps[index % xGaps.length],
                         }}
                       >
-                        <TestimonialCard testimonial={testimonial} />
+                        <ScrollParallax strength={parallaxStrengths[actualIndex]}>
+                          <div
+                            style={{
+                              position: "relative",
+                              top: yPositions[index % yPositions.length],
+                              transform: "translateY(-50%)",
+                            }}
+                          >
+                            <TestimonialCard testimonial={testimonial} />
+                          </div>
+                        </ScrollParallax>
                       </div>
-                    </ScrollParallax>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
 

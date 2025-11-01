@@ -38,10 +38,9 @@ export const useAutoScroll = (
     if (!container) return;
 
     const scroll = () => {
-      if (
-        container.scrollLeft + container.clientWidth >=
-        container.scrollWidth - 1
-      ) {
+      const maxScroll = container.scrollWidth / 2;
+
+      if (container.scrollLeft >= maxScroll) {
         container.scrollLeft = 0;
       } else {
         container.scrollLeft += scrollSpeed;
