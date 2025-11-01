@@ -131,15 +131,7 @@ export const testimonials: Testimonial[] = [
     amount: "$1,876.00",
     contractType: "Fixed price",
   },
-  {
-    title: "Create React App to NextJS migration",
-    rating: "5.0",
-    dateRange: "Sep 23, 2021 - Sep 25, 2021",
-    quote:
-      "He understood the requirements, provided a personalized video to apply for the gig, got to work right away, and delivered on time. Wasn't expecting this kind of work. It was a delight to work with Aaron. Totally recommended!",
-    amount: "$196.00",
-    contractType: "Fixed price",
-  },
+
   {
     title: "Rainbow of Emotions web app",
     rating: "5.0",
