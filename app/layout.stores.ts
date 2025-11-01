@@ -17,7 +17,6 @@ const initialState = {
   ],
   starSize: 5,
   starNumber: 15,
-  headerIsCollapsed: true,
 };
 
 export const getBackgroundStyle = (
@@ -46,7 +45,6 @@ export const useThemeStore = create<ThemeState>()(
       setStarColors: (starColors) => set({ starColors }),
       setStarSize: (starSize) => set({ starSize }),
       setStarNumber: (starNumber) => set({ starNumber }),
-      setHeaderIsCollapsed: (headerIsCollapsed) => set({ headerIsCollapsed }),
       reset: () => set(initialState),
     }),
     {

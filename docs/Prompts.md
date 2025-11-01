@@ -24,7 +24,8 @@ The commands and numbers below are shorthand references to the corresponding pro
 
 12. `_test_doc_fix`: "compare `docs/Test.md` with all tests in the repo and update the tests to align with the `docs/Test.md` document"
 
-13. `_roadmap_create`: "Create a roadmap at `docs/roadmaps/${scope}_${date}.md` ("eg: "docs/roadmaps/User_authentication_1-Jun-25.md"). Refer to the roadmap prompt at @docs/Roadmap_Prompt.md and the programming patterns in @CLAUDE.md and @docs/util.md . Your task is not to implement any of the described features. Your task is to create a comprehensive roadmap that details all of the steps required to complete the entire process and implement ALL of the functionality"
+13. `_roadmap_create`: "Write a prompt to `docs/${featureName}_prompt.md`. Your task is not to implement any of the described features. Your task is to create a comprehensive prompt that describes all of the steps required for an AI to implement the required functionality.
+    The prompt should explain that every step should be 100% completed. The prompt should instruct the AI to review the generated code to ensure that the programming patterns in @CLAUDE.md and @docs/util.md were followed."
 
 14. `_roadmap_continue`: "continue to follow the roadmap"
 

@@ -13,7 +13,5 @@ export interface ThemeState {
   setStarSize: (starSize: number) => void;
   starNumber: number;
   setStarNumber: (starNumber: number) => void;
-  headerIsCollapsed: boolean;
-  setHeaderIsCollapsed: (headerIsCollapsed: boolean) => void;
   reset: () => void;
 }

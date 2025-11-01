@@ -3,21 +3,21 @@
 import Header from "@/app/(components)/Header";
 import Sidebar from "@/app/(components)/Sidebar";
 import Stars from "@/app/(components)/Stars";
-import { useThemeStore } from "@/app/layout.stores";
+import { useHeaderStore } from "@/app/(components)/Header.store";
 import { cn } from "@/lib/tailwind.utils";
 import Footer from "./Footer";
 
 import { ReactNode, Suspense } from "react";
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
-  const { headerIsCollapsed } = useThemeStore();
+  const { isExpanded } = useHeaderStore();
   return (
     <div className="relative">
       <Header />
       <div
         className={cn(
-          "flex w-full h-screen relative overflow-hidden",
-          headerIsCollapsed ? "h-[calc(100vh-100px)]" : "h-screen"
+          "flex w-full relative overflow-hidden",
+          isExpanded ? "h-screen" : "h-[calc(100vh-100px)]"
         )}
       >
         <Sidebar />
