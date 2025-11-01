@@ -83,7 +83,7 @@ export const testimonials: Testimonial[] = [
     rating: "5.0",
     dateRange: "Mar 25, 2024 - May 14, 2024",
     quote:
-      "Great to work with Aaron. He understood what we were trying to achieve and was swiftly up and running on the project. He provided great value suggestions and came up…",
+      "Great to work with Aaron. He understood what we were trying to achieve and was swiftly up and running on the project. He provided great value suggestions and came up with innovative ideas. The output was clean, precise and to a high standard. I definitely will work with Aaron again.",
     amount: "$10,139.99",
     contractType: "Hourly",
     hourlyRate: "$65.00",
@@ -105,8 +105,12 @@ export const testimonials: Testimonial[] = [
       "Firebase authentication and Realtime database with Next.js for an RPG Maker JavaScript game",
     rating: "5.0",
     dateRange: "Dec 18, 2021 - Nov 3, 2023",
-    quote:
-      "If you are going to work with any developer on Upwork, make sure it is Aaron. Why should you work with Aaron? 1) He has the ability to work on…",
+    quote: `If you are going to work with any developer on Upwork, make sure it is Aaron.
+Why should you work with Aaron?
+1) He has the ability to work on projects both from the very ground up, but also with established code bases. He is a great problem solver, and will always find a solution. 
+2) He is not only a good coder, but an excellent communicator and mentor. Aaron has spent many hours upskilling me on dev ops, code bases and more. 
+3) He can work well as a solo dev, but also integrates well with your existing dev teams and stakeholders. He's been great helping our junior team members with their knowledge gaps. 
+4) He is a pleasure to work with. Just a good guy all round.`,
     amount: "$4,322.67",
     contractType: "Hourly",
     hourlyRate: "$50.00",
@@ -116,8 +120,9 @@ export const testimonials: Testimonial[] = [
     title: "Reporting dashboard for Facebook digital marketing agency",
     rating: "5.0",
     dateRange: "Dec 16, 2021 - Feb 12, 2022",
-    quote:
-      "Aaron is extremely professional & knowledge. Aaron sends video updates on all work that has been completed & at each step of the milestone. I would definitely work with Aaron…",
+    quote: `Aaron is extremely professional & knowledge. 
+Aaron sends video updates on all work that has been completed & at each step of the milestone. 
+I would definitely work with Aaron again on future projects & highly recommend Aaron if you are looking for a developer.`,
     amount: "$205.80",
     contractType: "Fixed price",
   },
