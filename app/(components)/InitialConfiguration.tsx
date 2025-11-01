@@ -281,7 +281,8 @@ const questionConfigs: (
       {
         id: "passkey",
         label: "Passkey (WebAuthn)",
-        description: "Passwordless authentication using biometrics or security keys",
+        description:
+          "Passwordless authentication using biometrics or security keys",
       },
       {
         id: "anonymous",
@@ -480,7 +481,11 @@ const getRequiredTechnologiesForSubOption = (
       required.push("stripe", "betterAuth");
     }
   } else if (questionId === "authentication") {
-    if (optionId === "magicLink" || optionId === "emailPassword" || optionId === "otp") {
+    if (
+      optionId === "magicLink" ||
+      optionId === "emailPassword" ||
+      optionId === "otp"
+    ) {
       required.push("resend");
     }
   } else if (questionId === "admin") {

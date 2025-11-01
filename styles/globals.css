@@ -78,6 +78,13 @@
   .scrollbar-thumb::-webkit-scrollbar-thumb {
     background-color: var(--color-scrollbar-thumb);
   }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer base {

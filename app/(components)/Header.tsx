@@ -1,6 +1,5 @@
 //-| File path: app/(components)/Header.tsx
 "use client";
-import { useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -21,89 +20,160 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
-  Clock,
+  FlaskConical,
   Loader2,
   Palette,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRef, useState } from "react";
 import { SiYoutube } from "react-icons/si";
 import { ScrollParallax } from "react-just-parallax";
-import { useYouTubeSubscriberCount } from "./Header.hooks";
-import { JobSuccessIcon, TopRatedIcon } from "./SVG";
+import { CodeReviewDialog } from "../(editor)/CodeReviewDialog";
+import {
+  useAutoScroll,
+  useHeaderCollapseOnScroll,
+  useYouTubeSubscriberCount,
+} from "./Header.hooks";
+import { useHeaderStore } from "./Header.store";
+import { testimonials } from "./Header.types";
+import { TestimonialCard } from "./TestimonialCard";
 import ThemeControlPanel from "./ThemeControlPanel";
 
 const Header = () => {
   const { data: subscriberData, isLoading } = useYouTubeSubscriberCount();
-  const { headerIsCollapsed, setHeaderIsCollapsed } = useThemeStore();
+  const { isExpanded, setIsExpanded } = useHeaderStore();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  useAutoScroll(scrollContainerRef, 1, isExpanded);
+  const [codeReviewDialogOpen, setCodeReviewDialogOpen] = useState(false);
+
+  useHeaderCollapseOnScroll();
+
+  const handleDialogOpenChange = (open: boolean | null) => {
+    setCodeReviewDialogOpen(!!open);
+  };
 
   return (
-    <div
-      className={clsx(
-        sourceCodePro.className,
-        "flex flex-col justify-between w-full items-center relative overflow-hidden text-center",
-        headerIsCollapsed ? "h-[100px] py-6" : "h-screen"
-      )}
-    >
-      <div className="absolute top-4 left-3 md:top-6 md:left-6 z-30">
-        <Button
-          variant="outline"
-          className={cn(
-            "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group p-3"
-          )}
-          onClick={() =>
-            window.open("https://www.youtube.com/@AzAnything/streams", "_blank")
-          }
-        >
-          {!headerIsCollapsed && (
-            <div className="relative h-3 w-8 mt-2 ">
-              <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
-            </div>
-          )}
-
-          <div className="flex items-center gap-1">
-            <span className="">@AzAnything</span>
-          </div>
-
-          <div
+    <>
+      <div
+        className={clsx(
+          sourceCodePro.className,
+          "flex flex-col justify-between w-full items-center relative text-center",
+          !isExpanded
+            ? "h-[100px] py-6 overflow-hidden"
+            : "h-screen overflow-x-hidden overflow-y-visible"
+        )}
+      >
+        <div className="absolute top-4 left-3 md:top-6 md:left-6 z-30">
+          <Button
+            variant="outline"
             className={cn(
-              "flex items-center gap-1",
-              headerIsCollapsed ? "-mt-3" : "-mt-2"
+              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group p-3"
             )}
+            onClick={() =>
+              window.open(
+                "https://www.youtube.com/@AzAnything/streams",
+                "_blank"
+              )
+            }
           >
-            <span className="">Anyones:</span>
-            <span className="">
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                subscriberData?.subscriberCount?.toLocaleString() || "..."
+            {isExpanded && (
+              <div className="relative h-3 w-8 mt-2 ">
+                <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
+              </div>
+            )}
+
+            <div className="flex items-center gap-1">
+              <span className="">@AzAnything</span>
+            </div>
+
+            <div
+              className={cn(
+                "flex items-center gap-1",
+                !isExpanded ? "-mt-3" : "-mt-2"
               )}
-            </span>
-          </div>
-        </Button>
-      </div>
-      <div className="absolute top-3 right-3 md:top-6 md:right-6 z-30 flex gap-2">
-        <Link href={configuration.paths.about}>
-          <Button variant="outline" className=" text-gray-300  font-bold">
-            About
-            <ArrowRight className="w-4 h-4" />
+            >
+              <span className="">Anyones:</span>
+              <span className="">
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  subscriberData?.subscriberCount?.toLocaleString() || "..."
+                )}
+              </span>
+            </div>
           </Button>
-        </Link>
-        <div className="md:flex hidden gap-2">
+        </div>
+        <div className="absolute top-3 right-3 md:top-6 md:right-6 z-30 flex gap-2">
+          <Link href={configuration.paths.about}>
+            <Button variant="outline" className=" text-gray-300  font-bold">
+              About
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+          <div className="md:flex hidden gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-gray-300"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                  >
+                    {!isExpanded ? (
+                      <ChevronUp className="w-5 h-5" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Collapse header</p>
+                </TooltipContent>
+              </Tooltip>
+              <Popover>
+                <Tooltip>
+                  <PopoverTrigger asChild>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-gray-300"
+                      >
+                        <Palette className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="p-0">
+                    <ThemeControlPanel />
+                  </PopoverContent>
+                  <TooltipContent>
+                    <p>Theme options</p>
+                  </TooltipContent>
+                </Tooltip>
+              </Popover>
+            </TooltipProvider>
+          </div>
+        </div>
+        <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
+                  asChild
                   variant="ghost"
                   size="icon"
                   className="text-gray-300"
-                  onClick={() => setHeaderIsCollapsed(!headerIsCollapsed)}
+                  onClick={() => setIsExpanded(!isExpanded)}
                 >
-                  {headerIsCollapsed ? (
-                    <ChevronUp className="w-5 h-5" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5" />
-                  )}
+                  <span>
+                    {!isExpanded ? (
+                      <ChevronUp className="w-5 h-5" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5" />
+                    )}
+                  </span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -115,11 +185,14 @@ const Header = () => {
                 <PopoverTrigger asChild>
                   <TooltipTrigger asChild>
                     <Button
+                      asChild
                       variant="ghost"
                       size="icon"
                       className="text-gray-300"
                     >
-                      <Palette className="w-5 h-5" />
+                      <span>
+                        <Palette className="w-5 h-5" />
+                      </span>
                     </Button>
                   </TooltipTrigger>
                 </PopoverTrigger>
@@ -133,104 +206,93 @@ const Header = () => {
             </Popover>
           </TooltipProvider>
         </div>
-      </div>
-      <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-300"
-                onClick={() => setHeaderIsCollapsed(!headerIsCollapsed)}
-              >
-                {headerIsCollapsed ? (
-                  <ChevronUp className="w-5 h-5" />
-                ) : (
-                  <ChevronDown className="w-5 h-5" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Collapse header</p>
-            </TooltipContent>
-          </Tooltip>
-          <Popover>
-            <Tooltip>
-              <PopoverTrigger asChild>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-gray-300">
-                    <Palette className="w-5 h-5" />
-                  </Button>
-                </TooltipTrigger>
-              </PopoverTrigger>
-              <PopoverContent align="end" className="p-0">
-                <ThemeControlPanel />
-              </PopoverContent>
-              <TooltipContent>
-                <p>Theme options</p>
-              </TooltipContent>
-            </Tooltip>
-          </Popover>
-        </TooltipProvider>
-      </div>
-      <div className="px-5 sm:px-10">
-        {!headerIsCollapsed && (
-          <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
-            AZ GAZZOLA
-          </h1>
-        )}
-        <h2 className="text-lg font-medium md:block hidden">
-          Full stack web dev
-        </h2>
-        <h3 className="text-lg font-medium hidden md:block">
-          Typescript + Next.js + Supabase
-        </h3>
-      </div>
-      {!headerIsCollapsed && (
-        <>
-          <ScrollParallax isAbsolutelyPositioned>
-            <div className="absolute top-[60%] sm:top-[40%] left-2/3 z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
-              <TopRatedIcon
-                className="w-7 h-7 mr-1.5"
-                path1ClassName="fill-gray-900 stroke-white"
-                path2ClassName="stroke-white"
-              />
-              Top Rated Plus
-            </div>
-          </ScrollParallax>
-          <ScrollParallax isAbsolutelyPositioned>
-            <div className="absolute top-[45%] sm:top-[30%] left-1/3 z-20 bg-black p-2 rounded-lg shadow shadow-gray-500 -translate-x-1/2 whitespace-nowrap space-x-10 flex items-center">
-              <div className="border rounded-full p-0.5 mr-1.5 bg-gray-900">
-                <JobSuccessIcon
-                  className="w-5 h-5"
-                  path1ClassName="stroke-white"
-                />
+        <div className="px-5 sm:px-10 ">
+          {isExpanded && (
+            <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
+              AZ GAZZOLA
+            </h1>
+          )}
+          <h2 className="text-lg font-medium md:block hidden">
+            Full stack web dev
+          </h2>
+          <h3 className="text-lg font-medium hidden md:block">
+            Typescript + Next.js + Supabase
+          </h3>
+        </div>
+        {isExpanded && (
+          <>
+            <div
+              ref={scrollContainerRef}
+              className="absolute inset-0  w-full overflow-x-auto overflow-y-visible hide-scrollbar z-20"
+              style={{
+                scrollBehavior: "auto",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              <div className="flex gap-8 px-2 h-full relative">
+                {testimonials.map((testimonial, index) => {
+                  const yPositions = [
+                    "42%",
+                    "58%",
+                    "45%",
+                    "55%",
+                    "48%",
+                    "52%",
+                    "43%",
+                    "57%",
+                    "46%",
+                    "54%",
+                    "44%",
+                    "56%",
+                  ];
+                  return (
+                    <ScrollParallax key={index} strength={0.05}>
+                      <div
+                        className="flex-shrink-0"
+                        style={{
+                          position: "relative",
+                          top: yPositions[index % yPositions.length],
+                          transform: "translateY(-50%)",
+                        }}
+                      >
+                        <TestimonialCard testimonial={testimonial} />
+                      </div>
+                    </ScrollParallax>
+                  );
+                })}
               </div>
-              100% Job Success
             </div>
-          </ScrollParallax>
-          <ScrollParallax isAbsolutelyPositioned>
-            <div className="absolute top-[80%] sm:top-[70%] left-[40%] z-20 bg-black -translate-x-1/2 p-2 rounded-lg shadow shadow-gray-500 whitespace-nowrap flex items-center">
-              <Clock className="w-7 h-7 mr-1.5 stroke-[1px]" />7 years of
-              experience
-            </div>
-          </ScrollParallax>
 
-          <Image
-            className="object-cover w-[150%] max-w-[1000px] mt-12"
-            src="/Space suit bust portrait.png"
-            alt="Space suit with programming code reflected in visor"
-            width={2912}
-            height={1664}
-            quality={100}
-            placeholder="blur"
-            blurDataURL={headerImagePreloader}
-          />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-24 z-10 bottom-vignette w-full max-w-[1000px]" />
-        </>
-      )}
-    </div>
+            <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center">
+              <Button
+                variant="outline"
+                className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 text-xl px-8 py-6"
+                onClick={() => setCodeReviewDialogOpen(true)}
+              >
+                Get a free code review!
+                <FlaskConical className="w-6 h-6" />
+              </Button>
+            </div>
+
+            <Image
+              className="object-cover w-[150%] max-w-[1000px] mt-12"
+              src="/Space suit bust portrait.png"
+              alt="Space suit with programming code reflected in visor"
+              width={2912}
+              height={1664}
+              quality={100}
+              placeholder="blur"
+              blurDataURL={headerImagePreloader}
+            />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-24 z-10 bottom-vignette w-full max-w-[1000px]" />
+          </>
+        )}
+      </div>
+      <CodeReviewDialog
+        open={codeReviewDialogOpen}
+        onOpenChange={handleDialogOpenChange}
+      />
+    </>
   );
 };
 

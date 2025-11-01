@@ -1,7 +1,7 @@
 "use client";
 
-import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
 import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
+import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -20,6 +20,7 @@ interface WalkthroughHelperProps {
   iconSize?: "sm" | "md";
   className?: string;
   showRestartButton?: boolean;
+  asDiv?: boolean;
 }
 
 export const WalkthroughHelper = ({
@@ -31,6 +32,7 @@ export const WalkthroughHelper = ({
   iconSize = "sm",
   className = "",
   showRestartButton = false,
+  asDiv = true,
 }: WalkthroughHelperProps) => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetWalkthrough } = useWalkthroughStore();
@@ -41,6 +43,8 @@ export const WalkthroughHelper = ({
   );
   const trigger = (
     <div
+      role={asDiv ? "button" : undefined}
+      tabIndex={asDiv ? 0 : undefined}
       className={cn(
         "h-5 w-5 rounded-full relative",
         title && description && "p-0.5"
@@ -48,6 +52,16 @@ export const WalkthroughHelper = ({
       style={{
         ...backgroundStyle,
       }}
+      onKeyDown={
+        asDiv
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onOpenChange?.(!isOpen);
+              }
+            }
+          : undefined
+      }
     >
       {showAnimation && (
         <div
@@ -63,11 +77,15 @@ export const WalkthroughHelper = ({
   if (!title && !description) return trigger;
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+      <PopoverTrigger asChild={!asDiv}>{trigger}</PopoverTrigger>
       <PopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
         <div className="flex flex-col theme-gap-3">
-          <h4 className="font-semibold text-sm theme-font-sans theme-tracking">{title}</h4>
-          <p className="text-sm theme-font-sans theme-tracking">{description}</p>
+          <h4 className="font-semibold text-sm theme-font-sans theme-tracking">
+            {title}
+          </h4>
+          <p className="text-sm theme-font-sans theme-tracking">
+            {description}
+          </p>
           {showRestartButton && (
             <Button
               variant="outline"

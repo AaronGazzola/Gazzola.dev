@@ -61,6 +61,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
+import { useHeaderStore } from "../../(components)/Header.store";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { useThemeStore } from "../../layout.stores";
 import { parseAndGetMarkdownDataAction } from "../layout.actions";
@@ -159,8 +160,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setMounted(true);
   }, []);
 
+  const { hasBeenCollapsed } = useHeaderStore();
   const showInitialDialog =
-    mounted && shouldShowStep(WalkthroughStep.INITIAL_DIALOG) && !codeReviewDialogOpen;
+    mounted &&
+    shouldShowStep(WalkthroughStep.INITIAL_DIALOG) &&
+    !codeReviewDialogOpen &&
+    hasBeenCollapsed;
   const showPreviewHelp =
     mounted && shouldShowStep(WalkthroughStep.PREVIEW_MODE);
   const showNextButtonHelp =
