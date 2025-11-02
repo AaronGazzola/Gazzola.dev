@@ -195,14 +195,10 @@ export const CodeReviewDialog = ({
       <DialogContent data-cy={FooterDataAttributes.CODE_REVIEW_DIALOG}>
         <DialogHeader className="flex flex-col gap-1 pb-4">
           <DialogTitle>
-            Are you a vibe coder? (eg. <strong>Lovable</strong>,{" "}
-            <strong>Replit</strong>)
+            Apply for a <strong className="italic">free</strong> code review
           </DialogTitle>
-          <DialogDescription asChild>
+          <DialogDescription asChild className="text-base">
             <div className="!text-gray-100 font-medium">
-              <p className="text-base">
-                Apply here for a <strong>free</strong> code review!
-              </p>
               <p className="mt-2 text-sm">You will receive:</p>
               <ul className="list-disc list-inside text-sm">
                 <li>
