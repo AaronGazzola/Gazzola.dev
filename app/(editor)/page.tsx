@@ -1,69 +1,51 @@
-"use client";
-
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 import { getMarkdownDataAction } from "./layout.actions";
 
-const RedirectComponent = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isRedirecting, setIsRedirecting] = useState(false);
+const getFirstPageUrl = async (): Promise<string> => {
+  const { data, error } = await getMarkdownDataAction();
+  if (!data || error) {
+    throw new Error("Failed to load markdown data: " + (error || "Unknown error"));
+  }
 
-  useEffect(() => {
-    const redirectToFirstPage = async () => {
-      if (isRedirecting) return;
-      setIsRedirecting(true);
+  const pages = Object.values(data.flatIndex)
+    .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-      try {
-        const { data, error } = await getMarkdownDataAction();
-        if (!data || error) {
-          throw new Error(
-            "Failed to load markdown data: " + (error || "Unknown error")
-          );
-        }
+  if (pages.length === 0) {
+    throw new Error("No valid pages found in markdown data");
+  }
 
-        const pages = Object.values(data.flatIndex)
-          .filter(
-            (node) =>
-              node.type === "file" &&
-              node.include !== false &&
-              !(node as any).previewOnly &&
-              !(node as any).visibleAfterPage
-          )
-          .sort((a, b) => (a.order || 0) - (b.order || 0));
+  const firstPageUrl = pages[0].urlPath;
+  if (!firstPageUrl) {
+    throw new Error("First page has no urlPath");
+  }
 
-        if (pages.length === 0) {
-          throw new Error("No valid pages found in markdown data");
-        }
+  return firstPageUrl;
+};
 
-        const firstPageUrl = pages[0].urlPath;
-        if (!firstPageUrl) {
-          throw new Error("First page has no urlPath");
-        }
+const page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const firstPageUrl = await getFirstPageUrl();
+  const params = await searchParams;
 
-        const queryString = searchParams.toString();
-        const redirectUrl = queryString
-          ? `${firstPageUrl}?${queryString}`
-          : firstPageUrl;
-
-        router.replace(redirectUrl);
-      } catch (error) {
-        console.error("Redirect error:", error);
+  const queryString = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined) {
+      if (Array.isArray(value)) {
+        value.forEach((v) => queryString.append(key, v));
+      } else {
+        queryString.append(key, value);
       }
-    };
+    }
+  });
 
-    redirectToFirstPage();
-  }, [router, searchParams, isRedirecting]);
+  const queryStr = queryString.toString();
+  const redirectUrl = queryStr ? `${firstPageUrl}?${queryStr}` : firstPageUrl;
 
-  return null;
+  redirect(redirectUrl);
 };
 
-const Page = () => {
-  return (
-    <Suspense fallback={null}>
-      <RedirectComponent />
-    </Suspense>
-  );
-};
-
-export default Page;
+export default page;

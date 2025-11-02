@@ -1,8 +1,10 @@
 "use client";
 
 import { useThemeCSSVariables } from "@/app/(components)/ThemeConfiguration.cssVariables";
+import { useHeaderStore } from "@/app/(components)/Header.store";
 import { processContent } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
+import { cn } from "@/lib/tailwind.utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
@@ -37,6 +39,7 @@ import {
   SECTION_TRANSFORMER,
   setSectionTransformerContext,
 } from "../components/SectionTransformer";
+import { EditorSkeleton } from "../components/EditorSkeleton";
 import { Toolbar } from "../components/Toolbar";
 import {
   useContentVersionCheck,
@@ -48,6 +51,7 @@ const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
   const themeReady = useThemeCSSVariables();
+  const { isExpanded } = useHeaderStore();
   const {
     updateContent,
     getNode,
@@ -340,21 +344,7 @@ const Page = () => {
     [setCurrentContent]
   );
   if (!canRender || (needsInitialization && isLoading)) {
-    return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
-        <div className="theme-text-muted-foreground theme-font-sans theme-tracking">
-          {!mounted
-            ? "Loading editor..."
-            : !themeReady
-              ? "Applying theme..."
-              : versionCheckLoading
-                ? "Checking content version..."
-                : isResetting
-                  ? "Updating content..."
-                  : "Loading content..."}
-        </div>
-      </div>
-    );
+    return <EditorSkeleton />;
   }
 
   if (error) {
@@ -379,13 +369,7 @@ const Page = () => {
   }
 
   if (!isInitialized) {
-    return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
-        <div className="theme-text-muted-foreground theme-font-sans theme-tracking">
-          Initializing editor...
-        </div>
-      </div>
-    );
+    return <EditorSkeleton />;
   }
 
   if (isTsxFile) {
@@ -393,7 +377,12 @@ const Page = () => {
       <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
         <div className="relative h-full flex flex-col">
           <Toolbar currentContentPath={contentPath} />
-          <div className="w-full flex-1 overflow-auto">
+          <div
+            className={cn(
+              "w-full flex-1",
+              isExpanded ? "overflow-hidden" : "overflow-auto"
+            )}
+          >
             <CodeViewer
               code={currentContent}
               language="tsx"
@@ -410,7 +399,12 @@ const Page = () => {
       {previewMode ? (
         <div className="relative h-full flex flex-col">
           <Toolbar currentContentPath={contentPath} />
-          <div className="w-full flex-1 overflow-auto">
+          <div
+            className={cn(
+              "w-full flex-1",
+              isExpanded ? "overflow-hidden" : "overflow-auto"
+            )}
+          >
             <ReadOnlyLexicalEditor
               content={processedContent}
               darkMode={darkMode}
@@ -423,7 +417,12 @@ const Page = () => {
             <Toolbar currentContentPath={contentPath} />
             <RichTextPlugin
               contentEditable={
-                <ContentEditable className="w-full flex-1 p-6 outline-none resize-none overflow-auto min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing h-24 border  " />
+                <ContentEditable
+                  className={cn(
+                    "w-full flex-1 p-6 outline-none resize-none min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing h-24 border",
+                    isExpanded ? "overflow-hidden" : "overflow-auto"
+                  )}
+                />
               }
               placeholder={
                 <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing theme-font-sans theme-tracking">
