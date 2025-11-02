@@ -20,6 +20,7 @@ export const useHeaderStore = create<HeaderState>()(
     }),
     {
       name: "header-state",
+      skipHydration: true,
     }
   )
 );

@@ -1,6 +1,7 @@
 //-| File path: app/(components)/Header.hooks.tsx
 "use client";
 
+import { getBrowserAPI } from "@/lib/env.utils";
 import { useQuery } from "@tanstack/react-query";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { getYouTubeSubscriberCountAction } from "./Header.actions";
@@ -63,7 +64,8 @@ export const useHeaderCollapseOnScroll = () => {
 
   useEffect(() => {
     if (isExpanded) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      const win = getBrowserAPI(() => window);
+      win?.scrollTo({ top: 0, behavior: "smooth" });
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = undefined;
@@ -72,10 +74,13 @@ export const useHeaderCollapseOnScroll = () => {
   }, [isExpanded]);
 
   useEffect(() => {
+    const win = getBrowserAPI(() => window);
+    const doc = getBrowserAPI(() => document);
+
     const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.scrollY;
-      const clientHeight = window.innerHeight;
+      const scrollHeight = doc?.documentElement.scrollHeight || 0;
+      const scrollTop = win?.scrollY || 0;
+      const clientHeight = win?.innerHeight || 0;
 
       if (isExpanded && scrollTop + clientHeight >= scrollHeight - 10) {
         if (timeoutRef.current) {
@@ -92,10 +97,10 @@ export const useHeaderCollapseOnScroll = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    win?.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      win?.removeEventListener("scroll", handleScroll);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

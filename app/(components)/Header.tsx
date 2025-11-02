@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import configuration from "@/configuration";
+import { getBrowserAPI } from "@/lib/env.utils";
 import { cn } from "@/lib/tailwind.utils";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
@@ -30,7 +31,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SiYoutube } from "react-icons/si";
 import { ScrollParallax } from "react-just-parallax";
 import "swiper/css";
@@ -57,43 +58,48 @@ const Header = () => {
   const [swiperAutoplayEnabled, setSwiperAutoplayEnabled] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [progressWidth, setProgressWidth] = useState(0);
+  const [isGrowing, setIsGrowing] = useState(true);
   const swiperRef = useRef<any>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  useHeaderCollapseOnScroll();
-
-  const shuffledTestimonials = useMemo(() => {
-    return [...testimonials].sort(() => Math.random() - 0.5);
+  useEffect(() => {
+    useHeaderStore.persist.rehydrate();
   }, []);
 
-  const parallaxStrengths = useMemo(() => {
-    return shuffledTestimonials.map(() => Math.random() * 0.15 + 0.05);
-  }, [shuffledTestimonials]);
+  useHeaderCollapseOnScroll();
 
   const handleDialogOpenChange = (open: boolean | null) => {
     setCodeReviewDialogOpen(!!open);
   };
 
-  const startProgressBar = () => {
+  const startProgressBar = useCallback(() => {
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
     }
-    setProgressWidth(0);
+    setProgressWidth(isGrowing ? 0 : 100);
     const duration = 3000;
     const interval = 30;
     const increment = (interval / duration) * 100;
 
     progressIntervalRef.current = setInterval(() => {
       setProgressWidth((prev) => {
-        const next = prev + increment;
-        if (next >= 100) {
-          return 0;
+        if (isGrowing) {
+          const next = prev + increment;
+          if (next >= 100) {
+            return 100;
+          }
+          return next;
+        } else {
+          const next = prev - increment;
+          if (next <= 0) {
+            return 0;
+          }
+          return next;
         }
-        return next;
       });
     }, interval);
-  };
+  }, [isGrowing]);
 
   const stopProgressBar = () => {
     if (progressIntervalRef.current) {
@@ -119,13 +125,14 @@ const Header = () => {
   };
 
   const handleSlideChange = () => {
+    setIsGrowing((prev) => !prev);
     if (swiperAutoplayEnabled && !isPaused) {
       startProgressBar();
     }
   };
 
-  const handleChevronClick = (direction: 'prev' | 'next') => {
-    if (direction === 'prev') {
+  const handleChevronClick = (direction: "prev" | "next") => {
+    if (direction === "prev") {
       swiperRef.current?.slidePrev();
     } else {
       swiperRef.current?.slideNext();
@@ -183,17 +190,17 @@ const Header = () => {
         clearInterval(progressIntervalRef.current);
       }
     };
-  }, [swiperAutoplayEnabled, isPaused]);
+  }, [swiperAutoplayEnabled, isPaused, startProgressBar]);
 
   return (
     <>
       <div
         className={clsx(
           sourceCodePro.className,
-          "flex flex-col justify-between w-full items-center relative text-center",
+          "flex flex-col justify-between w-full items-center relative text-center overflow-y-hidden",
           !isExpanded
             ? "h-[100px] py-6 overflow-hidden"
-            : "h-screen overflow-x-hidden overflow-y-visible"
+            : "h-screen overflow-x-hidden"
         )}
       >
         <div className="absolute top-4 left-3 md:top-6 md:left-6 z-30">
@@ -203,7 +210,7 @@ const Header = () => {
               "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group p-3"
             )}
             onClick={() =>
-              window.open(
+              getBrowserAPI(() => window)?.open(
                 "https://www.youtube.com/@AzAnything/streams",
                 "_blank"
               )
@@ -365,7 +372,7 @@ const Header = () => {
                 className="flex px-2 h-full relative"
                 style={{ height: "100%" }}
               >
-                {[...shuffledTestimonials, ...shuffledTestimonials].map(
+                {[...testimonials, ...testimonials].map(
                   (testimonial, index) => {
                     const yPositions = [
                       "30%",
@@ -391,7 +398,10 @@ const Header = () => {
                       "52px",
                       "36px",
                     ];
-                    const actualIndex = index % shuffledTestimonials.length;
+                    const parallaxStrengths = [
+                      0.08, 0.12, 0.06, 0.15, 0.09, 0.11,
+                    ];
+                    const actualIndex = index % testimonials.length;
                     return (
                       <div
                         key={index}
@@ -425,7 +435,7 @@ const Header = () => {
                 variant="ghost"
                 size="icon"
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-30 text-gray-300 hover:text-white"
-                onClick={() => handleChevronClick('prev')}
+                onClick={() => handleChevronClick("prev")}
               >
                 <ChevronLeft className="w-6 h-6" />
               </Button>
@@ -449,7 +459,7 @@ const Header = () => {
                   overflow: "visible",
                 }}
               >
-                {shuffledTestimonials.map((testimonial, index) => (
+                {testimonials.map((testimonial, index) => (
                   <SwiperSlide
                     key={index}
                     className="!flex !items-center !justify-center"
@@ -465,7 +475,7 @@ const Header = () => {
                 variant="ghost"
                 size="icon"
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-30 text-gray-300 hover:text-white"
-                onClick={() => handleChevronClick('next')}
+                onClick={() => handleChevronClick("next")}
               >
                 <ChevronRight className="w-6 h-6" />
               </Button>
@@ -475,7 +485,10 @@ const Header = () => {
               <div className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden shadow-lg">
                 <div
                   className="h-full bg-white transition-all duration-75 ease-linear"
-                  style={{ width: `${progressWidth}%` }}
+                  style={{
+                    width: `${progressWidth}%`,
+                    marginLeft: isGrowing ? "0" : "auto",
+                  }}
                 />
               </div>
               <Button
