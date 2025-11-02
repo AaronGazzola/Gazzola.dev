@@ -6,7 +6,7 @@ export const CollapseIcon = ({ className }: { className?: string }) => {
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
       height="1em"
-      viewBox="88.9501 0 329.254 228.21975"
+      viewBox="88.9501 0 329.254 280"
       className={className}
     >
       <g>
