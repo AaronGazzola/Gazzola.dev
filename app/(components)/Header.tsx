@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useQueryState } from "nuqs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SiYoutube } from "react-icons/si";
 import { ScrollParallax } from "react-just-parallax";
@@ -47,7 +48,6 @@ import { useHeaderStore } from "./Header.store";
 import { testimonials } from "./Header.types";
 import { TestimonialCard } from "./TestimonialCard";
 import ThemeControlPanel from "./ThemeControlPanel";
-import { useQueryState } from "nuqs";
 
 const Header = () => {
   const { data: subscriberData, isLoading } = useYouTubeSubscriberCount();
@@ -355,7 +355,7 @@ const Header = () => {
               Artificial Intelligence Quality Assurance
             </h2>
           )}
-          <h3 className="text-lg font-medium">Test, fix, ship.</h3>
+          <h3 className="text-lg font-medium">Test, Fix, Ship.</h3>
         </div>
         {isExpanded && (
           <>
