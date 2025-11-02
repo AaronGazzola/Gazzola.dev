@@ -343,8 +343,7 @@ const Header = () => {
         <div className="px-5 sm:px-10 ">
           <h1
             className={cn(
-              "text-[40px] tracking-[1.1rem] text-center leading-[3rem]",
-              isExpanded && "mt-2"
+              "text-[40px] tracking-[1.1rem] text-center leading-[3rem] mt-2"
             )}
           >
             AI <br className="sm:hidden" /> QA
