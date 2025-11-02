@@ -147,15 +147,14 @@ export const ThemeConfigurationSidebar = ({
 
   return (
     <div
-      className="flex flex-col theme-bg-background theme-border-border theme-radius theme-shadow sticky top-0"
+      className="flex flex-col theme-bg-background theme-border-border theme-radius theme-shadow sticky top-0 w-full lg:w-[360px]"
       style={{
-        width: "360px",
-        borderRightWidth: "1px",
-        maxHeight: "calc(100vh - 200px)",
+        borderRightWidth: "0px",
+        maxHeight: "calc(50vh - 100px)",
       }}
     >
       <div
-        className="theme-border-border theme-p-4"
+        className="theme-border-border theme-p-2 md:theme-p-4"
         style={{ borderBottomWidth: "1px" }}
       >
         <div className="flex items-center theme-gap-3">
@@ -257,17 +256,17 @@ export const ThemeConfigurationSidebar = ({
             variant="outline"
             size="sm"
             onClick={handlePrevTheme}
-            className="h-9 w-9 p-0 shrink-0"
+            className="h-8 w-8 md:h-9 md:w-9 p-0 shrink-0"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={handleNextTheme}
-            className="h-9 w-9 p-0 shrink-0"
+            className="h-8 w-8 md:h-9 md:w-9 p-0 shrink-0"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
           </Button>
         </div>
       </div>
@@ -295,7 +294,7 @@ export const ThemeConfigurationSidebar = ({
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="theme-p-4">
+        <div className="theme-p-2 md:theme-p-4">
           {activeTab === "colors" && (
             <div className="flex flex-col theme-gap-4">
               <div

@@ -10,7 +10,7 @@ export const ThemeConfiguration = () => {
   useThemeCSSVariables();
 
   return (
-    <div className="flex h-full theme-bg-background theme-text-foreground theme-font-sans">
+    <div className="flex flex-col lg:flex-row h-full theme-bg-background theme-text-foreground theme-font-sans">
       <ThemeConfigurationSidebar darkMode={darkMode} />
       <ThemeConfigurationPreview />
     </div>

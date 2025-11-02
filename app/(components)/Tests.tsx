@@ -288,17 +288,17 @@ const TestIndexHeader = ({
   isGenerating: boolean;
 }) => {
   return (
-    <div className="flex items-center theme-gap-2 flex-wrap">
-      <Button variant="default" onClick={onAddSuite}>
-        <Plus className="h-4 w-4 theme-mr-1" />
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center theme-gap-2 flex-wrap">
+      <Button variant="default" onClick={onAddSuite} className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10">
+        <Plus className="h-3 w-3 md:h-4 md:w-4 theme-mr-1" />
         Add Test Suite
       </Button>
-      <Button variant="outline" onClick={onReset}>
-        <RefreshCw className="h-4 w-4 theme-mr-1" />
+      <Button variant="outline" onClick={onReset} className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10">
+        <RefreshCw className="h-3 w-3 md:h-4 md:w-4 theme-mr-1" />
         Reset from Features
       </Button>
-      <Button variant="outline" onClick={onGenerate} disabled={isGenerating}>
-        <Download className="h-4 w-4 theme-mr-1" />
+      <Button variant="outline" onClick={onGenerate} disabled={isGenerating} className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10">
+        <Download className="h-3 w-3 md:h-4 md:w-4 theme-mr-1" />
         {isGenerating ? "Generating..." : "Generate Markdown"}
       </Button>
     </div>

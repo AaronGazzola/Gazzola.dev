@@ -1105,18 +1105,18 @@ const SchemaTab = () => {
   const getQuestionColor = (questionId?: string): string => {
     if (!questionId) return "";
     const colorMap: Record<string, string> = {
-      databaseChoice: "theme-border-l-chart-1 border-l-4",
-      authentication: "theme-border-l-chart-2 border-l-4",
-      fileStorage: "theme-border-l-chart-3 border-l-4",
-      payments: "theme-border-l-chart-4 border-l-4",
-      realTimeNotifications: "theme-border-l-chart-5 border-l-4",
+      databaseChoice: "theme-border-l-chart-1 border-l-2 md:border-l-4",
+      authentication: "theme-border-l-chart-2 border-l-2 md:border-l-4",
+      fileStorage: "theme-border-l-chart-3 border-l-2 md:border-l-4",
+      payments: "theme-border-l-chart-4 border-l-2 md:border-l-4",
+      realTimeNotifications: "theme-border-l-chart-5 border-l-2 md:border-l-4",
     };
     return colorMap[questionId] || "";
   };
 
   return (
-    <div className="theme-bg-muted theme-radius overflow-auto theme-shadow theme-p-4">
-      <Accordion type="multiple" className="flex flex-col theme-gap-2">
+    <div className="theme-bg-muted theme-radius overflow-auto theme-shadow theme-p-2 md:theme-p-4">
+      <Accordion type="multiple" className="flex flex-col theme-gap-1 md:theme-gap-2">
         {tables.map((table) => (
           <AccordionItem
             key={table.id}
@@ -1126,12 +1126,12 @@ const SchemaTab = () => {
               getQuestionColor(table.questionId)
             )}
           >
-            <AccordionTrigger className="hover:no-underline theme-px-4 theme-py-2">
-              <div className="flex items-center theme-gap-2 w-full">
+            <AccordionTrigger className="hover:no-underline theme-px-2 md:theme-px-4 theme-py-2">
+              <div className="flex items-center theme-gap-1 md:theme-gap-2 w-full">
                 {table.isDefault && (
-                  <Lock className="w-4 h-4 theme-text-muted-foreground" />
+                  <Lock className="w-3 h-3 md:w-4 md:h-4 theme-text-muted-foreground" />
                 )}
-                <span className="theme-text-foreground font-semibold">
+                <span className="theme-text-foreground font-semibold text-sm md:text-base">
                   {table.schema}.{table.name}
                 </span>
                 {!table.isDefault && (
@@ -1691,8 +1691,8 @@ export const DatabaseConfiguration = () => {
     initialConfiguration.questions.useSupabase === "none";
 
   return (
-    <div className="flex theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
-      <div className="w-80 shrink-0 theme-bg-muted theme-radius theme-p-4 theme-shadow overflow-auto">
+    <div className="flex flex-col lg:flex-row theme-gap-2 md:theme-gap-4 theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
+      <div className="w-full lg:w-80 lg:shrink-0 theme-bg-muted theme-radius theme-p-2 md:theme-p-4 theme-shadow overflow-auto max-h-[400px] lg:max-h-none">
         <ConfigurationSummary />
       </div>
 
@@ -1701,11 +1701,11 @@ export const DatabaseConfiguration = () => {
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as typeof activeTab)}
         >
-          <TabsList className="theme-mb-4">
-            <TabsTrigger value="network" disabled={isNoDatabaseSelected}>
+          <TabsList className="theme-mb-2 md:theme-mb-4 w-full justify-start overflow-x-auto flex-nowrap">
+            <TabsTrigger value="network" disabled={isNoDatabaseSelected} className="text-xs md:text-sm flex-shrink-0">
               Network
             </TabsTrigger>
-            <TabsTrigger value="schema" disabled={isNoDatabaseSelected}>
+            <TabsTrigger value="schema" disabled={isNoDatabaseSelected} className="text-xs md:text-sm flex-shrink-0">
               Schema
             </TabsTrigger>
             <TabsTrigger
@@ -1713,10 +1713,11 @@ export const DatabaseConfiguration = () => {
               disabled={
                 !isBetterAuthEnabled || isSupabaseOnly || isNoDatabaseSelected
               }
+              className="text-xs md:text-sm flex-shrink-0"
             >
               Plugins
             </TabsTrigger>
-            <TabsTrigger value="rls" disabled={isNoDatabaseSelected}>
+            <TabsTrigger value="rls" disabled={isNoDatabaseSelected} className="text-xs md:text-sm flex-shrink-0">
               RLS
             </TabsTrigger>
           </TabsList>

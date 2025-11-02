@@ -19,16 +19,24 @@ import clsx from "clsx";
 import {
   ArrowRight,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ChevronUp,
   FlaskConical,
   Loader2,
   Palette,
+  Pause,
+  Play,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SiYoutube } from "react-icons/si";
 import { ScrollParallax } from "react-just-parallax";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Autoplay, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { CodeReviewDialog } from "../(editor)/CodeReviewDialog";
 import {
   useAutoScroll,
@@ -46,6 +54,12 @@ const Header = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   useAutoScroll(scrollContainerRef, 1, isExpanded);
   const [codeReviewDialogOpen, setCodeReviewDialogOpen] = useState(false);
+  const [swiperAutoplayEnabled, setSwiperAutoplayEnabled] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+  const [progressWidth, setProgressWidth] = useState(0);
+  const swiperRef = useRef<any>(null);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useHeaderCollapseOnScroll();
 
@@ -60,6 +74,116 @@ const Header = () => {
   const handleDialogOpenChange = (open: boolean | null) => {
     setCodeReviewDialogOpen(!!open);
   };
+
+  const startProgressBar = () => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+    setProgressWidth(0);
+    const duration = 3000;
+    const interval = 30;
+    const increment = (interval / duration) * 100;
+
+    progressIntervalRef.current = setInterval(() => {
+      setProgressWidth((prev) => {
+        const next = prev + increment;
+        if (next >= 100) {
+          return 0;
+        }
+        return next;
+      });
+    }, interval);
+  };
+
+  const stopProgressBar = () => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    setProgressWidth(0);
+  };
+
+  const handleSwiperInteraction = () => {
+    setSwiperAutoplayEnabled(false);
+    stopProgressBar();
+    if (swiperRef.current?.autoplay) {
+      swiperRef.current.autoplay.stop();
+    }
+    setTimeout(() => {
+      setSwiperAutoplayEnabled(true);
+      if (swiperRef.current?.autoplay) {
+        swiperRef.current.autoplay.start();
+        startProgressBar();
+      }
+    }, 10000);
+  };
+
+  const handleSlideChange = () => {
+    if (swiperAutoplayEnabled && !isPaused) {
+      startProgressBar();
+    }
+  };
+
+  const handleChevronClick = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      swiperRef.current?.slidePrev();
+    } else {
+      swiperRef.current?.slideNext();
+    }
+
+    if (pauseTimeoutRef.current) {
+      clearTimeout(pauseTimeoutRef.current);
+    }
+
+    setIsPaused(true);
+    if (swiperRef.current?.autoplay) {
+      swiperRef.current.autoplay.stop();
+      stopProgressBar();
+    }
+
+    pauseTimeoutRef.current = setTimeout(() => {
+      setIsPaused(false);
+      if (swiperRef.current?.autoplay) {
+        swiperRef.current.autoplay.start();
+        startProgressBar();
+      }
+    }, 3000);
+  };
+
+  const togglePause = () => {
+    if (pauseTimeoutRef.current) {
+      clearTimeout(pauseTimeoutRef.current);
+      pauseTimeoutRef.current = null;
+    }
+
+    if (isPaused) {
+      setIsPaused(false);
+      if (swiperRef.current?.autoplay) {
+        swiperRef.current.autoplay.start();
+        startProgressBar();
+      }
+    } else {
+      setIsPaused(true);
+      if (swiperRef.current?.autoplay) {
+        swiperRef.current.autoplay.stop();
+        stopProgressBar();
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (swiperRef.current && swiperAutoplayEnabled && !isPaused) {
+      swiperRef.current.autoplay?.start();
+      startProgressBar();
+    } else {
+      stopProgressBar();
+    }
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, [swiperAutoplayEnabled, isPaused]);
 
   return (
     <>
@@ -231,13 +355,16 @@ const Header = () => {
           <>
             <div
               ref={scrollContainerRef}
-              className="absolute inset-0  w-full overflow-x-auto overflow-y-visible hide-scrollbar z-20"
+              className="absolute inset-0 w-full overflow-x-auto overflow-y-hidden hide-scrollbar z-20 hidden md:block"
               style={{
                 scrollBehavior: "auto",
                 WebkitOverflowScrolling: "touch",
               }}
             >
-              <div className="flex px-2 h-full relative">
+              <div
+                className="flex px-2 h-full relative"
+                style={{ height: "100%" }}
+              >
                 {[...shuffledTestimonials, ...shuffledTestimonials].map(
                   (testimonial, index) => {
                     const yPositions = [
@@ -291,6 +418,78 @@ const Header = () => {
                   }
                 )}
               </div>
+            </div>
+
+            <div className="absolute inset-0 w-full z-20 md:hidden px-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 text-gray-300 hover:text-white"
+                onClick={() => handleChevronClick('prev')}
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </Button>
+              <Swiper
+                modules={[Autoplay, Pagination]}
+                spaceBetween={16}
+                slidesPerView={1}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }}
+                pagination={{ clickable: true }}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper;
+                  startProgressBar();
+                }}
+                onTouchStart={handleSwiperInteraction}
+                onSlideChange={handleSlideChange}
+                className="w-full h-full"
+                style={{
+                  overflow: "visible",
+                }}
+              >
+                {shuffledTestimonials.map((testimonial, index) => (
+                  <SwiperSlide
+                    key={index}
+                    className="!flex !items-center !justify-center"
+                    style={{ overflow: "visible", height: "100%" }}
+                  >
+                    <div className="max-w-sm mx-auto">
+                      <TestimonialCard testimonial={testimonial} />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 text-gray-300 hover:text-white"
+                onClick={() => handleChevronClick('next')}
+              >
+                <ChevronRight className="w-6 h-6" />
+              </Button>
+            </div>
+
+            <div className="absolute bottom-32 left-0 right-0 z-40 md:hidden px-12 flex items-center gap-2">
+              <div className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden shadow-lg">
+                <div
+                  className="h-full bg-white transition-all duration-75 ease-linear"
+                  style={{ width: `${progressWidth}%` }}
+                />
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-gray-300 hover:text-white flex-shrink-0"
+                onClick={togglePause}
+              >
+                {isPaused ? (
+                  <Play className="w-4 h-4" />
+                ) : (
+                  <Pause className="w-4 h-4" />
+                )}
+              </Button>
             </div>
 
             <div className="absolute bottom-7 left-0 right-0 z-20 flex justify-center">

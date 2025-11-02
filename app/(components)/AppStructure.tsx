@@ -2654,19 +2654,19 @@ export const LayoutAndStructure = () => {
   };
 
   return (
-    <div className="theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
-      <div className="grid grid-cols-[minmax(400px,2fr)_minmax(400px,3fr)] theme-gap-4 min-h-[calc(100vh-800px)] max-xl:grid-cols-1">
-        <div className="flex flex-col theme-gap-4 h-full overflow-hidden">
+    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,2fr)_minmax(300px,3fr)] theme-gap-2 md:theme-gap-4 min-h-[calc(100vh-800px)]">
+        <div className="flex flex-col theme-gap-2 md:theme-gap-4 h-full overflow-hidden">
           <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
-            <div className="flex items-center justify-between theme-mb-2">
-              <h3 className="text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
-                App Directory Structure
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between theme-mb-2 theme-gap-2">
+              <h3 className="text-base md:text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
+                App Directory
               </h3>
               <Select
                 value={selectedTemplate}
                 onValueChange={handleTemplateChange}
               >
-                <SelectTrigger className="w-[180px] h-8 theme-font-mono text-sm">
+                <SelectTrigger className="w-full sm:w-[180px] h-8 theme-font-mono text-xs md:text-sm">
                   <SelectValue placeholder="Select template" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2679,7 +2679,7 @@ export const LayoutAndStructure = () => {
               </Select>
             </div>
 
-            <div className="theme-font-mono text-base theme-bg-background theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+            <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
               {appStructure.map((node, index) => (
                 <TreeNode
                   key={node.id}
@@ -2706,11 +2706,11 @@ export const LayoutAndStructure = () => {
 
           {routes.length > 0 && (
             <div className="flex flex-col flex-[1] min-h-0 overflow-hidden">
-              <h3 className="text-lg font-semibold theme-mb-2 theme-text-card-foreground theme-font-sans theme-tracking">
-                Site Map (Resulting Routes)
+              <h3 className="text-base md:text-lg font-semibold theme-mb-2 theme-text-card-foreground theme-font-sans theme-tracking">
+                Site Map
               </h3>
 
-              <div className="theme-font-mono text-base theme-bg-background theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+              <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
                 {routes.map((route, index) => (
                   <SiteMapNode
                     key={`${route.path}-${index}`}
@@ -2729,17 +2729,17 @@ export const LayoutAndStructure = () => {
 
         <div className="flex flex-col h-full overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
-            <div className="flex items-center justify-between theme-mb-2">
-              <TabsList>
-                <TabsTrigger value="layouts">Layouts</TabsTrigger>
-                <TabsTrigger value="features">Features</TabsTrigger>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between theme-mb-2 theme-gap-2">
+              <TabsList className="w-full sm:w-auto">
+                <TabsTrigger value="layouts" className="flex-1 sm:flex-none text-xs md:text-sm">Layouts</TabsTrigger>
+                <TabsTrigger value="features" className="flex-1 sm:flex-none text-xs md:text-sm">Features</TabsTrigger>
               </TabsList>
               {activeTab === "layouts" && (
-                <div className="flex items-center theme-gap-1">
+                <div className="flex items-center theme-gap-1 w-full sm:w-auto justify-end">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 theme-shadow"
+                    className="h-8 w-8 md:h-6 md:w-6 theme-shadow"
                     onClick={() => {
                       if (currentPageIndex > 0) {
                         setWireframeCurrentPage(currentPageIndex - 1);
@@ -2753,7 +2753,7 @@ export const LayoutAndStructure = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 theme-shadow"
+                    className="h-8 w-8 md:h-6 md:w-6 theme-shadow"
                     onClick={() => {
                       if (currentPageIndex < availablePages.length - 1) {
                         setWireframeCurrentPage(currentPageIndex + 1);
@@ -2770,9 +2770,9 @@ export const LayoutAndStructure = () => {
                 <Button
                   onClick={() => addFeature(selectedFileId)}
                   size="sm"
-                  className="theme-gap-2"
+                  className="theme-gap-1 md:theme-gap-2 w-full sm:w-auto text-xs md:text-sm h-8 md:h-9"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-3 w-3 md:h-4 md:w-4" />
                   Add Feature
                 </Button>
               )}
@@ -2780,17 +2780,17 @@ export const LayoutAndStructure = () => {
 
             <TabsContent value="layouts" className="flex-1 overflow-hidden theme-mt-0">
               <div className="flex flex-col h-full">
-                <h3 className="text-sm font-semibold theme-text-card-foreground theme-font-sans theme-tracking theme-mb-2">
+                <h3 className="text-xs md:text-sm font-semibold theme-text-card-foreground theme-font-sans theme-tracking theme-mb-2">
                   {currentPage && `${currentPage}`}
                 </h3>
-                <div className="theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow">
+                <div className="theme-p-2 md:theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow">
                   {renderNestedBoxes()}
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="features" className="flex-1 overflow-hidden theme-mt-0">
-              <div className="theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow h-full">
+              <div className="theme-p-2 md:theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow h-full">
                 {selectedFilePath ? (
                   <div className="flex flex-col theme-gap-3 h-full">
                     <div className="theme-mb-2">

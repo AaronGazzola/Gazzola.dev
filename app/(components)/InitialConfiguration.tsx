@@ -925,11 +925,11 @@ export const InitialConfiguration = () => {
         data-walkthrough="initial-configuration"
       >
         {enabledTechnologies.length > 0 && (
-          <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 theme-mb-1 theme-p-6 backdrop-blur-lg">
-            <h4 className="theme-text-card-foreground text-sm font-semibold theme-mb-1 theme-font-sans theme-tracking">
+          <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 theme-mb-1 theme-p-3 md:theme-p-6 backdrop-blur-lg">
+            <h4 className="theme-text-card-foreground text-xs md:text-sm font-semibold theme-mb-1 theme-font-sans theme-tracking">
               Required Technologies
             </h4>
-            <div className="flex flex-wrap theme-gap-2">
+            <div className="flex flex-wrap theme-gap-1 md:theme-gap-2">
               {enabledTechnologies.map((tech) => {
                 const Icon = tech.icon;
                 const requiredBy = getRequiredByFeatures(tech.id);
@@ -937,15 +937,16 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-2 theme-py-0\.5 rounded-full text-xs font-semibold cursor-help border whitespace-nowrap theme-font-sans theme-tracking">
-                        <Icon className="w-3 h-3" />
-                        <span>{tech.name}</span>
+                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-1.5 md:theme-px-2 theme-py-0\.5 rounded-full text-[10px] md:text-xs font-semibold cursor-help border whitespace-nowrap theme-font-sans theme-tracking">
+                        <Icon className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                        <span className="hidden sm:inline">{tech.name}</span>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow theme-font-sans theme-tracking">
                       <div className="max-w-[12rem]">
-                        <p className="font-medium theme-mb-1">Required by:</p>
-                        <ul className="text-sm">
+                        <p className="font-medium theme-mb-1">{tech.name}</p>
+                        <p className="font-medium theme-mb-1 text-xs">Required by:</p>
+                        <ul className="text-xs">
                           {requiredBy.map((feature, index) => (
                             <li key={index}>• {feature}</li>
                           ))}
@@ -1045,14 +1046,14 @@ export const InitialConfiguration = () => {
               >
                 <AccordionTrigger
                   className={cn(
-                    "flex items-center w-full theme-py-1 theme-px-2 theme-pr-10 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180",
+                    "flex items-center w-full theme-py-1 theme-px-1 md:theme-px-2 theme-pr-8 md:theme-pr-10 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180",
                     isQuestionDisabled && "opacity-50"
                   )}
                   disabled={isQuestionDisabled}
                 >
-                  <div className="flex items-center theme-gap-2 flex-1 min-w-0">
-                    <Icon className="theme-text-foreground w-5 h-5 transition-colors duration-200 shrink-0" />
-                    <span className="theme-text-foreground text-lg font-semibold theme-font-sans theme-tracking">
+                  <div className="flex items-center theme-gap-1 md:theme-gap-2 flex-1 min-w-0">
+                    <Icon className="theme-text-foreground w-4 h-4 md:w-5 md:h-5 transition-colors duration-200 shrink-0" />
+                    <span className="theme-text-foreground text-sm md:text-lg font-semibold theme-font-sans theme-tracking">
                       {question.question}
                     </span>
                     {question.id === "databaseChoice" && showConfigHelp && (
@@ -1089,7 +1090,7 @@ export const InitialConfiguration = () => {
                   </div>
                 </AccordionTrigger>
 
-                <div className="absolute right-2 top-0 theme-pt-5 z-10">
+                <div className="absolute right-1 md:right-2 top-0 theme-pt-3 md:theme-pt-5 z-10">
                   {isQuestionDisabled ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -1098,7 +1099,7 @@ export const InitialConfiguration = () => {
                             checked={isEnabled}
                             disabled={true}
                             className={cn(
-                              "size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
+                              "size-4 md:size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
                             )}
                           />
                         </span>
@@ -1131,7 +1132,7 @@ export const InitialConfiguration = () => {
                         updateFeature(question.id, isChecking);
                       }}
                       className={cn(
-                        "size-5 border border-gray-500 select-none",
+                        "size-4 md:size-5 border border-gray-500 select-none",
                         question.subOptions && question.subOptions.length > 0
                           ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
                           : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
@@ -1417,13 +1418,13 @@ export const InitialConfiguration = () => {
                                 />
                               )}
                               <div>
-                                <span className="theme-text-foreground text-base font-medium block theme-font-sans theme-tracking">
+                                <span className="theme-text-foreground text-sm md:text-base font-medium block theme-font-sans theme-tracking">
                                   {option.label}
                                 </span>
-                                <span className="theme-text-muted-foreground text-base block theme-mt-0\.5 font-medium theme-font-sans theme-tracking">
+                                <span className="theme-text-muted-foreground text-xs md:text-base block theme-mt-0\.5 font-medium theme-font-sans theme-tracking">
                                   {option.description}
                                 </span>
-                                <div className="flex flex-wrap theme-gap-1 theme-mt-2">
+                                <div className="flex flex-wrap theme-gap-0.5 md:theme-gap-1 theme-mt-1 md:theme-mt-2">
                                   {getRequiredTechnologiesForSubOption(
                                     question.id,
                                     option.id
@@ -1500,7 +1501,7 @@ export const InitialConfiguration = () => {
                                       <div
                                         key={techId}
                                         className={cn(
-                                          "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1\.5 theme-py-0\.5 text-xs font-medium border theme-font-sans theme-tracking",
+                                          "theme-radius theme-shadow flex items-center theme-gap-0.5 md:theme-gap-1 theme-px-1 md:theme-px-1\.5 theme-py-0\.5 text-[10px] md:text-xs font-medium border theme-font-sans theme-tracking",
                                           !isAvailable
                                             ? "theme-bg-muted theme-text-muted-foreground theme-border-border line-through opacity-50"
                                             : isBadgeActive
@@ -1508,8 +1509,8 @@ export const InitialConfiguration = () => {
                                               : "theme-bg-secondary theme-text-secondary-foreground theme-border-border"
                                         )}
                                       >
-                                        <Icon className="w-3 h-3" />
-                                        <span>{tech.name}</span>
+                                        <Icon className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                                        <span className="hidden sm:inline">{tech.name}</span>
                                       </div>
                                     );
                                   })}
