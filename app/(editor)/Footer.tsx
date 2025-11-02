@@ -30,13 +30,13 @@ const Footer = () => {
         data-cy={FooterDataAttributes.FOOTER}
       >
         <div className="absolute inset-0 z-0" style={backgroundStyle} />
-        <div className="bg-black opacity-60 absolute inset-0 top-[1px] group-hover:opacity-40"></div>
+        <div className="bg-black opacity-80 absolute inset-0 top-[1px] group-hover:opacity-40"></div>
 
         <p
           className="text-sm italic font-bold text-primary-foreground relative z-10  "
           data-cy={FooterDataAttributes.FOOTER_TRIGGER}
         >
-          Are you a vibe coder? Get a free code review!
+          Apply for a free code review
         </p>
       </footer>
       <CodeReviewDialog
