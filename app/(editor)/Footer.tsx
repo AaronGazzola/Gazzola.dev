@@ -33,7 +33,7 @@ const Footer = () => {
         <div className="bg-black opacity-80 absolute inset-0 top-[1px] group-hover:opacity-40"></div>
 
         <p
-          className="text-sm italic font-bold text-primary-foreground relative z-10  "
+          className="text-sm italic font-bold text-gray-200 relative z-10 group-hover:text-white "
           data-cy={FooterDataAttributes.FOOTER_TRIGGER}
         >
           Apply for a free code review
