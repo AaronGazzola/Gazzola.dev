@@ -19,11 +19,9 @@ import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import {
   ArrowRight,
-  ChevronDown,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
-  ChevronUp,
-  FlaskConical,
   Loader2,
   Palette,
   Pause,
@@ -39,6 +37,7 @@ import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { CodeReviewDialog } from "../(editor)/CodeReviewDialog";
+import { CollapseIcon } from "./CollapseIcon";
 import {
   useAutoScroll,
   useHeaderCollapseOnScroll,
@@ -197,17 +196,17 @@ const Header = () => {
       <div
         className={clsx(
           sourceCodePro.className,
-          "flex flex-col justify-between w-full items-center relative text-center overflow-y-hidden",
+          "flex flex-col justify-between w-full items-center relative text-center overflow-y-hidden h-screen transition-[max-height]",
           !isExpanded
-            ? "h-[100px] py-6 overflow-hidden"
-            : "h-screen overflow-x-hidden"
+            ? "max-h-[100px] overflow-hidden"
+            : "max-h-screen overflow-x-hidden"
         )}
       >
         <div className="absolute top-4 left-3 md:top-6 md:left-6 z-30">
           <Button
             variant="outline"
             className={cn(
-              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group p-3"
+              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group p-2sm:p-3"
             )}
             onClick={() =>
               getBrowserAPI(() => window)?.open(
@@ -223,17 +222,17 @@ const Header = () => {
             )}
 
             <div className="flex items-center gap-1">
-              <span className="">@AzAnything</span>
+              <span className="sm:inline hidden">@AzAnything</span>
             </div>
 
             <div
               className={cn(
                 "flex items-center gap-1",
-                !isExpanded ? "-mt-3" : "-mt-2"
+                !isExpanded ? "-mt-3" : "sm:-mt-2 -mt-6"
               )}
             >
-              <span className="">Anyones:</span>
-              <span className="">
+              <span className="sm:inline hidden">Anyones:</span>
+              <span className="text-lg sm:text-sm">
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
@@ -244,31 +243,74 @@ const Header = () => {
           </Button>
         </div>
         <div className="absolute top-3 right-3 md:top-6 md:right-6 z-30 flex gap-2">
+          {!isExpanded && (
+            <div className="md:flex hidden gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-gray-300"
+                      onClick={() => setIsExpanded(!isExpanded)}
+                    >
+                      <CollapseIcon className="w-5 h-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Expand header</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Popover>
+                  <Tooltip>
+                    <PopoverTrigger asChild>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-gray-300"
+                        >
+                          <Palette className="w-5 h-5" />
+                        </Button>
+                      </TooltipTrigger>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="p-0">
+                      <ThemeControlPanel />
+                    </PopoverContent>
+                    <TooltipContent>
+                      <p>Theme options</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </Popover>
+              </TooltipProvider>
+            </div>
+          )}
           <Link href={configuration.paths.about}>
             <Button variant="outline" className=" text-gray-300  font-bold">
               About
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
-          <div className="md:flex hidden gap-2">
+        </div>
+        {!isExpanded && (
+          <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
+                    asChild
                     variant="ghost"
                     size="icon"
                     className="text-gray-300"
                     onClick={() => setIsExpanded(!isExpanded)}
                   >
-                    {!isExpanded ? (
-                      <ChevronUp className="w-5 h-5" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5" />
-                    )}
+                    <span>
+                      <CollapseIcon className="w-5 h-5" />
+                    </span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Collapse header</p>
+                  <p>Expand header</p>
                 </TooltipContent>
               </Tooltip>
               <Popover>
@@ -276,11 +318,14 @@ const Header = () => {
                   <PopoverTrigger asChild>
                     <TooltipTrigger asChild>
                       <Button
+                        asChild
                         variant="ghost"
                         size="icon"
                         className="text-gray-300"
                       >
-                        <Palette className="w-5 h-5" />
+                        <span>
+                          <Palette className="w-5 h-5" />
+                        </span>
                       </Button>
                     </TooltipTrigger>
                   </PopoverTrigger>
@@ -294,69 +339,23 @@ const Header = () => {
               </Popover>
             </TooltipProvider>
           </div>
-        </div>
-        <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  className="text-gray-300"
-                  onClick={() => setIsExpanded(!isExpanded)}
-                >
-                  <span>
-                    {!isExpanded ? (
-                      <ChevronUp className="w-5 h-5" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5" />
-                    )}
-                  </span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Collapse header</p>
-              </TooltipContent>
-            </Tooltip>
-            <Popover>
-              <Tooltip>
-                <PopoverTrigger asChild>
-                  <TooltipTrigger asChild>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="icon"
-                      className="text-gray-300"
-                    >
-                      <span>
-                        <Palette className="w-5 h-5" />
-                      </span>
-                    </Button>
-                  </TooltipTrigger>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="p-0">
-                  <ThemeControlPanel />
-                </PopoverContent>
-                <TooltipContent>
-                  <p>Theme options</p>
-                </TooltipContent>
-              </Tooltip>
-            </Popover>
-          </TooltipProvider>
-        </div>
+        )}
         <div className="px-5 sm:px-10 ">
+          <h1
+            className={cn(
+              "text-[40px] tracking-[1.1rem] text-center leading-[3rem]",
+              isExpanded && "mt-2"
+            )}
+          >
+            AI <br className="sm:hidden" /> QA
+          </h1>
+
           {isExpanded && (
-            <h1 className="text-[40px] tracking-[1.1rem] text-center my-4 leading-[3rem]">
-              AZ GAZZOLA
-            </h1>
+            <h2 className="text-lg font-medium md:block hidden">
+              Artificial Intelligence Quality Assurance
+            </h2>
           )}
-          <h2 className="text-lg font-medium md:block hidden">
-            Full stack web dev
-          </h2>
-          <h3 className="text-lg font-medium hidden md:block">
-            Typescript + Next.js + Supabase
-          </h3>
+          <h3 className="text-lg font-medium">Test, fix, ship.</h3>
         </div>
         {isExpanded && (
           <>
@@ -511,8 +510,11 @@ const Header = () => {
                 className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 text-xl px-8 py-6"
                 onClick={() => setCodeReviewDialogOpen(true)}
               >
-                Get a free code review!
-                <FlaskConical className="w-6 h-6" />
+                <span className="sm:inline hidden">
+                  Apply for free code review
+                </span>
+                <span className="inline sm:hidden">Free code review</span>
+                <CheckCircle className="w-6 h-6" />
               </Button>
             </div>
 
