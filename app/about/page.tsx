@@ -17,18 +17,14 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  BookDown,
   BrainCog,
   Briefcase,
-  Cpu,
-  Database,
-  FlaskConical,
+  CheckCircle,
   GraduationCap,
-  LayoutPanelTop,
+  Hammer,
   Palette,
   Plus,
   Rocket,
-  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -107,39 +103,20 @@ const careerSteps = [
 
 const nextSteps = [
   {
-    title: "Select your tech stack",
-    description: "Answer questions to define your technology choices",
-    icon: Cpu,
-  },
-  {
-    title: "Design your theme",
-    description: "Configure your light and dark mode color schemes",
+    title: "Design",
+    description: "Configure your web app and download your roadmap",
     icon: Palette,
   },
   {
-    title: "Design your layout",
-    description: "Create wireframes and define your route structure",
-    icon: LayoutPanelTop,
+    title: "Build",
+    description: "Give your roadmap to an AI and start building!",
+    icon: Hammer,
   },
   {
-    title: "Design your database",
-    description: "Define your data models and relationships",
-    icon: Database,
-  },
-  {
-    title: "Define user experience",
-    description: "Map out user flows and interactions",
-    icon: User,
-  },
-  {
-    title: "Describe your tests",
-    description: "Plan your testing strategy and test cases",
-    icon: FlaskConical,
-  },
-  {
-    title: "Download your roadmap",
-    description: "Export your documentation and start building",
-    icon: BookDown,
+    title: "Review",
+    description:
+      "Apply for a code review, add a testing suite and achieve 100% pass rate",
+    icon: CheckCircle,
   },
 ];
 
@@ -616,10 +593,6 @@ const Page = () => {
                     return "down-right";
                   }
 
-                  if (isLastItemInLgGrid) {
-                    return null;
-                  }
-
                   const nextCol = (index + 1) % 3;
                   const nextRow = Math.floor((index + 1) / 3);
                   if (nextRow > lgInfo.row) {
@@ -629,13 +602,6 @@ const Page = () => {
                 };
 
                 const getMdArrowDirection = () => {
-                  if (isLastItemInMdGrid) {
-                    const visualCol = mdInfo.isEvenRow
-                      ? mdInfo.col
-                      : 1 - mdInfo.col;
-                    if (visualCol === 1 && mdInfo.row === 2) return "down-left";
-                    return null;
-                  }
                   if (isLastItemOverall) return null;
 
                   const visualCol = mdInfo.isEvenRow
@@ -643,7 +609,7 @@ const Page = () => {
                     : 1 - mdInfo.col;
 
                   if (mdInfo.isEvenRow) {
-                    return visualCol === 0 ? "right" : "down";
+                    return visualCol === 0 ? "right" : "down-left";
                   } else {
                     return visualCol === 1 ? "left" : "down";
                   }
@@ -797,7 +763,7 @@ const Page = () => {
                             : mdArrowDirection === "left"
                               ? "-left-4 top-1/3 -translate-y-1/2"
                               : mdArrowDirection === "down-left"
-                                ? "-bottom-4 left-16"
+                                ? "-bottom-8 left-8"
                                 : "-bottom-8 left-[calc(50%-1rem)] -translate-x-1/2"
                         }`}
                       >
@@ -830,7 +796,7 @@ const Page = () => {
                         )}
                         {mdArrowDirection === "down-left" && (
                           <ArrowDown
-                            className="w-8 h-8 rotate-[20deg]"
+                            className="w-8 h-8 rotate-[30deg]"
                             style={{
                               filter:
                                 "drop-shadow(0 0 8px rgba(147, 51, 234, 0.5))",
@@ -945,9 +911,9 @@ const Page = () => {
                           </linearGradient>
                         </defs>
                         <step.icon
-                          className="w-16 h-16"
+                          className="w-16 h-16 stroke-1"
                           stroke={`url(#gradient-next-mobile-${index})`}
-                          strokeWidth={2}
+                          fill="none"
                         />
                       </svg>
                     </div>

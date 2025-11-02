@@ -203,7 +203,7 @@ const Header = () => {
             : "max-h-screen overflow-x-hidden"
         )}
       >
-        <div className="absolute top-4 left-3 md:top-6 md:left-6 z-30">
+        <div className="absolute top-2.5 left-2.5 z-30">
           <Button
             variant="outline"
             className={cn(
@@ -216,30 +216,45 @@ const Header = () => {
               )
             }
           >
-            {isExpanded && (
-              <div className="relative h-3 w-8 mt-2 ">
-                <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
-              </div>
-            )}
-
-            <div className="flex items-center gap-1">
-              <span className="sm:inline hidden">@AzAnything</span>
+            <div className="relative h-3 w-8 mt-2 ">
+              <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
             </div>
 
             <div
               className={cn(
-                "flex items-center gap-1",
-                !isExpanded ? "-mt-3" : "sm:-mt-2 -mt-6"
+                "items-center gap-1 pb-1 -mt-2",
+                isExpanded ? "hidden sm:flex" : "flex"
               )}
             >
-              <span className="sm:inline hidden">Anyones:</span>
-              <span className="text-lg sm:text-sm">
+              <span className="">@AzAnything</span>
+            </div>
+
+            <div
+              className={cn(
+                "items-center gap-1 -mt-6 ",
+                isExpanded ? "hidden sm:flex" : "flex"
+              )}
+            >
+              <span className="">Anyones:</span>
+              <span className="">
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   subscriberData?.subscriberCount?.toLocaleString() || "..."
                 )}
               </span>
+            </div>
+            <div
+              className={cn(
+                "text-base",
+                isExpanded ? "sm:hidden -mt-1 flex  " : "hidden"
+              )}
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                subscriberData?.subscriberCount?.toLocaleString() || "..."
+              )}
             </div>
           </Button>
         </div>
@@ -344,7 +359,8 @@ const Header = () => {
         <div className="px-5 sm:px-10 ">
           <h1
             className={cn(
-              "text-[40px] tracking-[1.1rem] text-center leading-[3rem] mt-2"
+              "text-[40px] tracking-[1.1rem] text-center leading-[3rem]",
+              isExpanded ? "mt-2" : "mt-0 sm:mt-2"
             )}
           >
             AI <br className="sm:hidden" /> QA

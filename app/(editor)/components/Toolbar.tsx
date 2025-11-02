@@ -41,22 +41,18 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
   ArrowRight,
-  BookDown,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
-  Cpu,
-  Database,
   File,
   Files,
-  FlaskConical,
   Folder,
+  Hammer,
   Home,
-  LayoutPanelTop,
   ListRestart,
   Palette,
   RotateCcw,
   Settings,
-  User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
@@ -73,13 +69,9 @@ import { WalkthroughStep } from "../layout.walkthrough.types";
 const isDevelopment = process.env.NODE_ENV === "development";
 
 const nextSteps = [
-  { icon: Cpu, title: "Tech Stack" },
-  { icon: Palette, title: "Theme" },
-  { icon: LayoutPanelTop, title: "Layout" },
-  { icon: Database, title: "Database" },
-  { icon: User, title: "User Flow" },
-  { icon: FlaskConical, title: "Tests" },
-  { icon: BookDown, title: "Download" },
+  { icon: Palette, title: "Design" },
+  { icon: Hammer, title: "Build" },
+  { icon: CheckCircle, title: "Review" },
 ];
 
 interface ToolbarProps {
@@ -306,7 +298,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const canGoBack = currentPageIndex > 0;
   const canGoNext = Boolean(nextPage);
 
-  const prevPageTitle = canGoBack ? numberedPages[currentPageIndex - 1]?.title : "";
+  const prevPageTitle = canGoBack
+    ? numberedPages[currentPageIndex - 1]?.title
+    : "";
   const nextPageTitle = nextPage?.title || "";
 
   const handleBack = () => {
@@ -317,14 +311,42 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleHome = () => {
-    conditionalLog(JSON.stringify({numberedPagesLength:numberedPages.length,numberedPages:numberedPages.map(p=>({title:p.title,order:p.order,url:p.url,path:p.path}))}),{label:"toolbar"});
+    conditionalLog(
+      JSON.stringify({
+        numberedPagesLength: numberedPages.length,
+        numberedPages: numberedPages.map((p) => ({
+          title: p.title,
+          order: p.order,
+          url: p.url,
+          path: p.path,
+        })),
+      }),
+      { label: "toolbar" }
+    );
     const homePage = numberedPages.find((page) => page.order === 1);
-    conditionalLog(JSON.stringify({foundHomePage:!!homePage,homePage:homePage?{title:homePage.title,order:homePage.order,url:homePage.url}:null}),{label:"toolbar"});
+    conditionalLog(
+      JSON.stringify({
+        foundHomePage: !!homePage,
+        homePage: homePage
+          ? { title: homePage.title, order: homePage.order, url: homePage.url }
+          : null,
+      }),
+      { label: "toolbar" }
+    );
     if (homePage) {
-      conditionalLog(JSON.stringify({action:"pushing to router",url:homePage.url}),{label:"toolbar"});
+      conditionalLog(
+        JSON.stringify({ action: "pushing to router", url: homePage.url }),
+        { label: "toolbar" }
+      );
       router.push(homePage.url);
     } else {
-      conditionalLog(JSON.stringify({action:"no home page found, using first",firstPage:numberedPages[0]}),{label:"toolbar"});
+      conditionalLog(
+        JSON.stringify({
+          action: "no home page found, using first",
+          firstPage: numberedPages[0],
+        }),
+        { label: "toolbar" }
+      );
       const firstPage = numberedPages[0];
       if (firstPage) {
         router.push(firstPage.url);
@@ -396,7 +418,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
         const firstPagePath = Object.values(freshData.flatIndex)
-          .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
+          .filter(
+            (node) =>
+              node.type === "file" &&
+              node.include !== false &&
+              !(node as any).previewOnly &&
+              !(node as any).visibleAfterPage
+          )
           .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
         const resetKey = Date.now();
@@ -449,13 +477,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const progressInfo = useMemo(() => {
     const currentStep = currentPageIndex >= 0 ? currentPageIndex + 1 : 0;
     const totalSteps = numberedPages.length;
-    const progressValue = totalSteps > 0 && currentStep > 0 ? (currentStep / totalSteps) * 100 : 0;
+    const progressValue =
+      totalSteps > 0 && currentStep > 0 ? (currentStep / totalSteps) * 100 : 0;
 
     return {
       currentStep,
       totalSteps,
       progressValue,
-      currentTitle: currentPageIndex >= 0 ? numberedPages[currentPageIndex]?.title || "Unknown" : "Unknown",
+      currentTitle:
+        currentPageIndex >= 0
+          ? numberedPages[currentPageIndex]?.title || "Unknown"
+          : "Unknown",
     };
   }, [numberedPages, currentPageIndex]);
 
@@ -512,7 +544,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
           </div>
 
-          <div className="flex items-center theme-gap-3">
+          <div className="flex items-center theme-gap-3 ">
             {showInitialDialog ? (
               <Dialog
                 open={
@@ -532,21 +564,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 <DialogTrigger asChild>
                   <WalkthroughHelper />
                 </DialogTrigger>
-                <DialogContent className="max-w-[56rem] outline-none text-base bg-popover  text-popover-foreground  shadow theme-font-sans theme-tracking">
+                <DialogContent className="max-w-[40rem] outline-none text-base bg-popover  text-popover-foreground  shadow theme-font-sans theme-tracking">
                   <DialogHeader className="gap-3">
                     <DialogTitle className=" text-foreground theme-font-sans theme-tracking">
                       Welcome to Gazzola.dev
                     </DialogTitle>
                   </DialogHeader>
                   <div className="text-foreground mt-2 theme-font-sans theme-tracking">
-                    Design and download your full-stack web app roadmap
+                    Design, build and fix your custom web app:
                   </div>
                   <div className="flex flex-col my-4">
-                    <div className="flex items-center justify-center relative gap-3">
+                    <div className="flex flex-row items-center justify-center relative gap-3 mt-6">
                       {nextSteps.map((step, index) => (
                         <div
                           key={index}
-                          className="relative flex items-center gap-3"
+                          className="relative flex flex-row items-center gap-3"
                         >
                           <div className="flex flex-col items-center relative z-10 ">
                             <svg
@@ -592,32 +624,36 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       ))}
                     </div>
                   </div>
-                  <div className="w-full flex justify-end text-foreground mt-6 theme-font-sans theme-tracking">
+                  <div className="w-full flex justify-center text-foreground mt-6 theme-font-sans theme-tracking">
                     Do you want to enable the tutorial?
                   </div>
                   <DialogFooter className="mt-4">
-                    <GlobalButton
-                      variant="ghost"
-                      className="text-base focus-visible:ring-none theme-font-sans theme-tracking"
-                      onClick={() => {
-                        dismissWalkthrough();
-                        setInitialDialogOpen(false);
-                      }}
-                    >
-                      No thanks, I&apos;ll explore on my own
-                    </GlobalButton>
-                    <GlobalButton
-                      className="text-base theme-font-sans theme-tracking"
-                      variant="outline"
-                      onClick={() => {
-                        startWalkthrough();
-                        markStepComplete(WalkthroughStep.INITIAL_DIALOG);
-                        setStepOpen(WalkthroughStep.INITIAL_DIALOG, true);
-                        setInitialDialogOpen(false);
-                      }}
-                    >
-                      Show helpful tips
-                    </GlobalButton>
+                    <div className="flex sm:flex-row flex-col items-end sm:items-center gap-2 justify-between w-full">
+                      <div className="w-full flex justify-start">
+                        <GlobalButton
+                          variant="ghost"
+                          className="text-base focus-visible:ring-none theme-font-sans theme-tracking border"
+                          onClick={() => {
+                            dismissWalkthrough();
+                            setInitialDialogOpen(false);
+                          }}
+                        >
+                          No thanks!, I&apos;ll explore on my own
+                        </GlobalButton>
+                      </div>
+                      <GlobalButton
+                        className="text-base theme-font-sans theme-tracking"
+                        variant="outline"
+                        onClick={() => {
+                          startWalkthrough();
+                          markStepComplete(WalkthroughStep.INITIAL_DIALOG);
+                          setStepOpen(WalkthroughStep.INITIAL_DIALOG, true);
+                          setInitialDialogOpen(false);
+                        }}
+                      >
+                        Show helpful tips
+                      </GlobalButton>
+                    </div>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -662,7 +698,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   >
                     Cancel
                   </Button>
-                  <Button variant="destructive" onClick={handleResetPage} className="theme-font-sans theme-tracking">
+                  <Button
+                    variant="destructive"
+                    onClick={handleResetPage}
+                    className="theme-font-sans theme-tracking"
+                  >
                     Reset Page
                   </Button>
                 </EditorDialogFooter>
