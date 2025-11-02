@@ -13,7 +13,9 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
   const { isExpanded } = useHeaderStore();
   return (
     <div className="relative">
-      <Header />
+      <Suspense fallback={null}>
+        <Header />
+      </Suspense>
       <div
         className={cn(
           "flex w-full relative overflow-hidden",

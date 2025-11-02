@@ -47,13 +47,14 @@ import { useHeaderStore } from "./Header.store";
 import { testimonials } from "./Header.types";
 import { TestimonialCard } from "./TestimonialCard";
 import ThemeControlPanel from "./ThemeControlPanel";
+import { useQueryState } from "nuqs";
 
 const Header = () => {
   const { data: subscriberData, isLoading } = useYouTubeSubscriberCount();
   const { isExpanded, setIsExpanded } = useHeaderStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   useAutoScroll(scrollContainerRef, 1, isExpanded);
-  const [codeReviewDialogOpen, setCodeReviewDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useQueryState("codeReview");
   const [swiperAutoplayEnabled, setSwiperAutoplayEnabled] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [progressWidth, setProgressWidth] = useState(0);
@@ -69,7 +70,7 @@ const Header = () => {
   useHeaderCollapseOnScroll();
 
   const handleDialogOpenChange = (open: boolean | null) => {
-    setCodeReviewDialogOpen(!!open);
+    setDialogOpen(open ? "yesPlease" : null);
   };
 
   const startProgressBar = useCallback(() => {
@@ -507,7 +508,7 @@ const Header = () => {
               <Button
                 variant="outline"
                 className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 text-xl px-8 py-6"
-                onClick={() => setCodeReviewDialogOpen(true)}
+                onClick={() => setDialogOpen("yesPlease")}
               >
                 <span className="sm:inline hidden">
                   Apply for free code review
@@ -532,7 +533,7 @@ const Header = () => {
         )}
       </div>
       <CodeReviewDialog
-        open={codeReviewDialogOpen}
+        open={!!dialogOpen}
         onOpenChange={handleDialogOpenChange}
       />
     </>
