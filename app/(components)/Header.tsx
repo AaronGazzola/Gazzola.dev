@@ -527,7 +527,7 @@ const Header = () => {
                 onClick={() => setDialogOpen("yesPlease")}
               >
                 <span className="sm:inline hidden">
-                  Apply for free code review
+                  Apply for a free code review
                 </span>
                 <span className="inline sm:hidden">Free code review</span>
                 <CheckCircle className="w-6 h-6" />

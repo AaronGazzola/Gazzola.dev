@@ -64,38 +64,9 @@ All tests should be performed with Jest or Playwright and documented in the `Tes
 - The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`
 - Do not use wait in the tests. Only use timeouts.
 
-## Tests.md
+# Testing
 
-The test document should list all tests in the repo, with each test case listed in a single line with an indented line below with the pass condition.
-Test document should begin with an index and number each test as demonstrated below:
-
-# Tests.md file example:
-
-```md
-# Tests Documentation
-
-## Run All Tests
-
-**Command:** `npm run test`
-✓ Runs the complete test suite across all test files
-
-## Test Index
-
-1. [Name](#1-name-tests) - `npm run test:name`
-
-## 1. Name Tests
-
-**File:** `__tests__/name.test.ts`
-**Command:** `npm run test:name`
-
-### Name Test
-
-- should do something
-  ✓ Validates expected results
-
-- should do something else
-  ✓ Validates expected results
-```
+All tests should be performed with Playwright and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).
 
 # Environment Variables and Browser APIs
 
@@ -107,6 +78,8 @@ import { ENV, getBrowserAPI } from "@/lib/env.utils";
 const apiUrl = ENV.SUPABASE_URL;
 const storage = getBrowserAPI(() => localStorage);
 ```
+
+This ensures universal compatibility between browser and Node.js test environments with zero performance overhead.
 
 # Console.logging
 
