@@ -1,51 +1,46 @@
-import { redirect } from "next/navigation";
-import { getMarkdownDataAction } from "./layout.actions";
+"use client";
 
-const getFirstPageUrl = async (): Promise<string> => {
-  const { data, error } = await getMarkdownDataAction();
-  if (!data || error) {
-    throw new Error("Failed to load markdown data: " + (error || "Unknown error"));
-  }
+import { useEditorStore } from "./layout.stores";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useContentVersionCheck, useInitializeMarkdownData } from "./layout.hooks";
 
-  const pages = Object.values(data.flatIndex)
-    .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
+const Page = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data } = useEditorStore();
+  const { versionChecked, isLoading: versionCheckLoading } = useContentVersionCheck();
+  const { isInitialized, isLoading } = useInitializeMarkdownData(versionChecked, versionCheckLoading);
 
-  if (pages.length === 0) {
-    throw new Error("No valid pages found in markdown data");
-  }
+  useEffect(() => {
+    if (!isInitialized || isLoading) return;
 
-  const firstPageUrl = pages[0].urlPath;
-  if (!firstPageUrl) {
-    throw new Error("First page has no urlPath");
-  }
+    const pages = Object.values(data.flatIndex)
+      .filter(
+        (node) =>
+          node.type === "file" &&
+          node.include !== false &&
+          !(node as any).previewOnly &&
+          !(node as any).visibleAfterPage
+      )
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  return firstPageUrl;
-};
-
-const page = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-  const firstPageUrl = await getFirstPageUrl();
-  const params = await searchParams;
-
-  const queryString = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined) {
-      if (Array.isArray(value)) {
-        value.forEach((v) => queryString.append(key, v));
-      } else {
-        queryString.append(key, value);
-      }
+    if (pages.length === 0) {
+      throw new Error("No valid pages found in markdown data");
     }
-  });
 
-  const queryStr = queryString.toString();
-  const redirectUrl = queryStr ? `${firstPageUrl}?${queryStr}` : firstPageUrl;
+    const firstPageUrl = pages[0].urlPath;
+    if (!firstPageUrl) {
+      throw new Error("First page has no urlPath");
+    }
 
-  redirect(redirectUrl);
+    const queryStr = searchParams.toString();
+    const redirectUrl = queryStr ? `${firstPageUrl}?${queryStr}` : firstPageUrl;
+
+    router.replace(redirectUrl);
+  }, [data, router, searchParams, isInitialized, isLoading]);
+
+  return null;
 };
 
-export default page;
+export default Page;

@@ -78,7 +78,6 @@ const Page = () => {
 
   useEffect(() => {
     conditionalLog("Page: Component mounting", { label: "markdown-parse" });
-    useEditorStore.persist.rehydrate();
     setMounted(true);
   }, []);
 
