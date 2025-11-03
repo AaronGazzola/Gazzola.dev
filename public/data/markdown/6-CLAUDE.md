@@ -2,29 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Core Technologies
+### Core Technologies
 
-<!-- section-1 -->
-
-## Database & Authentication
-
-<!-- section-2 -->
-
-## Deployment Platform
-
-<!-- section-3 -->
-
-## Authentication Methods
-
-<!-- section-4 -->
-
-## Additional Features
-
-<!-- section-5 -->
-
-## Testing Framework
-
-<!-- section-6 -->
+- **Vite 5** with React Router
+- **TypeScript** for type safety
+- **TailwindCSS & Shadcn** for styling
+- **Jest & Playwright** for testing
+- **Supabase** for database and authentication _(remote DB only)_
 
 # General rules:
 
@@ -80,38 +64,9 @@ All tests should be performed with Jest or Playwright and documented in the `Tes
 - The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`
 - Do not use wait in the tests. Only use timeouts.
 
-## Tests.md
+# Testing
 
-The test document should list all tests in the repo, with each test case listed in a single line with an indented line below with the pass condition.
-Test document should begin with an index and number each test as demonstrated below:
-
-# Tests.md file example:
-
-```md
-# Tests Documentation
-
-## Run All Tests
-
-**Command:** `npm run test`
-✓ Runs the complete test suite across all test files
-
-## Test Index
-
-1. [Name](#1-name-tests) - `npm run test:name`
-
-## 1. Name Tests
-
-**File:** `__tests__/name.test.ts`
-**Command:** `npm run test:name`
-
-### Name Test
-
-- should do something
-  ✓ Validates expected results
-
-- should do something else
-  ✓ Validates expected results
-```
+All tests should be performed with Playwright and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).
 
 # Environment Variables and Browser APIs
 
@@ -123,6 +78,8 @@ import { ENV, getBrowserAPI } from "@/lib/env.utils";
 const apiUrl = ENV.SUPABASE_URL;
 const storage = getBrowserAPI(() => localStorage);
 ```
+
+This ensures universal compatibility between browser and Node.js test environments with zero performance overhead.
 
 # Console.logging
 
