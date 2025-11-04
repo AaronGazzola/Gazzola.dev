@@ -48,6 +48,16 @@
         "include": true
       },
       {
+        "id": "code-files",
+        "name": "code-files",
+        "displayName": "Code files",
+        "type": "directory",
+        "path": "code-files",
+        "urlPath": "/code-files",
+        "include": true,
+        "children": []
+      },
+      {
         "id": "docs",
         "name": "docs",
         "displayName": "docs",
@@ -256,6 +266,16 @@
           "include": true
         },
         {
+          "id": "code-files",
+          "name": "code-files",
+          "displayName": "Code files",
+          "type": "directory",
+          "path": "code-files",
+          "urlPath": "/code-files",
+          "include": true,
+          "children": []
+        },
+        {
           "id": "docs",
           "name": "docs",
           "displayName": "docs",
@@ -452,6 +472,16 @@
       "components": [],
       "sections": {},
       "include": true
+    },
+    "code-files": {
+      "id": "code-files",
+      "name": "code-files",
+      "displayName": "Code files",
+      "type": "directory",
+      "path": "code-files",
+      "urlPath": "/code-files",
+      "include": true,
+      "children": []
     },
     "docs": {
       "id": "docs",

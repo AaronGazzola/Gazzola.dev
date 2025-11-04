@@ -3,9 +3,9 @@ import {
   InitialConfigurationType,
   MarkdownData,
   MarkdownNode,
+  CodeFileNode,
 } from "@/app/(editor)/layout.types";
 import JSZip from "jszip";
-import { generateCodeFiles } from "@/lib/code-generation.utils";
 
 type RouteEntry = {
   path: string;
@@ -895,6 +895,7 @@ const processNode = (
 
 export const generateAndDownloadZip = async (
   markdownData: MarkdownData,
+  codeFiles: CodeFileNode[],
   getSectionInclude: (
     filePath: string,
     sectionId: string,
@@ -932,29 +933,24 @@ export const generateAndDownloadZip = async (
           getInitialConfiguration
         );
       });
-  }
 
-  try {
-    const codeFiles = generateCodeFiles();
+    codeFiles.forEach((codeFile) => {
+      if (!codeFile.includeCondition()) return;
 
-    if (codeFiles && codeFiles.length > 0) {
-      codeFiles.forEach((file) => {
-        const pathParts = file.path.split("/");
-        let currentFolder: JSZip | null = zip;
+      const pathParts = codeFile.downloadPath?.split("/") || [];
+      let currentFolder: JSZip | null = roadmapFolder;
 
-        for (let i = 0; i < pathParts.length - 1; i++) {
-          const folderName = pathParts[i];
-          currentFolder = currentFolder?.folder(folderName) || currentFolder;
-        }
-
-        const fileName = pathParts[pathParts.length - 1];
+      pathParts.forEach((part) => {
         if (currentFolder) {
-          currentFolder.file(fileName, file.content);
+          currentFolder = currentFolder.folder(part);
         }
       });
-    }
-  } catch (error) {
-    console.warn("Could not generate code files for download:", error);
+
+      if (currentFolder) {
+        const fileContent = codeFile.content();
+        currentFolder.file(codeFile.name, fileContent);
+      }
+    });
   }
 
   const blob = await zip.generateAsync({ type: "blob" });

@@ -32,6 +32,7 @@ import { loadThemesAction } from "./ThemeConfiguration.actions";
 import { useThemeStore } from "./ThemeConfiguration.stores";
 import { ParsedTheme } from "./ThemeConfiguration.types";
 import { verifyThemeApplication } from "./ThemeConfiguration.verify";
+import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 
 type TabType = "colors" | "typography" | "other";
 
@@ -85,13 +86,14 @@ export const ThemeConfigurationSidebar = ({
   }, [selectedTheme, applyThemePreset]);
 
   useEffect(() => {
-    console.log(
-      JSON.stringify({
+    conditionalLog(
+      {
         action: "currentColors_changed",
         mode: mode,
         primary: currentColors?.primary,
         allColors: currentColors,
-      })
+      },
+      { label: LOG_LABELS.THEME }
     );
   }, [currentColors, mode]);
 
@@ -104,15 +106,16 @@ export const ThemeConfigurationSidebar = ({
         themes[selectedTheme],
         selectedTheme
       );
-      console.log(
-        JSON.stringify({
+      conditionalLog(
+        {
           action: "theme_verification",
           isComplete: result.isComplete,
           missingCount: result.missingFields.length,
           mismatchCount: result.mismatchedFields.length,
           missingFields: result.missingFields,
           mismatchedFields: result.mismatchedFields,
-        })
+        },
+        { label: LOG_LABELS.THEME }
       );
     }
   }, [fullTheme, themes, selectedTheme]);
@@ -214,14 +217,15 @@ export const ThemeConfigurationSidebar = ({
                       <button
                         key={themeItem.name}
                         onClick={() => {
-                          console.log(
-                            JSON.stringify({
+                          conditionalLog(
+                            {
                               action: "clicking_theme",
                               themeName: themeItem.name,
                               themeIndex: themeIndex,
                               lightPrimary: themeItem.light.colors.primary,
                               darkPrimary: themeItem.dark.colors.primary,
-                            })
+                            },
+                            { label: LOG_LABELS.THEME }
                           );
                           applyThemePreset(themeIndex, themeItem);
                           setIsPopoverOpen(false);
@@ -319,11 +323,12 @@ export const ThemeConfigurationSidebar = ({
                       <ColorPicker
                         value={currentColors.primary}
                         onChange={(value) => {
-                          console.log(
-                            JSON.stringify({
+                          conditionalLog(
+                            {
                               action: "input_change",
                               newValue: value,
-                            })
+                            },
+                            { label: LOG_LABELS.THEME }
                           );
                           updateColor(
                             darkMode ? "dark" : "light",
@@ -332,11 +337,12 @@ export const ThemeConfigurationSidebar = ({
                           );
                         }}
                         onFocus={() =>
-                          console.log(
-                            JSON.stringify({
+                          conditionalLog(
+                            {
                               action: "input_focus",
                               currentValue: currentColors.primary,
-                            })
+                            },
+                            { label: LOG_LABELS.THEME }
                           )
                         }
                       />

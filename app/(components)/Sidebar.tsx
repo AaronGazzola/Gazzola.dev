@@ -32,21 +32,60 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { conditionalLog } from "@/lib/log.util";
+import type { CodeFileNode } from "@/app/(editor)/layout.types";
 
 const generateNavigationFromMarkdownData = (
-  nodes: MarkdownNode[]
+  nodes: MarkdownNode[],
+  codeFiles: CodeFileNode[] = []
 ): NavigationItem[] => {
   const items: NavigationItem[] = [];
 
+  conditionalLog(
+    {
+      message: "Generating navigation",
+      nodeCount: nodes.length,
+      codeFileCount: codeFiles.length,
+      codeFilePaths: codeFiles.map(cf => ({ name: cf.name, path: cf.path, parentPath: cf.parentPath })),
+    },
+    { label: "code-files" }
+  );
+
   for (const node of nodes) {
     if (node.type === "directory") {
+      const directoryCodeFiles = codeFiles.filter(
+        cf => cf.parentPath === node.path ||
+             (node.path === "" && cf.parentPath?.split('.')[0] === node.name)
+      );
+
+      conditionalLog(
+        {
+          message: "Processing directory",
+          dirName: node.name,
+          dirPath: node.path,
+          matchedCodeFiles: directoryCodeFiles.length,
+          directoryCodeFiles: directoryCodeFiles.map(cf => cf.name),
+        },
+        { label: "code-files" }
+      );
+
+      const childCodeFileItems: NavigationItem[] = directoryCodeFiles.map(cf => ({
+        name: cf.displayName,
+        type: "page",
+        order: cf.order,
+        path: cf.path,
+        include: cf.include,
+      }));
+
       items.push({
         name: node.displayName,
         type: "segment",
         order: node.order,
         path: node.path,
         include: node.include,
-        children: generateNavigationFromMarkdownData(node.children),
+        children: [
+          ...generateNavigationFromMarkdownData(node.children, codeFiles),
+          ...childCodeFileItems
+        ],
       });
     } else if (node.type === "file") {
       items.push({
@@ -237,6 +276,7 @@ const Sidebar = () => {
   const {
     isPageVisited,
     data,
+    codeFiles,
     appStructure,
     getSectionContent,
     getSectionInclude,
@@ -258,8 +298,8 @@ const Sidebar = () => {
   const showDownloadHelp = mounted && shouldShowStep(WalkthroughStep.DOWNLOAD);
 
   const navigationData = useMemo(() => {
-    return generateNavigationFromMarkdownData(data.root.children);
-  }, [data]);
+    return generateNavigationFromMarkdownData(data.root.children, codeFiles);
+  }, [data, codeFiles]);
 
   const currentPath = useMemo((): string => {
     const segments = params.segments as string[] | undefined;
@@ -346,6 +386,7 @@ const Sidebar = () => {
     try {
       await generateAndDownloadZip(
         data,
+        codeFiles,
         getSectionInclude,
         getSectionContent,
         getSectionOptions,

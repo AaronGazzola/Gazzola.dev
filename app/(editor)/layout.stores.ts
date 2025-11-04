@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
+  CodeFileNode,
   EditorState,
   Feature,
   FileSystemEntry,
@@ -12,6 +13,10 @@ import {
   WireframeElementType,
   WireframeState,
 } from "./layout.types";
+import { createCodeFileNodes } from "@/lib/code-files.registry";
+import { useThemeStore } from "@/app/(components)/ThemeConfiguration.stores";
+import { useDatabaseStore } from "@/app/(components)/DatabaseConfiguration.stores";
+import { conditionalLog } from "@/lib/log.util";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -258,6 +263,7 @@ const migrateSections = (data: any): any => {
 const createInitialState = (data: MarkdownData) => ({
   version: STORE_VERSION,
   data,
+  codeFiles: [],
   darkMode: true,
   previewMode: false,
   refreshKey: 0,
@@ -330,6 +336,46 @@ export const useEditorStore = create<EditorState>()(
       getNode: (path: string) => {
         const state = get();
         return state.data.flatIndex[path] || null;
+      },
+      getCodeFile: (path: string) => {
+        const state = get();
+        return state.codeFiles.find(file => file.path === path) || null;
+      },
+      generateCodeFiles: () => {
+        const state = get();
+        const themeStore = useThemeStore.getState();
+        const databaseStore = useDatabaseStore.getState();
+
+        conditionalLog(
+          {
+            message: "generateCodeFiles called",
+            hasTheme: !!themeStore.theme,
+            pluginCount: databaseStore.plugins.length,
+            tableCount: databaseStore.tables.length,
+            rlsPolicyCount: databaseStore.rlsPolicies.length,
+            initialConfig: state.initialConfiguration,
+          },
+          { label: "code-files" }
+        );
+
+        const codeFiles = createCodeFileNodes(
+          state.initialConfiguration,
+          themeStore.theme,
+          databaseStore.plugins,
+          databaseStore.tables,
+          databaseStore.rlsPolicies
+        );
+
+        conditionalLog(
+          {
+            message: "Code files generated",
+            count: codeFiles.length,
+            files: codeFiles.map((f) => ({ name: f.name, path: f.path })),
+          },
+          { label: "code-files" }
+        );
+
+        set({ codeFiles });
       },
       setDarkMode: (darkMode) => set({ darkMode }),
       setPreviewMode: (previewMode: boolean) => set({ previewMode }),
@@ -518,6 +564,7 @@ export const useEditorStore = create<EditorState>()(
       },
       setInitialConfiguration: (config: InitialConfigurationType) => {
         set({ initialConfiguration: config });
+        get().generateCodeFiles();
       },
       updateInitialConfiguration: (
         updates: Partial<InitialConfigurationType>
@@ -607,6 +654,7 @@ export const useEditorStore = create<EditorState>()(
             },
           };
         });
+        get().generateCodeFiles();
       },
       updateAuthenticationOption: (optionId: string, enabled: boolean) => {
         set((state) => {
@@ -827,6 +875,7 @@ export const useEditorStore = create<EditorState>()(
           storedContentVersion: newData.contentVersion,
           visitedPages: state.visitedPages.length === 0 ? [getFirstPagePath(newData)] : state.visitedPages,
         }));
+        get().generateCodeFiles();
       },
       refreshMarkdownData: () => {
         set((state) => ({ refreshKey: state.refreshKey + 1 }));
@@ -1304,6 +1353,35 @@ export const useEditorStore = create<EditorState>()(
           };
         }
         return persistedState;
+      },
+      onRehydrateStorage: () => {
+        return (state) => {
+          if (state) {
+            conditionalLog({ message: "Editor store rehydrated" }, { label: "code-files" });
+
+            const themeStore = useThemeStore.getState();
+            const databaseStore = useDatabaseStore.getState();
+
+            const codeFiles = createCodeFileNodes(
+              state.initialConfiguration,
+              themeStore.theme,
+              databaseStore.plugins,
+              databaseStore.tables,
+              databaseStore.rlsPolicies
+            );
+
+            conditionalLog(
+              {
+                message: "Code files generated on rehydration",
+                count: codeFiles.length,
+                files: codeFiles.map((f) => ({ name: f.name, path: f.path })),
+              },
+              { label: "code-files" }
+            );
+
+            state.codeFiles = codeFiles;
+          }
+        };
       },
     }
   )
