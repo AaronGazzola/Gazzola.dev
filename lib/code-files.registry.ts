@@ -319,16 +319,16 @@ export const createCodeFileNodes = (
     name: "globals.css",
     displayName: "globals.css",
     type: "code-file",
-    path: "code-files.globals",
-    urlPath: "/code-files/globals",
+    path: "app.globals",
+    urlPath: "/app/globals",
     include: true,
     fileExtension: "css",
     language: "css",
     content: () => codeFileGenerators.globals_css(theme),
     includeCondition: () => true,
-    parentPath: "code-files",
+    parentPath: "app",
     downloadPath: "app",
-    previewOnly: false,
+    previewOnly: true,
   });
 
   const isBetterAuthEnabled = initialConfig.technologies.betterAuth;
@@ -340,16 +340,16 @@ export const createCodeFileNodes = (
       name: "auth.ts",
       displayName: "auth.ts",
       type: "code-file",
-      path: "code-files.auth",
-      urlPath: "/code-files/auth",
+      path: "lib.auth",
+      urlPath: "/lib/auth",
       include: true,
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.auth_ts(plugins),
       includeCondition: () => initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
-      parentPath: "code-files",
+      parentPath: "lib",
       downloadPath: "lib",
-      previewOnly: false,
+      previewOnly: true,
     });
 
     nodes.push({
@@ -357,16 +357,16 @@ export const createCodeFileNodes = (
       name: "auth-client.ts",
       displayName: "auth-client.ts",
       type: "code-file",
-      path: "code-files.auth-client",
-      urlPath: "/code-files/auth-client",
+      path: "lib.auth-client",
+      urlPath: "/lib/auth-client",
       include: true,
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.auth_client_ts(plugins),
       includeCondition: () => initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
-      parentPath: "code-files",
+      parentPath: "lib",
       downloadPath: "lib",
-      previewOnly: false,
+      previewOnly: true,
     });
   }
 
@@ -377,16 +377,16 @@ export const createCodeFileNodes = (
       name: "schema.prisma",
       displayName: "schema.prisma",
       type: "code-file",
-      path: "code-files.schema",
-      urlPath: "/code-files/schema",
+      path: "prisma.schema",
+      urlPath: "/prisma/schema",
       include: true,
       fileExtension: "prisma",
       language: "prisma",
       content: () => codeFileGenerators.prisma_schema(tables),
       includeCondition: () => initialConfig.technologies.prisma,
-      parentPath: "code-files",
+      parentPath: "prisma",
       downloadPath: "prisma",
-      previewOnly: false,
+      previewOnly: true,
     });
   }
 
@@ -397,16 +397,16 @@ export const createCodeFileNodes = (
       name: "prisma-rls.ts",
       displayName: "prisma-rls.ts",
       type: "code-file",
-      path: "code-files.prisma-rls",
-      urlPath: "/code-files/prisma-rls",
+      path: "lib.prisma-rls",
+      urlPath: "/lib/prisma-rls",
       include: true,
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.prisma_rls_ts(rlsPolicies, tables),
       includeCondition: () => initialConfig.technologies.prisma && rlsPolicies.length > 0,
-      parentPath: "code-files",
+      parentPath: "lib",
       downloadPath: "lib",
-      previewOnly: false,
+      previewOnly: true,
     });
   }
 
@@ -418,8 +418,8 @@ export const createCodeFileNodes = (
       name: "rls_policies.sql",
       displayName: "rls_policies.sql",
       type: "code-file",
-      path: "code-files.rls-policies",
-      urlPath: "/code-files/rls-policies",
+      path: "supabase.migrations.rls-policies",
+      urlPath: "/supabase/migrations/rls-policies",
       include: true,
       fileExtension: "sql",
       language: "sql",
@@ -428,9 +428,9 @@ export const createCodeFileNodes = (
         (initialConfig.questions.useSupabase === "withBetterAuth" ||
          initialConfig.questions.useSupabase === "authOnly") &&
         rlsPolicies.length > 0,
-      parentPath: "code-files",
+      parentPath: "supabase.migrations",
       downloadPath: "supabase/migrations",
-      previewOnly: false,
+      previewOnly: true,
     });
   }
 

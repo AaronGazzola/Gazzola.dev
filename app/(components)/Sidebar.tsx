@@ -36,7 +36,8 @@ import type { CodeFileNode } from "@/app/(editor)/layout.types";
 
 const generateNavigationFromMarkdownData = (
   nodes: MarkdownNode[],
-  codeFiles: CodeFileNode[] = []
+  codeFiles: CodeFileNode[] = [],
+  isRootCall: boolean = true
 ): NavigationItem[] => {
   const items: NavigationItem[] = [];
 
@@ -49,6 +50,45 @@ const generateNavigationFromMarkdownData = (
     },
     { label: "code-files" }
   );
+
+  const existingDirectoryPaths = new Set<string>();
+  for (const node of nodes) {
+    if (node.type === "directory") {
+      existingDirectoryPaths.add(node.path);
+    }
+  }
+
+  const missingDirectories = new Map<string, CodeFileNode[]>();
+  const allRequiredPaths = new Set<string>();
+
+  for (const codeFile of codeFiles) {
+    if (!codeFile.parentPath) continue;
+
+    const parentPath = codeFile.parentPath;
+    const pathExists = existingDirectoryPaths.has(parentPath) ||
+                      nodes.some(node => node.type === "directory" && node.path === parentPath);
+
+    if (!pathExists) {
+      if (!missingDirectories.has(parentPath)) {
+        missingDirectories.set(parentPath, []);
+      }
+      missingDirectories.get(parentPath)?.push(codeFile);
+
+      const pathParts = parentPath.split('.');
+      for (let i = 1; i <= pathParts.length; i++) {
+        const ancestorPath = pathParts.slice(0, i).join('.');
+        if (!existingDirectoryPaths.has(ancestorPath)) {
+          allRequiredPaths.add(ancestorPath);
+        }
+      }
+    }
+  }
+
+  Array.from(allRequiredPaths).forEach(requiredPath => {
+    if (!missingDirectories.has(requiredPath)) {
+      missingDirectories.set(requiredPath, []);
+    }
+  });
 
   for (const node of nodes) {
     if (node.type === "directory") {
@@ -83,7 +123,7 @@ const generateNavigationFromMarkdownData = (
         path: node.path,
         include: node.include,
         children: [
-          ...generateNavigationFromMarkdownData(node.children, codeFiles),
+          ...generateNavigationFromMarkdownData(node.children, codeFiles, false),
           ...childCodeFileItems
         ],
       });
@@ -98,22 +138,73 @@ const generateNavigationFromMarkdownData = (
     }
   }
 
+  if (isRootCall) {
+    const sortedMissingDirs = Array.from(missingDirectories.entries()).sort((a, b) => {
+      const aDepth = a[0].split('.').length;
+      const bDepth = b[0].split('.').length;
+      return aDepth - bDepth;
+    });
+
+    const createdDirs = new Map<string, NavigationItem>();
+
+    for (const [parentPath, dirCodeFiles] of sortedMissingDirs) {
+      const pathParts = parentPath.split('.');
+      const dirName = pathParts[pathParts.length - 1];
+      const displayName = dirName.charAt(0).toUpperCase() + dirName.slice(1);
+
+      const childCodeFileItems: NavigationItem[] = dirCodeFiles.map(cf => ({
+        name: cf.displayName,
+        type: "page",
+        order: cf.order || 999,
+        path: cf.path,
+        include: cf.include,
+      }));
+
+      const dirItem: NavigationItem = {
+        name: displayName,
+        type: "segment",
+        order: 999,
+        path: parentPath,
+        include: true,
+        children: childCodeFileItems,
+      };
+
+      createdDirs.set(parentPath, dirItem);
+
+      if (pathParts.length === 1) {
+        items.push(dirItem);
+      } else {
+        const parentPathStr = pathParts.slice(0, -1).join('.');
+        const parentDir = createdDirs.get(parentPathStr) || items.find(item => item.path === parentPathStr);
+        if (parentDir) {
+          if (!parentDir.children) {
+            parentDir.children = [];
+          }
+          parentDir.children.push(dirItem);
+        } else {
+          items.push(dirItem);
+        }
+      }
+    }
+  }
+
   return items;
 };
 
 
 const hasPreviewOnlyDescendants = (
   item: NavigationItem,
-  flatIndex: Record<string, MarkdownNode>
+  flatIndex: Record<string, MarkdownNode>,
+  codeFiles: CodeFileNode[]
 ): boolean => {
   if (!item.children) return false;
 
   for (const child of item.children.filter((c) => c.include !== false)) {
-    const childNode = flatIndex[child.path || ""];
+    const childNode = flatIndex[child.path || ""] || codeFiles.find(cf => cf.path === (child.path || ""));
     if (childNode && (childNode as any).previewOnly === true) {
       return true;
     }
-    if (child.type === "segment" && hasPreviewOnlyDescendants(child, flatIndex)) {
+    if (child.type === "segment" && hasPreviewOnlyDescendants(child, flatIndex, codeFiles)) {
       return true;
     }
   }
@@ -130,6 +221,7 @@ interface TreeItemProps {
   isPageVisited: (path: string) => boolean;
   currentPath: string;
   data: any;
+  codeFiles: CodeFileNode[];
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({
@@ -140,9 +232,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
   isPageVisited,
   currentPath,
   data,
+  codeFiles,
 }) => {
   const itemPath = item.path || item.name;
   const isOpen = expandedItems.has(itemPath);
+
+  const getNode = (path: string) => {
+    return data.flatIndex[path] || codeFiles.find(cf => cf.path === path);
+  };
 
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
 
@@ -158,8 +255,8 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   const buildLinkPath = () => {
-    const node = data.flatIndex[itemPath];
-    if (node && node.type === "file") {
+    const node = getNode(itemPath);
+    if (node && (node.type === "file" || node.type === "code-file")) {
       return node.urlPath;
     } else if (node && node.type === "directory") {
       return node.urlPath;
@@ -168,7 +265,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   if (item.type === "page") {
-    const node = data.flatIndex[item.path || ""];
+    const node = getNode(item.path || "");
 
     if (!item.path) {
       return null;
@@ -184,6 +281,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
       if (!isPageVisited(item.path)) {
         return null;
       }
+    } else if (node?.type === "code-file") {
     }
 
     const isActive = currentPath === item.path;
@@ -209,7 +307,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
     );
   }
 
-  const itemNode = data.flatIndex[itemPath];
+  const itemNode = getNode(itemPath);
 
   const hasRequiredPageVisit = itemNode?.type === "directory" && itemNode.visibleAfterPage
     ? isPageVisited(itemNode.visibleAfterPage)
@@ -228,7 +326,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
       return false;
     });
 
-  const hasPreviewDescendants = hasPreviewOnlyDescendants(item, data.flatIndex);
+  const hasPreviewDescendants = hasPreviewOnlyDescendants(item, data.flatIndex, codeFiles);
 
   if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
     return null;
@@ -264,6 +362,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
               isPageVisited={isPageVisited}
               currentPath={currentPath}
               data={data}
+              codeFiles={codeFiles}
             />
           ))}
       </CollapsibleContent>
@@ -443,6 +542,7 @@ const Sidebar = () => {
                     isPageVisited={isPageVisited}
                     currentPath={currentPath}
                     data={data}
+                    codeFiles={codeFiles}
                   />
                 ))}
             </div>
