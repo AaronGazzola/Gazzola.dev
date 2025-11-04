@@ -5,6 +5,8 @@ import { useHeaderStore } from "@/app/(components)/Header.store";
 import { processContent } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
 import { cn } from "@/lib/tailwind.utils";
+import { generateCodeFiles } from "@/lib/code-generation.utils";
+import { getBrowserAPI } from "@/lib/env.utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
@@ -176,6 +178,22 @@ const Page = () => {
 
   const currentNode = useMemo(() => {
     if (!canRender || !contentPath) return null;
+
+    if (contentPath.startsWith("generated.")) {
+      return {
+        type: "file" as const,
+        displayName: contentPath.split(".").pop() || "generated",
+        path: contentPath,
+        name: contentPath,
+        id: contentPath,
+        include: true,
+        order: 0,
+        urlPath: "/" + contentPath.replace(/^generated\./, "").replace(/\./g, "/"),
+        content: "",
+        sections: {},
+      };
+    }
+
     return getNode(contentPath);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canRender, contentPath, getNode, refreshKey, data]);
@@ -187,8 +205,90 @@ const Page = () => {
     );
   }, [currentNode]);
 
+  const isCodePreviewFile = useMemo(() => {
+    return (
+      currentNode?.type === "file" &&
+      (currentNode as any).fileExtension === "preview"
+    );
+  }, [currentNode]);
+
+  const isGeneratedCodeFile = useMemo(() => {
+    return contentPath.startsWith("generated.");
+  }, [contentPath]);
+
+  const getCodeLanguage = useCallback((fileName: string): string => {
+    if (fileName.endsWith(".ts") || fileName.endsWith(".tsx")) {
+      return "typescript";
+    }
+    if (fileName.endsWith(".css")) {
+      return "css";
+    }
+    if (fileName.endsWith(".sql")) {
+      return "sql";
+    }
+    if (fileName.endsWith(".prisma")) {
+      return "typescript";
+    }
+    return "typescript";
+  }, []);
+
+  const [componentContent, setComponentContent] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const loadComponentFile = async (fileName: string) => {
+      if (componentContent[fileName]) return;
+
+      try {
+        const response = await fetch(`/components/ui/${fileName}`);
+        if (response.ok) {
+          const content = await response.text();
+          setComponentContent(prev => ({
+            ...prev,
+            [fileName]: content
+          }));
+        }
+      } catch {
+        conditionalLog({ message: "Failed to load component file", fileName }, { label: "markdown-parse" });
+      }
+    };
+
+    if (contentPath.startsWith("generated.")) {
+      const segments = params.segments as string[] | undefined;
+      if (segments) {
+        const filePath = segments.join("/");
+        if (filePath.startsWith("components/ui/")) {
+          const fileName = filePath.split("/").pop();
+          if (fileName) {
+            loadComponentFile(fileName);
+          }
+        }
+      }
+    }
+  }, [contentPath, params, componentContent]);
+
   const currentContent = useMemo(() => {
     if (!currentNode) return "";
+
+    if (contentPath.startsWith("generated.")) {
+      const segments = params.segments as string[] | undefined;
+      if (!segments) return "";
+
+      const filePath = segments.join("/");
+
+      const codeFiles = generateCodeFiles();
+      const generatedFile = codeFiles.find(f => f.path === filePath);
+
+      if (generatedFile) {
+        return generatedFile.content;
+      }
+
+      if (filePath.startsWith("components/ui/")) {
+        const fileName = filePath.split("/").pop() || "";
+        return componentContent[fileName] || "";
+      }
+
+      return "";
+    }
 
     conditionalLog(
       {
@@ -213,7 +313,7 @@ const Page = () => {
     }
     return "";
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentNode, contentPath, refreshKey, data]);
+  }, [currentNode, contentPath, refreshKey, data, params]);
 
   const editorContent = useMemo(() => {
     return currentContent.replace(
@@ -385,6 +485,56 @@ const Page = () => {
             <CodeViewer
               code={currentContent}
               language="tsx"
+              darkMode={darkMode}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isCodePreviewFile) {
+    const fileName = currentNode?.displayName || "";
+    const language = getCodeLanguage(fileName);
+    return (
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
+        <div className="relative h-full flex flex-col">
+          <Toolbar currentContentPath={contentPath} />
+          <div
+            className={cn(
+              "w-full flex-1",
+              isExpanded ? "overflow-hidden" : "overflow-auto"
+            )}
+          >
+            <CodeViewer
+              code={currentContent}
+              language={language}
+              darkMode={darkMode}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isGeneratedCodeFile) {
+    const segments = params.segments as string[] | undefined;
+    const filePath = segments ? segments.join("/") : "";
+    const fileName = filePath.split("/").pop() || "";
+    const language = getCodeLanguage(fileName);
+    return (
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
+        <div className="relative h-full flex flex-col">
+          <Toolbar currentContentPath={contentPath} />
+          <div
+            className={cn(
+              "w-full flex-1",
+              isExpanded ? "overflow-hidden" : "overflow-auto"
+            )}
+          >
+            <CodeViewer
+              code={currentContent}
+              language={language}
               darkMode={darkMode}
             />
           </div>

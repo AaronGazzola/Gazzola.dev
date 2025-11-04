@@ -47,9 +47,10 @@ import {
   File,
   Files,
   Folder,
-  Hammer,
   Home,
   ListRestart,
+  Menu,
+  MessagesSquare,
   Palette,
   RotateCcw,
   Settings,
@@ -70,7 +71,7 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 const nextSteps = [
   { icon: Palette, title: "Design" },
-  { icon: Hammer, title: "Build" },
+  { icon: MessagesSquare, title: "Build" },
   { icon: CheckCircle, title: "Review" },
 ];
 
@@ -146,6 +147,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [resetAllLoading, setResetAllLoading] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
+  const [menuPopoverOpen, setMenuPopoverOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -541,7 +543,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
           </div>
 
-          <div className="flex items-center theme-gap-3 ">
+          <div className="flex items-center theme-gap-3">
             {showInitialDialog ? (
               <Dialog
                 open={
@@ -568,7 +570,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     </DialogTitle>
                   </DialogHeader>
                   <div className="text-foreground mt-2 theme-font-sans theme-tracking">
-                    Design, build and fix your custom web app:
+                    Design your roadmap, build it with AI, get a free code
+                    review!
                   </div>
                   <div className="flex flex-col my-4">
                     <div className="flex flex-row items-center justify-center relative gap-3 mt-6">
@@ -665,20 +668,258 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 />
               )
             )}
+
+            <div className="hidden md:flex items-center theme-gap-3">
+              <span>
+                <IconButton
+                  onClick={() => setResetPageDialogOpen(true)}
+                  tooltip="Reset current page"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </IconButton>
+              </span>
+
+              <IconButton
+                onClick={() => setResetAllDialogOpen(true)}
+                tooltip="Reset all pages"
+              >
+                <ListRestart className="h-4 w-4" />
+              </IconButton>
+
+              {isDevelopment && (
+                <EditorPopover
+                  open={sectionsPopoverOpen}
+                  onOpenChange={setSectionsPopoverOpen}
+                >
+                  <EditorPopoverTrigger asChild>
+                    <span>
+                      <IconButton
+                        onClick={() => setSectionsPopoverOpen(true)}
+                        tooltip="Manage sections"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </IconButton>
+                    </span>
+                  </EditorPopoverTrigger>
+                  <EditorPopoverContent
+                    className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow theme-font-sans theme-tracking"
+                    align="center"
+                  >
+                    <div className="flex flex-col theme-gap-4">
+                      <div className="font-semibold text-sm theme-text-foreground theme-font-sans theme-tracking">
+                        Section Options
+                      </div>
+                      {sectionsData.length === 0 ? (
+                        <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                          No sections found
+                        </div>
+                      ) : (
+                        sectionsData.map((file) => (
+                          <div
+                            key={file.filePath}
+                            className="flex flex-col theme-gap-3"
+                          >
+                            <div className="font-medium text-sm border-b theme-border-border theme-pb-1 theme-text-foreground theme-font-sans theme-tracking">
+                              {file.fileName}
+                            </div>
+                            {file.sections.map((section) => (
+                              <div
+                                key={section.sectionId}
+                                className="theme-ml-2 flex flex-col theme-gap-2"
+                              >
+                                <div className="text-sm font-medium theme-text-muted-foreground theme-font-sans theme-tracking">
+                                  {section.sectionId}
+                                </div>
+                                {section.options.map((option) => (
+                                  <div
+                                    key={option.optionId}
+                                    className="flex items-center theme-gap-2 theme-ml-4"
+                                  >
+                                    <Checkbox
+                                      checked={getSectionInclude(
+                                        file.filePath,
+                                        section.sectionId,
+                                        option.optionId
+                                      )}
+                                      onCheckedChange={(checked) =>
+                                        setSectionInclude(
+                                          file.filePath,
+                                          section.sectionId,
+                                          option.optionId,
+                                          checked as boolean
+                                        )
+                                      }
+                                    />
+                                    <Label
+                                      className="text-sm cursor-pointer theme-text-foreground theme-font-sans theme-tracking"
+                                      onClick={() =>
+                                        setSectionInclude(
+                                          file.filePath,
+                                          section.sectionId,
+                                          option.optionId,
+                                          !getSectionInclude(
+                                            file.filePath,
+                                            section.sectionId,
+                                            option.optionId
+                                          )
+                                        )
+                                      }
+                                    >
+                                      {option.optionId}
+                                    </Label>
+                                  </div>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </EditorPopoverContent>
+                </EditorPopover>
+              )}
+
+              {isDevelopment && (
+                <EditorPopover
+                  open={fileTreePopoverOpen}
+                  onOpenChange={setFileTreePopoverOpen}
+                >
+                  <EditorPopoverTrigger asChild>
+                    <span>
+                      <IconButton
+                        onClick={() => setFileTreePopoverOpen(true)}
+                        tooltip="Manage file inclusion"
+                      >
+                        <Files className="h-4 w-4" />
+                      </IconButton>
+                    </span>
+                  </EditorPopoverTrigger>
+                  <EditorPopoverContent
+                    className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow theme-font-sans theme-tracking"
+                    align="center"
+                  >
+                    <div className="flex flex-col theme-gap-3">
+                      <div className="font-semibold text-sm theme-text-foreground theme-font-sans theme-tracking">
+                        File Inclusion
+                      </div>
+                      {fileTreeData.length === 0 ? (
+                        <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                          No files found
+                        </div>
+                      ) : (
+                        fileTreeData.map((item) => (
+                          <div
+                            key={item.path}
+                            className="flex items-center theme-gap-2"
+                            style={{ marginLeft: `${item.level * 12}px` }}
+                          >
+                            <Checkbox
+                              checked={item.include}
+                              onCheckedChange={(checked) =>
+                                updateInclusionRules({
+                                  [item.path]: checked as boolean,
+                                })
+                              }
+                            />
+                            {item.type === "directory" ? (
+                              <Folder className="h-4 w-4 text-[hsl(217,91%,60%)] theme-text-primary" />
+                            ) : (
+                              <File className="h-4 w-4 theme-text-muted-foreground" />
+                            )}
+                            <Label
+                              className="text-sm cursor-pointer flex-1 theme-text-foreground theme-font-sans theme-tracking"
+                              onClick={() =>
+                                updateInclusionRules({
+                                  [item.path]: !item.include,
+                                })
+                              }
+                            >
+                              {item.name}
+                            </Label>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </EditorPopoverContent>
+                </EditorPopover>
+              )}
+            </div>
+
+            <EditorPopover
+              open={menuPopoverOpen}
+              onOpenChange={setMenuPopoverOpen}
+            >
+              <EditorPopoverTrigger asChild>
+                <span className="md:hidden">
+                  <IconButton
+                    onClick={() => setMenuPopoverOpen(true)}
+                    tooltip="More options"
+                  >
+                    <Menu className="h-4 w-4" />
+                  </IconButton>
+                </span>
+              </EditorPopoverTrigger>
+              <EditorPopoverContent
+                className="w-56 theme-bg-popover theme-shadow theme-font-sans theme-tracking"
+                align="end"
+              >
+                <div className="flex flex-col theme-gap-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setResetPageDialogOpen(true);
+                      setMenuPopoverOpen(false);
+                    }}
+                    className="justify-start theme-gap-2 theme-font-sans theme-tracking"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset Current Page
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setResetAllDialogOpen(true);
+                      setMenuPopoverOpen(false);
+                    }}
+                    className="justify-start theme-gap-2 theme-font-sans theme-tracking"
+                  >
+                    <ListRestart className="h-4 w-4" />
+                    Reset All Pages
+                  </Button>
+                  {isDevelopment && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setSectionsPopoverOpen(true);
+                          setMenuPopoverOpen(false);
+                        }}
+                        className="justify-start theme-gap-2 theme-font-sans theme-tracking"
+                      >
+                        <Settings className="h-4 w-4" />
+                        Manage Sections
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setFileTreePopoverOpen(true);
+                          setMenuPopoverOpen(false);
+                        }}
+                        className="justify-start theme-gap-2 theme-font-sans theme-tracking"
+                      >
+                        <Files className="h-4 w-4" />
+                        Manage File Inclusion
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </EditorPopoverContent>
+            </EditorPopover>
+
             <EditorDialog
               open={resetPageDialogOpen}
               onOpenChange={setResetPageDialogOpen}
             >
-              <EditorDialogTrigger asChild>
-                <span>
-                  <IconButton
-                    onClick={() => setResetPageDialogOpen(true)}
-                    tooltip="Reset current page"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                  </IconButton>
-                </span>
-              </EditorDialogTrigger>
               <EditorDialogContent>
                 <EditorDialogHeader>
                   <EditorDialogTitle>Reset Current Page</EditorDialogTitle>
@@ -705,13 +946,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </EditorDialogFooter>
               </EditorDialogContent>
             </EditorDialog>
-
-            <IconButton
-              onClick={() => setResetAllDialogOpen(true)}
-              tooltip="Reset all pages"
-            >
-              <ListRestart className="h-4 w-4" />
-            </IconButton>
 
             <EditorDialog
               open={resetAllDialogOpen}
@@ -744,164 +978,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </EditorDialogFooter>
               </EditorDialogContent>
             </EditorDialog>
-
-            {isDevelopment && (
-              <EditorPopover
-                open={sectionsPopoverOpen}
-                onOpenChange={setSectionsPopoverOpen}
-              >
-                <EditorPopoverTrigger asChild>
-                  <span>
-                    <IconButton
-                      onClick={() => setSectionsPopoverOpen(true)}
-                      tooltip="Manage sections"
-                    >
-                      <Settings className="h-4 w-4" />
-                    </IconButton>
-                  </span>
-                </EditorPopoverTrigger>
-                <EditorPopoverContent
-                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow theme-font-sans theme-tracking"
-                  align="center"
-                >
-                  <div className="flex flex-col theme-gap-4">
-                    <div className="font-semibold text-sm theme-text-foreground theme-font-sans theme-tracking">
-                      Section Options
-                    </div>
-                    {sectionsData.length === 0 ? (
-                      <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
-                        No sections found
-                      </div>
-                    ) : (
-                      sectionsData.map((file) => (
-                        <div
-                          key={file.filePath}
-                          className="flex flex-col theme-gap-3"
-                        >
-                          <div className="font-medium text-sm border-b theme-border-border theme-pb-1 theme-text-foreground theme-font-sans theme-tracking">
-                            {file.fileName}
-                          </div>
-                          {file.sections.map((section) => (
-                            <div
-                              key={section.sectionId}
-                              className="theme-ml-2 flex flex-col theme-gap-2"
-                            >
-                              <div className="text-sm font-medium theme-text-muted-foreground theme-font-sans theme-tracking">
-                                {section.sectionId}
-                              </div>
-                              {section.options.map((option) => (
-                                <div
-                                  key={option.optionId}
-                                  className="flex items-center theme-gap-2 theme-ml-4"
-                                >
-                                  <Checkbox
-                                    checked={getSectionInclude(
-                                      file.filePath,
-                                      section.sectionId,
-                                      option.optionId
-                                    )}
-                                    onCheckedChange={(checked) =>
-                                      setSectionInclude(
-                                        file.filePath,
-                                        section.sectionId,
-                                        option.optionId,
-                                        checked as boolean
-                                      )
-                                    }
-                                  />
-                                  <Label
-                                    className="text-sm cursor-pointer theme-text-foreground theme-font-sans theme-tracking"
-                                    onClick={() =>
-                                      setSectionInclude(
-                                        file.filePath,
-                                        section.sectionId,
-                                        option.optionId,
-                                        !getSectionInclude(
-                                          file.filePath,
-                                          section.sectionId,
-                                          option.optionId
-                                        )
-                                      )
-                                    }
-                                  >
-                                    {option.optionId}
-                                  </Label>
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </EditorPopoverContent>
-              </EditorPopover>
-            )}
-
-            {isDevelopment && (
-              <EditorPopover
-                open={fileTreePopoverOpen}
-                onOpenChange={setFileTreePopoverOpen}
-              >
-                <EditorPopoverTrigger asChild>
-                  <span>
-                    <IconButton
-                      onClick={() => setFileTreePopoverOpen(true)}
-                      tooltip="Manage file inclusion"
-                    >
-                      <Files className="h-4 w-4" />
-                    </IconButton>
-                  </span>
-                </EditorPopoverTrigger>
-                <EditorPopoverContent
-                  className="w-80 max-h-96 overflow-y-auto theme-bg-popover theme-shadow theme-font-sans theme-tracking"
-                  align="center"
-                >
-                  <div className="flex flex-col theme-gap-3">
-                    <div className="font-semibold text-sm theme-text-foreground theme-font-sans theme-tracking">
-                      File Inclusion
-                    </div>
-                    {fileTreeData.length === 0 ? (
-                      <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
-                        No files found
-                      </div>
-                    ) : (
-                      fileTreeData.map((item) => (
-                        <div
-                          key={item.path}
-                          className="flex items-center theme-gap-2"
-                          style={{ marginLeft: `${item.level * 12}px` }}
-                        >
-                          <Checkbox
-                            checked={item.include}
-                            onCheckedChange={(checked) =>
-                              updateInclusionRules({
-                                [item.path]: checked as boolean,
-                              })
-                            }
-                          />
-                          {item.type === "directory" ? (
-                            <Folder className="h-4 w-4 text-[hsl(217,91%,60%)] theme-text-primary" />
-                          ) : (
-                            <File className="h-4 w-4 theme-text-muted-foreground" />
-                          )}
-                          <Label
-                            className="text-sm cursor-pointer flex-1 theme-text-foreground theme-font-sans theme-tracking"
-                            onClick={() =>
-                              updateInclusionRules({
-                                [item.path]: !item.include,
-                              })
-                            }
-                          >
-                            {item.name}
-                          </Label>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </EditorPopoverContent>
-              </EditorPopover>
-            )}
           </div>
 
           <div className="flex items-center theme-gap-4">

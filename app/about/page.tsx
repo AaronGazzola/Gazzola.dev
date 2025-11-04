@@ -21,7 +21,7 @@ import {
   Briefcase,
   CheckCircle,
   GraduationCap,
-  Hammer,
+  MessagesSquare,
   Palette,
   Plus,
   Rocket,
@@ -109,13 +109,12 @@ const nextSteps = [
   },
   {
     title: "Build",
-    description: "Give your roadmap to an AI and start building!",
-    icon: Hammer,
+    description: "Use your roadmap to generate your web app",
+    icon: MessagesSquare,
   },
   {
     title: "Review",
-    description:
-      "Apply for a code review, add a testing suite and achieve 100% pass rate",
+    description: "Apply for a free code review and QA analysis",
     icon: CheckCircle,
   },
 ];

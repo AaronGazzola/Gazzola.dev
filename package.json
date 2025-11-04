@@ -7,15 +7,15 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "npm run parse:markdown && npm run parse:theme && next build",
+    "build": "npm run parse && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "dev:test": "APP_ENV=test next dev",
+    "parse": "npm run parse:markdown",
     "parse:markdown": "npx tsx scripts/parse-markdown.ts",
     "parse:v": "npx tsx scripts/increment-version.ts",
     "parse:theme": "npx tsx scripts/parse-themes.ts",
-    "parse:files": "npx tsx scripts/parse-files.ts",
     "components": "npx tsx scripts/update-theme-components.ts",
     "mcp:toggle": "npx tsx scripts/toggle-playwright-mcp.ts"
   },

@@ -31,6 +31,9 @@ import { ChevronDown, ChevronRight, Download, Info, Menu } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { generateCodeFiles } from "@/lib/code-generation.utils";
+import { getBrowserAPI } from "@/lib/env.utils";
+import { conditionalLog } from "@/lib/log.util";
 
 const generateNavigationFromMarkdownData = (
   nodes: MarkdownNode[]
@@ -59,6 +62,79 @@ const generateNavigationFromMarkdownData = (
   }
 
   return items;
+};
+
+const buildGeneratedCodeTree = (): NavigationItem[] => {
+  const codeFiles = generateCodeFiles();
+
+  if (codeFiles.length === 0) {
+    return [];
+  }
+
+  const dirMap: Record<string, NavigationItem> = {};
+  const rootItems: NavigationItem[] = [];
+
+  const componentsDir = "components/ui";
+  const componentFiles: string[] = [];
+
+  if (typeof window !== "undefined" && typeof document !== "undefined") {
+    const storage = getBrowserAPI(() => localStorage);
+    const cachedComponents = storage?.getItem("ui-component-files");
+    if (cachedComponents) {
+      componentFiles.push(...JSON.parse(cachedComponents));
+    }
+  }
+
+  const allPaths = [
+    ...codeFiles.map(f => f.path),
+    ...componentFiles.map(f => `${componentsDir}/${f}`)
+  ];
+
+  allPaths.forEach((filePath) => {
+    const parts = filePath.split("/");
+    const fileName = parts[parts.length - 1];
+    const fileNameWithoutExt = fileName.replace(/\.(tsx|ts|css|prisma|sql)$/, "");
+
+    let currentPath = "";
+    for (let i = 0; i < parts.length - 1; i++) {
+      const dirName = parts[i];
+      const parentPath = currentPath;
+      currentPath = currentPath ? `${currentPath}.${dirName}` : `generated.${dirName}`;
+
+      if (!dirMap[currentPath]) {
+        const navItem: NavigationItem = {
+          name: dirName,
+          type: "segment",
+          path: currentPath,
+          include: true,
+          children: []
+        };
+
+        dirMap[currentPath] = navItem;
+
+        if (parentPath) {
+          dirMap[parentPath]?.children?.push(navItem);
+        } else {
+          rootItems.push(navItem);
+        }
+      }
+    }
+
+    const fileNavItem: NavigationItem = {
+      name: fileNameWithoutExt,
+      type: "page",
+      path: currentPath ? `${currentPath}.${fileNameWithoutExt}` : `generated.${fileNameWithoutExt}`,
+      include: true
+    };
+
+    if (currentPath && dirMap[currentPath]) {
+      dirMap[currentPath].children?.push(fileNavItem);
+    } else {
+      rootItems.push(fileNavItem);
+    }
+  });
+
+  return rootItems;
 };
 
 const hasPreviewOnlyDescendants = (
@@ -117,6 +193,11 @@ const TreeItem: React.FC<TreeItemProps> = ({
   };
 
   const buildLinkPath = () => {
+    if (itemPath.startsWith("generated.")) {
+      const pathWithoutPrefix = itemPath.replace(/^generated\./, "").replace(/\./g, "/");
+      return `/${pathWithoutPrefix}`;
+    }
+
     const node = data.flatIndex[itemPath];
     if (node && node.type === "file") {
       return node.urlPath;
@@ -128,12 +209,17 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
   if (item.type === "page") {
     const node = data.flatIndex[item.path || ""];
+    const isGeneratedFile = item.path?.startsWith("generated.");
 
     if (!item.path) {
       return null;
     }
 
-    if (node?.type === "file" && node.visibleAfterPage) {
+    if (isGeneratedFile) {
+      if (!isPageVisited("start-here.next-steps")) {
+        return null;
+      }
+    } else if (node?.type === "file" && node.visibleAfterPage) {
       const hasVisitedRequiredPage = isPageVisited(node.visibleAfterPage);
       const isPageIncluded = node.include === true;
       if (!hasVisitedRequiredPage || !isPageIncluded) {
@@ -169,6 +255,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
   }
 
   const itemNode = data.flatIndex[itemPath];
+  const isGeneratedSegment = itemPath.startsWith("generated.");
 
   const hasRequiredPageVisit = itemNode?.type === "directory" && itemNode.visibleAfterPage
     ? isPageVisited(itemNode.visibleAfterPage)
@@ -189,7 +276,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
   const hasPreviewDescendants = hasPreviewOnlyDescendants(item, data.flatIndex);
 
-  if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
+  if (!isGeneratedSegment && !hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
     return null;
   }
 
@@ -255,10 +342,30 @@ const Sidebar = () => {
 
   const showDownloadHelp = mounted && shouldShowStep(WalkthroughStep.DOWNLOAD);
 
-  const navigationData = useMemo(
-    () => generateNavigationFromMarkdownData(data.root.children),
-    [data]
-  );
+  const navigationData = useMemo(() => {
+    const markdownNav = generateNavigationFromMarkdownData(data.root.children);
+
+    const hasVisitedNextSteps = isPageVisited("start-here.next-steps");
+
+    conditionalLog({
+      hasVisitedNextSteps,
+      message: "Checking if Next Steps visited"
+    }, { label: "sidebar" });
+
+    if (hasVisitedNextSteps) {
+      const generatedCodeNav = buildGeneratedCodeTree();
+
+      conditionalLog({
+        generatedCodeNavLength: generatedCodeNav.length,
+        generatedCodeNav,
+        message: "Generated code navigation"
+      }, { label: "sidebar" });
+
+      return [...markdownNav, ...generatedCodeNav];
+    }
+
+    return markdownNav;
+  }, [data, isPageVisited]);
 
   const currentPath = useMemo((): string => {
     const segments = params.segments as string[] | undefined;

@@ -5,6 +5,7 @@ import {
   MarkdownNode,
 } from "@/app/(editor)/layout.types";
 import JSZip from "jszip";
+import { generateCodeFiles } from "@/lib/code-generation.utils";
 
 type RouteEntry = {
   path: string;
@@ -931,6 +932,29 @@ export const generateAndDownloadZip = async (
           getInitialConfiguration
         );
       });
+  }
+
+  try {
+    const codeFiles = generateCodeFiles();
+
+    if (codeFiles && codeFiles.length > 0) {
+      codeFiles.forEach((file) => {
+        const pathParts = file.path.split("/");
+        let currentFolder: JSZip | null = zip;
+
+        for (let i = 0; i < pathParts.length - 1; i++) {
+          const folderName = pathParts[i];
+          currentFolder = currentFolder?.folder(folderName) || currentFolder;
+        }
+
+        const fileName = pathParts[pathParts.length - 1];
+        if (currentFolder) {
+          currentFolder.file(fileName, file.content);
+        }
+      });
+    }
+  } catch (error) {
+    console.warn("Could not generate code files for download:", error);
   }
 
   const blob = await zip.generateAsync({ type: "blob" });

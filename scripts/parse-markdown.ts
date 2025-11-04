@@ -184,72 +184,6 @@ function extractOptionsFromSection(content: string): Record<string, { content: s
   return options;
 }
 
-function buildComponentsTree(): DirectoryNode | null {
-  if (!fs.existsSync(COMPONENTS_DIR)) {
-    return null;
-  }
-
-  const componentsDir: DirectoryNode = {
-    id: "components",
-    name: "components",
-    displayName: "components",
-    type: "directory",
-    path: "components",
-    urlPath: "/components",
-    include: true,
-    previewOnly: true,
-    includeInToolbar: false,
-    visibleAfterPage: "start-here.theme",
-    children: [],
-  };
-
-  const uiDir = path.join(COMPONENTS_DIR, "ui");
-  if (fs.existsSync(uiDir)) {
-    const uiDirNode: DirectoryNode = {
-      id: "components.ui",
-      name: "ui",
-      displayName: "ui",
-      type: "directory",
-      path: "components.ui",
-      urlPath: "/components/ui",
-      include: true,
-      previewOnly: true,
-      includeInToolbar: false,
-      children: [],
-    };
-
-    const files = fs.readdirSync(uiDir).filter((file) => file.endsWith(".tsx")).sort();
-
-    files.forEach((file) => {
-      const filePath = path.join(uiDir, file);
-      const content = fs.readFileSync(filePath, "utf8");
-      const fileName = file.replace(".tsx", "");
-
-      const fileNode: FileNode = {
-        id: `components.ui.${fileName}`,
-        name: fileName,
-        displayName: fileName,
-        type: "file",
-        path: `components.ui.${fileName}`,
-        urlPath: `/components/ui/${fileName}`,
-        content: escapeForJavaScript(content),
-        components: [],
-        sections: {},
-        include: true,
-        previewOnly: true,
-        includeInToolbar: false,
-        fileExtension: "tsx",
-      };
-
-      uiDirNode.children.push(fileNode);
-    });
-
-    componentsDir.children.push(uiDirNode);
-  }
-
-  return componentsDir;
-}
-
 function stripFrontmatter(content: string): string {
   const frontmatterRegex = /^---\n[\s\S]*?\n---\n\n/;
   return content.replace(frontmatterRegex, '');
@@ -394,6 +328,7 @@ function buildFlatIndex(
   return index;
 }
 
+
 function processMarkdownData(): MarkdownData {
   console.log("Starting markdown processing...");
 
@@ -407,12 +342,6 @@ function processMarkdownData(): MarkdownData {
 
   const children = fs.existsSync(MARKDOWN_DIR) ? buildMarkdownTree(MARKDOWN_DIR) : [];
   console.log(`Found ${children.length} top-level items`);
-
-  const componentsTree = buildComponentsTree();
-  if (componentsTree) {
-    children.push(componentsTree);
-    console.log(`Added components tree with ${componentsTree.children.length} directories`);
-  }
 
   const rootNode: DirectoryNode = {
     id: "root",
