@@ -91,44 +91,6 @@ export const parseMarkdownAction = async (): Promise<
   }
 };
 
-export const parseAndGetMarkdownDataAction = async (): Promise<
-  ActionResponse<MarkdownData>
-> => {
-  try {
-    conditionalLog("parseAndGetMarkdownDataAction: Starting", {
-      label: "markdown-parse",
-    });
-
-    const url = getAbsoluteUrl("/data/processed-markdown.json");
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      conditionalLog(
-        { error: "Processed markdown file not found" },
-        { label: "markdown-parse" }
-      );
-      return getActionResponse({
-        error: "Processed markdown file not found. Run 'npm run parse' first.",
-      });
-    }
-
-    const markdownData: MarkdownData = await response.json();
-
-    conditionalLog(
-      {
-        nodeCount: Object.keys(markdownData.flatIndex).length,
-        contentVersion: markdownData.contentVersion,
-      },
-      { label: "markdown-parse" }
-    );
-
-    return getActionResponse({ data: markdownData });
-  } catch (error) {
-    conditionalLog({ error: String(error) }, { label: "markdown-parse" });
-    return getActionResponse({ error });
-  }
-};
-
 export const getMarkdownDataAction = async (): Promise<
   ActionResponse<MarkdownData>
 > => {

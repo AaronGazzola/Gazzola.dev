@@ -3,7 +3,7 @@
 import { conditionalLog } from "@/lib/log.util";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { getContentVersionAction, getMarkdownDataAction, parseAndGetMarkdownDataAction } from "./layout.actions";
+import { getContentVersionAction, getMarkdownDataAction } from "./layout.actions";
 import { useEditorStore } from "./layout.stores";
 
 export const useContentVersion = () => {
@@ -144,7 +144,7 @@ export const useContentVersionCheck = () => {
       setIsLoading(true);
 
       try {
-        const { data: freshData, error } = await parseAndGetMarkdownDataAction();
+        const { data: freshData, error } = await getMarkdownDataAction();
 
         if (error) {
           conditionalLog({ parseError: String(error) }, { label: "markdown-parse" });

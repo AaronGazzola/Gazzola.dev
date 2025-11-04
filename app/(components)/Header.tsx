@@ -309,7 +309,7 @@ const Header = () => {
           </Link>
         </div>
         {!isExpanded && (
-          <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2">
+          <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2 items-center">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -353,6 +353,23 @@ const Header = () => {
                   </TooltipContent>
                 </Tooltip>
               </Popover>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-2 text-sm px-3 !py-0 "
+                      onClick={() => setDialogOpen("yesPlease")}
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Apply for a free code review!</p>
+                </TooltipContent>
+              </Tooltip>
             </TooltipProvider>
           </div>
         )}
@@ -371,7 +388,24 @@ const Header = () => {
               Artificial Intelligence Quality Assurance
             </h2>
           )}
-          <h3 className="text-lg font-medium">Test, Fix, Ship.</h3>
+          {isExpanded ? (
+            <h3 className="text-lg font-medium">Test, Fix, Ship.</h3>
+          ) : (
+            <span className="hidden md:inline">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-2 text-sm px-3 !py-0 mt-1.5"
+                onClick={() => setDialogOpen("yesPlease")}
+              >
+                <span className="hidden sm:inline">
+                  Apply for a free code review
+                </span>
+
+                <CheckCircle className="w-4 h-4" />
+              </Button>
+            </span>
+          )}
         </div>
         {isExpanded && (
           <>
@@ -526,10 +560,10 @@ const Header = () => {
                 className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 text-xl px-8 py-6"
                 onClick={() => setDialogOpen("yesPlease")}
               >
-                <span className="sm:inline hidden">
+                <span className="hidden sm:inline">
                   Apply for a free code review
                 </span>
-                <span className="inline sm:hidden">Free code review</span>
+                <span className="sm:hidden">Free code review</span>
                 <CheckCircle className="w-6 h-6" />
               </Button>
             </div>

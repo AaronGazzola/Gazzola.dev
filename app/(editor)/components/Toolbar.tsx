@@ -60,7 +60,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useHeaderStore } from "../../(components)/Header.store";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { useThemeStore } from "../../layout.stores";
-import { parseAndGetMarkdownDataAction } from "../layout.actions";
+import { getMarkdownDataAction } from "../layout.actions";
 import { useContentVersionCheck } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 import { useWalkthroughStore } from "../layout.walkthrough.stores";
@@ -384,7 +384,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     });
     setResetAllLoading(true);
     try {
-      const { data: freshData, error } = await parseAndGetMarkdownDataAction();
+      const { data: freshData, error } = await getMarkdownDataAction();
 
       conditionalLog(
         {
@@ -399,12 +399,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       );
 
       if (error) {
-        conditionalLog(
-          { parseError: String(error) },
-          { label: "markdown-parse" }
-        );
+        console.error("Reset all failed:", error);
         alert(
-          "Failed to parse markdown files. Please check the console for details."
+          "Failed to load markdown data. Please try again or refresh the page."
         );
         return;
       }
