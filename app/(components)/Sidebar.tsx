@@ -860,7 +860,7 @@ const Sidebar = () => {
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
             </div>
-            <p className="text-sm text-white font-medium mt-1">
+            <p className="text-sm text-white font-medium mt-1 italic">
               Design, Build, Review.
             </p>
           </div>
