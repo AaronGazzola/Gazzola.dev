@@ -2,6 +2,50 @@ import type { CodeFileNode, InitialConfigurationType } from "@/app/(editor)/layo
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
 import type { PrismaTable, RLSPolicy, Plugin } from "@/app/(components)/DatabaseConfiguration.types";
 
+const COMPONENT_NAMES = [
+  "accordion",
+  "alert-dialog",
+  "alert",
+  "aspect-ratio",
+  "avatar",
+  "badge",
+  "breadcrumb",
+  "button",
+  "calendar",
+  "card",
+  "checkbox",
+  "collapsible",
+  "context-menu",
+  "dialog",
+  "drawer",
+  "dropdown-menu",
+  "hover-card",
+  "input-otp",
+  "input",
+  "label",
+  "menubar",
+  "navigation-menu",
+  "popover",
+  "progress",
+  "radio-group",
+  "resizable",
+  "scroll-area",
+  "select",
+  "separator",
+  "sheet",
+  "skeleton",
+  "slider",
+  "sonner",
+  "switch",
+  "table",
+  "tabs",
+  "textarea",
+  "toast",
+  "toaster",
+  "toggle",
+  "tooltip",
+] as const;
+
 export interface CodeFileRegistry {
   globals_css: (theme: ThemeConfiguration) => string;
   auth_ts: (plugins: Plugin[]) => string;
@@ -123,6 +167,14 @@ const generateThemeCSS = (theme: ThemeConfiguration): string => {
 }`;
 };
 
+const getPluginImportStatement = (pluginName: string): string => {
+  return `import { ${pluginName} } from "better-auth/plugins";`;
+};
+
+const getPluginConfig = (pluginName: string): string => {
+  return `${pluginName}()`;
+};
+
 const generateAuthFile = (plugins: Plugin[]): string => {
   const enabledPlugins = plugins.filter(p => p.enabled && p.file === "auth");
 
@@ -143,8 +195,8 @@ export const auth = betterAuth({
 });`;
   }
 
-  const pluginImports = enabledPlugins.map(p => p.importStatement).join('\n');
-  const pluginConfigs = enabledPlugins.map(p => p.config).join(',\n    ');
+  const pluginImports = enabledPlugins.map(p => getPluginImportStatement(p.name)).join('\n');
+  const pluginConfigs = enabledPlugins.map(p => getPluginConfig(p.name)).join(',\n    ');
 
   return `import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -174,8 +226,8 @@ export const authClient = createAuthClient({
 });`;
   }
 
-  const pluginImports = enabledPlugins.map(p => p.importStatement).join('\n');
-  const pluginConfigs = enabledPlugins.map(p => p.config).join(',\n    ');
+  const pluginImports = enabledPlugins.map(p => getPluginImportStatement(p.name)).join('\n');
+  const pluginConfigs = enabledPlugins.map(p => getPluginConfig(p.name)).join(',\n    ');
 
   return `import { createAuthClient } from "better-auth/react";
 ${pluginImports}
@@ -303,6 +355,44 @@ export const codeFileGenerators: CodeFileRegistry = {
   prisma_schema: generatePrismaSchema,
   prisma_rls_ts: generatePrismaRLSFile,
   supabase_migration_sql: generateSupabaseMigration,
+};
+
+const generateComponentContent = (componentName: string): string => {
+  return `import * as React from "react";
+import { cn } from "@/lib/utils";
+
+export const ${componentName.charAt(0).toUpperCase() + componentName.slice(1).replace(/-./g, x => x[1].toUpperCase())} = () => {
+  return null;
+};`;
+};
+
+const createComponentFileNodes = (): CodeFileNode[] => {
+  const nodes: CodeFileNode[] = [];
+
+  COMPONENT_NAMES.forEach((componentName) => {
+    const fileName = `${componentName}.tsx`;
+
+    nodes.push({
+      id: `code-file-component-${componentName}`,
+      name: fileName,
+      displayName: fileName,
+      type: "code-file",
+      path: `components.ui.${componentName}`,
+      urlPath: `/components/ui/${componentName}`,
+      include: true,
+      fileExtension: "tsx",
+      language: "typescript",
+      content: () => {
+        return "";
+      },
+      includeCondition: () => true,
+      parentPath: "components.ui",
+      downloadPath: "components/ui",
+      previewOnly: true,
+    });
+  });
+
+  return nodes;
 };
 
 export const createCodeFileNodes = (
@@ -434,5 +524,7 @@ export const createCodeFileNodes = (
     });
   }
 
-  return nodes.filter(node => node.includeCondition());
+  const componentNodes = createComponentFileNodes();
+
+  return [...nodes.filter(node => node.includeCondition()), ...componentNodes];
 };
