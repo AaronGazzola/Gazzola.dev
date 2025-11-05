@@ -6,7 +6,6 @@ import Sidebar from "@/app/(components)/Sidebar";
 import Stars from "@/app/(components)/Stars";
 import { conditionalLog } from "@/lib/log.util";
 import { cn } from "@/lib/tailwind.utils";
-import Footer from "./Footer";
 import { useEditorStore } from "./layout.stores";
 
 import { ReactNode, Suspense, useEffect } from "react";
@@ -37,9 +36,6 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         <Sidebar />
         <div className="w-full flex flex-col h-full">
           <main className="w-full flex-1 bg-black min-h-0">{children}</main>
-          <Suspense fallback={null}>
-            <Footer />
-          </Suspense>
         </div>
       </div>
       <Stars />
