@@ -363,7 +363,8 @@ export const useEditorStore = create<EditorState>()(
           themeStore.theme,
           databaseStore.plugins,
           databaseStore.tables,
-          databaseStore.rlsPolicies
+          databaseStore.rlsPolicies,
+          state.isPageVisited
         );
 
         conditionalLog(
@@ -380,11 +381,33 @@ export const useEditorStore = create<EditorState>()(
       setDarkMode: (darkMode) => set({ darkMode }),
       setPreviewMode: (previewMode: boolean) => set({ previewMode }),
       markPageVisited: (path) =>
-        set((state) => ({
-          visitedPages: state.visitedPages.includes(path)
+        set((state) => {
+          console.log('[VISITED] Marking page as visited:', path);
+          console.log('[VISITED] Current visitedPages:', state.visitedPages);
+          const newVisitedPages = state.visitedPages.includes(path)
             ? state.visitedPages
-            : [...state.visitedPages, path],
-        })),
+            : [...state.visitedPages, path];
+          console.log('[VISITED] New visitedPages:', newVisitedPages);
+
+          if (path === "start-here.next-steps" && !state.visitedPages.includes(path)) {
+            const themeStore = useThemeStore.getState();
+            const databaseStore = useDatabaseStore.getState();
+
+            const codeFiles = createCodeFileNodes(
+              state.initialConfiguration,
+              themeStore.theme,
+              databaseStore.plugins,
+              databaseStore.tables,
+              databaseStore.rlsPolicies,
+              (checkPath: string) => newVisitedPages.includes(checkPath)
+            );
+
+            console.log('[VISITED] Regenerating code files after visiting next steps');
+            return { visitedPages: newVisitedPages, codeFiles };
+          }
+
+          return { visitedPages: newVisitedPages };
+        }),
       isPageVisited: (path) => {
         const state = get();
         return state.visitedPages.includes(path);
@@ -1367,7 +1390,8 @@ export const useEditorStore = create<EditorState>()(
               themeStore.theme,
               databaseStore.plugins,
               databaseStore.tables,
-              databaseStore.rlsPolicies
+              databaseStore.rlsPolicies,
+              state.isPageVisited
             );
 
             conditionalLog(

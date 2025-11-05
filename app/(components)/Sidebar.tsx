@@ -22,17 +22,49 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { generateAndDownloadZip } from "@/lib/download.utils";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
-import { ChevronDown, ChevronRight, Download, Info, Menu } from "lucide-react";
+import { ChevronDown, ChevronRight, Download, Info, Menu, Folder, FolderOpen, FileText, BookOpen, Bot, Sparkles, Boxes, Palette, LayoutGrid, Database, ListChecks, Rocket, Code2, Shield, UserCircle, ShieldCheck, FileCode, Box } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { conditionalLog } from "@/lib/log.util";
 import type { CodeFileNode } from "@/app/(editor)/layout.types";
+import type { LucideIcon } from "lucide-react";
+
+const FILE_ICON_MAP: Record<string, LucideIcon> = {
+  'readme': BookOpen,
+  'robots': Bot,
+  'claude': Sparkles,
+  'start-here.tech-stack': Boxes,
+  'start-here.theme': Palette,
+  'start-here.layout-routes': LayoutGrid,
+  'start-here.database': Database,
+  'start-here.next-steps': ListChecks,
+  'docs.deployment-instructions': Rocket,
+  'docs.util': Code2,
+  'app.globals': Palette,
+  'lib.auth': Shield,
+  'lib.auth-client': UserCircle,
+  'prisma.schema': Database,
+  'lib.prisma-rls': ShieldCheck,
+  'supabase.migrations.rls-policies': FileCode,
+};
+
+const getFileIconByPath = (path: string): LucideIcon => {
+  if (FILE_ICON_MAP[path]) {
+    return FILE_ICON_MAP[path];
+  }
+
+  if (path.startsWith('components.ui.')) {
+    return Box;
+  }
+
+  return FileText;
+};
 
 const generateNavigationFromMarkdownData = (
   nodes: MarkdownNode[],
@@ -282,6 +314,9 @@ const TreeItem: React.FC<TreeItemProps> = ({
         return null;
       }
     } else if (node?.type === "code-file") {
+      if (node.visibleAfterPage && !isPageVisited(node.visibleAfterPage)) {
+        return null;
+      }
     }
 
     const isActive = currentPath === item.path;
@@ -315,6 +350,21 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
   if (itemNode?.type === "directory" && itemNode.visibleAfterPage && !hasRequiredPageVisit) {
     return null;
+  }
+
+  const childCodeFiles = item.children
+    ?.filter((child) => child.include !== false && child.path)
+    .map((child) => codeFiles.find(cf => cf.path === child.path))
+    .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
+
+  const hasCodeFilesWithVisibilityRequirement = childCodeFiles.length > 0 &&
+    childCodeFiles.every(cf => cf.visibleAfterPage);
+
+  if (hasCodeFilesWithVisibilityRequirement) {
+    const requiredPage = childCodeFiles[0]?.visibleAfterPage;
+    if (requiredPage && !isPageVisited(requiredPage)) {
+      return null;
+    }
   }
 
   const hasVisitedChildren = item.children
@@ -370,10 +420,219 @@ const TreeItem: React.FC<TreeItemProps> = ({
   );
 };
 
+interface IconTreeItemProps {
+  item: NavigationItem;
+  level: number;
+  expandedItems: Set<string>;
+  onToggleExpansion: (itemPath: string) => void;
+  isPageVisited: (path: string) => boolean;
+  currentPath: string;
+  data: any;
+  codeFiles: CodeFileNode[];
+}
+
+const IconTreeItem: React.FC<IconTreeItemProps> = ({
+  item,
+  level,
+  expandedItems,
+  onToggleExpansion,
+  isPageVisited,
+  currentPath,
+  data,
+  codeFiles,
+}) => {
+  const itemPath = item.path || item.name;
+  const isOpen = expandedItems.has(itemPath);
+
+  const getNode = (path: string) => {
+    return data.flatIndex[path] || codeFiles.find(cf => cf.path === path);
+  };
+
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+  const getBackgroundStyle = () => {
+    if (gradientEnabled) {
+      return {
+        background: `linear-gradient(to right, ${gradientColors.join(", ")})`,
+      };
+    }
+    return {
+      background: singleColor,
+    };
+  };
+
+  const buildLinkPath = () => {
+    const node = getNode(itemPath);
+    if (node && (node.type === "file" || node.type === "code-file")) {
+      return node.urlPath;
+    } else if (node && node.type === "directory") {
+      return node.urlPath;
+    }
+    return "/";
+  };
+
+  if (item.type === "page") {
+    const node = getNode(item.path || "");
+
+    if (!item.path) {
+      return null;
+    }
+
+    if (node?.type === "file" && node.visibleAfterPage) {
+      const hasVisitedRequiredPage = isPageVisited(node.visibleAfterPage);
+      const isPageIncluded = node.include === true;
+      if (!hasVisitedRequiredPage || !isPageIncluded) {
+        return null;
+      }
+    } else if (node?.type === "file" && !node.previewOnly) {
+      if (!isPageVisited(item.path)) {
+        return null;
+      }
+    } else if (node?.type === "code-file") {
+      if (node.visibleAfterPage && !isPageVisited(node.visibleAfterPage)) {
+        return null;
+      }
+    }
+
+    const isActive = currentPath === item.path;
+    const FileIcon = getFileIconByPath(item.path || "");
+
+    return (
+      <>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href={buildLinkPath()}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "w-full h-10 text-white hover:bg-gray-800 relative flex items-center justify-center"
+                )}
+              >
+                <div
+                  className="absolute opacity-30 inset-0 rounded"
+                  style={isActive ? getBackgroundStyle() : undefined}
+                ></div>
+                <FileIcon className="h-5 w-5" />
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right" className="bg-gray-900 text-white border-gray-700">
+            {item.name}
+          </TooltipContent>
+        </Tooltip>
+        {item.children && item.children.length > 0 && isOpen && (
+          <>
+            {item.children
+              ?.filter((child) => child.include !== false)
+              .map((child, index) => (
+                <IconTreeItem
+                  key={index}
+                  item={child}
+                  level={level + 1}
+                  expandedItems={expandedItems}
+                  onToggleExpansion={onToggleExpansion}
+                  isPageVisited={isPageVisited}
+                  currentPath={currentPath}
+                  data={data}
+                  codeFiles={codeFiles}
+                />
+              ))}
+          </>
+        )}
+      </>
+    );
+  }
+
+  const itemNode = getNode(itemPath);
+
+  const hasRequiredPageVisit = itemNode?.type === "directory" && itemNode.visibleAfterPage
+    ? isPageVisited(itemNode.visibleAfterPage)
+    : false;
+
+  if (itemNode?.type === "directory" && itemNode.visibleAfterPage && !hasRequiredPageVisit) {
+    return null;
+  }
+
+  const childCodeFiles = item.children
+    ?.filter((child) => child.include !== false && child.path)
+    .map((child) => codeFiles.find(cf => cf.path === child.path))
+    .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
+
+  const hasCodeFilesWithVisibilityRequirement = childCodeFiles.length > 0 &&
+    childCodeFiles.every(cf => cf.visibleAfterPage);
+
+  if (hasCodeFilesWithVisibilityRequirement) {
+    const requiredPage = childCodeFiles[0]?.visibleAfterPage;
+    if (requiredPage && !isPageVisited(requiredPage)) {
+      return null;
+    }
+  }
+
+  const hasVisitedChildren = item.children
+    ?.filter((child) => child.include !== false)
+    .some((child) => {
+      if (child.type === "page" && child.path) {
+        return isPageVisited(child.path);
+      }
+      return false;
+    });
+
+  const hasPreviewDescendants = hasPreviewOnlyDescendants(item, data.flatIndex, codeFiles);
+
+  if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
+    return null;
+  }
+
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-full h-10 text-white hover:bg-gray-800 flex items-center justify-center"
+            onClick={() => onToggleExpansion(itemPath)}
+          >
+            {isOpen ? (
+              <FolderOpen className="h-5 w-5" />
+            ) : (
+              <Folder className="h-5 w-5" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="bg-gray-900 text-white border-gray-700">
+          {item.name}
+        </TooltipContent>
+      </Tooltip>
+      {isOpen && (
+        <>
+          {item.children
+            ?.filter((child) => child.include !== false)
+            .map((child, index) => (
+              <IconTreeItem
+                key={index}
+                item={child}
+                level={level + 1}
+                expandedItems={expandedItems}
+                onToggleExpansion={onToggleExpansion}
+                isPageVisited={isPageVisited}
+                currentPath={currentPath}
+                data={data}
+                codeFiles={codeFiles}
+              />
+            ))}
+        </>
+      )}
+    </>
+  );
+};
+
 const Sidebar = () => {
   const { toggleSidebar } = useSidebar();
   const {
     isPageVisited,
+    visitedPages,
     data,
     codeFiles,
     appStructure,
@@ -617,8 +876,8 @@ const Sidebar = () => {
   );
 
   const collapsedContent = (
-    <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0">
-      <SidebarHeader className="border-b border-gray-700">
+    <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
+      <SidebarHeader className="border-b border-gray-700 flex items-center justify-center p-2">
         <Button
           variant="ghost"
           size="icon"
@@ -630,6 +889,23 @@ const Sidebar = () => {
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
       </SidebarHeader>
+      <div className="flex-grow overflow-auto py-2">
+        {navigationData
+          .filter((item) => item.include !== false)
+          .map((item, index) => (
+            <IconTreeItem
+              key={index}
+              item={item}
+              level={0}
+              expandedItems={expandedItems}
+              onToggleExpansion={handleToggleExpansion}
+              isPageVisited={isPageVisited}
+              currentPath={currentPath}
+              data={data}
+              codeFiles={codeFiles}
+            />
+          ))}
+      </div>
     </SidebarContent>
   );
 

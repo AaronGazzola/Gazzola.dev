@@ -51,6 +51,7 @@ export interface CodeFileNode extends BaseNode {
   content: () => string;
   language: string;
   includeCondition: () => boolean;
+  visibleAfterPage?: string;
   parentPath?: string;
   downloadPath?: string;
 }
@@ -275,6 +276,7 @@ export interface NavigationItem {
   order?: number;
   path?: string;
   include?: boolean;
+  icon?: string;
   children?: NavigationItem[];
 }
 

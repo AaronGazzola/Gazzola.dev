@@ -314,7 +314,7 @@ export const codeFileGenerators: CodeFileRegistry = {
   supabase_migration_sql: generateSupabaseMigration,
 };
 
-const createComponentFileNodes = (): CodeFileNode[] => {
+const createComponentFileNodes = (shouldShowCodeFiles: boolean): CodeFileNode[] => {
   const nodes: CodeFileNode[] = [];
 
   Object.entries(componentFileContents).forEach(([componentName, content]) => {
@@ -327,11 +327,12 @@ const createComponentFileNodes = (): CodeFileNode[] => {
       type: "code-file",
       path: `components.ui.${componentName}`,
       urlPath: `/components/ui/${componentName}`,
-      include: true,
+      include: shouldShowCodeFiles,
       fileExtension: "tsx",
       language: "typescript",
       content: () => content,
-      includeCondition: () => true,
+      includeCondition: () => shouldShowCodeFiles,
+      visibleAfterPage: "start-here.next-steps",
       parentPath: "components.ui",
       downloadPath: "components/ui",
       previewOnly: true,
@@ -346,9 +347,11 @@ export const createCodeFileNodes = (
   theme: ThemeConfiguration,
   plugins: Plugin[],
   tables: PrismaTable[],
-  rlsPolicies: RLSPolicy[]
+  rlsPolicies: RLSPolicy[],
+  isPageVisited?: (path: string) => boolean
 ): CodeFileNode[] => {
   const nodes: CodeFileNode[] = [];
+  const shouldShowCodeFiles = isPageVisited?.("start-here.next-steps") ?? false;
 
   nodes.push({
     id: "code-file-globals-css",
@@ -357,11 +360,12 @@ export const createCodeFileNodes = (
     type: "code-file",
     path: "app.globals",
     urlPath: "/app/globals",
-    include: true,
+    include: shouldShowCodeFiles,
     fileExtension: "css",
     language: "css",
     content: () => codeFileGenerators.globals_css(theme),
-    includeCondition: () => true,
+    includeCondition: () => shouldShowCodeFiles,
+    visibleAfterPage: "start-here.next-steps",
     parentPath: "app",
     downloadPath: "app",
     previewOnly: true,
@@ -378,11 +382,12 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "lib.auth",
       urlPath: "/lib/auth",
-      include: true,
+      include: shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.auth_ts(plugins),
-      includeCondition: () => initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -395,11 +400,12 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "lib.auth-client",
       urlPath: "/lib/auth-client",
-      include: true,
+      include: shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.auth_client_ts(plugins),
-      includeCondition: () => initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -415,11 +421,12 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "prisma.schema",
       urlPath: "/prisma/schema",
-      include: true,
+      include: shouldShowCodeFiles && initialConfig.technologies.prisma,
       fileExtension: "prisma",
       language: "prisma",
       content: () => codeFileGenerators.prisma_schema(tables),
-      includeCondition: () => initialConfig.technologies.prisma,
+      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma,
+      visibleAfterPage: "start-here.next-steps",
       parentPath: "prisma",
       downloadPath: "prisma",
       previewOnly: true,
@@ -435,11 +442,12 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "lib.prisma-rls",
       urlPath: "/lib/prisma-rls",
-      include: true,
+      include: shouldShowCodeFiles && initialConfig.technologies.prisma && rlsPolicies.length > 0,
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.prisma_rls_ts(rlsPolicies, tables),
-      includeCondition: () => initialConfig.technologies.prisma && rlsPolicies.length > 0,
+      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma && rlsPolicies.length > 0,
+      visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -456,21 +464,26 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "supabase.migrations.rls-policies",
       urlPath: "/supabase/migrations/rls-policies",
-      include: true,
+      include: shouldShowCodeFiles &&
+        (initialConfig.questions.useSupabase === "withBetterAuth" ||
+         initialConfig.questions.useSupabase === "authOnly") &&
+        rlsPolicies.length > 0,
       fileExtension: "sql",
       language: "sql",
       content: () => codeFileGenerators.supabase_migration_sql(rlsPolicies, tables),
       includeCondition: () =>
+        shouldShowCodeFiles &&
         (initialConfig.questions.useSupabase === "withBetterAuth" ||
          initialConfig.questions.useSupabase === "authOnly") &&
         rlsPolicies.length > 0,
+      visibleAfterPage: "start-here.next-steps",
       parentPath: "supabase.migrations",
       downloadPath: "supabase/migrations",
       previewOnly: true,
     });
   }
 
-  const componentNodes = createComponentFileNodes();
+  const componentNodes = createComponentFileNodes(shouldShowCodeFiles);
 
   return [...nodes.filter(node => node.includeCondition()), ...componentNodes];
 };
