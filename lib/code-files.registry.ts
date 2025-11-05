@@ -1,50 +1,7 @@
 import type { CodeFileNode, InitialConfigurationType } from "@/app/(editor)/layout.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
 import type { PrismaTable, RLSPolicy, Plugin } from "@/app/(components)/DatabaseConfiguration.types";
-
-const COMPONENT_NAMES = [
-  "accordion",
-  "alert-dialog",
-  "alert",
-  "aspect-ratio",
-  "avatar",
-  "badge",
-  "breadcrumb",
-  "button",
-  "calendar",
-  "card",
-  "checkbox",
-  "collapsible",
-  "context-menu",
-  "dialog",
-  "drawer",
-  "dropdown-menu",
-  "hover-card",
-  "input-otp",
-  "input",
-  "label",
-  "menubar",
-  "navigation-menu",
-  "popover",
-  "progress",
-  "radio-group",
-  "resizable",
-  "scroll-area",
-  "select",
-  "separator",
-  "sheet",
-  "skeleton",
-  "slider",
-  "sonner",
-  "switch",
-  "table",
-  "tabs",
-  "textarea",
-  "toast",
-  "toaster",
-  "toggle",
-  "tooltip",
-] as const;
+import { componentFileContents } from "./component-files.generated";
 
 export interface CodeFileRegistry {
   globals_css: (theme: ThemeConfiguration) => string;
@@ -357,19 +314,10 @@ export const codeFileGenerators: CodeFileRegistry = {
   supabase_migration_sql: generateSupabaseMigration,
 };
 
-const generateComponentContent = (componentName: string): string => {
-  return `import * as React from "react";
-import { cn } from "@/lib/utils";
-
-export const ${componentName.charAt(0).toUpperCase() + componentName.slice(1).replace(/-./g, x => x[1].toUpperCase())} = () => {
-  return null;
-};`;
-};
-
 const createComponentFileNodes = (): CodeFileNode[] => {
   const nodes: CodeFileNode[] = [];
 
-  COMPONENT_NAMES.forEach((componentName) => {
+  Object.entries(componentFileContents).forEach(([componentName, content]) => {
     const fileName = `${componentName}.tsx`;
 
     nodes.push({
@@ -382,9 +330,7 @@ const createComponentFileNodes = (): CodeFileNode[] => {
       include: true,
       fileExtension: "tsx",
       language: "typescript",
-      content: () => {
-        return "";
-      },
+      content: () => content,
       includeCondition: () => true,
       parentPath: "components.ui",
       downloadPath: "components/ui",
