@@ -1,5 +1,6 @@
 "use client";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
+import type { CodeFileNode } from "@/app/(editor)/layout.types";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
 import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
@@ -22,36 +23,64 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { generateAndDownloadZip } from "@/lib/download.utils";
+import { conditionalLog } from "@/lib/log.util";
 import { cn } from "@/lib/tailwind.utils";
 import { DataCyAttributes } from "@/types/cypress.types";
-import { ChevronDown, ChevronRight, Download, Info, Menu, Folder, FolderOpen, FileText, BookOpen, Bot, Sparkles, Boxes, Palette, LayoutGrid, Database, ListChecks, Rocket, Code2, Shield, UserCircle, ShieldCheck, FileCode, Box } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import {
+  BookOpen,
+  Bot,
+  Box,
+  Boxes,
+  ChevronDown,
+  ChevronRight,
+  Code2,
+  Database,
+  Download,
+  FileCode,
+  FileText,
+  Folder,
+  FolderOpen,
+  Info,
+  LayoutGrid,
+  ListChecks,
+  Menu,
+  Palette,
+  Rocket,
+  Shield,
+  ShieldCheck,
+  Sparkles,
+  UserCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { conditionalLog } from "@/lib/log.util";
-import type { CodeFileNode } from "@/app/(editor)/layout.types";
-import type { LucideIcon } from "lucide-react";
 
 const FILE_ICON_MAP: Record<string, LucideIcon> = {
-  'readme': BookOpen,
-  'robots': Bot,
-  'claude': Sparkles,
-  'start-here.tech-stack': Boxes,
-  'start-here.theme': Palette,
-  'start-here.layout-routes': LayoutGrid,
-  'start-here.database': Database,
-  'start-here.next-steps': ListChecks,
-  'docs.deployment-instructions': Rocket,
-  'docs.util': Code2,
-  'app.globals': Palette,
-  'lib.auth': Shield,
-  'lib.auth-client': UserCircle,
-  'prisma.schema': Database,
-  'lib.prisma-rls': ShieldCheck,
-  'supabase.migrations.rls-policies': FileCode,
+  readme: BookOpen,
+  robots: Bot,
+  claude: Sparkles,
+  "start-here.tech-stack": Boxes,
+  "start-here.theme": Palette,
+  "start-here.layout-routes": LayoutGrid,
+  "start-here.database": Database,
+  "start-here.next-steps": ListChecks,
+  "docs.deployment-instructions": Rocket,
+  "docs.util": Code2,
+  "app.globals": Palette,
+  "lib.auth": Shield,
+  "lib.auth-client": UserCircle,
+  "prisma.schema": Database,
+  "lib.prisma-rls": ShieldCheck,
+  "supabase.migrations.rls-policies": FileCode,
 };
 
 const getFileIconByPath = (path: string): LucideIcon => {
@@ -59,7 +88,7 @@ const getFileIconByPath = (path: string): LucideIcon => {
     return FILE_ICON_MAP[path];
   }
 
-  if (path.startsWith('components.ui.')) {
+  if (path.startsWith("components.ui.")) {
     return Box;
   }
 
@@ -78,7 +107,11 @@ const generateNavigationFromMarkdownData = (
       message: "Generating navigation",
       nodeCount: nodes.length,
       codeFileCount: codeFiles.length,
-      codeFilePaths: codeFiles.map(cf => ({ name: cf.name, path: cf.path, parentPath: cf.parentPath })),
+      codeFilePaths: codeFiles.map((cf) => ({
+        name: cf.name,
+        path: cf.path,
+        parentPath: cf.parentPath,
+      })),
     },
     { label: "code-files" }
   );
@@ -97,8 +130,11 @@ const generateNavigationFromMarkdownData = (
     if (!codeFile.parentPath) continue;
 
     const parentPath = codeFile.parentPath;
-    const pathExists = existingDirectoryPaths.has(parentPath) ||
-                      nodes.some(node => node.type === "directory" && node.path === parentPath);
+    const pathExists =
+      existingDirectoryPaths.has(parentPath) ||
+      nodes.some(
+        (node) => node.type === "directory" && node.path === parentPath
+      );
 
     if (!pathExists) {
       if (!missingDirectories.has(parentPath)) {
@@ -106,9 +142,9 @@ const generateNavigationFromMarkdownData = (
       }
       missingDirectories.get(parentPath)?.push(codeFile);
 
-      const pathParts = parentPath.split('.');
+      const pathParts = parentPath.split(".");
       for (let i = 1; i <= pathParts.length; i++) {
-        const ancestorPath = pathParts.slice(0, i).join('.');
+        const ancestorPath = pathParts.slice(0, i).join(".");
         if (!existingDirectoryPaths.has(ancestorPath)) {
           allRequiredPaths.add(ancestorPath);
         }
@@ -116,7 +152,7 @@ const generateNavigationFromMarkdownData = (
     }
   }
 
-  Array.from(allRequiredPaths).forEach(requiredPath => {
+  Array.from(allRequiredPaths).forEach((requiredPath) => {
     if (!missingDirectories.has(requiredPath)) {
       missingDirectories.set(requiredPath, []);
     }
@@ -125,8 +161,9 @@ const generateNavigationFromMarkdownData = (
   for (const node of nodes) {
     if (node.type === "directory") {
       const directoryCodeFiles = codeFiles.filter(
-        cf => cf.parentPath === node.path ||
-             (node.path === "" && cf.parentPath?.split('.')[0] === node.name)
+        (cf) =>
+          cf.parentPath === node.path ||
+          (node.path === "" && cf.parentPath?.split(".")[0] === node.name)
       );
 
       conditionalLog(
@@ -135,18 +172,20 @@ const generateNavigationFromMarkdownData = (
           dirName: node.name,
           dirPath: node.path,
           matchedCodeFiles: directoryCodeFiles.length,
-          directoryCodeFiles: directoryCodeFiles.map(cf => cf.name),
+          directoryCodeFiles: directoryCodeFiles.map((cf) => cf.name),
         },
         { label: "code-files" }
       );
 
-      const childCodeFileItems: NavigationItem[] = directoryCodeFiles.map(cf => ({
-        name: cf.displayName,
-        type: "page",
-        order: cf.order,
-        path: cf.path,
-        include: cf.include,
-      }));
+      const childCodeFileItems: NavigationItem[] = directoryCodeFiles.map(
+        (cf) => ({
+          name: cf.displayName,
+          type: "page",
+          order: cf.order,
+          path: cf.path,
+          include: cf.include,
+        })
+      );
 
       items.push({
         name: node.displayName,
@@ -155,8 +194,12 @@ const generateNavigationFromMarkdownData = (
         path: node.path,
         include: node.include,
         children: [
-          ...generateNavigationFromMarkdownData(node.children, codeFiles, false),
-          ...childCodeFileItems
+          ...generateNavigationFromMarkdownData(
+            node.children,
+            codeFiles,
+            false
+          ),
+          ...childCodeFileItems,
         ],
       });
     } else if (node.type === "file") {
@@ -171,20 +214,22 @@ const generateNavigationFromMarkdownData = (
   }
 
   if (isRootCall) {
-    const sortedMissingDirs = Array.from(missingDirectories.entries()).sort((a, b) => {
-      const aDepth = a[0].split('.').length;
-      const bDepth = b[0].split('.').length;
-      return aDepth - bDepth;
-    });
+    const sortedMissingDirs = Array.from(missingDirectories.entries()).sort(
+      (a, b) => {
+        const aDepth = a[0].split(".").length;
+        const bDepth = b[0].split(".").length;
+        return aDepth - bDepth;
+      }
+    );
 
     const createdDirs = new Map<string, NavigationItem>();
 
     for (const [parentPath, dirCodeFiles] of sortedMissingDirs) {
-      const pathParts = parentPath.split('.');
+      const pathParts = parentPath.split(".");
       const dirName = pathParts[pathParts.length - 1];
       const displayName = dirName.charAt(0).toUpperCase() + dirName.slice(1);
 
-      const childCodeFileItems: NavigationItem[] = dirCodeFiles.map(cf => ({
+      const childCodeFileItems: NavigationItem[] = dirCodeFiles.map((cf) => ({
         name: cf.displayName,
         type: "page",
         order: cf.order || 999,
@@ -206,8 +251,10 @@ const generateNavigationFromMarkdownData = (
       if (pathParts.length === 1) {
         items.push(dirItem);
       } else {
-        const parentPathStr = pathParts.slice(0, -1).join('.');
-        const parentDir = createdDirs.get(parentPathStr) || items.find(item => item.path === parentPathStr);
+        const parentPathStr = pathParts.slice(0, -1).join(".");
+        const parentDir =
+          createdDirs.get(parentPathStr) ||
+          items.find((item) => item.path === parentPathStr);
         if (parentDir) {
           if (!parentDir.children) {
             parentDir.children = [];
@@ -223,7 +270,6 @@ const generateNavigationFromMarkdownData = (
   return items;
 };
 
-
 const hasPreviewOnlyDescendants = (
   item: NavigationItem,
   flatIndex: Record<string, MarkdownNode>,
@@ -232,11 +278,16 @@ const hasPreviewOnlyDescendants = (
   if (!item.children) return false;
 
   for (const child of item.children.filter((c) => c.include !== false)) {
-    const childNode = flatIndex[child.path || ""] || codeFiles.find(cf => cf.path === (child.path || ""));
+    const childNode =
+      flatIndex[child.path || ""] ||
+      codeFiles.find((cf) => cf.path === (child.path || ""));
     if (childNode && (childNode as any).previewOnly === true) {
       return true;
     }
-    if (child.type === "segment" && hasPreviewOnlyDescendants(child, flatIndex, codeFiles)) {
+    if (
+      child.type === "segment" &&
+      hasPreviewOnlyDescendants(child, flatIndex, codeFiles)
+    ) {
       return true;
     }
   }
@@ -270,7 +321,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
   const isOpen = expandedItems.has(itemPath);
 
   const getNode = (path: string) => {
-    return data.flatIndex[path] || codeFiles.find(cf => cf.path === path);
+    return data.flatIndex[path] || codeFiles.find((cf) => cf.path === path);
   };
 
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
@@ -344,21 +395,28 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
   const itemNode = getNode(itemPath);
 
-  const hasRequiredPageVisit = itemNode?.type === "directory" && itemNode.visibleAfterPage
-    ? isPageVisited(itemNode.visibleAfterPage)
-    : false;
+  const hasRequiredPageVisit =
+    itemNode?.type === "directory" && itemNode.visibleAfterPage
+      ? isPageVisited(itemNode.visibleAfterPage)
+      : false;
 
-  if (itemNode?.type === "directory" && itemNode.visibleAfterPage && !hasRequiredPageVisit) {
+  if (
+    itemNode?.type === "directory" &&
+    itemNode.visibleAfterPage &&
+    !hasRequiredPageVisit
+  ) {
     return null;
   }
 
-  const childCodeFiles = item.children
-    ?.filter((child) => child.include !== false && child.path)
-    .map((child) => codeFiles.find(cf => cf.path === child.path))
-    .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
+  const childCodeFiles =
+    item.children
+      ?.filter((child) => child.include !== false && child.path)
+      .map((child) => codeFiles.find((cf) => cf.path === child.path))
+      .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
 
-  const hasCodeFilesWithVisibilityRequirement = childCodeFiles.length > 0 &&
-    childCodeFiles.every(cf => cf.visibleAfterPage);
+  const hasCodeFilesWithVisibilityRequirement =
+    childCodeFiles.length > 0 &&
+    childCodeFiles.every((cf) => cf.visibleAfterPage);
 
   if (hasCodeFilesWithVisibilityRequirement) {
     const requiredPage = childCodeFiles[0]?.visibleAfterPage;
@@ -376,7 +434,11 @@ const TreeItem: React.FC<TreeItemProps> = ({
       return false;
     });
 
-  const hasPreviewDescendants = hasPreviewOnlyDescendants(item, data.flatIndex, codeFiles);
+  const hasPreviewDescendants = hasPreviewOnlyDescendants(
+    item,
+    data.flatIndex,
+    codeFiles
+  );
 
   if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
     return null;
@@ -445,7 +507,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
   const isOpen = expandedItems.has(itemPath);
 
   const getNode = (path: string) => {
-    return data.flatIndex[path] || codeFiles.find(cf => cf.path === path);
+    return data.flatIndex[path] || codeFiles.find((cf) => cf.path === path);
   };
 
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
@@ -517,7 +579,10 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
               </Button>
             </Link>
           </TooltipTrigger>
-          <TooltipContent side="right" className="bg-gray-900 text-white border-gray-700">
+          <TooltipContent
+            side="right"
+            className="bg-gray-900 text-white border-gray-700"
+          >
             {item.name}
           </TooltipContent>
         </Tooltip>
@@ -546,21 +611,28 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
 
   const itemNode = getNode(itemPath);
 
-  const hasRequiredPageVisit = itemNode?.type === "directory" && itemNode.visibleAfterPage
-    ? isPageVisited(itemNode.visibleAfterPage)
-    : false;
+  const hasRequiredPageVisit =
+    itemNode?.type === "directory" && itemNode.visibleAfterPage
+      ? isPageVisited(itemNode.visibleAfterPage)
+      : false;
 
-  if (itemNode?.type === "directory" && itemNode.visibleAfterPage && !hasRequiredPageVisit) {
+  if (
+    itemNode?.type === "directory" &&
+    itemNode.visibleAfterPage &&
+    !hasRequiredPageVisit
+  ) {
     return null;
   }
 
-  const childCodeFiles = item.children
-    ?.filter((child) => child.include !== false && child.path)
-    .map((child) => codeFiles.find(cf => cf.path === child.path))
-    .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
+  const childCodeFiles =
+    item.children
+      ?.filter((child) => child.include !== false && child.path)
+      .map((child) => codeFiles.find((cf) => cf.path === child.path))
+      .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
 
-  const hasCodeFilesWithVisibilityRequirement = childCodeFiles.length > 0 &&
-    childCodeFiles.every(cf => cf.visibleAfterPage);
+  const hasCodeFilesWithVisibilityRequirement =
+    childCodeFiles.length > 0 &&
+    childCodeFiles.every((cf) => cf.visibleAfterPage);
 
   if (hasCodeFilesWithVisibilityRequirement) {
     const requiredPage = childCodeFiles[0]?.visibleAfterPage;
@@ -578,7 +650,11 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
       return false;
     });
 
-  const hasPreviewDescendants = hasPreviewOnlyDescendants(item, data.flatIndex, codeFiles);
+  const hasPreviewDescendants = hasPreviewOnlyDescendants(
+    item,
+    data.flatIndex,
+    codeFiles
+  );
 
   if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
     return null;
@@ -601,7 +677,10 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="right" className="bg-gray-900 text-white border-gray-700">
+        <TooltipContent
+          side="right"
+          className="bg-gray-900 text-white border-gray-700"
+        >
           {item.name}
         </TooltipContent>
       </Tooltip>
@@ -664,7 +743,13 @@ const Sidebar = () => {
 
     const getFirstPagePath = () => {
       const pages = Object.values(data.flatIndex)
-        .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
+        .filter(
+          (node) =>
+            node.type === "file" &&
+            node.include !== false &&
+            !(node as any).previewOnly &&
+            !(node as any).visibleAfterPage
+        )
         .sort((a, b) => (a.order || 0) - (b.order || 0));
       return pages.length > 0 ? pages[0].path : "";
     };
@@ -776,11 +861,7 @@ const Sidebar = () => {
               </Button>
             </div>
             <p className="text-sm text-white font-medium mt-1">
-              A platform for generating full-stack{" "}
-              <span className="md:hidden block">
-                Next.js + TypeScript + PostgreSQL
-              </span>{" "}
-              web app roadmaps
+              Design, Build, Review.
             </p>
           </div>
         </div>
