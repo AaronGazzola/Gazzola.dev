@@ -1,7 +1,7 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import * as React from "react";
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
   "relative w-full border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7 radius shadow font-sans tracking",
@@ -17,7 +17,7 @@ const alertVariants = cva(
       variant: "default",
     },
   }
-);
+)
 
 const Alert = React.forwardRef<
   HTMLDivElement,
@@ -31,8 +31,8 @@ const Alert = React.forwardRef<
       {...props}
     />
   );
-});
-Alert.displayName = "Alert";
+})
+Alert.displayName = "Alert"
 
 const AlertTitle = React.forwardRef<
   HTMLParagraphElement,
@@ -40,14 +40,11 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn(
-      "mb-1 font-medium leading-none tracking-tight font-sans tracking",
-      className
-    )}
+    className={cn("mb-1 font-medium leading-none tracking-tight font-sans tracking", className)}
     {...props}
   />
-));
-AlertTitle.displayName = "AlertTitle";
+))
+AlertTitle.displayName = "AlertTitle"
 
 const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
@@ -55,13 +52,10 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "text-sm [&_p]:leading-relaxed font-sans tracking",
-      className
-    )}
+    className={cn("text-sm [&_p]:leading-relaxed font-sans tracking", className)}
     {...props}
   />
-));
-AlertDescription.displayName = "AlertDescription";
+))
+AlertDescription.displayName = "AlertDescription"
 
-export { Alert, AlertDescription, AlertTitle };
+export { Alert, AlertTitle, AlertDescription }

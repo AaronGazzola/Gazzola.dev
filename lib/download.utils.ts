@@ -3,9 +3,9 @@ import {
   InitialConfigurationType,
   MarkdownData,
   MarkdownNode,
+  CodeFileNode,
 } from "@/app/(editor)/layout.types";
 import JSZip from "jszip";
-import { generateCodeFiles } from "@/lib/code-generation.utils";
 
 type RouteEntry = {
   path: string;
@@ -759,6 +759,201 @@ export const processContent = (
     (_, sectionNum) => {
       const sectionId = `section${sectionNum}`;
       const options = getSectionOptions(filePath, sectionId);
+      const config = getInitialConfiguration();
+
+      const isCLAUDEFile = filePath.includes("claude") || filePath.includes("CLAUDE");
+      const isUtilFile = filePath.includes("util");
+      const isREADMEFile = filePath.includes("README") || filePath.includes("6-README");
+
+      if (isCLAUDEFile) {
+        let filteredOptions = Object.entries(options).filter(([, option]) => option.include);
+
+        if (sectionId === "section1") {
+          const techMap: Record<string, keyof InitialConfigurationType["technologies"]> = {
+            "option1": "nextjs",
+            "option2": "tailwindcss",
+            "option3": "shadcn",
+            "option4": "zustand",
+            "option5": "reactQuery",
+            "option6": "supabase",
+            "option7": "neondb",
+            "option8": "prisma",
+            "option9": "betterAuth",
+            "option10": "postgresql",
+            "option11": "vercel",
+            "option12": "railway",
+            "option13": "cypress",
+            "option14": "resend",
+            "option15": "stripe",
+            "option16": "paypal",
+            "option17": "openrouter",
+          };
+
+          filteredOptions = filteredOptions.filter(([optionId]) => {
+            const techKey = techMap[optionId];
+            return techKey && config.technologies[techKey];
+          });
+        }
+
+        if (sectionId === "section3") {
+          if (config.questions.useSupabase === "none") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option1");
+          } else if (config.questions.useSupabase === "no") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option2");
+          } else if (config.questions.useSupabase === "withBetterAuth") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option3");
+          } else if (config.questions.useSupabase === "authOnly") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option4");
+          }
+        }
+
+        if (sectionId === "section4") {
+          if (config.technologies.cypress) {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option2");
+          } else {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option1");
+          }
+        }
+
+        const includedContent = filteredOptions
+          .map(([, option]) => option.content)
+          .join("\n\n");
+
+        return includedContent;
+      }
+
+      if (isUtilFile) {
+        let filteredOptions = Object.entries(options).filter(([, option]) => option.include);
+
+        if (sectionId === "section1") {
+          if (config.questions.useSupabase === "none") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option1");
+          } else {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option2");
+          }
+        }
+
+        if (sectionId === "section3") {
+          if (config.questions.useSupabase === "none") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option1");
+          } else if (config.questions.useSupabase === "no") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option2");
+          } else if (config.questions.useSupabase === "withBetterAuth") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option3");
+          } else if (config.questions.useSupabase === "authOnly") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option4");
+          }
+        }
+
+        if (sectionId === "section4") {
+          if (config.questions.useSupabase === "none") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option1");
+          } else if (config.questions.useSupabase === "no" || config.questions.useSupabase === "withBetterAuth") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option2");
+          } else if (config.questions.useSupabase === "authOnly") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option3");
+          }
+        }
+
+        if (sectionId === "section5") {
+          if (config.questions.useSupabase === "none") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option1");
+          } else if (config.questions.useSupabase === "no" || config.questions.useSupabase === "withBetterAuth") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option2");
+          } else if (config.questions.useSupabase === "authOnly") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option3");
+          }
+        }
+
+        const includedContent = filteredOptions
+          .map(([, option]) => option.content)
+          .join("\n\n");
+
+        return includedContent;
+      }
+
+      if (isREADMEFile) {
+        let filteredOptions = Object.entries(options).filter(([, option]) => option.include);
+
+        if (sectionId === "section2") {
+          const techMap: Record<string, keyof InitialConfigurationType["technologies"]> = {
+            "option1": "nextjs",
+            "option2": "tailwindcss",
+            "option3": "shadcn",
+            "option4": "typescript",
+            "option5": "zustand",
+            "option6": "reactQuery",
+            "option7": "supabase",
+            "option8": "neondb",
+            "option9": "prisma",
+            "option10": "betterAuth",
+            "option11": "postgresql",
+            "option12": "vercel",
+            "option13": "railway",
+            "option14": "playwright",
+            "option15": "cypress",
+            "option16": "resend",
+            "option17": "stripe",
+            "option18": "paypal",
+            "option19": "openrouter",
+          };
+
+          filteredOptions = filteredOptions.filter(([optionId]) => {
+            const techKey = techMap[optionId];
+            return techKey && config.technologies[techKey];
+          });
+        }
+
+        if (sectionId === "section3") {
+          if (config.questions.useSupabase === "none") {
+            filteredOptions = filteredOptions.filter(([optionId]) => optionId === "option1");
+          } else if (config.questions.useSupabase === "no") {
+            filteredOptions = filteredOptions.filter(([optionId]) => ["option1", "option2"].includes(optionId));
+          } else if (config.questions.useSupabase === "withBetterAuth") {
+            filteredOptions = filteredOptions.filter(([optionId]) => ["option1", "option3"].includes(optionId));
+          } else if (config.questions.useSupabase === "authOnly") {
+            filteredOptions = filteredOptions.filter(([optionId]) => ["option1", "option3"].includes(optionId));
+          }
+        }
+
+        if (sectionId === "section4") {
+          filteredOptions = filteredOptions.filter(([optionId]) => {
+            if (optionId === "option1") return true;
+            if (optionId === "option2" && config.questions.useSupabase === "no") return true;
+            if (optionId === "option3" && (config.questions.useSupabase === "withBetterAuth" || config.questions.useSupabase === "authOnly")) return true;
+            if (optionId === "option4" && config.technologies.betterAuth) return true;
+            if (optionId === "option5" && config.technologies.stripe) return true;
+            if (optionId === "option6" && config.technologies.paypal) return true;
+            if (optionId === "option7" && config.technologies.resend) return true;
+            if (optionId === "option8" && config.technologies.openrouter) return true;
+            return false;
+          });
+        }
+
+        if (sectionId === "section5") {
+          filteredOptions = filteredOptions.filter(([optionId]) => {
+            if (optionId === "option1") return true;
+            if (optionId === "option2" && config.technologies.playwright) return true;
+            if (optionId === "option3" && config.technologies.cypress) return true;
+            if (optionId === "option4" && config.technologies.prisma) return true;
+            return false;
+          });
+        }
+
+        if (sectionId === "section6") {
+          filteredOptions = filteredOptions.filter(([optionId]) => {
+            if (optionId === "option1" && config.technologies.vercel) return true;
+            if (optionId === "option2" && (config.technologies.railway || config.questions.useSupabase === "no")) return true;
+            return false;
+          });
+        }
+
+        const includedContent = filteredOptions
+          .map(([, option]) => option.content)
+          .join("\n\n");
+
+        return includedContent;
+      }
 
       const includedContent = Object.entries(options)
         .filter(([, option]) => option.include)
@@ -895,6 +1090,7 @@ const processNode = (
 
 export const generateAndDownloadZip = async (
   markdownData: MarkdownData,
+  codeFiles: CodeFileNode[],
   getSectionInclude: (
     filePath: string,
     sectionId: string,
@@ -932,29 +1128,24 @@ export const generateAndDownloadZip = async (
           getInitialConfiguration
         );
       });
-  }
 
-  try {
-    const codeFiles = generateCodeFiles();
+    codeFiles.forEach((codeFile) => {
+      if (!codeFile.includeCondition()) return;
 
-    if (codeFiles && codeFiles.length > 0) {
-      codeFiles.forEach((file) => {
-        const pathParts = file.path.split("/");
-        let currentFolder: JSZip | null = zip;
+      const pathParts = codeFile.downloadPath?.split("/") || [];
+      let currentFolder: JSZip | null = roadmapFolder;
 
-        for (let i = 0; i < pathParts.length - 1; i++) {
-          const folderName = pathParts[i];
-          currentFolder = currentFolder?.folder(folderName) || currentFolder;
-        }
-
-        const fileName = pathParts[pathParts.length - 1];
+      pathParts.forEach((part) => {
         if (currentFolder) {
-          currentFolder.file(fileName, file.content);
+          currentFolder = currentFolder.folder(part);
         }
       });
-    }
-  } catch (error) {
-    console.warn("Could not generate code files for download:", error);
+
+      if (currentFolder) {
+        const fileContent = codeFile.content();
+        currentFolder.file(codeFile.name, fileContent);
+      }
+    });
   }
 
   const blob = await zip.generateAsync({ type: "blob" });

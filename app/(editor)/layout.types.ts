@@ -1,4 +1,4 @@
-export type NodeType = "directory" | "file" | "segment" | "component";
+export type NodeType = "directory" | "file" | "segment" | "component" | "code-file";
 
 export interface BaseNode {
   id: string;
@@ -46,11 +46,23 @@ export interface SegmentNode extends BaseNode {
   options?: Record<string, SectionOption>;
 }
 
+export interface CodeFileNode extends BaseNode {
+  type: "code-file";
+  content: () => string;
+  language: string;
+  includeCondition: () => boolean;
+  visibleAfterPage?: string;
+  parentPath?: string;
+  downloadPath?: string;
+}
+
 export type MarkdownNode =
   | DirectoryNode
   | FileNode
   | ComponentRef
   | SegmentNode;
+
+export type NavigationNode = MarkdownNode | CodeFileNode;
 
 export interface MarkdownData {
   root: DirectoryNode;
@@ -131,6 +143,7 @@ export interface InitialConfigurationType {
 export interface EditorState {
   version: number;
   data: MarkdownData;
+  codeFiles: CodeFileNode[];
   darkMode: boolean;
   previewMode: boolean;
   refreshKey: number;
@@ -142,6 +155,8 @@ export interface EditorState {
   updateContent: (path: string, content: string) => void;
   setContent: (path: string, content: string) => void;
   getNode: (path: string) => MarkdownNode | null;
+  getCodeFile: (path: string) => CodeFileNode | null;
+  generateCodeFiles: () => void;
   setDarkMode: (darkMode: boolean) => void;
   setPreviewMode: (previewMode: boolean) => void;
   markPageVisited: (path: string) => void;
@@ -261,6 +276,7 @@ export interface NavigationItem {
   order?: number;
   path?: string;
   include?: boolean;
+  icon?: string;
   children?: NavigationItem[];
 }
 

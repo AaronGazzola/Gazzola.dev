@@ -37,7 +37,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Gazzola Web App Roadmap Maker",
   description:
-    "A platform for generating full-stack web app roadmaps. Design and download comprehensive and detailed step-by-step instructions for you and your AI to vibe code your custom web app.",
+    "A platform for designing full-stack web apps. Design and download comprehensive step-by-step instructions for you and your AI to build your custom web app.",
   metadataBase: new URL("https://gazzola.dev"),
   openGraph: {
     title: "Gazzola Web App Roadmap Maker",

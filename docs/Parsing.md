@@ -2,12 +2,11 @@
 
 ## Overview
 
-This application uses two distinct parsing systems:
+This application uses a markdown parsing system:
 
-1. **Build-Time Markdown Parsing** - Processes markdown files and components into a navigation tree
-2. **Runtime Code Generation** - Generates infrastructure code files on-demand in the browser
+**Build-Time Markdown Parsing** - Processes markdown files and components into a navigation tree
 
-Both systems integrate seamlessly with navigation, editing, preview, and download features.
+This system integrates seamlessly with navigation, editing, preview, and download features.
 
 ---
 
@@ -89,31 +88,6 @@ Both systems integrate seamlessly with navigation, editing, preview, and downloa
   "contentVersion": 36
 }
 ```
-
-### Code Generator (`lib/code-generation.utils.ts`)
-
-**Purpose**: Generates infrastructure files on-demand in the browser.
-
-**Input Sources** (localStorage):
-- `theme-storage` - Theme colors, typography, spacing
-- `db-storage` - Database tables, RLS policies, auth plugins
-- `editor-storage` - Technology selections, features
-
-**Output**: Array of `ProcessedCodeFile` objects
-
-**Generated Files**:
-
-| Condition                    | Files                                         |
-| ---------------------------- | --------------------------------------------- |
-| Theme exists                 | `app/globals.css`                             |
-| `technologies.betterAuth`    | `lib/auth.ts`, `lib/auth-client.ts`           |
-| `technologies.prisma`        | `prisma/schema.prisma`, `lib/prisma-rls.ts`   |
-| `technologies.supabase`      | `supabase/migrations/00000000000000_init.sql` |
-
-**Process**:
-1. Read from localStorage (browser API)
-2. Execute template functions
-3. Return array of code files with path + content
 
 ---
 
@@ -456,14 +430,8 @@ function getCodeLanguage(fileName: string): string {
    ├─ Filter by include !== false
    ├─ For directories: Create ZIP folder, recurse
    └─ For files: Process content → Add to ZIP
-3. Generate code files (generateCodeFiles)
-   ├─ Read localStorage (theme, db, editor)
-   ├─ Generate theme CSS
-   ├─ Generate auth files
-   ├─ Generate Prisma/Supabase files
-   └─ Add to ZIP at specified paths
-4. Generate ZIP blob
-5. Trigger browser download
+3. Generate ZIP blob
+4. Trigger browser download
 ```
 
 ### Markdown Processing
@@ -563,84 +531,6 @@ content = content.replace(
 );
 ```
 
-### Code File Generation
-
-**Function**: `generateCodeFiles()` in `lib/code-generation.utils.ts`
-
-**Process**:
-```typescript
-export function generateCodeFiles(): ProcessedCodeFile[] {
-  const files: ProcessedCodeFile[] = [];
-
-  // Read from localStorage
-  const storage = getBrowserAPI(() => localStorage);
-  const themeStore = JSON.parse(storage.getItem("theme-storage") || "{}");
-  const dbStore = JSON.parse(storage.getItem("db-storage") || "{}");
-  const editorStore = JSON.parse(storage.getItem("editor-storage") || "{}");
-
-  // Extract data
-  const theme = themeStore?.state?.theme;
-  const plugins = dbStore?.state?.plugins || [];
-  const tables = dbStore?.state?.tables || [];
-  const rlsPolicies = dbStore?.state?.rlsPolicies || [];
-  const initialConfig = editorStore?.state?.initialConfiguration;
-
-  // Generate theme CSS
-  if (theme) {
-    files.push({
-      id: "theme-css",
-      path: "app/globals.css",
-      content: generateThemeCSS(theme),
-      type: "theme"
-    });
-  }
-
-  // Generate auth files
-  if (initialConfig?.technologies?.betterAuth && plugins.length > 0) {
-    files.push({
-      id: "auth",
-      path: "lib/auth.ts",
-      content: generateAuthFile(plugins, initialConfig),
-      type: "auth"
-    });
-    files.push({
-      id: "auth-client",
-      path: "lib/auth-client.ts",
-      content: generateAuthClientFile(plugins),
-      type: "auth"
-    });
-  }
-
-  // Generate Prisma files
-  if (initialConfig?.technologies?.prisma && tables.length > 0) {
-    files.push({
-      id: "prisma-schema",
-      path: "prisma/schema.prisma",
-      content: generatePrismaSchemaContent(tables),
-      type: "prisma"
-    });
-    files.push({
-      id: "prisma-rls",
-      path: "lib/prisma-rls.ts",
-      content: generatePrismaRLSFile(),
-      type: "prisma"
-    });
-  }
-
-  // Generate Supabase migration
-  if (initialConfig?.technologies?.supabase) {
-    files.push({
-      id: "supabase-migration",
-      path: "supabase/migrations/00000000000000_init.sql",
-      content: generateSupabaseMigration(rlsPolicies, tables, initialConfig),
-      type: "supabase"
-    });
-  }
-
-  return files;
-}
-```
-
 ### ZIP Structure
 
 **Output**:
@@ -656,22 +546,11 @@ roadmap.zip/
 │   ├── CLAUDE.md
 │   ├── Util.md
 │   └── README.md
-├── components/                   # TSX components (if included)
-│   └── ui/
-│       ├── button.tsx
-│       ├── card.tsx
-│       └── ...
-├── app/                          # From code generation
-│   └── globals.css
-├── lib/
-│   ├── auth.ts
-│   ├── auth-client.ts
-│   └── prisma-rls.ts
-├── prisma/
-│   └── schema.prisma
-└── supabase/
-    └── migrations/
-        └── 00000000000000_init.sql
+└── components/                   # TSX components (if included)
+    └── ui/
+        ├── button.tsx
+        ├── card.tsx
+        └── ...
 ```
 
 ---
@@ -1010,14 +889,6 @@ npm run build
 3. Check `contentVersion` in JSON matches store
 4. Clear browser localStorage and refresh
 
-### Code Files Not in Download
-
-**Check**:
-1. Is configuration in localStorage? (Open DevTools → Application → Local Storage)
-2. Check browser console for generation errors
-3. Verify `generateCodeFiles()` returns files (add console.log)
-4. Unzip download and inspect contents
-
 ### Page Not Appearing in Sidebar
 
 **Check**:
@@ -1041,19 +912,17 @@ npm run build
 The parsing system provides:
 
 1. **Build-Time Parsing**: Markdown + components → Navigation tree + flat index
-2. **Runtime Generation**: User config → Code files
-3. **Dual Lookup**: Tree for traversal, flat index for O(1) access
-4. **Progressive Disclosure**: Content unlocks as user progresses
-5. **Flexible Rendering**: Markdown editor, code viewer, or preview mode
-6. **Complete Download**: Processed markdown + generated code in ZIP
-7. **Version Control**: Cache invalidation for content updates
-8. **Serverless Ready**: Client-side generation, no backend needed
+2. **Dual Lookup**: Tree for traversal, flat index for O(1) access
+3. **Progressive Disclosure**: Content unlocks as user progresses
+4. **Flexible Rendering**: Markdown editor, code viewer, or preview mode
+5. **Complete Download**: Processed markdown in ZIP
+6. **Version Control**: Cache invalidation for content updates
+7. **Serverless Ready**: No backend needed
 
 **Data Flow**:
 ```
 Build: scripts/parse-markdown.ts → processed-markdown.json
 Runtime: JSON → Store → Navigation/Editor/Preview/Download
-Generation: localStorage → generateCodeFiles() → ZIP
 ```
 
 This architecture enables a fully functional coding roadmap generator that works on any serverless platform with zero server-side dependencies.
