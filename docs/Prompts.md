@@ -8,7 +8,7 @@ The commands and numbers below are shorthand references to the corresponding pro
 
 4. `_build_fix`: "run `npm run build` and fix the build errors, then run `num run build` again and repeat"
 
-5. `_test_plan`: "run `npm run test`, then create a plan to fix the fail cases."
+5. `_test_plan`: "Don't run any tests. Refer to the README.md file in the directory named with the latest timestamp in @test-results/\* . Concisely list each fail case, including the context, expectations, observations and screenshot. Then diagnose and make a plan to fix the fail cases"
 
 6. `_test_fix`: "run `npm run test` and fix the fail cases, then run the tests again and repeat until they are all passing. Do not change the test to be less scrupulous. Don't break or remove functionality. If you are stuck then stop and ask."
 

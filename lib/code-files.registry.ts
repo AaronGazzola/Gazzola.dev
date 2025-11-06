@@ -10,6 +10,9 @@ export interface CodeFileRegistry {
   prisma_schema: (tables: PrismaTable[]) => string;
   prisma_rls_ts: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]) => string;
   supabase_migration_sql: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]) => string;
+  log_utils_ts: () => string;
+  prisma_rls_client_ts: () => string;
+  auth_util_ts: () => string;
 }
 
 const generateThemeCSS = (theme: ThemeConfiguration): string => {
@@ -305,6 +308,209 @@ ${enableRLS}
 ${createPolicies}`;
 };
 
+const generateLogUtils = (): string => {
+  return `export enum LOG_LABELS {
+  GENERATE = "generate",
+  API = "api",
+  AUTH = "auth",
+  DB = "db",
+  FETCH = "fetch",
+  RATE_LIMIT = "rate-limit",
+  IMAGE = "image",
+  WIDGET = "widget",
+}
+
+interface ConditionalLogOptions {
+  maxStringLength?: number;
+  label: LOG_LABELS | string;
+}
+
+export function conditionalLog(
+  data: unknown,
+  options: ConditionalLogOptions
+): string | null {
+  const { maxStringLength = 200, label } = options;
+
+  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;
+
+  if (!logLabels || logLabels === "none") {
+    return null;
+  }
+
+  if (logLabels !== "all") {
+    const allowedLabels = logLabels.split(",").map((l) => l.trim());
+    if (!allowedLabels.includes(label)) {
+      return null;
+    }
+  }
+
+  try {
+    const processedData = deepStringify(data, maxStringLength, new WeakSet());
+    const result = JSON.stringify(processedData);
+    return result.replace(/\\s+/g, "");
+  } catch (error) {
+    return JSON.stringify({ error: "Failed to stringify data", label });
+  }
+}
+
+function deepStringify(
+  value: unknown,
+  maxLength: number,
+  seen: WeakSet<object>
+): unknown {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    return truncateString(value, maxLength);
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return value;
+  }
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (value instanceof Error) {
+    return {
+      name: value.name,
+      message: truncateString(value.message, maxLength),
+      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,
+    };
+  }
+
+  if (typeof value === "object") {
+    if (seen.has(value)) {
+      return "[Circular Reference]";
+    }
+
+    seen.add(value);
+
+    if (Array.isArray(value)) {
+      const result = value.map((item) => deepStringify(item, maxLength, seen));
+      seen.delete(value);
+      return result;
+    }
+
+    const result: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(value)) {
+      result[key] = deepStringify(val, maxLength, seen);
+    }
+    seen.delete(value);
+    return result;
+  }
+
+  return String(value);
+}
+
+function truncateString(str: string, maxLength: number): string {
+  if (str.length <= maxLength) {
+    return str;
+  }
+
+  const startLength = Math.floor((maxLength - 3) / 2);
+  const endLength = maxLength - 3 - startLength;
+
+  return str.slice(0, startLength) + "..." + str.slice(-endLength);
+}`;
+};
+
+const generatePrismaRLSClient = (): string => {
+  return `import { Prisma } from "@prisma/client";
+import { prisma } from "./prisma";
+
+function forUser(userId: string, tenantId?: string) {
+  return Prisma.defineExtension((prisma) =>
+    prisma.$extends({
+      query: {
+        $allModels: {
+          async $allOperations({ args, query }) {
+            if (tenantId) {
+              const [, , result] = await prisma.$transaction([
+                prisma.$executeRaw\\\`SELECT set_config('app.current_user_id', \${userId}, TRUE)\\\`,
+                prisma.$executeRaw\\\`SELECT set_config('app.current_tenant_id', \${tenantId}, TRUE)\\\`,
+                query(args),
+              ]);
+              return result;
+            } else {
+              const [, result] = await prisma.$transaction([
+                prisma.$executeRaw\\\`SELECT set_config('app.current_user_id', \${userId}, TRUE)\\\`,
+                query(args),
+              ]);
+              return result;
+            }
+          },
+        },
+      },
+    })
+  );
+}
+
+export function createRLSClient(userId: string, tenantId?: string) {
+  return prisma.$extends(forUser(userId, tenantId));
+}`;
+};
+
+const generateAuthUtil = (): string => {
+  return `import { User } from "better-auth";
+import jwt from "jsonwebtoken";
+import { headers } from "next/headers";
+import { auth, Session } from "./auth";
+import { createRLSClient } from "./prisma-rls";
+
+export async function getAuthenticatedClient(user?: User): Promise<{
+  db: ReturnType<typeof createRLSClient>;
+  session: Session | null;
+}> {
+  const headersList = await headers();
+
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
+
+  const userId = user?.id || session?.user.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const db = createRLSClient(userId);
+
+  return { db, session };
+}
+
+export function generateSupabaseJWT(userId: string, userRole: string): string {
+  const jwtSecret = process.env.SUPABASE_JWT_SECRET;
+
+  if (!jwtSecret) {
+    throw new Error("SUPABASE_JWT_SECRET is required for JWT generation");
+  }
+
+  const payload = {
+    aud: "authenticated",
+    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    sub: userId,
+    email: \\\`\${userId}@better-auth.local\\\`,
+    role: "authenticated",
+    user_metadata: {
+      better_auth_user_id: userId,
+      better_auth_role: userRole,
+    },
+    app_metadata: {
+      provider: "better-auth",
+      providers: ["better-auth"],
+    },
+  };
+
+  return jwt.sign(payload, jwtSecret, {
+    algorithm: "HS256",
+  });
+}`;
+};
+
 export const codeFileGenerators: CodeFileRegistry = {
   globals_css: generateThemeCSS,
   auth_ts: generateAuthFile,
@@ -312,6 +518,9 @@ export const codeFileGenerators: CodeFileRegistry = {
   prisma_schema: generatePrismaSchema,
   prisma_rls_ts: generatePrismaRLSFile,
   supabase_migration_sql: generateSupabaseMigration,
+  log_utils_ts: generateLogUtils,
+  prisma_rls_client_ts: generatePrismaRLSClient,
+  auth_util_ts: generateAuthUtil,
 };
 
 const createComponentFileNodes = (shouldShowCodeFiles: boolean): CodeFileNode[] => {
@@ -412,6 +621,24 @@ export const createCodeFileNodes = (
     });
   }
 
+  nodes.push({
+    id: "code-file-log-utils-ts",
+    name: "log.utils.ts",
+    displayName: "log.utils.ts",
+    type: "code-file",
+    path: "lib.log-utils",
+    urlPath: "/lib/log-utils",
+    include: shouldShowCodeFiles,
+    fileExtension: "ts",
+    language: "typescript",
+    content: () => codeFileGenerators.log_utils_ts(),
+    includeCondition: () => shouldShowCodeFiles,
+    visibleAfterPage: "start-here.next-steps",
+    parentPath: "lib",
+    downloadPath: "lib",
+    previewOnly: true,
+  });
+
   const hasPrisma = initialConfig.technologies.prisma;
   if (hasPrisma) {
     nodes.push({
@@ -447,6 +674,46 @@ export const createCodeFileNodes = (
       language: "typescript",
       content: () => codeFileGenerators.prisma_rls_ts(rlsPolicies, tables),
       includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma && rlsPolicies.length > 0,
+      visibleAfterPage: "start-here.next-steps",
+      parentPath: "lib",
+      downloadPath: "lib",
+      previewOnly: true,
+    });
+  }
+
+  if (hasPrisma) {
+    nodes.push({
+      id: "code-file-prisma-rls-client-ts",
+      name: "prisma-rls.ts",
+      displayName: "prisma-rls.ts",
+      type: "code-file",
+      path: "lib.prisma-rls-client",
+      urlPath: "/lib/prisma-rls-client",
+      include: shouldShowCodeFiles && initialConfig.technologies.prisma,
+      fileExtension: "ts",
+      language: "typescript",
+      content: () => codeFileGenerators.prisma_rls_client_ts(),
+      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma,
+      visibleAfterPage: "start-here.next-steps",
+      parentPath: "lib",
+      downloadPath: "lib",
+      previewOnly: true,
+    });
+  }
+
+  if (hasPrisma && isBetterAuthEnabled) {
+    nodes.push({
+      id: "code-file-auth-util-ts",
+      name: "auth.util.ts",
+      displayName: "auth.util.ts",
+      type: "code-file",
+      path: "lib.auth-util",
+      urlPath: "/lib/auth-util",
+      include: shouldShowCodeFiles && initialConfig.technologies.prisma && initialConfig.technologies.betterAuth,
+      fileExtension: "ts",
+      language: "typescript",
+      content: () => codeFileGenerators.auth_util_ts(),
+      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma && initialConfig.technologies.betterAuth,
       visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
