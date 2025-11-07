@@ -44,6 +44,7 @@ const defaultAppStructure: FileSystemEntry[] = [
 const defaultInitialConfiguration: InitialConfigurationType = {
   technologies: {
     nextjs: true,
+    typescript: true,
     tailwindcss: true,
     shadcn: true,
     zustand: true,
@@ -55,6 +56,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     postgresql: false,
     vercel: true,
     railway: false,
+    playwright: false,
     cypress: false,
     resend: false,
     stripe: false,

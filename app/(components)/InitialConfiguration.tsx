@@ -4,6 +4,7 @@ import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
 import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
+import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import {
   Accordion,
   AccordionContent,
@@ -643,6 +644,7 @@ export const InitialConfiguration = () => {
     updateAIIntegrationOption,
     updateRealTimeNotificationsOption,
     updateInclusionRules,
+    setSectionInclude,
   } = useEditorStore();
 
   const { shouldShowStep, markStepComplete, isStepOpen, setStepOpen } =
@@ -654,6 +656,10 @@ export const InitialConfiguration = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    applyAutomaticSectionFiltering(initialConfiguration, setSectionInclude);
+  }, [initialConfiguration, setSectionInclude]);
 
   const showConfigHelp =
     mounted && shouldShowStep(WalkthroughStep.CONFIGURATION);

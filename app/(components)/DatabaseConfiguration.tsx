@@ -2,6 +2,7 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
+import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import {
   Accordion,
   AccordionContent,
@@ -1670,7 +1671,7 @@ const RLSTab = () => {
 
 export const DatabaseConfiguration = () => {
   const { activeTab, setActiveTab, initializeFromConfig } = useDatabaseStore();
-  const { initialConfiguration } = useEditorStore();
+  const { initialConfiguration, setSectionInclude } = useEditorStore();
 
   useEffect(() => {
     initializeFromConfig(initialConfiguration);
@@ -1683,6 +1684,10 @@ export const DatabaseConfiguration = () => {
     initializeFromConfig,
     initialConfiguration,
   ]);
+
+  useEffect(() => {
+    applyAutomaticSectionFiltering(initialConfiguration, setSectionInclude);
+  }, [initialConfiguration, setSectionInclude]);
 
   const isBetterAuthEnabled = initialConfiguration.technologies.betterAuth;
   const isSupabaseOnly =

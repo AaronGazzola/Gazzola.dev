@@ -73,6 +73,7 @@ export interface MarkdownData {
 export interface InitialConfigurationType {
   technologies: {
     nextjs: boolean;
+    typescript: boolean;
     tailwindcss: boolean;
     shadcn: boolean;
     zustand: boolean;
@@ -84,6 +85,7 @@ export interface InitialConfigurationType {
     postgresql: boolean;
     vercel: boolean;
     railway: boolean;
+    playwright: boolean;
     cypress: boolean;
     resend: boolean;
     stripe: boolean;
