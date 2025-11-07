@@ -1,3 +1,4 @@
+<!-- option-1 -->
 Before copying files, ensure the target Next.js project has been initialized:
 
 ```bash
@@ -12,3 +13,4 @@ The `create-next-app` initialization should include:
 - ESLint configuration
 
 After initialization, you can proceed with copying the generated files.
+<!-- /option-1 -->

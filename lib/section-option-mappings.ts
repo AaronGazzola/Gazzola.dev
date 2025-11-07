@@ -45,6 +45,8 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "claude", sectionId: "section4", optionId: "option1", configPath: null },
   { filePath: "claude", sectionId: "section4", optionId: "option2", configPath: "technologies.cypress" },
 
+  { filePath: "readme", sectionId: "section1", optionId: "option1", configPath: null },
+
   { filePath: "readme", sectionId: "section2", optionId: "option1", configPath: "technologies.nextjs" },
   { filePath: "readme", sectionId: "section2", optionId: "option2", configPath: "technologies.tailwindcss" },
   { filePath: "readme", sectionId: "section2", optionId: "option3", configPath: "technologies.shadcn" },
@@ -64,6 +66,32 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "readme", sectionId: "section2", optionId: "option17", configPath: "technologies.stripe" },
   { filePath: "readme", sectionId: "section2", optionId: "option18", configPath: "technologies.paypal" },
   { filePath: "readme", sectionId: "section2", optionId: "option19", configPath: "technologies.openrouter" },
+
+  { filePath: "readme", sectionId: "section3", optionId: "option1", configPath: null },
+  { filePath: "readme", sectionId: "section3", optionId: "option2", configPath: "technologies.prisma" },
+  { filePath: "readme", sectionId: "section3", optionId: "option3", configPath: "technologies.supabase" },
+
+  { filePath: "readme", sectionId: "section4", optionId: "option1", configPath: null },
+  { filePath: "readme", sectionId: "section4", optionId: "option2", configPath: "technologies.neondb" },
+  { filePath: "readme", sectionId: "section4", optionId: "option3", configPath: "technologies.supabase" },
+  { filePath: "readme", sectionId: "section4", optionId: "option4", configPath: "technologies.betterAuth" },
+  { filePath: "readme", sectionId: "section4", optionId: "option5", configPath: "technologies.stripe" },
+  { filePath: "readme", sectionId: "section4", optionId: "option6", configPath: "technologies.paypal" },
+  { filePath: "readme", sectionId: "section4", optionId: "option7", configPath: "technologies.resend" },
+  { filePath: "readme", sectionId: "section4", optionId: "option8", configPath: "technologies.openrouter" },
+
+  { filePath: "readme", sectionId: "section5", optionId: "option1", configPath: null },
+  { filePath: "readme", sectionId: "section5", optionId: "option2", configPath: "technologies.playwright" },
+  { filePath: "readme", sectionId: "section5", optionId: "option3", configPath: "technologies.cypress" },
+  { filePath: "readme", sectionId: "section5", optionId: "option4", configPath: "technologies.prisma" },
+
+  { filePath: "readme", sectionId: "section6", optionId: "option1", configPath: "technologies.vercel" },
+  { filePath: "readme", sectionId: "section6", optionId: "option2", configPath: "technologies.railway" },
+
+  { filePath: "robots", sectionId: "section1", optionId: "option1", configPath: null },
+  { filePath: "robots", sectionId: "section2", optionId: "option1", configPath: null },
+  { filePath: "robots", sectionId: "section3", optionId: "option1", configPath: null },
+  { filePath: "robots", sectionId: "section4", optionId: "option1", configPath: null },
 ];
 
 export function getConfigValue(config: InitialConfigurationType, path: ConfigPath): any {

@@ -1,3 +1,4 @@
+<!-- option-1 -->
 Copy the generated files to the following locations in your Next.js project:
 
 **Root Level:**
@@ -28,3 +29,4 @@ After copying files:
 2. Run `npm run dev` to start the development server
 3. Configure environment variables in `.env.local`
 4. Run database migrations if applicable
+<!-- /option-1 -->

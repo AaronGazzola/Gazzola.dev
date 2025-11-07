@@ -1,3 +1,4 @@
+<!-- option-1 -->
 The following files have been generated and are ready to copy:
 
 **Core Configuration:**
@@ -22,3 +23,4 @@ The following files have been generated and are ready to copy:
 **Database (if applicable):**
 - `prisma/schema.prisma` - Prisma schema
 - `supabase/` - Supabase configuration and migrations
+<!-- /option-1 -->
