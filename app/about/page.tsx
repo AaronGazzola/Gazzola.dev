@@ -88,7 +88,7 @@ const careerSteps = [
     duration: "4 years",
   },
   {
-    title: "Learning Development",
+    title: "Online Learning",
     description: "Self-taught full stack web development over 2 years",
     icon: BrainCog,
     duration: "2 years",
