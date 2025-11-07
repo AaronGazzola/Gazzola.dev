@@ -95,7 +95,7 @@ const careerSteps = [
   },
   {
     title: "Freelance Career",
-    description: "5 years full-time freelance development",
+    description: "5 years full-time freelance full-stack development",
     icon: Briefcase,
     duration: "5 years",
   },
