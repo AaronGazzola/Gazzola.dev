@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 <!-- section-1 -->
 
+## Project Structure
+
+<!-- component-AppStructureAscii -->
+
 # General rules:
 
 - Don't include any comments in any files.

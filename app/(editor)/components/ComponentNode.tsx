@@ -35,6 +35,11 @@ const componentMap: Record<string, any> = {
       default: m.AppStructure,
     }))
   ),
+  AppStructureAscii: lazy(() =>
+    import("@/app/(components)/AppStructureAscii").then((m) => ({
+      default: m.AppStructureAscii,
+    }))
+  ),
   LayoutAndStructure: lazy(() =>
     import("@/app/(components)/AppStructure").then((m) => ({
       default: m.LayoutAndStructure,

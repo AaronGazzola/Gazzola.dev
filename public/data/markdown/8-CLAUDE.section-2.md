@@ -25,5 +25,5 @@ app/
 <!-- /option-1 -->
 
 <!-- option-2 -->
-<!-- component-AppStructure -->
+<!-- component-AppStructureAscii -->
 <!-- /option-2 -->

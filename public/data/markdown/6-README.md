@@ -14,11 +14,7 @@
 
 ## Project Structure
 
-<!-- component-AppStructure -->
-
-## Site Map
-
-<!-- component-SiteMap -->
+<!-- component-AppStructureAscii -->
 
 ## Need Help?
 

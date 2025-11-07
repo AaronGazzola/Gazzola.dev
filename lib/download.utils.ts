@@ -994,6 +994,17 @@ export const processContent = (
   );
 
   processedContent = processedContent.replace(
+    /<!-- component-AppStructureAscii -->/g,
+    () => {
+      return (
+        generateAppStructureAscii(appStructure) +
+        "\n\n" +
+        generateRouteMapAscii(appStructure)
+      );
+    }
+  );
+
+  processedContent = processedContent.replace(
     /<!-- component-InitialConfiguration -->/g,
     () => {
       return generateInitialConfigurationContent(getInitialConfiguration());
