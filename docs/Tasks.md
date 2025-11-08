@@ -2,12 +2,9 @@
 
 ## Active tasks
 
-- [ ] Add testing
-- Add a map to the first page. vertical flowchart that parses to ASCII
-- Stepping on flowers
-- [ ] Remove the temporary RESEND_API_KEY bypass
-- [ ] Remove "visibleAfterPage" from parse logic (AI added without consent!)
-- [ ] Fix theme config popover bug (fixed?)
+- [ ] display all remaining markdown files after "next steps"
+- [ ] Conditionally populate deployment instructions and util.md
+- [ ] Remove the empty section fallback
 - [ ] Fix single color button border
 - [ ] fix globals.css output:
       .theme-radius {
