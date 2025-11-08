@@ -1,75 +1,75 @@
 <!-- option-1 -->
-**Next.js** - A powerful React framework that handles both the visual interface users see and the behind-the-scenes server operations, making your application fast and efficient.
+**Next.js**: React framework providing server-side rendering, routing, and full-stack capabilities essential for modern web applications.
 <!-- /option-1 -->
 
 <!-- option-2 -->
-**TailwindCSS** - A modern styling system that ensures your application looks professional and consistent across all pages.
+**TailwindCSS v4**: Utility-first CSS framework for rapid UI development with consistent styling across the application.
 <!-- /option-2 -->
 
 <!-- option-3 -->
-**Shadcn/ui** - Pre-built, customizable interface components that provide a polished, professional appearance out of the box.
+**Shadcn/ui**: Component library built on Radix UI and Tailwind CSS, providing accessible and customizable UI components.
 <!-- /option-3 -->
 
 <!-- option-4 -->
-**TypeScript** - Adds safety checks to the code, catching errors before they reach users and making the application more reliable.
+**Zustand**: Lightweight state management solution for managing global application state with minimal boilerplate.
 <!-- /option-4 -->
 
 <!-- option-5 -->
-**Zustand** - Manages the application's data flow, ensuring information stays synchronized across different parts of the app.
+**React Query**: Data fetching and caching library that manages server state, handling loading states, errors, and data synchronization.
 <!-- /option-5 -->
 
 <!-- option-6 -->
-**React Query** - Handles data fetching and caching efficiently, keeping the application fast and responsive.
+**Supabase**: Backend-as-a-service platform providing database, authentication, file storage, and real-time capabilities with built-in security and scalability.
 <!-- /option-6 -->
 
 <!-- option-7 -->
-**Supabase** - An all-in-one backend platform providing database storage, user authentication, and real-time data synchronization.
+**NeonDB**: Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.
 <!-- /option-7 -->
 
 <!-- option-8 -->
-**NeonDB** - A modern PostgreSQL database that scales automatically and provides fast data access.
+**Prisma**: Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.
 <!-- /option-8 -->
 
 <!-- option-9 -->
-**Prisma** - A database toolkit that makes working with data safer and more efficient through type-safe queries.
+**Better Auth**: Authentication library providing secure user authentication and session management with support for multiple authentication methods.
 <!-- /option-9 -->
 
 <!-- option-10 -->
-**Better Auth** - A comprehensive authentication system supporting multiple sign-in methods (email/password, social logins, magic links).
+**PostgreSQL**: Relational database system storing application data including user accounts, authentication sessions, and application-specific data.
 <!-- /option-10 -->
 
 <!-- option-11 -->
-**PostgreSQL** - A robust, industry-standard database system known for reliability and performance.
+**Vercel**: Serverless deployment platform optimized for Next.js applications, providing automatic scaling and edge network distribution.
 <!-- /option-11 -->
 
 <!-- option-12 -->
-**Vercel** - A deployment platform optimized for Next.js applications, providing fast global delivery and automatic updates.
+**Railway**: Always-on server deployment platform required for continuous monitoring and background processes.
 <!-- /option-12 -->
 
 <!-- option-13 -->
-**Railway** - A cloud platform for deploying databases and backend services with simple configuration.
+**Playwright**: End-to-end testing framework for automated browser testing and quality assurance.
 <!-- /option-13 -->
 
 <!-- option-14 -->
-**Playwright** - Automated testing framework that verifies the application works correctly across different browsers.
+**Cypress**: End-to-end testing framework for automated browser testing and quality assurance.
 <!-- /option-14 -->
 
 <!-- option-15 -->
-**Cypress** - End-to-end testing tool that simulates real user interactions to ensure features work as expected.
+**Resend**: Email delivery service for sending authentication and notification emails with high deliverability rates.
 <!-- /option-15 -->
 
 <!-- option-16 -->
-**Resend** - Email delivery service for sending transactional emails (welcome messages, password resets, notifications).
+**Stripe**: Payment processing platform for one-time payments and subscription billing with secure transaction handling.
 <!-- /option-16 -->
 
 <!-- option-17 -->
-**Stripe** - Payment processing platform for accepting credit card payments securely.
+**PayPal**: Payment processing platform for accepting PayPal payments with buyer and seller protection.
 <!-- /option-17 -->
 
 <!-- option-18 -->
-**PayPal** - Payment integration for accepting PayPal payments from customers worldwide.
+**OpenRouter**: AI model routing platform providing access to multiple language models for AI-powered features.
 <!-- /option-18 -->
 
 <!-- option-19 -->
-**OpenRouter** - AI integration platform providing access to various language models for AI-powered features.
+**TypeScript**: Strongly-typed programming language built on JavaScript, providing enhanced code quality, developer experience, and compile-time error detection.
 <!-- /option-19 -->

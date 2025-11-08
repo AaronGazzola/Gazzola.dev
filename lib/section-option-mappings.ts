@@ -45,7 +45,10 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "claude", sectionId: "section4", optionId: "option1", configPath: null },
   { filePath: "claude", sectionId: "section4", optionId: "option2", configPath: "technologies.cypress" },
 
-  { filePath: "readme", sectionId: "section1", optionId: "option1", configPath: null },
+  { filePath: "readme", sectionId: "section1", optionId: "option1", configPath: "questions.useSupabase", matchValue: "none" },
+  { filePath: "readme", sectionId: "section1", optionId: "option2", configPath: "questions.useSupabase", matchValue: "no" },
+  { filePath: "readme", sectionId: "section1", optionId: "option3", configPath: "questions.useSupabase", matchValue: "authOnly" },
+  { filePath: "readme", sectionId: "section1", optionId: "option4", configPath: "questions.useSupabase", matchValue: "withBetterAuth" },
 
   { filePath: "readme", sectionId: "section2", optionId: "option1", configPath: "technologies.nextjs" },
   { filePath: "readme", sectionId: "section2", optionId: "option2", configPath: "technologies.tailwindcss" },
@@ -71,9 +74,9 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "readme", sectionId: "section3", optionId: "option2", configPath: "technologies.prisma" },
   { filePath: "readme", sectionId: "section3", optionId: "option3", configPath: "technologies.supabase" },
 
-  { filePath: "readme", sectionId: "section4", optionId: "option1", configPath: null },
+  { filePath: "readme", sectionId: "section4", optionId: "option1", configPath: "technologies.supabase" },
   { filePath: "readme", sectionId: "section4", optionId: "option2", configPath: "technologies.neondb" },
-  { filePath: "readme", sectionId: "section4", optionId: "option3", configPath: "technologies.supabase" },
+  { filePath: "readme", sectionId: "section4", optionId: "option3", configPath: "technologies.prisma" },
   { filePath: "readme", sectionId: "section4", optionId: "option4", configPath: "technologies.betterAuth" },
   { filePath: "readme", sectionId: "section4", optionId: "option5", configPath: "technologies.stripe" },
   { filePath: "readme", sectionId: "section4", optionId: "option6", configPath: "technologies.paypal" },

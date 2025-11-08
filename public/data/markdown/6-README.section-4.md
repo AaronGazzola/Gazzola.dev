@@ -1,91 +1,97 @@
 <!-- option-1 -->
-## Configuration
+### Supabase Setup
 
-### Environment Variables
-
-Create a file named `.env.local` in the root of your project. This file stores sensitive configuration data:
-
-```env
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+1. Create a project at [supabase.com](https://supabase.com)
+2. Get your project URL and anon key from Settings > API
+3. Add to `.env.local`:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   ```
+4. Run database migrations if using Supabase for database operations
 <!-- /option-1 -->
 
 <!-- option-2 -->
-Add your NeonDB connection string:
+### NeonDB Setup
 
-```env
-DATABASE_URL="your-neondb-connection-string"
-```
-
-Get your connection string from your NeonDB dashboard at [neon.tech](https://neon.tech).
+1. Create a database at [neon.tech](https://neon.tech)
+2. Copy your connection string from the dashboard
+3. Add to `.env.local`:
+   ```
+   DATABASE_URL=your_connection_string
+   ```
+4. Run Prisma migrations: `npx prisma migrate dev`
 <!-- /option-2 -->
 
 <!-- option-3 -->
-Add your Supabase credentials:
+### Prisma Setup
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-```
-
-Find these values in your Supabase project's API settings.
+1. Ensure your database connection string is set in `.env.local`
+2. Generate Prisma client: `npx prisma generate`
+3. Run migrations: `npx prisma migrate dev`
+4. (Optional) Seed database: `npx prisma db seed`
 <!-- /option-3 -->
 
 <!-- option-4 -->
-Add your Better Auth configuration:
+### Better Auth Setup
 
-```env
-BETTER_AUTH_SECRET=your-secret-key
-BETTER_AUTH_URL=http://localhost:3000
-```
-
-Generate a secure secret key by running:
-
-```bash
-openssl rand -base64 32
-```
+1. Generate a secret key: `openssl rand -base64 32`
+2. Add to `.env.local`:
+   ```
+   BETTER_AUTH_SECRET=your_generated_secret
+   BETTER_AUTH_URL=http://localhost:3000
+   ```
+3. Configure authentication providers in `lib/auth.ts`
+4. Run database migrations to create auth tables
 <!-- /option-4 -->
 
 <!-- option-5 -->
-Add your Stripe keys:
+### Stripe Setup
 
-```env
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your-publishable-key
-STRIPE_SECRET_KEY=your-secret-key
-STRIPE_WEBHOOK_SECRET=your-webhook-secret
-```
-
-Get these from your Stripe Dashboard at [stripe.com/dashboard](https://dashboard.stripe.com).
+1. Create an account at [stripe.com](https://stripe.com)
+2. Get your API keys from Dashboard > Developers > API keys
+3. Add to `.env.local`:
+   ```
+   STRIPE_SECRET_KEY=your_secret_key
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_publishable_key
+   STRIPE_WEBHOOK_SECRET=your_webhook_secret
+   ```
+4. Set up webhooks for payment events
 <!-- /option-5 -->
 
 <!-- option-6 -->
-Add your PayPal credentials:
+### PayPal Setup
 
-```env
-NEXT_PUBLIC_PAYPAL_CLIENT_ID=your-client-id
-PAYPAL_CLIENT_SECRET=your-client-secret
-```
-
-Get these from your PayPal Developer Dashboard at [developer.paypal.com](https://developer.paypal.com).
+1. Create a developer account at [developer.paypal.com](https://developer.paypal.com)
+2. Create a REST API app and get your credentials
+3. Add to `.env.local`:
+   ```
+   PAYPAL_CLIENT_ID=your_client_id
+   PAYPAL_CLIENT_SECRET=your_client_secret
+   ```
+4. Configure webhook endpoints for payment notifications
 <!-- /option-6 -->
 
 <!-- option-7 -->
-Add your Resend API key:
+### Resend Setup
 
-```env
-RESEND_API_KEY=your-resend-api-key
-```
-
-Get your API key from [resend.com/api-keys](https://resend.com/api-keys).
+1. Create an account at [resend.com](https://resend.com)
+2. Get your API key from Settings > API Keys
+3. Add to `.env.local`:
+   ```
+   RESEND_API_KEY=your_api_key
+   ```
+4. Verify your sending domain in the Resend dashboard
 <!-- /option-7 -->
 
 <!-- option-8 -->
-Add your OpenRouter API key:
+### OpenRouter Setup
 
-```env
-OPENROUTER_API_KEY=your-openrouter-api-key
-```
-
-Get your API key from [openrouter.ai/keys](https://openrouter.ai/keys).
+1. Create an account at [openrouter.ai](https://openrouter.ai)
+2. Get your API key from Settings > API Keys
+3. Add to `.env.local`:
+   ```
+   OPENROUTER_API_KEY=your_api_key
+   ```
+4. Configure your preferred AI models in the application
 <!-- /option-8 -->

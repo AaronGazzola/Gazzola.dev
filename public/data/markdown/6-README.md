@@ -1,28 +1,23 @@
+# {{appName:Your app name}}
+
+Welcome to {{appName:Your app name}}, a modern full-stack web application built with cutting-edge technologies and best practices.
+
 <!-- section-1 -->
 
-## Technologies Used
+## Technology Stack
+
+This project is built with a carefully selected stack of modern web technologies:
 
 <!-- section-2 -->
-
-<!-- section-3 -->
-
-<!-- section-4 -->
-
-<!-- section-5 -->
-
-<!-- section-6 -->
 
 ## Project Structure
 
 <!-- component-AppStructureAscii -->
 
-## Need Help?
+## Quick Start
 
-If you run into any issues:
+<!-- section-4 -->
 
-1. Check that all environment variables are correctly set
-2. Verify that your database is running and accessible
-3. Ensure you're using Node.js version 18 or higher
-4. Try deleting `node_modules` and `.next` folders, then run `npm install` again
+## Credits
 
-For more detailed documentation, refer to the individual technology documentation linked in the Technologies Used section.
+This foundational app structure and comprehensive documentation was generated at [Gazzola.dev](https://Gazzola.dev).
