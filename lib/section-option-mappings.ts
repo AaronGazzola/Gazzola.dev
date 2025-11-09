@@ -5,6 +5,7 @@ type ConfigPath =
   | `questions.${keyof InitialConfigurationType["questions"]}`
   | `features.${keyof InitialConfigurationType["features"]}`
   | `features.authentication.${keyof InitialConfigurationType["features"]["authentication"]}`
+  | `features.admin.${keyof InitialConfigurationType["features"]["admin"]}`
   | `features.payments.${keyof InitialConfigurationType["features"]["payments"]}`
   | `features.realTimeNotifications.${keyof InitialConfigurationType["features"]["realTimeNotifications"]}`
   | `database.${keyof InitialConfigurationType["database"]}`
