@@ -432,7 +432,19 @@ const TreeItem: React.FC<TreeItemProps> = ({
     ?.filter((child) => child.include !== false)
     .some((child) => {
       if (child.type === "page" && child.path) {
-        return isPageVisited(child.path);
+        const childNode = getNode(child.path || "");
+
+        if (isPageVisited(child.path)) {
+          return true;
+        }
+
+        if (childNode?.type === "file" && (childNode as any).visibleAfterPage) {
+          return isPageVisited((childNode as any).visibleAfterPage);
+        }
+
+        if (childNode?.type === "code-file" && (childNode as any).visibleAfterPage) {
+          return isPageVisited((childNode as any).visibleAfterPage);
+        }
       }
       return false;
     });
@@ -648,7 +660,19 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     ?.filter((child) => child.include !== false)
     .some((child) => {
       if (child.type === "page" && child.path) {
-        return isPageVisited(child.path);
+        const childNode = getNode(child.path || "");
+
+        if (isPageVisited(child.path)) {
+          return true;
+        }
+
+        if (childNode?.type === "file" && (childNode as any).visibleAfterPage) {
+          return isPageVisited((childNode as any).visibleAfterPage);
+        }
+
+        if (childNode?.type === "code-file" && (childNode as any).visibleAfterPage) {
+          return isPageVisited((childNode as any).visibleAfterPage);
+        }
       }
       return false;
     });

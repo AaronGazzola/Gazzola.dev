@@ -230,6 +230,10 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     fileNode.visibleAfterPage = "start-here.next-steps";
   }
 
+  if (order && order >= 6) {
+    fileNode.visibleAfterPage = "start-here.next-steps";
+  }
+
   return fileNode;
 }
 

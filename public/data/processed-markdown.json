@@ -16,7 +16,7 @@
         "order": 6,
         "path": "readme",
         "urlPath": "/readme",
-        "content": "<!-- section-1 -->\n\n## Technologies Used\n\n<!-- section-2 -->\n\n<!-- section-3 -->\n\n<!-- section-4 -->\n\n<!-- section-5 -->\n\n<!-- section-6 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n## Need Help?\n\nIf you run into any issues:\n\n1. Check that all environment variables are correctly set\n2. Verify that your database is running and accessible\n3. Ensure you're using Node.js version 18 or higher\n4. Try deleting \\`node_modules\\` and \\`.next\\` folders, then run \\`npm install\\` again\n\nFor more detailed documentation, refer to the individual technology documentation linked in the Technologies Used section.\n",
+        "content": "# {{appName:Your app name}}\n\nWelcome to {{appName:Your app name}}, a modern full-stack web application built with cutting-edge technologies and best practices.\n\n<!-- section-1 -->\n\n## Technology Stack\n\nThis project is built with a carefully selected stack of modern web technologies:\n\n<!-- section-2 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n## Quick Start\n\n<!-- section-4 -->\n\n## Credits\n\nThis foundational app structure and comprehensive documentation was generated at [Gazzola.dev](https://Gazzola.dev).\n",
         "components": [
           {
             "id": "component-AppStructureAscii",
@@ -32,166 +32,137 @@
         "sections": {
           "section1": {
             "option1": {
-              "content": "# Your Web Application\n\nA modern, full-stack web application built with the latest technologies to deliver a fast, secure, and scalable user experience.\n\n## What This Application Does\n\nThis web application provides a complete foundation for building dynamic web experiences. It includes user authentication, data management, and a responsive interface that works seamlessly across all devices.",
+              "content": "This application provides a complete foundation for building modern web applications without requiring database infrastructure. All features run entirely on the client and serverless edge functions.",
+              "include": true
+            },
+            "option2": {
+              "content": "This application uses NeonDB serverless PostgreSQL for data persistence and Better Auth for secure authentication and session management. The database is managed through Prisma ORM, providing type-safe database operations and schema migrations.",
+              "include": true
+            },
+            "option3": {
+              "content": "This application uses Supabase for authentication and session management, providing secure user authentication with support for multiple authentication methods. The Supabase client handles all authentication flows and session persistence.",
+              "include": true
+            },
+            "option4": {
+              "content": "This application uses Supabase for database operations, real-time subscriptions, and file storage, combined with Better Auth for enhanced authentication features and session management. This powerful combination provides enterprise-grade security with flexible authentication options.",
               "include": true
             }
           },
           "section2": {
             "option1": {
-              "content": "**Next.js** - A powerful React framework that handles both the visual interface users see and the behind-the-scenes server operations, making your application fast and efficient.",
+              "content": "**Next.js**: React framework providing server-side rendering, routing, and full-stack capabilities essential for modern web applications.",
               "include": true
             },
             "option2": {
-              "content": "**TailwindCSS** - A modern styling system that ensures your application looks professional and consistent across all pages.",
+              "content": "**TailwindCSS v4**: Utility-first CSS framework for rapid UI development with consistent styling across the application.",
               "include": true
             },
             "option3": {
-              "content": "**Shadcn/ui** - Pre-built, customizable interface components that provide a polished, professional appearance out of the box.",
+              "content": "**Shadcn/ui**: Component library built on Radix UI and Tailwind CSS, providing accessible and customizable UI components.",
               "include": true
             },
             "option4": {
-              "content": "**TypeScript** - Adds safety checks to the code, catching errors before they reach users and making the application more reliable.",
+              "content": "**Zustand**: Lightweight state management solution for managing global application state with minimal boilerplate.",
               "include": true
             },
             "option5": {
-              "content": "**Zustand** - Manages the application's data flow, ensuring information stays synchronized across different parts of the app.",
+              "content": "**React Query**: Data fetching and caching library that manages server state, handling loading states, errors, and data synchronization.",
               "include": true
             },
             "option6": {
-              "content": "**React Query** - Handles data fetching and caching efficiently, keeping the application fast and responsive.",
+              "content": "**Supabase**: Backend-as-a-service platform providing database, authentication, file storage, and real-time capabilities with built-in security and scalability.",
               "include": true
             },
             "option7": {
-              "content": "**Supabase** - An all-in-one backend platform providing database storage, user authentication, and real-time data synchronization.",
+              "content": "**NeonDB**: Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.",
               "include": true
             },
             "option8": {
-              "content": "**NeonDB** - A modern PostgreSQL database that scales automatically and provides fast data access.",
+              "content": "**Prisma**: Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.",
               "include": true
             },
             "option9": {
-              "content": "**Prisma** - A database toolkit that makes working with data safer and more efficient through type-safe queries.",
+              "content": "**Better Auth**: Authentication library providing secure user authentication and session management with support for multiple authentication methods.",
               "include": true
             },
             "option10": {
-              "content": "**Better Auth** - A comprehensive authentication system supporting multiple sign-in methods (email/password, social logins, magic links).",
+              "content": "**PostgreSQL**: Relational database system storing application data including user accounts, authentication sessions, and application-specific data.",
               "include": true
             },
             "option11": {
-              "content": "**PostgreSQL** - A robust, industry-standard database system known for reliability and performance.",
+              "content": "**Vercel**: Serverless deployment platform optimized for Next.js applications, providing automatic scaling and edge network distribution.",
               "include": true
             },
             "option12": {
-              "content": "**Vercel** - A deployment platform optimized for Next.js applications, providing fast global delivery and automatic updates.",
+              "content": "**Railway**: Always-on server deployment platform required for continuous monitoring and background processes.",
               "include": true
             },
             "option13": {
-              "content": "**Railway** - A cloud platform for deploying databases and backend services with simple configuration.",
+              "content": "**Playwright**: End-to-end testing framework for automated browser testing and quality assurance.",
               "include": true
             },
             "option14": {
-              "content": "**Playwright** - Automated testing framework that verifies the application works correctly across different browsers.",
+              "content": "**Cypress**: End-to-end testing framework for automated browser testing and quality assurance.",
               "include": true
             },
             "option15": {
-              "content": "**Cypress** - End-to-end testing tool that simulates real user interactions to ensure features work as expected.",
+              "content": "**Resend**: Email delivery service for sending authentication and notification emails with high deliverability rates.",
               "include": true
             },
             "option16": {
-              "content": "**Resend** - Email delivery service for sending transactional emails (welcome messages, password resets, notifications).",
+              "content": "**Stripe**: Payment processing platform for one-time payments and subscription billing with secure transaction handling.",
               "include": true
             },
             "option17": {
-              "content": "**Stripe** - Payment processing platform for accepting credit card payments securely.",
+              "content": "**PayPal**: Payment processing platform for accepting PayPal payments with buyer and seller protection.",
               "include": true
             },
             "option18": {
-              "content": "**PayPal** - Payment integration for accepting PayPal payments from customers worldwide.",
+              "content": "**OpenRouter**: AI model routing platform providing access to multiple language models for AI-powered features.",
               "include": true
             },
             "option19": {
-              "content": "**OpenRouter** - AI integration platform providing access to various language models for AI-powered features.",
-              "include": true
-            }
-          },
-          "section3": {
-            "option1": {
-              "content": "## Getting Started\n\n### Prerequisites\n\nBefore you begin, make sure you have these tools installed on your computer:\n\n- **Node.js** (version 18 or higher) - Download from [nodejs.org](https://nodejs.org)\n- **Git** - Download from [git-scm.com](https://git-scm.com)\n\nTo verify they're installed, open your terminal and run:\n\n```bash\nnode --version\ngit --version\n```\n\n### Installation Steps\n\n1. **Download the project files**\n\n   Open your terminal and navigate to where you want to store the project, then run:\n\n   ```bash\n   git clone <your-repository-url>\n   cd <your-project-name>\n   ```\n\n2. **Install dependencies**\n\n   This downloads all the necessary libraries and tools:\n\n   ```bash\n   npm install\n   ```",
-              "include": true
-            },
-            "option2": {
-              "content": "3. **Set up your database**\n\n   Install Prisma CLI globally:\n\n   ```bash\n   npm install -g prisma\n   ```\n\n   Initialize your database:\n\n   ```bash\n   npx prisma generate\n   npx prisma db push\n   ```",
-              "include": true
-            },
-            "option3": {
-              "content": "3. **Set up your Supabase project**\n\n   - Visit [supabase.com](https://supabase.com) and create a free account\n   - Create a new project\n   - Go to Project Settings > API to find your connection details",
+              "content": "**TypeScript**: Strongly-typed programming language built on JavaScript, providing enhanced code quality, developer experience, and compile-time error detection.",
               "include": true
             }
           },
           "section4": {
             "option1": {
-              "content": "## Configuration\n\n### Environment Variables\n\nCreate a file named `.env.local` in the root of your project. This file stores sensitive configuration data:\n\n```env\nNEXT_PUBLIC_APP_URL=http://localhost:3000\n```",
+              "content": "### Supabase Setup\n\n1. Create a project at [supabase.com](https://supabase.com)\n2. Get your project URL and anon key from Settings > API\n3. Add to `.env.local`:\n   ```\n   NEXT_PUBLIC_SUPABASE_URL=your_project_url\n   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key\n   ```\n4. Run database migrations if using Supabase for database operations",
               "include": true
             },
             "option2": {
-              "content": "Add your NeonDB connection string:\n\n```env\nDATABASE_URL=\"your-neondb-connection-string\"\n```\n\nGet your connection string from your NeonDB dashboard at [neon.tech](https://neon.tech).",
+              "content": "### NeonDB Setup\n\n1. Create a database at [neon.tech](https://neon.tech)\n2. Copy your connection string from the dashboard\n3. Add to `.env.local`:\n   ```\n   DATABASE_URL=your_connection_string\n   ```\n4. Run Prisma migrations: `npx prisma migrate dev`",
               "include": true
             },
             "option3": {
-              "content": "Add your Supabase credentials:\n\n```env\nNEXT_PUBLIC_SUPABASE_URL=your-supabase-url\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key\nSUPABASE_SERVICE_ROLE_KEY=your-service-role-key\n```\n\nFind these values in your Supabase project's API settings.",
+              "content": "### Prisma Setup\n\n1. Ensure your database connection string is set in `.env.local`\n2. Generate Prisma client: `npx prisma generate`\n3. Run migrations: `npx prisma migrate dev`\n4. (Optional) Seed database: `npx prisma db seed`",
               "include": true
             },
             "option4": {
-              "content": "Add your Better Auth configuration:\n\n```env\nBETTER_AUTH_SECRET=your-secret-key\nBETTER_AUTH_URL=http://localhost:3000\n```\n\nGenerate a secure secret key by running:\n\n```bash\nopenssl rand -base64 32\n```",
+              "content": "### Better Auth Setup\n\n1. Generate a secret key: `openssl rand -base64 32`\n2. Add to `.env.local`:\n   ```\n   BETTER_AUTH_SECRET=your_generated_secret\n   BETTER_AUTH_URL=http://localhost:3000\n   ```\n3. Configure authentication providers in `lib/auth.ts`\n4. Run database migrations to create auth tables",
               "include": true
             },
             "option5": {
-              "content": "Add your Stripe keys:\n\n```env\nNEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your-publishable-key\nSTRIPE_SECRET_KEY=your-secret-key\nSTRIPE_WEBHOOK_SECRET=your-webhook-secret\n```\n\nGet these from your Stripe Dashboard at [stripe.com/dashboard](https://dashboard.stripe.com).",
+              "content": "### Stripe Setup\n\n1. Create an account at [stripe.com](https://stripe.com)\n2. Get your API keys from Dashboard > Developers > API keys\n3. Add to `.env.local`:\n   ```\n   STRIPE_SECRET_KEY=your_secret_key\n   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_publishable_key\n   STRIPE_WEBHOOK_SECRET=your_webhook_secret\n   ```\n4. Set up webhooks for payment events",
               "include": true
             },
             "option6": {
-              "content": "Add your PayPal credentials:\n\n```env\nNEXT_PUBLIC_PAYPAL_CLIENT_ID=your-client-id\nPAYPAL_CLIENT_SECRET=your-client-secret\n```\n\nGet these from your PayPal Developer Dashboard at [developer.paypal.com](https://developer.paypal.com).",
+              "content": "### PayPal Setup\n\n1. Create a developer account at [developer.paypal.com](https://developer.paypal.com)\n2. Create a REST API app and get your credentials\n3. Add to `.env.local`:\n   ```\n   PAYPAL_CLIENT_ID=your_client_id\n   PAYPAL_CLIENT_SECRET=your_client_secret\n   ```\n4. Configure webhook endpoints for payment notifications",
               "include": true
             },
             "option7": {
-              "content": "Add your Resend API key:\n\n```env\nRESEND_API_KEY=your-resend-api-key\n```\n\nGet your API key from [resend.com/api-keys](https://resend.com/api-keys).",
+              "content": "### Resend Setup\n\n1. Create an account at [resend.com](https://resend.com)\n2. Get your API key from Settings > API Keys\n3. Add to `.env.local`:\n   ```\n   RESEND_API_KEY=your_api_key\n   ```\n4. Verify your sending domain in the Resend dashboard",
               "include": true
             },
             "option8": {
-              "content": "Add your OpenRouter API key:\n\n```env\nOPENROUTER_API_KEY=your-openrouter-api-key\n```\n\nGet your API key from [openrouter.ai/keys](https://openrouter.ai/keys).",
-              "include": true
-            }
-          },
-          "section5": {
-            "option1": {
-              "content": "## Development\n\n### Running the Application Locally\n\nStart the development server:\n\n```bash\nnpm run dev\n```\n\nOpen your web browser and visit [http://localhost:3000](http://localhost:3000)\n\nThe application will automatically reload when you make changes to the code.\n\n### Available Commands\n\n- `npm run dev` - Starts the development server\n- `npm run build` - Creates an optimized production build\n- `npm run start` - Runs the production build locally\n- `npm run lint` - Checks code for potential issues",
-              "include": true
-            },
-            "option2": {
-              "content": "- `npm run test` - Runs all tests\n- `npm run test:e2e` - Runs end-to-end tests with Playwright",
-              "include": true
-            },
-            "option3": {
-              "content": "- `npm run cypress:open` - Opens Cypress test runner\n- `npm run cypress:run` - Runs Cypress tests in headless mode",
-              "include": true
-            },
-            "option4": {
-              "content": "- `npx prisma studio` - Opens a visual database editor\n- `npx prisma migrate dev` - Creates and applies database migrations\n- `npx prisma generate` - Generates Prisma client types",
-              "include": true
-            }
-          },
-          "section6": {
-            "option1": {
-              "content": "## Deployment\n\n### Deploying to Vercel\n\nVercel is the recommended platform for deploying Next.js applications:\n\n1. **Create a Vercel account**\n\n   Visit [vercel.com](https://vercel.com) and sign up with your GitHub account.\n\n2. **Import your project**\n\n   - Click \"New Project\" in your Vercel dashboard\n   - Import your GitHub repository\n   - Vercel will automatically detect Next.js settings\n\n3. **Add environment variables**\n\n   In your project settings, add all the environment variables from your `.env.local` file.\n\n4. **Deploy**\n\n   Click \"Deploy\" and Vercel will build and publish your application.\n\nYour application will be live at `https://your-project-name.vercel.app`\n\nEvery time you push code to your main branch, Vercel will automatically deploy the updates.",
-              "include": true
-            },
-            "option2": {
-              "content": "### Deploying Your Database to Railway\n\nIf you're using NeonDB or need to host PostgreSQL:\n\n1. **Create a Railway account**\n\n   Visit [railway.app](https://railway.app) and sign up.\n\n2. **Create a new PostgreSQL database**\n\n   - Click \"New Project\"\n   - Select \"Provision PostgreSQL\"\n   - Copy the connection string from the \"Connect\" tab\n\n3. **Update your environment variables**\n\n   Add the Railway database connection string to your Vercel environment variables.\n\n4. **Run migrations**\n\n   After deployment, run your database migrations:\n\n   ```bash\n   npx prisma migrate deploy\n   ```",
+              "content": "### OpenRouter Setup\n\n1. Create an account at [openrouter.ai](https://openrouter.ai)\n2. Get your API key from Settings > API Keys\n3. Add to `.env.local`:\n   ```\n   OPENROUTER_API_KEY=your_api_key\n   ```\n4. Configure your preferred AI models in the application",
               "include": true
             }
           }
         },
-        "include": true
+        "include": true,
+        "visibleAfterPage": "start-here.next-steps"
       },
       {
         "id": "robots",
@@ -201,15 +172,9 @@
         "order": 7,
         "path": "robots",
         "urlPath": "/robots",
-        "content": "# ROBOTS.md\n\nThis file provides instructions for AI assistants to copy the generated files from this editor to a Next.js project directory.\n\n## Overview\n\n<!-- section-1 -->\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
+        "content": "# ROBOTS.md\n\nThe web app has been initialized with \\`npx create-next-app@latest\\`.\nThis ROBOTS file is located at \\`roadmap/ROBOTS.md\\`. The roadmap directory is in the root of the Next.js repository.\n\n## Overview\n\nThe files in the roadmap directory should all be copied into their corresponding file paths in the next.js repo. Ie the file at \\`roadmap/app/globals.css\\` should be copied to \\`app/globals.css\\`, replacing any existing file at that location.\n\nAfter copying the files listed below, confirm that the environment variables listed below are present - if not, request them from the user. If possible, search the latest documentation for the corresponding platforms to find out how to find the environment variables.\n\nOnce the environment variables are set and the files are in place, run the commands listed below to initialize the database and any integrations.\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
         "components": [],
         "sections": {
-          "section1": {
-            "option1": {
-              "content": "This documentation guides AI assistants on how to copy the generated application files from this editor into a Next.js project initialized with `npx create-next-app@latest`.\n\nThe files generated by this editor are ready to be integrated into a fresh Next.js installation. Follow the sections below to understand which files to copy and where to place them.",
-              "include": true
-            }
-          },
           "section2": {
             "option1": {
               "content": "The following files have been generated and are ready to copy:\n\n**Core Configuration:**\n- `package.json` - Dependencies and scripts\n- `tsconfig.json` - TypeScript configuration\n- `tailwind.config.ts` - Tailwind CSS configuration\n- `next.config.js` - Next.js configuration\n- `.env.local` - Environment variables template\n\n**Application Structure:**\n- `app/` - All application routes and layouts\n- `components/` - Reusable UI components\n- `lib/` - Utility functions and helpers\n- `hooks/` - Custom React hooks\n- `types/` - TypeScript type definitions\n\n**Testing:**\n- `__tests__/` - Test files\n- `playwright.config.ts` - Playwright configuration\n- `jest.config.js` - Jest configuration\n\n**Database (if applicable):**\n- `prisma/schema.prisma` - Prisma schema\n- `supabase/` - Supabase configuration and migrations",
@@ -229,7 +194,8 @@
             }
           }
         },
-        "include": true
+        "include": true,
+        "visibleAfterPage": "start-here.next-steps"
       },
       {
         "id": "claude",
@@ -362,7 +328,8 @@
             }
           }
         },
-        "include": true
+        "include": true,
+        "visibleAfterPage": "start-here.next-steps"
       },
       {
         "id": "code-files",
@@ -394,7 +361,8 @@
             "content": "",
             "components": [],
             "sections": {},
-            "include": true
+            "include": true,
+            "visibleAfterPage": "start-here.next-steps"
           },
           {
             "id": "docs.util",
@@ -470,7 +438,8 @@
                 }
               }
             },
-            "include": true
+            "include": true,
+            "visibleAfterPage": "start-here.next-steps"
           }
         ]
       },
@@ -614,7 +583,7 @@
           "order": 6,
           "path": "readme",
           "urlPath": "/readme",
-          "content": "<!-- section-1 -->\n\n## Technologies Used\n\n<!-- section-2 -->\n\n<!-- section-3 -->\n\n<!-- section-4 -->\n\n<!-- section-5 -->\n\n<!-- section-6 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n## Need Help?\n\nIf you run into any issues:\n\n1. Check that all environment variables are correctly set\n2. Verify that your database is running and accessible\n3. Ensure you're using Node.js version 18 or higher\n4. Try deleting \\`node_modules\\` and \\`.next\\` folders, then run \\`npm install\\` again\n\nFor more detailed documentation, refer to the individual technology documentation linked in the Technologies Used section.\n",
+          "content": "# {{appName:Your app name}}\n\nWelcome to {{appName:Your app name}}, a modern full-stack web application built with cutting-edge technologies and best practices.\n\n<!-- section-1 -->\n\n## Technology Stack\n\nThis project is built with a carefully selected stack of modern web technologies:\n\n<!-- section-2 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n## Quick Start\n\n<!-- section-4 -->\n\n## Credits\n\nThis foundational app structure and comprehensive documentation was generated at [Gazzola.dev](https://Gazzola.dev).\n",
           "components": [
             {
               "id": "component-AppStructureAscii",
@@ -630,166 +599,137 @@
           "sections": {
             "section1": {
               "option1": {
-                "content": "# Your Web Application\n\nA modern, full-stack web application built with the latest technologies to deliver a fast, secure, and scalable user experience.\n\n## What This Application Does\n\nThis web application provides a complete foundation for building dynamic web experiences. It includes user authentication, data management, and a responsive interface that works seamlessly across all devices.",
+                "content": "This application provides a complete foundation for building modern web applications without requiring database infrastructure. All features run entirely on the client and serverless edge functions.",
+                "include": true
+              },
+              "option2": {
+                "content": "This application uses NeonDB serverless PostgreSQL for data persistence and Better Auth for secure authentication and session management. The database is managed through Prisma ORM, providing type-safe database operations and schema migrations.",
+                "include": true
+              },
+              "option3": {
+                "content": "This application uses Supabase for authentication and session management, providing secure user authentication with support for multiple authentication methods. The Supabase client handles all authentication flows and session persistence.",
+                "include": true
+              },
+              "option4": {
+                "content": "This application uses Supabase for database operations, real-time subscriptions, and file storage, combined with Better Auth for enhanced authentication features and session management. This powerful combination provides enterprise-grade security with flexible authentication options.",
                 "include": true
               }
             },
             "section2": {
               "option1": {
-                "content": "**Next.js** - A powerful React framework that handles both the visual interface users see and the behind-the-scenes server operations, making your application fast and efficient.",
+                "content": "**Next.js**: React framework providing server-side rendering, routing, and full-stack capabilities essential for modern web applications.",
                 "include": true
               },
               "option2": {
-                "content": "**TailwindCSS** - A modern styling system that ensures your application looks professional and consistent across all pages.",
+                "content": "**TailwindCSS v4**: Utility-first CSS framework for rapid UI development with consistent styling across the application.",
                 "include": true
               },
               "option3": {
-                "content": "**Shadcn/ui** - Pre-built, customizable interface components that provide a polished, professional appearance out of the box.",
+                "content": "**Shadcn/ui**: Component library built on Radix UI and Tailwind CSS, providing accessible and customizable UI components.",
                 "include": true
               },
               "option4": {
-                "content": "**TypeScript** - Adds safety checks to the code, catching errors before they reach users and making the application more reliable.",
+                "content": "**Zustand**: Lightweight state management solution for managing global application state with minimal boilerplate.",
                 "include": true
               },
               "option5": {
-                "content": "**Zustand** - Manages the application's data flow, ensuring information stays synchronized across different parts of the app.",
+                "content": "**React Query**: Data fetching and caching library that manages server state, handling loading states, errors, and data synchronization.",
                 "include": true
               },
               "option6": {
-                "content": "**React Query** - Handles data fetching and caching efficiently, keeping the application fast and responsive.",
+                "content": "**Supabase**: Backend-as-a-service platform providing database, authentication, file storage, and real-time capabilities with built-in security and scalability.",
                 "include": true
               },
               "option7": {
-                "content": "**Supabase** - An all-in-one backend platform providing database storage, user authentication, and real-time data synchronization.",
+                "content": "**NeonDB**: Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.",
                 "include": true
               },
               "option8": {
-                "content": "**NeonDB** - A modern PostgreSQL database that scales automatically and provides fast data access.",
+                "content": "**Prisma**: Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.",
                 "include": true
               },
               "option9": {
-                "content": "**Prisma** - A database toolkit that makes working with data safer and more efficient through type-safe queries.",
+                "content": "**Better Auth**: Authentication library providing secure user authentication and session management with support for multiple authentication methods.",
                 "include": true
               },
               "option10": {
-                "content": "**Better Auth** - A comprehensive authentication system supporting multiple sign-in methods (email/password, social logins, magic links).",
+                "content": "**PostgreSQL**: Relational database system storing application data including user accounts, authentication sessions, and application-specific data.",
                 "include": true
               },
               "option11": {
-                "content": "**PostgreSQL** - A robust, industry-standard database system known for reliability and performance.",
+                "content": "**Vercel**: Serverless deployment platform optimized for Next.js applications, providing automatic scaling and edge network distribution.",
                 "include": true
               },
               "option12": {
-                "content": "**Vercel** - A deployment platform optimized for Next.js applications, providing fast global delivery and automatic updates.",
+                "content": "**Railway**: Always-on server deployment platform required for continuous monitoring and background processes.",
                 "include": true
               },
               "option13": {
-                "content": "**Railway** - A cloud platform for deploying databases and backend services with simple configuration.",
+                "content": "**Playwright**: End-to-end testing framework for automated browser testing and quality assurance.",
                 "include": true
               },
               "option14": {
-                "content": "**Playwright** - Automated testing framework that verifies the application works correctly across different browsers.",
+                "content": "**Cypress**: End-to-end testing framework for automated browser testing and quality assurance.",
                 "include": true
               },
               "option15": {
-                "content": "**Cypress** - End-to-end testing tool that simulates real user interactions to ensure features work as expected.",
+                "content": "**Resend**: Email delivery service for sending authentication and notification emails with high deliverability rates.",
                 "include": true
               },
               "option16": {
-                "content": "**Resend** - Email delivery service for sending transactional emails (welcome messages, password resets, notifications).",
+                "content": "**Stripe**: Payment processing platform for one-time payments and subscription billing with secure transaction handling.",
                 "include": true
               },
               "option17": {
-                "content": "**Stripe** - Payment processing platform for accepting credit card payments securely.",
+                "content": "**PayPal**: Payment processing platform for accepting PayPal payments with buyer and seller protection.",
                 "include": true
               },
               "option18": {
-                "content": "**PayPal** - Payment integration for accepting PayPal payments from customers worldwide.",
+                "content": "**OpenRouter**: AI model routing platform providing access to multiple language models for AI-powered features.",
                 "include": true
               },
               "option19": {
-                "content": "**OpenRouter** - AI integration platform providing access to various language models for AI-powered features.",
-                "include": true
-              }
-            },
-            "section3": {
-              "option1": {
-                "content": "## Getting Started\n\n### Prerequisites\n\nBefore you begin, make sure you have these tools installed on your computer:\n\n- **Node.js** (version 18 or higher) - Download from [nodejs.org](https://nodejs.org)\n- **Git** - Download from [git-scm.com](https://git-scm.com)\n\nTo verify they're installed, open your terminal and run:\n\n```bash\nnode --version\ngit --version\n```\n\n### Installation Steps\n\n1. **Download the project files**\n\n   Open your terminal and navigate to where you want to store the project, then run:\n\n   ```bash\n   git clone <your-repository-url>\n   cd <your-project-name>\n   ```\n\n2. **Install dependencies**\n\n   This downloads all the necessary libraries and tools:\n\n   ```bash\n   npm install\n   ```",
-                "include": true
-              },
-              "option2": {
-                "content": "3. **Set up your database**\n\n   Install Prisma CLI globally:\n\n   ```bash\n   npm install -g prisma\n   ```\n\n   Initialize your database:\n\n   ```bash\n   npx prisma generate\n   npx prisma db push\n   ```",
-                "include": true
-              },
-              "option3": {
-                "content": "3. **Set up your Supabase project**\n\n   - Visit [supabase.com](https://supabase.com) and create a free account\n   - Create a new project\n   - Go to Project Settings > API to find your connection details",
+                "content": "**TypeScript**: Strongly-typed programming language built on JavaScript, providing enhanced code quality, developer experience, and compile-time error detection.",
                 "include": true
               }
             },
             "section4": {
               "option1": {
-                "content": "## Configuration\n\n### Environment Variables\n\nCreate a file named `.env.local` in the root of your project. This file stores sensitive configuration data:\n\n```env\nNEXT_PUBLIC_APP_URL=http://localhost:3000\n```",
+                "content": "### Supabase Setup\n\n1. Create a project at [supabase.com](https://supabase.com)\n2. Get your project URL and anon key from Settings > API\n3. Add to `.env.local`:\n   ```\n   NEXT_PUBLIC_SUPABASE_URL=your_project_url\n   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key\n   ```\n4. Run database migrations if using Supabase for database operations",
                 "include": true
               },
               "option2": {
-                "content": "Add your NeonDB connection string:\n\n```env\nDATABASE_URL=\"your-neondb-connection-string\"\n```\n\nGet your connection string from your NeonDB dashboard at [neon.tech](https://neon.tech).",
+                "content": "### NeonDB Setup\n\n1. Create a database at [neon.tech](https://neon.tech)\n2. Copy your connection string from the dashboard\n3. Add to `.env.local`:\n   ```\n   DATABASE_URL=your_connection_string\n   ```\n4. Run Prisma migrations: `npx prisma migrate dev`",
                 "include": true
               },
               "option3": {
-                "content": "Add your Supabase credentials:\n\n```env\nNEXT_PUBLIC_SUPABASE_URL=your-supabase-url\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key\nSUPABASE_SERVICE_ROLE_KEY=your-service-role-key\n```\n\nFind these values in your Supabase project's API settings.",
+                "content": "### Prisma Setup\n\n1. Ensure your database connection string is set in `.env.local`\n2. Generate Prisma client: `npx prisma generate`\n3. Run migrations: `npx prisma migrate dev`\n4. (Optional) Seed database: `npx prisma db seed`",
                 "include": true
               },
               "option4": {
-                "content": "Add your Better Auth configuration:\n\n```env\nBETTER_AUTH_SECRET=your-secret-key\nBETTER_AUTH_URL=http://localhost:3000\n```\n\nGenerate a secure secret key by running:\n\n```bash\nopenssl rand -base64 32\n```",
+                "content": "### Better Auth Setup\n\n1. Generate a secret key: `openssl rand -base64 32`\n2. Add to `.env.local`:\n   ```\n   BETTER_AUTH_SECRET=your_generated_secret\n   BETTER_AUTH_URL=http://localhost:3000\n   ```\n3. Configure authentication providers in `lib/auth.ts`\n4. Run database migrations to create auth tables",
                 "include": true
               },
               "option5": {
-                "content": "Add your Stripe keys:\n\n```env\nNEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your-publishable-key\nSTRIPE_SECRET_KEY=your-secret-key\nSTRIPE_WEBHOOK_SECRET=your-webhook-secret\n```\n\nGet these from your Stripe Dashboard at [stripe.com/dashboard](https://dashboard.stripe.com).",
+                "content": "### Stripe Setup\n\n1. Create an account at [stripe.com](https://stripe.com)\n2. Get your API keys from Dashboard > Developers > API keys\n3. Add to `.env.local`:\n   ```\n   STRIPE_SECRET_KEY=your_secret_key\n   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_publishable_key\n   STRIPE_WEBHOOK_SECRET=your_webhook_secret\n   ```\n4. Set up webhooks for payment events",
                 "include": true
               },
               "option6": {
-                "content": "Add your PayPal credentials:\n\n```env\nNEXT_PUBLIC_PAYPAL_CLIENT_ID=your-client-id\nPAYPAL_CLIENT_SECRET=your-client-secret\n```\n\nGet these from your PayPal Developer Dashboard at [developer.paypal.com](https://developer.paypal.com).",
+                "content": "### PayPal Setup\n\n1. Create a developer account at [developer.paypal.com](https://developer.paypal.com)\n2. Create a REST API app and get your credentials\n3. Add to `.env.local`:\n   ```\n   PAYPAL_CLIENT_ID=your_client_id\n   PAYPAL_CLIENT_SECRET=your_client_secret\n   ```\n4. Configure webhook endpoints for payment notifications",
                 "include": true
               },
               "option7": {
-                "content": "Add your Resend API key:\n\n```env\nRESEND_API_KEY=your-resend-api-key\n```\n\nGet your API key from [resend.com/api-keys](https://resend.com/api-keys).",
+                "content": "### Resend Setup\n\n1. Create an account at [resend.com](https://resend.com)\n2. Get your API key from Settings > API Keys\n3. Add to `.env.local`:\n   ```\n   RESEND_API_KEY=your_api_key\n   ```\n4. Verify your sending domain in the Resend dashboard",
                 "include": true
               },
               "option8": {
-                "content": "Add your OpenRouter API key:\n\n```env\nOPENROUTER_API_KEY=your-openrouter-api-key\n```\n\nGet your API key from [openrouter.ai/keys](https://openrouter.ai/keys).",
-                "include": true
-              }
-            },
-            "section5": {
-              "option1": {
-                "content": "## Development\n\n### Running the Application Locally\n\nStart the development server:\n\n```bash\nnpm run dev\n```\n\nOpen your web browser and visit [http://localhost:3000](http://localhost:3000)\n\nThe application will automatically reload when you make changes to the code.\n\n### Available Commands\n\n- `npm run dev` - Starts the development server\n- `npm run build` - Creates an optimized production build\n- `npm run start` - Runs the production build locally\n- `npm run lint` - Checks code for potential issues",
-                "include": true
-              },
-              "option2": {
-                "content": "- `npm run test` - Runs all tests\n- `npm run test:e2e` - Runs end-to-end tests with Playwright",
-                "include": true
-              },
-              "option3": {
-                "content": "- `npm run cypress:open` - Opens Cypress test runner\n- `npm run cypress:run` - Runs Cypress tests in headless mode",
-                "include": true
-              },
-              "option4": {
-                "content": "- `npx prisma studio` - Opens a visual database editor\n- `npx prisma migrate dev` - Creates and applies database migrations\n- `npx prisma generate` - Generates Prisma client types",
-                "include": true
-              }
-            },
-            "section6": {
-              "option1": {
-                "content": "## Deployment\n\n### Deploying to Vercel\n\nVercel is the recommended platform for deploying Next.js applications:\n\n1. **Create a Vercel account**\n\n   Visit [vercel.com](https://vercel.com) and sign up with your GitHub account.\n\n2. **Import your project**\n\n   - Click \"New Project\" in your Vercel dashboard\n   - Import your GitHub repository\n   - Vercel will automatically detect Next.js settings\n\n3. **Add environment variables**\n\n   In your project settings, add all the environment variables from your `.env.local` file.\n\n4. **Deploy**\n\n   Click \"Deploy\" and Vercel will build and publish your application.\n\nYour application will be live at `https://your-project-name.vercel.app`\n\nEvery time you push code to your main branch, Vercel will automatically deploy the updates.",
-                "include": true
-              },
-              "option2": {
-                "content": "### Deploying Your Database to Railway\n\nIf you're using NeonDB or need to host PostgreSQL:\n\n1. **Create a Railway account**\n\n   Visit [railway.app](https://railway.app) and sign up.\n\n2. **Create a new PostgreSQL database**\n\n   - Click \"New Project\"\n   - Select \"Provision PostgreSQL\"\n   - Copy the connection string from the \"Connect\" tab\n\n3. **Update your environment variables**\n\n   Add the Railway database connection string to your Vercel environment variables.\n\n4. **Run migrations**\n\n   After deployment, run your database migrations:\n\n   ```bash\n   npx prisma migrate deploy\n   ```",
+                "content": "### OpenRouter Setup\n\n1. Create an account at [openrouter.ai](https://openrouter.ai)\n2. Get your API key from Settings > API Keys\n3. Add to `.env.local`:\n   ```\n   OPENROUTER_API_KEY=your_api_key\n   ```\n4. Configure your preferred AI models in the application",
                 "include": true
               }
             }
           },
-          "include": true
+          "include": true,
+          "visibleAfterPage": "start-here.next-steps"
         },
         {
           "id": "robots",
@@ -799,15 +739,9 @@
           "order": 7,
           "path": "robots",
           "urlPath": "/robots",
-          "content": "# ROBOTS.md\n\nThis file provides instructions for AI assistants to copy the generated files from this editor to a Next.js project directory.\n\n## Overview\n\n<!-- section-1 -->\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
+          "content": "# ROBOTS.md\n\nThe web app has been initialized with \\`npx create-next-app@latest\\`.\nThis ROBOTS file is located at \\`roadmap/ROBOTS.md\\`. The roadmap directory is in the root of the Next.js repository.\n\n## Overview\n\nThe files in the roadmap directory should all be copied into their corresponding file paths in the next.js repo. Ie the file at \\`roadmap/app/globals.css\\` should be copied to \\`app/globals.css\\`, replacing any existing file at that location.\n\nAfter copying the files listed below, confirm that the environment variables listed below are present - if not, request them from the user. If possible, search the latest documentation for the corresponding platforms to find out how to find the environment variables.\n\nOnce the environment variables are set and the files are in place, run the commands listed below to initialize the database and any integrations.\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
           "components": [],
           "sections": {
-            "section1": {
-              "option1": {
-                "content": "This documentation guides AI assistants on how to copy the generated application files from this editor into a Next.js project initialized with `npx create-next-app@latest`.\n\nThe files generated by this editor are ready to be integrated into a fresh Next.js installation. Follow the sections below to understand which files to copy and where to place them.",
-                "include": true
-              }
-            },
             "section2": {
               "option1": {
                 "content": "The following files have been generated and are ready to copy:\n\n**Core Configuration:**\n- `package.json` - Dependencies and scripts\n- `tsconfig.json` - TypeScript configuration\n- `tailwind.config.ts` - Tailwind CSS configuration\n- `next.config.js` - Next.js configuration\n- `.env.local` - Environment variables template\n\n**Application Structure:**\n- `app/` - All application routes and layouts\n- `components/` - Reusable UI components\n- `lib/` - Utility functions and helpers\n- `hooks/` - Custom React hooks\n- `types/` - TypeScript type definitions\n\n**Testing:**\n- `__tests__/` - Test files\n- `playwright.config.ts` - Playwright configuration\n- `jest.config.js` - Jest configuration\n\n**Database (if applicable):**\n- `prisma/schema.prisma` - Prisma schema\n- `supabase/` - Supabase configuration and migrations",
@@ -827,7 +761,8 @@
               }
             }
           },
-          "include": true
+          "include": true,
+          "visibleAfterPage": "start-here.next-steps"
         },
         {
           "id": "claude",
@@ -960,7 +895,8 @@
               }
             }
           },
-          "include": true
+          "include": true,
+          "visibleAfterPage": "start-here.next-steps"
         },
         {
           "id": "code-files",
@@ -992,7 +928,8 @@
               "content": "",
               "components": [],
               "sections": {},
-              "include": true
+              "include": true,
+              "visibleAfterPage": "start-here.next-steps"
             },
             {
               "id": "docs.util",
@@ -1068,7 +1005,8 @@
                   }
                 }
               },
-              "include": true
+              "include": true,
+              "visibleAfterPage": "start-here.next-steps"
             }
           ]
         },
@@ -1202,7 +1140,7 @@
       "order": 6,
       "path": "readme",
       "urlPath": "/readme",
-      "content": "<!-- section-1 -->\n\n## Technologies Used\n\n<!-- section-2 -->\n\n<!-- section-3 -->\n\n<!-- section-4 -->\n\n<!-- section-5 -->\n\n<!-- section-6 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n## Need Help?\n\nIf you run into any issues:\n\n1. Check that all environment variables are correctly set\n2. Verify that your database is running and accessible\n3. Ensure you're using Node.js version 18 or higher\n4. Try deleting \\`node_modules\\` and \\`.next\\` folders, then run \\`npm install\\` again\n\nFor more detailed documentation, refer to the individual technology documentation linked in the Technologies Used section.\n",
+      "content": "# {{appName:Your app name}}\n\nWelcome to {{appName:Your app name}}, a modern full-stack web application built with cutting-edge technologies and best practices.\n\n<!-- section-1 -->\n\n## Technology Stack\n\nThis project is built with a carefully selected stack of modern web technologies:\n\n<!-- section-2 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n## Quick Start\n\n<!-- section-4 -->\n\n## Credits\n\nThis foundational app structure and comprehensive documentation was generated at [Gazzola.dev](https://Gazzola.dev).\n",
       "components": [
         {
           "id": "component-AppStructureAscii",
@@ -1218,166 +1156,137 @@
       "sections": {
         "section1": {
           "option1": {
-            "content": "# Your Web Application\n\nA modern, full-stack web application built with the latest technologies to deliver a fast, secure, and scalable user experience.\n\n## What This Application Does\n\nThis web application provides a complete foundation for building dynamic web experiences. It includes user authentication, data management, and a responsive interface that works seamlessly across all devices.",
+            "content": "This application provides a complete foundation for building modern web applications without requiring database infrastructure. All features run entirely on the client and serverless edge functions.",
+            "include": true
+          },
+          "option2": {
+            "content": "This application uses NeonDB serverless PostgreSQL for data persistence and Better Auth for secure authentication and session management. The database is managed through Prisma ORM, providing type-safe database operations and schema migrations.",
+            "include": true
+          },
+          "option3": {
+            "content": "This application uses Supabase for authentication and session management, providing secure user authentication with support for multiple authentication methods. The Supabase client handles all authentication flows and session persistence.",
+            "include": true
+          },
+          "option4": {
+            "content": "This application uses Supabase for database operations, real-time subscriptions, and file storage, combined with Better Auth for enhanced authentication features and session management. This powerful combination provides enterprise-grade security with flexible authentication options.",
             "include": true
           }
         },
         "section2": {
           "option1": {
-            "content": "**Next.js** - A powerful React framework that handles both the visual interface users see and the behind-the-scenes server operations, making your application fast and efficient.",
+            "content": "**Next.js**: React framework providing server-side rendering, routing, and full-stack capabilities essential for modern web applications.",
             "include": true
           },
           "option2": {
-            "content": "**TailwindCSS** - A modern styling system that ensures your application looks professional and consistent across all pages.",
+            "content": "**TailwindCSS v4**: Utility-first CSS framework for rapid UI development with consistent styling across the application.",
             "include": true
           },
           "option3": {
-            "content": "**Shadcn/ui** - Pre-built, customizable interface components that provide a polished, professional appearance out of the box.",
+            "content": "**Shadcn/ui**: Component library built on Radix UI and Tailwind CSS, providing accessible and customizable UI components.",
             "include": true
           },
           "option4": {
-            "content": "**TypeScript** - Adds safety checks to the code, catching errors before they reach users and making the application more reliable.",
+            "content": "**Zustand**: Lightweight state management solution for managing global application state with minimal boilerplate.",
             "include": true
           },
           "option5": {
-            "content": "**Zustand** - Manages the application's data flow, ensuring information stays synchronized across different parts of the app.",
+            "content": "**React Query**: Data fetching and caching library that manages server state, handling loading states, errors, and data synchronization.",
             "include": true
           },
           "option6": {
-            "content": "**React Query** - Handles data fetching and caching efficiently, keeping the application fast and responsive.",
+            "content": "**Supabase**: Backend-as-a-service platform providing database, authentication, file storage, and real-time capabilities with built-in security and scalability.",
             "include": true
           },
           "option7": {
-            "content": "**Supabase** - An all-in-one backend platform providing database storage, user authentication, and real-time data synchronization.",
+            "content": "**NeonDB**: Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.",
             "include": true
           },
           "option8": {
-            "content": "**NeonDB** - A modern PostgreSQL database that scales automatically and provides fast data access.",
+            "content": "**Prisma**: Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.",
             "include": true
           },
           "option9": {
-            "content": "**Prisma** - A database toolkit that makes working with data safer and more efficient through type-safe queries.",
+            "content": "**Better Auth**: Authentication library providing secure user authentication and session management with support for multiple authentication methods.",
             "include": true
           },
           "option10": {
-            "content": "**Better Auth** - A comprehensive authentication system supporting multiple sign-in methods (email/password, social logins, magic links).",
+            "content": "**PostgreSQL**: Relational database system storing application data including user accounts, authentication sessions, and application-specific data.",
             "include": true
           },
           "option11": {
-            "content": "**PostgreSQL** - A robust, industry-standard database system known for reliability and performance.",
+            "content": "**Vercel**: Serverless deployment platform optimized for Next.js applications, providing automatic scaling and edge network distribution.",
             "include": true
           },
           "option12": {
-            "content": "**Vercel** - A deployment platform optimized for Next.js applications, providing fast global delivery and automatic updates.",
+            "content": "**Railway**: Always-on server deployment platform required for continuous monitoring and background processes.",
             "include": true
           },
           "option13": {
-            "content": "**Railway** - A cloud platform for deploying databases and backend services with simple configuration.",
+            "content": "**Playwright**: End-to-end testing framework for automated browser testing and quality assurance.",
             "include": true
           },
           "option14": {
-            "content": "**Playwright** - Automated testing framework that verifies the application works correctly across different browsers.",
+            "content": "**Cypress**: End-to-end testing framework for automated browser testing and quality assurance.",
             "include": true
           },
           "option15": {
-            "content": "**Cypress** - End-to-end testing tool that simulates real user interactions to ensure features work as expected.",
+            "content": "**Resend**: Email delivery service for sending authentication and notification emails with high deliverability rates.",
             "include": true
           },
           "option16": {
-            "content": "**Resend** - Email delivery service for sending transactional emails (welcome messages, password resets, notifications).",
+            "content": "**Stripe**: Payment processing platform for one-time payments and subscription billing with secure transaction handling.",
             "include": true
           },
           "option17": {
-            "content": "**Stripe** - Payment processing platform for accepting credit card payments securely.",
+            "content": "**PayPal**: Payment processing platform for accepting PayPal payments with buyer and seller protection.",
             "include": true
           },
           "option18": {
-            "content": "**PayPal** - Payment integration for accepting PayPal payments from customers worldwide.",
+            "content": "**OpenRouter**: AI model routing platform providing access to multiple language models for AI-powered features.",
             "include": true
           },
           "option19": {
-            "content": "**OpenRouter** - AI integration platform providing access to various language models for AI-powered features.",
-            "include": true
-          }
-        },
-        "section3": {
-          "option1": {
-            "content": "## Getting Started\n\n### Prerequisites\n\nBefore you begin, make sure you have these tools installed on your computer:\n\n- **Node.js** (version 18 or higher) - Download from [nodejs.org](https://nodejs.org)\n- **Git** - Download from [git-scm.com](https://git-scm.com)\n\nTo verify they're installed, open your terminal and run:\n\n```bash\nnode --version\ngit --version\n```\n\n### Installation Steps\n\n1. **Download the project files**\n\n   Open your terminal and navigate to where you want to store the project, then run:\n\n   ```bash\n   git clone <your-repository-url>\n   cd <your-project-name>\n   ```\n\n2. **Install dependencies**\n\n   This downloads all the necessary libraries and tools:\n\n   ```bash\n   npm install\n   ```",
-            "include": true
-          },
-          "option2": {
-            "content": "3. **Set up your database**\n\n   Install Prisma CLI globally:\n\n   ```bash\n   npm install -g prisma\n   ```\n\n   Initialize your database:\n\n   ```bash\n   npx prisma generate\n   npx prisma db push\n   ```",
-            "include": true
-          },
-          "option3": {
-            "content": "3. **Set up your Supabase project**\n\n   - Visit [supabase.com](https://supabase.com) and create a free account\n   - Create a new project\n   - Go to Project Settings > API to find your connection details",
+            "content": "**TypeScript**: Strongly-typed programming language built on JavaScript, providing enhanced code quality, developer experience, and compile-time error detection.",
             "include": true
           }
         },
         "section4": {
           "option1": {
-            "content": "## Configuration\n\n### Environment Variables\n\nCreate a file named `.env.local` in the root of your project. This file stores sensitive configuration data:\n\n```env\nNEXT_PUBLIC_APP_URL=http://localhost:3000\n```",
+            "content": "### Supabase Setup\n\n1. Create a project at [supabase.com](https://supabase.com)\n2. Get your project URL and anon key from Settings > API\n3. Add to `.env.local`:\n   ```\n   NEXT_PUBLIC_SUPABASE_URL=your_project_url\n   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key\n   ```\n4. Run database migrations if using Supabase for database operations",
             "include": true
           },
           "option2": {
-            "content": "Add your NeonDB connection string:\n\n```env\nDATABASE_URL=\"your-neondb-connection-string\"\n```\n\nGet your connection string from your NeonDB dashboard at [neon.tech](https://neon.tech).",
+            "content": "### NeonDB Setup\n\n1. Create a database at [neon.tech](https://neon.tech)\n2. Copy your connection string from the dashboard\n3. Add to `.env.local`:\n   ```\n   DATABASE_URL=your_connection_string\n   ```\n4. Run Prisma migrations: `npx prisma migrate dev`",
             "include": true
           },
           "option3": {
-            "content": "Add your Supabase credentials:\n\n```env\nNEXT_PUBLIC_SUPABASE_URL=your-supabase-url\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key\nSUPABASE_SERVICE_ROLE_KEY=your-service-role-key\n```\n\nFind these values in your Supabase project's API settings.",
+            "content": "### Prisma Setup\n\n1. Ensure your database connection string is set in `.env.local`\n2. Generate Prisma client: `npx prisma generate`\n3. Run migrations: `npx prisma migrate dev`\n4. (Optional) Seed database: `npx prisma db seed`",
             "include": true
           },
           "option4": {
-            "content": "Add your Better Auth configuration:\n\n```env\nBETTER_AUTH_SECRET=your-secret-key\nBETTER_AUTH_URL=http://localhost:3000\n```\n\nGenerate a secure secret key by running:\n\n```bash\nopenssl rand -base64 32\n```",
+            "content": "### Better Auth Setup\n\n1. Generate a secret key: `openssl rand -base64 32`\n2. Add to `.env.local`:\n   ```\n   BETTER_AUTH_SECRET=your_generated_secret\n   BETTER_AUTH_URL=http://localhost:3000\n   ```\n3. Configure authentication providers in `lib/auth.ts`\n4. Run database migrations to create auth tables",
             "include": true
           },
           "option5": {
-            "content": "Add your Stripe keys:\n\n```env\nNEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your-publishable-key\nSTRIPE_SECRET_KEY=your-secret-key\nSTRIPE_WEBHOOK_SECRET=your-webhook-secret\n```\n\nGet these from your Stripe Dashboard at [stripe.com/dashboard](https://dashboard.stripe.com).",
+            "content": "### Stripe Setup\n\n1. Create an account at [stripe.com](https://stripe.com)\n2. Get your API keys from Dashboard > Developers > API keys\n3. Add to `.env.local`:\n   ```\n   STRIPE_SECRET_KEY=your_secret_key\n   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_publishable_key\n   STRIPE_WEBHOOK_SECRET=your_webhook_secret\n   ```\n4. Set up webhooks for payment events",
             "include": true
           },
           "option6": {
-            "content": "Add your PayPal credentials:\n\n```env\nNEXT_PUBLIC_PAYPAL_CLIENT_ID=your-client-id\nPAYPAL_CLIENT_SECRET=your-client-secret\n```\n\nGet these from your PayPal Developer Dashboard at [developer.paypal.com](https://developer.paypal.com).",
+            "content": "### PayPal Setup\n\n1. Create a developer account at [developer.paypal.com](https://developer.paypal.com)\n2. Create a REST API app and get your credentials\n3. Add to `.env.local`:\n   ```\n   PAYPAL_CLIENT_ID=your_client_id\n   PAYPAL_CLIENT_SECRET=your_client_secret\n   ```\n4. Configure webhook endpoints for payment notifications",
             "include": true
           },
           "option7": {
-            "content": "Add your Resend API key:\n\n```env\nRESEND_API_KEY=your-resend-api-key\n```\n\nGet your API key from [resend.com/api-keys](https://resend.com/api-keys).",
+            "content": "### Resend Setup\n\n1. Create an account at [resend.com](https://resend.com)\n2. Get your API key from Settings > API Keys\n3. Add to `.env.local`:\n   ```\n   RESEND_API_KEY=your_api_key\n   ```\n4. Verify your sending domain in the Resend dashboard",
             "include": true
           },
           "option8": {
-            "content": "Add your OpenRouter API key:\n\n```env\nOPENROUTER_API_KEY=your-openrouter-api-key\n```\n\nGet your API key from [openrouter.ai/keys](https://openrouter.ai/keys).",
-            "include": true
-          }
-        },
-        "section5": {
-          "option1": {
-            "content": "## Development\n\n### Running the Application Locally\n\nStart the development server:\n\n```bash\nnpm run dev\n```\n\nOpen your web browser and visit [http://localhost:3000](http://localhost:3000)\n\nThe application will automatically reload when you make changes to the code.\n\n### Available Commands\n\n- `npm run dev` - Starts the development server\n- `npm run build` - Creates an optimized production build\n- `npm run start` - Runs the production build locally\n- `npm run lint` - Checks code for potential issues",
-            "include": true
-          },
-          "option2": {
-            "content": "- `npm run test` - Runs all tests\n- `npm run test:e2e` - Runs end-to-end tests with Playwright",
-            "include": true
-          },
-          "option3": {
-            "content": "- `npm run cypress:open` - Opens Cypress test runner\n- `npm run cypress:run` - Runs Cypress tests in headless mode",
-            "include": true
-          },
-          "option4": {
-            "content": "- `npx prisma studio` - Opens a visual database editor\n- `npx prisma migrate dev` - Creates and applies database migrations\n- `npx prisma generate` - Generates Prisma client types",
-            "include": true
-          }
-        },
-        "section6": {
-          "option1": {
-            "content": "## Deployment\n\n### Deploying to Vercel\n\nVercel is the recommended platform for deploying Next.js applications:\n\n1. **Create a Vercel account**\n\n   Visit [vercel.com](https://vercel.com) and sign up with your GitHub account.\n\n2. **Import your project**\n\n   - Click \"New Project\" in your Vercel dashboard\n   - Import your GitHub repository\n   - Vercel will automatically detect Next.js settings\n\n3. **Add environment variables**\n\n   In your project settings, add all the environment variables from your `.env.local` file.\n\n4. **Deploy**\n\n   Click \"Deploy\" and Vercel will build and publish your application.\n\nYour application will be live at `https://your-project-name.vercel.app`\n\nEvery time you push code to your main branch, Vercel will automatically deploy the updates.",
-            "include": true
-          },
-          "option2": {
-            "content": "### Deploying Your Database to Railway\n\nIf you're using NeonDB or need to host PostgreSQL:\n\n1. **Create a Railway account**\n\n   Visit [railway.app](https://railway.app) and sign up.\n\n2. **Create a new PostgreSQL database**\n\n   - Click \"New Project\"\n   - Select \"Provision PostgreSQL\"\n   - Copy the connection string from the \"Connect\" tab\n\n3. **Update your environment variables**\n\n   Add the Railway database connection string to your Vercel environment variables.\n\n4. **Run migrations**\n\n   After deployment, run your database migrations:\n\n   ```bash\n   npx prisma migrate deploy\n   ```",
+            "content": "### OpenRouter Setup\n\n1. Create an account at [openrouter.ai](https://openrouter.ai)\n2. Get your API key from Settings > API Keys\n3. Add to `.env.local`:\n   ```\n   OPENROUTER_API_KEY=your_api_key\n   ```\n4. Configure your preferred AI models in the application",
             "include": true
           }
         }
       },
-      "include": true
+      "include": true,
+      "visibleAfterPage": "start-here.next-steps"
     },
     "readme.component.AppStructureAscii": {
       "id": "component-AppStructureAscii",
@@ -1397,15 +1306,9 @@
       "order": 7,
       "path": "robots",
       "urlPath": "/robots",
-      "content": "# ROBOTS.md\n\nThis file provides instructions for AI assistants to copy the generated files from this editor to a Next.js project directory.\n\n## Overview\n\n<!-- section-1 -->\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
+      "content": "# ROBOTS.md\n\nThe web app has been initialized with \\`npx create-next-app@latest\\`.\nThis ROBOTS file is located at \\`roadmap/ROBOTS.md\\`. The roadmap directory is in the root of the Next.js repository.\n\n## Overview\n\nThe files in the roadmap directory should all be copied into their corresponding file paths in the next.js repo. Ie the file at \\`roadmap/app/globals.css\\` should be copied to \\`app/globals.css\\`, replacing any existing file at that location.\n\nAfter copying the files listed below, confirm that the environment variables listed below are present - if not, request them from the user. If possible, search the latest documentation for the corresponding platforms to find out how to find the environment variables.\n\nOnce the environment variables are set and the files are in place, run the commands listed below to initialize the database and any integrations.\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
       "components": [],
       "sections": {
-        "section1": {
-          "option1": {
-            "content": "This documentation guides AI assistants on how to copy the generated application files from this editor into a Next.js project initialized with `npx create-next-app@latest`.\n\nThe files generated by this editor are ready to be integrated into a fresh Next.js installation. Follow the sections below to understand which files to copy and where to place them.",
-            "include": true
-          }
-        },
         "section2": {
           "option1": {
             "content": "The following files have been generated and are ready to copy:\n\n**Core Configuration:**\n- `package.json` - Dependencies and scripts\n- `tsconfig.json` - TypeScript configuration\n- `tailwind.config.ts` - Tailwind CSS configuration\n- `next.config.js` - Next.js configuration\n- `.env.local` - Environment variables template\n\n**Application Structure:**\n- `app/` - All application routes and layouts\n- `components/` - Reusable UI components\n- `lib/` - Utility functions and helpers\n- `hooks/` - Custom React hooks\n- `types/` - TypeScript type definitions\n\n**Testing:**\n- `__tests__/` - Test files\n- `playwright.config.ts` - Playwright configuration\n- `jest.config.js` - Jest configuration\n\n**Database (if applicable):**\n- `prisma/schema.prisma` - Prisma schema\n- `supabase/` - Supabase configuration and migrations",
@@ -1425,7 +1328,8 @@
           }
         }
       },
-      "include": true
+      "include": true,
+      "visibleAfterPage": "start-here.next-steps"
     },
     "claude": {
       "id": "claude",
@@ -1558,7 +1462,8 @@
           }
         }
       },
-      "include": true
+      "include": true,
+      "visibleAfterPage": "start-here.next-steps"
     },
     "claude.component.AppStructureAscii": {
       "id": "component-AppStructureAscii",
@@ -1600,7 +1505,8 @@
           "content": "",
           "components": [],
           "sections": {},
-          "include": true
+          "include": true,
+          "visibleAfterPage": "start-here.next-steps"
         },
         {
           "id": "docs.util",
@@ -1676,7 +1582,8 @@
               }
             }
           },
-          "include": true
+          "include": true,
+          "visibleAfterPage": "start-here.next-steps"
         }
       ]
     },
@@ -1691,7 +1598,8 @@
       "content": "",
       "components": [],
       "sections": {},
-      "include": true
+      "include": true,
+      "visibleAfterPage": "start-here.next-steps"
     },
     "docs.util": {
       "id": "docs.util",
@@ -1767,7 +1675,8 @@
           }
         }
       },
-      "include": true
+      "include": true,
+      "visibleAfterPage": "start-here.next-steps"
     },
     "start-here": {
       "id": "start-here",
@@ -2039,5 +1948,5 @@
       "include": true
     }
   },
-  "contentVersion": 38
+  "contentVersion": 39
 }
