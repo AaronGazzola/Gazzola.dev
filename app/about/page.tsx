@@ -108,7 +108,7 @@ const careerSteps = [
   {
     title: "Freelance Career",
     description:
-      "5 years of full-time, five-star, full-stack, freelance web app development",
+      "5 years of five-star full-stack freelance web app development",
     icon: Briefcase,
     duration: "5 years",
   },
@@ -451,7 +451,9 @@ const Page = () => {
               {techStack.map((tech, index) => {
                 const totalItems = techStack.length;
                 const isLastItemOverall = index === totalItems - 1;
-                const mdHideClass = isLastItemOverall ? "md:hidden lg:flex" : "";
+                const mdHideClass = isLastItemOverall
+                  ? "md:hidden lg:flex"
+                  : "";
                 const combinedClassName =
                   `tech-stack-item-${index} relative flex flex-col items-center ${mdHideClass}`.trim();
 
