@@ -2,7 +2,7 @@
 
 ## Active tasks
 
-- [ ] display all remaining markdown files after "next steps"
+- [x] display all remaining markdown files after "next steps"
 - [ ] Conditionally populate deployment instructions and util.md
 - [ ] Remove the empty section fallback
 - [ ] Fix single color button border

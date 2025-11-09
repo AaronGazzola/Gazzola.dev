@@ -95,6 +95,58 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "robots", sectionId: "section2", optionId: "option1", configPath: null },
   { filePath: "robots", sectionId: "section3", optionId: "option1", configPath: null },
   { filePath: "robots", sectionId: "section4", optionId: "option1", configPath: null },
+
+  { filePath: "docs.deployment-instructions", sectionId: "section1", optionId: "option1", configPath: "technologies.vercel" },
+  { filePath: "docs.deployment-instructions", sectionId: "section1", optionId: "option2", configPath: "technologies.railway" },
+
+  { filePath: "docs.deployment-instructions", sectionId: "section2", optionId: "option1", configPath: "questions.useSupabase", matchValue: "none" },
+  { filePath: "docs.deployment-instructions", sectionId: "section2", optionId: "option2", configPath: "technologies.neondb" },
+  { filePath: "docs.deployment-instructions", sectionId: "section2", optionId: "option3", configPath: "technologies.supabase" },
+
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option1", configPath: null },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option2", configPath: "technologies.prisma" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option3", configPath: "technologies.betterAuth" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option4", configPath: "technologies.resend" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option5", configPath: "technologies.stripe" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option6", configPath: "technologies.paypal" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option7", configPath: "technologies.openrouter" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option8", configPath: "features.authentication.googleAuth" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option9", configPath: "features.authentication.githubAuth" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option10", configPath: "features.authentication.appleAuth" },
+
+  { filePath: "docs.deployment-instructions", sectionId: "section4", optionId: "option1", configPath: "technologies.betterAuth" },
+  { filePath: "docs.deployment-instructions", sectionId: "section4", optionId: "option2", configPath: "questions.useSupabase", matchValue: "authOnly" },
+  { filePath: "docs.deployment-instructions", sectionId: "section4", optionId: "option3", configPath: "features.admin.enabled" },
+
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option1", configPath: "technologies.stripe" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option2", configPath: "technologies.paypal" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option3", configPath: "technologies.railway" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option4", configPath: "technologies.vercel" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option5", configPath: "technologies.railway" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option6", configPath: "technologies.resend" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option7", configPath: null },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option8", configPath: "technologies.supabase" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option9", configPath: "technologies.supabase" },
+  { filePath: "docs.deployment-instructions", sectionId: "section5", optionId: "option10", configPath: null },
+
+  { filePath: "docs.util", sectionId: "section1", optionId: "option1", configPath: "questions.useSupabase", matchValue: "none" },
+  { filePath: "docs.util", sectionId: "section1", optionId: "option2", configPath: "technologies.prisma" },
+
+  { filePath: "docs.util", sectionId: "section2", optionId: "option1", configPath: "technologies.prisma" },
+  { filePath: "docs.util", sectionId: "section2", optionId: "option2", configPath: "questions.useSupabase", matchValue: "none" },
+
+  { filePath: "docs.util", sectionId: "section3", optionId: "option1", configPath: "questions.useSupabase", matchValue: "none" },
+  { filePath: "docs.util", sectionId: "section3", optionId: "option2", configPath: "technologies.betterAuth" },
+  { filePath: "docs.util", sectionId: "section3", optionId: "option3", configPath: "questions.useSupabase", matchValue: "withBetterAuth" },
+  { filePath: "docs.util", sectionId: "section3", optionId: "option4", configPath: "questions.useSupabase", matchValue: "authOnly" },
+
+  { filePath: "docs.util", sectionId: "section4", optionId: "option1", configPath: "questions.useSupabase", matchValue: "none" },
+  { filePath: "docs.util", sectionId: "section4", optionId: "option2", configPath: "technologies.betterAuth" },
+  { filePath: "docs.util", sectionId: "section4", optionId: "option3", configPath: "questions.useSupabase", matchValue: "authOnly" },
+
+  { filePath: "docs.util", sectionId: "section5", optionId: "option1", configPath: "questions.useSupabase", matchValue: "none" },
+  { filePath: "docs.util", sectionId: "section5", optionId: "option2", configPath: "technologies.betterAuth" },
+  { filePath: "docs.util", sectionId: "section5", optionId: "option3", configPath: "technologies.supabase" },
 ];
 
 export function getConfigValue(config: InitialConfigurationType, path: ConfigPath): any {
