@@ -385,7 +385,7 @@ const Header = () => {
 
           {isExpanded && (
             <h2 className="text-lg font-medium md:block hidden">
-              Artificial Intelligence Quality Assurance
+              Artificial Intelligence Quality Assurance.
             </h2>
           )}
           {isExpanded ? (
