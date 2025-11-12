@@ -389,7 +389,7 @@ const Header = () => {
             </h2>
           )}
           {isExpanded ? (
-            <h3 className="text-lg font-medium">Design, Build, Review.</h3>
+            <h3 className="text-lg font-medium">Don&apos;t trust, verify.</h3>
           ) : (
             <span className="hidden md:inline">
               <Button
