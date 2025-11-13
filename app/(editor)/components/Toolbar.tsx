@@ -492,13 +492,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   return (
     <TooltipProvider>
-      <div className="w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow theme-font-sans theme-tracking">
+      <div className="w-full max-w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow theme-font-sans theme-tracking overflow-hidden">
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="w-full">
+            <div className="w-full max-w-full">
               <Progress
                 value={progressInfo.progressValue}
-                className="h-1 w-full rounded-none"
+                className="h-1 w-full max-w-full rounded-none"
               />
             </div>
           </TooltipTrigger>
@@ -510,7 +510,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </TooltipContent>
         </Tooltip>
 
-        <div className="flex items-center justify-between h-12 theme-px-2">
+        <div className="flex items-center justify-between h-12 theme-px-2 max-w-full">
           <div className="flex items-center theme-gap-4">
             <Button
               onClick={() => {
@@ -521,7 +521,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking"
             >
               <ChevronLeft className="h-4 w-4" />
-              Back
+              <span className="hidden sm:inline">Back</span>
             </Button>
 
             <Tooltip>

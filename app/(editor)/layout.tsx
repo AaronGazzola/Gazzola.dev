@@ -34,8 +34,8 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         )}
       >
         <Sidebar />
-        <div className="w-full flex flex-col h-full">
-          <main className="w-full flex-1 bg-black min-h-0">{children}</main>
+        <div className="w-full max-w-full flex flex-col h-full overflow-hidden">
+          <main className="w-full max-w-full flex-1 bg-black min-h-0 overflow-hidden">{children}</main>
         </div>
       </div>
       <Stars />

@@ -426,12 +426,12 @@ const Page = () => {
     const codeNode = currentNode as any;
     const language = codeNode.language || "typescript";
     return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
-        <div className="relative h-full flex flex-col">
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
+        <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
           <div
             className={cn(
-              "w-full flex-1",
+              "w-full flex-1 max-w-full",
               isExpanded ? "overflow-hidden" : "overflow-auto"
             )}
           >
@@ -448,12 +448,12 @@ const Page = () => {
 
   if (isTsxFile) {
     return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
-        <div className="relative h-full flex flex-col">
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
+        <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
           <div
             className={cn(
-              "w-full flex-1",
+              "w-full flex-1 max-w-full",
               isExpanded ? "overflow-hidden" : "overflow-auto"
             )}
           >
@@ -472,12 +472,12 @@ const Page = () => {
     const fileName = currentNode?.displayName || "";
     const language = getCodeLanguage(fileName);
     return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
-        <div className="relative h-full flex flex-col">
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
+        <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
           <div
             className={cn(
-              "w-full flex-1",
+              "w-full flex-1 max-w-full",
               isExpanded ? "overflow-hidden" : "overflow-auto"
             )}
           >
@@ -493,13 +493,13 @@ const Page = () => {
   }
 
   return (
-    <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
+    <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
       {previewMode ? (
-        <div className="relative h-full flex flex-col">
+        <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
           <div
             className={cn(
-              "w-full flex-1",
+              "w-full flex-1 max-w-full",
               isExpanded ? "overflow-hidden" : "overflow-auto"
             )}
           >
@@ -511,13 +511,13 @@ const Page = () => {
         </div>
       ) : (
         <LexicalComposer key={refreshKey} initialConfig={initialConfig}>
-          <div className="relative h-full flex flex-col">
+          <div className="relative h-full flex flex-col max-w-full">
             <Toolbar currentContentPath={contentPath} />
             <RichTextPlugin
               contentEditable={
                 <ContentEditable
                   className={cn(
-                    "w-full flex-1 p-6 outline-none resize-none min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing h-24 border",
+                    "w-full flex-1 p-6 outline-none resize-none min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing h-24 border max-w-full",
                     isExpanded ? "overflow-hidden" : "overflow-auto"
                   )}
                 />

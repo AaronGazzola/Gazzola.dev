@@ -85,11 +85,11 @@ export const ReadOnlyLexicalEditor = ({ content, darkMode }: ReadOnlyLexicalEdit
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="relative h-full">
+      <div className="relative h-full max-w-full">
         <RichTextPlugin
           contentEditable={
             <ContentEditable
-              className="w-full h-full p-6 outline-none resize-none overflow-auto focus:outline-none"
+              className="w-full max-w-full h-full p-6 outline-none resize-none overflow-auto focus:outline-none"
               style={{ minHeight: "0" }}
             />
           }
