@@ -150,10 +150,9 @@ export const ThemeConfigurationSidebar = ({
 
   return (
     <div
-      className="flex flex-col theme-bg-background theme-border-border theme-radius theme-shadow sticky top-0 w-full lg:w-[360px]"
+      className="flex flex-col theme-bg-background theme-border-border theme-radius theme-shadow lg:sticky lg:top-0 w-full lg:w-[360px] lg:h-full"
       style={{
         borderRightWidth: "0px",
-        maxHeight: "calc(50vh - 100px)",
       }}
     >
       <div

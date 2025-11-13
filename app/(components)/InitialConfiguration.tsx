@@ -932,7 +932,7 @@ export const InitialConfiguration = () => {
       >
         {enabledTechnologies.length > 0 && (
           <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 theme-mb-1 theme-p-3 md:theme-p-6 backdrop-blur-lg">
-            <h4 className="theme-text-card-foreground text-xs md:text-sm font-semibold theme-mb-1 theme-font-sans theme-tracking">
+            <h4 className="theme-text-card-foreground text-xs md:text-sm font-semibold theme-mb-2 md:theme-mb-3 theme-font-sans theme-tracking">
               Required Technologies
             </h4>
             <div className="flex flex-wrap theme-gap-1 md:theme-gap-2">
@@ -943,9 +943,9 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-1.5 md:theme-px-2 theme-py-0\.5 rounded-full text-[10px] md:text-xs font-semibold cursor-help border whitespace-nowrap theme-font-sans theme-tracking">
-                        <Icon className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                        <span className="hidden sm:inline">{tech.name}</span>
+                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-1.5 md:theme-px-2 theme-py-0\.5 rounded-full text-xs font-semibold cursor-help border whitespace-nowrap theme-font-sans theme-tracking">
+                        <Icon className="w-3 h-3" />
+                        <span>{tech.name}</span>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow theme-font-sans theme-tracking">

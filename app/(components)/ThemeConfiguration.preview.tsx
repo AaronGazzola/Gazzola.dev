@@ -18,7 +18,7 @@ export const ThemeConfigurationPreview = () => {
   return (
     <ScrollArea className="flex-1 h-full">
       <div className="theme-p-6">
-        <div className="flex theme-gap-6" style={{ alignItems: "flex-start" }}>
+        <div className="flex flex-col xl:flex-row theme-gap-6" style={{ alignItems: "flex-start" }}>
           <div className="flex-1 flex flex-col theme-gap-6">
             <Card>
               <div className="flex flex-col theme-gap-3  theme-p-6">
