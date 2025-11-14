@@ -207,7 +207,7 @@ const Header = () => {
           <Button
             variant="outline"
             className={cn(
-              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group p-2sm:p-3"
+              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group"
             )}
             onClick={() =>
               getBrowserAPI(() => window)?.open(
@@ -220,21 +220,11 @@ const Header = () => {
               <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
             </div>
 
-            <div
-              className={cn(
-                "items-center gap-1 pb-1 -mt-2",
-                isExpanded ? "hidden sm:flex" : "flex"
-              )}
-            >
+            <div className={cn("items-center gap-1 pb-1 -mt-2 hidden xs:flex")}>
               <span className="">@AzAnything</span>
             </div>
 
-            <div
-              className={cn(
-                "items-center gap-1 -mt-6 ",
-                isExpanded ? "hidden sm:flex" : "flex"
-              )}
-            >
+            <div className={cn("items-center gap-1 -mt-6 hidden xs:flex")}>
               <span className="">Anyones:</span>
               <span className="">
                 {isLoading ? (
@@ -244,12 +234,7 @@ const Header = () => {
                 )}
               </span>
             </div>
-            <div
-              className={cn(
-                "text-base",
-                isExpanded ? "sm:hidden -mt-1 flex  " : "hidden"
-              )}
-            >
+            <div className={cn("text-base xs:hidden -mt-1 flex")}>
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
