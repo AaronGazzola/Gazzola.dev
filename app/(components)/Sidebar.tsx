@@ -442,7 +442,10 @@ const TreeItem: React.FC<TreeItemProps> = ({
           return isPageVisited((childNode as any).visibleAfterPage);
         }
 
-        if (childNode?.type === "code-file" && (childNode as any).visibleAfterPage) {
+        if (
+          childNode?.type === "code-file" &&
+          (childNode as any).visibleAfterPage
+        ) {
           return isPageVisited((childNode as any).visibleAfterPage);
         }
       }
@@ -574,6 +577,9 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     const isActive = currentPath === item.path;
     const FileIcon = getFileIconByPath(item.path || "");
 
+    const parentPath = item.path?.split(".").slice(0, -1).join(".");
+    const isParentExpanded = parentPath && expandedItems.has(parentPath);
+
     return (
       <>
         <Tooltip>
@@ -583,14 +589,22 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "w-full h-10 text-white hover:bg-gray-800 relative flex items-center justify-center"
+                  "w-full h-10 text-white hover:bg-gray-800 relative flex items-center justify-center transition-transform",
+                  isParentExpanded && "translate-x-[-4px]"
                 )}
               >
                 <div
                   className="absolute opacity-30 inset-0 rounded"
                   style={isActive ? getBackgroundStyle() : undefined}
                 ></div>
-                <FileIcon className="h-5 w-5" />
+                <FileIcon
+                  className={cn(
+                    "h-5 w-5",
+                    isActive
+                      ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                      : "opacity-70"
+                  )}
+                />
               </Button>
             </Link>
           </TooltipTrigger>
@@ -670,7 +684,10 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
           return isPageVisited((childNode as any).visibleAfterPage);
         }
 
-        if (childNode?.type === "code-file" && (childNode as any).visibleAfterPage) {
+        if (
+          childNode?.type === "code-file" &&
+          (childNode as any).visibleAfterPage
+        ) {
           return isPageVisited((childNode as any).visibleAfterPage);
         }
       }
@@ -694,13 +711,16 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="w-full h-10 text-white hover:bg-gray-800 flex items-center justify-center"
+            className={cn(
+              "w-full h-10 text-white hover:bg-gray-800 flex items-center justify-center transition-transform",
+              isOpen && "translate-x-[-4px]"
+            )}
             onClick={() => onToggleExpansion(itemPath)}
           >
             {isOpen ? (
               <FolderOpen className="h-5 w-5" />
             ) : (
-              <Folder className="h-5 w-5" />
+              <Folder className="h-5 w-5 opacity-70" />
             )}
           </Button>
         </TooltipTrigger>
@@ -712,23 +732,25 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
         </TooltipContent>
       </Tooltip>
       {isOpen && (
-        <>
+        <div className="relative">
+          <div className="absolute left-[10px] top-0 bottom-0 w-px bg-white z-10" />
           {item.children
             ?.filter((child) => child.include !== false)
             .map((child, index) => (
-              <IconTreeItem
-                key={index}
-                item={child}
-                level={level + 1}
-                expandedItems={expandedItems}
-                onToggleExpansion={onToggleExpansion}
-                isPageVisited={isPageVisited}
-                currentPath={currentPath}
-                data={data}
-                codeFiles={codeFiles}
-              />
+              <div key={index} className="translate-x-[8px] relative">
+                <IconTreeItem
+                  item={child}
+                  level={level + 1}
+                  expandedItems={expandedItems}
+                  onToggleExpansion={onToggleExpansion}
+                  isPageVisited={isPageVisited}
+                  currentPath={currentPath}
+                  data={data}
+                  codeFiles={codeFiles}
+                />
+              </div>
             ))}
-        </>
+        </div>
       )}
     </>
   );
@@ -997,7 +1019,7 @@ const Sidebar = () => {
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
       </SidebarHeader>
-      <div className="flex-grow overflow-auto py-2">
+      <div className="flex-grow overflow-y-auto overflow-x-hidden py-2">
         {navigationData
           .filter((item) => item.include !== false)
           .map((item, index) => (
@@ -1013,6 +1035,92 @@ const Sidebar = () => {
               codeFiles={codeFiles}
             />
           ))}
+      </div>
+      <div className="border-t border-gray-700 p-2 space-y-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-full text-orange-500 hover:text-orange-400 hover:bg-gray-800"
+                >
+                  <Info className="h-5 w-5" />
+                  <span className="sr-only">Work in Progress Info</span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                side="right"
+                className="w-80 bg-black border-orange-500 text-white rounded-xl"
+              >
+                <div className="space-y-2">
+                  <h4 className="font-semibold">Work in Progress</h4>
+                  <p className="text-sm text-gray-300">
+                    This app is a work in progress and will likely change often.
+                    When the source material changes, the editor content will be
+                    reset.
+                  </p>
+                  <p className="text-sm text-gray-300 font-medium">
+                    Please download your roadmap frequently to avoid losing your
+                    progress.
+                  </p>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            className="bg-gray-900 text-white border-gray-700"
+          >
+            Work in Progress
+          </TooltipContent>
+        </Tooltip>
+        <div className="relative">
+          {showDownloadHelp && (
+            <div className="absolute -top-2 -right-2 z-30">
+              <WalkthroughHelper
+                isOpen={downloadHelpOpen}
+                onOpenChange={(open) => {
+                  setDownloadHelpOpen(open);
+                  if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
+                    markStepComplete(WalkthroughStep.DOWNLOAD);
+                  } else if (open && !isStepOpen(WalkthroughStep.DOWNLOAD)) {
+                    setStepOpen(WalkthroughStep.DOWNLOAD, true);
+                  }
+                }}
+                showAnimation={!isStepOpen(WalkthroughStep.DOWNLOAD)}
+                title="Download Your Roadmap"
+                description="Click here to download all your customized roadmap documents as a ZIP file. You can download at any time to save your progress."
+                iconSize="sm"
+              />
+            </div>
+          )}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full text-white hover:bg-gray-800"
+                onClick={() => {
+                  handleDownload();
+                  if (showDownloadHelp) {
+                    markStepComplete(WalkthroughStep.DOWNLOAD);
+                  }
+                }}
+              >
+                <Download className="h-5 w-5" />
+                <span className="sr-only">Download Roadmap</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="bg-gray-900 text-white border-gray-700"
+            >
+              Download Roadmap
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
     </SidebarContent>
   );

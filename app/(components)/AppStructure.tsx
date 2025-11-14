@@ -10,37 +10,53 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/editor/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/editor/ui/tabs";
 import { Textarea } from "@/components/editor/ui/textarea";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { cn } from "@/lib/tailwind.utils";
 import {
+  Check,
   ChevronDown,
   ChevronUp,
+  Ellipsis,
   File,
   Folder,
   FolderOpen,
+  LayoutTemplate,
   Plus,
   Save,
   Trash2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { getBrowserAPI } from "@/lib/env.utils";
 
 type RouteEntry = {
   path: string;
   children?: RouteEntry[];
+};
+
+type ScreenSize = 'xs' | 'sm' | 'md' | 'lg';
+
+const useScreenSize = (): ScreenSize => {
+  const [screenSize, setScreenSize] = useState<ScreenSize>('lg');
+
+  useEffect(() => {
+    const window = getBrowserAPI(() => globalThis.window);
+    if (!window) return;
+
+    const updateScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 640) setScreenSize('xs');
+      else if (width < 768) setScreenSize('sm');
+      else if (width < 1024) setScreenSize('md');
+      else setScreenSize('lg');
+    };
+
+    updateScreenSize();
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
+  }, []);
+
+  return screenSize;
 };
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
@@ -475,6 +491,173 @@ const getQualifyingFiles = (
   return qualifyingFiles;
 };
 
+const InlineFeatureCard = ({
+  feature,
+  fileId,
+  appStructure,
+  filePath,
+  isCollapsed,
+  onToggleCollapse,
+}: {
+  feature: Feature;
+  fileId: string;
+  appStructure: FileSystemEntry[];
+  filePath: string;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+}) => {
+  const { updateFeature, removeFeature, unlinkFeatureFile, setFeatureFileSelection, setSelectedFile, clearFeatureFileSelection, featureFileSelection } = useEditorStore();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+    }
+  };
+
+  const fileTypes: UserExperienceFileType[] = ["stores", "hooks", "actions", "types"];
+
+  const handlePlaceholderClick = (fileType: UserExperienceFileType) => {
+    const linkedFile = feature.linkedFiles[fileType];
+    conditionalLog({
+      message: "InlineFeatureCard: handlePlaceholderClick called",
+      fileType,
+      fileId,
+      featureId: feature.id,
+      filePath,
+      linkedFile,
+    }, { label: LOG_LABELS.APP_STRUCTURE });
+
+    if (linkedFile) {
+      setSelectedFile(linkedFile, "");
+      setFeatureFileSelection(fileId, feature.id, fileType);
+    } else {
+      setSelectedFile(filePath, fileId);
+      setFeatureFileSelection(fileId, feature.id, fileType);
+    }
+  };
+
+  const handleUnlinkFile = (fileType: UserExperienceFileType, e: React.MouseEvent) => {
+    e.stopPropagation();
+    unlinkFeatureFile(fileId, feature.id, fileType);
+  };
+
+  return (
+    <div className="theme-bg-muted/50 theme-radius theme-p-2 theme-border-border border">
+      {isCollapsed ? (
+        <div
+          className="flex items-center justify-between theme-gap-2 cursor-pointer hover:theme-bg-accent/50 transition-colors theme-radius theme-p-1 -theme-m-1"
+          onClick={onToggleCollapse}
+        >
+          <div className="text-xs font-medium theme-text-foreground truncate">
+            {feature.title || "Untitled"}
+          </div>
+          <ChevronDown className="h-3 w-3 flex-shrink-0" />
+        </div>
+      ) : (
+        <>
+          <div className="flex items-start justify-between theme-gap-2 theme-mb-2">
+            <Input
+              value={feature.title}
+              onChange={(e) =>
+                updateFeature(fileId, feature.id, { title: e.target.value })
+              }
+              onKeyDown={handleKeyDown}
+              className="h-6 text-xs font-medium theme-shadow flex-1"
+              placeholder="Feature title"
+            />
+            <div className="flex items-center theme-gap-1">
+              <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-5 w-5 flex-shrink-0">
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 theme-p-2 theme-shadow" align="end">
+                  <div className="flex flex-col theme-gap-2">
+                    <p className="text-xs theme-text-foreground">
+                      Delete {feature.title}?
+                    </p>
+                    <div className="flex theme-gap-1">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="h-6 text-xs"
+                        onClick={() => {
+                          removeFeature(fileId, feature.id);
+                          setDeleteConfirmOpen(false);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-xs"
+                        onClick={() => setDeleteConfirmOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-5 w-5 flex-shrink-0"
+                onClick={() => {
+                  onToggleCollapse();
+                  clearFeatureFileSelection();
+                }}
+              >
+                <ChevronUp className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 theme-gap-2">
+            {fileTypes.map((fileType) => {
+              const linkedFile = feature.linkedFiles[fileType];
+              const isActiveBadge = featureFileSelection.featureId === feature.id && featureFileSelection.fileType === fileType;
+              return (
+                <div
+                  key={fileType}
+                  className={cn(
+                    "text-xs theme-font-mono theme-px-2 theme-py-1 theme-radius border transition-colors flex items-center theme-gap-1 cursor-pointer",
+                    isActiveBadge && linkedFile
+                      ? "theme-bg-background border-green-500 hover:theme-bg-accent"
+                      : isActiveBadge && !linkedFile
+                      ? "theme-bg-background border-2 border-dashed theme-border-primary hover:theme-bg-accent"
+                      : linkedFile
+                      ? "theme-bg-background theme-border-border hover:theme-bg-accent"
+                      : "border-dashed theme-border-muted-foreground/30 theme-bg-background/50 hover:theme-bg-accent/50"
+                  )}
+                  onClick={() => {
+                    conditionalLog({
+                      message: "Badge onClick triggered (edit mode)",
+                      fileType,
+                      linkedFile,
+                    }, { label: LOG_LABELS.APP_STRUCTURE });
+                    handlePlaceholderClick(fileType);
+                  }}
+                >
+                  <span className="theme-text-foreground capitalize">
+                    {fileType}
+                  </span>
+                  {linkedFile && (
+                    <Check className="h-3 w-3 text-green-500" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 const FeatureCard = ({
   feature,
   fileId,
@@ -579,7 +762,7 @@ const FeatureCard = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 theme-gap-2 theme-mt-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 theme-gap-2 theme-mt-3">
           {fileTypes.map((fileType) => {
             const linkedFile = feature.linkedFiles[fileType];
             return (
@@ -687,7 +870,7 @@ const FeatureCard = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 theme-gap-2 theme-mt-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 theme-gap-2 theme-mt-3">
         {fileTypes.map((fileType) => {
           const linkedFile = feature.linkedFiles[fileType];
           return (
@@ -988,6 +1171,66 @@ const deleteRouteFromFileSystem = (
       return entry;
     })
     .filter(Boolean) as FileSystemEntry[];
+};
+
+const getExistingSegmentNames = (
+  entries: FileSystemEntry[],
+  parentPath: string,
+  currentPath: string = "",
+  isRoot: boolean = false
+): string[] => {
+  const segmentNames: string[] = [];
+
+  for (const entry of entries) {
+    if (entry.name === "app" && isRoot) {
+      if (entry.children) {
+        segmentNames.push(...getExistingSegmentNames(entry.children, parentPath, "", false));
+      }
+      continue;
+    }
+
+    if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+      if (entry.children) {
+        segmentNames.push(...getExistingSegmentNames(entry.children, parentPath, currentPath, false));
+      }
+      continue;
+    }
+
+    if (entry.type === "directory" && entry.children) {
+      const newPath = currentPath
+        ? `${currentPath}/${entry.name}`
+        : `/${entry.name}`;
+
+      if (parentPath === newPath) {
+        return entry.children
+          .filter((child) => child.type === "directory")
+          .map((child) => child.name);
+      }
+
+      segmentNames.push(...getExistingSegmentNames(entry.children, parentPath, newPath, false));
+    }
+  }
+
+  return segmentNames;
+};
+
+const generateUniqueSegmentName = (
+  appStructure: FileSystemEntry[],
+  parentPath: string
+): string => {
+  const existingNames = getExistingSegmentNames(appStructure, parentPath, "", true);
+  const baseName = "new-segment";
+
+  if (!existingNames.includes(baseName)) {
+    return baseName;
+  }
+
+  let counter = 2;
+  while (existingNames.includes(`${baseName}-${counter}`)) {
+    counter++;
+  }
+
+  return `${baseName}-${counter}`;
 };
 
 const addRouteSegment = (
@@ -1600,6 +1843,7 @@ const SiteMapNode = ({
   onDeleteRoute,
   onAddSegment,
   ancestorIsLast = [],
+  newlyAddedSegmentPath,
 }: {
   route: RouteEntry;
   depth?: number;
@@ -1609,11 +1853,14 @@ const SiteMapNode = ({
   onDeleteRoute: (routePath: string) => void;
   onAddSegment: (parentPath: string) => void;
   ancestorIsLast?: boolean[];
+  newlyAddedSegmentPath?: string | null;
 }) => {
+  const screenSize = useScreenSize();
   const [editingSegmentIndex, setEditingSegmentIndex] = useState<number | null>(
     null
   );
   const [tempValue, setTempValue] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -1623,6 +1870,15 @@ const SiteMapNode = ({
     }
   }, [editingSegmentIndex]);
 
+  useEffect(() => {
+    if (newlyAddedSegmentPath && route.path === newlyAddedSegmentPath) {
+      const pathSegments = route.path === "/" ? ["/"] : route.path.split("/").filter(Boolean);
+      const lastSegmentIndex = pathSegments.length - 1;
+      setEditingSegmentIndex(lastSegmentIndex);
+      setTempValue(pathSegments[lastSegmentIndex]);
+    }
+  }, [newlyAddedSegmentPath, route.path]);
+
   const getTreeChar = () => {
     if (depth === 0) return "";
     return isLast ? "└" : "├";
@@ -1630,9 +1886,12 @@ const SiteMapNode = ({
 
   const getLinePrefix = () => {
     if (depth === 0) return "";
+    const spacingMap = { xs: 2, sm: 3, md: 4, lg: 5 };
+    const spacing = spacingMap[screenSize];
+    const spaces = " ".repeat(spacing);
     const lines = [];
     for (let i = 0; i < depth - 1; i++) {
-      lines.push(ancestorIsLast[i] ? "    " : "│   ");
+      lines.push(ancestorIsLast[i + 1] ? spaces : `│${spaces.slice(1)}`);
     }
     return lines.join("");
   };
@@ -1728,10 +1987,12 @@ const SiteMapNode = ({
 
   const handleDeleteRoute = () => {
     onDeleteRoute(route.path);
+    setMenuOpen(false);
   };
 
   const handleAddSegment = () => {
     onAddSegment(route.path);
+    setMenuOpen(false);
   };
 
   return (
@@ -1746,25 +2007,41 @@ const SiteMapNode = ({
           {renderPathSegments()}
         </div>
 
-        <div className="flex items-center theme-spacing opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 theme-shadow"
-            onClick={handleAddSegment}
-            title="Add segment"
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 theme-shadow"
-            onClick={handleDeleteRoute}
-            title="Delete route"
-          >
-            <Trash2 className="h-3 w-3 theme-text-destructive" />
-          </Button>
+        <div className="flex items-center theme-spacing">
+          <Popover open={menuOpen} onOpenChange={setMenuOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 theme-shadow"
+                title="Options"
+              >
+                <Ellipsis className="h-3 w-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-40 theme-p-2 theme-shadow" align="end">
+              <div className="flex flex-col theme-gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 justify-start theme-gap-2"
+                  onClick={handleAddSegment}
+                >
+                  <Plus className="h-3 w-3" />
+                  Add segment
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 justify-start theme-gap-2 theme-text-destructive hover:theme-text-destructive"
+                  onClick={handleDeleteRoute}
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Delete route
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
       {route.children && route.children.length > 0 && (
@@ -1780,6 +2057,7 @@ const SiteMapNode = ({
               onDeleteRoute={onDeleteRoute}
               onAddSegment={onAddSegment}
               ancestorIsLast={[...ancestorIsLast, isLast]}
+              newlyAddedSegmentPath={newlyAddedSegmentPath}
             />
           ))}
         </>
@@ -1802,6 +2080,8 @@ const TreeNode = ({
   onAddSpecificFile,
   newNodeId,
   qualifyingFilePaths = [],
+  expandedFileId,
+  setExpandedFileId,
 }: {
   node: FileSystemEntry;
   depth?: number;
@@ -1816,8 +2096,9 @@ const TreeNode = ({
   onAddSpecificFile?: (parentId: string, fileName: string) => void;
   newNodeId?: string | null;
   qualifyingFilePaths?: string[];
+  expandedFileId?: string | null;
+  setExpandedFileId?: (id: string | null) => void;
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const {
     wireframeState,
     setWireframeCurrentPage,
@@ -1829,17 +2110,87 @@ const TreeNode = ({
     linkFeatureFile,
     clearFeatureFileSelection,
     selectedFilePath,
+    getFeatures,
+    addFeature,
+    updateFeature,
+    removeFeature,
+    linkFeatureFile: linkFeatureFileStore,
+    unlinkFeatureFile,
+    setFeatureFileSelection,
   } = useEditorStore();
-  const [isEditing, setIsEditing] = useState(false);
+  const screenSize = useScreenSize();
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [directoryPopoverOpen, setDirectoryPopoverOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [expandedFeatureId, setExpandedFeatureId] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const isPageFile = node.type === "file" && node.name === "page.tsx";
   const isLayoutFile = node.type === "file" && node.name === "layout.tsx";
   const isClickableFile = isPageFile || isLayoutFile;
+  const isExpanded = expandedFileId === node.id;
 
   const currentFilePath = parentPath ? `${parentPath}/${node.name}` : node.name;
   const isQualified = qualifyingFilePaths.includes(currentFilePath);
   const isInSelectionMode = featureFileSelection.fileType !== null;
+
+  const features = isClickableFile && node.id ? getFeatures(node.id) : [];
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleNameClick = (e: React.MouseEvent) => {
+    if (node.type === "directory") {
+      e.stopPropagation();
+      setIsEditing(true);
+    } else if (isClickableFile) {
+      if (isQualified && isInSelectionMode) {
+        handleFileClick();
+        return;
+      }
+      if (setExpandedFileId) {
+        if (isExpanded) {
+          clearFeatureFileSelection();
+          setExpandedFileId(null);
+        } else {
+          setExpandedFileId(node.id);
+        }
+      }
+    }
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setIsEditing(false);
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+    }
+  };
+
+  const handleRowClick = (e: React.MouseEvent) => {
+    if (isQualified && isInSelectionMode) {
+      e.stopPropagation();
+      handleFileClick();
+      return;
+    }
+    if (isClickableFile && setExpandedFileId) {
+      e.stopPropagation();
+      if (isExpanded) {
+        clearFeatureFileSelection();
+        setExpandedFileId(null);
+      } else {
+        setExpandedFileId(node.id);
+      }
+    }
+  };
 
   const getFileIconColor = (): string => {
     if (isPageFile) {
@@ -1981,37 +2332,6 @@ const TreeNode = ({
     return "";
   };
 
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-
-  useEffect(() => {
-    if (newNodeId && node.id === newNodeId) {
-      setIsEditing(true);
-    }
-  }, [newNodeId, node.id]);
-
-  const handleNameSubmit = (newName: string) => {
-    if (newName.trim()) {
-      onUpdate(node.id, { name: newName.trim() });
-      setIsEditing(false);
-    } else {
-      onDelete(node.id);
-      setIsEditing(false);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleNameSubmit(e.currentTarget.value);
-    }
-    if (e.key === "Escape") {
-      setIsEditing(false);
-    }
-  };
 
   const getTreeChar = () => {
     if (depth === 0) return "";
@@ -2020,9 +2340,12 @@ const TreeNode = ({
 
   const getLinePrefix = () => {
     if (depth === 0) return "";
+    const spacingMap = { xs: 2, sm: 3, md: 4, lg: 5 };
+    const spacing = spacingMap[screenSize];
+    const spaces = " ".repeat(spacing);
     const lines = [];
     for (let i = 0; i < depth - 1; i++) {
-      lines.push(ancestorIsLast[i] ? "    " : "│   ");
+      lines.push(ancestorIsLast[i + 1] ? spaces : `│${spaces.slice(1)}`);
     }
     return lines.join("");
   };
@@ -2107,29 +2430,21 @@ const TreeNode = ({
   );
 
   return (
-    <div>
+    <div
+      className={cn(
+        isClickableFile && isExpanded && "border-2 border-dashed theme-border-primary theme-radius theme-p-1"
+      )}
+    >
       <div
         className={cn(
           "group flex items-center theme-spacing theme-radius theme-px theme-text-foreground",
-          isClickableFile && "cursor-pointer hover:theme-bg-primary",
+          isClickableFile && "cursor-pointer hover:theme-bg-accent",
           !isClickableFile && "hover:theme-bg-accent",
           isCurrentPage && " theme-bg-muted ",
-          isQualified && isInSelectionMode && "border-2 border-dashed theme-border-chart-4 theme-bg-accent/20 cursor-pointer"
+          isInSelectionMode && selectedFilePath === currentFilePath && !isClickableFile && "border border-green-500",
+          isQualified && isInSelectionMode && selectedFilePath !== currentFilePath && "border-2 border-dashed theme-border-chart-4 theme-bg-accent/20 cursor-pointer"
         )}
-        onClick={(e) => {
-          if (isQualified && isInSelectionMode) {
-            e.stopPropagation();
-            handleFileClick();
-            return;
-          }
-          if (isClickableFile) {
-            e.stopPropagation();
-            if (isPageFile) {
-              handlePageFileClick();
-            }
-            handleFileClick();
-          }
-        }}
+        onClick={handleRowClick}
       >
         <span className="font-mono text-base select-none theme-text-muted-foreground">
           {getLinePrefix()}
@@ -2137,7 +2452,7 @@ const TreeNode = ({
           {depth > 0 && "─ "}
         </span>
 
-        <div className="flex items-center theme-spacing flex-1 min-w-0 theme-px">
+        <div className="flex items-center theme-spacing flex-1 min-w-0 theme-px theme-gap-2">
           {node.type === "directory" ? (
             node.isExpanded ? (
               <FolderOpen className="h-4 w-4 flex-shrink-0 theme-text-chart-2" />
@@ -2160,149 +2475,119 @@ const TreeNode = ({
             />
           )}
 
-          {isEditing ? (
+          {isEditing && node.type === "directory" ? (
             <Input
               ref={inputRef}
-              defaultValue={node.name}
-              onBlur={(e) => handleNameSubmit(e.target.value)}
+              value={node.name}
+              onChange={(e) => onUpdate(node.id, { name: e.target.value })}
+              onBlur={handleBlur}
               onKeyDown={handleKeyDown}
-              className="h-6 theme-px-2 theme-py-0 text-sm theme-shadow"
+              className="h-6 text-sm flex-1 min-w-0"
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span
-              className="text-sm truncate cursor-pointer hover:underline theme-text-foreground"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditing(true);
-              }}
-            >
-              {node.name}
-            </span>
+            <>
+              <span
+                className={cn(
+                  "text-sm truncate theme-text-foreground",
+                  node.type === "directory" && "cursor-text",
+                  isClickableFile && "cursor-pointer"
+                )}
+                onClick={handleNameClick}
+              >
+                {node.name}
+              </span>
+              {isInSelectionMode && selectedFilePath === currentFilePath && (
+                <Check className="h-3 w-3 flex-shrink-0 text-green-500 theme-ml-1" />
+              )}
+            </>
           )}
 
-          {isClickableFile && remainingOptions.length > 0 && (
-            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          {isClickableFile && (
+            <>
+              <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                  >
+                    <Ellipsis className="h-3 w-3" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border"
+                  align="start"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex flex-col theme-gap-1">
+                    {remainingOptions.map((option) => (
+                      <Button
+                        key={option}
+                        variant="ghost"
+                        size="sm"
+                        className="justify-start theme-gap-2 theme-shadow"
+                        onClick={() => handleAddUtilityFile(option)}
+                      >
+                        <Plus className="h-3 w-3 theme-text-chart-4" />
+                        <span>{option}</span>
+                      </Button>
+                    ))}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start theme-gap-2 theme-shadow"
+                      onClick={() => {
+                        onDelete(node.id);
+                        setPopoverOpen(false);
+                      }}
+                    >
+                      <Trash2 className="h-3 w-3 theme-text-destructive" />
+                      <span>Delete</span>
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 ml-auto"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (setExpandedFileId) {
+                    if (isExpanded) {
+                      clearFeatureFileSelection();
+                      setExpandedFileId(null);
+                    } else {
+                      setExpandedFileId(node.id);
+                    }
+                  }
+                }}
+              >
+                {isExpanded ? (
+                  <ChevronUp className="h-3 w-3" />
+                ) : (
+                  <ChevronDown className="h-3 w-3" />
+                )}
+              </Button>
+            </>
+          )}
+
+          {node.type === "directory" && (
+            <Popover open={directoryPopoverOpen} onOpenChange={setDirectoryPopoverOpen}>
               <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 opacity-0 group-hover:opacity-100 theme-ml-auto"
+                  className="h-6 w-6"
                 >
-                  <Plus className="h-3 w-3" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border"
-                align="start"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex flex-col theme-gap-1">
-                  {remainingOptions.map((option) => (
-                    <Button
-                      key={option}
-                      variant="ghost"
-                      size="sm"
-                      className="justify-start theme-gap-2 theme-shadow"
-                      onClick={() => handleAddUtilityFile(option)}
-                    >
-                      <File className="h-4 w-4 theme-text-chart-4" />
-                      <span>{option}</span>
-                    </Button>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
-          )}
-
-          {isClickableFile && utilityFiles.length > 0 && (
-            <div className="flex items-center theme-gap-1 theme-ml-2">
-              {utilityFiles.map((fileType, i) => (
-                <span
-                  key={i}
-                  className="text-xs theme-font-mono theme-px-1 theme-py-0.5 theme-bg-accent theme-radius theme-text-muted-foreground"
-                >
-                  {fileType[0]}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div
-          className={cn(
-            "flex items-center theme-spacing transition-opacity",
-            isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          )}
-        >
-          {isEditing && (
-            <div
-              className="h-6 w-6 theme-shadow flex items-center justify-center"
-              title="Save"
-            >
-              <Save className="h-3 w-3 theme-text-muted-foreground" />
-            </div>
-          )}
-          <div
-            className="h-6 w-6 theme-shadow flex items-center justify-center cursor-pointer hover:theme-bg-accent theme-radius"
-            onClick={() => onDelete(node.id)}
-            title="Delete"
-          >
-            <Trash2 className="h-3 w-3 theme-text-destructive" />
-          </div>
-        </div>
-      </div>
-
-      {node.type === "directory" && node.isExpanded && node.children && (
-        <div>
-          {node.children.map((child, index) => (
-            <TreeNode
-              key={child.id}
-              node={child}
-              depth={depth + 1}
-              isLast={false}
-              parentPath={`${parentPath}/${node.name}`}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-              onAddFile={onAddFile}
-              onAddDirectory={onAddDirectory}
-              appStructure={appStructure}
-              ancestorIsLast={[...ancestorIsLast, false]}
-              onAddSpecificFile={onAddSpecificFile}
-              newNodeId={newNodeId}
-              qualifyingFilePaths={qualifyingFilePaths}
-            />
-          ))}
-
-          <div className="flex items-center theme-spacing theme-radius theme-px theme-text-foreground">
-            <span className="font-mono text-base select-none theme-text-muted-foreground">
-              {(() => {
-                const lines = [];
-                for (let i = 0; i < depth - 1; i++) {
-                  lines.push(ancestorIsLast[i] ? "    " : "│   ");
-                }
-                if (depth > 0) {
-                  lines.push("│   ");
-                }
-                return lines.join("");
-              })()}
-              └─{" "}
-            </span>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 theme-px-2 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono"
-                >
-                  <Plus className="h-3 w-3" />
-                  <span className="text-sm">Add...</span>
+                  <Ellipsis className="h-3 w-3" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent
                 className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border theme-font-mono theme-tracking"
                 align="start"
+                onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex flex-col theme-gap-1">
                   <Button
@@ -2313,12 +2598,13 @@ const TreeNode = ({
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "page.tsx");
                       }
+                      setDirectoryPopoverOpen(false);
                     }}
                     disabled={node.children?.some(
                       (child) => child.name === "page.tsx"
                     )}
                   >
-                    <File className="h-4 w-4 theme-text-chart-1" />
+                    <Plus className="h-3 w-3 theme-text-chart-1" />
                     <span>page.tsx</span>
                   </Button>
                   <Button
@@ -2329,27 +2615,105 @@ const TreeNode = ({
                       if (onAddSpecificFile) {
                         onAddSpecificFile(node.id, "layout.tsx");
                       }
+                      setDirectoryPopoverOpen(false);
                     }}
                     disabled={node.children?.some(
                       (child) => child.name === "layout.tsx"
                     )}
                   >
-                    <File className="h-4 w-4 theme-text-secondary" />
+                    <Plus className="h-3 w-3 theme-text-secondary" />
                     <span>layout.tsx</span>
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
-                    onClick={() => onAddDirectory(node.id)}
+                    onClick={() => {
+                      onAddDirectory(node.id);
+                      setDirectoryPopoverOpen(false);
+                    }}
                   >
-                    <Folder className="h-4 w-4 theme-text-chart-2" />
+                    <Plus className="h-3 w-3 theme-text-chart-2" />
                     <span>directory</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
+                    onClick={() => {
+                      onDelete(node.id);
+                      setDirectoryPopoverOpen(false);
+                    }}
+                  >
+                    <Trash2 className="h-3 w-3 theme-text-destructive" />
+                    <span>Delete</span>
                   </Button>
                 </div>
               </PopoverContent>
             </Popover>
+          )}
+        </div>
+      </div>
+
+      {isClickableFile && isExpanded && (
+        <div className="theme-mt-1 theme-p-2 theme-bg-background theme-radius animate-in slide-in-from-top-2">
+          <div className="flex flex-col theme-gap-2">
+            {features.length > 0 ? (
+              features.map((feature) => (
+                <InlineFeatureCard
+                  key={feature.id}
+                  feature={feature}
+                  fileId={node.id}
+                  appStructure={appStructure}
+                  filePath={currentFilePath}
+                  isCollapsed={expandedFeatureId !== feature.id}
+                  onToggleCollapse={() => {
+                    setExpandedFeatureId(expandedFeatureId === feature.id ? null : feature.id);
+                  }}
+                />
+              ))
+            ) : (
+              <div className="text-xs theme-text-muted-foreground text-center theme-py-2">
+                No features yet
+              </div>
+            )}
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                addFeature(node.id);
+              }}
+              size="sm"
+              className="w-full theme-gap-1 h-7 text-xs"
+            >
+              <Plus className="h-3 w-3" />
+              Add Feature
+            </Button>
           </div>
+        </div>
+      )}
+
+      {node.type === "directory" && node.isExpanded && node.children && (
+        <div>
+          {node.children.map((child, index) => (
+            <TreeNode
+              key={child.id}
+              node={child}
+              depth={depth + 1}
+              isLast={index === node.children!.length - 1}
+              parentPath={`${parentPath}/${node.name}`}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+              onAddFile={onAddFile}
+              onAddDirectory={onAddDirectory}
+              appStructure={appStructure}
+              ancestorIsLast={[...ancestorIsLast, isLast]}
+              onAddSpecificFile={onAddSpecificFile}
+              newNodeId={newNodeId}
+              qualifyingFilePaths={qualifyingFilePaths}
+              expandedFileId={expandedFileId}
+              setExpandedFileId={setExpandedFileId}
+            />
+          ))}
         </div>
       )}
     </div>
@@ -2363,38 +2727,17 @@ export const LayoutAndStructure = () => {
     deleteAppStructureNode,
     addAppStructureNode,
     setAppStructure,
-    wireframeState,
-    initializeWireframePages,
-    setWireframeCurrentPage,
-    addWireframeElement,
-    removeWireframeElement,
-    selectedFilePath,
-    selectedFileId,
-    getUtilityFiles,
-    getFeatures,
-    addFeature,
     featureFileSelection,
+    selectedFilePath,
   } = useEditorStore();
-
-  useEffect(() => {
-    initializeWireframePages();
-  }, [appStructure, initializeWireframePages]);
-
-  const { currentPageIndex, availablePages } = wireframeState;
-  const currentPage = availablePages[currentPageIndex] || null;
-
-  const layouts = currentPage
-    ? findLayoutsForPagePath(appStructure, currentPage, "", true)
-    : [];
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("blank");
-  const [activeTab, setActiveTab] = useState<string>("layouts");
-
-  const utilityFiles = selectedFileId ? getUtilityFiles(selectedFileId) : [];
-  const features = selectedFileId ? getFeatures(selectedFileId) : [];
+  const [templatePopoverOpen, setTemplatePopoverOpen] = useState(false);
+  const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
+  const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<string | null>(null);
 
   const qualifyingFilePaths = featureFileSelection.fileType
     ? getQualifyingFiles(appStructure, selectedFilePath, featureFileSelection.fileType)
@@ -2406,6 +2749,7 @@ export const LayoutAndStructure = () => {
     if (template) {
       setAppStructure(template.structure);
     }
+    setTemplatePopoverOpen(false);
   };
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
@@ -2459,7 +2803,7 @@ export const LayoutAndStructure = () => {
   };
 
   const handleAddSegment = (parentPath: string) => {
-    const segmentName = "new-segment";
+    const segmentName = generateUniqueSegmentName(appStructure, parentPath);
     const updatedStructure = addRouteSegment(
       appStructure,
       parentPath,
@@ -2468,6 +2812,8 @@ export const LayoutAndStructure = () => {
       true
     );
     setAppStructure(updatedStructure);
+    const newSegmentPath = parentPath === "/" ? `/${segmentName}` : `${parentPath}/${segmentName}`;
+    setNewlyAddedSegmentPath(newSegmentPath);
   };
 
   const handleRouteSubmit = () => {
@@ -2495,188 +2841,45 @@ export const LayoutAndStructure = () => {
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
-  const handleAddLayoutElement = (
-    layoutPath: string,
-    elementType: "header" | "footer" | "sidebar-left" | "sidebar-right"
-  ) => {
-    const layoutData = wireframeState.wireframeData.layouts[layoutPath];
-    const existingElements = layoutData?.elements || [];
-    const existingElement = existingElements.find(
-      (el) => el.type === elementType
-    );
-
-    if (existingElement) {
-      removeWireframeElement(layoutPath, "layout", existingElement.id);
-    }
-
-    const newElement: import("@/app/(editor)/layout.types").WireframeElement = {
-      id: generateId(),
-      type: elementType,
-      label: elementType.replace("-", " "),
-      config: {
-        position:
-          elementType === "header"
-            ? "top"
-            : elementType === "footer"
-              ? "bottom"
-              : elementType === "sidebar-left"
-                ? "left"
-                : "right",
-      },
-    };
-    addWireframeElement(layoutPath, "layout", newElement);
-  };
-
-  const handleRemoveLayoutElementByType = (
-    layoutPath: string,
-    elementType: "header" | "footer" | "sidebar-left" | "sidebar-right"
-  ) => {
-    const layoutData = wireframeState.wireframeData.layouts[layoutPath];
-    const existingElements = layoutData?.elements || [];
-    const existingElement = existingElements.find(
-      (el) => el.type === elementType
-    );
-
-    if (existingElement) {
-      removeWireframeElement(layoutPath, "layout", existingElement.id);
-    }
-  };
-
-  const renderNestedBoxes = () => {
-    if (!currentPage) {
-      return (
-        <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
-          No pages available
-        </div>
-      );
-    }
-
-    if (layouts.length === 0) {
-      return (
-        <div
-          className={cn(
-            "border-2 border-dashed theme-shadow",
-            PAGE_FILE_ICON.replace("text-", "border-"),
-            "theme-radius theme-p h-full flex flex-col"
-          )}
-        />
-      );
-    }
-
-    let content: JSX.Element | null = null;
-
-    for (let i = layouts.length - 1; i >= 0; i--) {
-      const colorSet = LAYOUT_COLORS[i % LAYOUT_COLORS.length];
-      const layoutPath = layouts[i];
-      const layoutData = wireframeState.wireframeData.layouts[layoutPath];
-      const elements = layoutData?.elements || [];
-
-      const headers = elements.filter((el) => el.type === "header");
-      const footers = elements.filter((el) => el.type === "footer");
-      const leftSidebars = elements.filter((el) => el.type === "sidebar-left");
-      const rightSidebars = elements.filter(
-        (el) => el.type === "sidebar-right"
-      );
-
-      const hasHeader = headers.length > 0;
-      const hasFooter = footers.length > 0;
-      const hasLeftSidebar = leftSidebars.length > 0;
-      const hasRightSidebar = rightSidebars.length > 0;
-
-      content = (
-        <div
-          className={cn(
-            "border-2 border-dashed relative theme-shadow",
-            colorSet.border,
-            "theme-radius theme-p-4 h-full flex flex-col theme-gap-4"
-          )}
-        >
-          <LayoutInsertionButtons
-            layoutPath={layoutPath}
-            onAddElement={(type) => handleAddLayoutElement(layoutPath, type)}
-            onRemoveElement={(type) =>
-              handleRemoveLayoutElementByType(layoutPath, type)
-            }
-            hasHeader={hasHeader}
-            hasFooter={hasFooter}
-            hasLeftSidebar={hasLeftSidebar}
-            hasRightSidebar={hasRightSidebar}
-          />
-
-          {headers.map((el) => (
-            <WireframeElementComponent
-              key={el.id}
-              element={el}
-              colorSet={colorSet}
-            />
-          ))}
-
-          <div className="flex-1 flex theme-gap-4">
-            {leftSidebars.length > 0 && (
-              <div className="flex flex-col theme-gap-4">
-                {leftSidebars.map((el) => (
-                  <WireframeElementComponent
-                    key={el.id}
-                    element={el}
-                    colorSet={colorSet}
-                  />
-                ))}
-              </div>
-            )}
-
-            <div className="flex-1">{content}</div>
-
-            {rightSidebars.length > 0 && (
-              <div className="flex flex-col theme-gap-4">
-                {rightSidebars.map((el) => (
-                  <WireframeElementComponent
-                    key={el.id}
-                    element={el}
-                    colorSet={colorSet}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {footers.map((el) => (
-            <WireframeElementComponent
-              key={el.id}
-              element={el}
-              colorSet={colorSet}
-            />
-          ))}
-        </div>
-      );
-    }
-
-    return content;
-  };
-
   return (
-    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,2fr)_minmax(300px,3fr)] theme-gap-2 md:theme-gap-4 min-h-[calc(100vh-800px)]">
-        <div className="flex flex-col theme-gap-2 md:theme-gap-4 h-full overflow-hidden">
+    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-3xl mx-auto">
+      <div className="flex flex-col theme-gap-2 md:theme-gap-4 min-h-[calc(100vh-800px)]">
           <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between theme-mb-2 theme-gap-2">
+            <div className="flex items-center justify-between theme-mb-2">
               <h3 className="text-base md:text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
                 App Directory
               </h3>
-              <Select
-                value={selectedTemplate}
-                onValueChange={handleTemplateChange}
-              >
-                <SelectTrigger className="w-full sm:w-[180px] h-8 theme-font-mono text-xs md:text-sm">
-                  <SelectValue placeholder="Select template" />
-                </SelectTrigger>
-                <SelectContent>
-                  {APP_STRUCTURE_TEMPLATES.map((template) => (
-                    <SelectItem key={template.id} value={template.id}>
-                      {template.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={templatePopoverOpen} onOpenChange={setTemplatePopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 theme-shadow"
+                    title="Select template"
+                  >
+                    <LayoutTemplate className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56 theme-p-2 theme-shadow" align="end">
+                  <div className="flex flex-col theme-gap-1">
+                    <div className="theme-px-2 theme-py-1 text-xs font-semibold theme-text-muted-foreground">
+                      Templates
+                    </div>
+                    {APP_STRUCTURE_TEMPLATES.map((template) => (
+                      <Button
+                        key={template.id}
+                        variant={selectedTemplate === template.id ? "secondary" : "ghost"}
+                        size="sm"
+                        className="justify-start theme-gap-2 w-full"
+                        onClick={() => handleTemplateChange(template.id)}
+                      >
+                        <LayoutTemplate className="h-4 w-4" />
+                        <span>{template.name}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
@@ -2684,7 +2887,7 @@ export const LayoutAndStructure = () => {
                 <TreeNode
                   key={node.id}
                   node={node}
-                  isLast={false}
+                  isLast={index === appStructure.length - 1}
                   onUpdate={handleUpdate}
                   onDelete={handleDelete}
                   onAddFile={handleAddFile}
@@ -2693,6 +2896,8 @@ export const LayoutAndStructure = () => {
                   onAddSpecificFile={handleAddSpecificFile}
                   newNodeId={newNodeId}
                   qualifyingFilePaths={qualifyingFilePaths}
+                  expandedFileId={expandedFileId}
+                  setExpandedFileId={setExpandedFileId}
                 />
               ))}
 
@@ -2720,114 +2925,12 @@ export const LayoutAndStructure = () => {
                     onUpdateAppStructure={handleUpdate}
                     onDeleteRoute={handleDeleteRoute}
                     onAddSegment={handleAddSegment}
+                    newlyAddedSegmentPath={newlyAddedSegmentPath}
                   />
                 ))}
               </div>
             </div>
           )}
-        </div>
-
-        <div className="flex flex-col h-full overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between theme-mb-2 theme-gap-2">
-              <TabsList className="w-full sm:w-auto">
-                <TabsTrigger value="layouts" className="flex-1 sm:flex-none text-xs md:text-sm">Layouts</TabsTrigger>
-                <TabsTrigger value="features" className="flex-1 sm:flex-none text-xs md:text-sm">Features</TabsTrigger>
-              </TabsList>
-              {activeTab === "layouts" && (
-                <div className="flex items-center theme-gap-1 w-full sm:w-auto justify-end">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 md:h-6 md:w-6 theme-shadow"
-                    onClick={() => {
-                      if (currentPageIndex > 0) {
-                        setWireframeCurrentPage(currentPageIndex - 1);
-                      }
-                    }}
-                    disabled={currentPageIndex === 0}
-                    title="Previous page"
-                  >
-                    <ChevronUp className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 md:h-6 md:w-6 theme-shadow"
-                    onClick={() => {
-                      if (currentPageIndex < availablePages.length - 1) {
-                        setWireframeCurrentPage(currentPageIndex + 1);
-                      }
-                    }}
-                    disabled={currentPageIndex === availablePages.length - 1}
-                    title="Next page"
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-              {activeTab === "features" && selectedFileId && (
-                <Button
-                  onClick={() => addFeature(selectedFileId)}
-                  size="sm"
-                  className="theme-gap-1 md:theme-gap-2 w-full sm:w-auto text-xs md:text-sm h-8 md:h-9"
-                >
-                  <Plus className="h-3 w-3 md:h-4 md:w-4" />
-                  Add Feature
-                </Button>
-              )}
-            </div>
-
-            <TabsContent value="layouts" className="flex-1 overflow-hidden theme-mt-0">
-              <div className="flex flex-col h-full">
-                <h3 className="text-xs md:text-sm font-semibold theme-text-card-foreground theme-font-sans theme-tracking theme-mb-2">
-                  {currentPage && `${currentPage}`}
-                </h3>
-                <div className="theme-p-2 md:theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow">
-                  {renderNestedBoxes()}
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="features" className="flex-1 overflow-hidden theme-mt-0">
-              <div className="theme-p-2 md:theme-p-3 theme-radius theme-bg-background flex-1 overflow-y-auto theme-shadow h-full">
-                {selectedFilePath ? (
-                  <div className="flex flex-col theme-gap-3 h-full">
-                    <div className="theme-mb-2">
-                      <span className="text-sm theme-font-mono theme-text-muted-foreground">
-                        {selectedFilePath}
-                      </span>
-                    </div>
-
-                    {features.length > 0 ? (
-                      <div className="flex flex-col theme-gap-3">
-                        {features.map((feature) => (
-                          <FeatureCard
-                            key={feature.id}
-                            feature={feature}
-                            fileId={selectedFileId!}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center theme-py-8">
-                        <span className="theme-text-muted-foreground theme-font-sans theme-tracking">
-                          No features added. Click &quot;Add Feature&quot; to begin.
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <span className="theme-text-muted-foreground theme-font-sans theme-tracking">
-                      Select a page.tsx or layout.tsx file to begin
-                    </span>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
       </div>
     </div>
   );
@@ -3063,11 +3166,19 @@ export const AppStructure = () => {
     deleteAppStructureNode,
     addAppStructureNode,
     setAppStructure,
+    featureFileSelection,
+    selectedFilePath,
   } = useEditorStore();
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
+  const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
+  const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<string | null>(null);
+
+  const qualifyingFilePaths = featureFileSelection.fileType
+    ? getQualifyingFiles(appStructure, selectedFilePath, featureFileSelection.fileType)
+    : [];
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -3120,7 +3231,7 @@ export const AppStructure = () => {
   };
 
   const handleAddSegment = (parentPath: string) => {
-    const segmentName = "new-segment";
+    const segmentName = generateUniqueSegmentName(appStructure, parentPath);
     const updatedStructure = addRouteSegment(
       appStructure,
       parentPath,
@@ -3129,6 +3240,8 @@ export const AppStructure = () => {
       true
     );
     setAppStructure(updatedStructure);
+    const newSegmentPath = parentPath === "/" ? `/${segmentName}` : `${parentPath}/${segmentName}`;
+    setNewlyAddedSegmentPath(newSegmentPath);
   };
 
   const handleRouteSubmit = () => {
@@ -3175,6 +3288,9 @@ export const AppStructure = () => {
             appStructure={appStructure}
             onAddSpecificFile={handleAddSpecificFile}
             newNodeId={newNodeId}
+            qualifyingFilePaths={qualifyingFilePaths}
+            expandedFileId={expandedFileId}
+            setExpandedFileId={setExpandedFileId}
           />
         ))}
 
@@ -3203,6 +3319,7 @@ export const AppStructure = () => {
                 onUpdateAppStructure={handleUpdate}
                 onDeleteRoute={handleDeleteRoute}
                 onAddSegment={handleAddSegment}
+                newlyAddedSegmentPath={newlyAddedSegmentPath}
               />
             ))}
 
