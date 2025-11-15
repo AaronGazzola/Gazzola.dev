@@ -587,7 +587,7 @@
             "order": 1,
             "path": "start-here.tech-stack",
             "urlPath": "/start-here/tech-stack",
-            "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+            "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
             "components": [
               {
                 "id": "component-InitialConfiguration",
@@ -1281,7 +1281,7 @@
               "order": 1,
               "path": "start-here.tech-stack",
               "urlPath": "/start-here/tech-stack",
-              "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+              "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
               "components": [
                 {
                   "id": "component-InitialConfiguration",
@@ -2203,7 +2203,7 @@
           "order": 1,
           "path": "start-here.tech-stack",
           "urlPath": "/start-here/tech-stack",
-          "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+          "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
           "components": [
             {
               "id": "component-InitialConfiguration",
@@ -2314,7 +2314,7 @@
       "order": 1,
       "path": "start-here.tech-stack",
       "urlPath": "/start-here/tech-stack",
-      "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThis collection of documents provides comprehensive instructions for creating a custom full-stack web application.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+      "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
       "components": [
         {
           "id": "component-InitialConfiguration",
@@ -2456,5 +2456,5 @@
       "include": true
     }
   },
-  "contentVersion": 40
+  "contentVersion": 41
 }

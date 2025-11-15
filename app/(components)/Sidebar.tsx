@@ -915,91 +915,85 @@ const Sidebar = () => {
           </div>
         </div>
       </SidebarHeader>
-      <div className="p-0 space-y-4 flex-grow flex flex-col">
-        <div className="flex-grow flex flex-col relative ">
-          <div className="absolute inset-0 overflow-auto px-3 flex flex-col justify-between">
-            <div className="space-y-1">
-              {navigationData
-                .filter((item) => item.include !== false)
-                .map((item, index) => (
-                  <TreeItem
-                    key={index}
-                    item={item}
-                    level={0}
-                    expandedItems={expandedItems}
-                    onToggleExpansion={handleToggleExpansion}
-                    isPageVisited={isPageVisited}
-                    currentPath={currentPath}
-                    data={data}
-                    codeFiles={codeFiles}
-                  />
-                ))}
+      <div className="flex-grow overflow-y-auto overflow-x-hidden px-3 py-2">
+        {navigationData
+          .filter((item) => item.include !== false)
+          .map((item, index) => (
+            <TreeItem
+              key={index}
+              item={item}
+              level={0}
+              expandedItems={expandedItems}
+              onToggleExpansion={handleToggleExpansion}
+              isPageVisited={isPageVisited}
+              currentPath={currentPath}
+              data={data}
+              codeFiles={codeFiles}
+            />
+          ))}
+      </div>
+      <div className="border-t border-gray-700 p-3 space-y-3">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Badge
+              variant="outline"
+              className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
+            >
+              <Info className="h-4 w-4 text-orange-500 absolute left-3" />
+              Work in Progress
+            </Badge>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
+            <div className="space-y-2">
+              <h4 className="font-semibold">Work in Progress</h4>
+              <p className="text-sm text-gray-300">
+                This app is a work in progress and will likely change
+                often. When the source material changes, the editor
+                content will be reset.
+              </p>
+              <p className="text-sm text-gray-300 font-medium">
+                Please download your roadmap frequently to avoid losing
+                your progress.
+              </p>
             </div>
-            <div className="p-3  mt-auto space-y-3">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Badge
-                    variant="outline"
-                    className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
-                  >
-                    <Info className="h-4 w-4 text-orange-500 absolute left-3" />
-                    Work in Progress
-                  </Badge>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Work in Progress</h4>
-                    <p className="text-sm text-gray-300">
-                      This app is a work in progress and will likely change
-                      often. When the source material changes, the editor
-                      content will be reset.
-                    </p>
-                    <p className="text-sm text-gray-300 font-medium">
-                      Please download your roadmap frequently to avoid losing
-                      your progress.
-                    </p>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <div className="relative w-full">
-                {showDownloadHelp && (
-                  <div className="absolute -top-2 -right-2 z-30">
-                    <WalkthroughHelper
-                      isOpen={downloadHelpOpen}
-                      onOpenChange={(open) => {
-                        setDownloadHelpOpen(open);
-                        if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
-                          markStepComplete(WalkthroughStep.DOWNLOAD);
-                        } else if (
-                          open &&
-                          !isStepOpen(WalkthroughStep.DOWNLOAD)
-                        ) {
-                          setStepOpen(WalkthroughStep.DOWNLOAD, true);
-                        }
-                      }}
-                      showAnimation={!isStepOpen(WalkthroughStep.DOWNLOAD)}
-                      title="Download Your Roadmap"
-                      description="Click here to download all your customized roadmap documents as a ZIP file. You can download at any time to save your progress."
-                      iconSize="sm"
-                    />
-                  </div>
-                )}
-                <Button
-                  variant="outline"
-                  className="w-full text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500 z-10"
-                  onClick={() => {
-                    handleDownload();
-                    if (showDownloadHelp) {
-                      markStepComplete(WalkthroughStep.DOWNLOAD);
-                    }
-                  }}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
-              </div>
+          </PopoverContent>
+        </Popover>
+        <div className="relative w-full">
+          {showDownloadHelp && (
+            <div className="absolute -top-2 -right-2 z-30">
+              <WalkthroughHelper
+                isOpen={downloadHelpOpen}
+                onOpenChange={(open) => {
+                  setDownloadHelpOpen(open);
+                  if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
+                    markStepComplete(WalkthroughStep.DOWNLOAD);
+                  } else if (
+                    open &&
+                    !isStepOpen(WalkthroughStep.DOWNLOAD)
+                  ) {
+                    setStepOpen(WalkthroughStep.DOWNLOAD, true);
+                  }
+                }}
+                showAnimation={!isStepOpen(WalkthroughStep.DOWNLOAD)}
+                title="Download Your Roadmap"
+                description="Click here to download all your customized roadmap documents as a ZIP file. You can download at any time to save your progress."
+                iconSize="sm"
+              />
             </div>
-          </div>
+          )}
+          <Button
+            variant="outline"
+            className="w-full text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500 z-10"
+            onClick={() => {
+              handleDownload();
+              if (showDownloadHelp) {
+                markStepComplete(WalkthroughStep.DOWNLOAD);
+              }
+            }}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download
+          </Button>
         </div>
       </div>
     </SidebarContent>
@@ -1019,7 +1013,7 @@ const Sidebar = () => {
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
       </SidebarHeader>
-      <div className="flex-grow overflow-y-auto overflow-x-hidden py-2">
+      <div className="flex-grow overflow-y-auto overflow-x-hidden py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {navigationData
           .filter((item) => item.include !== false)
           .map((item, index) => (

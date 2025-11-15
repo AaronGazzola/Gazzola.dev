@@ -365,17 +365,16 @@ const Header = () => {
               isExpanded ? "mt-2" : "mt-0 sm:mt-2"
             )}
           >
-            AI <br className="sm:hidden" /> QA
+            AI <br className="sm:hidden" /> TDD
           </h1>
 
           {isExpanded && (
-            <h2 className="text-lg font-medium md:block hidden">
-              Artificial Intelligence Quality Assurance.
+            <h2 className="text-lg font-medium">
+              Artificial Intelligence <br />
+              Test Driven Development
             </h2>
           )}
-          {isExpanded ? (
-            <h3 className="text-lg font-medium">Design, Build, Review</h3>
-          ) : (
+          {!isExpanded && (
             <span className="hidden md:inline">
               <Button
                 variant="outline"

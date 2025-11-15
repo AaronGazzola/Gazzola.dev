@@ -2,7 +2,7 @@
 
 Welcome to the development roadmap for {{appName:Your app name}}!
 
-This collection of documents provides comprehensive instructions for creating a custom full-stack web application.
+These files provide instructions for an AI to build the foundation of your web app.
 
 ## Technology stack
 

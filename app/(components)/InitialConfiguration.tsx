@@ -232,26 +232,6 @@ const questionConfigs: (
     ],
   },
   {
-    id: "deploymentChoice",
-    question: 'Do you need an "always on" server?',
-    description: "Choose your deployment platform based on your requirements.",
-    icon: Settings,
-    requiredTechnologies: [],
-    subOptions: [
-      {
-        id: "serverless",
-        label: "No, a serverless deployment is sufficient",
-        description: "Simpler and cheaper, suitable for most cases",
-      },
-      {
-        id: "alwaysOn",
-        label: "Yes, I need live monitoring for continuous service",
-        description:
-          "More complex and expensive but required for some backend logic",
-      },
-    ],
-  },
-  {
     id: "authentication",
     question: "Can users sign in to your app?",
     description: "Enable user authentication and session management.",
@@ -347,15 +327,25 @@ const questionConfigs: (
     ],
   },
   {
-    id: "fileStorage",
-    question: "Can users upload files?",
-    description:
-      "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
-    icon: Upload,
-    requiredTechnologies: ["supabase"],
-    disabledWhen: (config) =>
-      config.questions.useSupabase === "no" ||
-      config.questions.useSupabase === "none",
+    id: "deploymentChoice",
+    question: 'Do you need an "always on" server?',
+    description: "Choose your deployment platform based on your requirements.",
+    icon: Settings,
+    requiredTechnologies: [],
+    disabledWhen: () => true,
+    subOptions: [
+      {
+        id: "serverless",
+        label: "No, a serverless deployment is sufficient",
+        description: "Simpler and cheaper, suitable for most cases",
+      },
+      {
+        id: "alwaysOn",
+        label: "Yes, I need live monitoring for continuous service",
+        description:
+          "More complex and expensive but required for some backend logic",
+      },
+    ],
   },
   {
     id: "payments",
@@ -363,6 +353,7 @@ const questionConfigs: (
     description: "Handle payments and subscriptions.",
     icon: CreditCard,
     requiredTechnologies: [],
+    disabledWhen: () => true,
     subOptions: [
       {
         id: "paypalPayments",
@@ -379,10 +370,6 @@ const questionConfigs: (
         label: "Subscription management with Stripe",
         description:
           "Recurring subscription billing with Stripe and Better Auth",
-        disabledWhen: (config) =>
-          (config.questions.useSupabase !== "withBetterAuth" &&
-            config.questions.useSupabase !== "no") ||
-          !config.features.authentication.enabled,
       },
     ],
   },
@@ -392,14 +379,12 @@ const questionConfigs: (
     description: "AI-powered features for enhanced user experience.",
     icon: Settings,
     requiredTechnologies: [],
+    disabledWhen: () => true,
     subOptions: [
       {
         id: "imageGeneration",
         label: "Yes I need to generate and store images",
         description: "Generate and store AI-generated images",
-        disabledWhen: (config) =>
-          config.questions.useSupabase === "no" ||
-          config.questions.useSupabase === "none",
       },
       {
         id: "textGeneration",
@@ -409,21 +394,27 @@ const questionConfigs: (
     ],
   },
   {
+    id: "fileStorage",
+    question: "Can users upload files?",
+    description:
+      "File storage with secure access controls using Supabase Storage for secure, scalable file uploads and management.",
+    icon: Upload,
+    requiredTechnologies: ["supabase"],
+    disabledWhen: () => true,
+  },
+  {
     id: "realTimeNotifications",
     question: "Do you need realtime notifications?",
     description:
       "Live updates and push notifications using Supabase Realtime for instant data synchronization.",
     icon: Bell,
     requiredTechnologies: ["supabase"],
-    disabledWhen: (config) =>
-      config.questions.useSupabase === "no" ||
-      config.questions.useSupabase === "none",
+    disabledWhen: () => true,
     subOptions: [
       {
         id: "emailNotifications",
         label: "Email notifications",
         description: "Send notifications via email using Resend",
-        disabledWhen: (config) => !config.features.authentication.enabled,
       },
       {
         id: "inAppNotifications",
@@ -441,9 +432,6 @@ const getRequiredTechnologiesForPayments = (
 
   if (paymentFeatures.stripePayments || paymentFeatures.stripeSubscriptions) {
     required.push("stripe");
-  }
-  if (paymentFeatures.paypalPayments) {
-    required.push("paypal");
   }
   if (paymentFeatures.stripeSubscriptions) {
     required.push("betterAuth");
@@ -467,16 +455,8 @@ const getRequiredTechnologiesForSubOption = (
     } else if (optionId === "supabaseOnly") {
       required.push("supabase", "prisma", "postgresql");
     }
-  } else if (questionId === "deploymentChoice") {
-    if (optionId === "serverless") {
-      required.push("vercel");
-    } else if (optionId === "alwaysOn") {
-      required.push("railway");
-    }
   } else if (questionId === "payments") {
-    if (optionId === "paypalPayments") {
-      required.push("paypal");
-    } else if (optionId === "stripePayments") {
+    if (optionId === "stripePayments") {
       required.push("stripe");
     } else if (optionId === "stripeSubscriptions") {
       required.push("stripe", "betterAuth");
@@ -492,12 +472,6 @@ const getRequiredTechnologiesForSubOption = (
   } else if (questionId === "admin") {
     if (optionId === "orgAdmins" || optionId === "orgMembers") {
       required.push("betterAuth");
-    }
-  } else if (questionId === "aiIntegration") {
-    if (optionId === "imageGeneration") {
-      required.push("openrouter", "supabase");
-    } else if (optionId === "textGeneration") {
-      required.push("openrouter");
     }
   } else if (questionId === "realTimeNotifications") {
     required.push("supabase");
@@ -515,11 +489,8 @@ const hasAnyChildrenSelected = (
 ): boolean => {
   if (questionId === "databaseChoice") {
     return true;
-  } else if (questionId === "deploymentChoice") {
-    return true;
   } else if (questionId === "payments") {
     return (
-      initialConfiguration.features.payments.paypalPayments ||
       initialConfiguration.features.payments.stripePayments ||
       initialConfiguration.features.payments.stripeSubscriptions
     );
@@ -546,11 +517,6 @@ const hasAnyChildrenSelected = (
     return (
       initialConfiguration.features.realTimeNotifications.emailNotifications ||
       initialConfiguration.features.realTimeNotifications.inAppNotifications
-    );
-  } else if (questionId === "aiIntegration") {
-    return (
-      initialConfiguration.features.aiIntegration.imageGeneration ||
-      initialConfiguration.features.aiIntegration.textGeneration
     );
   }
 
@@ -613,24 +579,6 @@ const getDisabledReason = (
     }
   }
 
-  if (
-    questionId === "realTimeNotifications" &&
-    optionId === "emailNotifications"
-  ) {
-    if (!config.features.authentication.enabled) {
-      return "Requires user authentication (Question 3)";
-    }
-  }
-
-  if (questionId === "aiIntegration" && optionId === "imageGeneration") {
-    if (
-      config.questions.useSupabase === "no" ||
-      config.questions.useSupabase === "none"
-    ) {
-      return "Requires Supabase (Question 1)";
-    }
-  }
-
   return null;
 };
 
@@ -665,7 +613,7 @@ export const InitialConfiguration = () => {
     mounted && shouldShowStep(WalkthroughStep.CONFIGURATION);
 
   const getFeatureEnabled = (featureId: string): boolean => {
-    if (featureId === "databaseChoice" || featureId === "deploymentChoice") {
+    if (featureId === "databaseChoice") {
       return true;
     } else if (featureId === "authentication") {
       return initialConfiguration.features.authentication.enabled;
@@ -673,8 +621,6 @@ export const InitialConfiguration = () => {
       return initialConfiguration.features.admin.enabled;
     } else if (featureId === "payments") {
       return initialConfiguration.features.payments.enabled;
-    } else if (featureId === "aiIntegration") {
-      return initialConfiguration.features.aiIntegration.enabled;
     } else if (featureId === "realTimeNotifications") {
       return initialConfiguration.features.realTimeNotifications.enabled;
     }
@@ -713,17 +659,10 @@ export const InitialConfiguration = () => {
       techId === "shadcn" ||
       techId === "tailwindcss" ||
       techId === "zustand" ||
-      techId === "reactQuery"
+      techId === "reactQuery" ||
+      techId === "vercel"
     ) {
       requiredBy.push("Core technology stack");
-    }
-
-    if (techId === "vercel" && !initialConfiguration.questions.alwaysOnServer) {
-      requiredBy.push("Serverless deployment");
-    }
-
-    if (techId === "railway" && initialConfiguration.questions.alwaysOnServer) {
-      requiredBy.push("Always-on server deployment");
     }
 
     questionConfigs(initialConfiguration).forEach((question) => {
@@ -787,14 +726,6 @@ export const InitialConfiguration = () => {
       }
     }
 
-    if (techId === "openrouter") {
-      if (initialConfiguration.features.aiIntegration.imageGeneration) {
-        requiredBy.push("AI image generation");
-      }
-      if (initialConfiguration.features.aiIntegration.textGeneration) {
-        requiredBy.push("AI text generation or image analysis");
-      }
-    }
 
     if (initialConfiguration.features.payments.enabled) {
       const paymentTechs = getRequiredTechnologiesForPayments(
@@ -888,16 +819,6 @@ export const InitialConfiguration = () => {
           ...initialConfiguration.features,
           payments: {
             ...initialConfiguration.features.payments,
-            enabled,
-          },
-        },
-      });
-    } else if (featureId === "aiIntegration") {
-      updateInitialConfiguration({
-        features: {
-          ...initialConfiguration.features,
-          aiIntegration: {
-            ...initialConfiguration.features.aiIntegration,
             enabled,
           },
         },
@@ -1052,16 +973,27 @@ export const InitialConfiguration = () => {
               >
                 <AccordionTrigger
                   className={cn(
-                    "flex items-center w-full theme-py-1 theme-px-1 md:theme-px-2 theme-pr-8 md:theme-pr-10 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180",
-                    isQuestionDisabled && "opacity-50"
+                    "flex items-center w-full theme-py-1 theme-px-1 md:theme-px-2 theme-pr-8 md:theme-pr-10 hover:no-underline [&>svg]:hidden [&[data-state=open]_.chevron]:rotate-180"
                   )}
                   disabled={isQuestionDisabled}
                 >
-                  <div className="flex items-center theme-gap-1 md:theme-gap-2 flex-1 min-w-0">
-                    <Icon className="theme-text-foreground w-4 h-4 md:w-5 md:h-5 transition-colors duration-200 shrink-0" />
-                    <span className="theme-text-foreground text-sm md:text-lg font-semibold theme-font-sans theme-tracking">
-                      {question.question}
-                    </span>
+                  <div className="flex items-start theme-gap-1 md:theme-gap-2 flex-1 min-w-0">
+                    <div className={cn(isQuestionDisabled && "opacity-50")}>
+                      <Icon className="theme-text-foreground w-4 h-4 md:w-5 md:h-5 transition-colors duration-200 shrink-0 theme-mt-0.5 md:theme-mt-1" />
+                    </div>
+                    <div className="flex flex-col theme-gap-0.5">
+                      <span className={cn(
+                        "theme-text-foreground text-sm md:text-lg font-semibold theme-font-sans theme-tracking",
+                        isQuestionDisabled && "opacity-50"
+                      )}>
+                        {question.question}
+                      </span>
+                      {isQuestionDisabled && (
+                        <span className="text-[10px] md:text-xs text-white font-semibold theme-font-sans theme-tracking opacity-80">
+                          Coming soon
+                        </span>
+                      )}
+                    </div>
                     {question.id === "databaseChoice" && showConfigHelp && (
                       <div onClick={(e) => e.stopPropagation()}>
                         <WalkthroughHelper
@@ -1095,57 +1027,6 @@ export const InitialConfiguration = () => {
                     <ChevronDown className="chevron h-4 w-4 shrink-0 transition-transform duration-200" />
                   </div>
                 </AccordionTrigger>
-
-                <div className="absolute right-1 md:right-2 top-0 theme-pt-3 md:theme-pt-5 z-10">
-                  {isQuestionDisabled ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <Checkbox
-                            checked={isEnabled}
-                            disabled={true}
-                            className={cn(
-                              "size-4 md:size-5 border border-gray-500 select-none data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
-                            )}
-                          />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent className="theme-font-sans theme-tracking">
-                        <p>
-                          {getDisabledReason(
-                            question.id,
-                            null,
-                            initialConfiguration
-                          ) || "Question not available"}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <Checkbox
-                      checked={isEnabled}
-                      disabled={
-                        question.subOptions && question.subOptions.length > 0
-                      }
-                      onCheckedChange={(checked) => {
-                        if (
-                          question.subOptions &&
-                          question.subOptions.length > 0
-                        ) {
-                          return;
-                        }
-
-                        const isChecking = checked === true;
-                        updateFeature(question.id, isChecking);
-                      }}
-                      className={cn(
-                        "size-4 md:size-5 border border-gray-500 select-none",
-                        question.subOptions && question.subOptions.length > 0
-                          ? "data-[state=checked]:bg-gray-800 data-[state=checked]:border-gray-600 data-[state=checked]:text-white cursor-not-allowed opacity-50"
-                          : "data-[state=checked]:bg-black data-[state=checked]:border-black data-[state=checked]:text-white"
-                      )}
-                    />
-                  )}
-                </div>
                 <AccordionContent>
                   <div className="theme-px-2 theme-pb-2 theme-pt-0">
                     {question.subOptions && question.subOptions.length > 0 ? (
@@ -1222,14 +1103,7 @@ export const InitialConfiguration = () => {
                                         (option.id === "supabaseOnly" &&
                                           initialConfiguration.questions
                                             .useSupabase === "authOnly")
-                                      : question.id === "deploymentChoice"
-                                        ? (option.id === "serverless" &&
-                                            !initialConfiguration.questions
-                                              .alwaysOnServer) ||
-                                          (option.id === "alwaysOn" &&
-                                            initialConfiguration.questions
-                                              .alwaysOnServer)
-                                        : question.id === "payments"
+                                      : question.id === "payments"
                                           ? initialConfiguration.features
                                               .payments[
                                               option.id as keyof typeof initialConfiguration.features.payments
@@ -1244,19 +1118,14 @@ export const InitialConfiguration = () => {
                                                   .authentication[
                                                   option.id as keyof typeof initialConfiguration.features.authentication
                                                 ] || false
-                                              : question.id === "aiIntegration"
-                                                ? initialConfiguration.features
-                                                    .aiIntegration[
-                                                    option.id as keyof typeof initialConfiguration.features.aiIntegration
+                                              : question.id ===
+                                                  "realTimeNotifications"
+                                                ? initialConfiguration
+                                                    .features
+                                                    .realTimeNotifications[
+                                                    option.id as keyof typeof initialConfiguration.features.realTimeNotifications
                                                   ] || false
-                                                : question.id ===
-                                                    "realTimeNotifications"
-                                                  ? initialConfiguration
-                                                      .features
-                                                      .realTimeNotifications[
-                                                      option.id as keyof typeof initialConfiguration.features.realTimeNotifications
-                                                    ] || false
-                                                  : false
+                                                : false
                                   }
                                   onCheckedChange={(checked) => {
                                     if (checked && isSubOptionDisabled) {
@@ -1366,27 +1235,6 @@ export const InitialConfiguration = () => {
                                           ...featureUpdates,
                                         },
                                       });
-                                    } else if (
-                                      question.id === "deploymentChoice" &&
-                                      checked
-                                    ) {
-                                      const alwaysOn = option.id === "alwaysOn";
-                                      updateInitialConfiguration({
-                                        questions: {
-                                          ...initialConfiguration.questions,
-                                          alwaysOnServer: alwaysOn,
-                                        },
-                                        deployment: {
-                                          platform: alwaysOn
-                                            ? "railway"
-                                            : "vercel",
-                                        },
-                                        technologies: {
-                                          ...initialConfiguration.technologies,
-                                          vercel: !alwaysOn,
-                                          railway: alwaysOn,
-                                        },
-                                      });
                                     } else if (question.id === "payments") {
                                       updatePaymentOption(
                                         option.id,
@@ -1401,13 +1249,6 @@ export const InitialConfiguration = () => {
                                       question.id === "authentication"
                                     ) {
                                       updateAuthenticationOption(
-                                        option.id,
-                                        checked === true
-                                      );
-                                    } else if (
-                                      question.id === "aiIntegration"
-                                    ) {
-                                      updateAIIntegrationOption(
                                         option.id,
                                         checked === true
                                       );
@@ -1458,14 +1299,7 @@ export const InitialConfiguration = () => {
                                           (option.id === "supabaseOnly" &&
                                             initialConfiguration.questions
                                               .useSupabase === "authOnly")
-                                        : question.id === "deploymentChoice"
-                                          ? (option.id === "serverless" &&
-                                              !initialConfiguration.questions
-                                                .alwaysOnServer) ||
-                                            (option.id === "alwaysOn" &&
-                                              initialConfiguration.questions
-                                                .alwaysOnServer)
-                                          : question.id === "payments"
+                                        : question.id === "payments"
                                             ? initialConfiguration.features
                                                 .payments[
                                                 option.id as keyof typeof initialConfiguration.features.payments
@@ -1481,19 +1315,13 @@ export const InitialConfiguration = () => {
                                                     option.id as keyof typeof initialConfiguration.features.authentication
                                                   ] || false
                                                 : question.id ===
-                                                    "aiIntegration"
+                                                    "realTimeNotifications"
                                                   ? initialConfiguration
-                                                      .features.aiIntegration[
-                                                      option.id as keyof typeof initialConfiguration.features.aiIntegration
+                                                      .features
+                                                      .realTimeNotifications[
+                                                      option.id as keyof typeof initialConfiguration.features.realTimeNotifications
                                                     ] || false
-                                                  : question.id ===
-                                                      "realTimeNotifications"
-                                                    ? initialConfiguration
-                                                        .features
-                                                        .realTimeNotifications[
-                                                        option.id as keyof typeof initialConfiguration.features.realTimeNotifications
-                                                      ] || false
-                                                    : false;
+                                                  : false;
 
                                     // Badge is active only if technology is enabled AND this specific sub-option is selected
                                     const isBadgeActive =
@@ -1527,9 +1355,52 @@ export const InitialConfiguration = () => {
                         })}
                       </div>
                     ) : (
-                      <p className="theme-text-foreground text-sm font-medium theme-font-sans theme-tracking">
-                        {question.description}
-                      </p>
+                      <label
+                        className={cn(
+                          "flex items-start theme-gap-2",
+                          isQuestionDisabled
+                            ? "cursor-not-allowed opacity-50"
+                            : "cursor-pointer"
+                        )}
+                      >
+                        {isQuestionDisabled ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Checkbox
+                                checked={isEnabled}
+                                disabled={true}
+                                className="size-4 theme-mt-0\.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent className="theme-font-sans theme-tracking">
+                              <p>
+                                {getDisabledReason(
+                                  question.id,
+                                  null,
+                                  initialConfiguration
+                                ) || "Option not available"}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : (
+                          <Checkbox
+                            checked={isEnabled}
+                            onCheckedChange={(checked) => {
+                              const isChecking = checked === true;
+                              updateFeature(question.id, isChecking);
+                            }}
+                            className="size-4 mt-0.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
+                          />
+                        )}
+                        <div>
+                          <span className="theme-text-foreground text-sm md:text-base font-medium block theme-font-sans theme-tracking">
+                            {question.question}
+                          </span>
+                          <span className="theme-text-muted-foreground text-xs md:text-base block theme-mt-0\.5 font-medium theme-font-sans theme-tracking">
+                            {question.description}
+                          </span>
+                        </div>
+                      </label>
                     )}
                   </div>
                 </AccordionContent>
