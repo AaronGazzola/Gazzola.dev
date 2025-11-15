@@ -1,11 +1,9 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
-import { cn } from "@/lib/tailwind.utils";
 import {
   Popover,
   PopoverContent,
@@ -24,21 +22,16 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/editor/ui/tabs";
-import {
-  ChevronDown,
-  Ellipsis,
-  Lock,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
+import { ChevronDown, Ellipsis, Lock, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { SiSupabase } from "react-icons/si";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import type {
   PRISMA_TYPES,
   PrismaColumn,
   PrismaTable,
 } from "./DatabaseConfiguration.types";
-import { SiSupabase } from "react-icons/si";
 
 const BetterAuthIcon = ({ className }: { className?: string }) => (
   <svg
@@ -302,7 +295,10 @@ const ColumnLine = ({
               <Ellipsis className="h-3 w-3" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 theme-p-3 theme-shadow relative" align="start">
+          <PopoverContent
+            className="w-64 theme-p-3 theme-shadow relative"
+            align="start"
+          >
             <Button
               variant="ghost"
               size="icon"
@@ -393,7 +389,11 @@ const EditableSelect = ({
   className,
 }: {
   value: string;
-  options: { value: string; label: string | React.ReactNode; disabled?: boolean }[];
+  options: {
+    value: string;
+    label: string | React.ReactNode;
+    disabled?: boolean;
+  }[];
   onValueChange: (value: string) => void;
   onNameChange?: (name: string) => void;
   onDelete?: () => void;
@@ -439,7 +439,7 @@ const EditableSelect = ({
   const selectedOption = options.find((opt) => opt.value === value);
 
   return (
-    <div className={cn("flex items-center", className)}>
+    <div className={className}>
       {isEditing ? (
         <Input
           ref={inputRef}
@@ -450,58 +450,71 @@ const EditableSelect = ({
           className="h-9 theme-px-2 text-sm theme-shadow theme-font-mono"
         />
       ) : (
-        <div className="flex items-center theme-border-border border theme-radius overflow-hidden">
-          <span
-            className="text-sm theme-font-mono theme-text-foreground cursor-pointer hover:underline theme-px-2 theme-py-1.5"
-            onClick={() => isEditable && setIsEditing(true)}
-          >
-            {selectedOption?.label || value || placeholder}
-          </span>
-          <Popover open={isOpen} onOpenChange={setIsOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-none border-l theme-border-border"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 theme-p-2 theme-shadow" align="start">
-              <div className="flex flex-col theme-gap-1">
-                {options.map((option) => (
-                  <Button
-                    key={option.value}
-                    variant="ghost"
-                    size="sm"
-                    disabled={option.disabled}
-                    className="justify-start text-sm"
-                    onClick={() => {
-                      onValueChange(option.value);
-                      setIsOpen(false);
-                    }}
-                  >
-                    {option.label}
-                  </Button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {showDelete && onDelete && (
-            <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <div className="flex items-center theme-gap-1">
+          <div className="flex items-center border theme-border-border rounded overflow-hidden theme-bg-background">
+            <span
+              className="text-sm theme-font-mono theme-text-foreground cursor-pointer hover:underline theme-px-2 theme-py-1.5"
+              onClick={() => isEditable && setIsEditing(true)}
+            >
+              {selectedOption?.label || value || placeholder}
+            </span>
+            <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 rounded-none border-l theme-border-border"
+                  className="h-9 w-9 rounded-none border-l theme-border-border"
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-56 theme-p-2 theme-shadow"
+                align="start"
+              >
+                <div className="flex flex-col theme-gap-1">
+                  {options.map((option) => (
+                    <Button
+                      key={option.value}
+                      variant="ghost"
+                      size="sm"
+                      disabled={option.disabled}
+                      className="justify-start text-sm"
+                      onClick={() => {
+                        onValueChange(option.value);
+                        setIsOpen(false);
+                      }}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+          {showDelete && onDelete && (
+            <Popover
+              open={deleteConfirmOpen}
+              onOpenChange={setDeleteConfirmOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
                 >
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+              <PopoverContent
+                className="w-64 theme-p-3 theme-shadow"
+                align="end"
+              >
                 <div className="flex flex-col theme-gap-2">
                   <p className="text-sm theme-text-foreground">
-                    {placeholder?.includes("schema") ? `Delete schema "${value}" and all its tables?` : `Delete table "${selectedOption?.label || value}"?`}
+                    {placeholder?.includes("schema")
+                      ? `Delete schema "${value}" and all its tables?`
+                      : `Delete table "${selectedOption?.label || value}"?`}
                   </p>
                   <div className="flex theme-gap-2">
                     <Button
@@ -619,7 +632,8 @@ const DatabaseChoicePopover = () => {
   const handleOptionChange = (optionId: string, checked: boolean) => {
     if (!checked) return;
 
-    let useSupabaseValue: "none" | "no" | "withBetterAuth" | "authOnly" = "none";
+    let useSupabaseValue: "none" | "no" | "withBetterAuth" | "authOnly" =
+      "none";
     const techUpdates: Partial<typeof initialConfiguration.technologies> = {};
     const featureUpdates: Partial<typeof initialConfiguration.features> = {};
 
@@ -682,7 +696,12 @@ const DatabaseChoicePopover = () => {
         useSupabase: useSupabaseValue,
       },
       database: {
-        hosting: useSupabaseValue === "none" ? "postgresql" : useSupabaseValue === "no" ? "neondb" : "supabase",
+        hosting:
+          useSupabaseValue === "none"
+            ? "postgresql"
+            : useSupabaseValue === "no"
+              ? "neondb"
+              : "supabase",
       },
       technologies: {
         ...initialConfiguration.technologies,
@@ -756,7 +775,8 @@ const DatabaseChoicePopover = () => {
     {
       id: "supabaseOnly",
       label: "Yes, use only Supabase for authentication",
-      description: "Fewer options for authentication and integration, but better for compliance and audit requirements",
+      description:
+        "Fewer options for authentication and integration, but better for compliance and audit requirements",
     },
   ];
 
@@ -772,10 +792,15 @@ const DatabaseChoicePopover = () => {
           {getCurrentSelectionBadges()}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[32rem] theme-p-4 theme-shadow" align="start">
+      <PopoverContent
+        className="w-[32rem] theme-p-4 theme-shadow"
+        align="start"
+      >
         <div className="flex flex-col theme-gap-3">
           <div>
-            <h4 className="font-semibold theme-mb-1">Do you want to use a database?</h4>
+            <h4 className="font-semibold theme-mb-1">
+              Do you want to use a database?
+            </h4>
             <p className="text-xs theme-text-muted-foreground">
               Choose your database and authentication provider.
             </p>
@@ -783,10 +808,15 @@ const DatabaseChoicePopover = () => {
           <div className="flex flex-col theme-gap-2">
             {options.map((option) => {
               const isChecked =
-                (option.id === "noDatabase" && initialConfiguration.questions.useSupabase === "none") ||
-                (option.id === "neondb" && initialConfiguration.questions.useSupabase === "no") ||
-                (option.id === "supabaseWithBetter" && initialConfiguration.questions.useSupabase === "withBetterAuth") ||
-                (option.id === "supabaseOnly" && initialConfiguration.questions.useSupabase === "authOnly");
+                (option.id === "noDatabase" &&
+                  initialConfiguration.questions.useSupabase === "none") ||
+                (option.id === "neondb" &&
+                  initialConfiguration.questions.useSupabase === "no") ||
+                (option.id === "supabaseWithBetter" &&
+                  initialConfiguration.questions.useSupabase ===
+                    "withBetterAuth") ||
+                (option.id === "supabaseOnly" &&
+                  initialConfiguration.questions.useSupabase === "authOnly");
 
               return (
                 <label
@@ -795,7 +825,9 @@ const DatabaseChoicePopover = () => {
                 >
                   <Checkbox
                     checked={isChecked}
-                    onCheckedChange={(checked) => handleOptionChange(option.id, checked === true)}
+                    onCheckedChange={(checked) =>
+                      handleOptionChange(option.id, checked === true)
+                    }
                     className="size-4 mt-0.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
                   />
                   <div>
@@ -857,12 +889,14 @@ const RoleAccessPopover = () => {
     {
       id: "superAdmin",
       label: "Super Admin",
-      description: "Super admins have full access and can manage all users and content",
+      description:
+        "Super admins have full access and can manage all users and content",
     },
     {
       id: "organizations",
       label: "Organizations",
-      description: "Enable organization-based access with org-admin and org-member roles",
+      description:
+        "Enable organization-based access with org-admin and org-member roles",
       disabled: initialConfiguration.questions.useSupabase === "authOnly",
     },
   ];
@@ -880,10 +914,15 @@ const RoleAccessPopover = () => {
           {getCurrentSelectionBadges()}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[32rem] theme-p-4 theme-shadow" align="start">
+      <PopoverContent
+        className="w-[32rem] theme-p-4 theme-shadow"
+        align="start"
+      >
         <div className="flex flex-col theme-gap-3">
           <div>
-            <h4 className="font-semibold theme-mb-1">Does your app use role access?</h4>
+            <h4 className="font-semibold theme-mb-1">
+              Does your app use role access?
+            </h4>
             <p className="text-xs theme-text-muted-foreground">
               Select the user roles you need for your application.
             </p>
@@ -899,7 +938,9 @@ const RoleAccessPopover = () => {
                 <label
                   key={option.id}
                   className={`flex items-start theme-gap-2 ${
-                    option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                    option.disabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
                   }`}
                 >
                   <Checkbox
@@ -908,8 +949,12 @@ const RoleAccessPopover = () => {
                     onCheckedChange={(checked) => {
                       updateAdminOption(option.id, checked === true);
                       if (!checked) {
-                        const adminFeatures = initialConfiguration.features.admin;
-                        const anyEnabled = adminFeatures.admin || adminFeatures.superAdmin || adminFeatures.organizations;
+                        const adminFeatures =
+                          initialConfiguration.features.admin;
+                        const anyEnabled =
+                          adminFeatures.admin ||
+                          adminFeatures.superAdmin ||
+                          adminFeatures.organizations;
                         if (!anyEnabled) {
                           setOpen(false);
                         }
@@ -940,7 +985,8 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
   const { addColumn, deleteColumn, updateColumn } = useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
-  const isSupabaseAuthOnly = initialConfiguration.questions.useSupabase === "authOnly";
+  const isSupabaseAuthOnly =
+    initialConfiguration.questions.useSupabase === "authOnly";
   const isAuthSchema = table.schema === "auth";
 
   if (isSupabaseAuthOnly && isAuthSchema) {
@@ -949,7 +995,8 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
         <div className="flex items-center theme-gap-2 theme-text-muted-foreground">
           <Lock className="h-4 w-4" />
           <p className="text-sm theme-font-sans theme-tracking">
-            The Supabase auth schema is managed by Supabase and cannot be edited directly.
+            The Supabase auth schema is managed by Supabase and cannot be edited
+            directly.
           </p>
         </div>
       </div>
@@ -959,7 +1006,10 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
   return (
     <div className="flex flex-col theme-p-2 theme-gap-2">
       {table.columns.map((column) => (
-        <div key={column.id} className="w-full theme-bg-muted theme-radius theme-p-2 overflow-x-auto">
+        <div
+          key={column.id}
+          className="w-full theme-bg-muted theme-radius theme-p-2 overflow-x-auto"
+        >
           <div className="flex items-center min-w-fit">
             <div className="flex-grow-0 flex-shrink-0">
               <ColumnLine
@@ -988,22 +1038,26 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
 };
 
 const TableRLSContent = ({ table }: { table: PrismaTable }) => {
-  const { addOrUpdateRLSPolicy, getRLSPolicyForOperation, tables } = useDatabaseStore();
+  const { addOrUpdateRLSPolicy, getRLSPolicyForOperation, tables } =
+    useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
-  const authProvider = initialConfiguration.questions.useSupabase === "authOnly"
-    ? "Supabase"
-    : "Better Auth";
+  const authProvider =
+    initialConfiguration.questions.useSupabase === "authOnly"
+      ? "Supabase"
+      : "Better Auth";
   const isAuthSchema = table.schema === "auth";
 
   const enabledRoles: import("./DatabaseConfiguration.types").UserRole[] = [];
   if (initialConfiguration.features.admin.admin) enabledRoles.push("admin");
-  if (initialConfiguration.features.admin.superAdmin) enabledRoles.push("super-admin");
+  if (initialConfiguration.features.admin.superAdmin)
+    enabledRoles.push("super-admin");
   if (initialConfiguration.features.admin.organizations) {
     enabledRoles.push("org-admin", "org-member");
   }
 
-  const operations: import("./DatabaseConfiguration.types").RLSPolicy["operation"][] = ["INSERT", "SELECT", "UPDATE", "DELETE"];
+  const operations: import("./DatabaseConfiguration.types").RLSPolicy["operation"][] =
+    ["INSERT", "SELECT", "UPDATE", "DELETE"];
 
   const availableTables = tables.filter((t) => t.id !== table.id);
 
@@ -1024,7 +1078,8 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
     return (
       <div className="flex flex-col theme-p-4 theme-gap-2">
         <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
-          No user roles configured. Configure roles in the initial configuration to define RLS policies.
+          No user roles configured. Configure roles in the initial configuration
+          to define RLS policies.
         </p>
       </div>
     );
@@ -1036,13 +1091,18 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
         const policy = getRLSPolicyForOperation(table.id, operation);
 
         return (
-          <div key={operation} className="theme-bg-muted theme-radius theme-p-3">
+          <div
+            key={operation}
+            className="theme-bg-muted theme-radius theme-p-3"
+          >
             <h4 className="text-sm font-semibold theme-text-foreground theme-mb-2 theme-font-sans theme-tracking">
               {operation}
             </h4>
             <div className="flex flex-col items-stretch theme-gap-2">
               {enabledRoles.map((role) => {
-                const rolePolicy = policy?.rolePolicies?.find((rp) => rp.role === role);
+                const rolePolicy = policy?.rolePolicies?.find(
+                  (rp) => rp.role === role
+                );
                 const accessType = rolePolicy?.accessType || "global";
                 const relatedTable = rolePolicy?.relatedTable;
 
@@ -1055,8 +1115,17 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                       <Select
                         value={accessType}
                         onValueChange={(value) => {
-                          if (value === "global" || value === "own" || value === "organization") {
-                            addOrUpdateRLSPolicy(table.id, operation, role, value as import("./DatabaseConfiguration.types").RLSAccessType);
+                          if (
+                            value === "global" ||
+                            value === "own" ||
+                            value === "organization"
+                          ) {
+                            addOrUpdateRLSPolicy(
+                              table.id,
+                              operation,
+                              role,
+                              value as import("./DatabaseConfiguration.types").RLSAccessType
+                            );
                           } else if (value === "related") {
                             addOrUpdateRLSPolicy(
                               table.id,
@@ -1074,8 +1143,11 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                         <SelectContent>
                           <SelectItem value="global">Global</SelectItem>
                           <SelectItem value="own">Own data</SelectItem>
-                          {initialConfiguration.features.admin.organizations && (
-                            <SelectItem value="organization">Organization</SelectItem>
+                          {initialConfiguration.features.admin
+                            .organizations && (
+                            <SelectItem value="organization">
+                              Organization
+                            </SelectItem>
                           )}
                           <SelectItem value="related">Related</SelectItem>
                         </SelectContent>
@@ -1089,7 +1161,13 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                         <Select
                           value={relatedTable || ""}
                           onValueChange={(tableName) => {
-                            addOrUpdateRLSPolicy(table.id, operation, role, "related", tableName);
+                            addOrUpdateRLSPolicy(
+                              table.id,
+                              operation,
+                              role,
+                              "related",
+                              tableName
+                            );
                           }}
                         >
                           <SelectTrigger className="h-7 text-xs flex-1">
@@ -1117,7 +1195,16 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
 };
 
 export const DatabaseConfiguration = () => {
-  const { tables, initializeFromConfig, addTable, updateTableName, updateTableSchema, deleteTable, deleteSchema, getAvailableSchemas } = useDatabaseStore();
+  const {
+    tables,
+    initializeFromConfig,
+    addTable,
+    updateTableName,
+    updateTableSchema,
+    deleteTable,
+    deleteSchema,
+    getAvailableSchemas,
+  } = useDatabaseStore();
   const { initialConfiguration, setSectionInclude } = useEditorStore();
   const [selectedSchema, setSelectedSchema] = useState<string>("public");
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
@@ -1196,7 +1283,7 @@ export const DatabaseConfiguration = () => {
   }
 
   return (
-    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-3xl mx-auto">
+    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-3">
         <span className="text-sm font-medium theme-text-foreground">
           Database Configuration
@@ -1217,167 +1304,200 @@ export const DatabaseConfiguration = () => {
         <div className="theme-bg-card theme-radius theme-shadow overflow-auto">
           <Tabs defaultValue="columns" className="w-full">
             <TabsList className="w-full theme-p-1 h-auto flex-col items-stretch theme-gap-2">
-              <div className="flex flex-col sm:flex-row theme-gap-2 sm:theme-gap-0 theme-px-2 justify-center items-center">
+              <div className="flex flex-col md:flex-row theme-gap-2 md:theme-gap-0 theme-px-2 justify-center items-center theme-py-2">
                 <div className="flex items-center theme-gap-2">
-                  <span className="text-xs theme-text-muted-foreground whitespace-nowrap">Schema:</span>
-                {isAddingSchema ? (
-                  <Input
-                    autoFocus
-                    value={newSchemaName}
-                    onChange={(e) => setNewSchemaName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddSchema(newSchemaName);
+                  <span className="text-xs theme-text-muted-foreground whitespace-nowrap">
+                    Schema:
+                  </span>
+                  {isAddingSchema ? (
+                    <Input
+                      autoFocus
+                      value={newSchemaName}
+                      onChange={(e) => setNewSchemaName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleAddSchema(newSchemaName);
+                          setIsAddingSchema(false);
+                          setNewSchemaName("");
+                        }
+                        if (e.key === "Escape") {
+                          setIsAddingSchema(false);
+                          setNewSchemaName("");
+                        }
+                      }}
+                      onBlur={() => {
+                        if (newSchemaName.trim()) {
+                          handleAddSchema(newSchemaName);
+                        }
                         setIsAddingSchema(false);
                         setNewSchemaName("");
+                      }}
+                      placeholder="Schema name"
+                      className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono w-28"
+                    />
+                  ) : (
+                    <EditableSelect
+                      value={selectedSchema}
+                      options={[
+                        ...getAvailableSchemas().map((schema) => ({
+                          value: schema,
+                          label:
+                            schema === "auth" &&
+                            initialConfiguration.questions.useSupabase ===
+                              "authOnly" ? (
+                              <div className="flex items-center theme-gap-1">
+                                <Lock className="h-3 w-3" />
+                                <span>{schema}</span>
+                              </div>
+                            ) : (
+                              schema
+                            ),
+                        })),
+                        {
+                          value: "__add_new__",
+                          label: (
+                            <div className="flex items-center theme-gap-1">
+                              <Plus className="h-3 w-3" />
+                              <span>Add new schema...</span>
+                            </div>
+                          ),
+                        },
+                      ]}
+                      onValueChange={(v) => {
+                        if (v === "__add_new__") {
+                          setIsAddingSchema(true);
+                        } else {
+                          setSelectedSchema(v);
+                        }
+                      }}
+                      onNameChange={(name) => {
+                        const oldSchema = selectedSchema;
+                        tables
+                          .filter((t) => t.schema === oldSchema)
+                          .forEach((t) => {
+                            updateTableSchema(t.id, name);
+                          });
+                        setSelectedSchema(name);
+                      }}
+                      onDelete={
+                        selectedSchema !== "auth" &&
+                        selectedSchema !== "better_auth"
+                          ? () => {
+                              const schemas = getAvailableSchemas().filter(
+                                (s) => s !== selectedSchema
+                              );
+                              deleteSchema(selectedSchema);
+                              setSelectedSchema(schemas[0] || "public");
+                              setSelectedTableId(null);
+                            }
+                          : undefined
                       }
-                      if (e.key === "Escape") {
-                        setIsAddingSchema(false);
-                        setNewSchemaName("");
+                      isEditable={
+                        selectedSchema !== "auth" &&
+                        selectedSchema !== "better_auth"
                       }
-                    }}
-                    onBlur={() => {
-                      if (newSchemaName.trim()) {
-                        handleAddSchema(newSchemaName);
+                      showDelete={
+                        selectedSchema !== "auth" &&
+                        selectedSchema !== "better_auth"
                       }
-                      setIsAddingSchema(false);
-                      setNewSchemaName("");
-                    }}
-                    placeholder="Schema name"
-                    className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono w-28"
-                  />
-                ) : (
-                  <EditableSelect
-                    value={selectedSchema}
-                    options={[
-                      ...getAvailableSchemas().map((schema) => ({
-                        value: schema,
-                        label: schema === "auth" && initialConfiguration.questions.useSupabase === "authOnly" ? (
-                          <div className="flex items-center theme-gap-1">
-                            <Lock className="h-3 w-3" />
-                            <span>{schema}</span>
-                          </div>
-                        ) : schema,
-                      })),
-                      {
-                        value: "__add_new__",
-                        label: (
-                          <div className="flex items-center theme-gap-1">
-                            <Plus className="h-3 w-3" />
-                            <span>Add new schema...</span>
-                          </div>
-                        ),
-                      },
-                    ]}
-                    onValueChange={(v) => {
-                      if (v === "__add_new__") {
-                        setIsAddingSchema(true);
-                      } else {
-                        setSelectedSchema(v);
-                      }
-                    }}
-                    onNameChange={(name) => {
-                      const oldSchema = selectedSchema;
-                      tables.filter((t) => t.schema === oldSchema).forEach((t) => {
-                        updateTableSchema(t.id, name);
-                      });
-                      setSelectedSchema(name);
-                    }}
-                    onDelete={selectedSchema !== "auth" && selectedSchema !== "better_auth" ? () => {
-                      const schemas = getAvailableSchemas().filter((s) => s !== selectedSchema);
-                      deleteSchema(selectedSchema);
-                      setSelectedSchema(schemas[0] || "public");
-                      setSelectedTableId(null);
-                    } : undefined}
-                    isEditable={selectedSchema !== "auth" && selectedSchema !== "better_auth"}
-                    showDelete={selectedSchema !== "auth" && selectedSchema !== "better_auth"}
-                    placeholder="Select schema"
-                    className="min-w-0"
-                  />
-                )}
+                      placeholder="Select schema"
+                      className="min-w-0"
+                    />
+                  )}
                 </div>
                 <div className="flex items-center theme-gap-2">
-                  <span className="text-xs theme-text-muted-foreground whitespace-nowrap">Table:</span>
+                  <span className="text-xs theme-text-muted-foreground whitespace-nowrap">
+                    Table:
+                  </span>
                   {isAddingTable ? (
-                  <Input
-                    autoFocus
-                    value={newTableName}
-                    onChange={(e) => setNewTableName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddTable(newTableName);
+                    <Input
+                      autoFocus
+                      value={newTableName}
+                      onChange={(e) => setNewTableName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleAddTable(newTableName);
+                        }
+                        if (e.key === "Escape") {
+                          setIsAddingTable(false);
+                          setNewTableName("");
+                        }
+                      }}
+                      onBlur={() => {
+                        if (newTableName.trim()) {
+                          handleAddTable(newTableName);
+                        } else {
+                          setIsAddingTable(false);
+                          setNewTableName("");
+                        }
+                      }}
+                      placeholder="Table name"
+                      className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono w-28"
+                    />
+                  ) : (
+                    <EditableSelect
+                      value={selectedTableId || ""}
+                      options={[
+                        ...(initialConfiguration.questions.useSupabase ===
+                          "authOnly" && selectedSchema === "auth"
+                          ? [
+                              {
+                                value: "locked",
+                                label: (
+                                  <div className="flex items-center theme-gap-1">
+                                    <Lock className="h-3 w-3" />
+                                    <span>Locked</span>
+                                  </div>
+                                ),
+                                disabled: true,
+                              },
+                            ]
+                          : [
+                              ...filteredTables.map((table) => ({
+                                value: table.id,
+                                label: table.name,
+                              })),
+                              {
+                                value: "__add_new__",
+                                label: (
+                                  <div className="flex items-center theme-gap-1">
+                                    <Plus className="h-3 w-3" />
+                                    <span>Add new table...</span>
+                                  </div>
+                                ),
+                              },
+                            ]),
+                      ]}
+                      onValueChange={(v) => {
+                        if (v === "__add_new__") {
+                          handleAddTable();
+                        } else if (v !== "locked") {
+                          setSelectedTableId(v);
+                        }
+                      }}
+                      onNameChange={(name) => {
+                        if (selectedTable) {
+                          updateTableName(selectedTable.id, name);
+                        }
+                      }}
+                      onDelete={
+                        selectedTable && selectedTable.isEditable
+                          ? () => {
+                              deleteTable(selectedTable.id);
+                              const remainingTables = filteredTables.filter(
+                                (t) => t.id !== selectedTable.id
+                              );
+                              setSelectedTableId(
+                                remainingTables[0]?.id || null
+                              );
+                            }
+                          : undefined
                       }
-                      if (e.key === "Escape") {
-                        setIsAddingTable(false);
-                        setNewTableName("");
-                      }
-                    }}
-                    onBlur={() => {
-                      if (newTableName.trim()) {
-                        handleAddTable(newTableName);
-                      } else {
-                        setIsAddingTable(false);
-                        setNewTableName("");
-                      }
-                    }}
-                    placeholder="Table name"
-                    className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono w-28"
-                  />
-                ) : (
-                  <EditableSelect
-                    value={selectedTableId || ""}
-                    options={[
-                      ...(initialConfiguration.questions.useSupabase === "authOnly" && selectedSchema === "auth"
-                        ? [
-                            {
-                              value: "locked",
-                              label: (
-                                <div className="flex items-center theme-gap-1">
-                                  <Lock className="h-3 w-3" />
-                                  <span>Locked</span>
-                                </div>
-                              ),
-                              disabled: true,
-                            },
-                          ]
-                        : [
-                            ...filteredTables.map((table) => ({
-                              value: table.id,
-                              label: table.name,
-                            })),
-                            {
-                              value: "__add_new__",
-                              label: (
-                                <div className="flex items-center theme-gap-1">
-                                  <Plus className="h-3 w-3" />
-                                  <span>Add new table...</span>
-                                </div>
-                              ),
-                            },
-                          ]),
-                    ]}
-                    onValueChange={(v) => {
-                      if (v === "__add_new__") {
-                        handleAddTable();
-                      } else if (v !== "locked") {
-                        setSelectedTableId(v);
-                      }
-                    }}
-                    onNameChange={(name) => {
-                      if (selectedTable) {
-                        updateTableName(selectedTable.id, name);
-                      }
-                    }}
-                    onDelete={selectedTable && selectedTable.isEditable ? () => {
-                      deleteTable(selectedTable.id);
-                      const remainingTables = filteredTables.filter((t) => t.id !== selectedTable.id);
-                      setSelectedTableId(remainingTables[0]?.id || null);
-                    } : undefined}
-                    placeholder="Select table"
-                    isEditable={selectedTable?.isEditable}
-                    showDelete={selectedTable?.isEditable}
-                    className="min-w-0"
-                  />
+                      placeholder="Select table"
+                      isEditable={selectedTable?.isEditable}
+                      showDelete={selectedTable?.isEditable}
+                      className="min-w-0"
+                    />
                   )}
                 </div>
               </div>

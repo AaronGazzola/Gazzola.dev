@@ -1,7 +1,11 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { Feature, FileSystemEntry, UserExperienceFileType } from "@/app/(editor)/layout.types";
+import {
+  Feature,
+  FileSystemEntry,
+  UserExperienceFileType,
+} from "@/app/(editor)/layout.types";
 import { findLayoutsForPagePath } from "@/app/(editor)/layout.utils";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
@@ -11,6 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
+import { getBrowserAPI } from "@/lib/env.utils";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { cn } from "@/lib/tailwind.utils";
 import {
@@ -27,17 +32,16 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { getBrowserAPI } from "@/lib/env.utils";
 
 type RouteEntry = {
   path: string;
   children?: RouteEntry[];
 };
 
-type ScreenSize = 'xs' | 'sm' | 'md' | 'lg';
+type ScreenSize = "xs" | "sm" | "md" | "lg";
 
 const useScreenSize = (): ScreenSize => {
-  const [screenSize, setScreenSize] = useState<ScreenSize>('lg');
+  const [screenSize, setScreenSize] = useState<ScreenSize>("lg");
 
   useEffect(() => {
     const window = getBrowserAPI(() => globalThis.window);
@@ -45,15 +49,15 @@ const useScreenSize = (): ScreenSize => {
 
     const updateScreenSize = () => {
       const width = window.innerWidth;
-      if (width < 640) setScreenSize('xs');
-      else if (width < 768) setScreenSize('sm');
-      else if (width < 1024) setScreenSize('md');
-      else setScreenSize('lg');
+      if (width < 640) setScreenSize("xs");
+      else if (width < 768) setScreenSize("sm");
+      else if (width < 1024) setScreenSize("md");
+      else setScreenSize("lg");
     };
 
     updateScreenSize();
-    window.addEventListener('resize', updateScreenSize);
-    return () => window.removeEventListener('resize', updateScreenSize);
+    window.addEventListener("resize", updateScreenSize);
+    return () => window.removeEventListener("resize", updateScreenSize);
   }, []);
 
   return screenSize;
@@ -427,7 +431,10 @@ const getQualifyingFiles = (
   fileType: UserExperienceFileType
 ): string[] => {
   if (!selectedFilePath) {
-    conditionalLog({ message: "No selected file path", selectedFilePath, fileType }, { label: LOG_LABELS.APP_STRUCTURE });
+    conditionalLog(
+      { message: "No selected file path", selectedFilePath, fileType },
+      { label: LOG_LABELS.APP_STRUCTURE }
+    );
     return [];
   }
 
@@ -438,7 +445,10 @@ const getQualifyingFiles = (
 
   const qualifyingFiles: string[] = [];
 
-  const isAncestorOrSameDirectory = (fileDir: string, selectedDir: string): boolean => {
+  const isAncestorOrSameDirectory = (
+    fileDir: string,
+    selectedDir: string
+  ): boolean => {
     if (fileDir === selectedDir) return true;
 
     if (selectedDir.startsWith(fileDir + "/")) return true;
@@ -451,20 +461,31 @@ const getQualifyingFiles = (
     currentPath: string = ""
   ) => {
     for (const entry of entries) {
-      const entryPath = currentPath ? `${currentPath}/${entry.name}` : `/${entry.name}`;
+      const entryPath = currentPath
+        ? `${currentPath}/${entry.name}`
+        : `/${entry.name}`;
 
       if (entry.type === "file" && isQualifyingFile(entry.name, fileType)) {
-        const fileDirectory = entryPath.substring(0, entryPath.lastIndexOf("/"));
-        const isQualified = isAncestorOrSameDirectory(fileDirectory, selectedDirectory);
-
-        conditionalLog({
-          fileName: entry.name,
-          entryPath,
+        const fileDirectory = entryPath.substring(
+          0,
+          entryPath.lastIndexOf("/")
+        );
+        const isQualified = isAncestorOrSameDirectory(
           fileDirectory,
-          selectedDirectory,
-          isQualified,
-          fileType,
-        }, { label: LOG_LABELS.APP_STRUCTURE });
+          selectedDirectory
+        );
+
+        conditionalLog(
+          {
+            fileName: entry.name,
+            entryPath,
+            fileDirectory,
+            selectedDirectory,
+            isQualified,
+            fileType,
+          },
+          { label: LOG_LABELS.APP_STRUCTURE }
+        );
 
         if (isQualified) {
           qualifyingFiles.push(entryPath);
@@ -479,14 +500,17 @@ const getQualifyingFiles = (
 
   traverseStructure(appStructure);
 
-  conditionalLog({
-    message: "Qualifying files result",
-    selectedFilePath,
-    selectedDirectory,
-    fileType,
-    qualifyingFiles,
-    totalQualifying: qualifyingFiles.length,
-  }, { label: LOG_LABELS.APP_STRUCTURE });
+  conditionalLog(
+    {
+      message: "Qualifying files result",
+      selectedFilePath,
+      selectedDirectory,
+      fileType,
+      qualifyingFiles,
+      totalQualifying: qualifyingFiles.length,
+    },
+    { label: LOG_LABELS.APP_STRUCTURE }
+  );
 
   return qualifyingFiles;
 };
@@ -506,7 +530,15 @@ const InlineFeatureCard = ({
   isCollapsed: boolean;
   onToggleCollapse: () => void;
 }) => {
-  const { updateFeature, removeFeature, unlinkFeatureFile, setFeatureFileSelection, setSelectedFile, clearFeatureFileSelection, featureFileSelection } = useEditorStore();
+  const {
+    updateFeature,
+    removeFeature,
+    unlinkFeatureFile,
+    setFeatureFileSelection,
+    setSelectedFile,
+    clearFeatureFileSelection,
+    featureFileSelection,
+  } = useEditorStore();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -515,18 +547,26 @@ const InlineFeatureCard = ({
     }
   };
 
-  const fileTypes: UserExperienceFileType[] = ["stores", "hooks", "actions", "types"];
+  const fileTypes: UserExperienceFileType[] = [
+    "stores",
+    "hooks",
+    "actions",
+    "types",
+  ];
 
   const handlePlaceholderClick = (fileType: UserExperienceFileType) => {
     const linkedFile = feature.linkedFiles[fileType];
-    conditionalLog({
-      message: "InlineFeatureCard: handlePlaceholderClick called",
-      fileType,
-      fileId,
-      featureId: feature.id,
-      filePath,
-      linkedFile,
-    }, { label: LOG_LABELS.APP_STRUCTURE });
+    conditionalLog(
+      {
+        message: "InlineFeatureCard: handlePlaceholderClick called",
+        fileType,
+        fileId,
+        featureId: feature.id,
+        filePath,
+        linkedFile,
+      },
+      { label: LOG_LABELS.APP_STRUCTURE }
+    );
 
     if (linkedFile) {
       setSelectedFile(linkedFile, "");
@@ -537,7 +577,10 @@ const InlineFeatureCard = ({
     }
   };
 
-  const handleUnlinkFile = (fileType: UserExperienceFileType, e: React.MouseEvent) => {
+  const handleUnlinkFile = (
+    fileType: UserExperienceFileType,
+    e: React.MouseEvent
+  ) => {
     e.stopPropagation();
     unlinkFeatureFile(fileId, feature.id, fileType);
   };
@@ -567,13 +610,23 @@ const InlineFeatureCard = ({
               placeholder="Feature title"
             />
             <div className="flex items-center theme-gap-1">
-              <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+              <Popover
+                open={deleteConfirmOpen}
+                onOpenChange={setDeleteConfirmOpen}
+              >
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-5 w-5 flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 flex-shrink-0"
+                  >
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-48 theme-p-2 theme-shadow" align="end">
+                <PopoverContent
+                  className="w-48 theme-p-2 theme-shadow"
+                  align="end"
+                >
                   <div className="flex flex-col theme-gap-2">
                     <p className="text-xs theme-text-foreground">
                       Delete {feature.title}?
@@ -619,7 +672,9 @@ const InlineFeatureCard = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 theme-gap-2">
             {fileTypes.map((fileType) => {
               const linkedFile = feature.linkedFiles[fileType];
-              const isActiveBadge = featureFileSelection.featureId === feature.id && featureFileSelection.fileType === fileType;
+              const isActiveBadge =
+                featureFileSelection.featureId === feature.id &&
+                featureFileSelection.fileType === fileType;
               return (
                 <div
                   key={fileType}
@@ -628,26 +683,27 @@ const InlineFeatureCard = ({
                     isActiveBadge && linkedFile
                       ? "theme-bg-background border-green-500 hover:theme-bg-accent"
                       : isActiveBadge && !linkedFile
-                      ? "theme-bg-background border-2 border-dashed theme-border-primary hover:theme-bg-accent"
-                      : linkedFile
-                      ? "theme-bg-background theme-border-border hover:theme-bg-accent"
-                      : "border-dashed theme-border-muted-foreground/30 theme-bg-background/50 hover:theme-bg-accent/50"
+                        ? "theme-bg-background border-2 border-dashed theme-border-primary hover:theme-bg-accent"
+                        : linkedFile
+                          ? "theme-bg-background theme-border-border hover:theme-bg-accent"
+                          : "border-dashed theme-border-muted-foreground/30 theme-bg-background/50 hover:theme-bg-accent/50"
                   )}
                   onClick={() => {
-                    conditionalLog({
-                      message: "Badge onClick triggered (edit mode)",
-                      fileType,
-                      linkedFile,
-                    }, { label: LOG_LABELS.APP_STRUCTURE });
+                    conditionalLog(
+                      {
+                        message: "Badge onClick triggered (edit mode)",
+                        fileType,
+                        linkedFile,
+                      },
+                      { label: LOG_LABELS.APP_STRUCTURE }
+                    );
                     handlePlaceholderClick(fileType);
                   }}
                 >
                   <span className="theme-text-foreground capitalize">
                     {fileType}
                   </span>
-                  {linkedFile && (
-                    <Check className="h-3 w-3 text-green-500" />
-                  )}
+                  {linkedFile && <Check className="h-3 w-3 text-green-500" />}
                 </div>
               );
             })}
@@ -665,7 +721,13 @@ const FeatureCard = ({
   feature: Feature;
   fileId: string;
 }) => {
-  const { updateFeature, removeFeature, linkFeatureFile, unlinkFeatureFile, setFeatureFileSelection } = useEditorStore();
+  const {
+    updateFeature,
+    removeFeature,
+    linkFeatureFile,
+    unlinkFeatureFile,
+    setFeatureFileSelection,
+  } = useEditorStore();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const canSave =
@@ -688,13 +750,21 @@ const FeatureCard = ({
     }
   };
 
-  const fileTypes: UserExperienceFileType[] = ["stores", "hooks", "actions", "types"];
+  const fileTypes: UserExperienceFileType[] = [
+    "stores",
+    "hooks",
+    "actions",
+    "types",
+  ];
 
   const handlePlaceholderClick = (fileType: UserExperienceFileType) => {
     setFeatureFileSelection(fileId, feature.id, fileType);
   };
 
-  const handleUnlinkFile = (fileType: UserExperienceFileType, e: React.MouseEvent) => {
+  const handleUnlinkFile = (
+    fileType: UserExperienceFileType,
+    e: React.MouseEvent
+  ) => {
     e.stopPropagation();
     unlinkFeatureFile(fileId, feature.id, fileType);
   };
@@ -717,7 +787,10 @@ const FeatureCard = ({
                 {feature.description}
               </div>
             </div>
-            <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+            <Popover
+              open={deleteConfirmOpen}
+              onOpenChange={setDeleteConfirmOpen}
+            >
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
@@ -1184,14 +1257,23 @@ const getExistingSegmentNames = (
   for (const entry of entries) {
     if (entry.name === "app" && isRoot) {
       if (entry.children) {
-        segmentNames.push(...getExistingSegmentNames(entry.children, parentPath, "", false));
+        segmentNames.push(
+          ...getExistingSegmentNames(entry.children, parentPath, "", false)
+        );
       }
       continue;
     }
 
     if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
       if (entry.children) {
-        segmentNames.push(...getExistingSegmentNames(entry.children, parentPath, currentPath, false));
+        segmentNames.push(
+          ...getExistingSegmentNames(
+            entry.children,
+            parentPath,
+            currentPath,
+            false
+          )
+        );
       }
       continue;
     }
@@ -1207,7 +1289,9 @@ const getExistingSegmentNames = (
           .map((child) => child.name);
       }
 
-      segmentNames.push(...getExistingSegmentNames(entry.children, parentPath, newPath, false));
+      segmentNames.push(
+        ...getExistingSegmentNames(entry.children, parentPath, newPath, false)
+      );
     }
   }
 
@@ -1218,7 +1302,12 @@ const generateUniqueSegmentName = (
   appStructure: FileSystemEntry[],
   parentPath: string
 ): string => {
-  const existingNames = getExistingSegmentNames(appStructure, parentPath, "", true);
+  const existingNames = getExistingSegmentNames(
+    appStructure,
+    parentPath,
+    "",
+    true
+  );
   const baseName = "new-segment";
 
   if (!existingNames.includes(baseName)) {
@@ -1872,7 +1961,8 @@ const SiteMapNode = ({
 
   useEffect(() => {
     if (newlyAddedSegmentPath && route.path === newlyAddedSegmentPath) {
-      const pathSegments = route.path === "/" ? ["/"] : route.path.split("/").filter(Boolean);
+      const pathSegments =
+        route.path === "/" ? ["/"] : route.path.split("/").filter(Boolean);
       const lastSegmentIndex = pathSegments.length - 1;
       setEditingSegmentIndex(lastSegmentIndex);
       setTempValue(pathSegments[lastSegmentIndex]);
@@ -2122,7 +2212,9 @@ const TreeNode = ({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [directoryPopoverOpen, setDirectoryPopoverOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [expandedFeatureId, setExpandedFeatureId] = useState<string | null>(null);
+  const [expandedFeatureId, setExpandedFeatureId] = useState<string | null>(
+    null
+  );
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isPageFile = node.type === "file" && node.name === "page.tsx";
@@ -2332,7 +2424,6 @@ const TreeNode = ({
     return "";
   };
 
-
   const getTreeChar = () => {
     if (depth === 0) return "";
     return isLast ? "└" : "├";
@@ -2384,7 +2475,13 @@ const TreeNode = ({
   };
 
   const handleFileClick = () => {
-    if (isInSelectionMode && isQualified && featureFileSelection.fileId && featureFileSelection.featureId && featureFileSelection.fileType) {
+    if (
+      isInSelectionMode &&
+      isQualified &&
+      featureFileSelection.fileId &&
+      featureFileSelection.featureId &&
+      featureFileSelection.fileType
+    ) {
       linkFeatureFile(
         featureFileSelection.fileId,
         featureFileSelection.featureId,
@@ -2432,7 +2529,9 @@ const TreeNode = ({
   return (
     <div
       className={cn(
-        isClickableFile && isExpanded && "border-2 border-dashed theme-border-primary theme-radius theme-p-1"
+        isClickableFile &&
+          isExpanded &&
+          "border-2 border-dashed theme-border-primary theme-radius theme-p-1"
       )}
     >
       <div
@@ -2441,8 +2540,14 @@ const TreeNode = ({
           isClickableFile && "cursor-pointer hover:theme-bg-accent",
           !isClickableFile && "hover:theme-bg-accent",
           isCurrentPage && " theme-bg-muted ",
-          isInSelectionMode && selectedFilePath === currentFilePath && !isClickableFile && "border border-green-500",
-          isQualified && isInSelectionMode && selectedFilePath !== currentFilePath && "border-2 border-dashed theme-border-chart-4 theme-bg-accent/20 cursor-pointer"
+          isInSelectionMode &&
+            selectedFilePath === currentFilePath &&
+            !isClickableFile &&
+            "border border-green-500",
+          isQualified &&
+            isInSelectionMode &&
+            selectedFilePath !== currentFilePath &&
+            "border-2 border-dashed theme-border-chart-4 theme-bg-accent/20 cursor-pointer"
         )}
         onClick={handleRowClick}
       >
@@ -2507,11 +2612,7 @@ const TreeNode = ({
             <>
               <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                 <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                  >
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
                     <Ellipsis className="h-3 w-3" />
                   </Button>
                 </PopoverTrigger>
@@ -2574,13 +2675,12 @@ const TreeNode = ({
           )}
 
           {node.type === "directory" && (
-            <Popover open={directoryPopoverOpen} onOpenChange={setDirectoryPopoverOpen}>
+            <Popover
+              open={directoryPopoverOpen}
+              onOpenChange={setDirectoryPopoverOpen}
+            >
               <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                >
+                <Button variant="ghost" size="icon" className="h-6 w-6">
                   <Ellipsis className="h-3 w-3" />
                 </Button>
               </PopoverTrigger>
@@ -2668,7 +2768,9 @@ const TreeNode = ({
                   filePath={currentFilePath}
                   isCollapsed={expandedFeatureId !== feature.id}
                   onToggleCollapse={() => {
-                    setExpandedFeatureId(expandedFeatureId === feature.id ? null : feature.id);
+                    setExpandedFeatureId(
+                      expandedFeatureId === feature.id ? null : feature.id
+                    );
                   }}
                 />
               ))
@@ -2737,10 +2839,16 @@ export const LayoutAndStructure = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("blank");
   const [templatePopoverOpen, setTemplatePopoverOpen] = useState(false);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
-  const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<string | null>(null);
+  const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<
+    string | null
+  >(null);
 
   const qualifyingFilePaths = featureFileSelection.fileType
-    ? getQualifyingFiles(appStructure, selectedFilePath, featureFileSelection.fileType)
+    ? getQualifyingFiles(
+        appStructure,
+        selectedFilePath,
+        featureFileSelection.fileType
+      )
     : [];
 
   const handleTemplateChange = (templateId: string) => {
@@ -2812,7 +2920,8 @@ export const LayoutAndStructure = () => {
       true
     );
     setAppStructure(updatedStructure);
-    const newSegmentPath = parentPath === "/" ? `/${segmentName}` : `${parentPath}/${segmentName}`;
+    const newSegmentPath =
+      parentPath === "/" ? `/${segmentName}` : `${parentPath}/${segmentName}`;
     setNewlyAddedSegmentPath(newSegmentPath);
   };
 
@@ -2842,95 +2951,103 @@ export const LayoutAndStructure = () => {
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
   return (
-    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-3xl mx-auto">
+    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-2 md:theme-gap-4 min-h-[calc(100vh-800px)]">
-          <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
-            <div className="flex items-center justify-between theme-mb-2">
-              <h3 className="text-base md:text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
-                App Directory
-              </h3>
-              <Popover open={templatePopoverOpen} onOpenChange={setTemplatePopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 theme-shadow"
-                    title="Select template"
-                  >
-                    <LayoutTemplate className="h-4 w-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-56 theme-p-2 theme-shadow" align="end">
-                  <div className="flex flex-col theme-gap-1">
-                    <div className="theme-px-2 theme-py-1 text-xs font-semibold theme-text-muted-foreground">
-                      Templates
-                    </div>
-                    {APP_STRUCTURE_TEMPLATES.map((template) => (
-                      <Button
-                        key={template.id}
-                        variant={selectedTemplate === template.id ? "secondary" : "ghost"}
-                        size="sm"
-                        className="justify-start theme-gap-2 w-full"
-                        onClick={() => handleTemplateChange(template.id)}
-                      >
-                        <LayoutTemplate className="h-4 w-4" />
-                        <span>{template.name}</span>
-                      </Button>
-                    ))}
+        <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
+          <div className="flex items-center justify-between theme-mb-2">
+            <h3 className="text-base md:text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
+              App Directory
+            </h3>
+            <Popover
+              open={templatePopoverOpen}
+              onOpenChange={setTemplatePopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 theme-shadow"
+                  title="Select template"
+                >
+                  <LayoutTemplate className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-56 theme-p-2 theme-shadow"
+                align="end"
+              >
+                <div className="flex flex-col theme-gap-1">
+                  <div className="theme-px-2 theme-py-1 text-xs font-semibold theme-text-muted-foreground">
+                    Templates
                   </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
-              {appStructure.map((node, index) => (
-                <TreeNode
-                  key={node.id}
-                  node={node}
-                  isLast={index === appStructure.length - 1}
-                  onUpdate={handleUpdate}
-                  onDelete={handleDelete}
-                  onAddFile={handleAddFile}
-                  onAddDirectory={handleAddDirectory}
-                  appStructure={appStructure}
-                  onAddSpecificFile={handleAddSpecificFile}
-                  newNodeId={newNodeId}
-                  qualifyingFilePaths={qualifyingFilePaths}
-                  expandedFileId={expandedFileId}
-                  setExpandedFileId={setExpandedFileId}
-                />
-              ))}
-
-              {appStructure.length === 0 && (
-                <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
-                  Select a template above to start building your app structure
+                  {APP_STRUCTURE_TEMPLATES.map((template) => (
+                    <Button
+                      key={template.id}
+                      variant={
+                        selectedTemplate === template.id ? "secondary" : "ghost"
+                      }
+                      size="sm"
+                      className="justify-start theme-gap-2 w-full"
+                      onClick={() => handleTemplateChange(template.id)}
+                    >
+                      <LayoutTemplate className="h-4 w-4" />
+                      <span>{template.name}</span>
+                    </Button>
+                  ))}
                 </div>
-              )}
-            </div>
+              </PopoverContent>
+            </Popover>
           </div>
 
-          {routes.length > 0 && (
-            <div className="flex flex-col flex-[1] min-h-0 overflow-hidden">
-              <h3 className="text-base md:text-lg font-semibold theme-mb-2 theme-text-card-foreground theme-font-sans theme-tracking">
-                Site Map
-              </h3>
+          <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+            {appStructure.map((node, index) => (
+              <TreeNode
+                key={node.id}
+                node={node}
+                isLast={index === appStructure.length - 1}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                onAddFile={handleAddFile}
+                onAddDirectory={handleAddDirectory}
+                appStructure={appStructure}
+                onAddSpecificFile={handleAddSpecificFile}
+                newNodeId={newNodeId}
+                qualifyingFilePaths={qualifyingFilePaths}
+                expandedFileId={expandedFileId}
+                setExpandedFileId={setExpandedFileId}
+              />
+            ))}
 
-              <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
-                {routes.map((route, index) => (
-                  <SiteMapNode
-                    key={`${route.path}-${index}`}
-                    route={route}
-                    isLast={index === routes.length - 1}
-                    appStructure={appStructure}
-                    onUpdateAppStructure={handleUpdate}
-                    onDeleteRoute={handleDeleteRoute}
-                    onAddSegment={handleAddSegment}
-                    newlyAddedSegmentPath={newlyAddedSegmentPath}
-                  />
-                ))}
+            {appStructure.length === 0 && (
+              <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
+                Select a template above to start building your app structure
               </div>
+            )}
+          </div>
+        </div>
+
+        {routes.length > 0 && (
+          <div className="flex flex-col flex-[1] min-h-0 overflow-hidden">
+            <h3 className="text-base md:text-lg font-semibold theme-mb-2 theme-text-card-foreground theme-font-sans theme-tracking">
+              Site Map
+            </h3>
+
+            <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
+              {routes.map((route, index) => (
+                <SiteMapNode
+                  key={`${route.path}-${index}`}
+                  route={route}
+                  isLast={index === routes.length - 1}
+                  appStructure={appStructure}
+                  onUpdateAppStructure={handleUpdate}
+                  onDeleteRoute={handleDeleteRoute}
+                  onAddSegment={handleAddSegment}
+                  newlyAddedSegmentPath={newlyAddedSegmentPath}
+                />
+              ))}
             </div>
-          )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -3174,10 +3291,16 @@ export const AppStructure = () => {
   const routeInputRef = useRef<HTMLInputElement>(null);
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
-  const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<string | null>(null);
+  const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<
+    string | null
+  >(null);
 
   const qualifyingFilePaths = featureFileSelection.fileType
-    ? getQualifyingFiles(appStructure, selectedFilePath, featureFileSelection.fileType)
+    ? getQualifyingFiles(
+        appStructure,
+        selectedFilePath,
+        featureFileSelection.fileType
+      )
     : [];
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
@@ -3240,7 +3363,8 @@ export const AppStructure = () => {
       true
     );
     setAppStructure(updatedStructure);
-    const newSegmentPath = parentPath === "/" ? `/${segmentName}` : `${parentPath}/${segmentName}`;
+    const newSegmentPath =
+      parentPath === "/" ? `/${segmentName}` : `${parentPath}/${segmentName}`;
     setNewlyAddedSegmentPath(newSegmentPath);
   };
 

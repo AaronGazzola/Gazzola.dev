@@ -70,6 +70,11 @@ const componentMap: Record<string, any> = {
       default: m.Tests,
     }))
   ),
+  IDESelection: lazy(() =>
+    import("@/app/(components)/IDESelection").then((m) => ({
+      default: m.IDESelection,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

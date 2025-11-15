@@ -1,7 +1,5 @@
 # Next steps
 
-1. Download your Roadmap
-2. Run `npx create-next-app@latest` to create your project repository.
-3. Paste your Roadmap into your project repository.
-4. Refer your AI to the `ROBOTS.md` file
-5. Start building!
+<!-- component-IDESelection -->
+
+<!-- section-1 -->
