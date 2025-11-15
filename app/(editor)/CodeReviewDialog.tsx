@@ -194,21 +194,14 @@ export const CodeReviewDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent data-cy={FooterDataAttributes.CODE_REVIEW_DIALOG}>
         <DialogHeader className="flex flex-col gap-1 pb-4">
-          <DialogTitle>
-            Apply for a <strong className="italic">free</strong> code review
+          <DialogTitle className="text-xl">
+            Do you have a prototype?
           </DialogTitle>
           <DialogDescription asChild className="text-base">
             <div className="!text-gray-100 font-medium">
-              <p className="mt-2 text-sm">You will receive:</p>
-              <ul className="list-disc list-inside text-sm">
-                <li>
-                  Comprehensive <strong> test results</strong> from a custom
-                  testing suite
-                </li>
-                <li>
-                  A <strong>project quote </strong> to reach 100% pass rate
-                </li>
-              </ul>
+              Let&apos;s <strong>test, fix, and ship</strong> your web app!
+              <br />
+              Enter your details below to apply!
             </div>
           </DialogDescription>
         </DialogHeader>
