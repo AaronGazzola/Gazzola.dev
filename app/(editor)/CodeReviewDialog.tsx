@@ -201,7 +201,7 @@ export const CodeReviewDialog = ({
             <div className="!text-gray-100 font-medium">
               Let&apos;s <strong>test, fix, and ship</strong> your web app!
               <br />
-              Enter your details below to apply!
+              Enter your details below for a free code review.
             </div>
           </DialogDescription>
         </DialogHeader>

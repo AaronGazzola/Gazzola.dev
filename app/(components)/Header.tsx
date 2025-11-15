@@ -377,9 +377,9 @@ const Header = () => {
           {!isExpanded && (
             <span className="hidden md:inline">
               <Button
-                variant="outline"
+                variant="highlight"
                 size="sm"
-                className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-2 text-sm px-3 !py-0 mt-1.5"
+                className="border border-transparent text-white  font-bold flex items-center gap-2 text-sm px-3 !py-0 mt-1.5"
                 onClick={() => setDialogOpen("yesPlease")}
               >
                 <span className="hidden sm:inline">
@@ -540,8 +540,8 @@ const Header = () => {
 
             <div className="absolute bottom-7 left-0 right-0 z-20 flex justify-center">
               <Button
-                variant="outline"
-                className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 text-xl px-8 py-6"
+                variant="highlight"
+                className="border border-transparenttext-gray-300 font-semibold flex items-center gap-4 text-xl px-8 py-6"
                 onClick={() => setDialogOpen("yesPlease")}
               >
                 <span className="hidden sm:inline">

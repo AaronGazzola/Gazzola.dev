@@ -14,6 +14,8 @@ const buttonVariants = cva(
         default: "text-primary-foreground shadow",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        highlight:
+          "shadow-sm text-gray-300 bg-black/60 hover:bg-black/10 font-semibold flex items-center gap-4  px-10 py-8 hover:text-accent-foreground ",
         outline:
           "shadow-sm text-gray-300 bg-black hover:bg-black/80 font-semibold flex items-center gap-4  px-10 py-8 hover:text-accent-foreground ",
         secondary:
@@ -63,7 +65,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       gradientEnabled
     );
 
-    if (variant === "outline" || (variant === "ghost" && isActive))
+    if (
+      variant === "outline" ||
+      variant === "highlight" ||
+      (variant === "ghost" && isActive)
+    )
       return (
         <div className="relative z-10">
           <div
