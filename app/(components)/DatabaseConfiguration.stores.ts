@@ -1192,12 +1192,23 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           columns: [],
         };
         set((state) => ({ tables: [...state.tables, newTable] }));
+        return newTable.id;
       },
 
       deleteTable: (tableId) => {
         set((state) => ({
-          tables: state.tables.filter((t) => t.id !== tableId && !t.isDefault),
+          tables: state.tables.filter((t) => t.id !== tableId),
           rlsPolicies: state.rlsPolicies.filter((p) => p.tableId !== tableId),
+        }));
+      },
+
+      deleteSchema: (schema) => {
+        set((state) => ({
+          tables: state.tables.filter((t) => t.schema !== schema),
+          rlsPolicies: state.rlsPolicies.filter((p) => {
+            const table = state.tables.find((t) => t.id === p.tableId);
+            return table?.schema !== schema;
+          }),
         }));
       },
 
@@ -1215,6 +1226,13 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             t.id === tableId && t.isEditable ? { ...t, schema } : t
           ),
         }));
+      },
+
+      getAvailableSchemas: () => {
+        const { tables } = get();
+        const schemas = new Set<string>();
+        tables.forEach((t) => schemas.add(t.schema));
+        return Array.from(schemas).sort();
       },
 
       addColumn: (tableId, column) => {
@@ -1280,29 +1298,68 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         }));
       },
 
-      addRLSPolicy: (policy) => {
-        const newPolicy: RLSPolicy = {
-          ...policy,
-          id: generateId(),
-          isEditing: true,
-        };
-        set((state) => ({
-          rlsPolicies: [...state.rlsPolicies, newPolicy],
-        }));
+      addOrUpdateRLSPolicy: (tableId, operation, role, accessType, relatedTable) => {
+        set((state) => {
+          const existingPolicyIndex = state.rlsPolicies.findIndex(
+            (p) => p.tableId === tableId && p.operation === operation
+          );
+
+          if (existingPolicyIndex >= 0) {
+            const updatedPolicies = [...state.rlsPolicies];
+            const policy = updatedPolicies[existingPolicyIndex];
+            const existingRoleIndex = policy.rolePolicies.findIndex(
+              (rp) => rp.role === role
+            );
+
+            if (existingRoleIndex >= 0) {
+              policy.rolePolicies[existingRoleIndex] = {
+                role,
+                accessType,
+                relatedTable,
+              };
+            } else {
+              policy.rolePolicies.push({ role, accessType, relatedTable });
+            }
+
+            return { rlsPolicies: updatedPolicies };
+          } else {
+            const newPolicy: RLSPolicy = {
+              id: generateId(),
+              tableId,
+              operation,
+              rolePolicies: [{ role, accessType, relatedTable }],
+            };
+            return { rlsPolicies: [...state.rlsPolicies, newPolicy] };
+          }
+        });
       },
 
-      deleteRLSPolicy: (policyId) => {
-        set((state) => ({
-          rlsPolicies: state.rlsPolicies.filter((p) => p.id !== policyId),
-        }));
+      removeRLSRolePolicy: (tableId, operation, role) => {
+        set((state) => {
+          const updatedPolicies = state.rlsPolicies
+            .map((policy) => {
+              if (policy.tableId === tableId && policy.operation === operation) {
+                return {
+                  ...policy,
+                  rolePolicies: policy.rolePolicies.filter((rp) => rp.role !== role),
+                };
+              }
+              return policy;
+            })
+            .filter((policy) => policy.rolePolicies.length > 0);
+
+          return { rlsPolicies: updatedPolicies };
+        });
       },
 
-      updateRLSPolicy: (policyId, updates) => {
-        set((state) => ({
-          rlsPolicies: state.rlsPolicies.map((p) =>
-            p.id === policyId ? { ...p, ...updates } : p
-          ),
-        }));
+      getRLSPoliciesForTable: (tableId) => {
+        return get().rlsPolicies.filter((p) => p.tableId === tableId);
+      },
+
+      getRLSPolicyForOperation: (tableId, operation) => {
+        return get().rlsPolicies.find(
+          (p) => p.tableId === tableId && p.operation === operation
+        );
       },
 
       addPlugin: (plugin) => {
@@ -1373,14 +1430,38 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           const table = tables.find((t) => t.id === policy.tableId);
           if (!table) return;
 
-          sql += `CREATE POLICY "${policy.name}"\n`;
-          sql += `  ON ${table.schema}.${table.name}\n`;
-          sql += `  FOR ${policy.operation}\n`;
-          sql += `  USING (${policy.using})`;
-          if (policy.withCheck) {
-            sql += `\n  WITH CHECK (${policy.withCheck})`;
-          }
-          sql += `;\n\n`;
+          policy.rolePolicies.forEach((rolePolicy) => {
+            const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
+
+            sql += `CREATE POLICY "${policyName}"\n`;
+            sql += `  ON ${table.schema}.${table.name}\n`;
+            sql += `  FOR ${policy.operation}\n`;
+            sql += `  TO ${rolePolicy.role}\n`;
+
+            let usingClause = "";
+            switch (rolePolicy.accessType) {
+              case "global":
+                usingClause = "true";
+                break;
+              case "own":
+                usingClause = "auth.uid() = user_id";
+                break;
+              case "organization":
+                usingClause = "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
+                break;
+              case "related":
+                if (rolePolicy.relatedTable) {
+                  usingClause = `id IN (SELECT ${table.name}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+                }
+                break;
+            }
+
+            if (usingClause) {
+              sql += `  USING (${usingClause})`;
+            }
+
+            sql += `;\n\n`;
+          });
         });
 
         return sql;
@@ -1406,10 +1487,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         } else if (isBetterAuthEnabled) {
           tables = [...getDefaultAuthTables()];
 
-          if (
-            config.features.admin.orgAdmins ||
-            config.features.admin.orgMembers
-          ) {
+          if (config.features.admin.organizations) {
             tables = [...tables, ...getOrganizationTables()];
           }
 
@@ -1451,7 +1529,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             });
           }
 
-          if (config.features.admin.superAdmins && tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"))) {
+          if ((config.features.admin.admin || config.features.admin.superAdmin) && tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"))) {
             plugins.push({
               id: generateId(),
               name: "admin",
@@ -1470,7 +1548,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             });
           }
 
-          if ((config.features.admin.orgAdmins || config.features.admin.orgMembers) && tables.some((t) => t.name === "organization")) {
+          if (config.features.admin.organizations && tables.some((t) => t.name === "organization")) {
             plugins.push({
               id: generateId(),
               name: "organization",

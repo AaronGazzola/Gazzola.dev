@@ -302,25 +302,22 @@ const questionConfigs: (
     disabledWhen: (config) => config.questions.useSupabase === "none",
     subOptions: [
       {
-        id: "superAdmins",
-        label: "Super admins have elevated access",
+        id: "admin",
+        label: "Admin",
         description:
-          "Created using a script, super admins have full access and can assign other user roles",
+          "Regular admin users with elevated permissions",
       },
       {
-        id: "orgMembers",
-        label: "Organization access is limited to organization members",
+        id: "superAdmin",
+        label: "Super Admin",
         description:
-          "Have read access to content related to their organizations",
-        disabledWhen: (config) =>
-          config.questions.useSupabase !== "withBetterAuth" &&
-          config.questions.useSupabase !== "no",
+          "Super admins have full access and can manage all users and content",
       },
       {
-        id: "orgAdmins",
-        label: "Organization admins have elevated access to organizations",
+        id: "organizations",
+        label: "Organizations",
         description:
-          "Invited by super admins, org admins can manage their own organizations and the members they contain",
+          "Enable organization-based access with org-admin and org-member roles",
         disabledWhen: (config) =>
           config.questions.useSupabase !== "withBetterAuth" &&
           config.questions.useSupabase !== "no",
@@ -476,7 +473,7 @@ const getRequiredTechnologiesForSubOption = (
       required.push("resend");
     }
   } else if (questionId === "admin") {
-    if (optionId === "orgAdmins" || optionId === "orgMembers") {
+    if (optionId === "organizations") {
       required.push("betterAuth");
     }
   } else if (questionId === "realTimeNotifications") {
@@ -502,9 +499,9 @@ const hasAnyChildrenSelected = (
     );
   } else if (questionId === "admin") {
     return (
-      initialConfiguration.features.admin.superAdmins ||
-      initialConfiguration.features.admin.orgAdmins ||
-      initialConfiguration.features.admin.orgMembers
+      initialConfiguration.features.admin.admin ||
+      initialConfiguration.features.admin.superAdmin ||
+      initialConfiguration.features.admin.organizations
     );
   } else if (questionId === "authentication") {
     return (
@@ -564,13 +561,7 @@ const getDisabledReason = (
     }
   }
 
-  if (questionId === "admin" && optionId === "orgMembers") {
-    if (config.questions.useSupabase === "authOnly") {
-      return "Requires Better-Auth (Question 1: choose NeonDB or Supabase with Better-Auth)";
-    }
-  }
-
-  if (questionId === "admin" && optionId === "orgAdmins") {
+  if (questionId === "admin" && optionId === "organizations") {
     if (config.questions.useSupabase === "authOnly") {
       return "Requires Better-Auth (Question 1: choose NeonDB or Supabase with Better-Auth)";
     }
@@ -1210,12 +1201,8 @@ export const InitialConfiguration = () => {
                                           ...initialConfiguration.features
                                             .admin,
                                         };
-                                        if (
-                                          adminUpdates.orgAdmins ||
-                                          adminUpdates.orgMembers
-                                        ) {
-                                          adminUpdates.orgAdmins = false;
-                                          adminUpdates.orgMembers = false;
+                                        if (adminUpdates.organizations) {
+                                          adminUpdates.organizations = false;
                                         }
                                         featureUpdates.admin = adminUpdates;
                                       }

@@ -947,13 +947,10 @@ const Sidebar = () => {
             <div className="space-y-2">
               <h4 className="font-semibold">Work in Progress</h4>
               <p className="text-sm text-gray-300">
-                This app is a work in progress and will likely change
-                often. When the source material changes, the editor
-                content will be reset.
+                This app is a work in progress and will likely change often.
               </p>
               <p className="text-sm text-gray-300 font-medium">
-                Please download your roadmap frequently to avoid losing
-                your progress.
+                Some of the functionality may be incomplete or error prone.
               </p>
             </div>
           </PopoverContent>
@@ -967,10 +964,7 @@ const Sidebar = () => {
                   setDownloadHelpOpen(open);
                   if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
                     markStepComplete(WalkthroughStep.DOWNLOAD);
-                  } else if (
-                    open &&
-                    !isStepOpen(WalkthroughStep.DOWNLOAD)
-                  ) {
+                  } else if (open && !isStepOpen(WalkthroughStep.DOWNLOAD)) {
                     setStepOpen(WalkthroughStep.DOWNLOAD, true);
                   }
                 }}
@@ -1052,12 +1046,9 @@ const Sidebar = () => {
                   <h4 className="font-semibold">Work in Progress</h4>
                   <p className="text-sm text-gray-300">
                     This app is a work in progress and will likely change often.
-                    When the source material changes, the editor content will be
-                    reset.
                   </p>
                   <p className="text-sm text-gray-300 font-medium">
-                    Please download your roadmap frequently to avoid losing your
-                    progress.
+                    Some of the functionality may be incomplete or error prone.
                   </p>
                 </div>
               </PopoverContent>

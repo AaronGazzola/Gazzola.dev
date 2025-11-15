@@ -20,7 +20,7 @@ export interface PrismaColumn {
 export interface PrismaTable {
   id: string;
   name: string;
-  schema: "auth" | "public";
+  schema: string;
   isDefault: boolean;
   isEditable: boolean;
   columns: PrismaColumn[];
@@ -28,14 +28,21 @@ export interface PrismaTable {
   questionId?: string;
 }
 
+export type UserRole = "admin" | "super-admin" | "org-admin" | "org-member";
+
+export type RLSAccessType = "global" | "own" | "organization" | "related";
+
+export interface RLSRolePolicy {
+  role: UserRole;
+  accessType: RLSAccessType;
+  relatedTable?: string;
+}
+
 export interface RLSPolicy {
   id: string;
   tableId: string;
-  name: string;
-  operation: "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "ALL";
-  using: string;
-  withCheck?: string;
-  isEditing: boolean;
+  operation: "SELECT" | "INSERT" | "UPDATE" | "DELETE";
+  rolePolicies: RLSRolePolicy[];
 }
 
 export interface CodeSection {
@@ -61,10 +68,12 @@ export interface DatabaseConfigurationState {
 
   setActiveTab: (tab: DatabaseConfigurationState["activeTab"]) => void;
 
-  addTable: (name: string, schema: "auth" | "public") => void;
+  addTable: (name: string, schema: string) => string;
   deleteTable: (tableId: string) => void;
+  deleteSchema: (schema: string) => void;
   updateTableName: (tableId: string, name: string) => void;
-  updateTableSchema: (tableId: string, schema: "auth" | "public") => void;
+  updateTableSchema: (tableId: string, schema: string) => void;
+  getAvailableSchemas: () => string[];
 
   addColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
   deleteColumn: (tableId: string, columnId: string) => void;
@@ -74,9 +83,10 @@ export interface DatabaseConfigurationState {
     updates: Partial<PrismaColumn>
   ) => void;
 
-  addRLSPolicy: (policy: Omit<RLSPolicy, "id">) => void;
-  deleteRLSPolicy: (policyId: string) => void;
-  updateRLSPolicy: (policyId: string, updates: Partial<RLSPolicy>) => void;
+  addOrUpdateRLSPolicy: (tableId: string, operation: RLSPolicy["operation"], role: UserRole, accessType: RLSAccessType, relatedTable?: string) => void;
+  removeRLSRolePolicy: (tableId: string, operation: RLSPolicy["operation"], role: UserRole) => void;
+  getRLSPoliciesForTable: (tableId: string) => RLSPolicy[];
+  getRLSPolicyForOperation: (tableId: string, operation: RLSPolicy["operation"]) => RLSPolicy | undefined;
 
   addPlugin: (plugin: Omit<Plugin, "id">) => void;
   deletePlugin: (pluginId: string) => void;

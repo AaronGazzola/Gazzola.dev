@@ -1,6 +1,6 @@
 import type { CodeFileNode, InitialConfigurationType } from "@/app/(editor)/layout.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
-import type { PrismaTable, RLSPolicy, Plugin } from "@/app/(components)/DatabaseConfiguration.types";
+import type { PrismaTable, RLSPolicy, RLSRolePolicy, Plugin } from "@/app/(components)/DatabaseConfiguration.types";
 import { componentFileContents } from "./component-files.generated";
 
 export interface CodeFileRegistry {
@@ -247,14 +247,35 @@ const generatePrismaRLSFile = (rlsPolicies: RLSPolicy[], tables: PrismaTable[]):
     return acc;
   }, {} as Record<string, RLSPolicy[]>);
 
+  const generateUsingClause = (rolePolicy: RLSRolePolicy, tableName: string): string => {
+    switch (rolePolicy.accessType) {
+      case "global":
+        return "true";
+      case "own":
+        return "auth.uid() = user_id";
+      case "organization":
+        return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
+      case "related":
+        if (rolePolicy.relatedTable) {
+          return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+        }
+        return "true";
+      default:
+        return "true";
+    }
+  };
+
   const policyFunctions = Object.entries(policyGroups).map(([tableName, policies]) => {
-    const policyChecks = policies.map(p => {
-      const check = p.withCheck ? `checkCondition: \`${p.withCheck}\`` : '';
-      return `    {
+    const policyChecks = policies.flatMap(p =>
+      p.rolePolicies.map(rolePolicy => {
+        const usingClause = generateUsingClause(rolePolicy, tableName);
+        return `    {
       operation: "${p.operation}",
-      using: \`${p.using}\`,${check ? '\n      ' + check : ''}
+      role: "${rolePolicy.role}",
+      using: \`${usingClause}\`
     }`;
-    }).join(',\n');
+      })
+    ).join(',\n');
 
     return `export const ${tableName}RLS = {
   policies: [
@@ -267,8 +288,8 @@ ${policyChecks}
 
 export interface RLSPolicy {
   operation: RLSOperation;
+  role: string;
   using: string;
-  checkCondition?: string;
 }
 
 ${policyFunctions}`;
@@ -287,17 +308,39 @@ const generateSupabaseMigration = (rlsPolicies: RLSPolicy[], tables: PrismaTable
     return acc;
   }, {} as Record<string, RLSPolicy[]>);
 
+  const generateUsingClause = (rolePolicy: RLSRolePolicy, tableName: string): string => {
+    switch (rolePolicy.accessType) {
+      case "global":
+        return "true";
+      case "own":
+        return "auth.uid() = user_id";
+      case "organization":
+        return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
+      case "related":
+        if (rolePolicy.relatedTable) {
+          return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+        }
+        return "true";
+      default:
+        return "true";
+    }
+  };
+
   const enableRLS = Object.keys(policyGroups).map(tableName =>
     `ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY;`
   ).join('\n');
 
   const createPolicies = Object.entries(policyGroups).flatMap(([tableName, policies]) =>
-    policies.map(policy => {
-      const withCheck = policy.withCheck ? `\n  WITH CHECK (${policy.withCheck})` : '';
-      return `CREATE POLICY "${policy.name}" ON public."${tableName}"
+    policies.flatMap(policy =>
+      policy.rolePolicies.map(rolePolicy => {
+        const policyName = `${tableName}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
+        const usingClause = generateUsingClause(rolePolicy, tableName);
+        return `CREATE POLICY "${policyName}" ON public."${tableName}"
   FOR ${policy.operation}
-  USING (${policy.using})${withCheck};`;
-    })
+  TO ${rolePolicy.role}
+  USING (${usingClause});`;
+      })
+    )
   ).join('\n\n');
 
   return `-- Migration: ${timestamp}_rls_policies.sql

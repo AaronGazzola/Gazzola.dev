@@ -83,9 +83,9 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     },
     admin: {
       enabled: false,
-      superAdmins: false,
-      orgAdmins: false,
-      orgMembers: false,
+      admin: false,
+      superAdmin: false,
+      organizations: false,
     },
     payments: {
       enabled: false,
@@ -735,7 +735,7 @@ export const useEditorStore = create<EditorState>()(
       updateAdminOption: (optionId: string, enabled: boolean) => {
         set((state) => {
           if (state.initialConfiguration.questions.useSupabase === "authOnly" &&
-              (optionId === "orgAdmins" || optionId === "orgMembers")) {
+              optionId === "organizations") {
             return state;
           }
 
@@ -746,7 +746,7 @@ export const useEditorStore = create<EditorState>()(
             shadcn: true,
           };
 
-          if (enabled && (optionId === "orgAdmins" || optionId === "orgMembers")) {
+          if (enabled && optionId === "organizations") {
             techUpdates.betterAuth = true;
           }
 

@@ -112,9 +112,9 @@ export interface InitialConfigurationType {
     };
     admin: {
       enabled: boolean;
-      superAdmins: boolean;
-      orgAdmins: boolean;
-      orgMembers: boolean;
+      admin: boolean;
+      superAdmin: boolean;
+      organizations: boolean;
     };
     payments: {
       enabled: boolean;

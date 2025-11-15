@@ -2250,3 +2250,23 @@
 .theme-tracking {
   letter-spacing: var(--theme-letter-spacing);
 }
+
+[data-state="active"].data-\[state\=active\]\:theme-bg-background {
+  background-color: var(--theme-background);
+}
+
+[data-state="active"].data-\[state\=active\]\:theme-text-foreground {
+  color: var(--theme-foreground);
+}
+
+[data-state="active"].data-\[state\=active\]\:shadow {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.theme-focus-visible\:ring-ring:focus-visible {
+  --tw-ring-color: var(--theme-ring);
+}
+
+.theme-mt-0 {
+  margin-top: 0;
+}

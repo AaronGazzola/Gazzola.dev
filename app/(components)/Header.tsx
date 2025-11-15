@@ -344,7 +344,7 @@ const Header = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-2 text-sm px-3 !py-0 "
+                      className="border border-transparent  text-gray-300 bg-black/50 font-semibold flex items-center gap-2 text-sm px-3 !py-0 "
                       onClick={() => setDialogOpen("yesPlease")}
                     >
                       <CheckCircle className="w-4 h-4" />
