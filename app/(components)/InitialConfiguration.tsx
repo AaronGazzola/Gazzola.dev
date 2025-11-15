@@ -195,6 +195,7 @@ interface QuestionConfig {
     disabledWhen?: (config: InitialConfigurationType) => boolean;
   }[];
   disabledWhen?: (config: InitialConfigurationType) => boolean;
+  comingSoon?: boolean;
 }
 
 const questionConfigs: (
@@ -333,6 +334,7 @@ const questionConfigs: (
     icon: Settings,
     requiredTechnologies: [],
     disabledWhen: () => true,
+    comingSoon: true,
     subOptions: [
       {
         id: "serverless",
@@ -354,6 +356,7 @@ const questionConfigs: (
     icon: CreditCard,
     requiredTechnologies: [],
     disabledWhen: () => true,
+    comingSoon: true,
     subOptions: [
       {
         id: "paypalPayments",
@@ -380,6 +383,7 @@ const questionConfigs: (
     icon: Settings,
     requiredTechnologies: [],
     disabledWhen: () => true,
+    comingSoon: true,
     subOptions: [
       {
         id: "imageGeneration",
@@ -401,6 +405,7 @@ const questionConfigs: (
     icon: Upload,
     requiredTechnologies: ["supabase"],
     disabledWhen: () => true,
+    comingSoon: true,
   },
   {
     id: "realTimeNotifications",
@@ -410,6 +415,7 @@ const questionConfigs: (
     icon: Bell,
     requiredTechnologies: ["supabase"],
     disabledWhen: () => true,
+    comingSoon: true,
     subOptions: [
       {
         id: "emailNotifications",
@@ -988,7 +994,7 @@ export const InitialConfiguration = () => {
                       )}>
                         {question.question}
                       </span>
-                      {isQuestionDisabled && (
+                      {question.comingSoon && (
                         <span className="text-[10px] md:text-xs text-white font-semibold theme-font-sans theme-tracking opacity-80">
                           Coming soon
                         </span>
