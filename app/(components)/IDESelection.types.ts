@@ -1,4 +1,4 @@
-export type IDEType = "lovable" | "replit" | "vscode";
+export type IDEType = "lovable" | "replit" | "claudecode" | "cursor";
 
 export interface IDEOption {
   id: IDEType;
@@ -18,8 +18,13 @@ export const IDE_OPTIONS: IDEOption[] = [
     description: "Browser-based collaborative coding environment",
   },
   {
-    id: "vscode",
-    name: "VS Code",
-    description: "Professional desktop code editor",
+    id: "claudecode",
+    name: "Claude Code",
+    description: "AI-powered coding assistant by Anthropic",
+  },
+  {
+    id: "cursor",
+    name: "Cursor",
+    description: "AI-first code editor",
   },
 ];

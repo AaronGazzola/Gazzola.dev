@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { useThemeStore } from "../layout.stores";
 
 const ThemeControlPanel = () => {
@@ -67,7 +67,9 @@ const ThemeControlPanel = () => {
               <ColorPicker
                 key={index}
                 value={color}
-                onChange={(newColor) => handleGradientColorChange(index, newColor)}
+                onChange={(newColor) =>
+                  handleGradientColorChange(index, newColor)
+                }
               />
             ))}
           </div>
@@ -85,7 +87,9 @@ const ThemeControlPanel = () => {
             <div key={index} className={cn(!starsEnabled && "opacity-50")}>
               <ColorPicker
                 value={color}
-                onChange={(newColor) => starsEnabled && handleStarColorChange(index, newColor)}
+                onChange={(newColor) =>
+                  starsEnabled && handleStarColorChange(index, newColor)
+                }
                 className={cn(!starsEnabled && "pointer-events-none")}
               />
             </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import {
   DecoratorNode,
   LexicalNode,

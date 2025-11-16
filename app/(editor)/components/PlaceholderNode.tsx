@@ -1,7 +1,7 @@
 "use client";
 
 import { WalkthroughHelper } from "@/components/WalkthroughHelper";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import {
   DecoratorNode,
   LexicalNode,

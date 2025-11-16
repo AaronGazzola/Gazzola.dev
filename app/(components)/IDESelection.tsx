@@ -1,11 +1,13 @@
 "use client";
 
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useEditorStore } from "../(editor)/layout.stores";
 import { IDE_OPTIONS, IDEType } from "./IDESelection.types";
 import {
+  ClaudeCodeLogo,
+  CursorLogo,
   GitHubSmallLogo,
   LovableLogo,
   ReplitLogo,
@@ -14,12 +16,15 @@ import {
 
 const SECTION_FILE_PATH = "start-here.next-steps";
 
-const IDE_LOGOS: Record<IDEType, React.ComponentType<{ className?: string }>> =
-  {
-    lovable: LovableLogo,
-    replit: ReplitLogo,
-    vscode: VSCodeLogo,
-  };
+const IDE_LOGOS: Record<
+  IDEType,
+  React.ComponentType<{ className?: string }>
+> = {
+  lovable: LovableLogo,
+  replit: ReplitLogo,
+  claudecode: ClaudeCodeLogo,
+  cursor: CursorLogo,
+};
 
 export const IDESelection = () => {
   const { darkMode, setSectionInclude, getSectionInclude } = useEditorStore();
@@ -43,23 +48,35 @@ export const IDESelection = () => {
       "section1",
       "option2"
     );
-    const vscodeIncluded = getSectionInclude(
+    const claudecodeIncluded = getSectionInclude(
       SECTION_FILE_PATH,
       "section1",
       "option3"
     );
+    const cursorIncluded = getSectionInclude(
+      SECTION_FILE_PATH,
+      "section1",
+      "option4"
+    );
 
-    const selectedCount = [lovableIncluded, replitIncluded, vscodeIncluded].filter(Boolean).length;
+    const selectedCount = [
+      lovableIncluded,
+      replitIncluded,
+      claudecodeIncluded,
+      cursorIncluded,
+    ].filter(Boolean).length;
 
     if (selectedCount !== 1) {
       setSectionInclude(SECTION_FILE_PATH, "section1", "option1", true);
       setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
       setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
+      setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
       setSelectedIDE("lovable");
     } else {
       if (lovableIncluded) setSelectedIDE("lovable");
       else if (replitIncluded) setSelectedIDE("replit");
-      else if (vscodeIncluded) setSelectedIDE("vscode");
+      else if (claudecodeIncluded) setSelectedIDE("claudecode");
+      else if (cursorIncluded) setSelectedIDE("cursor");
     }
   }, [mounted, getSectionInclude, setSectionInclude]);
 
@@ -71,14 +88,22 @@ export const IDESelection = () => {
         setSectionInclude(SECTION_FILE_PATH, "section1", "option1", true);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
       } else if (ideType === "replit") {
         setSectionInclude(SECTION_FILE_PATH, "section1", "option1", false);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option2", true);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
-      } else if (ideType === "vscode") {
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
+      } else if (ideType === "claudecode") {
         setSectionInclude(SECTION_FILE_PATH, "section1", "option1", false);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option3", true);
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
+      } else if (ideType === "cursor") {
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option1", false);
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", true);
       }
     },
     [setSectionInclude]
@@ -119,21 +144,31 @@ export const IDESelection = () => {
               )}
             >
               <div className="flex items-center theme-gap-4 flex-1">
-                <LogoComponent className="w-8 h-8 flex-shrink-0 theme-text-foreground" />
+                <div className="flex flex-col xs:flex-row xs:items-center theme-gap-2 flex-1">
+                  <div className="flex items-center theme-gap-4">
+                    <LogoComponent className="w-8 h-8 flex-shrink-0 theme-text-foreground" />
+                    <h4
+                      className={cn(
+                        "text-lg font-semibold theme-font-sans theme-tracking",
+                        isSelected
+                          ? "theme-text-primary"
+                          : "theme-text-foreground"
+                      )}
+                    >
+                      {ide.name}
+                    </h4>
+                  </div>
 
-                <div className="flex items-center theme-gap-2 flex-1">
-                  <h4
-                    className={cn(
-                      "text-lg font-semibold theme-font-sans theme-tracking",
-                      isSelected
-                        ? "theme-text-primary"
-                        : "theme-text-foreground"
+                  <div className="flex items-center theme-gap-2 ml-12 xs:ml-0">
+                    <Plus className="w-4 h-4 theme-text-muted-foreground" />
+                    <GitHubSmallLogo className="w-5 h-5 theme-text-muted-foreground" />
+                    {ide.id === "claudecode" && (
+                      <>
+                        <Plus className="w-4 h-4 theme-text-muted-foreground" />
+                        <VSCodeLogo className="w-5 h-5 theme-text-muted-foreground" />
+                      </>
                     )}
-                  >
-                    {ide.name}
-                  </h4>
-                  <Plus className="w-4 h-4 theme-text-muted-foreground" />
-                  <GitHubSmallLogo className="w-5 h-5 theme-text-muted-foreground" />
+                  </div>
                 </div>
 
                 <div

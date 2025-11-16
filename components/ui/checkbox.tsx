@@ -5,8 +5,8 @@ import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "@/lib/tailwind.utils";
 import { useThemeStore } from "@/app/layout.stores";
+import { cn } from "@/lib/utils";
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -27,10 +27,7 @@ const Checkbox = React.forwardRef<
 
   return (
     <div
-      className={cn(
-        "h-[18px] w-[18px] p-[1px] relative",
-        className
-      )}
+      className={cn("h-[18px] w-[18px] p-[1px] relative", className)}
       style={{
         borderRadius: ".25rem",
         ...getBackgroundStyle(),

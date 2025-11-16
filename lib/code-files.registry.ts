@@ -1,6 +1,14 @@
-import type { CodeFileNode, InitialConfigurationType } from "@/app/(editor)/layout.types";
+import type {
+  Plugin,
+  PrismaTable,
+  RLSPolicy,
+  RLSRolePolicy,
+} from "@/app/(components)/DatabaseConfiguration.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
-import type { PrismaTable, RLSPolicy, RLSRolePolicy, Plugin } from "@/app/(components)/DatabaseConfiguration.types";
+import type {
+  CodeFileNode,
+  InitialConfigurationType,
+} from "@/app/(editor)/layout.types";
 import { componentFileContents } from "./component-files.generated";
 
 export interface CodeFileRegistry {
@@ -9,7 +17,10 @@ export interface CodeFileRegistry {
   auth_client_ts: (plugins: Plugin[]) => string;
   prisma_schema: (tables: PrismaTable[]) => string;
   prisma_rls_ts: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]) => string;
-  supabase_migration_sql: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]) => string;
+  supabase_migration_sql: (
+    rlsPolicies: RLSPolicy[],
+    tables: PrismaTable[]
+  ) => string;
   log_utils_ts: () => string;
   prisma_rls_client_ts: () => string;
   auth_util_ts: () => string;
@@ -52,7 +63,7 @@ const generateThemeCSS = (theme: ThemeConfiguration): string => {
     --chart-3: ${colors.light.chart3};
     --chart-4: ${colors.light.chart4};
     --chart-5: ${colors.light.chart5};
-    --sidebar-background: ${colors.light.sidebarBackground};
+    --sidebar: ${colors.light.sidebarBackground};
     --sidebar-foreground: ${colors.light.sidebarForeground};
     --sidebar-primary: ${colors.light.sidebarPrimary};
     --sidebar-primary-foreground: ${colors.light.sidebarPrimaryForeground};
@@ -69,6 +80,13 @@ const generateThemeCSS = (theme: ThemeConfiguration): string => {
     --radius: ${other.light.radius}rem;
     --spacing: ${other.light.spacing}rem;
     --shadow: ${formatShadow(other.light.shadow)};
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
   }
 
   .dark {
@@ -96,7 +114,7 @@ const generateThemeCSS = (theme: ThemeConfiguration): string => {
     --chart-3: ${colors.dark.chart3};
     --chart-4: ${colors.dark.chart4};
     --chart-5: ${colors.dark.chart5};
-    --sidebar-background: ${colors.dark.sidebarBackground};
+    --sidebar: ${colors.dark.sidebarBackground};
     --sidebar-foreground: ${colors.dark.sidebarForeground};
     --sidebar-primary: ${colors.dark.sidebarPrimary};
     --sidebar-primary-foreground: ${colors.dark.sidebarPrimaryForeground};
@@ -113,6 +131,13 @@ const generateThemeCSS = (theme: ThemeConfiguration): string => {
     --radius: ${other.dark.radius}rem;
     --spacing: ${other.dark.spacing}rem;
     --shadow: ${formatShadow(other.dark.shadow)};
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
   }
 }
 
@@ -124,6 +149,140 @@ const generateThemeCSS = (theme: ThemeConfiguration): string => {
     @apply bg-background text-foreground font-sans;
     letter-spacing: var(--letter-spacing);
   }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+}
+
+.radius {
+  border-radius: var(--radius);
+}
+
+.shadow {
+  box-shadow: var(--shadow);
+}
+
+.tracking {
+  letter-spacing: var(--letter-spacing);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+[data-state="checked"].data-checked-bg-primary {
+  background-color: var(--primary);
+}
+
+[data-state="checked"].data-checked-text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+[data-state="unchecked"].data-unchecked-bg-input {
+  background-color: var(--input);
+}
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+[data-selected-single="true"].data-selected-single-bg-primary {
+  background-color: var(--primary);
+}
+
+[data-selected-single="true"].data-selected-single-text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+[data-range-start="true"].data-range-start-bg-primary {
+  background-color: var(--primary);
+}
+
+[data-range-start="true"].data-range-start-text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+[data-range-end="true"].data-range-end-bg-primary {
+  background-color: var(--primary);
+}
+
+[data-range-end="true"].data-range-end-text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+[data-range-middle="true"].data-range-middle-bg-accent {
+  background-color: var(--accent);
+}
+
+[data-range-middle="true"].data-range-middle-text-accent-foreground {
+  color: var(--accent-foreground);
+}
+
+.focus-border-ring:focus-visible {
+  border-color: var(--ring);
+}
+
+.focus-ring-color:focus-visible {
+  --tw-ring-color: var(--ring);
 }`;
 };
 
@@ -136,7 +295,7 @@ const getPluginConfig = (pluginName: string): string => {
 };
 
 const generateAuthFile = (plugins: Plugin[]): string => {
-  const enabledPlugins = plugins.filter(p => p.enabled && p.file === "auth");
+  const enabledPlugins = plugins.filter((p) => p.enabled && p.file === "auth");
 
   if (enabledPlugins.length === 0) {
     return `import { betterAuth } from "better-auth";
@@ -155,8 +314,12 @@ export const auth = betterAuth({
 });`;
   }
 
-  const pluginImports = enabledPlugins.map(p => getPluginImportStatement(p.name)).join('\n');
-  const pluginConfigs = enabledPlugins.map(p => getPluginConfig(p.name)).join(',\n    ');
+  const pluginImports = enabledPlugins
+    .map((p) => getPluginImportStatement(p.name))
+    .join("\n");
+  const pluginConfigs = enabledPlugins
+    .map((p) => getPluginConfig(p.name))
+    .join(",\n    ");
 
   return `import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -176,7 +339,9 @@ export const auth = betterAuth({
 };
 
 const generateAuthClientFile = (plugins: Plugin[]): string => {
-  const enabledPlugins = plugins.filter(p => p.enabled && p.file === "auth-client");
+  const enabledPlugins = plugins.filter(
+    (p) => p.enabled && p.file === "auth-client"
+  );
 
   if (enabledPlugins.length === 0) {
     return `import { createAuthClient } from "better-auth/react";
@@ -186,8 +351,12 @@ export const authClient = createAuthClient({
 });`;
   }
 
-  const pluginImports = enabledPlugins.map(p => getPluginImportStatement(p.name)).join('\n');
-  const pluginConfigs = enabledPlugins.map(p => getPluginConfig(p.name)).join(',\n    ');
+  const pluginImports = enabledPlugins
+    .map((p) => getPluginImportStatement(p.name))
+    .join("\n");
+  const pluginConfigs = enabledPlugins
+    .map((p) => getPluginConfig(p.name))
+    .join(",\n    ");
 
   return `import { createAuthClient } from "better-auth/react";
 ${pluginImports}
@@ -201,22 +370,23 @@ export const authClient = createAuthClient({
 };
 
 const generatePrismaSchema = (tables: PrismaTable[]): string => {
-  const generateColumn = (col: typeof tables[0]["columns"][0]) => {
+  const generateColumn = (col: (typeof tables)[0]["columns"][0]) => {
     const parts: string[] = [col.name, col.type];
     if (col.isArray) parts[1] += "[]";
     if (col.isOptional) parts[1] += "?";
-    if (col.attributes.length > 0) parts.push(...col.attributes.map(a => `@${a}`));
+    if (col.attributes.length > 0)
+      parts.push(...col.attributes.map((a) => `@${a}`));
     return `  ${parts.join(" ")}`;
   };
 
   const generateTable = (table: PrismaTable) => {
-    const columns = table.columns.map(generateColumn).join('\n');
-    const uniqueConstraints = table.uniqueConstraints.map(
-      uc => `  @@unique([${uc.join(", ")}])`
-    ).join('\n');
+    const columns = table.columns.map(generateColumn).join("\n");
+    const uniqueConstraints = table.uniqueConstraints
+      .map((uc) => `  @@unique([${uc.join(", ")}])`)
+      .join("\n");
 
     return `model ${table.name} {
-${columns}${uniqueConstraints ? '\n' + uniqueConstraints : ''}
+${columns}${uniqueConstraints ? "\n" + uniqueConstraints : ""}
   @@schema("${table.schema}")
 }`;
   };
@@ -232,22 +402,31 @@ datasource db {
   schemas  = ["auth", "public"]
 }
 
-${tables.map(generateTable).join('\n\n')}`;
+${tables.map(generateTable).join("\n\n")}`;
 };
 
-const generatePrismaRLSFile = (rlsPolicies: RLSPolicy[], tables: PrismaTable[]): string => {
-  const policyGroups = rlsPolicies.reduce((acc, policy) => {
-    const table = tables.find(t => t.id === policy.tableId);
-    if (!table) return acc;
+const generatePrismaRLSFile = (
+  rlsPolicies: RLSPolicy[],
+  tables: PrismaTable[]
+): string => {
+  const policyGroups = rlsPolicies.reduce(
+    (acc, policy) => {
+      const table = tables.find((t) => t.id === policy.tableId);
+      if (!table) return acc;
 
-    if (!acc[table.name]) {
-      acc[table.name] = [];
-    }
-    acc[table.name].push(policy);
-    return acc;
-  }, {} as Record<string, RLSPolicy[]>);
+      if (!acc[table.name]) {
+        acc[table.name] = [];
+      }
+      acc[table.name].push(policy);
+      return acc;
+    },
+    {} as Record<string, RLSPolicy[]>
+  );
 
-  const generateUsingClause = (rolePolicy: RLSRolePolicy, tableName: string): string => {
+  const generateUsingClause = (
+    rolePolicy: RLSRolePolicy,
+    tableName: string
+  ): string => {
     switch (rolePolicy.accessType) {
       case "global":
         return "true";
@@ -265,24 +444,28 @@ const generatePrismaRLSFile = (rlsPolicies: RLSPolicy[], tables: PrismaTable[]):
     }
   };
 
-  const policyFunctions = Object.entries(policyGroups).map(([tableName, policies]) => {
-    const policyChecks = policies.flatMap(p =>
-      p.rolePolicies.map(rolePolicy => {
-        const usingClause = generateUsingClause(rolePolicy, tableName);
-        return `    {
+  const policyFunctions = Object.entries(policyGroups)
+    .map(([tableName, policies]) => {
+      const policyChecks = policies
+        .flatMap((p) =>
+          p.rolePolicies.map((rolePolicy) => {
+            const usingClause = generateUsingClause(rolePolicy, tableName);
+            return `    {
       operation: "${p.operation}",
       role: "${rolePolicy.role}",
       using: \`${usingClause}\`
     }`;
-      })
-    ).join(',\n');
+          })
+        )
+        .join(",\n");
 
-    return `export const ${tableName}RLS = {
+      return `export const ${tableName}RLS = {
   policies: [
 ${policyChecks}
   ],
 };`;
-  }).join('\n\n');
+    })
+    .join("\n\n");
 
   return `export type RLSOperation = "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "ALL";
 
@@ -295,20 +478,29 @@ export interface RLSPolicy {
 ${policyFunctions}`;
 };
 
-const generateSupabaseMigration = (rlsPolicies: RLSPolicy[], tables: PrismaTable[]): string => {
+const generateSupabaseMigration = (
+  rlsPolicies: RLSPolicy[],
+  tables: PrismaTable[]
+): string => {
   const timestamp = Date.now();
-  const policyGroups = rlsPolicies.reduce((acc, policy) => {
-    const table = tables.find(t => t.id === policy.tableId);
-    if (!table) return acc;
+  const policyGroups = rlsPolicies.reduce(
+    (acc, policy) => {
+      const table = tables.find((t) => t.id === policy.tableId);
+      if (!table) return acc;
 
-    if (!acc[table.name]) {
-      acc[table.name] = [];
-    }
-    acc[table.name].push(policy);
-    return acc;
-  }, {} as Record<string, RLSPolicy[]>);
+      if (!acc[table.name]) {
+        acc[table.name] = [];
+      }
+      acc[table.name].push(policy);
+      return acc;
+    },
+    {} as Record<string, RLSPolicy[]>
+  );
 
-  const generateUsingClause = (rolePolicy: RLSRolePolicy, tableName: string): string => {
+  const generateUsingClause = (
+    rolePolicy: RLSRolePolicy,
+    tableName: string
+  ): string => {
     switch (rolePolicy.accessType) {
       case "global":
         return "true";
@@ -326,22 +518,27 @@ const generateSupabaseMigration = (rlsPolicies: RLSPolicy[], tables: PrismaTable
     }
   };
 
-  const enableRLS = Object.keys(policyGroups).map(tableName =>
-    `ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY;`
-  ).join('\n');
+  const enableRLS = Object.keys(policyGroups)
+    .map(
+      (tableName) =>
+        `ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY;`
+    )
+    .join("\n");
 
-  const createPolicies = Object.entries(policyGroups).flatMap(([tableName, policies]) =>
-    policies.flatMap(policy =>
-      policy.rolePolicies.map(rolePolicy => {
-        const policyName = `${tableName}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
-        const usingClause = generateUsingClause(rolePolicy, tableName);
-        return `CREATE POLICY "${policyName}" ON public."${tableName}"
+  const createPolicies = Object.entries(policyGroups)
+    .flatMap(([tableName, policies]) =>
+      policies.flatMap((policy) =>
+        policy.rolePolicies.map((rolePolicy) => {
+          const policyName = `${tableName}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
+          const usingClause = generateUsingClause(rolePolicy, tableName);
+          return `CREATE POLICY "${policyName}" ON public."${tableName}"
   FOR ${policy.operation}
   TO ${rolePolicy.role}
   USING (${usingClause});`;
-      })
+        })
+      )
     )
-  ).join('\n\n');
+    .join("\n\n");
 
   return `-- Migration: ${timestamp}_rls_policies.sql
 -- Enable RLS on tables
@@ -566,7 +763,9 @@ export const codeFileGenerators: CodeFileRegistry = {
   auth_util_ts: generateAuthUtil,
 };
 
-const createComponentFileNodes = (shouldShowCodeFiles: boolean): CodeFileNode[] => {
+const createComponentFileNodes = (
+  shouldShowCodeFiles: boolean
+): CodeFileNode[] => {
   const nodes: CodeFileNode[] = [];
 
   Object.entries(componentFileContents).forEach(([componentName, content]) => {
@@ -577,8 +776,8 @@ const createComponentFileNodes = (shouldShowCodeFiles: boolean): CodeFileNode[] 
       name: fileName,
       displayName: fileName,
       type: "code-file",
-      path: `components.ui.${componentName}`,
-      urlPath: `/components/ui/${componentName}`,
+      path: `ui.${componentName}`,
+      urlPath: `/ui/${componentName}`,
       include: shouldShowCodeFiles,
       fileExtension: "tsx",
       language: "typescript",
@@ -610,8 +809,8 @@ export const createCodeFileNodes = (
     name: "globals.css",
     displayName: "globals.css",
     type: "code-file",
-    path: "app.globals",
-    urlPath: "/app/globals",
+    path: "styles.globals",
+    urlPath: "/styles/globals",
     include: shouldShowCodeFiles,
     fileExtension: "css",
     language: "css",
@@ -624,7 +823,7 @@ export const createCodeFileNodes = (
   });
 
   const isBetterAuthEnabled = initialConfig.technologies.betterAuth;
-  const isSupabaseOnly = initialConfig.questions.useSupabase === "authOnly";
+  const isSupabaseOnly = initialConfig.questions.databaseProvider === "supabase";
 
   if (isBetterAuthEnabled && !isSupabaseOnly) {
     nodes.push({
@@ -634,11 +833,17 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "lib.auth",
       urlPath: "/lib/auth",
-      include: shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      include:
+        shouldShowCodeFiles &&
+        initialConfig.technologies.betterAuth &&
+        initialConfig.questions.databaseProvider !== "supabase",
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.auth_ts(plugins),
-      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      includeCondition: () =>
+        shouldShowCodeFiles &&
+        initialConfig.technologies.betterAuth &&
+        initialConfig.questions.databaseProvider !== "supabase",
       visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
@@ -652,11 +857,17 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "lib.auth-client",
       urlPath: "/lib/auth-client",
-      include: shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      include:
+        shouldShowCodeFiles &&
+        initialConfig.technologies.betterAuth &&
+        initialConfig.questions.databaseProvider !== "supabase",
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.auth_client_ts(plugins),
-      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.betterAuth && initialConfig.questions.useSupabase !== "authOnly",
+      includeCondition: () =>
+        shouldShowCodeFiles &&
+        initialConfig.technologies.betterAuth &&
+        initialConfig.questions.databaseProvider !== "supabase",
       visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
@@ -695,7 +906,8 @@ export const createCodeFileNodes = (
       fileExtension: "prisma",
       language: "prisma",
       content: () => codeFileGenerators.prisma_schema(tables),
-      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma,
+      includeCondition: () =>
+        shouldShowCodeFiles && initialConfig.technologies.prisma,
       visibleAfterPage: "start-here.next-steps",
       parentPath: "prisma",
       downloadPath: "prisma",
@@ -712,11 +924,17 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "lib.prisma-rls",
       urlPath: "/lib/prisma-rls",
-      include: shouldShowCodeFiles && initialConfig.technologies.prisma && rlsPolicies.length > 0,
+      include:
+        shouldShowCodeFiles &&
+        initialConfig.technologies.prisma &&
+        rlsPolicies.length > 0,
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.prisma_rls_ts(rlsPolicies, tables),
-      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma && rlsPolicies.length > 0,
+      includeCondition: () =>
+        shouldShowCodeFiles &&
+        initialConfig.technologies.prisma &&
+        rlsPolicies.length > 0,
       visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
@@ -736,7 +954,8 @@ export const createCodeFileNodes = (
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.prisma_rls_client_ts(),
-      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma,
+      includeCondition: () =>
+        shouldShowCodeFiles && initialConfig.technologies.prisma,
       visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
@@ -752,11 +971,17 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "lib.auth-util",
       urlPath: "/lib/auth-util",
-      include: shouldShowCodeFiles && initialConfig.technologies.prisma && initialConfig.technologies.betterAuth,
+      include:
+        shouldShowCodeFiles &&
+        initialConfig.technologies.prisma &&
+        initialConfig.technologies.betterAuth,
       fileExtension: "ts",
       language: "typescript",
       content: () => codeFileGenerators.auth_util_ts(),
-      includeCondition: () => shouldShowCodeFiles && initialConfig.technologies.prisma && initialConfig.technologies.betterAuth,
+      includeCondition: () =>
+        shouldShowCodeFiles &&
+        initialConfig.technologies.prisma &&
+        initialConfig.technologies.betterAuth,
       visibleAfterPage: "start-here.next-steps",
       parentPath: "lib",
       downloadPath: "lib",
@@ -764,8 +989,9 @@ export const createCodeFileNodes = (
     });
   }
 
-  const isSupabase = initialConfig.questions.useSupabase === "withBetterAuth" ||
-                     initialConfig.questions.useSupabase === "authOnly";
+  const isSupabase =
+    initialConfig.questions.databaseProvider === "both" ||
+    initialConfig.questions.databaseProvider === "supabase";
   if (isSupabase && hasRLS) {
     nodes.push({
       id: "code-file-supabase-migration",
@@ -774,17 +1000,19 @@ export const createCodeFileNodes = (
       type: "code-file",
       path: "supabase.migrations.rls-policies",
       urlPath: "/supabase/migrations/rls-policies",
-      include: shouldShowCodeFiles &&
-        (initialConfig.questions.useSupabase === "withBetterAuth" ||
-         initialConfig.questions.useSupabase === "authOnly") &&
+      include:
+        shouldShowCodeFiles &&
+        (initialConfig.questions.databaseProvider === "both" ||
+          initialConfig.questions.databaseProvider === "supabase") &&
         rlsPolicies.length > 0,
       fileExtension: "sql",
       language: "sql",
-      content: () => codeFileGenerators.supabase_migration_sql(rlsPolicies, tables),
+      content: () =>
+        codeFileGenerators.supabase_migration_sql(rlsPolicies, tables),
       includeCondition: () =>
         shouldShowCodeFiles &&
-        (initialConfig.questions.useSupabase === "withBetterAuth" ||
-         initialConfig.questions.useSupabase === "authOnly") &&
+        (initialConfig.questions.databaseProvider === "both" ||
+          initialConfig.questions.databaseProvider === "supabase") &&
         rlsPolicies.length > 0,
       visibleAfterPage: "start-here.next-steps",
       parentPath: "supabase.migrations",
@@ -795,5 +1023,8 @@ export const createCodeFileNodes = (
 
   const componentNodes = createComponentFileNodes(shouldShowCodeFiles);
 
-  return [...nodes.filter(node => node.includeCondition()), ...componentNodes];
+  return [
+    ...nodes.filter((node) => node.includeCondition()),
+    ...componentNodes,
+  ];
 };

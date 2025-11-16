@@ -28,7 +28,7 @@ export interface PrismaTable {
   questionId?: string;
 }
 
-export type UserRole = "admin" | "super-admin" | "org-admin" | "org-member";
+export type UserRole = "user" | "admin" | "super-admin" | "org-admin" | "org-member";
 
 export type RLSAccessType = "global" | "own" | "organization" | "related";
 

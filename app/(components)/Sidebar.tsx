@@ -32,7 +32,7 @@ import {
 import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { generateAndDownloadZip } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import type { LucideIcon } from "lucide-react";
 import {

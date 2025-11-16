@@ -1,21 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ReactFlow,
-  Node,
-  Edge,
-  Background,
-  Controls,
-  MiniMap,
-  useNodesState,
-  useEdgesState,
-  Handle,
-  Position,
-  NodeProps,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { ChevronDown, ChevronRight, Settings } from "lucide-react";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
 import {
@@ -30,9 +14,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/editor/ui/select";
-import { cn } from "@/lib/tailwind.utils";
-import type { PrismaColumn, PrismaTable } from "./DatabaseConfiguration.types";
+import { cn } from "@/lib/utils";
+import {
+  Background,
+  Controls,
+  Edge,
+  Handle,
+  MiniMap,
+  Node,
+  Position,
+  ReactFlow,
+  useEdgesState,
+  useNodesState,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { ChevronDown, ChevronRight, Settings } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
+import type { PrismaColumn, PrismaTable } from "./DatabaseConfiguration.types";
 
 const PRISMA_TYPE_OPTIONS = [
   "String",
@@ -218,8 +217,16 @@ const TableNode = ({ data }: { data: TableNodeData }) => {
 
   return (
     <div className="theme-bg-card theme-border-border theme-radius theme-shadow-lg min-w-[280px]">
-      <Handle type="target" position={Position.Left} className="!theme-bg-chart-3" />
-      <Handle type="source" position={Position.Right} className="!theme-bg-chart-3" />
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="!theme-bg-chart-3"
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="!theme-bg-chart-3"
+      />
 
       <div className="theme-bg-accent theme-px-3 theme-py-2 flex items-center theme-gap-2">
         <Button
@@ -262,7 +269,9 @@ const nodeTypes = {
 
 export const NetworkVisualization = () => {
   const { tables, updateColumn } = useDatabaseStore();
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<TableNodeData>>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node<TableNodeData>>(
+    []
+  );
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
   const createNodesAndEdges = useCallback(() => {

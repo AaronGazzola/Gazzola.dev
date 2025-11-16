@@ -431,7 +431,7 @@
             "order": 1,
             "path": "start-here.tech-stack",
             "urlPath": "/start-here/tech-stack",
-            "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+            "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
             "components": [
               {
                 "id": "component-InitialConfiguration",
@@ -455,7 +455,7 @@
             "order": 2,
             "path": "start-here.theme",
             "urlPath": "/start-here/theme",
-            "content": "# Theme configuration\n\nAdd the css below to your \\`styles/global.css\\` file and import the components from \\`components/ui\\` to apply your theme.\n\n<!-- component-ThemeConfiguration -->\n",
+            "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
             "components": [
               {
                 "id": "component-ThemeConfiguration",
@@ -995,7 +995,7 @@
               "order": 1,
               "path": "start-here.tech-stack",
               "urlPath": "/start-here/tech-stack",
-              "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+              "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
               "components": [
                 {
                   "id": "component-InitialConfiguration",
@@ -1019,7 +1019,7 @@
               "order": 2,
               "path": "start-here.theme",
               "urlPath": "/start-here/theme",
-              "content": "# Theme configuration\n\nAdd the css below to your \\`styles/global.css\\` file and import the components from \\`components/ui\\` to apply your theme.\n\n<!-- component-ThemeConfiguration -->\n",
+              "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
               "components": [
                 {
                   "id": "component-ThemeConfiguration",
@@ -1777,7 +1777,7 @@
           "order": 1,
           "path": "start-here.tech-stack",
           "urlPath": "/start-here/tech-stack",
-          "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+          "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
           "components": [
             {
               "id": "component-InitialConfiguration",
@@ -1801,7 +1801,7 @@
           "order": 2,
           "path": "start-here.theme",
           "urlPath": "/start-here/theme",
-          "content": "# Theme configuration\n\nAdd the css below to your \\`styles/global.css\\` file and import the components from \\`components/ui\\` to apply your theme.\n\n<!-- component-ThemeConfiguration -->\n",
+          "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
           "components": [
             {
               "id": "component-ThemeConfiguration",
@@ -1914,7 +1914,7 @@
       "order": 1,
       "path": "start-here.tech-stack",
       "urlPath": "/start-here/tech-stack",
-      "content": "# {{appName:Your app name}} development roadmap\n\nWelcome to the development roadmap for {{appName:Your app name}}!\n\nThese files provide instructions for an AI to build the foundation of your web app.\n\n## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below. Start by installing these technologies using their \\`npm install\\` commands.\n\n<!-- component-InitialConfiguration -->\n",
+      "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
       "components": [
         {
           "id": "component-InitialConfiguration",
@@ -1948,7 +1948,7 @@
       "order": 2,
       "path": "start-here.theme",
       "urlPath": "/start-here/theme",
-      "content": "# Theme configuration\n\nAdd the css below to your \\`styles/global.css\\` file and import the components from \\`components/ui\\` to apply your theme.\n\n<!-- component-ThemeConfiguration -->\n",
+      "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
       "components": [
         {
           "id": "component-ThemeConfiguration",
@@ -2092,5 +2092,5 @@
       "include": true
     }
   },
-  "contentVersion": 42
+  "contentVersion": 44
 }

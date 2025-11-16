@@ -1,10 +1,10 @@
 "use client";
 
-import { useThemeCSSVariables } from "@/app/(components)/ThemeConfiguration.cssVariables";
 import { useHeaderStore } from "@/app/(components)/Header.store";
+import { useThemeCSSVariables } from "@/app/(components)/ThemeConfiguration.cssVariables";
 import { processContent } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
@@ -27,6 +27,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { CodeViewer } from "../components/CodeViewer";
 import { ComponentNode } from "../components/ComponentNode";
 import { COMPONENT_TRANSFORMER } from "../components/ComponentTransformer";
+import { EditorSkeleton } from "../components/EditorSkeleton";
 import { FirstPlaceholderPlugin } from "../components/FirstPlaceholderPlugin";
 import { PlaceholderNode } from "../components/PlaceholderNode";
 import {
@@ -39,7 +40,6 @@ import {
   SECTION_TRANSFORMER,
   setSectionTransformerContext,
 } from "../components/SectionTransformer";
-import { EditorSkeleton } from "../components/EditorSkeleton";
 import { Toolbar } from "../components/Toolbar";
 import {
   useContentVersionCheck,
@@ -195,7 +195,15 @@ const Page = () => {
     const codeFileNode = getCodeFile(contentPath);
     return codeFileNode;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canRender, contentPath, getNode, getCodeFile, refreshKey, data, codeFiles]);
+  }, [
+    canRender,
+    contentPath,
+    getNode,
+    getCodeFile,
+    refreshKey,
+    data,
+    codeFiles,
+  ]);
 
   const isCodeFile = useMemo(() => {
     return currentNode?.type === "code-file";
@@ -244,8 +252,8 @@ const Page = () => {
           currentNode && currentNode.type === "file"
             ? currentNode.content.length
             : currentNode && currentNode.type === "code-file"
-            ? currentNode.content().length
-            : 0,
+              ? currentNode.content().length
+              : 0,
       },
       { label: "markdown-parse" }
     );

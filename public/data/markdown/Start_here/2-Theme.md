@@ -1,5 +1,5 @@
 # Theme configuration
 
-Add the css below to your `styles/global.css` file and import the components from `components/ui` to apply your theme.
+This custom theme will be applied globally via Shadcn components and Tailwind classes.
 
 <!-- component-ThemeConfiguration -->

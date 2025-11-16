@@ -31,7 +31,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

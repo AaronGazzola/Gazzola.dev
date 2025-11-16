@@ -1,14 +1,14 @@
 "use client";
 
+import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
+import { Label } from "@/components/editor/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
-import { Button } from "@/components/editor/ui/button";
-import { Label } from "@/components/editor/ui/label";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";

@@ -93,7 +93,7 @@ export interface InitialConfigurationType {
     openrouter: boolean;
   };
   questions: {
-    useSupabase: "none" | "no" | "withBetterAuth" | "authOnly";
+    databaseProvider: "none" | "supabase" | "neondb" | "both";
     alwaysOnServer: boolean;
   };
   features: {

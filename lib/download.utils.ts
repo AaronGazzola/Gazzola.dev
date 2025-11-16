@@ -1,10 +1,17 @@
 import {
+  CodeFileNode,
   FileSystemEntry,
   InitialConfigurationType,
   MarkdownData,
   MarkdownNode,
-  CodeFileNode,
 } from "@/app/(editor)/layout.types";
+import type {
+  PrismaTable,
+  RLSPolicy,
+  RLSAccessType,
+  UserRole,
+} from "@/app/(components)/DatabaseConfiguration.types";
+import { useDatabaseStore } from "@/app/(components)/DatabaseConfiguration.stores";
 import JSZip from "jszip";
 
 type RouteEntry = {
@@ -347,7 +354,7 @@ const generateInitialConfigurationContent = (
 
       case "supabase": {
         const features: string[] = [];
-        if (initialConfiguration.questions.useSupabase === "authOnly") {
+        if (initialConfiguration.questions.databaseProvider === "supabase") {
           features.push("authentication");
         } else {
           features.push("database");
@@ -445,6 +452,10 @@ const generateThemeCss = (): string => {
     const lightOther = theme.other.light;
     const darkOther = theme.other.dark;
 
+    const formatShadow = (shadow: any) => {
+      return `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${shadow.color} / ${shadow.opacity}`;
+    };
+
     const colorKeys = [
       { key: "background", css: "--background" },
       { key: "foreground", css: "--foreground" },
@@ -486,102 +497,69 @@ const generateThemeCss = (): string => {
       { key: "sidebarRing", css: "--sidebar-ring" },
     ];
 
-    const lines: string[] = ["```css", "", ":root {"];
+    const lines: string[] = ["```css", "", "@tailwind base;", "@tailwind components;", "@tailwind utilities;", "", "@layer base {", "  :root {"];
 
     colorKeys.forEach(({ key, css }) => {
       const color = (lightColors as any)[key];
       if (color) {
-        lines.push(`  ${css}: ${color};`);
+        lines.push(`    ${css}: ${color};`);
       }
     });
 
-    lines.push(`  --font-sans:`);
-    lines.push(`    ${lightTypography.fontSans};`);
-    lines.push(`  --font-serif: ${lightTypography.fontSerif};`);
-    lines.push(`  --font-mono:`);
-    lines.push(`    ${lightTypography.fontMono};`);
-    lines.push(`  --radius: ${lightOther.radius}rem;`);
-    lines.push(`  --shadow-x: ${lightOther.shadow.offsetX};`);
-    lines.push(`  --shadow-y: ${lightOther.shadow.offsetY}px;`);
-    lines.push(`  --shadow-blur: ${lightOther.shadow.blurRadius}px;`);
-    lines.push(`  --shadow-spread: ${lightOther.shadow.spread}px;`);
-    lines.push(`  --shadow-opacity: ${lightOther.shadow.opacity};`);
-    lines.push(
-      `  --shadow-color: ${lightOther.shadow.color};`
-    );
-    lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`  --shadow-sm:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(
-      `  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-md:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-lg:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-xl:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
-    lines.push(
-      `  --tracking-normal: ${lightTypography.letterSpacing}em;`
-    );
-    lines.push(`  --spacing: ${lightOther.spacing}rem;`);
-    lines.push(`}`);
     lines.push(``);
-    lines.push(`.dark {`);
+    lines.push(`    --font-sans: ${lightTypography.fontSans};`);
+    lines.push(`    --font-serif: ${lightTypography.fontSerif};`);
+    lines.push(`    --font-mono: ${lightTypography.fontMono};`);
+    lines.push(`    --letter-spacing: ${lightTypography.letterSpacing}px;`);
+    lines.push(``);
+    lines.push(`    --radius: ${lightOther.radius}rem;`);
+    lines.push(`    --spacing: ${lightOther.spacing}rem;`);
+    lines.push(`    --shadow: ${formatShadow(lightOther.shadow)};`);
+    lines.push(`    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
+    lines.push(`  }`);
+    lines.push(``);
+    lines.push(`  .dark {`);
 
     colorKeys.forEach(({ key, css }) => {
       const color = (darkColors as any)[key];
       if (color) {
-        lines.push(`  ${css}: ${color};`);
+        lines.push(`    ${css}: ${color};`);
       }
     });
 
-    lines.push(`  --font-sans:`);
-    lines.push(`    ${darkTypography.fontSans};`);
-    lines.push(`  --font-serif: ${darkTypography.fontSerif};`);
-    lines.push(`  --font-mono:`);
-    lines.push(`    ${darkTypography.fontMono};`);
-    lines.push(`  --radius: ${darkOther.radius}rem;`);
-    lines.push(`  --shadow-x: ${darkOther.shadow.offsetX};`);
-    lines.push(`  --shadow-y: ${darkOther.shadow.offsetY}px;`);
-    lines.push(`  --shadow-blur: ${darkOther.shadow.blurRadius}px;`);
-    lines.push(`  --shadow-spread: ${darkOther.shadow.spread}px;`);
-    lines.push(`  --shadow-opacity: ${darkOther.shadow.opacity};`);
-    lines.push(
-      `  --shadow-color: ${darkOther.shadow.color};`
-    );
-    lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`  --shadow-sm:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(
-      `  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-md:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-lg:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-xl:`);
-    lines.push(
-      `    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`
-    );
-    lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
+    lines.push(``);
+    lines.push(`    --font-sans: ${darkTypography.fontSans};`);
+    lines.push(`    --font-serif: ${darkTypography.fontSerif};`);
+    lines.push(`    --font-mono: ${darkTypography.fontMono};`);
+    lines.push(`    --letter-spacing: ${darkTypography.letterSpacing}px;`);
+    lines.push(``);
+    lines.push(`    --radius: ${darkOther.radius}rem;`);
+    lines.push(`    --spacing: ${darkOther.spacing}rem;`);
+    lines.push(`    --shadow: ${formatShadow(darkOther.shadow)};`);
+    lines.push(`    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
+    lines.push(`  }`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`@layer base {`);
+    lines.push(`  * {`);
+    lines.push(`    @apply border-border;`);
+    lines.push(`  }`);
+    lines.push(`  body {`);
+    lines.push(`    @apply bg-background text-foreground font-sans;`);
+    lines.push(`    letter-spacing: var(--letter-spacing);`);
+    lines.push(`  }`);
     lines.push(`}`);
     lines.push(``);
     lines.push(`@theme inline {`);
@@ -590,17 +568,11 @@ const generateThemeCss = (): string => {
     lines.push(`  --color-card: var(--card);`);
     lines.push(`  --color-card-foreground: var(--card-foreground);`);
     lines.push(`  --color-popover: var(--popover);`);
-    lines.push(
-      `  --color-popover-foreground: var(--popover-foreground);`
-    );
+    lines.push(`  --color-popover-foreground: var(--popover-foreground);`);
     lines.push(`  --color-primary: var(--primary);`);
-    lines.push(
-      `  --color-primary-foreground: var(--primary-foreground);`
-    );
+    lines.push(`  --color-primary-foreground: var(--primary-foreground);`);
     lines.push(`  --color-secondary: var(--secondary);`);
-    lines.push(
-      `  --color-secondary-foreground: var(--secondary-foreground);`
-    );
+    lines.push(`  --color-secondary-foreground: var(--secondary-foreground);`);
     lines.push(`  --color-muted: var(--muted);`);
     lines.push(`  --color-muted-foreground: var(--muted-foreground);`);
     lines.push(`  --color-accent: var(--accent);`);
@@ -618,9 +590,7 @@ const generateThemeCss = (): string => {
     lines.push(`  --color-chart-4: var(--chart-4);`);
     lines.push(`  --color-chart-5: var(--chart-5);`);
     lines.push(`  --color-sidebar: var(--sidebar);`);
-    lines.push(
-      `  --color-sidebar-foreground: var(--sidebar-foreground);`
-    );
+    lines.push(`  --color-sidebar-foreground: var(--sidebar-foreground);`);
     lines.push(`  --color-sidebar-primary: var(--sidebar-primary);`);
     lines.push(
       `  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);`
@@ -651,68 +621,84 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-2xl: var(--shadow-2xl);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`.theme-radius {`);
+    lines.push(`.radius {`);
     lines.push(`  border-radius: var(--radius);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`.theme-shadow {`);
+    lines.push(`.shadow {`);
     lines.push(`  box-shadow: var(--shadow);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-state="checked"].theme-data-checked-bg-primary {`);
+    lines.push(`.tracking {`);
+    lines.push(`  letter-spacing: var(--letter-spacing);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.font-sans {`);
+    lines.push(`  font-family: var(--font-sans);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.font-serif {`);
+    lines.push(`  font-family: var(--font-serif);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.font-mono {`);
+    lines.push(`  font-family: var(--font-mono);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`[data-state="checked"].data-checked-bg-primary {`);
     lines.push(`  background-color: var(--primary);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-state="checked"].theme-data-checked-text-primary-foreground {`);
+    lines.push(`[data-state="checked"].data-checked-text-primary-foreground {`);
     lines.push(`  color: var(--primary-foreground);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-state="unchecked"].theme-data-unchecked-bg-input {`);
+    lines.push(`[data-state="unchecked"].data-unchecked-bg-input {`);
     lines.push(`  background-color: var(--input);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`.theme-focus-ring:focus-visible {`);
+    lines.push(`.focus-ring:focus-visible {`);
     lines.push(`  outline: none;`);
     lines.push(`  box-shadow: 0 0 0 2px var(--ring);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-selected-single="true"].theme-data-selected-single-bg-primary {`);
+    lines.push(`[data-selected-single="true"].data-selected-single-bg-primary {`);
     lines.push(`  background-color: var(--primary);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-selected-single="true"].theme-data-selected-single-text-primary-foreground {`);
+    lines.push(`[data-selected-single="true"].data-selected-single-text-primary-foreground {`);
     lines.push(`  color: var(--primary-foreground);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-range-start="true"].theme-data-range-start-bg-primary {`);
+    lines.push(`[data-range-start="true"].data-range-start-bg-primary {`);
     lines.push(`  background-color: var(--primary);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-range-start="true"].theme-data-range-start-text-primary-foreground {`);
+    lines.push(`[data-range-start="true"].data-range-start-text-primary-foreground {`);
     lines.push(`  color: var(--primary-foreground);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-range-end="true"].theme-data-range-end-bg-primary {`);
+    lines.push(`[data-range-end="true"].data-range-end-bg-primary {`);
     lines.push(`  background-color: var(--primary);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-range-end="true"].theme-data-range-end-text-primary-foreground {`);
+    lines.push(`[data-range-end="true"].data-range-end-text-primary-foreground {`);
     lines.push(`  color: var(--primary-foreground);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-range-middle="true"].theme-data-range-middle-bg-accent {`);
+    lines.push(`[data-range-middle="true"].data-range-middle-bg-accent {`);
     lines.push(`  background-color: var(--accent);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`[data-range-middle="true"].theme-data-range-middle-text-accent-foreground {`);
+    lines.push(`[data-range-middle="true"].data-range-middle-text-accent-foreground {`);
     lines.push(`  color: var(--accent-foreground);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`.theme-focus-border-ring:focus-visible {`);
+    lines.push(`.focus-border-ring:focus-visible {`);
     lines.push(`  border-color: var(--ring);`);
     lines.push(`}`);
     lines.push(``);
-    lines.push(`.theme-focus-ring-color:focus-visible {`);
+    lines.push(`.focus-ring-color:focus-visible {`);
     lines.push(`  --tw-ring-color: var(--ring);`);
     lines.push(`}`);
     lines.push("```");
@@ -817,6 +803,42 @@ export const processContent = (
   );
 
   processedContent = processedContent.replace(
+    /<!-- component-DatabaseConfiguration -->/g,
+    () => {
+      const databaseState = useDatabaseStore.getState();
+      const initialConfig = getInitialConfiguration();
+
+      if (initialConfig.questions.databaseProvider === "none") {
+        return "No database configuration selected.";
+      }
+
+      const prismaSchema = generatePrismaSchema(
+        databaseState.tables,
+        initialConfig
+      );
+      const rlsSQL = generateRLSMigrationSQL(
+        databaseState.rlsPolicies,
+        databaseState.tables,
+        initialConfig
+      );
+
+      let output = "## Database Schema\n\n";
+      output += "### Prisma Schema\n\n";
+      output += "File: `prisma/schema.prisma`\n\n";
+      output += "```prisma\n";
+      output += prismaSchema;
+      output += "\n```\n\n";
+      output += "### RLS Migration SQL\n\n";
+      output += "File: `prisma/migrations/enable-rls.sql`\n\n";
+      output += "```sql\n";
+      output += rlsSQL;
+      output += "\n```";
+
+      return output;
+    }
+  );
+
+  processedContent = processedContent.replace(
     /<!-- component-(\w+) -->/g,
     (match, componentId) => {
       if (componentId === "FullStackOrFrontEnd") {
@@ -827,6 +849,230 @@ export const processContent = (
   );
 
   return processedContent;
+};
+
+export const generatePrismaSchema = (
+  tables: PrismaTable[],
+  initialConfiguration: InitialConfigurationType
+): string => {
+  const schemas = Array.from(new Set(tables.map((t) => t.schema)));
+  const schemasStr = schemas.map((s) => `"${s}"`).join(", ");
+
+  let schema = `datasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n  schemas  = [${schemasStr}]\n}\n\n`;
+
+  schema += `generator client {\n  provider = "prisma-client-js"\n  previewFeatures = ["multiSchema"]\n}\n\n`;
+
+  tables.forEach((table) => {
+    schema += `model ${table.name} {\n`;
+
+    table.columns.forEach((col) => {
+      const typeStr = col.isArray ? `${col.type}[]` : col.type;
+      const optionalStr = col.isOptional ? "?" : "";
+      const namePadding = " ".repeat(Math.max(1, 20 - col.name.length));
+
+      let line = `  ${col.name}${namePadding}${typeStr}${optionalStr}`;
+
+      if (col.attributes.length > 0) {
+        const typePadding = " ".repeat(
+          Math.max(2, 25 - typeStr.length - optionalStr.length)
+        );
+        line += `${typePadding}${col.attributes.join(" ")}`;
+      }
+
+      if (col.relation) {
+        const relationName = `${table.name}To${col.relation.table}`;
+        const fields = `fields: [${col.name}]`;
+        const references = `references: [${col.relation.field}]`;
+        const onDelete = col.relation.onDelete
+          ? `, onDelete: ${col.relation.onDelete}`
+          : "";
+        line += ` @relation("${relationName}", ${fields}, ${references}${onDelete})`;
+      }
+
+      schema += `${line}\n`;
+    });
+
+    if (table.uniqueConstraints.length > 0) {
+      schema += "\n";
+      table.uniqueConstraints.forEach((constraint) => {
+        const fields = constraint.map((f) => `${f}`).join(", ");
+        schema += `  @@unique([${fields}])\n`;
+      });
+    }
+
+    schema += `\n  @@schema("${table.schema}")\n`;
+    schema += `}\n\n`;
+  });
+
+  return schema.trim();
+};
+
+export const generateRLSMigrationSQL = (
+  rlsPolicies: RLSPolicy[],
+  tables: PrismaTable[],
+  initialConfiguration: InitialConfigurationType
+): string => {
+  const lines: string[] = [];
+
+  const authProvider =
+    initialConfiguration.questions.databaseProvider === "supabase"
+      ? "supabase"
+      : "better-auth";
+
+  lines.push(`-- Enable Row Level Security on all tables`);
+  lines.push(``);
+
+  tables.forEach((table) => {
+    if (table.schema === "auth" && authProvider === "supabase") {
+      return;
+    }
+
+    if (table.schema === "better_auth") {
+      return;
+    }
+
+    lines.push(
+      `ALTER TABLE ${table.schema}.${table.name} ENABLE ROW LEVEL SECURITY;`
+    );
+  });
+
+  lines.push(``);
+  lines.push(`-- Create RLS Policies`);
+  lines.push(``);
+
+  const getUSINGClause = (
+    accessType: RLSAccessType,
+    role: UserRole,
+    table: PrismaTable,
+    relatedTable?: string
+  ): string => {
+    if (accessType === "global") {
+      return "true";
+    }
+
+    const userIdColumn =
+      table.columns.find((c) => c.name === "userId" || c.name === "user_id")
+        ?.name || "user_id";
+
+    if (accessType === "own") {
+      if (authProvider === "supabase") {
+        return `auth.uid() = ${userIdColumn}`;
+      } else {
+        return `(SELECT id FROM better_auth.user WHERE id = ${userIdColumn}) IS NOT NULL`;
+      }
+    }
+
+    if (accessType === "organization") {
+      const orgIdColumn =
+        table.columns.find(
+          (c) => c.name === "organizationId" || c.name === "organization_id"
+        )?.name || "organization_id";
+
+      if (authProvider === "supabase") {
+        return `${orgIdColumn} IN (
+      SELECT organization_id
+      FROM public.user_organizations
+      WHERE user_id = auth.uid()
+    )`;
+      } else {
+        return `${orgIdColumn} IN (
+      SELECT organization_id
+      FROM public.user_organizations
+      WHERE user_id = (SELECT id FROM better_auth.user LIMIT 1)
+    )`;
+      }
+    }
+
+    if (accessType === "related" && relatedTable) {
+      const relatedColumn = table.columns.find(
+        (c) => c.type === relatedTable || c.relation?.table === relatedTable
+      );
+
+      if (relatedColumn) {
+        const columnName = relatedColumn.name;
+        const relatedTableObj = tables.find((t) => t.name === relatedTable);
+        const relatedUserColumn =
+          relatedTableObj?.columns.find(
+            (c) => c.name === "userId" || c.name === "user_id"
+          )?.name || "user_id";
+
+        if (authProvider === "supabase") {
+          return `${columnName} IN (
+      SELECT id
+      FROM ${relatedTableObj?.schema || "public"}.${relatedTable}
+      WHERE ${relatedUserColumn} = auth.uid()
+    )`;
+        } else {
+          return `${columnName} IN (
+      SELECT id
+      FROM ${relatedTableObj?.schema || "public"}.${relatedTable}
+      WHERE ${relatedUserColumn} = (SELECT id FROM better_auth.user LIMIT 1)
+    )`;
+        }
+      }
+    }
+
+    return "false";
+  };
+
+  const groupedPolicies: Record<string, RLSPolicy[]> = {};
+  rlsPolicies.forEach((policy) => {
+    if (!groupedPolicies[policy.tableId]) {
+      groupedPolicies[policy.tableId] = [];
+    }
+    groupedPolicies[policy.tableId].push(policy);
+  });
+
+  Object.entries(groupedPolicies).forEach(([tableId, policies]) => {
+    const table = tables.find((t) => t.id === tableId);
+    if (!table) return;
+
+    if (table.schema === "auth" && authProvider === "supabase") {
+      return;
+    }
+
+    if (table.schema === "better_auth") {
+      return;
+    }
+
+    lines.push(`-- Policies for ${table.schema}.${table.name}`);
+
+    policies.forEach((policy) => {
+      policy.rolePolicies?.forEach((rolePolicy) => {
+        const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role.replace("-", "_")}`;
+        const usingClause = getUSINGClause(
+          rolePolicy.accessType,
+          rolePolicy.role,
+          table,
+          rolePolicy.relatedTable
+        );
+
+        lines.push(`CREATE POLICY "${policyName}"`);
+        lines.push(`  ON ${table.schema}.${table.name}`);
+        lines.push(`  FOR ${policy.operation}`);
+        lines.push(`  TO ${rolePolicy.role.replace("-", "_")}`);
+        lines.push(`  USING (${usingClause});`);
+        lines.push(``);
+      });
+    });
+  });
+
+  if (authProvider === "better-auth") {
+    lines.push(`-- Create database roles for Better Auth`);
+    lines.push(``);
+
+    const roles = ["user", "admin", "super_admin"];
+    if (initialConfiguration.features.admin.organizations) {
+      roles.push("org_admin", "org_member");
+    }
+
+    roles.forEach((role) => {
+      lines.push(`CREATE ROLE ${role};`);
+    });
+    lines.push(``);
+  }
+
+  return lines.join("\n").trim();
 };
 
 const processNode = (

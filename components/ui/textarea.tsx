@@ -1,7 +1,7 @@
 //-| File path: components/ui/textarea.tsx
 import * as React from "react";
 
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,

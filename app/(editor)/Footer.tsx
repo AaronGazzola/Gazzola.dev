@@ -1,7 +1,7 @@
 "use client";
 
 import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { useQueryState } from "nuqs";
 import { FooterDataAttributes } from "./Footer.types";
 

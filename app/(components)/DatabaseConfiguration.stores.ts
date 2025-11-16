@@ -1477,12 +1477,10 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         const plugins: Plugin[] = [];
 
         const isBetterAuthEnabled =
-          (config.questions.useSupabase === "no" || config.questions.useSupabase === "withBetterAuth") &&
+          config.questions.databaseProvider !== "none" &&
           config.technologies.betterAuth;
 
-        if (config.questions.useSupabase === "none") {
-          tables = [];
-        } else if (config.questions.useSupabase === "authOnly") {
+        if (config.questions.databaseProvider === "none") {
           tables = [];
         } else if (isBetterAuthEnabled) {
           tables = [...getDefaultAuthTables()];
@@ -1652,7 +1650,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             });
           }
 
-          if (config.features.fileStorage && config.questions.useSupabase === "withBetterAuth") {
+          if (config.features.fileStorage && (config.questions.databaseProvider === "supabase" || config.questions.databaseProvider === "both")) {
             plugins.push({
               id: generateId(),
               name: "supabaseStorage",

@@ -2,10 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/tailwind.utils";
-import { HexColorPicker } from "react-colorful";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { HexColorPicker } from "react-colorful";
 
 interface ColorPickerProps {
   value: string;
@@ -49,7 +53,11 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
       </PopoverTrigger>
       <PopoverContent className="w-64 p-3" side="bottom" align="start">
         <div className="space-y-3">
-          <HexColorPicker color={value} onChange={handleColorChange} className="w-full" />
+          <HexColorPicker
+            color={value}
+            onChange={handleColorChange}
+            className="w-full"
+          />
           <div className="space-y-2">
             <label className="text-sm font-medium">Hex Value</label>
             <div className="flex gap-2">

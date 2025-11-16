@@ -64,7 +64,7 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     openrouter: false,
   },
   questions: {
-    useSupabase: "none",
+    databaseProvider: "none",
     alwaysOnServer: false,
   },
   features: {
@@ -734,7 +734,7 @@ export const useEditorStore = create<EditorState>()(
       },
       updateAdminOption: (optionId: string, enabled: boolean) => {
         set((state) => {
-          if (state.initialConfiguration.questions.useSupabase === "authOnly" &&
+          if (!state.initialConfiguration.technologies.betterAuth &&
               optionId === "organizations") {
             return state;
           }
@@ -790,7 +790,7 @@ export const useEditorStore = create<EditorState>()(
 
           if (enabled) {
             if (optionId === "stripePayments" || optionId === "stripeSubscriptions") {
-              if (state.initialConfiguration.questions.useSupabase === "authOnly" && optionId === "stripeSubscriptions") {
+              if (!state.initialConfiguration.technologies.betterAuth && optionId === "stripeSubscriptions") {
                 return state;
               }
               techUpdates.stripe = true;

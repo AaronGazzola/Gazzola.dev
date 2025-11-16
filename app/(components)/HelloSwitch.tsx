@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { cn } from "@/lib/tailwind.utils";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useState } from "react";
 
 export const HelloSwitch = () => {
   const { getSectionInclude, setSectionInclude, darkMode } = useEditorStore();
@@ -12,8 +12,16 @@ export const HelloSwitch = () => {
   const targetSection = "section1";
 
   useEffect(() => {
-    const option1Include = getSectionInclude(targetFile, targetSection, "option1");
-    const option2Include = getSectionInclude(targetFile, targetSection, "option2");
+    const option1Include = getSectionInclude(
+      targetFile,
+      targetSection,
+      "option1"
+    );
+    const option2Include = getSectionInclude(
+      targetFile,
+      targetSection,
+      "option2"
+    );
 
     if (option1Include) {
       setIsGreeting(false);
@@ -36,14 +44,18 @@ export const HelloSwitch = () => {
   }, [isGreeting, setSectionInclude]);
 
   return (
-    <div className={cn(
-      "flex items-center justify-center gap-4 p-6 rounded-lg",
-      darkMode ? "bg-gray-800" : "bg-gray-50"
-    )}>
-      <span className={cn(
-        "text-sm font-medium",
-        darkMode ? "text-gray-300" : "text-gray-700"
-      )}>
+    <div
+      className={cn(
+        "flex items-center justify-center gap-4 p-6 rounded-lg",
+        darkMode ? "bg-gray-800" : "bg-gray-50"
+      )}
+    >
+      <span
+        className={cn(
+          "text-sm font-medium",
+          darkMode ? "text-gray-300" : "text-gray-700"
+        )}
+      >
         Hello there
       </span>
 
@@ -52,10 +64,14 @@ export const HelloSwitch = () => {
         className={cn(
           "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
           isGreeting === null
-            ? darkMode ? "bg-gray-600" : "bg-gray-300"
+            ? darkMode
+              ? "bg-gray-600"
+              : "bg-gray-300"
             : isGreeting
-            ? "bg-blue-600"
-            : darkMode ? "bg-gray-600" : "bg-gray-400",
+              ? "bg-blue-600"
+              : darkMode
+                ? "bg-gray-600"
+                : "bg-gray-400",
           darkMode && "focus:ring-offset-gray-900"
         )}
         role="switch"
@@ -67,16 +83,18 @@ export const HelloSwitch = () => {
             isGreeting === null
               ? "translate-x-2.5"
               : isGreeting
-              ? "translate-x-5"
-              : "translate-x-0"
+                ? "translate-x-5"
+                : "translate-x-0"
           )}
         />
       </button>
 
-      <span className={cn(
-        "text-sm font-medium",
-        darkMode ? "text-gray-300" : "text-gray-700"
-      )}>
+      <span
+        className={cn(
+          "text-sm font-medium",
+          darkMode ? "text-gray-300" : "text-gray-700"
+        )}
+      >
         Greetings
       </span>
     </div>

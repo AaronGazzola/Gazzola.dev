@@ -5,16 +5,16 @@ import { TestCase, TestSuite } from "@/app/(editor)/layout.types";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
 import { Textarea } from "@/components/editor/ui/textarea";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import {
   ChevronDown,
   ChevronRight,
   ChevronUp,
+  Download,
   Edit,
   Plus,
   RefreshCw,
   Trash2,
-  Download,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -81,7 +81,9 @@ const TestCaseItem = ({
               className="cursor-pointer"
               onClick={() => onUpdate({ isEditing: true })}
             >
-              <div className="theme-text-foreground">{testCase.description}</div>
+              <div className="theme-text-foreground">
+                {testCase.description}
+              </div>
               <div className="flex items-start theme-gap-1 theme-mt-1 theme-text-muted-foreground text-sm">
                 <span>✓</span>
                 <span>{testCase.passCondition}</span>
@@ -164,7 +166,9 @@ const TestSuiteCard = ({
                 />
                 <Textarea
                   value={suite.description}
-                  onChange={(e) => handleUpdate({ description: e.target.value })}
+                  onChange={(e) =>
+                    handleUpdate({ description: e.target.value })
+                  }
                   placeholder="Description"
                   className="theme-shadow"
                   rows={2}
@@ -254,7 +258,8 @@ const TestSuiteCard = ({
           <div className="space-y-2">
             {suite.testCases.length === 0 ? (
               <p className="theme-text-muted-foreground text-sm theme-p-4 text-center">
-                No test cases defined. Click &ldquo;Add Test Case&rdquo; to create one.
+                No test cases defined. Click &ldquo;Add Test Case&rdquo; to
+                create one.
               </p>
             ) : (
               suite.testCases.map((testCase) => (
@@ -289,15 +294,28 @@ const TestIndexHeader = ({
 }) => {
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center theme-gap-2 flex-wrap">
-      <Button variant="default" onClick={onAddSuite} className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10">
+      <Button
+        variant="default"
+        onClick={onAddSuite}
+        className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10"
+      >
         <Plus className="h-3 w-3 md:h-4 md:w-4 theme-mr-1" />
         Add Test Suite
       </Button>
-      <Button variant="outline" onClick={onReset} className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10">
+      <Button
+        variant="outline"
+        onClick={onReset}
+        className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10"
+      >
         <RefreshCw className="h-3 w-3 md:h-4 md:w-4 theme-mr-1" />
         Reset from Features
       </Button>
-      <Button variant="outline" onClick={onGenerate} disabled={isGenerating} className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10">
+      <Button
+        variant="outline"
+        onClick={onGenerate}
+        disabled={isGenerating}
+        className="w-full sm:w-auto text-xs md:text-sm h-9 md:h-10"
+      >
         <Download className="h-3 w-3 md:h-4 md:w-4 theme-mr-1" />
         {isGenerating ? "Generating..." : "Generate Markdown"}
       </Button>
@@ -363,9 +381,9 @@ export const Tests = () => {
 
       {testSuites.length === 0 && (
         <div className="theme-p-8 text-center theme-text-muted-foreground">
-          No test suites defined. Click &ldquo;Reset from Features&rdquo; to generate test
-          suites from your app features, or &ldquo;Add Test Suite&rdquo; to create one
-          manually.
+          No test suites defined. Click &ldquo;Reset from Features&rdquo; to
+          generate test suites from your app features, or &ldquo;Add Test
+          Suite&rdquo; to create one manually.
         </div>
       )}
     </div>

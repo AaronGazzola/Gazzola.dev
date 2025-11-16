@@ -1,5 +1,5 @@
 //-| File path: components/ui/table.tsx
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import * as React from "react";
 
 const Table = React.forwardRef<

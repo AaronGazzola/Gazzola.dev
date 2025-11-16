@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import configuration from "@/configuration";
 import { getBrowserAPI } from "@/lib/env.utils";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import {

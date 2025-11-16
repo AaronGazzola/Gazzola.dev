@@ -17,7 +17,7 @@ import {
 import { Textarea } from "@/components/editor/ui/textarea";
 import { getBrowserAPI } from "@/lib/env.utils";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 import {
   Check,
   ChevronDown,

@@ -23,7 +23,8 @@ import {
   TabsTrigger,
 } from "@/components/editor/ui/tabs";
 import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
-import { ChevronDown, Ellipsis, Lock, Plus, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ChevronDown, Database, Ellipsis, Lock, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SiSupabase } from "react-icons/si";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
@@ -632,13 +633,12 @@ const DatabaseChoicePopover = () => {
   const handleOptionChange = (optionId: string, checked: boolean) => {
     if (!checked) return;
 
-    let useSupabaseValue: "none" | "no" | "withBetterAuth" | "authOnly" =
-      "none";
+    let databaseProvider: "none" | "supabase" | "neondb" | "both" = "none";
     const techUpdates: Partial<typeof initialConfiguration.technologies> = {};
     const featureUpdates: Partial<typeof initialConfiguration.features> = {};
 
     if (optionId === "noDatabase") {
-      useSupabaseValue = "none";
+      databaseProvider = "none";
       techUpdates.supabase = false;
       techUpdates.neondb = false;
       techUpdates.betterAuth = false;
@@ -658,7 +658,7 @@ const DatabaseChoicePopover = () => {
         enabled: false,
       };
     } else if (optionId === "neondb") {
-      useSupabaseValue = "no";
+      databaseProvider = "neondb";
       techUpdates.neondb = true;
       techUpdates.betterAuth = true;
       techUpdates.prisma = true;
@@ -670,14 +670,14 @@ const DatabaseChoicePopover = () => {
         enabled: false,
       };
     } else if (optionId === "supabaseWithBetter") {
-      useSupabaseValue = "withBetterAuth";
+      databaseProvider = "supabase";
       techUpdates.supabase = true;
       techUpdates.betterAuth = true;
       techUpdates.prisma = true;
       techUpdates.postgresql = true;
       techUpdates.neondb = false;
     } else if (optionId === "supabaseOnly") {
-      useSupabaseValue = "authOnly";
+      databaseProvider = "supabase";
       techUpdates.supabase = true;
       techUpdates.prisma = true;
       techUpdates.postgresql = true;
@@ -693,13 +693,13 @@ const DatabaseChoicePopover = () => {
     updateInitialConfiguration({
       questions: {
         ...initialConfiguration.questions,
-        useSupabase: useSupabaseValue,
+        databaseProvider,
       },
       database: {
         hosting:
-          useSupabaseValue === "none"
+          databaseProvider === "none"
             ? "postgresql"
-            : useSupabaseValue === "no"
+            : databaseProvider === "neondb"
               ? "neondb"
               : "supabase",
       },
@@ -717,13 +717,13 @@ const DatabaseChoicePopover = () => {
   };
 
   const getCurrentSelectionBadges = () => {
-    const useSupabase = initialConfiguration.questions.useSupabase;
+    const databaseProvider = initialConfiguration.questions.databaseProvider;
 
-    if (useSupabase === "none") {
+    if (databaseProvider === "none") {
       return <span className="theme-text-muted-foreground text-xs">None</span>;
     }
 
-    if (useSupabase === "no") {
+    if (databaseProvider === "neondb") {
       return (
         <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 rounded-full text-xs font-semibold border">
           <BetterAuthIcon className="w-3 h-3" />
@@ -732,7 +732,7 @@ const DatabaseChoicePopover = () => {
       );
     }
 
-    if (useSupabase === "withBetterAuth") {
+    if (databaseProvider === "both" || (databaseProvider === "supabase" && initialConfiguration.technologies.betterAuth)) {
       return (
         <div className="flex items-center theme-gap-1">
           <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 rounded-full text-xs font-semibold border">
@@ -748,37 +748,17 @@ const DatabaseChoicePopover = () => {
       );
     }
 
-    return (
-      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 rounded-full text-xs font-semibold border">
-        <SiSupabase className="w-3 h-3" />
-        <span>Supabase</span>
-      </div>
-    );
-  };
+    if (databaseProvider === "supabase") {
+      return (
+        <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 rounded-full text-xs font-semibold border">
+          <SiSupabase className="w-3 h-3" />
+          <span>Supabase</span>
+        </div>
+      );
+    }
 
-  const options = [
-    {
-      id: "noDatabase",
-      label: "No, I don't need any custom backend logic",
-      description: "No database or authentication functionality",
-    },
-    {
-      id: "neondb",
-      label: "Yes, I want to use NeonDB with Better-auth for authentication",
-      description: "Cheaper, more restrictive",
-    },
-    {
-      id: "supabaseWithBetter",
-      label: "Yes, I want to use Supabase with Better-Auth for authentication",
-      description: "More options for authentication and integration",
-    },
-    {
-      id: "supabaseOnly",
-      label: "Yes, use only Supabase for authentication",
-      description:
-        "Fewer options for authentication and integration, but better for compliance and audit requirements",
-    },
-  ];
+    return null;
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -793,55 +773,127 @@ const DatabaseChoicePopover = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[32rem] theme-p-4 theme-shadow"
+        className="w-auto max-w-2xl theme-p-4 theme-shadow"
         align="start"
       >
         <div className="flex flex-col theme-gap-3">
           <div>
             <h4 className="font-semibold theme-mb-1">
-              Do you want to use a database?
+              Do you need a database?
             </h4>
             <p className="text-xs theme-text-muted-foreground">
               Choose your database and authentication provider.
             </p>
           </div>
-          <div className="flex flex-col theme-gap-2">
-            {options.map((option) => {
-              const isChecked =
-                (option.id === "noDatabase" &&
-                  initialConfiguration.questions.useSupabase === "none") ||
-                (option.id === "neondb" &&
-                  initialConfiguration.questions.useSupabase === "no") ||
-                (option.id === "supabaseWithBetter" &&
-                  initialConfiguration.questions.useSupabase ===
-                    "withBetterAuth") ||
-                (option.id === "supabaseOnly" &&
-                  initialConfiguration.questions.useSupabase === "authOnly");
+          <div className="flex flex-col xs:flex-row theme-gap-3">
+            <div
+              onClick={() => {
+                const currentSupabase = initialConfiguration.technologies.supabase;
+                const techUpdates: Partial<typeof initialConfiguration.technologies> = {};
+                const featureUpdates: Partial<typeof initialConfiguration.features> = {};
 
-              return (
-                <label
-                  key={option.id}
-                  className="flex items-start theme-gap-2 cursor-pointer"
-                >
-                  <Checkbox
-                    checked={isChecked}
-                    onCheckedChange={(checked) =>
-                      handleOptionChange(option.id, checked === true)
-                    }
-                    className="size-4 mt-0.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
-                  />
-                  <div>
-                    <span className="theme-text-foreground text-sm font-medium block">
-                      {option.label}
-                    </span>
-                    <span className="theme-text-muted-foreground text-xs block theme-mt-0.5 font-medium">
-                      {option.description}
-                    </span>
-                  </div>
-                </label>
-              );
-            })}
+                techUpdates.supabase = !currentSupabase;
+                techUpdates.prisma = !currentSupabase || initialConfiguration.technologies.betterAuth;
+                techUpdates.postgresql = !currentSupabase || initialConfiguration.technologies.betterAuth;
+
+                if (!currentSupabase && !initialConfiguration.technologies.betterAuth) {
+                  techUpdates.neondb = false;
+                }
+
+                const newProvider = !currentSupabase
+                  ? (initialConfiguration.technologies.betterAuth ? "both" : "supabase")
+                  : (initialConfiguration.technologies.betterAuth ? "neondb" : "none");
+
+                updateInitialConfiguration({
+                  questions: {
+                    ...initialConfiguration.questions,
+                    databaseProvider: newProvider,
+                  },
+                  database: {
+                    hosting: !currentSupabase ? "supabase" : (initialConfiguration.technologies.betterAuth ? "neondb" : "postgresql"),
+                  },
+                  technologies: {
+                    ...initialConfiguration.technologies,
+                    ...techUpdates,
+                  },
+                  features: {
+                    ...initialConfiguration.features,
+                    ...featureUpdates,
+                  },
+                });
+                setOpen(false);
+              }}
+              className={cn(
+                "theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-4 cursor-pointer transition-all hover:theme-bg-accent flex-1 relative",
+                initialConfiguration.technologies.supabase && "border-white"
+              )}
+            >
+              <Checkbox
+                checked={initialConfiguration.technologies.supabase}
+                className="size-6 border-2 border-white/30 dark:border-black/30 data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none absolute top-2 right-2"
+              />
+              <div className="flex flex-col items-center theme-gap-2 text-center">
+                <SiSupabase className="w-12 h-12 theme-text-foreground" />
+                <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">Supabase</h4>
+              </div>
+            </div>
+
+            <div
+              onClick={() => {
+                const currentBetterAuth = initialConfiguration.technologies.betterAuth;
+                const techUpdates: Partial<typeof initialConfiguration.technologies> = {};
+                const featureUpdates: Partial<typeof initialConfiguration.features> = {};
+
+                techUpdates.betterAuth = !currentBetterAuth;
+                techUpdates.neondb = !currentBetterAuth && !initialConfiguration.technologies.supabase;
+                techUpdates.prisma = !currentBetterAuth || initialConfiguration.technologies.supabase;
+                techUpdates.postgresql = !currentBetterAuth || initialConfiguration.technologies.supabase;
+
+                const newProvider = !currentBetterAuth
+                  ? (initialConfiguration.technologies.supabase ? "both" : "neondb")
+                  : (initialConfiguration.technologies.supabase ? "supabase" : "none");
+
+                updateInitialConfiguration({
+                  questions: {
+                    ...initialConfiguration.questions,
+                    databaseProvider: newProvider,
+                  },
+                  database: {
+                    hosting: !currentBetterAuth
+                      ? (initialConfiguration.technologies.supabase ? "supabase" : "neondb")
+                      : (initialConfiguration.technologies.supabase ? "supabase" : "postgresql"),
+                  },
+                  technologies: {
+                    ...initialConfiguration.technologies,
+                    ...techUpdates,
+                  },
+                  features: {
+                    ...initialConfiguration.features,
+                    ...featureUpdates,
+                  },
+                });
+                setOpen(false);
+              }}
+              className={cn(
+                "theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-4 cursor-pointer transition-all hover:theme-bg-accent flex-1 relative",
+                initialConfiguration.technologies.betterAuth && "border-white"
+              )}
+            >
+              <Checkbox
+                checked={initialConfiguration.technologies.betterAuth}
+                className="size-6 border-2 border-white/30 dark:border-black/30 data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none absolute top-2 right-2"
+              />
+              <div className="flex flex-col items-center theme-gap-2 text-center">
+                <BetterAuthIcon className="w-12 h-12 theme-text-foreground" />
+                <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">Better Auth</h4>
+              </div>
+            </div>
           </div>
+          {!initialConfiguration.technologies.supabase && !initialConfiguration.technologies.betterAuth && (
+            <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+              No database required, this app is front-end only
+            </p>
+          )}
         </div>
       </PopoverContent>
     </Popover>
@@ -852,7 +904,7 @@ const RoleAccessPopover = () => {
   const { initialConfiguration, updateAdminOption } = useEditorStore();
   const [open, setOpen] = useState(false);
 
-  const isDisabled = initialConfiguration.questions.useSupabase === "none";
+  const isDisabled = initialConfiguration.questions.databaseProvider === "none";
 
   const getCurrentSelectionBadges = () => {
     const admin = initialConfiguration.features.admin;
@@ -897,7 +949,7 @@ const RoleAccessPopover = () => {
       label: "Organizations",
       description:
         "Enable organization-based access with org-admin and org-member roles",
-      disabled: initialConfiguration.questions.useSupabase === "authOnly",
+      disabled: !initialConfiguration.technologies.betterAuth,
     },
   ];
 
@@ -986,7 +1038,7 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
   const { initialConfiguration } = useEditorStore();
 
   const isSupabaseAuthOnly =
-    initialConfiguration.questions.useSupabase === "authOnly";
+    !initialConfiguration.technologies.betterAuth;
   const isAuthSchema = table.schema === "auth";
 
   if (isSupabaseAuthOnly && isAuthSchema) {
@@ -1043,12 +1095,12 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
   const { initialConfiguration } = useEditorStore();
 
   const authProvider =
-    initialConfiguration.questions.useSupabase === "authOnly"
+    !initialConfiguration.technologies.betterAuth
       ? "Supabase"
       : "Better Auth";
   const isAuthSchema = table.schema === "auth";
 
-  const enabledRoles: import("./DatabaseConfiguration.types").UserRole[] = [];
+  const enabledRoles: import("./DatabaseConfiguration.types").UserRole[] = ["user"];
   if (initialConfiguration.features.admin.admin) enabledRoles.push("admin");
   if (initialConfiguration.features.admin.superAdmin)
     enabledRoles.push("super-admin");
@@ -1074,16 +1126,6 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
     );
   }
 
-  if (enabledRoles.length === 0) {
-    return (
-      <div className="flex flex-col theme-p-4 theme-gap-2">
-        <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
-          No user roles configured. Configure roles in the initial configuration
-          to define RLS policies.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-stretch theme-gap-3 theme-p-4">
@@ -1226,7 +1268,7 @@ export const DatabaseConfiguration = () => {
     initialConfiguration.features.admin.admin,
     initialConfiguration.features.admin.superAdmin,
     initialConfiguration.features.admin.organizations,
-    initialConfiguration.questions.useSupabase,
+    initialConfiguration.questions.databaseProvider,
     initializeFromConfig,
     initialConfiguration,
   ]);
@@ -1236,7 +1278,7 @@ export const DatabaseConfiguration = () => {
   }, [initialConfiguration, setSectionInclude]);
 
   const isNoDatabaseSelected =
-    initialConfiguration.questions.useSupabase === "none";
+    initialConfiguration.questions.databaseProvider === "none";
 
   const filteredTables = tables.filter((t) => t.schema === selectedSchema);
 
@@ -1343,8 +1385,7 @@ export const DatabaseConfiguration = () => {
                           value: schema,
                           label:
                             schema === "auth" &&
-                            initialConfiguration.questions.useSupabase ===
-                              "authOnly" ? (
+                            !initialConfiguration.technologies.betterAuth ? (
                               <div className="flex items-center theme-gap-1">
                                 <Lock className="h-3 w-3" />
                                 <span>{schema}</span>
@@ -1438,8 +1479,7 @@ export const DatabaseConfiguration = () => {
                     <EditableSelect
                       value={selectedTableId || ""}
                       options={[
-                        ...(initialConfiguration.questions.useSupabase ===
-                          "authOnly" && selectedSchema === "auth"
+                        ...(!initialConfiguration.technologies.betterAuth && selectedSchema === "auth"
                           ? [
                               {
                                 value: "locked",

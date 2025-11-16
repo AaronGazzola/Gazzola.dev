@@ -1,5 +1,5 @@
 //-| File path: components/ui/skeleton.tsx
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 
 function Skeleton({
   className,

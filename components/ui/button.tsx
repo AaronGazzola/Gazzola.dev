@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { getBackgroundStyle, useThemeStore } from "@/app/layout.stores";
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[0.375rem] text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",

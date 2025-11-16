@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@/lib/tailwind.utils";
+import { cn } from "@/lib/utils";
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -35,7 +35,10 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("font-semibold leading-none tracking-tight theme-font-sans theme-tracking", className)}
+    className={cn(
+      "font-semibold leading-none tracking-tight theme-font-sans theme-tracking",
+      className
+    )}
     {...props}
   />
 ));
@@ -47,7 +50,10 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm theme-text-muted-foreground theme-font-sans theme-tracking", className)}
+    className={cn(
+      "text-sm theme-text-muted-foreground theme-font-sans theme-tracking",
+      className
+    )}
     {...props}
   />
 ));
