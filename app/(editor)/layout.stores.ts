@@ -695,13 +695,17 @@ export const useEditorStore = create<EditorState>()(
             [optionId]: enabled,
           };
 
-          if (enabled) {
-            const hasEmailAuth = newAuthConfig.magicLink ||
-              newAuthConfig.emailPassword ||
-              newAuthConfig.otp;
-            if (hasEmailAuth) {
-              techUpdates.resend = true;
-            }
+          const hasEmailAuth = newAuthConfig.magicLink ||
+            newAuthConfig.emailPassword ||
+            newAuthConfig.otp;
+
+          const hasEmailNotifications = state.initialConfiguration.features.realTimeNotifications.enabled &&
+            state.initialConfiguration.features.realTimeNotifications.emailNotifications;
+
+          if (hasEmailAuth || hasEmailNotifications) {
+            techUpdates.resend = true;
+          } else {
+            techUpdates.resend = false;
           }
 
           const newFeatures = {
@@ -788,19 +792,32 @@ export const useEditorStore = create<EditorState>()(
             shadcn: true,
           };
 
-          if (enabled) {
-            if (optionId === "stripePayments" || optionId === "stripeSubscriptions") {
-              if (!state.initialConfiguration.technologies.betterAuth && optionId === "stripeSubscriptions") {
-                return state;
-              }
-              techUpdates.stripe = true;
-              if (optionId === "stripeSubscriptions") {
-                techUpdates.betterAuth = true;
-              }
+          const newPaymentConfig = {
+            ...state.initialConfiguration.features.payments,
+            [optionId]: enabled,
+          };
+
+          const hasStripePayments = newPaymentConfig.stripePayments || newPaymentConfig.stripeSubscriptions;
+          const hasPaypalPayments = newPaymentConfig.paypalPayments;
+          const hasStripeSubscriptions = newPaymentConfig.stripeSubscriptions;
+
+          if (hasStripePayments) {
+            if (!state.initialConfiguration.technologies.betterAuth && hasStripeSubscriptions && enabled && optionId === "stripeSubscriptions") {
+              return state;
             }
-            if (optionId === "paypalPayments") {
-              techUpdates.paypal = true;
-            }
+            techUpdates.stripe = true;
+          } else {
+            techUpdates.stripe = false;
+          }
+
+          if (hasStripeSubscriptions) {
+            techUpdates.betterAuth = true;
+          }
+
+          if (hasPaypalPayments) {
+            techUpdates.paypal = true;
+          } else {
+            techUpdates.paypal = false;
           }
 
           return {
@@ -810,9 +827,8 @@ export const useEditorStore = create<EditorState>()(
               features: {
                 ...state.initialConfiguration.features,
                 payments: {
-                  ...state.initialConfiguration.features.payments,
+                  ...newPaymentConfig,
                   enabled: true,
-                  [optionId]: enabled,
                 },
               },
             },
@@ -860,11 +876,25 @@ export const useEditorStore = create<EditorState>()(
             shadcn: true,
           };
 
+          const newRealTimeConfig = {
+            ...state.initialConfiguration.features.realTimeNotifications,
+            [optionId]: enabled,
+          };
+
           if (enabled) {
             techUpdates.supabase = true;
-            if (optionId === "emailNotifications") {
-              techUpdates.resend = true;
-            }
+          }
+
+          const hasEmailAuth = state.initialConfiguration.features.authentication.magicLink ||
+            state.initialConfiguration.features.authentication.emailPassword ||
+            state.initialConfiguration.features.authentication.otp;
+
+          const hasEmailNotifications = newRealTimeConfig.emailNotifications;
+
+          if (hasEmailAuth || hasEmailNotifications) {
+            techUpdates.resend = true;
+          } else {
+            techUpdates.resend = false;
           }
 
           const hasDatabaseFunctionality =
@@ -885,9 +915,8 @@ export const useEditorStore = create<EditorState>()(
               features: {
                 ...state.initialConfiguration.features,
                 realTimeNotifications: {
-                  ...state.initialConfiguration.features.realTimeNotifications,
+                  ...newRealTimeConfig,
                   enabled: true,
-                  [optionId]: enabled,
                 },
               },
             },

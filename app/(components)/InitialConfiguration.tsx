@@ -1298,7 +1298,7 @@ export const InitialConfiguration = () => {
                                       <div
                                         key={techId}
                                         className={cn(
-                                          "theme-radius theme-shadow flex items-center theme-gap-0.5 md:theme-gap-1 theme-px-1 md:theme-px-1\.5 theme-py-0\.5 text-[10px] md:text-xs font-medium border theme-font-sans theme-tracking",
+                                          "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 text-xs font-medium border theme-font-sans theme-tracking",
                                           !isAvailable
                                             ? "theme-bg-muted theme-text-muted-foreground theme-border-border line-through opacity-50"
                                             : isBadgeActive
@@ -1306,10 +1306,8 @@ export const InitialConfiguration = () => {
                                               : "theme-bg-secondary theme-text-secondary-foreground theme-border-border"
                                         )}
                                       >
-                                        <Icon className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                                        <span className="hidden sm:inline">
-                                          {tech.name}
-                                        </span>
+                                        <Icon className="w-3 h-3" />
+                                        <span>{tech.name}</span>
                                       </div>
                                     );
                                   })}
