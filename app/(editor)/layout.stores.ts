@@ -1184,6 +1184,7 @@ export const useEditorStore = create<EditorState>()(
             title: "",
             description: "",
             linkedFiles: {},
+            functionNames: {},
             isEditing: true,
           };
 

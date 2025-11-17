@@ -351,6 +351,7 @@ export interface Feature {
   title: string;
   description: string;
   linkedFiles: Partial<Record<UserExperienceFileType, string>>;
+  functionNames: Partial<Record<UserExperienceFileType, string>>;
   isEditing: boolean;
 }
 

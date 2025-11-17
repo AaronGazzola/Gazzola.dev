@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import { getBrowserAPI } from "@/lib/env.utils";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ import {
   FolderOpen,
   LayoutTemplate,
   Plus,
+  RotateCcw,
   Save,
   Trash2,
 } from "lucide-react";
@@ -65,7 +67,7 @@ const useScreenSize = (): ScreenSize => {
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
-const PAGE_FILE_ICON = "text-[var(--theme-chart-1)]";
+const PAGE_FILE_ICON = "theme-text-chart-4";
 
 const getFileExtension = (
   fileType: UserExperienceFileType,
@@ -403,14 +405,37 @@ const LAYOUT_COLORS = [
     icon: "theme-text-chart-5",
   },
   {
-    border: "theme-border-chart-2",
-    icon: "theme-text-chart-2",
+    border: "theme-border-destructive",
+    icon: "theme-text-destructive",
   },
   {
-    border: "theme-border-chart-3",
-    icon: "theme-text-chart-3",
+    border: "theme-border-primary",
+    icon: "theme-text-primary",
   },
 ];
+
+const generateDefaultFunctionName = (
+  featureTitle: string,
+  fileType: UserExperienceFileType
+): string => {
+  const pascalCase = featureTitle
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("");
+
+  const camelCase = pascalCase.charAt(0).toLowerCase() + pascalCase.slice(1);
+
+  switch (fileType) {
+    case "stores":
+      return `use${pascalCase}Store`;
+    case "hooks":
+      return `use${pascalCase}`;
+    case "actions":
+      return `${camelCase}Action`;
+    case "types":
+      return `${pascalCase}Data`;
+  }
+};
 
 const isQualifyingFile = (
   fileName: string,
@@ -540,10 +565,21 @@ const InlineFeatureCard = ({
     featureFileSelection,
   } = useEditorStore();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [expandedUtilType, setExpandedUtilType] =
+    useState<UserExperienceFileType | null>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isCollapsed && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [isCollapsed]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      (e.target as HTMLInputElement).blur();
     }
   };
 
@@ -553,6 +589,19 @@ const InlineFeatureCard = ({
     "actions",
     "types",
   ];
+
+  const getUtilLabel = (fileType: UserExperienceFileType): string => {
+    switch (fileType) {
+      case "stores":
+        return "Store";
+      case "hooks":
+        return "Hook";
+      case "actions":
+        return "Action";
+      case "types":
+        return "Type";
+    }
+  };
 
   const handlePlaceholderClick = (fileType: UserExperienceFileType) => {
     const linkedFile = feature.linkedFiles[fileType];
@@ -585,6 +634,34 @@ const InlineFeatureCard = ({
     unlinkFeatureFile(fileId, feature.id, fileType);
   };
 
+  const getDefaultFunctionName = (fileType: UserExperienceFileType): string => {
+    const customName = feature.functionNames?.[fileType];
+    if (customName) return customName;
+    return generateDefaultFunctionName(feature.title || "Untitled", fileType);
+  };
+
+  const handleFunctionNameChange = (
+    fileType: UserExperienceFileType,
+    newName: string
+  ) => {
+    updateFeature(fileId, feature.id, {
+      functionNames: {
+        ...feature.functionNames,
+        [fileType]: newName,
+      },
+    });
+  };
+
+  const handleResetFunctionName = (fileType: UserExperienceFileType) => {
+    const defaultName = generateDefaultFunctionName(feature.title || "Untitled", fileType);
+    updateFeature(fileId, feature.id, {
+      functionNames: {
+        ...feature.functionNames,
+        [fileType]: defaultName,
+      },
+    });
+  };
+
   return (
     <div className="theme-bg-muted/50 theme-radius theme-p-2 theme-border-border border">
       {isCollapsed ? (
@@ -601,6 +678,7 @@ const InlineFeatureCard = ({
         <>
           <div className="flex items-start justify-between theme-gap-2 theme-mb-2">
             <Input
+              ref={titleInputRef}
               value={feature.title}
               onChange={(e) =>
                 updateFeature(fileId, feature.id, { title: e.target.value })
@@ -669,41 +747,118 @@ const InlineFeatureCard = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 theme-gap-2">
+          <div className="flex flex-col theme-gap-2">
             {fileTypes.map((fileType) => {
               const linkedFile = feature.linkedFiles[fileType];
-              const isActiveBadge =
-                featureFileSelection.featureId === feature.id &&
-                featureFileSelection.fileType === fileType;
+              const functionName = getDefaultFunctionName(fileType);
+              const isExpanded = expandedUtilType === fileType;
+
               return (
                 <div
                   key={fileType}
                   className={cn(
-                    "text-xs theme-font-mono theme-px-2 theme-py-1 theme-radius border transition-colors flex items-center theme-gap-1 cursor-pointer",
-                    isActiveBadge && linkedFile
-                      ? "theme-bg-background border-green-500 hover:theme-bg-accent"
-                      : isActiveBadge && !linkedFile
-                        ? "theme-bg-background border-2 border-dashed theme-border-primary hover:theme-bg-accent"
-                        : linkedFile
-                          ? "theme-bg-background theme-border-border hover:theme-bg-accent"
-                          : "border-dashed theme-border-muted-foreground/30 theme-bg-background/50 hover:theme-bg-accent/50"
+                    "theme-bg-background theme-radius border transition-all",
+                    isExpanded
+                      ? linkedFile
+                        ? "border-green-500"
+                        : "border-2 border-dashed theme-border-chart-2"
+                      : linkedFile
+                        ? "border-green-500"
+                        : "theme-border-border"
                   )}
-                  onClick={() => {
-                    conditionalLog(
-                      {
-                        message: "Badge onClick triggered (edit mode)",
-                        fileType,
-                        linkedFile,
-                      },
-                      { label: LOG_LABELS.APP_STRUCTURE }
-                    );
-                    handlePlaceholderClick(fileType);
-                  }}
                 >
-                  <span className="theme-text-foreground capitalize">
-                    {fileType}
-                  </span>
-                  {linkedFile && <Check className="h-3 w-3 text-green-500" />}
+                  <div
+                    className="flex items-center justify-between theme-px-2 theme-py-1.5 cursor-pointer hover:theme-bg-accent transition-colors select-none"
+                    onClick={() => {
+                      if (isExpanded) {
+                        setExpandedUtilType(null);
+                        clearFeatureFileSelection();
+                      } else {
+                        setExpandedUtilType(fileType);
+                        handlePlaceholderClick(fileType);
+                      }
+                    }}
+                  >
+                    <span className="text-xs font-medium theme-text-foreground">
+                      {getUtilLabel(fileType)}
+                    </span>
+                    <div className="flex items-center theme-gap-1">
+                      {linkedFile && (
+                        <Check className="h-3 w-3 text-green-500" />
+                      )}
+                      {isExpanded ? (
+                        <ChevronUp className="h-3 w-3" />
+                      ) : (
+                        <ChevronDown className="h-3 w-3" />
+                      )}
+                    </div>
+                  </div>
+
+                  {isExpanded && (
+                    <div className="theme-px-2 theme-pb-2 theme-pt-1 flex flex-col theme-gap-2 border-t theme-border-border">
+                      <div className="flex items-center theme-gap-1">
+                        <Input
+                          value={functionName}
+                          onChange={(e) =>
+                            handleFunctionNameChange(fileType, e.target.value)
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={handleKeyDown}
+                          placeholder={`Function name`}
+                          className="h-7 text-xs theme-shadow theme-font-mono flex-1"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 flex-shrink-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleResetFunctionName(fileType);
+                          }}
+                          title="Reset to default name"
+                        >
+                          <RotateCcw className="h-2.5 w-2.5" />
+                        </Button>
+                      </div>
+
+                      <div className="flex items-center theme-gap-1">
+                        {linkedFile ? (
+                          <div
+                            className="text-xs theme-font-mono theme-text-foreground theme-px-2 theme-py-1 theme-bg-muted theme-radius cursor-pointer hover:theme-bg-accent transition-colors truncate flex-1 border border-green-500"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePlaceholderClick(fileType);
+                            }}
+                          >
+                            {linkedFile.split("/").slice(-2).join("/")}
+                          </div>
+                        ) : (
+                          <div
+                            className="text-xs theme-text-muted-foreground theme-px-2 theme-py-1 theme-bg-muted/50 theme-radius cursor-pointer hover:theme-bg-accent/50 transition-colors border border-dashed theme-border-muted-foreground/30 flex-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePlaceholderClick(fileType);
+                            }}
+                          >
+                            Select a {getUtilLabel(fileType).toLowerCase()} file
+                          </div>
+                        )}
+                        {linkedFile && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 flex-shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUnlinkFile(fileType, e);
+                            }}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -2228,6 +2383,40 @@ const TreeNode = ({
 
   const features = isClickableFile && node.id ? getFeatures(node.id) : [];
 
+  const checkLinkedFeatureInfo = (): { showBorder: boolean; isLinked: boolean } => {
+    if (isClickableFile) return { showBorder: false, isLinked: false };
+    if (!isInSelectionMode) return { showBorder: false, isLinked: false };
+
+    const getAllFeaturesWithFileId = (entries: FileSystemEntry[]): Array<{ feature: Feature; fileId: string }> => {
+      let allFeatures: Array<{ feature: Feature; fileId: string }> = [];
+      for (const entry of entries) {
+        if ((entry.name === "page.tsx" || entry.name === "layout.tsx") && entry.id) {
+          const features = getFeatures(entry.id);
+          allFeatures = [...allFeatures, ...features.map(f => ({ feature: f, fileId: entry.id }))];
+        }
+        if (entry.children) {
+          allFeatures = [...allFeatures, ...getAllFeaturesWithFileId(entry.children)];
+        }
+      }
+      return allFeatures;
+    };
+
+    const allFeatures = getAllFeaturesWithFileId(appStructure);
+    for (const { feature, fileId } of allFeatures) {
+      if (!featureFileSelection.fileType) continue;
+
+      const linkedFile = feature.linkedFiles[featureFileSelection.fileType];
+      if (linkedFile === currentFilePath &&
+          featureFileSelection.fileId === fileId &&
+          featureFileSelection.featureId === feature.id) {
+        return { showBorder: true, isLinked: true };
+      }
+    }
+    return { showBorder: false, isLinked: false };
+  };
+
+  const linkedFeatureInfo = checkLinkedFeatureInfo();
+
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -2283,6 +2472,13 @@ const TreeNode = ({
       }
     }
   };
+
+  const isUtilityFile = node.type === "file" && (
+    node.name.endsWith(".stores.ts") ||
+    node.name.endsWith(".hooks.tsx") ||
+    node.name.endsWith(".actions.ts") ||
+    node.name.endsWith(".types.ts")
+  );
 
   const getFileIconColor = (): string => {
     if (isPageFile) {
@@ -2417,11 +2613,20 @@ const TreeNode = ({
         });
 
         if (layoutIndex !== -1) {
-          return LAYOUT_COLORS[layoutIndex % LAYOUT_COLORS.length].icon;
+          return LAYOUT_COLORS[0].icon;
         }
       }
     }
+    if (isUtilityFile) {
+      return "theme-text-chart-2";
+    }
     return "";
+  };
+
+  const getFileBorderColor = (): string => {
+    const iconColor = getFileIconColor();
+    if (!iconColor) return "theme-border-foreground";
+    return iconColor.replace("theme-text-", "theme-border-");
   };
 
   const getTreeChar = () => {
@@ -2526,12 +2731,66 @@ const TreeNode = ({
     (opt) => !utilityFiles.includes(opt)
   );
 
+  const hasPageFile = node.children?.some((child) => child.name === "page.tsx");
+  const hasLayoutFile = node.children?.some((child) => child.name === "layout.tsx");
+
+  const pageRelatedFiles = {
+    "page.stores.ts": node.children?.some((child) => child.name === "page.stores.ts"),
+    "page.hooks.tsx": node.children?.some((child) => child.name === "page.hooks.tsx"),
+    "page.actions.ts": node.children?.some((child) => child.name === "page.actions.ts"),
+    "page.types.ts": node.children?.some((child) => child.name === "page.types.ts"),
+  };
+
+  const layoutRelatedFiles = {
+    "layout.stores.ts": node.children?.some((child) => child.name === "layout.stores.ts"),
+    "layout.hooks.tsx": node.children?.some((child) => child.name === "layout.hooks.tsx"),
+    "layout.actions.ts": node.children?.some((child) => child.name === "layout.actions.ts"),
+    "layout.types.ts": node.children?.some((child) => child.name === "layout.types.ts"),
+  };
+
+  const handleFileToggle = (fileName: string, isChecked: boolean) => {
+    if (isChecked) {
+      if (onAddSpecificFile) {
+        onAddSpecificFile(node.id, fileName);
+      }
+    } else {
+      const childToDelete = node.children?.find((child) => child.name === fileName);
+      if (childToDelete) {
+        onDelete(childToDelete.id);
+      }
+    }
+  };
+
+  const handleRootFileToggle = (rootFileName: string, relatedFiles: Record<string, boolean | undefined>) => {
+    const hasRootFile = node.children?.some((child) => child.name === rootFileName);
+
+    if (hasRootFile) {
+      const childToDelete = node.children?.find((child) => child.name === rootFileName);
+      if (childToDelete) {
+        onDelete(childToDelete.id);
+      }
+
+      Object.keys(relatedFiles).forEach((fileName) => {
+        if (relatedFiles[fileName]) {
+          const relatedChild = node.children?.find((child) => child.name === fileName);
+          if (relatedChild) {
+            onDelete(relatedChild.id);
+          }
+        }
+      });
+    } else {
+      if (onAddSpecificFile) {
+        onAddSpecificFile(node.id, rootFileName);
+      }
+    }
+  };
+
   return (
     <div
       className={cn(
         isClickableFile &&
           isExpanded &&
-          "border-2 border-dashed theme-border-primary theme-radius theme-p-1"
+          `border ${getFileBorderColor()} theme-radius theme-p-1`
       )}
     >
       <div
@@ -2543,11 +2802,12 @@ const TreeNode = ({
           isInSelectionMode &&
             selectedFilePath === currentFilePath &&
             !isClickableFile &&
-            "border border-green-500",
+            "border theme-border-chart-2",
           isQualified &&
             isInSelectionMode &&
             selectedFilePath !== currentFilePath &&
-            "border-2 border-dashed theme-border-chart-4 theme-bg-accent/20 cursor-pointer"
+            "border-2 border-dashed theme-border-chart-4 theme-bg-accent/20 cursor-pointer",
+          linkedFeatureInfo.showBorder && linkedFeatureInfo.isLinked && "border border-green-500"
         )}
         onClick={handleRowClick}
       >
@@ -2560,15 +2820,15 @@ const TreeNode = ({
         <div className="flex items-center theme-spacing flex-1 min-w-0 theme-px theme-gap-2">
           {node.type === "directory" ? (
             node.isExpanded ? (
-              <FolderOpen className="h-4 w-4 flex-shrink-0 theme-text-chart-2" />
+              <FolderOpen className="h-4 w-4 flex-shrink-0 theme-text-chart-1" />
             ) : (
-              <Folder className="h-4 w-4 flex-shrink-0 theme-text-chart-2" />
+              <Folder className="h-4 w-4 flex-shrink-0 theme-text-chart-1" />
             )
           ) : (
             <File
               className={cn(
-                "h-4 w-4 flex-shrink-0 theme-text-chart-3",
-                getFileIconColor(),
+                "h-4 w-4 flex-shrink-0",
+                getFileIconColor() || "theme-text-chart-3",
                 isPageFile && "cursor-pointer hover:opacity-70"
               )}
               onClick={(e) => {
@@ -2602,75 +2862,30 @@ const TreeNode = ({
               >
                 {node.name}
               </span>
-              {isInSelectionMode && selectedFilePath === currentFilePath && (
-                <Check className="h-3 w-3 flex-shrink-0 text-green-500 theme-ml-1" />
-              )}
-            </>
-          )}
-
-          {isClickableFile && (
-            <>
-              <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-                <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                    <Ellipsis className="h-3 w-3" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border"
-                  align="start"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex flex-col theme-gap-1">
-                    {remainingOptions.map((option) => (
-                      <Button
-                        key={option}
-                        variant="ghost"
-                        size="sm"
-                        className="justify-start theme-gap-2 theme-shadow"
-                        onClick={() => handleAddUtilityFile(option)}
-                      >
-                        <Plus className="h-3 w-3 theme-text-chart-4" />
-                        <span>{option}</span>
-                      </Button>
-                    ))}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="justify-start theme-gap-2 theme-shadow"
-                      onClick={() => {
-                        onDelete(node.id);
-                        setPopoverOpen(false);
-                      }}
-                    >
-                      <Trash2 className="h-3 w-3 theme-text-destructive" />
-                      <span>Delete</span>
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 ml-auto"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (setExpandedFileId) {
-                    if (isExpanded) {
-                      clearFeatureFileSelection();
-                      setExpandedFileId(null);
-                    } else {
-                      setExpandedFileId(node.id);
+              {isClickableFile && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (setExpandedFileId) {
+                      if (isExpanded) {
+                        clearFeatureFileSelection();
+                        setExpandedFileId(null);
+                      } else {
+                        setExpandedFileId(node.id);
+                      }
                     }
-                  }
-                }}
-              >
-                {isExpanded ? (
-                  <ChevronUp className="h-3 w-3" />
-                ) : (
-                  <ChevronDown className="h-3 w-3" />
-                )}
-              </Button>
+                  }}
+                >
+                  {isExpanded ? (
+                    <ChevronUp className="h-3 w-3" />
+                  ) : (
+                    <ChevronDown className="h-3 w-3" />
+                  )}
+                </Button>
+              )}
             </>
           )}
 
@@ -2685,69 +2900,123 @@ const TreeNode = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent
-                className="w-48 theme-p-2 theme-shadow theme-bg-popover theme-border-border theme-font-mono theme-tracking"
+                className="w-56 theme-p-2 theme-shadow theme-bg-popover theme-border-border theme-font-mono theme-tracking"
                 align="start"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex flex-col theme-gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
-                    onClick={() => {
-                      if (onAddSpecificFile) {
-                        onAddSpecificFile(node.id, "page.tsx");
-                      }
-                      setDirectoryPopoverOpen(false);
-                    }}
-                    disabled={node.children?.some(
-                      (child) => child.name === "page.tsx"
-                    )}
-                  >
-                    <Plus className="h-3 w-3 theme-text-chart-1" />
-                    <span>page.tsx</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
-                    onClick={() => {
-                      if (onAddSpecificFile) {
-                        onAddSpecificFile(node.id, "layout.tsx");
-                      }
-                      setDirectoryPopoverOpen(false);
-                    }}
-                    disabled={node.children?.some(
-                      (child) => child.name === "layout.tsx"
-                    )}
-                  >
-                    <Plus className="h-3 w-3 theme-text-secondary" />
-                    <span>layout.tsx</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
-                    onClick={() => {
-                      onAddDirectory(node.id);
-                      setDirectoryPopoverOpen(false);
+                  <div
+                    className="flex items-center theme-gap-2 theme-py-1 cursor-pointer hover:theme-bg-accent theme-radius theme-px-1 -theme-mx-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRootFileToggle("page.tsx", pageRelatedFiles);
                     }}
                   >
-                    <Plus className="h-3 w-3 theme-text-chart-2" />
-                    <span>directory</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
-                    onClick={() => {
-                      onDelete(node.id);
-                      setDirectoryPopoverOpen(false);
+                    <Checkbox
+                      checked={hasPageFile}
+                      onCheckedChange={() => handleRootFileToggle("page.tsx", pageRelatedFiles)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <span className="text-sm">page.tsx</span>
+                  </div>
+
+                  {Object.entries(pageRelatedFiles).map(([fileName, exists]) => (
+                    <div
+                      key={fileName}
+                      className={cn(
+                        "flex items-center theme-gap-2 theme-ml-6 theme-py-0.5 theme-radius theme-px-1 -theme-mx-1",
+                        hasPageFile && "cursor-pointer hover:theme-bg-accent"
+                      )}
+                      onClick={(e) => {
+                        if (hasPageFile) {
+                          e.stopPropagation();
+                          handleFileToggle(fileName, !exists);
+                        }
+                      }}
+                    >
+                      <Checkbox
+                        checked={!!exists}
+                        onCheckedChange={(checked) =>
+                          handleFileToggle(fileName, !!checked)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        disabled={!hasPageFile}
+                      />
+                      <span className="text-xs">
+                        {fileName}
+                      </span>
+                    </div>
+                  ))}
+
+                  <div
+                    className="flex items-center theme-gap-2 theme-py-1 theme-mt-1 cursor-pointer hover:theme-bg-accent theme-radius theme-px-1 -theme-mx-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRootFileToggle("layout.tsx", layoutRelatedFiles);
                     }}
                   >
-                    <Trash2 className="h-3 w-3 theme-text-destructive" />
-                    <span>Delete</span>
-                  </Button>
+                    <Checkbox
+                      checked={hasLayoutFile}
+                      onCheckedChange={() => handleRootFileToggle("layout.tsx", layoutRelatedFiles)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <span className="text-sm">layout.tsx</span>
+                  </div>
+
+                  {Object.entries(layoutRelatedFiles).map(([fileName, exists]) => (
+                    <div
+                      key={fileName}
+                      className={cn(
+                        "flex items-center theme-gap-2 theme-ml-6 theme-py-0.5 theme-radius theme-px-1 -theme-mx-1",
+                        hasLayoutFile && "cursor-pointer hover:theme-bg-accent"
+                      )}
+                      onClick={(e) => {
+                        if (hasLayoutFile) {
+                          e.stopPropagation();
+                          handleFileToggle(fileName, !exists);
+                        }
+                      }}
+                    >
+                      <Checkbox
+                        checked={!!exists}
+                        onCheckedChange={(checked) =>
+                          handleFileToggle(fileName, !!checked)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        disabled={!hasLayoutFile}
+                      />
+                      <span className="text-xs">
+                        {fileName}
+                      </span>
+                    </div>
+                  ))}
+
+                  <div className="border-t theme-border-border theme-pt-2 theme-mt-2 flex flex-col theme-gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
+                      onClick={() => {
+                        onAddDirectory(node.id);
+                        setDirectoryPopoverOpen(false);
+                      }}
+                    >
+                      <Plus className="h-3 w-3 theme-text-chart-1" />
+                      <span>directory</span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start theme-gap-2 theme-shadow theme-font-mono theme-tracking"
+                      onClick={() => {
+                        onDelete(node.id);
+                        setDirectoryPopoverOpen(false);
+                      }}
+                    >
+                      <Trash2 className="h-3 w-3 theme-text-destructive" />
+                      <span>Delete</span>
+                    </Button>
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
@@ -2757,6 +3026,9 @@ const TreeNode = ({
 
       {isClickableFile && isExpanded && (
         <div className="theme-mt-1 theme-p-2 theme-bg-background theme-radius animate-in slide-in-from-top-2">
+          <div className="text-sm font-medium theme-text-muted-foreground theme-mb-2">
+            Features
+          </div>
           <div className="flex flex-col theme-gap-2">
             {features.length > 0 ? (
               features.map((feature) => (
