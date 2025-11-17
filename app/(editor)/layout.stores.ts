@@ -423,7 +423,7 @@ export const useEditorStore = create<EditorState>()(
             : [...state.visitedPages, path];
           console.log('[VISITED] New visitedPages:', newVisitedPages);
 
-          if (path === "start-here.next-steps" && !state.visitedPages.includes(path)) {
+          if (path === "next-steps" && !state.visitedPages.includes(path)) {
             const themeStore = useThemeStore.getState();
             const databaseStore = useDatabaseStore.getState();
 

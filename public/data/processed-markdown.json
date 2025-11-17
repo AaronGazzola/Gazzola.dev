@@ -9,6 +9,145 @@
     "include": true,
     "children": [
       {
+        "id": "tech-stack",
+        "name": "tech-stack",
+        "displayName": "Tech Stack",
+        "type": "file",
+        "order": 1,
+        "path": "tech-stack",
+        "urlPath": "/tech-stack",
+        "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
+        "components": [
+          {
+            "id": "component-InitialConfiguration",
+            "name": "InitialConfiguration",
+            "displayName": "InitialConfiguration",
+            "type": "component",
+            "path": "tech-stack.component.InitialConfiguration",
+            "urlPath": "",
+            "componentId": "InitialConfiguration",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true
+      },
+      {
+        "id": "theme",
+        "name": "theme",
+        "displayName": "Theme",
+        "type": "file",
+        "order": 2,
+        "path": "theme",
+        "urlPath": "/theme",
+        "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
+        "components": [
+          {
+            "id": "component-ThemeConfiguration",
+            "name": "ThemeConfiguration",
+            "displayName": "ThemeConfiguration",
+            "type": "component",
+            "path": "theme.component.ThemeConfiguration",
+            "urlPath": "",
+            "componentId": "ThemeConfiguration",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true
+      },
+      {
+        "id": "app-structure",
+        "name": "app-structure",
+        "displayName": "App Structure",
+        "type": "file",
+        "order": 3,
+        "path": "app-structure",
+        "urlPath": "/app-structure",
+        "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+        "components": [
+          {
+            "id": "component-LayoutAndStructure",
+            "name": "LayoutAndStructure",
+            "displayName": "LayoutAndStructure",
+            "type": "component",
+            "path": "app-structure.component.LayoutAndStructure",
+            "urlPath": "",
+            "componentId": "LayoutAndStructure",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true
+      },
+      {
+        "id": "database",
+        "name": "database",
+        "displayName": "Database",
+        "type": "file",
+        "order": 4,
+        "path": "database",
+        "urlPath": "/database",
+        "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+        "components": [
+          {
+            "id": "component-DatabaseConfiguration",
+            "name": "DatabaseConfiguration",
+            "displayName": "DatabaseConfiguration",
+            "type": "component",
+            "path": "database.component.DatabaseConfiguration",
+            "urlPath": "",
+            "componentId": "DatabaseConfiguration",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true
+      },
+      {
+        "id": "next-steps",
+        "name": "next-steps",
+        "displayName": "Next Steps",
+        "type": "file",
+        "order": 5,
+        "path": "next-steps",
+        "urlPath": "/next-steps",
+        "content": "# Next steps\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
+        "components": [
+          {
+            "id": "component-IDESelection",
+            "name": "IDESelection",
+            "displayName": "IDESelection",
+            "type": "component",
+            "path": "next-steps.component.IDESelection",
+            "urlPath": "",
+            "componentId": "IDESelection",
+            "include": true
+          }
+        ],
+        "sections": {
+          "section1": {
+            "option1": {
+              "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
+              "include": true
+            },
+            "option2": {
+              "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
+              "include": true
+            },
+            "option3": {
+              "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
+              "include": true
+            },
+            "option4": {
+              "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
+              "include": true
+            }
+          }
+        },
+        "include": true
+      },
+      {
         "id": "robots",
         "name": "robots",
         "displayName": "ROBOTS",
@@ -39,141 +178,7 @@
           }
         },
         "include": true,
-        "visibleAfterPage": "start-here.next-steps"
-      },
-      {
-        "id": "claude",
-        "name": "claude",
-        "displayName": "CLAUDE",
-        "type": "file",
-        "order": 7,
-        "path": "claude",
-        "urlPath": "/claude",
-        "content": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n## Core Technologies\n\n<!-- section-1 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatinate classes.\n\n# File Organization and Naming Conventions\n\n<!-- section-2 -->\n\n# Hook, action, store and type patterns\n\n<!-- section-3 -->\n\n## Example of file patterns - [\\`docs/utils.md\\`](docs/utils.md)\n\nFollow the examples outlined in [\\`docs/utils.md\\`](docs/utils.md) when working on hook, action, store or type files. The file also contains the \\`prisma-rls.ts\\` and \\`action.utils.ts\\` files for reference.\n\n# Testing\n\n<!-- section-4 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n",
-        "components": [
-          {
-            "id": "component-AppStructureAscii",
-            "name": "AppStructureAscii",
-            "displayName": "AppStructureAscii",
-            "type": "component",
-            "path": "claude.component.AppStructureAscii",
-            "urlPath": "",
-            "componentId": "AppStructureAscii",
-            "include": true
-          }
-        ],
-        "sections": {
-          "section1": {
-            "option1": {
-              "content": "**Next.js**: React framework providing server-side rendering, routing, and full-stack capabilities essential for modern web applications.",
-              "include": true
-            },
-            "option2": {
-              "content": "**TailwindCSS v4**: Utility-first CSS framework for rapid UI development with consistent styling across the application.",
-              "include": true
-            },
-            "option3": {
-              "content": "**Shadcn/ui**: Component library built on Radix UI and Tailwind CSS, providing accessible and customizable UI components.",
-              "include": true
-            },
-            "option4": {
-              "content": "**Zustand**: Lightweight state management solution for managing global application state with minimal boilerplate.",
-              "include": true
-            },
-            "option5": {
-              "content": "**React Query**: Data fetching and caching library that manages server state, handling loading states, errors, and data synchronization.",
-              "include": true
-            },
-            "option6": {
-              "content": "**Supabase**: Backend-as-a-service platform providing database, authentication, file storage, and real-time capabilities with built-in security and scalability.",
-              "include": true
-            },
-            "option7": {
-              "content": "**NeonDB**: Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.",
-              "include": true
-            },
-            "option8": {
-              "content": "**Prisma**: Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.",
-              "include": true
-            },
-            "option9": {
-              "content": "**Better Auth**: Authentication library providing secure user authentication and session management with support for multiple authentication methods.",
-              "include": true
-            },
-            "option10": {
-              "content": "**PostgreSQL**: Relational database system storing application data including user accounts, authentication sessions, and application-specific data.",
-              "include": true
-            },
-            "option11": {
-              "content": "**Vercel**: Serverless deployment platform optimized for Next.js applications, providing automatic scaling and edge network distribution.",
-              "include": true
-            },
-            "option12": {
-              "content": "**Railway**: Always-on server deployment platform required for continuous monitoring and background processes.",
-              "include": true
-            },
-            "option13": {
-              "content": "**Cypress**: End-to-end testing framework for automated browser testing and quality assurance.",
-              "include": true
-            },
-            "option14": {
-              "content": "**Resend**: Email delivery service for sending authentication and notification emails with high deliverability rates.",
-              "include": true
-            },
-            "option15": {
-              "content": "**Stripe**: Payment processing platform for one-time payments and subscription billing with secure transaction handling.",
-              "include": true
-            },
-            "option16": {
-              "content": "**PayPal**: Payment processing platform for accepting PayPal payments with buyer and seller protection.",
-              "include": true
-            },
-            "option17": {
-              "content": "**OpenRouter**: AI model routing platform providing access to multiple language models for AI-powered features.",
-              "include": true
-            }
-          },
-          "section2": {
-            "option1": {
-              "content": "Types and store files alongside ancestor files. Actions and hooks files alongside descendent files.\n\n```txt\napp/\n├── layout.tsx\n├── layout.providers.tsx\n├── layout.types.ts\n├── layout.stores.ts ◄─── useAppStore\n└── (dashboard)/\n    ├── layout.tsx\n    ├── layout.types.tsx\n    ├── layout.stores.tsx ◄─── useDashboardStore\n    ├── page.tsx              ─┐\n    ├── page.hooks.tsx         ├────► useAppStore\n    ├── Component.tsx          ├────► useDashboardStore\n    ├── Component.hooks.tsx   ─┘\n    ├── page.actions.ts\n    └── Component.actions.ts\n\n    key:\n    ◄─── = defined\n    ───► = imported\n```",
-              "include": true
-            },
-            "option2": {
-              "content": "<!-- component-AppStructureAscii -->",
-              "include": true
-            }
-          },
-          "section3": {
-            "option1": {
-              "content": "**Client-side only (No database)**\n\nComponent <-> hook <-> store\n\n- React Query hooks fetch data from external APIs or manage client-side state.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.",
-              "include": true
-            },
-            "option2": {
-              "content": "**NeonDB + Better Auth + Prisma**\n\nDB <-> Action <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `\"@prisma/client\"`",
-              "include": true
-            },
-            "option3": {
-              "content": "**Supabase + Better Auth + Prisma**\n\nDB <-> Action <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `\"@prisma/client\"`",
-              "include": true
-            },
-            "option4": {
-              "content": "**Supabase only (Supabase Auth)**\n\nDB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.",
-              "include": true
-            }
-          },
-          "section4": {
-            "option1": {
-              "content": "All tests should be performed with Playwright and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).\n\n**Test rules:**\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.",
-              "include": true
-            },
-            "option2": {
-              "content": "All tests should be performed with Playwright or Cypress and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).\n\n**Test rules:**\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.",
-              "include": true
-            }
-          }
-        },
-        "include": true,
-        "visibleAfterPage": "start-here.next-steps"
+        "visibleAfterPage": "next-steps"
       },
       {
         "id": "code-files",
@@ -329,7 +334,7 @@
               }
             },
             "include": true,
-            "visibleAfterPage": "start-here.next-steps"
+            "visibleAfterPage": "next-steps"
           },
           {
             "id": "docs.util",
@@ -410,153 +415,7 @@
               }
             },
             "include": true,
-            "visibleAfterPage": "start-here.next-steps"
-          }
-        ]
-      },
-      {
-        "id": "start-here",
-        "name": "start-here",
-        "displayName": "Start here",
-        "type": "directory",
-        "path": "start-here",
-        "urlPath": "/start-here",
-        "include": true,
-        "children": [
-          {
-            "id": "start-here.tech-stack",
-            "name": "tech-stack",
-            "displayName": "Tech Stack",
-            "type": "file",
-            "order": 1,
-            "path": "start-here.tech-stack",
-            "urlPath": "/start-here/tech-stack",
-            "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
-            "components": [
-              {
-                "id": "component-InitialConfiguration",
-                "name": "InitialConfiguration",
-                "displayName": "InitialConfiguration",
-                "type": "component",
-                "path": "tech-stack.component.InitialConfiguration",
-                "urlPath": "",
-                "componentId": "InitialConfiguration",
-                "include": true
-              }
-            ],
-            "sections": {},
-            "include": true
-          },
-          {
-            "id": "start-here.theme",
-            "name": "theme",
-            "displayName": "Theme",
-            "type": "file",
-            "order": 2,
-            "path": "start-here.theme",
-            "urlPath": "/start-here/theme",
-            "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
-            "components": [
-              {
-                "id": "component-ThemeConfiguration",
-                "name": "ThemeConfiguration",
-                "displayName": "ThemeConfiguration",
-                "type": "component",
-                "path": "theme.component.ThemeConfiguration",
-                "urlPath": "",
-                "componentId": "ThemeConfiguration",
-                "include": true
-              }
-            ],
-            "sections": {},
-            "include": true
-          },
-          {
-            "id": "start-here.app-structure",
-            "name": "app-structure",
-            "displayName": "App Structure",
-            "type": "file",
-            "order": 3,
-            "path": "start-here.app-structure",
-            "urlPath": "/start-here/app-structure",
-            "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-            "components": [
-              {
-                "id": "component-LayoutAndStructure",
-                "name": "LayoutAndStructure",
-                "displayName": "LayoutAndStructure",
-                "type": "component",
-                "path": "app-structure.component.LayoutAndStructure",
-                "urlPath": "",
-                "componentId": "LayoutAndStructure",
-                "include": true
-              }
-            ],
-            "sections": {},
-            "include": true
-          },
-          {
-            "id": "start-here.database",
-            "name": "database",
-            "displayName": "Database",
-            "type": "file",
-            "order": 4,
-            "path": "start-here.database",
-            "urlPath": "/start-here/database",
-            "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
-            "components": [
-              {
-                "id": "component-DatabaseConfiguration",
-                "name": "DatabaseConfiguration",
-                "displayName": "DatabaseConfiguration",
-                "type": "component",
-                "path": "database.component.DatabaseConfiguration",
-                "urlPath": "",
-                "componentId": "DatabaseConfiguration",
-                "include": true
-              }
-            ],
-            "sections": {},
-            "include": true
-          },
-          {
-            "id": "start-here.next-steps",
-            "name": "next-steps",
-            "displayName": "Next Steps",
-            "type": "file",
-            "order": 5,
-            "path": "start-here.next-steps",
-            "urlPath": "/start-here/next-steps",
-            "content": "# Next steps\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
-            "components": [
-              {
-                "id": "component-IDESelection",
-                "name": "IDESelection",
-                "displayName": "IDESelection",
-                "type": "component",
-                "path": "next-steps.component.IDESelection",
-                "urlPath": "",
-                "componentId": "IDESelection",
-                "include": true
-              }
-            ],
-            "sections": {
-              "section1": {
-                "option1": {
-                  "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 4: Start Building with AI\n\n1. Open the chat panel in Lovable\n2. Direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n3. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
-                  "include": true
-                },
-                "option2": {
-                  "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 6: Start Building with AI\n\n1. Open the Replit AI assistant\n2. Direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n3. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
-                  "include": true
-                },
-                "option3": {
-                  "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 6: Start Building with AI\n\n1. Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension (requires subscription)\n2. Or use [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n3. Direct your AI assistant to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n4. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
-                  "include": true
-                }
-              }
-            },
-            "include": true
+            "visibleAfterPage": "next-steps"
           }
         ]
       }
@@ -572,6 +431,145 @@
       "urlPath": "/",
       "include": true,
       "children": [
+        {
+          "id": "tech-stack",
+          "name": "tech-stack",
+          "displayName": "Tech Stack",
+          "type": "file",
+          "order": 1,
+          "path": "tech-stack",
+          "urlPath": "/tech-stack",
+          "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-InitialConfiguration",
+              "name": "InitialConfiguration",
+              "displayName": "InitialConfiguration",
+              "type": "component",
+              "path": "tech-stack.component.InitialConfiguration",
+              "urlPath": "",
+              "componentId": "InitialConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        },
+        {
+          "id": "theme",
+          "name": "theme",
+          "displayName": "Theme",
+          "type": "file",
+          "order": 2,
+          "path": "theme",
+          "urlPath": "/theme",
+          "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-ThemeConfiguration",
+              "name": "ThemeConfiguration",
+              "displayName": "ThemeConfiguration",
+              "type": "component",
+              "path": "theme.component.ThemeConfiguration",
+              "urlPath": "",
+              "componentId": "ThemeConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        },
+        {
+          "id": "app-structure",
+          "name": "app-structure",
+          "displayName": "App Structure",
+          "type": "file",
+          "order": 3,
+          "path": "app-structure",
+          "urlPath": "/app-structure",
+          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+          "components": [
+            {
+              "id": "component-LayoutAndStructure",
+              "name": "LayoutAndStructure",
+              "displayName": "LayoutAndStructure",
+              "type": "component",
+              "path": "app-structure.component.LayoutAndStructure",
+              "urlPath": "",
+              "componentId": "LayoutAndStructure",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        },
+        {
+          "id": "database",
+          "name": "database",
+          "displayName": "Database",
+          "type": "file",
+          "order": 4,
+          "path": "database",
+          "urlPath": "/database",
+          "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-DatabaseConfiguration",
+              "name": "DatabaseConfiguration",
+              "displayName": "DatabaseConfiguration",
+              "type": "component",
+              "path": "database.component.DatabaseConfiguration",
+              "urlPath": "",
+              "componentId": "DatabaseConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true
+        },
+        {
+          "id": "next-steps",
+          "name": "next-steps",
+          "displayName": "Next Steps",
+          "type": "file",
+          "order": 5,
+          "path": "next-steps",
+          "urlPath": "/next-steps",
+          "content": "# Next steps\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
+          "components": [
+            {
+              "id": "component-IDESelection",
+              "name": "IDESelection",
+              "displayName": "IDESelection",
+              "type": "component",
+              "path": "next-steps.component.IDESelection",
+              "urlPath": "",
+              "componentId": "IDESelection",
+              "include": true
+            }
+          ],
+          "sections": {
+            "section1": {
+              "option1": {
+                "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
+                "include": true
+              },
+              "option2": {
+                "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
+                "include": true
+              },
+              "option3": {
+                "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
+                "include": true
+              },
+              "option4": {
+                "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
+                "include": true
+              }
+            }
+          },
+          "include": true
+        },
         {
           "id": "robots",
           "name": "robots",
@@ -603,141 +601,7 @@
             }
           },
           "include": true,
-          "visibleAfterPage": "start-here.next-steps"
-        },
-        {
-          "id": "claude",
-          "name": "claude",
-          "displayName": "CLAUDE",
-          "type": "file",
-          "order": 7,
-          "path": "claude",
-          "urlPath": "/claude",
-          "content": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n## Core Technologies\n\n<!-- section-1 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatinate classes.\n\n# File Organization and Naming Conventions\n\n<!-- section-2 -->\n\n# Hook, action, store and type patterns\n\n<!-- section-3 -->\n\n## Example of file patterns - [\\`docs/utils.md\\`](docs/utils.md)\n\nFollow the examples outlined in [\\`docs/utils.md\\`](docs/utils.md) when working on hook, action, store or type files. The file also contains the \\`prisma-rls.ts\\` and \\`action.utils.ts\\` files for reference.\n\n# Testing\n\n<!-- section-4 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n",
-          "components": [
-            {
-              "id": "component-AppStructureAscii",
-              "name": "AppStructureAscii",
-              "displayName": "AppStructureAscii",
-              "type": "component",
-              "path": "claude.component.AppStructureAscii",
-              "urlPath": "",
-              "componentId": "AppStructureAscii",
-              "include": true
-            }
-          ],
-          "sections": {
-            "section1": {
-              "option1": {
-                "content": "**Next.js**: React framework providing server-side rendering, routing, and full-stack capabilities essential for modern web applications.",
-                "include": true
-              },
-              "option2": {
-                "content": "**TailwindCSS v4**: Utility-first CSS framework for rapid UI development with consistent styling across the application.",
-                "include": true
-              },
-              "option3": {
-                "content": "**Shadcn/ui**: Component library built on Radix UI and Tailwind CSS, providing accessible and customizable UI components.",
-                "include": true
-              },
-              "option4": {
-                "content": "**Zustand**: Lightweight state management solution for managing global application state with minimal boilerplate.",
-                "include": true
-              },
-              "option5": {
-                "content": "**React Query**: Data fetching and caching library that manages server state, handling loading states, errors, and data synchronization.",
-                "include": true
-              },
-              "option6": {
-                "content": "**Supabase**: Backend-as-a-service platform providing database, authentication, file storage, and real-time capabilities with built-in security and scalability.",
-                "include": true
-              },
-              "option7": {
-                "content": "**NeonDB**: Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.",
-                "include": true
-              },
-              "option8": {
-                "content": "**Prisma**: Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.",
-                "include": true
-              },
-              "option9": {
-                "content": "**Better Auth**: Authentication library providing secure user authentication and session management with support for multiple authentication methods.",
-                "include": true
-              },
-              "option10": {
-                "content": "**PostgreSQL**: Relational database system storing application data including user accounts, authentication sessions, and application-specific data.",
-                "include": true
-              },
-              "option11": {
-                "content": "**Vercel**: Serverless deployment platform optimized for Next.js applications, providing automatic scaling and edge network distribution.",
-                "include": true
-              },
-              "option12": {
-                "content": "**Railway**: Always-on server deployment platform required for continuous monitoring and background processes.",
-                "include": true
-              },
-              "option13": {
-                "content": "**Cypress**: End-to-end testing framework for automated browser testing and quality assurance.",
-                "include": true
-              },
-              "option14": {
-                "content": "**Resend**: Email delivery service for sending authentication and notification emails with high deliverability rates.",
-                "include": true
-              },
-              "option15": {
-                "content": "**Stripe**: Payment processing platform for one-time payments and subscription billing with secure transaction handling.",
-                "include": true
-              },
-              "option16": {
-                "content": "**PayPal**: Payment processing platform for accepting PayPal payments with buyer and seller protection.",
-                "include": true
-              },
-              "option17": {
-                "content": "**OpenRouter**: AI model routing platform providing access to multiple language models for AI-powered features.",
-                "include": true
-              }
-            },
-            "section2": {
-              "option1": {
-                "content": "Types and store files alongside ancestor files. Actions and hooks files alongside descendent files.\n\n```txt\napp/\n├── layout.tsx\n├── layout.providers.tsx\n├── layout.types.ts\n├── layout.stores.ts ◄─── useAppStore\n└── (dashboard)/\n    ├── layout.tsx\n    ├── layout.types.tsx\n    ├── layout.stores.tsx ◄─── useDashboardStore\n    ├── page.tsx              ─┐\n    ├── page.hooks.tsx         ├────► useAppStore\n    ├── Component.tsx          ├────► useDashboardStore\n    ├── Component.hooks.tsx   ─┘\n    ├── page.actions.ts\n    └── Component.actions.ts\n\n    key:\n    ◄─── = defined\n    ───► = imported\n```",
-                "include": true
-              },
-              "option2": {
-                "content": "<!-- component-AppStructureAscii -->",
-                "include": true
-              }
-            },
-            "section3": {
-              "option1": {
-                "content": "**Client-side only (No database)**\n\nComponent <-> hook <-> store\n\n- React Query hooks fetch data from external APIs or manage client-side state.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.",
-                "include": true
-              },
-              "option2": {
-                "content": "**NeonDB + Better Auth + Prisma**\n\nDB <-> Action <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `\"@prisma/client\"`",
-                "include": true
-              },
-              "option3": {
-                "content": "**Supabase + Better Auth + Prisma**\n\nDB <-> Action <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `\"@prisma/client\"`",
-                "include": true
-              },
-              "option4": {
-                "content": "**Supabase only (Supabase Auth)**\n\nDB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.",
-                "include": true
-              }
-            },
-            "section4": {
-              "option1": {
-                "content": "All tests should be performed with Playwright and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).\n\n**Test rules:**\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.",
-                "include": true
-              },
-              "option2": {
-                "content": "All tests should be performed with Playwright or Cypress and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).\n\n**Test rules:**\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.",
-                "include": true
-              }
-            }
-          },
-          "include": true,
-          "visibleAfterPage": "start-here.next-steps"
+          "visibleAfterPage": "next-steps"
         },
         {
           "id": "code-files",
@@ -893,7 +757,7 @@
                 }
               },
               "include": true,
-              "visibleAfterPage": "start-here.next-steps"
+              "visibleAfterPage": "next-steps"
             },
             {
               "id": "docs.util",
@@ -974,157 +838,200 @@
                 }
               },
               "include": true,
-              "visibleAfterPage": "start-here.next-steps"
-            }
-          ]
-        },
-        {
-          "id": "start-here",
-          "name": "start-here",
-          "displayName": "Start here",
-          "type": "directory",
-          "path": "start-here",
-          "urlPath": "/start-here",
-          "include": true,
-          "children": [
-            {
-              "id": "start-here.tech-stack",
-              "name": "tech-stack",
-              "displayName": "Tech Stack",
-              "type": "file",
-              "order": 1,
-              "path": "start-here.tech-stack",
-              "urlPath": "/start-here/tech-stack",
-              "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
-              "components": [
-                {
-                  "id": "component-InitialConfiguration",
-                  "name": "InitialConfiguration",
-                  "displayName": "InitialConfiguration",
-                  "type": "component",
-                  "path": "tech-stack.component.InitialConfiguration",
-                  "urlPath": "",
-                  "componentId": "InitialConfiguration",
-                  "include": true
-                }
-              ],
-              "sections": {},
-              "include": true
-            },
-            {
-              "id": "start-here.theme",
-              "name": "theme",
-              "displayName": "Theme",
-              "type": "file",
-              "order": 2,
-              "path": "start-here.theme",
-              "urlPath": "/start-here/theme",
-              "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
-              "components": [
-                {
-                  "id": "component-ThemeConfiguration",
-                  "name": "ThemeConfiguration",
-                  "displayName": "ThemeConfiguration",
-                  "type": "component",
-                  "path": "theme.component.ThemeConfiguration",
-                  "urlPath": "",
-                  "componentId": "ThemeConfiguration",
-                  "include": true
-                }
-              ],
-              "sections": {},
-              "include": true
-            },
-            {
-              "id": "start-here.app-structure",
-              "name": "app-structure",
-              "displayName": "App Structure",
-              "type": "file",
-              "order": 3,
-              "path": "start-here.app-structure",
-              "urlPath": "/start-here/app-structure",
-              "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-              "components": [
-                {
-                  "id": "component-LayoutAndStructure",
-                  "name": "LayoutAndStructure",
-                  "displayName": "LayoutAndStructure",
-                  "type": "component",
-                  "path": "app-structure.component.LayoutAndStructure",
-                  "urlPath": "",
-                  "componentId": "LayoutAndStructure",
-                  "include": true
-                }
-              ],
-              "sections": {},
-              "include": true
-            },
-            {
-              "id": "start-here.database",
-              "name": "database",
-              "displayName": "Database",
-              "type": "file",
-              "order": 4,
-              "path": "start-here.database",
-              "urlPath": "/start-here/database",
-              "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
-              "components": [
-                {
-                  "id": "component-DatabaseConfiguration",
-                  "name": "DatabaseConfiguration",
-                  "displayName": "DatabaseConfiguration",
-                  "type": "component",
-                  "path": "database.component.DatabaseConfiguration",
-                  "urlPath": "",
-                  "componentId": "DatabaseConfiguration",
-                  "include": true
-                }
-              ],
-              "sections": {},
-              "include": true
-            },
-            {
-              "id": "start-here.next-steps",
-              "name": "next-steps",
-              "displayName": "Next Steps",
-              "type": "file",
-              "order": 5,
-              "path": "start-here.next-steps",
-              "urlPath": "/start-here/next-steps",
-              "content": "# Next steps\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
-              "components": [
-                {
-                  "id": "component-IDESelection",
-                  "name": "IDESelection",
-                  "displayName": "IDESelection",
-                  "type": "component",
-                  "path": "next-steps.component.IDESelection",
-                  "urlPath": "",
-                  "componentId": "IDESelection",
-                  "include": true
-                }
-              ],
-              "sections": {
-                "section1": {
-                  "option1": {
-                    "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 4: Start Building with AI\n\n1. Open the chat panel in Lovable\n2. Direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n3. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
-                    "include": true
-                  },
-                  "option2": {
-                    "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 6: Start Building with AI\n\n1. Open the Replit AI assistant\n2. Direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n3. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
-                    "include": true
-                  },
-                  "option3": {
-                    "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 6: Start Building with AI\n\n1. Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension (requires subscription)\n2. Or use [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n3. Direct your AI assistant to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n4. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
-                    "include": true
-                  }
-                }
-              },
-              "include": true
+              "visibleAfterPage": "next-steps"
             }
           ]
         }
       ]
+    },
+    "tech-stack": {
+      "id": "tech-stack",
+      "name": "tech-stack",
+      "displayName": "Tech Stack",
+      "type": "file",
+      "order": 1,
+      "path": "tech-stack",
+      "urlPath": "/tech-stack",
+      "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
+      "components": [
+        {
+          "id": "component-InitialConfiguration",
+          "name": "InitialConfiguration",
+          "displayName": "InitialConfiguration",
+          "type": "component",
+          "path": "tech-stack.component.InitialConfiguration",
+          "urlPath": "",
+          "componentId": "InitialConfiguration",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "tech-stack.component.InitialConfiguration": {
+      "id": "component-InitialConfiguration",
+      "name": "InitialConfiguration",
+      "displayName": "InitialConfiguration",
+      "type": "component",
+      "path": "tech-stack.component.InitialConfiguration",
+      "urlPath": "",
+      "componentId": "InitialConfiguration",
+      "include": true
+    },
+    "theme": {
+      "id": "theme",
+      "name": "theme",
+      "displayName": "Theme",
+      "type": "file",
+      "order": 2,
+      "path": "theme",
+      "urlPath": "/theme",
+      "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
+      "components": [
+        {
+          "id": "component-ThemeConfiguration",
+          "name": "ThemeConfiguration",
+          "displayName": "ThemeConfiguration",
+          "type": "component",
+          "path": "theme.component.ThemeConfiguration",
+          "urlPath": "",
+          "componentId": "ThemeConfiguration",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "theme.component.ThemeConfiguration": {
+      "id": "component-ThemeConfiguration",
+      "name": "ThemeConfiguration",
+      "displayName": "ThemeConfiguration",
+      "type": "component",
+      "path": "theme.component.ThemeConfiguration",
+      "urlPath": "",
+      "componentId": "ThemeConfiguration",
+      "include": true
+    },
+    "app-structure": {
+      "id": "app-structure",
+      "name": "app-structure",
+      "displayName": "App Structure",
+      "type": "file",
+      "order": 3,
+      "path": "app-structure",
+      "urlPath": "/app-structure",
+      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+      "components": [
+        {
+          "id": "component-LayoutAndStructure",
+          "name": "LayoutAndStructure",
+          "displayName": "LayoutAndStructure",
+          "type": "component",
+          "path": "app-structure.component.LayoutAndStructure",
+          "urlPath": "",
+          "componentId": "LayoutAndStructure",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "app-structure.component.LayoutAndStructure": {
+      "id": "component-LayoutAndStructure",
+      "name": "LayoutAndStructure",
+      "displayName": "LayoutAndStructure",
+      "type": "component",
+      "path": "app-structure.component.LayoutAndStructure",
+      "urlPath": "",
+      "componentId": "LayoutAndStructure",
+      "include": true
+    },
+    "database": {
+      "id": "database",
+      "name": "database",
+      "displayName": "Database",
+      "type": "file",
+      "order": 4,
+      "path": "database",
+      "urlPath": "/database",
+      "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+      "components": [
+        {
+          "id": "component-DatabaseConfiguration",
+          "name": "DatabaseConfiguration",
+          "displayName": "DatabaseConfiguration",
+          "type": "component",
+          "path": "database.component.DatabaseConfiguration",
+          "urlPath": "",
+          "componentId": "DatabaseConfiguration",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true
+    },
+    "database.component.DatabaseConfiguration": {
+      "id": "component-DatabaseConfiguration",
+      "name": "DatabaseConfiguration",
+      "displayName": "DatabaseConfiguration",
+      "type": "component",
+      "path": "database.component.DatabaseConfiguration",
+      "urlPath": "",
+      "componentId": "DatabaseConfiguration",
+      "include": true
+    },
+    "next-steps": {
+      "id": "next-steps",
+      "name": "next-steps",
+      "displayName": "Next Steps",
+      "type": "file",
+      "order": 5,
+      "path": "next-steps",
+      "urlPath": "/next-steps",
+      "content": "# Next steps\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
+      "components": [
+        {
+          "id": "component-IDESelection",
+          "name": "IDESelection",
+          "displayName": "IDESelection",
+          "type": "component",
+          "path": "next-steps.component.IDESelection",
+          "urlPath": "",
+          "componentId": "IDESelection",
+          "include": true
+        }
+      ],
+      "sections": {
+        "section1": {
+          "option1": {
+            "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
+            "include": true
+          },
+          "option2": {
+            "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
+            "include": true
+          },
+          "option3": {
+            "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
+            "include": true
+          },
+          "option4": {
+            "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
+            "include": true
+          }
+        }
+      },
+      "include": true
+    },
+    "next-steps.component.IDESelection": {
+      "id": "component-IDESelection",
+      "name": "IDESelection",
+      "displayName": "IDESelection",
+      "type": "component",
+      "path": "next-steps.component.IDESelection",
+      "urlPath": "",
+      "componentId": "IDESelection",
+      "include": true
     },
     "robots": {
       "id": "robots",
@@ -1157,151 +1064,7 @@
         }
       },
       "include": true,
-      "visibleAfterPage": "start-here.next-steps"
-    },
-    "claude": {
-      "id": "claude",
-      "name": "claude",
-      "displayName": "CLAUDE",
-      "type": "file",
-      "order": 7,
-      "path": "claude",
-      "urlPath": "/claude",
-      "content": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n## Core Technologies\n\n<!-- section-1 -->\n\n## Project Structure\n\n<!-- component-AppStructureAscii -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatinate classes.\n\n# File Organization and Naming Conventions\n\n<!-- section-2 -->\n\n# Hook, action, store and type patterns\n\n<!-- section-3 -->\n\n## Example of file patterns - [\\`docs/utils.md\\`](docs/utils.md)\n\nFollow the examples outlined in [\\`docs/utils.md\\`](docs/utils.md) when working on hook, action, store or type files. The file also contains the \\`prisma-rls.ts\\` and \\`action.utils.ts\\` files for reference.\n\n# Testing\n\n<!-- section-4 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n",
-      "components": [
-        {
-          "id": "component-AppStructureAscii",
-          "name": "AppStructureAscii",
-          "displayName": "AppStructureAscii",
-          "type": "component",
-          "path": "claude.component.AppStructureAscii",
-          "urlPath": "",
-          "componentId": "AppStructureAscii",
-          "include": true
-        }
-      ],
-      "sections": {
-        "section1": {
-          "option1": {
-            "content": "**Next.js**: React framework providing server-side rendering, routing, and full-stack capabilities essential for modern web applications.",
-            "include": true
-          },
-          "option2": {
-            "content": "**TailwindCSS v4**: Utility-first CSS framework for rapid UI development with consistent styling across the application.",
-            "include": true
-          },
-          "option3": {
-            "content": "**Shadcn/ui**: Component library built on Radix UI and Tailwind CSS, providing accessible and customizable UI components.",
-            "include": true
-          },
-          "option4": {
-            "content": "**Zustand**: Lightweight state management solution for managing global application state with minimal boilerplate.",
-            "include": true
-          },
-          "option5": {
-            "content": "**React Query**: Data fetching and caching library that manages server state, handling loading states, errors, and data synchronization.",
-            "include": true
-          },
-          "option6": {
-            "content": "**Supabase**: Backend-as-a-service platform providing database, authentication, file storage, and real-time capabilities with built-in security and scalability.",
-            "include": true
-          },
-          "option7": {
-            "content": "**NeonDB**: Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.",
-            "include": true
-          },
-          "option8": {
-            "content": "**Prisma**: Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.",
-            "include": true
-          },
-          "option9": {
-            "content": "**Better Auth**: Authentication library providing secure user authentication and session management with support for multiple authentication methods.",
-            "include": true
-          },
-          "option10": {
-            "content": "**PostgreSQL**: Relational database system storing application data including user accounts, authentication sessions, and application-specific data.",
-            "include": true
-          },
-          "option11": {
-            "content": "**Vercel**: Serverless deployment platform optimized for Next.js applications, providing automatic scaling and edge network distribution.",
-            "include": true
-          },
-          "option12": {
-            "content": "**Railway**: Always-on server deployment platform required for continuous monitoring and background processes.",
-            "include": true
-          },
-          "option13": {
-            "content": "**Cypress**: End-to-end testing framework for automated browser testing and quality assurance.",
-            "include": true
-          },
-          "option14": {
-            "content": "**Resend**: Email delivery service for sending authentication and notification emails with high deliverability rates.",
-            "include": true
-          },
-          "option15": {
-            "content": "**Stripe**: Payment processing platform for one-time payments and subscription billing with secure transaction handling.",
-            "include": true
-          },
-          "option16": {
-            "content": "**PayPal**: Payment processing platform for accepting PayPal payments with buyer and seller protection.",
-            "include": true
-          },
-          "option17": {
-            "content": "**OpenRouter**: AI model routing platform providing access to multiple language models for AI-powered features.",
-            "include": true
-          }
-        },
-        "section2": {
-          "option1": {
-            "content": "Types and store files alongside ancestor files. Actions and hooks files alongside descendent files.\n\n```txt\napp/\n├── layout.tsx\n├── layout.providers.tsx\n├── layout.types.ts\n├── layout.stores.ts ◄─── useAppStore\n└── (dashboard)/\n    ├── layout.tsx\n    ├── layout.types.tsx\n    ├── layout.stores.tsx ◄─── useDashboardStore\n    ├── page.tsx              ─┐\n    ├── page.hooks.tsx         ├────► useAppStore\n    ├── Component.tsx          ├────► useDashboardStore\n    ├── Component.hooks.tsx   ─┘\n    ├── page.actions.ts\n    └── Component.actions.ts\n\n    key:\n    ◄─── = defined\n    ───► = imported\n```",
-            "include": true
-          },
-          "option2": {
-            "content": "<!-- component-AppStructureAscii -->",
-            "include": true
-          }
-        },
-        "section3": {
-          "option1": {
-            "content": "**Client-side only (No database)**\n\nComponent <-> hook <-> store\n\n- React Query hooks fetch data from external APIs or manage client-side state.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.",
-            "include": true
-          },
-          "option2": {
-            "content": "**NeonDB + Better Auth + Prisma**\n\nDB <-> Action <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `\"@prisma/client\"`",
-            "include": true
-          },
-          "option3": {
-            "content": "**Supabase + Better Auth + Prisma**\n\nDB <-> Action <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `\"@prisma/client\"`",
-            "include": true
-          },
-          "option4": {
-            "content": "**Supabase only (Supabase Auth)**\n\nDB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.",
-            "include": true
-          }
-        },
-        "section4": {
-          "option1": {
-            "content": "All tests should be performed with Playwright and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).\n\n**Test rules:**\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.",
-            "include": true
-          },
-          "option2": {
-            "content": "All tests should be performed with Playwright or Cypress and documented in the `Tests.md` document. For complete testing instructions, patterns, and documentation format, refer to [`docs/Testing.md`](docs/Testing.md).\n\n**Test rules:**\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.",
-            "include": true
-          }
-        }
-      },
-      "include": true,
-      "visibleAfterPage": "start-here.next-steps"
-    },
-    "claude.component.AppStructureAscii": {
-      "id": "component-AppStructureAscii",
-      "name": "AppStructureAscii",
-      "displayName": "AppStructureAscii",
-      "type": "component",
-      "path": "claude.component.AppStructureAscii",
-      "urlPath": "",
-      "componentId": "AppStructureAscii",
-      "include": true
+      "visibleAfterPage": "next-steps"
     },
     "code-files": {
       "id": "code-files",
@@ -1457,7 +1220,7 @@
             }
           },
           "include": true,
-          "visibleAfterPage": "start-here.next-steps"
+          "visibleAfterPage": "next-steps"
         },
         {
           "id": "docs.util",
@@ -1538,7 +1301,7 @@
             }
           },
           "include": true,
-          "visibleAfterPage": "start-here.next-steps"
+          "visibleAfterPage": "next-steps"
         }
       ]
     },
@@ -1677,7 +1440,7 @@
         }
       },
       "include": true,
-      "visibleAfterPage": "start-here.next-steps"
+      "visibleAfterPage": "next-steps"
     },
     "docs.util": {
       "id": "docs.util",
@@ -1758,338 +1521,7 @@
         }
       },
       "include": true,
-      "visibleAfterPage": "start-here.next-steps"
-    },
-    "start-here": {
-      "id": "start-here",
-      "name": "start-here",
-      "displayName": "Start here",
-      "type": "directory",
-      "path": "start-here",
-      "urlPath": "/start-here",
-      "include": true,
-      "children": [
-        {
-          "id": "start-here.tech-stack",
-          "name": "tech-stack",
-          "displayName": "Tech Stack",
-          "type": "file",
-          "order": 1,
-          "path": "start-here.tech-stack",
-          "urlPath": "/start-here/tech-stack",
-          "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
-          "components": [
-            {
-              "id": "component-InitialConfiguration",
-              "name": "InitialConfiguration",
-              "displayName": "InitialConfiguration",
-              "type": "component",
-              "path": "tech-stack.component.InitialConfiguration",
-              "urlPath": "",
-              "componentId": "InitialConfiguration",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true
-        },
-        {
-          "id": "start-here.theme",
-          "name": "theme",
-          "displayName": "Theme",
-          "type": "file",
-          "order": 2,
-          "path": "start-here.theme",
-          "urlPath": "/start-here/theme",
-          "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
-          "components": [
-            {
-              "id": "component-ThemeConfiguration",
-              "name": "ThemeConfiguration",
-              "displayName": "ThemeConfiguration",
-              "type": "component",
-              "path": "theme.component.ThemeConfiguration",
-              "urlPath": "",
-              "componentId": "ThemeConfiguration",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true
-        },
-        {
-          "id": "start-here.app-structure",
-          "name": "app-structure",
-          "displayName": "App Structure",
-          "type": "file",
-          "order": 3,
-          "path": "start-here.app-structure",
-          "urlPath": "/start-here/app-structure",
-          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-          "components": [
-            {
-              "id": "component-LayoutAndStructure",
-              "name": "LayoutAndStructure",
-              "displayName": "LayoutAndStructure",
-              "type": "component",
-              "path": "app-structure.component.LayoutAndStructure",
-              "urlPath": "",
-              "componentId": "LayoutAndStructure",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true
-        },
-        {
-          "id": "start-here.database",
-          "name": "database",
-          "displayName": "Database",
-          "type": "file",
-          "order": 4,
-          "path": "start-here.database",
-          "urlPath": "/start-here/database",
-          "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
-          "components": [
-            {
-              "id": "component-DatabaseConfiguration",
-              "name": "DatabaseConfiguration",
-              "displayName": "DatabaseConfiguration",
-              "type": "component",
-              "path": "database.component.DatabaseConfiguration",
-              "urlPath": "",
-              "componentId": "DatabaseConfiguration",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true
-        },
-        {
-          "id": "start-here.next-steps",
-          "name": "next-steps",
-          "displayName": "Next Steps",
-          "type": "file",
-          "order": 5,
-          "path": "start-here.next-steps",
-          "urlPath": "/start-here/next-steps",
-          "content": "# Next steps\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
-          "components": [
-            {
-              "id": "component-IDESelection",
-              "name": "IDESelection",
-              "displayName": "IDESelection",
-              "type": "component",
-              "path": "next-steps.component.IDESelection",
-              "urlPath": "",
-              "componentId": "IDESelection",
-              "include": true
-            }
-          ],
-          "sections": {
-            "section1": {
-              "option1": {
-                "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 4: Start Building with AI\n\n1. Open the chat panel in Lovable\n2. Direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n3. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
-                "include": true
-              },
-              "option2": {
-                "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 6: Start Building with AI\n\n1. Open the Replit AI assistant\n2. Direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n3. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
-                "include": true
-              },
-              "option3": {
-                "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 6: Start Building with AI\n\n1. Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension (requires subscription)\n2. Or use [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n3. Direct your AI assistant to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n4. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
-                "include": true
-              }
-            }
-          },
-          "include": true
-        }
-      ]
-    },
-    "start-here.tech-stack": {
-      "id": "start-here.tech-stack",
-      "name": "tech-stack",
-      "displayName": "Tech Stack",
-      "type": "file",
-      "order": 1,
-      "path": "start-here.tech-stack",
-      "urlPath": "/start-here/tech-stack",
-      "content": "## Technology stack\n\n{{appName:Your app name}} is a progressive web app built with the technologies outlined below.\n\n<!-- component-InitialConfiguration -->\n",
-      "components": [
-        {
-          "id": "component-InitialConfiguration",
-          "name": "InitialConfiguration",
-          "displayName": "InitialConfiguration",
-          "type": "component",
-          "path": "tech-stack.component.InitialConfiguration",
-          "urlPath": "",
-          "componentId": "InitialConfiguration",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true
-    },
-    "tech-stack.component.InitialConfiguration": {
-      "id": "component-InitialConfiguration",
-      "name": "InitialConfiguration",
-      "displayName": "InitialConfiguration",
-      "type": "component",
-      "path": "tech-stack.component.InitialConfiguration",
-      "urlPath": "",
-      "componentId": "InitialConfiguration",
-      "include": true
-    },
-    "start-here.theme": {
-      "id": "start-here.theme",
-      "name": "theme",
-      "displayName": "Theme",
-      "type": "file",
-      "order": 2,
-      "path": "start-here.theme",
-      "urlPath": "/start-here/theme",
-      "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
-      "components": [
-        {
-          "id": "component-ThemeConfiguration",
-          "name": "ThemeConfiguration",
-          "displayName": "ThemeConfiguration",
-          "type": "component",
-          "path": "theme.component.ThemeConfiguration",
-          "urlPath": "",
-          "componentId": "ThemeConfiguration",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true
-    },
-    "theme.component.ThemeConfiguration": {
-      "id": "component-ThemeConfiguration",
-      "name": "ThemeConfiguration",
-      "displayName": "ThemeConfiguration",
-      "type": "component",
-      "path": "theme.component.ThemeConfiguration",
-      "urlPath": "",
-      "componentId": "ThemeConfiguration",
-      "include": true
-    },
-    "start-here.app-structure": {
-      "id": "start-here.app-structure",
-      "name": "app-structure",
-      "displayName": "App Structure",
-      "type": "file",
-      "order": 3,
-      "path": "start-here.app-structure",
-      "urlPath": "/start-here/app-structure",
-      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-      "components": [
-        {
-          "id": "component-LayoutAndStructure",
-          "name": "LayoutAndStructure",
-          "displayName": "LayoutAndStructure",
-          "type": "component",
-          "path": "app-structure.component.LayoutAndStructure",
-          "urlPath": "",
-          "componentId": "LayoutAndStructure",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true
-    },
-    "app-structure.component.LayoutAndStructure": {
-      "id": "component-LayoutAndStructure",
-      "name": "LayoutAndStructure",
-      "displayName": "LayoutAndStructure",
-      "type": "component",
-      "path": "app-structure.component.LayoutAndStructure",
-      "urlPath": "",
-      "componentId": "LayoutAndStructure",
-      "include": true
-    },
-    "start-here.database": {
-      "id": "start-here.database",
-      "name": "database",
-      "displayName": "Database",
-      "type": "file",
-      "order": 4,
-      "path": "start-here.database",
-      "urlPath": "/start-here/database",
-      "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
-      "components": [
-        {
-          "id": "component-DatabaseConfiguration",
-          "name": "DatabaseConfiguration",
-          "displayName": "DatabaseConfiguration",
-          "type": "component",
-          "path": "database.component.DatabaseConfiguration",
-          "urlPath": "",
-          "componentId": "DatabaseConfiguration",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true
-    },
-    "database.component.DatabaseConfiguration": {
-      "id": "component-DatabaseConfiguration",
-      "name": "DatabaseConfiguration",
-      "displayName": "DatabaseConfiguration",
-      "type": "component",
-      "path": "database.component.DatabaseConfiguration",
-      "urlPath": "",
-      "componentId": "DatabaseConfiguration",
-      "include": true
-    },
-    "start-here.next-steps": {
-      "id": "start-here.next-steps",
-      "name": "next-steps",
-      "displayName": "Next Steps",
-      "type": "file",
-      "order": 5,
-      "path": "start-here.next-steps",
-      "urlPath": "/start-here/next-steps",
-      "content": "# Next steps\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
-      "components": [
-        {
-          "id": "component-IDESelection",
-          "name": "IDESelection",
-          "displayName": "IDESelection",
-          "type": "component",
-          "path": "next-steps.component.IDESelection",
-          "urlPath": "",
-          "componentId": "IDESelection",
-          "include": true
-        }
-      ],
-      "sections": {
-        "section1": {
-          "option1": {
-            "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 4: Start Building with AI\n\n1. Open the chat panel in Lovable\n2. Direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n3. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
-            "include": true
-          },
-          "option2": {
-            "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 6: Start Building with AI\n\n1. Open the Replit AI assistant\n2. Direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n3. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
-            "include": true
-          },
-          "option3": {
-            "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 6: Start Building with AI\n\n1. Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension (requires subscription)\n2. Or use [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n3. Direct your AI assistant to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n4. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
-            "include": true
-          }
-        }
-      },
-      "include": true
-    },
-    "next-steps.component.IDESelection": {
-      "id": "component-IDESelection",
-      "name": "IDESelection",
-      "displayName": "IDESelection",
-      "type": "component",
-      "path": "next-steps.component.IDESelection",
-      "urlPath": "",
-      "componentId": "IDESelection",
-      "include": true
+      "visibleAfterPage": "next-steps"
     }
   },
   "contentVersion": 45

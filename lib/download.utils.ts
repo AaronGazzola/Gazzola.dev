@@ -1037,14 +1037,25 @@ export const generatePrismaSchema = (
   tables: PrismaTable[],
   initialConfiguration: InitialConfigurationType
 ): string => {
-  const schemas = Array.from(new Set(tables.map((t) => t.schema)));
+  const shouldExcludeAuthSchema =
+    initialConfiguration.questions.databaseProvider === "supabase" &&
+    !initialConfiguration.technologies.betterAuth;
+
+  const filteredTables = tables.filter((table) => {
+    if (shouldExcludeAuthSchema && table.schema === "auth") {
+      return false;
+    }
+    return true;
+  });
+
+  const schemas = Array.from(new Set(filteredTables.map((t) => t.schema)));
   const schemasStr = schemas.map((s) => `"${s}"`).join(", ");
 
   let schema = `datasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n  schemas  = [${schemasStr}]\n}\n\n`;
 
   schema += `generator client {\n  provider = "prisma-client-js"\n  previewFeatures = ["multiSchema"]\n}\n\n`;
 
-  tables.forEach((table) => {
+  filteredTables.forEach((table) => {
     schema += `model ${table.name} {\n`;
 
     table.columns.forEach((col) => {
@@ -1097,7 +1108,8 @@ export const generateRLSMigrationSQL = (
   const lines: string[] = [];
 
   const authProvider =
-    initialConfiguration.questions.databaseProvider === "supabase"
+    initialConfiguration.questions.databaseProvider === "supabase" &&
+    !initialConfiguration.technologies.betterAuth
       ? "supabase"
       : "better-auth";
 

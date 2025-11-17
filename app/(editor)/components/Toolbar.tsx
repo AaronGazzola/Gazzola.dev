@@ -373,7 +373,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         .replace(/\\\\/g, "\\");
       setContent(currentContentPath, originalContent);
     }
-    if (currentContentPath === "start-here.theme") {
+    if (currentContentPath === "theme") {
       resetTheme();
     }
     forceRefresh();

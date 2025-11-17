@@ -227,11 +227,11 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
   };
 
   if (sanitizedName === "robot-readme") {
-    fileNode.visibleAfterPage = "start-here.next-steps";
+    fileNode.visibleAfterPage = "next-steps";
   }
 
   if (order && order >= 6) {
-    fileNode.visibleAfterPage = "start-here.next-steps";
+    fileNode.visibleAfterPage = "next-steps";
   }
 
   return fileNode;
@@ -280,7 +280,7 @@ function buildMarkdownTree(
       };
 
       if (sanitizedName === "robots") {
-        directoryNode.visibleAfterPage = "start-here.next-steps";
+        directoryNode.visibleAfterPage = "next-steps";
       }
 
       nodes.push(directoryNode);

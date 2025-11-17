@@ -783,7 +783,7 @@ const createComponentFileNodes = (
       language: "typescript",
       content: () => content,
       includeCondition: () => shouldShowCodeFiles,
-      visibleAfterPage: "start-here.next-steps",
+      visibleAfterPage: "next-steps",
       parentPath: "components.ui",
       downloadPath: "components/ui",
       previewOnly: true,
@@ -802,28 +802,11 @@ export const createCodeFileNodes = (
   isPageVisited?: (path: string) => boolean
 ): CodeFileNode[] => {
   const nodes: CodeFileNode[] = [];
-  const shouldShowCodeFiles = isPageVisited?.("start-here.next-steps") ?? false;
-
-  nodes.push({
-    id: "code-file-globals-css",
-    name: "globals.css",
-    displayName: "globals.css",
-    type: "code-file",
-    path: "styles.globals",
-    urlPath: "/styles/globals",
-    include: shouldShowCodeFiles,
-    fileExtension: "css",
-    language: "css",
-    content: () => codeFileGenerators.globals_css(theme),
-    includeCondition: () => shouldShowCodeFiles,
-    visibleAfterPage: "start-here.next-steps",
-    parentPath: "app",
-    downloadPath: "app",
-    previewOnly: true,
-  });
+  const shouldShowCodeFiles = isPageVisited?.("next-steps") ?? false;
 
   const isBetterAuthEnabled = initialConfig.technologies.betterAuth;
-  const isSupabaseOnly = initialConfig.questions.databaseProvider === "supabase";
+  const isSupabaseOnly =
+    initialConfig.questions.databaseProvider === "supabase";
 
   if (isBetterAuthEnabled && !isSupabaseOnly) {
     nodes.push({
@@ -844,7 +827,7 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.betterAuth &&
         initialConfig.questions.databaseProvider !== "supabase",
-      visibleAfterPage: "start-here.next-steps",
+      visibleAfterPage: "next-steps",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -868,7 +851,7 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.betterAuth &&
         initialConfig.questions.databaseProvider !== "supabase",
-      visibleAfterPage: "start-here.next-steps",
+      visibleAfterPage: "next-steps",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -894,29 +877,9 @@ export const createCodeFileNodes = (
   });
 
   const hasPrisma = initialConfig.technologies.prisma;
-  if (hasPrisma) {
-    nodes.push({
-      id: "code-file-prisma-schema",
-      name: "schema.prisma",
-      displayName: "schema.prisma",
-      type: "code-file",
-      path: "prisma.schema",
-      urlPath: "/prisma/schema",
-      include: shouldShowCodeFiles && initialConfig.technologies.prisma,
-      fileExtension: "prisma",
-      language: "prisma",
-      content: () => codeFileGenerators.prisma_schema(tables),
-      includeCondition: () =>
-        shouldShowCodeFiles && initialConfig.technologies.prisma,
-      visibleAfterPage: "start-here.next-steps",
-      parentPath: "prisma",
-      downloadPath: "prisma",
-      previewOnly: true,
-    });
-  }
 
   const hasRLS = rlsPolicies.length > 0;
-  if (hasPrisma && hasRLS) {
+  if (hasPrisma && !isSupabaseOnly) {
     nodes.push({
       id: "code-file-prisma-rls-ts",
       name: "prisma-rls.ts",
@@ -935,28 +898,7 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.prisma &&
         rlsPolicies.length > 0,
-      visibleAfterPage: "start-here.next-steps",
-      parentPath: "lib",
-      downloadPath: "lib",
-      previewOnly: true,
-    });
-  }
-
-  if (hasPrisma) {
-    nodes.push({
-      id: "code-file-prisma-rls-client-ts",
-      name: "prisma-rls.ts",
-      displayName: "prisma-rls.ts",
-      type: "code-file",
-      path: "lib.prisma-rls-client",
-      urlPath: "/lib/prisma-rls-client",
-      include: shouldShowCodeFiles && initialConfig.technologies.prisma,
-      fileExtension: "ts",
-      language: "typescript",
-      content: () => codeFileGenerators.prisma_rls_client_ts(),
-      includeCondition: () =>
-        shouldShowCodeFiles && initialConfig.technologies.prisma,
-      visibleAfterPage: "start-here.next-steps",
+      visibleAfterPage: "next-steps",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -982,41 +924,9 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.prisma &&
         initialConfig.technologies.betterAuth,
-      visibleAfterPage: "start-here.next-steps",
+      visibleAfterPage: "next-steps",
       parentPath: "lib",
       downloadPath: "lib",
-      previewOnly: true,
-    });
-  }
-
-  const isSupabase =
-    initialConfig.questions.databaseProvider === "both" ||
-    initialConfig.questions.databaseProvider === "supabase";
-  if (isSupabase && hasRLS) {
-    nodes.push({
-      id: "code-file-supabase-migration",
-      name: "rls_policies.sql",
-      displayName: "rls_policies.sql",
-      type: "code-file",
-      path: "supabase.migrations.rls-policies",
-      urlPath: "/supabase/migrations/rls-policies",
-      include:
-        shouldShowCodeFiles &&
-        (initialConfig.questions.databaseProvider === "both" ||
-          initialConfig.questions.databaseProvider === "supabase") &&
-        rlsPolicies.length > 0,
-      fileExtension: "sql",
-      language: "sql",
-      content: () =>
-        codeFileGenerators.supabase_migration_sql(rlsPolicies, tables),
-      includeCondition: () =>
-        shouldShowCodeFiles &&
-        (initialConfig.questions.databaseProvider === "both" ||
-          initialConfig.questions.databaseProvider === "supabase") &&
-        rlsPolicies.length > 0,
-      visibleAfterPage: "start-here.next-steps",
-      parentPath: "supabase.migrations",
-      downloadPath: "supabase/migrations",
       previewOnly: true,
     });
   }
