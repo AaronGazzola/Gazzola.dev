@@ -5,6 +5,7 @@ import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
 import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
 import { useThemeStore } from "@/app/layout.stores";
+import { getDynamicRobotsFileName } from "@/lib/robots-file.utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -327,7 +328,16 @@ const TreeItem: React.FC<TreeItemProps> = ({
     return data.flatIndex[path] || codeFiles.find((cf) => cf.path === path);
   };
 
+  const { getSectionInclude } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+  const getDisplayName = (itemName: string, itemPath: string): string => {
+    const node = getNode(itemPath);
+    if (node && node.type === "file" && (node as any).isDynamicRobotsFile) {
+      return getDynamicRobotsFileName(getSectionInclude);
+    }
+    return itemName;
+  };
 
   const getBackgroundStyle = () => {
     if (gradientEnabled) {
@@ -390,7 +400,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
             className="absolute opacity-30 inset-0 rounded"
             style={isActive ? getBackgroundStyle() : undefined}
           ></div>
-          <div className="flex items-center">{item.name}</div>
+          <div className="flex items-center">{getDisplayName(item.name, item.path || "")}</div>
         </Button>
       </Link>
     );
@@ -470,7 +480,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
           className="w-full justify-between text-white hover:bg-gray-800 h-8 px-2"
           style={{ paddingLeft: `${level * 12 + 8}px` }}
         >
-          {item.name}
+          {getDisplayName(item.name, itemPath)}
           {isOpen ? (
             <ChevronDown className="h-4 w-4" />
           ) : (
@@ -528,7 +538,16 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     return data.flatIndex[path] || codeFiles.find((cf) => cf.path === path);
   };
 
+  const { getSectionInclude } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+
+  const getDisplayName = (itemName: string, itemPath: string): string => {
+    const node = getNode(itemPath);
+    if (node && node.type === "file" && (node as any).isDynamicRobotsFile) {
+      return getDynamicRobotsFileName(getSectionInclude);
+    }
+    return itemName;
+  };
 
   const getBackgroundStyle = () => {
     if (gradientEnabled) {
@@ -612,7 +631,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
             side="right"
             className="bg-gray-900 text-white border-gray-700"
           >
-            {item.name}
+            {getDisplayName(item.name, itemPath)}
           </TooltipContent>
         </Tooltip>
         {item.children && item.children.length > 0 && isOpen && (
@@ -728,7 +747,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
           side="right"
           className="bg-gray-900 text-white border-gray-700"
         >
-          {item.name}
+          {getDisplayName(item.name, itemPath)}
         </TooltipContent>
       </Tooltip>
       {isOpen && (

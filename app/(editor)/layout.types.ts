@@ -1,4 +1,13 @@
+import type { IDEType } from "@/app/(components)/IDESelection.types";
+
 export type NodeType = "directory" | "file" | "segment" | "component" | "code-file";
+
+export const IDE_ROBOTS_DISPLAY_NAMES: Record<IDEType, string> = {
+  claudecode: "CLAUDE",
+  cursor: ".cursorrules",
+  lovable: ".lovablerules",
+  replit: ".replitai",
+};
 
 export interface BaseNode {
   id: string;
@@ -31,6 +40,7 @@ export interface FileNode extends BaseNode {
   content: string;
   components: ComponentRef[];
   sections: Record<string, Record<string, SectionOption>>;
+  isDynamicRobotsFile?: boolean;
 }
 
 export interface ComponentRef extends BaseNode {

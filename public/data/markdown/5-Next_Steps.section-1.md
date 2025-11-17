@@ -38,7 +38,7 @@
 
 1. In the chat panel, direct the AI to investigate the roadmap:
    ```
-   Please read and analyze the ROBOTS.md file in the roadmap folder,
+   Please read and analyze the README.md file in the roadmap folder,
    then help me implement the features described there.
    ```
 2. The AI will read your roadmap and start helping you build!
@@ -113,7 +113,7 @@
 
 1. In the Replit AI assistant, direct it to your roadmap:
    ```
-   Please read and follow the instructions in the roadmap/ROBOTS.md file
+   Please read and follow the instructions in the roadmap/README.md file
    to help me build this application.
    ```
 2. Start developing with AI assistance!
@@ -197,7 +197,7 @@
 
 1. In your AI assistant, direct it to the roadmap:
    ```
-   Please read the roadmap/ROBOTS.md file and help me implement
+   Please read the roadmap/README.md file and help me implement
    the features and requirements described there.
    ```
 2. Start building your application!
@@ -279,7 +279,7 @@
 
 1. In Cursor's AI chat panel, direct the AI to your roadmap:
    ```
-   Please read the roadmap/ROBOTS.md file and help me implement
+   Please read the roadmap/README.md file and help me implement
    the features and requirements described there.
    ```
 2. Start building with AI assistance!

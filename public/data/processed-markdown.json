@@ -30,7 +30,8 @@
           }
         ],
         "sections": {},
-        "include": true
+        "include": true,
+        "isDynamicRobotsFile": false
       },
       {
         "id": "theme",
@@ -54,7 +55,8 @@
           }
         ],
         "sections": {},
-        "include": true
+        "include": true,
+        "isDynamicRobotsFile": false
       },
       {
         "id": "app-structure",
@@ -78,7 +80,8 @@
           }
         ],
         "sections": {},
-        "include": true
+        "include": true,
+        "isDynamicRobotsFile": false
       },
       {
         "id": "database",
@@ -102,7 +105,8 @@
           }
         ],
         "sections": {},
-        "include": true
+        "include": true,
+        "isDynamicRobotsFile": false
       },
       {
         "id": "next-steps",
@@ -128,56 +132,54 @@
         "sections": {
           "section1": {
             "option1": {
-              "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
+              "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the README.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
               "include": true
             },
             "option2": {
-              "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
+              "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/README.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
               "include": true
             },
             "option3": {
-              "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
+              "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/README.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
               "include": true
             },
             "option4": {
-              "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
+              "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/README.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
               "include": true
             }
           }
         },
-        "include": true
+        "include": true,
+        "isDynamicRobotsFile": false
+      },
+      {
+        "id": "readme",
+        "name": "readme",
+        "displayName": "README",
+        "type": "file",
+        "order": 6,
+        "path": "readme",
+        "urlPath": "/readme",
+        "content": "# README\n\nThis file will provide instructions for your AI to utilize the files in the downloaded roadmap directory\n",
+        "components": [],
+        "sections": {},
+        "include": true,
+        "isDynamicRobotsFile": false,
+        "visibleAfterPage": "next-steps"
       },
       {
         "id": "robots",
         "name": "robots",
         "displayName": "ROBOTS",
         "type": "file",
-        "order": 6,
+        "order": 7,
         "path": "robots",
         "urlPath": "/robots",
-        "content": "# ROBOTS.md\n\nThe web app has been initialized with \\`npx create-next-app@latest\\`.\nThis ROBOTS file is located at \\`roadmap/ROBOTS.md\\`. The roadmap directory is in the root of the Next.js repository.\n\n## Overview\n\nThe files in the roadmap directory should all be copied into their corresponding file paths in the next.js repo. Ie the file at \\`roadmap/app/globals.css\\` should be copied to \\`app/globals.css\\`, replacing any existing file at that location.\n\nAfter copying the files listed below, confirm that the environment variables listed below are present - if not, request them from the user. If possible, search the latest documentation for the corresponding platforms to find out how to find the environment variables.\n\nOnce the environment variables are set and the files are in place, run the commands listed below to initialize the database and any integrations.\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
+        "content": "# ROBOTS.md\n\nThis file will explain the programming patterns that your AI will use to build your web app.\n",
         "components": [],
-        "sections": {
-          "section2": {
-            "option1": {
-              "content": "The following files have been generated and are ready to copy:\n\n**Core Configuration:**\n- `package.json` - Dependencies and scripts\n- `tsconfig.json` - TypeScript configuration\n- `tailwind.config.ts` - Tailwind CSS configuration\n- `next.config.js` - Next.js configuration\n- `.env.local` - Environment variables template\n\n**Application Structure:**\n- `app/` - All application routes and layouts\n- `components/` - Reusable UI components\n- `lib/` - Utility functions and helpers\n- `hooks/` - Custom React hooks\n- `types/` - TypeScript type definitions\n\n**Testing:**\n- `__tests__/` - Test files\n- `playwright.config.ts` - Playwright configuration\n- `jest.config.js` - Jest configuration\n\n**Database (if applicable):**\n- `prisma/schema.prisma` - Prisma schema\n- `supabase/` - Supabase configuration and migrations",
-              "include": true
-            }
-          },
-          "section3": {
-            "option1": {
-              "content": "Before copying files, ensure the target Next.js project has been initialized:\n\n```bash\nnpx create-next-app@latest my-app\ncd my-app\n```\n\nThe `create-next-app` initialization should include:\n- TypeScript support\n- Tailwind CSS\n- App Router (not Pages Router)\n- ESLint configuration\n\nAfter initialization, you can proceed with copying the generated files.",
-              "include": true
-            }
-          },
-          "section4": {
-            "option1": {
-              "content": "Copy the generated files to the following locations in your Next.js project:\n\n**Root Level:**\n- Copy `package.json` → Merge with existing `package.json`\n- Copy `tsconfig.json` → Replace existing `tsconfig.json`\n- Copy `tailwind.config.ts` → Replace existing `tailwind.config.ts`\n- Copy `next.config.js` → Replace existing `next.config.js`\n- Copy `.env.local` → Create new `.env.local` (fill in actual values)\n\n**Directory Structure:**\n- Copy `app/` → Merge with existing `app/` directory\n- Copy `components/` → Create new `components/` directory\n- Copy `lib/` → Create new `lib/` directory\n- Copy `hooks/` → Create new `hooks/` directory\n- Copy `types/` → Create new `types/` directory\n\n**Testing:**\n- Copy `__tests__/` → Create new `__tests__/` directory\n- Copy `playwright.config.ts` → Create new file\n- Copy `jest.config.js` → Create new file\n\n**Database:**\n- Copy `prisma/` → Create new `prisma/` directory (if using Prisma)\n- Copy `supabase/` → Create new `supabase/` directory (if using Supabase)\n\nAfter copying files:\n1. Run `npm install` to install dependencies\n2. Run `npm run dev` to start the development server\n3. Configure environment variables in `.env.local`\n4. Run database migrations if applicable",
-              "include": true
-            }
-          }
-        },
+        "sections": {},
         "include": true,
+        "isDynamicRobotsFile": true,
         "visibleAfterPage": "next-steps"
       },
       {
@@ -334,6 +336,7 @@
               }
             },
             "include": true,
+            "isDynamicRobotsFile": false,
             "visibleAfterPage": "next-steps"
           },
           {
@@ -415,6 +418,7 @@
               }
             },
             "include": true,
+            "isDynamicRobotsFile": false,
             "visibleAfterPage": "next-steps"
           }
         ]
@@ -453,7 +457,8 @@
             }
           ],
           "sections": {},
-          "include": true
+          "include": true,
+          "isDynamicRobotsFile": false
         },
         {
           "id": "theme",
@@ -477,7 +482,8 @@
             }
           ],
           "sections": {},
-          "include": true
+          "include": true,
+          "isDynamicRobotsFile": false
         },
         {
           "id": "app-structure",
@@ -501,7 +507,8 @@
             }
           ],
           "sections": {},
-          "include": true
+          "include": true,
+          "isDynamicRobotsFile": false
         },
         {
           "id": "database",
@@ -525,7 +532,8 @@
             }
           ],
           "sections": {},
-          "include": true
+          "include": true,
+          "isDynamicRobotsFile": false
         },
         {
           "id": "next-steps",
@@ -551,56 +559,54 @@
           "sections": {
             "section1": {
               "option1": {
-                "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
+                "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the README.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
                 "include": true
               },
               "option2": {
-                "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
+                "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/README.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
                 "include": true
               },
               "option3": {
-                "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
+                "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/README.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
                 "include": true
               },
               "option4": {
-                "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
+                "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/README.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
                 "include": true
               }
             }
           },
-          "include": true
+          "include": true,
+          "isDynamicRobotsFile": false
+        },
+        {
+          "id": "readme",
+          "name": "readme",
+          "displayName": "README",
+          "type": "file",
+          "order": 6,
+          "path": "readme",
+          "urlPath": "/readme",
+          "content": "# README\n\nThis file will provide instructions for your AI to utilize the files in the downloaded roadmap directory\n",
+          "components": [],
+          "sections": {},
+          "include": true,
+          "isDynamicRobotsFile": false,
+          "visibleAfterPage": "next-steps"
         },
         {
           "id": "robots",
           "name": "robots",
           "displayName": "ROBOTS",
           "type": "file",
-          "order": 6,
+          "order": 7,
           "path": "robots",
           "urlPath": "/robots",
-          "content": "# ROBOTS.md\n\nThe web app has been initialized with \\`npx create-next-app@latest\\`.\nThis ROBOTS file is located at \\`roadmap/ROBOTS.md\\`. The roadmap directory is in the root of the Next.js repository.\n\n## Overview\n\nThe files in the roadmap directory should all be copied into their corresponding file paths in the next.js repo. Ie the file at \\`roadmap/app/globals.css\\` should be copied to \\`app/globals.css\\`, replacing any existing file at that location.\n\nAfter copying the files listed below, confirm that the environment variables listed below are present - if not, request them from the user. If possible, search the latest documentation for the corresponding platforms to find out how to find the environment variables.\n\nOnce the environment variables are set and the files are in place, run the commands listed below to initialize the database and any integrations.\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
+          "content": "# ROBOTS.md\n\nThis file will explain the programming patterns that your AI will use to build your web app.\n",
           "components": [],
-          "sections": {
-            "section2": {
-              "option1": {
-                "content": "The following files have been generated and are ready to copy:\n\n**Core Configuration:**\n- `package.json` - Dependencies and scripts\n- `tsconfig.json` - TypeScript configuration\n- `tailwind.config.ts` - Tailwind CSS configuration\n- `next.config.js` - Next.js configuration\n- `.env.local` - Environment variables template\n\n**Application Structure:**\n- `app/` - All application routes and layouts\n- `components/` - Reusable UI components\n- `lib/` - Utility functions and helpers\n- `hooks/` - Custom React hooks\n- `types/` - TypeScript type definitions\n\n**Testing:**\n- `__tests__/` - Test files\n- `playwright.config.ts` - Playwright configuration\n- `jest.config.js` - Jest configuration\n\n**Database (if applicable):**\n- `prisma/schema.prisma` - Prisma schema\n- `supabase/` - Supabase configuration and migrations",
-                "include": true
-              }
-            },
-            "section3": {
-              "option1": {
-                "content": "Before copying files, ensure the target Next.js project has been initialized:\n\n```bash\nnpx create-next-app@latest my-app\ncd my-app\n```\n\nThe `create-next-app` initialization should include:\n- TypeScript support\n- Tailwind CSS\n- App Router (not Pages Router)\n- ESLint configuration\n\nAfter initialization, you can proceed with copying the generated files.",
-                "include": true
-              }
-            },
-            "section4": {
-              "option1": {
-                "content": "Copy the generated files to the following locations in your Next.js project:\n\n**Root Level:**\n- Copy `package.json` → Merge with existing `package.json`\n- Copy `tsconfig.json` → Replace existing `tsconfig.json`\n- Copy `tailwind.config.ts` → Replace existing `tailwind.config.ts`\n- Copy `next.config.js` → Replace existing `next.config.js`\n- Copy `.env.local` → Create new `.env.local` (fill in actual values)\n\n**Directory Structure:**\n- Copy `app/` → Merge with existing `app/` directory\n- Copy `components/` → Create new `components/` directory\n- Copy `lib/` → Create new `lib/` directory\n- Copy `hooks/` → Create new `hooks/` directory\n- Copy `types/` → Create new `types/` directory\n\n**Testing:**\n- Copy `__tests__/` → Create new `__tests__/` directory\n- Copy `playwright.config.ts` → Create new file\n- Copy `jest.config.js` → Create new file\n\n**Database:**\n- Copy `prisma/` → Create new `prisma/` directory (if using Prisma)\n- Copy `supabase/` → Create new `supabase/` directory (if using Supabase)\n\nAfter copying files:\n1. Run `npm install` to install dependencies\n2. Run `npm run dev` to start the development server\n3. Configure environment variables in `.env.local`\n4. Run database migrations if applicable",
-                "include": true
-              }
-            }
-          },
+          "sections": {},
           "include": true,
+          "isDynamicRobotsFile": true,
           "visibleAfterPage": "next-steps"
         },
         {
@@ -757,6 +763,7 @@
                 }
               },
               "include": true,
+              "isDynamicRobotsFile": false,
               "visibleAfterPage": "next-steps"
             },
             {
@@ -838,6 +845,7 @@
                 }
               },
               "include": true,
+              "isDynamicRobotsFile": false,
               "visibleAfterPage": "next-steps"
             }
           ]
@@ -866,7 +874,8 @@
         }
       ],
       "sections": {},
-      "include": true
+      "include": true,
+      "isDynamicRobotsFile": false
     },
     "tech-stack.component.InitialConfiguration": {
       "id": "component-InitialConfiguration",
@@ -900,7 +909,8 @@
         }
       ],
       "sections": {},
-      "include": true
+      "include": true,
+      "isDynamicRobotsFile": false
     },
     "theme.component.ThemeConfiguration": {
       "id": "component-ThemeConfiguration",
@@ -934,7 +944,8 @@
         }
       ],
       "sections": {},
-      "include": true
+      "include": true,
+      "isDynamicRobotsFile": false
     },
     "app-structure.component.LayoutAndStructure": {
       "id": "component-LayoutAndStructure",
@@ -968,7 +979,8 @@
         }
       ],
       "sections": {},
-      "include": true
+      "include": true,
+      "isDynamicRobotsFile": false
     },
     "database.component.DatabaseConfiguration": {
       "id": "component-DatabaseConfiguration",
@@ -1004,24 +1016,25 @@
       "sections": {
         "section1": {
           "option1": {
-            "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the ROBOTS.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
+            "content": "## Setup Instructions for Lovable\n\n### Step 1: Connect Your GitHub Account\n\n1. Go to **Settings → Integrations → GitHub** in Lovable\n2. Click **Connect GitHub**\n3. Sign in to your GitHub account to authorize lovable.dev\n4. Install the Lovable GitHub App on your account or organization\n5. Select whether to give access to all repositories or only selected ones\n6. Click **Install & Authorize**\n\n### Step 2: Create and Connect Your Repository\n\n1. In the Lovable editor, click the **GitHub icon** in the top-right corner\n2. Click **Create Repository**\n3. Choose the GitHub organization or account where your code should live\n4. Lovable will create a new GitHub repository and push your project code to it\n\n### Step 3: Initialize Your Next.js Application\n\n1. Open the chat panel in Lovable\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for Lovable to create the Next.js project structure\n\n### Step 4: Add Your Roadmap to the Repository\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Lovable, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 5: Start Building with AI\n\n1. In the chat panel, direct the AI to investigate the roadmap:\n   ```\n   Please read and analyze the README.md file in the roadmap folder,\n   then help me implement the features described there.\n   ```\n2. The AI will read your roadmap and start helping you build!\n\n### Important Notes\n\n- Two-way sync: Edits in Lovable appear in GitHub, and vice versa\n- Don't rename, move, or delete your GitHub repository after connecting\n- Lovable currently tracks only the default branch of your repository\n- You can only connect one GitHub account per Lovable account",
             "include": true
           },
           "option2": {
-            "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/ROBOTS.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
+            "content": "## Setup Instructions for Replit\n\n### Step 1: Connect Your GitHub Account\n\n1. Navigate to your Replit account settings\n2. Scroll down to **Connected Services**\n3. Click the GitHub **Connect** button\n4. Authorize Replit to access your GitHub account\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and create a new repository\n2. Name it appropriately for your project (e.g., `my-web-app`)\n3. Choose visibility (public or private - private requires Replit Core membership)\n4. Initialize with a README if desired\n5. Copy the repository URL\n\n### Step 3: Import Repository to Replit\n\n**Option A - Rapid Import (Public Repositories):**\n\n1. Copy your GitHub repository URL (starting with github.com)\n2. In your browser, type: `https://replit.com/` and paste the GitHub URL at the end\n3. Example: `https://replit.com/github.com/yourusername/your-repo`\n\n**Option B - Guided Import (Public & Private):**\n\n1. Navigate to [https://replit.com/import](https://replit.com/import)\n2. Select **GitHub** from available import sources\n3. Authorize access if prompted\n4. Select the repository you want to import\n5. Click **Import** to start the conversion process\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open the Replit AI assistant\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the initialization to complete\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. In Replit, navigate to your project files\n3. Paste your roadmap directory into your project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Version Control** panel in Replit (Git icon in sidebar)\n2. Stage your changes (click the + next to changed files)\n3. Write a commit message: \"Add project roadmap\"\n4. Click **Commit & push**\n\n### Step 7: Start Building with AI\n\n1. In the Replit AI assistant, direct it to your roadmap:\n   ```\n   Please read and follow the instructions in the roadmap/README.md file\n   to help me build this application.\n   ```\n2. Start developing with AI assistance!\n\n### Important Notes\n\n- There's no longer a limit on repository size (within Replit storage limits)\n- Private repositories require Replit Core membership\n- Replit attempts to auto-detect your app's language and dependencies",
             "include": true
           },
           "option3": {
-            "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
+            "content": "## Setup Instructions for VS Code\n\n### Step 1: Install Prerequisites\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in VS Code\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open VS Code\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Install an AI assistant if you haven't already:\n   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) (requires subscription)\n   - [Continue](https://marketplace.visualstudio.com/items?itemName=Continue.continue) (free AI coding assistant)\n   - Or use Claude Code\n2. Open your AI assistant and ask it to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In your AI assistant, direct it to the roadmap:\n   ```\n   Please read the roadmap/README.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building your application!\n\n### Important Notes\n\n- Authentication with GitHub is built into VS Code\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)\n- Use the integrated terminal (`Ctrl+\\`` or `⌃\\``) for running commands",
             "include": true
           },
           "option4": {
-            "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/ROBOTS.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
+            "content": "## Setup Instructions for Cursor\n\n### Step 1: Install Prerequisites\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) on your computer\n3. Verify Git installation by opening a terminal and running: `git --version`\n\n### Step 2: Create Your GitHub Repository\n\n1. Go to [GitHub](https://github.com) and sign in\n2. Click the **+** icon in the top-right and select **New repository**\n3. Name your repository (e.g., `my-web-app`)\n4. Choose visibility (public or private)\n5. Optionally initialize with a README\n6. Click **Create repository**\n7. Copy the repository URL (HTTPS or SSH)\n\n### Step 3: Clone Repository in Cursor\n\n**Method 1 - Using Command Palette (Recommended):**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub**\n5. Sign into GitHub if prompted\n6. Select your repository from the dropdown\n7. Choose a local folder for the project\n8. Click **Open** when prompted\n\n**Method 2 - Using URL:**\n\n1. Open Cursor\n2. Press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac)\n3. Type `Git: Clone` and select it\n4. Paste your repository URL\n5. Select a destination folder\n6. Click **Open** when prompted\n\n### Step 4: Initialize Your Next.js Application\n\n1. Open Cursor's AI chat panel (Ctrl+L or ⌘L)\n2. Ask the AI to initialize your project:\n   ```\n   Please initialize a Next.js web app in the root of this repository\n   with all latest defaults accepted.\n   ```\n3. Wait for the Next.js project structure to be created\n\n### Step 5: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 6: Commit and Push to GitHub\n\n1. Open the **Source Control** panel (Ctrl+Shift+G or ⌃⇧G)\n2. Stage your changes by clicking the **+** icon next to changed files\n3. Enter a commit message: \"Add project roadmap\"\n4. Click the **✓ Commit** button\n5. Click **Sync Changes** or **Push** to send to GitHub\n\n### Step 7: Start Building with AI\n\n1. In Cursor's AI chat panel, direct the AI to your roadmap:\n   ```\n   Please read the roadmap/README.md file and help me implement\n   the features and requirements described there.\n   ```\n2. Start building with AI assistance!\n\n### Important Notes\n\n- Cursor has built-in AI features powered by GPT-4 and Claude\n- Use `Ctrl+K` (Windows/Linux) or `⌘K` (Mac) for inline AI editing\n- Authentication with GitHub is built into Cursor\n- You can use SSH or HTTPS for Git operations\n- Install recommended extensions for your tech stack (React, TypeScript, etc.)",
             "include": true
           }
         }
       },
-      "include": true
+      "include": true,
+      "isDynamicRobotsFile": false
     },
     "next-steps.component.IDESelection": {
       "id": "component-IDESelection",
@@ -1033,37 +1046,34 @@
       "componentId": "IDESelection",
       "include": true
     },
+    "readme": {
+      "id": "readme",
+      "name": "readme",
+      "displayName": "README",
+      "type": "file",
+      "order": 6,
+      "path": "readme",
+      "urlPath": "/readme",
+      "content": "# README\n\nThis file will provide instructions for your AI to utilize the files in the downloaded roadmap directory\n",
+      "components": [],
+      "sections": {},
+      "include": true,
+      "isDynamicRobotsFile": false,
+      "visibleAfterPage": "next-steps"
+    },
     "robots": {
       "id": "robots",
       "name": "robots",
       "displayName": "ROBOTS",
       "type": "file",
-      "order": 6,
+      "order": 7,
       "path": "robots",
       "urlPath": "/robots",
-      "content": "# ROBOTS.md\n\nThe web app has been initialized with \\`npx create-next-app@latest\\`.\nThis ROBOTS file is located at \\`roadmap/ROBOTS.md\\`. The roadmap directory is in the root of the Next.js repository.\n\n## Overview\n\nThe files in the roadmap directory should all be copied into their corresponding file paths in the next.js repo. Ie the file at \\`roadmap/app/globals.css\\` should be copied to \\`app/globals.css\\`, replacing any existing file at that location.\n\nAfter copying the files listed below, confirm that the environment variables listed below are present - if not, request them from the user. If possible, search the latest documentation for the corresponding platforms to find out how to find the environment variables.\n\nOnce the environment variables are set and the files are in place, run the commands listed below to initialize the database and any integrations.\n\n## Files to Copy\n\n<!-- section-2 -->\n\n## Prerequisites\n\n<!-- section-3 -->\n\n## File Placement\n\n<!-- section-4 -->\n",
+      "content": "# ROBOTS.md\n\nThis file will explain the programming patterns that your AI will use to build your web app.\n",
       "components": [],
-      "sections": {
-        "section2": {
-          "option1": {
-            "content": "The following files have been generated and are ready to copy:\n\n**Core Configuration:**\n- `package.json` - Dependencies and scripts\n- `tsconfig.json` - TypeScript configuration\n- `tailwind.config.ts` - Tailwind CSS configuration\n- `next.config.js` - Next.js configuration\n- `.env.local` - Environment variables template\n\n**Application Structure:**\n- `app/` - All application routes and layouts\n- `components/` - Reusable UI components\n- `lib/` - Utility functions and helpers\n- `hooks/` - Custom React hooks\n- `types/` - TypeScript type definitions\n\n**Testing:**\n- `__tests__/` - Test files\n- `playwright.config.ts` - Playwright configuration\n- `jest.config.js` - Jest configuration\n\n**Database (if applicable):**\n- `prisma/schema.prisma` - Prisma schema\n- `supabase/` - Supabase configuration and migrations",
-            "include": true
-          }
-        },
-        "section3": {
-          "option1": {
-            "content": "Before copying files, ensure the target Next.js project has been initialized:\n\n```bash\nnpx create-next-app@latest my-app\ncd my-app\n```\n\nThe `create-next-app` initialization should include:\n- TypeScript support\n- Tailwind CSS\n- App Router (not Pages Router)\n- ESLint configuration\n\nAfter initialization, you can proceed with copying the generated files.",
-            "include": true
-          }
-        },
-        "section4": {
-          "option1": {
-            "content": "Copy the generated files to the following locations in your Next.js project:\n\n**Root Level:**\n- Copy `package.json` → Merge with existing `package.json`\n- Copy `tsconfig.json` → Replace existing `tsconfig.json`\n- Copy `tailwind.config.ts` → Replace existing `tailwind.config.ts`\n- Copy `next.config.js` → Replace existing `next.config.js`\n- Copy `.env.local` → Create new `.env.local` (fill in actual values)\n\n**Directory Structure:**\n- Copy `app/` → Merge with existing `app/` directory\n- Copy `components/` → Create new `components/` directory\n- Copy `lib/` → Create new `lib/` directory\n- Copy `hooks/` → Create new `hooks/` directory\n- Copy `types/` → Create new `types/` directory\n\n**Testing:**\n- Copy `__tests__/` → Create new `__tests__/` directory\n- Copy `playwright.config.ts` → Create new file\n- Copy `jest.config.js` → Create new file\n\n**Database:**\n- Copy `prisma/` → Create new `prisma/` directory (if using Prisma)\n- Copy `supabase/` → Create new `supabase/` directory (if using Supabase)\n\nAfter copying files:\n1. Run `npm install` to install dependencies\n2. Run `npm run dev` to start the development server\n3. Configure environment variables in `.env.local`\n4. Run database migrations if applicable",
-            "include": true
-          }
-        }
-      },
+      "sections": {},
       "include": true,
+      "isDynamicRobotsFile": true,
       "visibleAfterPage": "next-steps"
     },
     "code-files": {
@@ -1220,6 +1230,7 @@
             }
           },
           "include": true,
+          "isDynamicRobotsFile": false,
           "visibleAfterPage": "next-steps"
         },
         {
@@ -1301,6 +1312,7 @@
             }
           },
           "include": true,
+          "isDynamicRobotsFile": false,
           "visibleAfterPage": "next-steps"
         }
       ]
@@ -1440,6 +1452,7 @@
         }
       },
       "include": true,
+      "isDynamicRobotsFile": false,
       "visibleAfterPage": "next-steps"
     },
     "docs.util": {
@@ -1521,8 +1534,9 @@
         }
       },
       "include": true,
+      "isDynamicRobotsFile": false,
       "visibleAfterPage": "next-steps"
     }
   },
-  "contentVersion": 45
+  "contentVersion": 46
 }

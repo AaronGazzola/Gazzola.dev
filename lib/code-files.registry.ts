@@ -9,7 +9,9 @@ import type {
   CodeFileNode,
   InitialConfigurationType,
 } from "@/app/(editor)/layout.types";
+import type { IDEType } from "@/app/(components)/IDESelection.types";
 import { componentFileContents } from "./component-files.generated";
+import { getSelectedIDE } from "./robots-file.utils";
 
 export interface CodeFileRegistry {
   globals_css: (theme: ThemeConfiguration) => string;
@@ -24,7 +26,15 @@ export interface CodeFileRegistry {
   log_utils_ts: () => string;
   prisma_rls_client_ts: () => string;
   auth_util_ts: () => string;
+  robots_file: () => string;
 }
+
+export const IDE_ROBOTS_FILES: Record<IDEType, { fileName: string; fileExtension: string }> = {
+  claudecode: { fileName: "CLAUDE", fileExtension: "md" },
+  cursor: { fileName: ".cursorrules", fileExtension: "cursorrules" },
+  lovable: { fileName: ".lovablerules", fileExtension: "lovablerules" },
+  replit: { fileName: ".replitai", fileExtension: "replitai" },
+};
 
 const generateThemeCSS = (theme: ThemeConfiguration): string => {
   const { colors, typography, other } = theme;
@@ -751,6 +761,97 @@ export function generateSupabaseJWT(userId: string, userRole: string): string {
 }`;
 };
 
+const generateRobotsFile = (): string => {
+  return `# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+### Core Technologies
+
+- **Vite 5** with React Router
+- **TypeScript** for type safety
+- **TailwindCSS & Shadcn** for styling
+- **Jest & Playwright** for testing
+- **Supabase** for database and authentication _(remote DB only)_
+
+# General rules:
+
+- Don't include any comments in any files.
+- All errors should be thrown - no "fallback" functionality
+- Import "cn" from "@/lib/utils" to concatenate classes.
+- Always use \\\`@/lib/env.utils\\\` for environment variables and browser APIs to ensure unit test compatibility.
+
+# File Organization and Naming Conventions
+
+- Types and store files alongside ancestor files
+- Actions and hooks files alongside descendent files
+
+\\\`\\\`\\\`txt
+src/
+├── components/
+│   ├── Component.tsx
+│   └── Component.types.ts
+├── pages/
+│   ├── Page.tsx
+│   ├── Page.hooks.tsx
+│   └── Page.types.ts
+├── hooks/
+│   └── useFeature.tsx
+└── lib/
+    ├── utils.ts
+    └── log.utils.ts
+
+    key:
+    ◄─── = defined
+    ───► = imported
+\\\`\\\`\\\`
+
+# Hook, action, store and type patterns
+
+DB <-> Supabase Client <-> hook <-> store
+
+- Supabase client queries are called directly in react-query hooks.
+- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).
+- Loading and error state is managed via the react-query hooks, NOT the zustand store.
+- All db types should be defined from \\\`@/integrations/supabase/types\\\`.
+
+## Example of file patterns - [\\\`docs/util.md\\\`](docs/util.md)
+
+Follow the examples outlined in [\\\`docs/util.md\\\`](docs/util.md) when working on hook, store or type files.
+
+# Testing
+
+All tests should be performed with Jest or Playwright and documented in the \\\`Tests.md\\\` document
+
+## Test rules:
+
+- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from \\\`@/test.types.ts\\\`
+- Do not use wait in the tests. Only use timeouts.
+
+# Testing
+
+All tests should be performed with Playwright and documented in the \\\`Tests.md\\\` document. For complete testing instructions, patterns, and documentation format, refer to [\\\`docs/Testing.md\\\`](docs/Testing.md).
+
+# Environment Variables and Browser APIs
+
+All environment variable access and browser API usage must use the centralized utilities from \\\`@/lib/env.utils\\\`:
+
+\\\`\\\`\\\`typescript
+import { ENV, getBrowserAPI } from "@/lib/env.utils";
+
+const apiUrl = ENV.SUPABASE_URL;
+const storage = getBrowserAPI(() => localStorage);
+\\\`\\\`\\\`
+
+This ensures universal compatibility between browser and Node.js test environments with zero performance overhead.
+
+# Console.logging
+
+All logging should be performed using the \\\`conditionalLog\\\` function exported from \\\`lib/log.utils.ts\\\`
+The \\\`VITE_LOG_LABELS\\\` variable in \\\`.env.local\\\` stores a comma separated string of log labels. Logs are returned if \\\`VITE_LOG_LABELS="all"\\\`, or if \\\`VITE_LOG_LABELS\\\` includes the label arg in \\\`conditionalLog\\\`.
+`;
+};
+
 export const codeFileGenerators: CodeFileRegistry = {
   globals_css: generateThemeCSS,
   auth_ts: generateAuthFile,
@@ -761,6 +862,7 @@ export const codeFileGenerators: CodeFileRegistry = {
   log_utils_ts: generateLogUtils,
   prisma_rls_client_ts: generatePrismaRLSClient,
   auth_util_ts: generateAuthUtil,
+  robots_file: generateRobotsFile,
 };
 
 const createComponentFileNodes = (
@@ -930,6 +1032,28 @@ export const createCodeFileNodes = (
       previewOnly: true,
     });
   }
+
+  const { getSectionInclude } = require("@/app/(editor)/layout.stores").useEditorStore.getState();
+  const selectedIDE = getSelectedIDE(getSectionInclude);
+  const robotsFileConfig = IDE_ROBOTS_FILES[selectedIDE];
+
+  nodes.push({
+    id: "code-file-robots",
+    name: robotsFileConfig.fileName,
+    displayName: robotsFileConfig.fileName,
+    type: "code-file",
+    path: `root.${robotsFileConfig.fileName.replace(/\./g, "_")}`,
+    urlPath: `/${robotsFileConfig.fileName}`,
+    include: shouldShowCodeFiles,
+    fileExtension: robotsFileConfig.fileExtension,
+    language: robotsFileConfig.fileExtension === "md" ? "markdown" : "text",
+    content: () => codeFileGenerators.robots_file(),
+    includeCondition: () => shouldShowCodeFiles,
+    visibleAfterPage: "next-steps",
+    parentPath: "",
+    downloadPath: "",
+    previewOnly: true,
+  });
 
   const componentNodes = createComponentFileNodes(shouldShowCodeFiles);
 

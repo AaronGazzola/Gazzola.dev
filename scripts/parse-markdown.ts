@@ -42,6 +42,7 @@ interface FileNode {
   includeInToolbar?: boolean;
   visibleAfterPage?: string;
   fileExtension?: string;
+  isDynamicRobotsFile?: boolean;
 }
 
 interface DirectoryNode {
@@ -212,6 +213,8 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     include
   );
 
+  const isRobotsFile = fileName.toUpperCase().includes("ROBOTS");
+
   const fileNode: FileNode = {
     id: sanitizedName,
     name: sanitizedName,
@@ -224,9 +227,10 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     components: components,
     sections: sections,
     include: include,
+    isDynamicRobotsFile: isRobotsFile,
   };
 
-  if (sanitizedName === "robot-readme") {
+  if (sanitizedName === "robot-readme" || isRobotsFile) {
     fileNode.visibleAfterPage = "next-steps";
   }
 

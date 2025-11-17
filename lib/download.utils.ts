@@ -13,6 +13,7 @@ import type {
 } from "@/app/(components)/DatabaseConfiguration.types";
 import { useDatabaseStore } from "@/app/(components)/DatabaseConfiguration.stores";
 import JSZip from "jszip";
+import { getDynamicRobotsFileName } from "./robots-file.utils";
 
 type RouteEntry = {
   path: string;
@@ -1340,7 +1341,11 @@ const processNode = (
         .replace(/\\\\/g, "\\");
     }
 
-    currentFolder.file(`${node.name}.${fileExtension}`, cleanContent);
+    const fileName = (node as any).isDynamicRobotsFile
+      ? getDynamicRobotsFileName(getSectionInclude)
+      : node.name;
+
+    currentFolder.file(`${fileName}.${fileExtension}`, cleanContent);
   }
 };
 
