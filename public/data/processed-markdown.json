@@ -472,21 +472,21 @@
             "include": true
           },
           {
-            "id": "start-here.layout-routes",
-            "name": "layout-routes",
-            "displayName": "Layout & routes",
+            "id": "start-here.app-structure",
+            "name": "app-structure",
+            "displayName": "App Structure",
             "type": "file",
             "order": 3,
-            "path": "start-here.layout-routes",
-            "urlPath": "/start-here/layout-routes",
-            "content": "# Layout wire frame and route structure\n\nCreate page and layout files within the nested directory structure outlined below to implement your app's route and layout structure\n\n<!-- component-LayoutAndStructure -->\n",
+            "path": "start-here.app-structure",
+            "urlPath": "/start-here/app-structure",
+            "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
             "components": [
               {
                 "id": "component-LayoutAndStructure",
                 "name": "LayoutAndStructure",
                 "displayName": "LayoutAndStructure",
                 "type": "component",
-                "path": "layout-routes.component.LayoutAndStructure",
+                "path": "app-structure.component.LayoutAndStructure",
                 "urlPath": "",
                 "componentId": "LayoutAndStructure",
                 "include": true
@@ -1036,21 +1036,21 @@
               "include": true
             },
             {
-              "id": "start-here.layout-routes",
-              "name": "layout-routes",
-              "displayName": "Layout & routes",
+              "id": "start-here.app-structure",
+              "name": "app-structure",
+              "displayName": "App Structure",
               "type": "file",
               "order": 3,
-              "path": "start-here.layout-routes",
-              "urlPath": "/start-here/layout-routes",
-              "content": "# Layout wire frame and route structure\n\nCreate page and layout files within the nested directory structure outlined below to implement your app's route and layout structure\n\n<!-- component-LayoutAndStructure -->\n",
+              "path": "start-here.app-structure",
+              "urlPath": "/start-here/app-structure",
+              "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
               "components": [
                 {
                   "id": "component-LayoutAndStructure",
                   "name": "LayoutAndStructure",
                   "displayName": "LayoutAndStructure",
                   "type": "component",
-                  "path": "layout-routes.component.LayoutAndStructure",
+                  "path": "app-structure.component.LayoutAndStructure",
                   "urlPath": "",
                   "componentId": "LayoutAndStructure",
                   "include": true
@@ -1818,21 +1818,21 @@
           "include": true
         },
         {
-          "id": "start-here.layout-routes",
-          "name": "layout-routes",
-          "displayName": "Layout & routes",
+          "id": "start-here.app-structure",
+          "name": "app-structure",
+          "displayName": "App Structure",
           "type": "file",
           "order": 3,
-          "path": "start-here.layout-routes",
-          "urlPath": "/start-here/layout-routes",
-          "content": "# Layout wire frame and route structure\n\nCreate page and layout files within the nested directory structure outlined below to implement your app's route and layout structure\n\n<!-- component-LayoutAndStructure -->\n",
+          "path": "start-here.app-structure",
+          "urlPath": "/start-here/app-structure",
+          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
           "components": [
             {
               "id": "component-LayoutAndStructure",
               "name": "LayoutAndStructure",
               "displayName": "LayoutAndStructure",
               "type": "component",
-              "path": "layout-routes.component.LayoutAndStructure",
+              "path": "app-structure.component.LayoutAndStructure",
               "urlPath": "",
               "componentId": "LayoutAndStructure",
               "include": true
@@ -1974,22 +1974,22 @@
       "componentId": "ThemeConfiguration",
       "include": true
     },
-    "start-here.layout-routes": {
-      "id": "start-here.layout-routes",
-      "name": "layout-routes",
-      "displayName": "Layout & routes",
+    "start-here.app-structure": {
+      "id": "start-here.app-structure",
+      "name": "app-structure",
+      "displayName": "App Structure",
       "type": "file",
       "order": 3,
-      "path": "start-here.layout-routes",
-      "urlPath": "/start-here/layout-routes",
-      "content": "# Layout wire frame and route structure\n\nCreate page and layout files within the nested directory structure outlined below to implement your app's route and layout structure\n\n<!-- component-LayoutAndStructure -->\n",
+      "path": "start-here.app-structure",
+      "urlPath": "/start-here/app-structure",
+      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
       "components": [
         {
           "id": "component-LayoutAndStructure",
           "name": "LayoutAndStructure",
           "displayName": "LayoutAndStructure",
           "type": "component",
-          "path": "layout-routes.component.LayoutAndStructure",
+          "path": "app-structure.component.LayoutAndStructure",
           "urlPath": "",
           "componentId": "LayoutAndStructure",
           "include": true
@@ -1998,12 +1998,12 @@
       "sections": {},
       "include": true
     },
-    "layout-routes.component.LayoutAndStructure": {
+    "app-structure.component.LayoutAndStructure": {
       "id": "component-LayoutAndStructure",
       "name": "LayoutAndStructure",
       "displayName": "LayoutAndStructure",
       "type": "component",
-      "path": "layout-routes.component.LayoutAndStructure",
+      "path": "app-structure.component.LayoutAndStructure",
       "urlPath": "",
       "componentId": "LayoutAndStructure",
       "include": true
@@ -2092,5 +2092,5 @@
       "include": true
     }
   },
-  "contentVersion": 44
+  "contentVersion": 45
 }
