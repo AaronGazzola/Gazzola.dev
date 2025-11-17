@@ -19,6 +19,7 @@ import { Checkbox } from "@/components/editor/ui/checkbox";
 import { getBrowserAPI } from "@/lib/env.utils";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { cn } from "@/lib/utils";
+import { generateDefaultFunctionName } from "@/lib/feature.utils";
 import {
   Check,
   ChevronDown,
@@ -413,29 +414,6 @@ const LAYOUT_COLORS = [
     icon: "theme-text-primary",
   },
 ];
-
-const generateDefaultFunctionName = (
-  featureTitle: string,
-  fileType: UserExperienceFileType
-): string => {
-  const pascalCase = featureTitle
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join("");
-
-  const camelCase = pascalCase.charAt(0).toLowerCase() + pascalCase.slice(1);
-
-  switch (fileType) {
-    case "stores":
-      return `use${pascalCase}Store`;
-    case "hooks":
-      return `use${pascalCase}`;
-    case "actions":
-      return `${camelCase}Action`;
-    case "types":
-      return `${pascalCase}Data`;
-  }
-};
 
 const isQualifyingFile = (
   fileName: string,

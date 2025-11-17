@@ -479,7 +479,7 @@
             "order": 3,
             "path": "start-here.app-structure",
             "urlPath": "/start-here/app-structure",
-            "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
+            "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
             "components": [
               {
                 "id": "component-LayoutAndStructure",
@@ -1043,7 +1043,7 @@
               "order": 3,
               "path": "start-here.app-structure",
               "urlPath": "/start-here/app-structure",
-              "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
+              "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
               "components": [
                 {
                   "id": "component-LayoutAndStructure",
@@ -1825,7 +1825,7 @@
           "order": 3,
           "path": "start-here.app-structure",
           "urlPath": "/start-here/app-structure",
-          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
+          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
           "components": [
             {
               "id": "component-LayoutAndStructure",
@@ -1982,7 +1982,7 @@
       "order": 3,
       "path": "start-here.app-structure",
       "urlPath": "/start-here/app-structure",
-      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n- \\`page.tsx\\` files represent pages in the site map\n- \\`layout.tsx\\` files wrap all descendant pages\n- Files ending in \\`.stores.tsx\\` contain Zustand stores\n- Files ending in \\`.hooks.tsx\\` contain React-Query hooks\n- Files ending in \\`.types.tsx\\` contain types\n- Files ending in \\`.actions.tsx\\` contain Next.js server actions\n\n<!-- component-LayoutAndStructure -->\n",
+      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
       "components": [
         {
           "id": "component-LayoutAndStructure",

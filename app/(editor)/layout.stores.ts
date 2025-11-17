@@ -18,6 +18,7 @@ import { createCodeFileNodes } from "@/lib/code-files.registry";
 import { useThemeStore } from "@/app/(components)/ThemeConfiguration.stores";
 import { useDatabaseStore } from "@/app/(components)/DatabaseConfiguration.stores";
 import { conditionalLog } from "@/lib/log.util";
+import { generateDefaultFunctionName } from "@/lib/feature.utils";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -1261,17 +1262,29 @@ export const useEditorStore = create<EditorState>()(
           return {
             features: {
               ...state.features,
-              [fileId]: features.map((feature) =>
-                feature.id === featureId
-                  ? {
-                      ...feature,
-                      linkedFiles: {
-                        ...feature.linkedFiles,
-                        [fileType]: filePath,
+              [fileId]: features.map((feature) => {
+                if (feature.id === featureId) {
+                  const defaultFunctionName = generateDefaultFunctionName(
+                    feature.title || "Untitled",
+                    fileType
+                  );
+                  return {
+                    ...feature,
+                    linkedFiles: {
+                      ...feature.linkedFiles,
+                      [fileType]: filePath,
+                    },
+                    functionNames: {
+                      ...feature.functionNames,
+                      [fileType]: {
+                        name: defaultFunctionName,
+                        utilFile: filePath,
                       },
-                    }
-                  : feature
-              ),
+                    },
+                  };
+                }
+                return feature;
+              }),
             },
           };
         });

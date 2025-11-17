@@ -521,7 +521,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking"
             >
               <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Back</span>
+              <span className="hidden md:inline">Back</span>
             </Button>
 
             <Tooltip>
@@ -669,7 +669,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               )
             )}
 
-            <div className="hidden md:flex items-center theme-gap-3">
+            <div className="hidden lg:flex items-center theme-gap-3">
               <span>
                 <IconButton
                   onClick={() => setResetPageDialogOpen(true)}
@@ -850,7 +850,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               onOpenChange={setMenuPopoverOpen}
             >
               <EditorPopoverTrigger asChild>
-                <span className="md:hidden">
+                <span className="lg:hidden">
                   <IconButton
                     onClick={() => setMenuPopoverOpen(true)}
                     tooltip="More options"

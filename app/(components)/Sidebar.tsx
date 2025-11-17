@@ -893,26 +893,24 @@ const Sidebar = () => {
 
   const expandedContent = (
     <SidebarContent className="flex-grow bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
-      <SidebarHeader className="p-6 pb-2">
-        <div className="flex items-center justify-between">
+      <SidebarHeader className="pl-6 pr-2 pt-6 pb-2">
+        <div className="flex items-start justify-between">
           <div className="flex flex-col">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-bold text-white">Gazzola.dev</h1>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:text-white hover:bg-gray-800"
-                onClick={toggleSidebar}
-                data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Sidebar</span>
-              </Button>
-            </div>
+            <h1 className="text-xl font-bold text-white">Gazzola.dev</h1>
             <p className="text-sm text-white font-medium mt-1 italic">
               Design, Build, Review.
             </p>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="-mt-1 text-white hover:text-white hover:bg-gray-800"
+            onClick={toggleSidebar}
+            data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle Sidebar</span>
+          </Button>
         </div>
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden px-3 py-2">
@@ -977,7 +975,7 @@ const Sidebar = () => {
           )}
           <Button
             variant="outline"
-            className="w-full text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500 z-10"
+            className=" text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500 z-10"
             onClick={() => {
               handleDownload();
               if (showDownloadHelp) {

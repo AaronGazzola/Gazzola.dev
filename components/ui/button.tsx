@@ -71,7 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       (variant === "ghost" && isActive)
     )
       return (
-        <div className="relative z-10">
+        <div className="relative z-10 ">
           <div
             className={cn(
               "group absolute z-0",
@@ -86,7 +86,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             className={cn(
               buttonVariants({ variant, size, className }),
               isActive && "bg-black/60",
-              "relative z-10"
+              "relative z-10 w-full"
             )}
             ref={ref}
             {...props}

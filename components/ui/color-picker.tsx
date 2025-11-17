@@ -44,7 +44,6 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
           className={cn("h-12 w-full p-1", className)}
           style={{ backgroundColor: value }}
         >

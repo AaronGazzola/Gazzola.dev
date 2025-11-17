@@ -19,13 +19,13 @@ import { sourceCodePro } from "@/styles/fonts";
 import clsx from "clsx";
 import {
   ArrowRight,
-  CheckCircle,
   ChevronLeft,
   ChevronRight,
   Loader2,
   Palette,
   Pause,
   Play,
+  Rocket,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +38,6 @@ import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { CodeReviewDialog } from "../(editor)/CodeReviewDialog";
-import { CollapseIcon } from "./CollapseIcon";
 import {
   useAutoScroll,
   useHeaderCollapseOnScroll,
@@ -199,7 +198,7 @@ const Header = () => {
           sourceCodePro.className,
           "flex flex-col justify-between w-full items-center relative text-center overflow-y-hidden h-screen transition-[max-height]",
           !isExpanded
-            ? "max-h-[100px] overflow-hidden"
+            ? "max-h-[100px] overflow-hidden "
             : "max-h-screen overflow-x-hidden"
         )}
       >
@@ -247,21 +246,6 @@ const Header = () => {
           {!isExpanded && (
             <div className="md:flex hidden gap-2">
               <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-gray-300"
-                      onClick={() => setIsExpanded(!isExpanded)}
-                    >
-                      <CollapseIcon className="w-5 h-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Expand header</p>
-                  </TooltipContent>
-                </Tooltip>
                 <Popover>
                   <Tooltip>
                     <PopoverTrigger asChild>
@@ -296,24 +280,6 @@ const Header = () => {
         {!isExpanded && (
           <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2 items-center">
             <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    size="icon"
-                    className="text-gray-300"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                  >
-                    <span>
-                      <CollapseIcon className="w-5 h-5" />
-                    </span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Expand header</p>
-                </TooltipContent>
-              </Tooltip>
               <Popover>
                 <Tooltip>
                   <PopoverTrigger asChild>
@@ -344,10 +310,13 @@ const Header = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border border-transparent  text-gray-300 bg-black/50 font-semibold flex items-center gap-2 text-sm px-3 !py-0 "
-                      onClick={() => setDialogOpen("yesPlease")}
+                      className="flex sm:hidden border border-transparent  text-gray-300 bg-black/50 font-semibold  items-center gap-2 text-sm px-3 !py-0 "
+                      onClick={() => {
+                        setDialogOpen("yesPlease");
+                        setIsExpanded(true);
+                      }}
                     >
-                      <CheckCircle className="w-4 h-4" />
+                      <Rocket className="w-4 h-4" />
                     </Button>
                   </div>
                 </TooltipTrigger>
@@ -358,14 +327,14 @@ const Header = () => {
             </TooltipProvider>
           </div>
         )}
-        <div className="px-5 sm:px-10 ">
+        <div className="px-5 sm:px-10 relative  flex flex-col items-center">
           <h1
             className={cn(
-              "text-[40px] tracking-[1.1rem] text-center leading-[3rem]",
-              isExpanded ? "mt-2" : "mt-0 sm:mt-2"
+              "text-[40px] pl-4 tracking-[1.1rem] text-center leading-[3rem]  sm:block ",
+              isExpanded ? "mt-24 sm:mt-2" : "mt-0 sm:mt-2 hidden"
             )}
           >
-            AI <br className="sm:hidden" /> TDD
+            AITDD
           </h1>
 
           {isExpanded && (
@@ -375,18 +344,22 @@ const Header = () => {
             </h2>
           )}
           {!isExpanded && (
-            <span className="hidden md:inline">
+            <span className="hidden sm:inline">
               <Button
                 variant="highlight"
                 size="sm"
-                className="border border-transparent text-white  font-bold flex items-center gap-2 text-sm px-3 !py-0 mt-1.5"
-                onClick={() => setDialogOpen("yesPlease")}
+                className="  border border-transparent text-white  font-bold flex items-center gap-2 text-sm px-3 !py-0 "
+                onClick={() => {
+                  setIsExpanded(true);
+                  setDialogOpen("yesPlease");
+                }}
               >
-                <span className="hidden sm:inline">
+                <span className="hidden md:inline">
                   Apply for a free code review
                 </span>
+                <span className="md:hidden">Free code review</span>
 
-                <CheckCircle className="w-4 h-4" />
+                <Rocket className="w-4 h-4" />
               </Button>
             </span>
           )}
@@ -487,7 +460,7 @@ const Header = () => {
                 }}
                 onTouchStart={handleSwiperInteraction}
                 onSlideChange={handleSlideChange}
-                className="w-full h-full"
+                className="w-full h-full  mt-32 xs:mt-16 sm:mt-0 "
                 style={{
                   overflow: "visible",
                 }}
@@ -542,13 +515,16 @@ const Header = () => {
               <Button
                 variant="highlight"
                 className="border border-transparenttext-gray-300 font-semibold flex items-center gap-4 text-xl px-8 py-6"
-                onClick={() => setDialogOpen("yesPlease")}
+                onClick={() => {
+                  setDialogOpen("yesPlease");
+                  setIsExpanded(true);
+                }}
               >
                 <span className="hidden sm:inline">
                   Apply for a free code review
                 </span>
                 <span className="sm:hidden">Free code review</span>
-                <CheckCircle className="w-6 h-6" />
+                <Rocket className="w-6 h-6" />
               </Button>
             </div>
 

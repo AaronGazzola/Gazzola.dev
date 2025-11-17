@@ -248,6 +248,182 @@ export const generateRouteMapAscii = (
   return lines.join("\n");
 };
 
+const getFeaturesData = (): Record<string, any[]> => {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const storeState = localStorage.getItem("editor-storage");
+    if (!storeState) {
+      return {};
+    }
+
+    const parsed = JSON.parse(storeState);
+    return parsed?.state?.features || {};
+  } catch (error) {
+    return {};
+  }
+};
+
+export const generateFeatureFunctionMapAscii = (
+  appStructure: FileSystemEntry[]
+): string => {
+  const lines: string[] = [
+    "## Feature and Function Map",
+    "",
+  ];
+
+  const featuresData = getFeaturesData();
+
+  const fileTypeLabels: Record<string, string> = {
+    hooks: "Hook",
+    stores: "Store",
+    actions: "Action",
+    types: "Type",
+  };
+
+  const allFiles: Array<{
+    filePath: string;
+    fileName: string;
+    type: "file" | "directory";
+    fileId?: string;
+  }> = [];
+
+  const utilFileMap: Record<
+    string,
+    Array<{ featureName: string; functionName: string; pageFilePath: string }>
+  > = {};
+
+  const collectAllFiles = (
+    entries: FileSystemEntry[],
+    currentPath: string = "",
+    isRoot: boolean = false
+  ): void => {
+    entries.forEach((entry) => {
+      if (entry.name === "app" && isRoot) {
+        if (entry.children) {
+          collectAllFiles(entry.children, "/app", false);
+        }
+        return;
+      }
+
+      if (entry.name.startsWith("(") && entry.name.endsWith(")")) {
+        if (entry.children) {
+          const newPath = currentPath
+            ? `${currentPath}/${entry.name}`
+            : `/${entry.name}`;
+          collectAllFiles(entry.children, newPath, false);
+        }
+        return;
+      }
+
+      if (entry.type === "directory" && entry.children) {
+        const newPath = currentPath
+          ? `${currentPath}/${entry.name}`
+          : `/${entry.name}`;
+        collectAllFiles(entry.children, newPath, false);
+      }
+
+      if (entry.type === "file") {
+        const filePath = currentPath
+          ? `${currentPath}/${entry.name}`
+          : `/${entry.name}`;
+        allFiles.push({
+          filePath,
+          fileName: entry.name,
+          type: entry.type,
+          fileId: entry.id,
+        });
+      }
+    });
+  };
+
+  collectAllFiles(appStructure, "", true);
+
+  allFiles.forEach((file) => {
+    lines.push(`### ${file.filePath}`);
+
+    const isPageOrLayout =
+      file.fileName === "page.tsx" || file.fileName === "layout.tsx";
+    const isUtilFile =
+      file.fileName.endsWith(".hooks.tsx") ||
+      file.fileName.endsWith(".stores.ts") ||
+      file.fileName.endsWith(".actions.ts") ||
+      file.fileName.endsWith(".types.ts");
+
+    if (isPageOrLayout && file.fileId) {
+      const features = featuresData[file.fileId] || [];
+
+      if (features.length > 0) {
+        features.forEach((feature) => {
+          const featureTitle = feature.title || "Untitled Feature";
+          lines.push(`**Feature: ${featureTitle}**`);
+
+          const fileTypes: Array<"hooks" | "stores" | "actions" | "types"> = [
+            "hooks",
+            "stores",
+            "actions",
+            "types",
+          ];
+          fileTypes.forEach((fileType) => {
+            const functionData = feature.functionNames?.[fileType];
+            if (functionData) {
+              const functionName =
+                typeof functionData === "string"
+                  ? functionData
+                  : functionData.name;
+              const utilFile =
+                typeof functionData === "object"
+                  ? functionData.utilFile
+                  : feature.linkedFiles?.[fileType];
+
+              if (functionName && utilFile) {
+                lines.push(
+                  `- ${fileTypeLabels[fileType]}: \`${functionName}\` → \`${utilFile}\``
+                );
+
+                if (!utilFileMap[utilFile]) {
+                  utilFileMap[utilFile] = [];
+                }
+                utilFileMap[utilFile].push({
+                  featureName: featureTitle,
+                  functionName,
+                  pageFilePath: file.filePath,
+                });
+              }
+            }
+          });
+
+          lines.push("");
+        });
+      } else {
+        lines.push("*No features defined*");
+        lines.push("");
+      }
+    } else if (isUtilFile) {
+      const consumers = utilFileMap[file.filePath] || [];
+
+      if (consumers.length > 0) {
+        consumers.forEach((consumer) => {
+          lines.push(
+            `- \`${consumer.functionName}\` (used by: \`${consumer.pageFilePath}\` → ${consumer.featureName})`
+          );
+        });
+      } else {
+        lines.push("*No consumers found*");
+      }
+
+      lines.push("");
+    } else {
+      lines.push("*Not applicable*");
+      lines.push("");
+    }
+  });
+
+  return lines.join("\n");
+};
+
 const generateInitialConfigurationContent = (
   initialConfiguration: InitialConfigurationType
 ): string => {
@@ -761,7 +937,9 @@ export const processContent = (
       return (
         generateAppStructureAscii(appStructure) +
         "\n\n" +
-        generateRouteMapAscii(appStructure)
+        generateRouteMapAscii(appStructure) +
+        "\n\n" +
+        generateFeatureFunctionMapAscii(appStructure)
       );
     }
   );
@@ -772,7 +950,9 @@ export const processContent = (
       return (
         generateAppStructureAscii(appStructure) +
         "\n\n" +
-        generateRouteMapAscii(appStructure)
+        generateRouteMapAscii(appStructure) +
+        "\n\n" +
+        generateFeatureFunctionMapAscii(appStructure)
       );
     }
   );
@@ -790,7 +970,9 @@ export const processContent = (
       return (
         generateAppStructureAscii(appStructure) +
         "\n\n" +
-        generateRouteMapAscii(appStructure)
+        generateRouteMapAscii(appStructure) +
+        "\n\n" +
+        generateFeatureFunctionMapAscii(appStructure)
       );
     }
   );
