@@ -5,6 +5,7 @@ import {
   EditorState,
   Feature,
   FileSystemEntry,
+  FunctionNameData,
   InitialConfigurationType,
   MarkdownData,
   UserExperienceFileType,
@@ -260,6 +261,36 @@ const migrateSections = (data: any): any => {
   });
 
   return migratedData;
+};
+
+const migrateFunctionNames = (features: Record<string, Feature[]>): Record<string, Feature[]> => {
+  const migratedFeatures: Record<string, Feature[]> = {};
+
+  Object.entries(features).forEach(([fileId, featureList]) => {
+    migratedFeatures[fileId] = featureList.map((feature) => {
+      const migratedFunctionNames: Partial<Record<UserExperienceFileType, string | FunctionNameData>> = {};
+
+      if (feature.functionNames) {
+        Object.entries(feature.functionNames).forEach(([fileType, value]) => {
+          if (typeof value === "string") {
+            migratedFunctionNames[fileType as UserExperienceFileType] = {
+              name: value,
+              utilFile: feature.linkedFiles[fileType as UserExperienceFileType] || "",
+            };
+          } else {
+            migratedFunctionNames[fileType as UserExperienceFileType] = value;
+          }
+        });
+      }
+
+      return {
+        ...feature,
+        functionNames: migratedFunctionNames,
+      };
+    });
+  });
+
+  return migratedFeatures;
 };
 
 const createInitialState = (data: MarkdownData) => ({
@@ -1254,9 +1285,53 @@ export const useEditorStore = create<EditorState>()(
               [fileId]: features.map((feature) => {
                 if (feature.id === featureId) {
                   const { [fileType]: _, ...remainingFiles } = feature.linkedFiles;
+                  const { [fileType]: __, ...remainingFunctionNames } = feature.functionNames;
                   return {
                     ...feature,
                     linkedFiles: remainingFiles,
+                    functionNames: remainingFunctionNames,
+                  };
+                }
+                return feature;
+              }),
+            },
+          };
+        });
+      },
+      getUtilFileFunctions: (utilFilePath: string) => {
+        const state = get();
+        const allFunctions: string[] = [];
+
+        Object.values(state.features).forEach((featureList) => {
+          featureList.forEach((feature) => {
+            Object.entries(feature.functionNames).forEach(([_, value]) => {
+              if (typeof value === "object" && value.utilFile === utilFilePath) {
+                allFunctions.push(value.name);
+              }
+            });
+          });
+        });
+
+        return allFunctions;
+      },
+      setFunctionForUtilFile: (fileId: string, featureId: string, fileType: UserExperienceFileType, functionName: string) => {
+        set((state) => {
+          const features = state.features[fileId] || [];
+          return {
+            features: {
+              ...state.features,
+              [fileId]: features.map((feature) => {
+                if (feature.id === featureId) {
+                  const utilFile = feature.linkedFiles[fileType] || "";
+                  return {
+                    ...feature,
+                    functionNames: {
+                      ...feature.functionNames,
+                      [fileType]: {
+                        name: functionName,
+                        utilFile,
+                      },
+                    },
                   };
                 }
                 return feature;
@@ -1397,17 +1472,24 @@ export const useEditorStore = create<EditorState>()(
         testSuites: state.testSuites,
       }),
       migrate: (persistedState: any, version: number) => {
+        let state = persistedState;
+
         if (version < 2) {
           const migratedData = migrateSections(
-            persistedState.data || defaultMarkdownData
+            state.data || defaultMarkdownData
           );
-          return {
-            ...persistedState,
+          state = {
+            ...state,
             version: STORE_VERSION,
             data: migratedData,
           };
         }
-        return persistedState;
+
+        if (state.features) {
+          state.features = migrateFunctionNames(state.features);
+        }
+
+        return state;
       },
       onRehydrateStorage: () => {
         return (state) => {

@@ -540,6 +540,134 @@ const getQualifyingFiles = (
   return qualifyingFiles;
 };
 
+const FunctionNameSelect = ({
+  functionName,
+  utilFilePath,
+  availableFunctions,
+  onFunctionNameChange,
+  onReset,
+}: {
+  functionName: string;
+  utilFilePath: string;
+  availableFunctions: string[];
+  onFunctionNameChange: (name: string) => void;
+  onReset: () => void;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempName, setTempName] = useState(functionName);
+  const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setTempName(functionName);
+  }, [functionName]);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleNameSubmit = () => {
+    if (tempName.trim()) {
+      onFunctionNameChange(tempName.trim());
+    }
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleNameSubmit();
+    }
+    if (e.key === "Escape") {
+      setTempName(functionName);
+      setIsEditing(false);
+    }
+  };
+
+  const uniqueAvailableFunctions = Array.from(new Set(availableFunctions));
+
+  return (
+    <div className="flex items-center theme-gap-1">
+      {isEditing ? (
+        <Input
+          ref={inputRef}
+          value={tempName}
+          onChange={(e) => setTempName(e.target.value)}
+          onBlur={handleNameSubmit}
+          onKeyDown={handleKeyDown}
+          className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono flex-1"
+        />
+      ) : (
+        <div
+          className="border theme-border-border rounded theme-bg-background flex-1 cursor-pointer hover:theme-bg-accent transition-colors"
+          onClick={() => setIsEditing(true)}
+        >
+          <span className="text-xs theme-font-mono theme-text-foreground hover:underline theme-px-2 theme-py-1.5 inline-block">
+            {functionName || "Function name"}
+          </span>
+        </div>
+      )}
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 flex-shrink-0"
+          >
+            <ChevronDown className="h-3 w-3" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-56 theme-p-2 theme-shadow" align="start">
+          <div className="flex flex-col theme-gap-1">
+            {uniqueAvailableFunctions.length > 0 && (
+              <>
+                {uniqueAvailableFunctions.map((fn) => (
+                  <Button
+                    key={fn}
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start text-xs theme-font-mono"
+                    onClick={() => {
+                      onFunctionNameChange(fn);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {fn}
+                  </Button>
+                ))}
+                <div className="theme-border-border border-t theme-my-1" />
+              </>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start text-xs"
+              onClick={() => {
+                setIsEditing(true);
+                setIsOpen(false);
+              }}
+            >
+              <Plus className="h-3 w-3 theme-mr-1" />
+              Add new function...
+            </Button>
+          </div>
+        </PopoverContent>
+      </Popover>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6 flex-shrink-0"
+        onClick={onReset}
+        title="Reset to default name"
+      >
+        <RotateCcw className="h-2.5 w-2.5" />
+      </Button>
+    </div>
+  );
+};
+
 const InlineFeatureCard = ({
   feature,
   fileId,
@@ -563,6 +691,8 @@ const InlineFeatureCard = ({
     setSelectedFile,
     clearFeatureFileSelection,
     featureFileSelection,
+    getUtilFileFunctions,
+    setFunctionForUtilFile,
   } = useEditorStore();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [expandedUtilType, setExpandedUtilType] =
@@ -636,7 +766,12 @@ const InlineFeatureCard = ({
 
   const getDefaultFunctionName = (fileType: UserExperienceFileType): string => {
     const customName = feature.functionNames?.[fileType];
-    if (customName) return customName;
+    if (typeof customName === "object") {
+      return customName.name;
+    }
+    if (typeof customName === "string") {
+      return customName;
+    }
     return generateDefaultFunctionName(feature.title || "Untitled", fileType);
   };
 
@@ -644,22 +779,12 @@ const InlineFeatureCard = ({
     fileType: UserExperienceFileType,
     newName: string
   ) => {
-    updateFeature(fileId, feature.id, {
-      functionNames: {
-        ...feature.functionNames,
-        [fileType]: newName,
-      },
-    });
+    setFunctionForUtilFile(fileId, feature.id, fileType, newName);
   };
 
   const handleResetFunctionName = (fileType: UserExperienceFileType) => {
     const defaultName = generateDefaultFunctionName(feature.title || "Untitled", fileType);
-    updateFeature(fileId, feature.id, {
-      functionNames: {
-        ...feature.functionNames,
-        [fileType]: defaultName,
-      },
-    });
+    setFunctionForUtilFile(fileId, feature.id, fileType, defaultName);
   };
 
   return (
@@ -796,29 +921,14 @@ const InlineFeatureCard = ({
 
                   {isExpanded && (
                     <div className="theme-px-2 theme-pb-2 theme-pt-1 flex flex-col theme-gap-2 border-t theme-border-border">
-                      <div className="flex items-center theme-gap-1">
-                        <Input
-                          value={functionName}
-                          onChange={(e) =>
-                            handleFunctionNameChange(fileType, e.target.value)
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                          onKeyDown={handleKeyDown}
-                          placeholder={`Function name`}
-                          className="h-7 text-xs theme-shadow theme-font-mono flex-1"
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <FunctionNameSelect
+                          functionName={functionName}
+                          utilFilePath={linkedFile || ""}
+                          availableFunctions={linkedFile ? getUtilFileFunctions(linkedFile) : []}
+                          onFunctionNameChange={(name) => handleFunctionNameChange(fileType, name)}
+                          onReset={() => handleResetFunctionName(fileType)}
                         />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 flex-shrink-0"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleResetFunctionName(fileType);
-                          }}
-                          title="Reset to default name"
-                        >
-                          <RotateCcw className="h-2.5 w-2.5" />
-                        </Button>
                       </div>
 
                       <div className="flex items-center theme-gap-1">
@@ -3068,26 +3178,32 @@ const TreeNode = ({
 
       {node.type === "directory" && node.isExpanded && node.children && (
         <div>
-          {node.children.map((child, index) => (
-            <TreeNode
-              key={child.id}
-              node={child}
-              depth={depth + 1}
-              isLast={index === node.children!.length - 1}
-              parentPath={`${parentPath}/${node.name}`}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-              onAddFile={onAddFile}
-              onAddDirectory={onAddDirectory}
-              appStructure={appStructure}
-              ancestorIsLast={[...ancestorIsLast, isLast]}
-              onAddSpecificFile={onAddSpecificFile}
-              newNodeId={newNodeId}
-              qualifyingFilePaths={qualifyingFilePaths}
-              expandedFileId={expandedFileId}
-              setExpandedFileId={setExpandedFileId}
-            />
-          ))}
+          {[...node.children]
+            .sort((a, b) => {
+              if (a.type === "file" && b.type === "directory") return -1;
+              if (a.type === "directory" && b.type === "file") return 1;
+              return a.name.localeCompare(b.name);
+            })
+            .map((child, index, sortedArray) => (
+              <TreeNode
+                key={child.id}
+                node={child}
+                depth={depth + 1}
+                isLast={index === sortedArray.length - 1}
+                parentPath={`${parentPath}/${node.name}`}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                onAddFile={onAddFile}
+                onAddDirectory={onAddDirectory}
+                appStructure={appStructure}
+                ancestorIsLast={[...ancestorIsLast, isLast]}
+                onAddSpecificFile={onAddSpecificFile}
+                newNodeId={newNodeId}
+                qualifyingFilePaths={qualifyingFilePaths}
+                expandedFileId={expandedFileId}
+                setExpandedFileId={setExpandedFileId}
+              />
+            ))}
         </div>
       )}
     </div>
@@ -3672,23 +3788,29 @@ export const AppStructure = () => {
       </h3>
 
       <div className="font-mono text-base bg-[hsl(var(--muted))] theme-p-3 rounded overflow-x-auto">
-        {appStructure.map((node, index) => (
-          <TreeNode
-            key={node.id}
-            node={node}
-            isLast={false}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
-            onAddFile={handleAddFile}
-            onAddDirectory={handleAddDirectory}
-            appStructure={appStructure}
-            onAddSpecificFile={handleAddSpecificFile}
-            newNodeId={newNodeId}
-            qualifyingFilePaths={qualifyingFilePaths}
-            expandedFileId={expandedFileId}
-            setExpandedFileId={setExpandedFileId}
-          />
-        ))}
+        {[...appStructure]
+          .sort((a, b) => {
+            if (a.type === "file" && b.type === "directory") return -1;
+            if (a.type === "directory" && b.type === "file") return 1;
+            return a.name.localeCompare(b.name);
+          })
+          .map((node, index) => (
+            <TreeNode
+              key={node.id}
+              node={node}
+              isLast={false}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+              onAddFile={handleAddFile}
+              onAddDirectory={handleAddDirectory}
+              appStructure={appStructure}
+              onAddSpecificFile={handleAddSpecificFile}
+              newNodeId={newNodeId}
+              qualifyingFilePaths={qualifyingFilePaths}
+              expandedFileId={expandedFileId}
+              setExpandedFileId={setExpandedFileId}
+            />
+          ))}
 
         {appStructure.length === 0 && (
           <div className="text-center theme-py-8 text-[hsl(var(--muted-foreground))]">

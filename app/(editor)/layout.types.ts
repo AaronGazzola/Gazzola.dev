@@ -259,6 +259,8 @@ export interface EditorState {
   getFeatures: (fileId: string) => Feature[];
   linkFeatureFile: (fileId: string, featureId: string, fileType: UserExperienceFileType, filePath: string) => void;
   unlinkFeatureFile: (fileId: string, featureId: string, fileType: UserExperienceFileType) => void;
+  getUtilFileFunctions: (utilFilePath: string) => string[];
+  setFunctionForUtilFile: (fileId: string, featureId: string, fileType: UserExperienceFileType, functionName: string) => void;
   setFeatureFileSelection: (fileId: string | null, featureId: string | null, fileType: UserExperienceFileType | null) => void;
   clearFeatureFileSelection: () => void;
   testSuites: TestSuite[];
@@ -346,12 +348,17 @@ export interface WireframeState {
 
 export type UserExperienceFileType = "stores" | "hooks" | "actions" | "types";
 
+export interface FunctionNameData {
+  name: string;
+  utilFile: string;
+}
+
 export interface Feature {
   id: string;
   title: string;
   description: string;
   linkedFiles: Partial<Record<UserExperienceFileType, string>>;
-  functionNames: Partial<Record<UserExperienceFileType, string>>;
+  functionNames: Partial<Record<UserExperienceFileType, string | FunctionNameData>>;
   isEditing: boolean;
 }
 
