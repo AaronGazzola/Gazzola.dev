@@ -190,7 +190,7 @@
         "order": 7,
         "path": "robots",
         "urlPath": "/robots",
-        "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Core Technologies\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n<!-- section-2 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`txt\napp/\n├── layout.tsx\n├── layout.providers.tsx\n├── layout.types.ts\n├── layout.stores.ts ◄─── useAppStore\n└── (dashboard)/\n    ├── layout.tsx\n    ├── layout.types.tsx\n    ├── layout.stores.tsx ◄─── useDashboardStore\n    ├── page.tsx              ─┐\n    ├── page.hooks.tsx         ├────► useAppStore\n    ├── Component.tsx          ├────► useDashboardStore\n    ├── Component.hooks.tsx   ─┘\n    ├── page.actions.ts\n    └── Component.actions.ts\n\n    key:\n    ◄─── = defined\n    ───► = imported\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-3 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n<!-- section-4 -->\n",
+        "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Tech stack\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-2 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n\\`\\`\\`\n",
         "components": [],
         "sections": {
           "section1": {
@@ -213,24 +213,6 @@
           },
           "section2": {
             "option1": {
-              "content": "# Authentication Patterns\n\n## Using Supabase Authentication\n\n```typescript\nimport { createClient } from '@/lib/supabase/client';\n\nconst supabase = createClient();\nconst { data: { user } } = await supabase.auth.getUser();\n```\n\n## Using Supabase RLS\n\n```typescript\nconst { data, error } = await supabase\n  .from('posts')\n  .select('*');\n```",
-              "include": true
-            },
-            "option2": {
-              "content": "# Authentication Patterns\n\n## Using Better-Auth with Prisma\n\n```typescript\nimport { getAuthenticatedClient } from '@/lib/auth.util';\n\nexport async function getData() {\n  const { db, session } = await getAuthenticatedClient();\n  return await db.user.findMany();\n}\n```\n\n## Client-side Authentication\n\n```typescript\nimport { authClient } from '@/lib/auth-client';\n\nconst { data: session } = authClient.useSession();\n```",
-              "include": true
-            },
-            "option3": {
-              "content": "# Authentication Patterns\n\n## Using Better-Auth with NeonDB\n\n```typescript\nimport { getAuthenticatedClient } from '@/lib/auth.util';\n\nexport async function getData() {\n  const { db, session } = await getAuthenticatedClient();\n  return await db.user.findMany();\n}\n```\n\n## Using Supabase for Real-time Features\n\n```typescript\nimport { createClient } from '@/lib/supabase/client';\nimport { generateSupabaseJWT } from '@/lib/auth.util';\n\nconst supabase = createClient();\nconst jwt = generateSupabaseJWT(userId, userRole);\nawait supabase.auth.setSession({ access_token: jwt, refresh_token: '' });\n```",
-              "include": true
-            },
-            "option4": {
-              "content": "# Authentication Patterns\n\nNo authentication required - this is a public application without user accounts.",
-              "include": true
-            }
-          },
-          "section3": {
-            "option1": {
               "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.",
               "include": true
             },
@@ -239,29 +221,11 @@
               "include": true
             },
             "option3": {
-              "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, action, store or type files. The file also contains the `prisma-rls.ts` and `action.util.ts` files for reference.",
+              "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.",
               "include": true
             },
             "option4": {
               "content": "Component <-> hook <-> store\n\n- No database interactions - frontend only.\n- API calls (if any) are made directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All types should be defined in `.types.ts` files alongside components.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.",
-              "include": true
-            }
-          },
-          "section4": {
-            "option1": {
-              "content": "# Testing\n\nAll tests should be performed with Playwright and documented in the `Tests.md` document.\n\n## Test rules:\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.\n- Use Page Object Model pattern for complex test scenarios\n- Run tests with: `npm run test:e2e`\n\n## Example Playwright Test:\n\n```typescript\nimport { test, expect } from '@playwright/test';\nimport { TestIds } from '@/test.types';\n\ntest('user can login', async ({ page }) => {\n  await page.goto('/login');\n  await page.getByTestId(TestIds.EMAIL_INPUT).fill('user@example.com');\n  await page.getByTestId(TestIds.PASSWORD_INPUT).fill('password');\n  await page.getByTestId(TestIds.LOGIN_BUTTON).click();\n  await expect(page).toHaveURL('/dashboard');\n});\n```",
-              "include": true
-            },
-            "option2": {
-              "content": "# Testing\n\nAll tests should be performed with Cypress and documented in the `Tests.md` document.\n\n## Test rules:\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Use custom commands for common actions\n- Run E2E tests with: `npm run cypress:open`\n- Run component tests with: `npm run cypress:component`\n\n## Example Cypress Test:\n\n```typescript\nimport { TestIds } from '@/test.types';\n\ndescribe('Authentication', () => {\n  it('allows user to login', () => {\n    cy.visit('/login');\n    cy.get(`[data-testid=\"${TestIds.EMAIL_INPUT}\"]`).type('user@example.com');\n    cy.get(`[data-testid=\"${TestIds.PASSWORD_INPUT}\"]`).type('password');\n    cy.get(`[data-testid=\"${TestIds.LOGIN_BUTTON}\"]`).click();\n    cy.url().should('include', '/dashboard');\n  });\n});\n```",
-              "include": true
-            },
-            "option3": {
-              "content": "# Testing\n\nAll tests should be performed with Jest for unit tests and Playwright for E2E tests.\n\n## Unit Test Rules (Jest):\n\n- Test hooks and utilities in isolation\n- Mock external dependencies\n- Use React Testing Library for component tests\n- Run with: `npm run test:unit`\n\n## E2E Test Rules (Playwright):\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.\n- Run with: `npm run test:e2e`\n\n## Example Jest Test:\n\n```typescript\nimport { renderHook, act } from '@testing-library/react';\nimport { useAuthStore } from '@/stores/auth.store';\n\ndescribe('useAuthStore', () => {\n  it('sets user on login', () => {\n    const { result } = renderHook(() => useAuthStore());\n    act(() => {\n      result.current.setUser({ id: '1', email: 'user@example.com' });\n    });\n    expect(result.current.user).toEqual({ id: '1', email: 'user@example.com' });\n  });\n});\n```",
-              "include": true
-            },
-            "option4": {
-              "content": "# Testing\n\nTesting is not configured for this project. Add testing frameworks as needed based on project requirements.\n\n## Recommended Setup:\n\nFor comprehensive testing, consider adding:\n- **Playwright** for E2E testing\n- **Jest** with React Testing Library for unit/component tests\n- **Cypress** as an alternative E2E solution\n\nWhen adding tests:\n- Use data-attributes for element selection\n- Create a `test.types.ts` file with TestIds enum\n- Document all tests in `Tests.md`",
               "include": true
             }
           }
@@ -705,7 +669,7 @@
           "order": 7,
           "path": "robots",
           "urlPath": "/robots",
-          "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Core Technologies\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n<!-- section-2 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`txt\napp/\n├── layout.tsx\n├── layout.providers.tsx\n├── layout.types.ts\n├── layout.stores.ts ◄─── useAppStore\n└── (dashboard)/\n    ├── layout.tsx\n    ├── layout.types.tsx\n    ├── layout.stores.tsx ◄─── useDashboardStore\n    ├── page.tsx              ─┐\n    ├── page.hooks.tsx         ├────► useAppStore\n    ├── Component.tsx          ├────► useDashboardStore\n    ├── Component.hooks.tsx   ─┘\n    ├── page.actions.ts\n    └── Component.actions.ts\n\n    key:\n    ◄─── = defined\n    ───► = imported\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-3 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n<!-- section-4 -->\n",
+          "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Tech stack\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-2 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n\\`\\`\\`\n",
           "components": [],
           "sections": {
             "section1": {
@@ -728,24 +692,6 @@
             },
             "section2": {
               "option1": {
-                "content": "# Authentication Patterns\n\n## Using Supabase Authentication\n\n```typescript\nimport { createClient } from '@/lib/supabase/client';\n\nconst supabase = createClient();\nconst { data: { user } } = await supabase.auth.getUser();\n```\n\n## Using Supabase RLS\n\n```typescript\nconst { data, error } = await supabase\n  .from('posts')\n  .select('*');\n```",
-                "include": true
-              },
-              "option2": {
-                "content": "# Authentication Patterns\n\n## Using Better-Auth with Prisma\n\n```typescript\nimport { getAuthenticatedClient } from '@/lib/auth.util';\n\nexport async function getData() {\n  const { db, session } = await getAuthenticatedClient();\n  return await db.user.findMany();\n}\n```\n\n## Client-side Authentication\n\n```typescript\nimport { authClient } from '@/lib/auth-client';\n\nconst { data: session } = authClient.useSession();\n```",
-                "include": true
-              },
-              "option3": {
-                "content": "# Authentication Patterns\n\n## Using Better-Auth with NeonDB\n\n```typescript\nimport { getAuthenticatedClient } from '@/lib/auth.util';\n\nexport async function getData() {\n  const { db, session } = await getAuthenticatedClient();\n  return await db.user.findMany();\n}\n```\n\n## Using Supabase for Real-time Features\n\n```typescript\nimport { createClient } from '@/lib/supabase/client';\nimport { generateSupabaseJWT } from '@/lib/auth.util';\n\nconst supabase = createClient();\nconst jwt = generateSupabaseJWT(userId, userRole);\nawait supabase.auth.setSession({ access_token: jwt, refresh_token: '' });\n```",
-                "include": true
-              },
-              "option4": {
-                "content": "# Authentication Patterns\n\nNo authentication required - this is a public application without user accounts.",
-                "include": true
-              }
-            },
-            "section3": {
-              "option1": {
                 "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.",
                 "include": true
               },
@@ -754,29 +700,11 @@
                 "include": true
               },
               "option3": {
-                "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, action, store or type files. The file also contains the `prisma-rls.ts` and `action.util.ts` files for reference.",
+                "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.",
                 "include": true
               },
               "option4": {
                 "content": "Component <-> hook <-> store\n\n- No database interactions - frontend only.\n- API calls (if any) are made directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All types should be defined in `.types.ts` files alongside components.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.",
-                "include": true
-              }
-            },
-            "section4": {
-              "option1": {
-                "content": "# Testing\n\nAll tests should be performed with Playwright and documented in the `Tests.md` document.\n\n## Test rules:\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.\n- Use Page Object Model pattern for complex test scenarios\n- Run tests with: `npm run test:e2e`\n\n## Example Playwright Test:\n\n```typescript\nimport { test, expect } from '@playwright/test';\nimport { TestIds } from '@/test.types';\n\ntest('user can login', async ({ page }) => {\n  await page.goto('/login');\n  await page.getByTestId(TestIds.EMAIL_INPUT).fill('user@example.com');\n  await page.getByTestId(TestIds.PASSWORD_INPUT).fill('password');\n  await page.getByTestId(TestIds.LOGIN_BUTTON).click();\n  await expect(page).toHaveURL('/dashboard');\n});\n```",
-                "include": true
-              },
-              "option2": {
-                "content": "# Testing\n\nAll tests should be performed with Cypress and documented in the `Tests.md` document.\n\n## Test rules:\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Use custom commands for common actions\n- Run E2E tests with: `npm run cypress:open`\n- Run component tests with: `npm run cypress:component`\n\n## Example Cypress Test:\n\n```typescript\nimport { TestIds } from '@/test.types';\n\ndescribe('Authentication', () => {\n  it('allows user to login', () => {\n    cy.visit('/login');\n    cy.get(`[data-testid=\"${TestIds.EMAIL_INPUT}\"]`).type('user@example.com');\n    cy.get(`[data-testid=\"${TestIds.PASSWORD_INPUT}\"]`).type('password');\n    cy.get(`[data-testid=\"${TestIds.LOGIN_BUTTON}\"]`).click();\n    cy.url().should('include', '/dashboard');\n  });\n});\n```",
-                "include": true
-              },
-              "option3": {
-                "content": "# Testing\n\nAll tests should be performed with Jest for unit tests and Playwright for E2E tests.\n\n## Unit Test Rules (Jest):\n\n- Test hooks and utilities in isolation\n- Mock external dependencies\n- Use React Testing Library for component tests\n- Run with: `npm run test:unit`\n\n## E2E Test Rules (Playwright):\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.\n- Run with: `npm run test:e2e`\n\n## Example Jest Test:\n\n```typescript\nimport { renderHook, act } from '@testing-library/react';\nimport { useAuthStore } from '@/stores/auth.store';\n\ndescribe('useAuthStore', () => {\n  it('sets user on login', () => {\n    const { result } = renderHook(() => useAuthStore());\n    act(() => {\n      result.current.setUser({ id: '1', email: 'user@example.com' });\n    });\n    expect(result.current.user).toEqual({ id: '1', email: 'user@example.com' });\n  });\n});\n```",
-                "include": true
-              },
-              "option4": {
-                "content": "# Testing\n\nTesting is not configured for this project. Add testing frameworks as needed based on project requirements.\n\n## Recommended Setup:\n\nFor comprehensive testing, consider adding:\n- **Playwright** for E2E testing\n- **Jest** with React Testing Library for unit/component tests\n- **Cypress** as an alternative E2E solution\n\nWhen adding tests:\n- Use data-attributes for element selection\n- Create a `test.types.ts` file with TestIds enum\n- Document all tests in `Tests.md`",
                 "include": true
               }
             }
@@ -1260,7 +1188,7 @@
       "order": 7,
       "path": "robots",
       "urlPath": "/robots",
-      "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Core Technologies\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n<!-- section-2 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`txt\napp/\n├── layout.tsx\n├── layout.providers.tsx\n├── layout.types.ts\n├── layout.stores.ts ◄─── useAppStore\n└── (dashboard)/\n    ├── layout.tsx\n    ├── layout.types.tsx\n    ├── layout.stores.tsx ◄─── useDashboardStore\n    ├── page.tsx              ─┐\n    ├── page.hooks.tsx         ├────► useAppStore\n    ├── Component.tsx          ├────► useDashboardStore\n    ├── Component.hooks.tsx   ─┘\n    ├── page.actions.ts\n    └── Component.actions.ts\n\n    key:\n    ◄─── = defined\n    ───► = imported\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-3 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n<!-- section-4 -->\n",
+      "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Tech stack\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-2 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n\\`\\`\\`\n",
       "components": [],
       "sections": {
         "section1": {
@@ -1283,24 +1211,6 @@
         },
         "section2": {
           "option1": {
-            "content": "# Authentication Patterns\n\n## Using Supabase Authentication\n\n```typescript\nimport { createClient } from '@/lib/supabase/client';\n\nconst supabase = createClient();\nconst { data: { user } } = await supabase.auth.getUser();\n```\n\n## Using Supabase RLS\n\n```typescript\nconst { data, error } = await supabase\n  .from('posts')\n  .select('*');\n```",
-            "include": true
-          },
-          "option2": {
-            "content": "# Authentication Patterns\n\n## Using Better-Auth with Prisma\n\n```typescript\nimport { getAuthenticatedClient } from '@/lib/auth.util';\n\nexport async function getData() {\n  const { db, session } = await getAuthenticatedClient();\n  return await db.user.findMany();\n}\n```\n\n## Client-side Authentication\n\n```typescript\nimport { authClient } from '@/lib/auth-client';\n\nconst { data: session } = authClient.useSession();\n```",
-            "include": true
-          },
-          "option3": {
-            "content": "# Authentication Patterns\n\n## Using Better-Auth with NeonDB\n\n```typescript\nimport { getAuthenticatedClient } from '@/lib/auth.util';\n\nexport async function getData() {\n  const { db, session } = await getAuthenticatedClient();\n  return await db.user.findMany();\n}\n```\n\n## Using Supabase for Real-time Features\n\n```typescript\nimport { createClient } from '@/lib/supabase/client';\nimport { generateSupabaseJWT } from '@/lib/auth.util';\n\nconst supabase = createClient();\nconst jwt = generateSupabaseJWT(userId, userRole);\nawait supabase.auth.setSession({ access_token: jwt, refresh_token: '' });\n```",
-            "include": true
-          },
-          "option4": {
-            "content": "# Authentication Patterns\n\nNo authentication required - this is a public application without user accounts.",
-            "include": true
-          }
-        },
-        "section3": {
-          "option1": {
             "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.",
             "include": true
           },
@@ -1309,29 +1219,11 @@
             "include": true
           },
           "option3": {
-            "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, action, store or type files. The file also contains the `prisma-rls.ts` and `action.util.ts` files for reference.",
+            "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.",
             "include": true
           },
           "option4": {
             "content": "Component <-> hook <-> store\n\n- No database interactions - frontend only.\n- API calls (if any) are made directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All types should be defined in `.types.ts` files alongside components.\n\n## Example of file patterns - [`docs/util.md`](docs/util.md)\n\nFollow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.",
-            "include": true
-          }
-        },
-        "section4": {
-          "option1": {
-            "content": "# Testing\n\nAll tests should be performed with Playwright and documented in the `Tests.md` document.\n\n## Test rules:\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.\n- Use Page Object Model pattern for complex test scenarios\n- Run tests with: `npm run test:e2e`\n\n## Example Playwright Test:\n\n```typescript\nimport { test, expect } from '@playwright/test';\nimport { TestIds } from '@/test.types';\n\ntest('user can login', async ({ page }) => {\n  await page.goto('/login');\n  await page.getByTestId(TestIds.EMAIL_INPUT).fill('user@example.com');\n  await page.getByTestId(TestIds.PASSWORD_INPUT).fill('password');\n  await page.getByTestId(TestIds.LOGIN_BUTTON).click();\n  await expect(page).toHaveURL('/dashboard');\n});\n```",
-            "include": true
-          },
-          "option2": {
-            "content": "# Testing\n\nAll tests should be performed with Cypress and documented in the `Tests.md` document.\n\n## Test rules:\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Use custom commands for common actions\n- Run E2E tests with: `npm run cypress:open`\n- Run component tests with: `npm run cypress:component`\n\n## Example Cypress Test:\n\n```typescript\nimport { TestIds } from '@/test.types';\n\ndescribe('Authentication', () => {\n  it('allows user to login', () => {\n    cy.visit('/login');\n    cy.get(`[data-testid=\"${TestIds.EMAIL_INPUT}\"]`).type('user@example.com');\n    cy.get(`[data-testid=\"${TestIds.PASSWORD_INPUT}\"]`).type('password');\n    cy.get(`[data-testid=\"${TestIds.LOGIN_BUTTON}\"]`).click();\n    cy.url().should('include', '/dashboard');\n  });\n});\n```",
-            "include": true
-          },
-          "option3": {
-            "content": "# Testing\n\nAll tests should be performed with Jest for unit tests and Playwright for E2E tests.\n\n## Unit Test Rules (Jest):\n\n- Test hooks and utilities in isolation\n- Mock external dependencies\n- Use React Testing Library for component tests\n- Run with: `npm run test:unit`\n\n## E2E Test Rules (Playwright):\n\n- The test should find elements in the DOM via data-attributes. Add corresponding data-attributes to the elements in the components. Import the data-attribute values from an enum exported from `@/test.types.ts`\n- Do not use wait in the tests. Only use timeouts.\n- Run with: `npm run test:e2e`\n\n## Example Jest Test:\n\n```typescript\nimport { renderHook, act } from '@testing-library/react';\nimport { useAuthStore } from '@/stores/auth.store';\n\ndescribe('useAuthStore', () => {\n  it('sets user on login', () => {\n    const { result } = renderHook(() => useAuthStore());\n    act(() => {\n      result.current.setUser({ id: '1', email: 'user@example.com' });\n    });\n    expect(result.current.user).toEqual({ id: '1', email: 'user@example.com' });\n  });\n});\n```",
-            "include": true
-          },
-          "option4": {
-            "content": "# Testing\n\nTesting is not configured for this project. Add testing frameworks as needed based on project requirements.\n\n## Recommended Setup:\n\nFor comprehensive testing, consider adding:\n- **Playwright** for E2E testing\n- **Jest** with React Testing Library for unit/component tests\n- **Cypress** as an alternative E2E solution\n\nWhen adding tests:\n- Use data-attributes for element selection\n- Create a `test.types.ts` file with TestIds enum\n- Document all tests in `Tests.md`",
             "include": true
           }
         }
@@ -1802,5 +1694,5 @@
       "visibleAfterPage": "ide"
     }
   },
-  "contentVersion": 47
+  "contentVersion": 48
 }

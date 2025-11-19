@@ -1,5 +1,14 @@
 import type { ConfigSnapshot } from "./config-snapshot";
 import type { Plugin, PrismaTable, RLSPolicy, RLSRolePolicy } from "@/app/(components)/DatabaseConfiguration.types";
+import {
+  getOAuthProviders,
+  hasEmailPasswordBase,
+  needsAppName,
+  getServerPlugins,
+  getClientPlugins,
+  getPluginImports,
+  AUTH_PLUGIN_REGISTRY,
+} from "./auth-plugin-mappings";
 
 export const TEMPLATES = {
   globals_css: (config: ConfigSnapshot): string => {
@@ -263,79 +272,247 @@ export const TEMPLATES = {
 }`;
   },
 
-  auth: {
-    basic: (): string => {
-      return `import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client";
+  auth: (config: ConfigSnapshot): string => {
+    const serverPlugins = getServerPlugins(config);
+    const pluginImportGroups = getPluginImports(serverPlugins, "server");
+    const oauthProviders = getOAuthProviders(config);
+    const hasEmailPassword = hasEmailPasswordBase(config);
+    const requiresAppName = needsAppName(config);
 
-const prisma = new PrismaClient();
+    const hasAdminOrOrg = serverPlugins.some(p => p.name === "admin" || p.name === "organization");
+    const needsAccessControl = hasAdminOrOrg;
 
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
+    const imports: string[] = ['import { betterAuth } from "better-auth";'];
+    imports.push('import { prismaAdapter } from "better-auth/adapters/prisma";');
+    imports.push('import { PrismaClient } from "@prisma/client";');
+
+    pluginImportGroups.forEach(({ imports: pluginNames, importPath }) => {
+      imports.push(`import { ${pluginNames.join(", ")} } from "${importPath}";`);
+    });
+
+    if (needsAccessControl) {
+      imports.push('import { createAccessControl } from "better-auth/plugins/access";');
+      imports.push('import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";');
+    }
+
+    const configLines: string[] = [];
+
+    if (requiresAppName) {
+      configLines.push('  appName: process.env.APP_NAME || "My App",');
+    }
+
+    configLines.push(`  database: prismaAdapter(prisma, {
     provider: "postgresql",
-  }),
-  emailAndPassword: {
+  }),`);
+
+    if (hasEmailPassword) {
+      const requiresVerification = config.authMethods.twoFactor;
+      configLines.push(`  emailAndPassword: {
     enabled: true,
-  },
-});`;
-    },
+    minPasswordLength: 8,${requiresVerification ? "\n    requireEmailVerification: true," : ""}
+  },`);
+    }
 
-    withPlugins: (plugins: Plugin[]): string => {
-      const enabledPlugins = plugins.filter((p) => p.enabled && p.file === "auth");
-      const pluginImports = enabledPlugins
-        .map((p) => `import { ${p.name} } from "better-auth/plugins";`)
-        .join("\n");
-      const pluginConfigs = enabledPlugins
-        .map((p) => `${p.name}()`)
-        .join(",\n    ");
+    if (oauthProviders.length > 0) {
+      const providerConfigs = oauthProviders.map(provider => {
+        const upperProvider = provider.toUpperCase();
+        return `    ${provider}: {
+      clientId: process.env.${upperProvider}_CLIENT_ID!,
+      clientSecret: process.env.${upperProvider}_CLIENT_SECRET!,
+    },`;
+      }).join("\n");
 
-      return `import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client";
-${pluginImports}
+      configLines.push(`  socialProviders: {
+${providerConfigs}
+  },`);
+    }
+
+    const pluginConfigs: string[] = [];
+
+    serverPlugins.forEach(plugin => {
+      const info = AUTH_PLUGIN_REGISTRY[plugin.name];
+
+      switch (plugin.name) {
+        case "twoFactor":
+          pluginConfigs.push("    twoFactor()");
+          break;
+        case "admin":
+          if (needsAccessControl) {
+            pluginConfigs.push(`    admin({
+      ac,
+      roles: { user, admin, superAdmin }
+    })`);
+          } else {
+            pluginConfigs.push("    admin()");
+          }
+          break;
+        case "organization":
+          if (needsAccessControl) {
+            pluginConfigs.push(`    organization({
+      ac,
+      roles: { owner: superAdmin, admin, member: user }
+    })`);
+          } else {
+            pluginConfigs.push("    organization()");
+          }
+          break;
+        case "passkey":
+          pluginConfigs.push("    passkey()");
+          break;
+        case "magicLink":
+          pluginConfigs.push(`    magicLink({
+      sendMagicLink: async ({ email, url }) => {
+        console.log(\`Magic link for \${email}: \${url}\`);
+      }
+    })`);
+          break;
+        case "emailOTP":
+          pluginConfigs.push(`    emailOTP({
+      sendVerificationOTP: async ({ email, otp, type }) => {
+        console.log(\`OTP for \${email} (\${type}): \${otp}\`);
+      }
+    })`);
+          break;
+        case "anonymous":
+          pluginConfigs.push(`    anonymous({
+      onLinkAccount: async ({ anonymousUser, newUser }) => {
+        console.log(\`Linking anonymous user \${anonymousUser.id} to \${newUser.id}\`);
+      }
+    })`);
+          break;
+        default:
+          if (info) {
+            pluginConfigs.push(`    ${info.serverPlugin}()`);
+          }
+      }
+    });
+
+    if (pluginConfigs.length > 0) {
+      configLines.push(`  plugins: [\n${pluginConfigs.join(",\n")}\n  ],`);
+    }
+
+    let accessControlCode = "";
+    if (needsAccessControl) {
+      accessControlCode = `
+const statement = {
+  ...defaultStatements,
+} as const;
+
+const ac = createAccessControl(statement);
+
+const user = ac.newRole({});
+
+const admin = ac.newRole({
+  ...adminAc.statements,
+});
+
+const superAdmin = ac.newRole({
+  ...adminAc.statements,
+});
+
+`;
+    }
+
+    return `${imports.join("\n")}
 
 const prisma = new PrismaClient();
-
+${accessControlCode}
 export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-  plugins: [
-    ${pluginConfigs}
-  ],
-});`;
-    },
+${configLines.join("\n")}
+});
+
+export type Session = typeof auth.$Infer.Session;`;
   },
 
-  authClient: {
-    basic: (): string => {
-      return `import { createAuthClient } from "better-auth/react";
+  authClient: (config: ConfigSnapshot): string => {
+    const clientPlugins = getClientPlugins(config);
+    const pluginImportGroups = getPluginImports(clientPlugins, "client");
 
+    const hasAdminOrOrg = clientPlugins.some(p => p.name === "admin" || p.name === "organization");
+    const needsAccessControl = hasAdminOrOrg;
+
+    const imports: string[] = ['import { createAuthClient } from "better-auth/react";'];
+
+    pluginImportGroups.forEach(({ imports: pluginNames, importPath }) => {
+      imports.push(`import { ${pluginNames.join(", ")} } from "${importPath}";`);
+    });
+
+    if (needsAccessControl) {
+      imports.push('import { createAccessControl } from "better-auth/plugins/access";');
+      imports.push('import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";');
+    }
+
+    const pluginConfigs: string[] = [];
+
+    clientPlugins.forEach(plugin => {
+      const info = AUTH_PLUGIN_REGISTRY[plugin.name];
+
+      switch (plugin.name) {
+        case "twoFactor":
+          pluginConfigs.push(`    twoFactorClient({
+      twoFactorPage: "/two-factor"
+    })`);
+          break;
+        case "admin":
+          if (needsAccessControl) {
+            pluginConfigs.push(`    adminClient({
+      ac,
+      roles: { user, admin, superAdmin }
+    })`);
+          } else {
+            pluginConfigs.push("    adminClient()");
+          }
+          break;
+        case "organization":
+          if (needsAccessControl) {
+            pluginConfigs.push(`    organizationClient({
+      ac,
+      roles: { owner: superAdmin, admin, member: user }
+    })`);
+          } else {
+            pluginConfigs.push("    organizationClient()");
+          }
+          break;
+        default:
+          if (info) {
+            pluginConfigs.push(`    ${info.clientPlugin}()`);
+          }
+      }
+    });
+
+    let accessControlCode = "";
+    if (needsAccessControl) {
+      accessControlCode = `
+const statement = {
+  ...defaultStatements,
+} as const;
+
+const ac = createAccessControl(statement);
+
+const user = ac.newRole({});
+
+const admin = ac.newRole({
+  ...adminAc.statements,
+});
+
+const superAdmin = ac.newRole({
+  ...adminAc.statements,
+});
+
+`;
+    }
+
+    const configLines: string[] = ['  baseURL: process.env.NEXT_PUBLIC_APP_URL,'];
+
+    if (pluginConfigs.length > 0) {
+      configLines.push(`  plugins: [\n${pluginConfigs.join(",\n")}\n  ],`);
+    }
+
+    return `${imports.join("\n")}
+${accessControlCode}
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL,
+${configLines.join("\n")}
 });`;
-    },
-
-    withPlugins: (plugins: Plugin[]): string => {
-      const enabledPlugins = plugins.filter((p) => p.enabled && p.file === "auth-client");
-      const pluginImports = enabledPlugins
-        .map((p) => `import { ${p.name} } from "better-auth/plugins";`)
-        .join("\n");
-      const pluginConfigs = enabledPlugins
-        .map((p) => `${p.name}()`)
-        .join(",\n    ");
-
-      return `import { createAuthClient } from "better-auth/react";
-${pluginImports}
-
-export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL,
-  plugins: [
-    ${pluginConfigs}
-  ],
-});`;
-    },
   },
 
   prismaSchema: (tables: PrismaTable[]): string => {

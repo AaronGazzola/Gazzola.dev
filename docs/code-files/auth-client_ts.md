@@ -1,6 +1,6 @@
 # lib/auth-client.ts
 
-**Description:** Better Auth client-side configuration
+**Description:** Better Auth client-side configuration with plugins matching server setup
 
 **Required Technologies:** betterAuth
 

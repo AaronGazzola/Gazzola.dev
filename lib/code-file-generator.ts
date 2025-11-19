@@ -68,7 +68,7 @@ export const getCodeFiles = (
     } else if (fileExtension === "md") {
       language = "markdown";
     } else if (fileExtension === "cursorrules" || fileExtension === "lovablerules" || fileExtension === "replitai") {
-      language = "text";
+      language = "plaintext";
     }
 
     nodes.push({

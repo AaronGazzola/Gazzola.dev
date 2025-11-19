@@ -1,6 +1,7 @@
 import type { ConfigSnapshot } from "./config-snapshot";
 import { TEMPLATES } from "./code-templates";
 import { IDE_ROBOTS_FILES } from "./code-files.registry";
+import { generateVersionString } from "./auth-plugin-mappings";
 
 export interface FileConfig {
   id: string;
@@ -20,7 +21,7 @@ export interface FileConfig {
 export const CODE_FILE_CONFIGS: FileConfig[] = [
   {
     id: "globals.css",
-    path: "app/globals.css",
+    path: "styles/globals.css",
     conditions: {
       include: () => true,
       version: (config) => `theme-v1`,
@@ -38,24 +39,11 @@ export const CODE_FILE_CONFIGS: FileConfig[] = [
     path: "lib/auth.ts",
     conditions: {
       include: (config) => config.betterAuth && config.databaseProvider !== "supabase",
-      version: (config) => {
-        const enabledPlugins = config.plugins
-          .filter((p) => p.enabled && p.file === "auth")
-          .map((p) => p.name)
-          .sort()
-          .join(",");
-        return `betterAuth-${enabledPlugins || "basic"}`;
-      },
+      version: (config) => generateVersionString(config),
     },
-    generator: (config) => {
-      const authPlugins = config.plugins.filter((p) => p.enabled && p.file === "auth");
-      if (authPlugins.length === 0) {
-        return TEMPLATES.auth.basic();
-      }
-      return TEMPLATES.auth.withPlugins(authPlugins);
-    },
+    generator: (config) => TEMPLATES.auth(config),
     metadata: {
-      description: "Better Auth server configuration",
+      description: "Better Auth server configuration with plugins based on selected auth methods and roles",
       requiredTech: ["betterAuth", "prisma"],
       requiredFeatures: ["authentication"],
     },
@@ -66,24 +54,11 @@ export const CODE_FILE_CONFIGS: FileConfig[] = [
     path: "lib/auth-client.ts",
     conditions: {
       include: (config) => config.betterAuth && config.databaseProvider !== "supabase",
-      version: (config) => {
-        const enabledPlugins = config.plugins
-          .filter((p) => p.enabled && p.file === "auth-client")
-          .map((p) => p.name)
-          .sort()
-          .join(",");
-        return `betterAuth-client-${enabledPlugins || "basic"}`;
-      },
+      version: (config) => `${generateVersionString(config)}-client`,
     },
-    generator: (config) => {
-      const authClientPlugins = config.plugins.filter((p) => p.enabled && p.file === "auth-client");
-      if (authClientPlugins.length === 0) {
-        return TEMPLATES.authClient.basic();
-      }
-      return TEMPLATES.authClient.withPlugins(authClientPlugins);
-    },
+    generator: (config) => TEMPLATES.authClient(config),
     metadata: {
-      description: "Better Auth client-side configuration",
+      description: "Better Auth client-side configuration with plugins matching server setup",
       requiredTech: ["betterAuth"],
       requiredFeatures: ["authentication"],
     },

@@ -4,6 +4,104 @@
 @import "@/styles/animations.css";
 @import "@/styles/theme.css";
 
+.code-viewer .hljs {
+  background: transparent !important;
+}
+
+.code-viewer .hljs * {
+  background: transparent !important;
+}
+
+.code-viewer code {
+  background: transparent !important;
+}
+
+.code-viewer pre {
+  background: transparent !important;
+}
+
+.hljs-github-dark .hljs-string,
+.hljs-github-dark span.hljs-string {
+  color: #a5d6ff !important;
+}
+
+.hljs-github-dark .hljs-number,
+.hljs-github-dark span.hljs-number {
+  color: #79c0ff !important;
+}
+
+.hljs-github-dark .hljs-literal,
+.hljs-github-dark span.hljs-literal {
+  color: #79c0ff !important;
+}
+
+.hljs-github-dark .hljs-keyword,
+.hljs-github-dark span.hljs-keyword {
+  color: #ff7b72 !important;
+}
+
+.hljs-github-dark .hljs-built_in,
+.hljs-github-dark span.hljs-built_in {
+  color: #ffa657 !important;
+}
+
+.hljs-github-dark .hljs-function,
+.hljs-github-dark span.hljs-function {
+  color: #d2a8ff !important;
+}
+
+.hljs-github-dark .hljs-title,
+.hljs-github-dark span.hljs-title {
+  color: #d2a8ff !important;
+}
+
+.hljs-github-dark .hljs-attr,
+.hljs-github-dark span.hljs-attr {
+  color: #7ee787 !important;
+}
+
+.hljs-github-dark .hljs-variable,
+.hljs-github-dark span.hljs-variable {
+  color: #ffa657 !important;
+}
+
+.hljs-github-dark .hljs-property,
+.hljs-github-dark span.hljs-property {
+  color: #79c0ff !important;
+}
+
+.hljs-github-dark .hljs-comment,
+.hljs-github-dark span.hljs-comment {
+  color: #8b949e !important;
+}
+
+.hljs-github-dark .hljs-template-variable,
+.hljs-github-dark span.hljs-template-variable,
+.hljs-github-dark .hljs-subst,
+.hljs-github-dark span.hljs-subst {
+  color: #ffa657 !important;
+}
+
+.hljs-github-dark .hljs-params,
+.hljs-github-dark span.hljs-params {
+  color: #ffa657 !important;
+}
+
+.hljs-github-dark .hljs-name,
+.hljs-github-dark span.hljs-name {
+  color: #7ee787 !important;
+}
+
+.hljs-github-dark .hljs-type,
+.hljs-github-dark span.hljs-type {
+  color: #ffa657 !important;
+}
+
+.hljs-github-dark .hljs-meta,
+.hljs-github-dark span.hljs-meta {
+  color: #79c0ff !important;
+}
+
 :root {
   --color-scrollbar-thumb: rgba(255, 255, 255, 0.3);
   --color-scrollbar-track: rgba(0, 0, 0, 0.15);

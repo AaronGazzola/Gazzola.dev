@@ -1,4 +1,4 @@
-# app/globals.css
+# styles/globals.css
 
 **Description:** Global CSS styles with theme configuration
 

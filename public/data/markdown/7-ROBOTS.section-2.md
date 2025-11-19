@@ -1,75 +1,61 @@
 <!-- option-1 -->
-# Authentication Patterns
 
-## Using Supabase Authentication
+DB <-> Supabase Client <-> hook <-> store
 
-```typescript
-import { createClient } from '@/lib/supabase/client';
+- Supabase client queries are called directly in react-query hooks.
+- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).
+- Loading and error state is managed via the react-query hooks, NOT the zustand store.
+- All db types should be defined from `@/integrations/supabase/types`.
 
-const supabase = createClient();
-const { data: { user } } = await supabase.auth.getUser();
-```
+## Example of file patterns - [`docs/util.md`](docs/util.md)
 
-## Using Supabase RLS
+Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.
 
-```typescript
-const { data, error } = await supabase
-  .from('posts')
-  .select('*');
-```
 <!-- /option-1 -->
 
 <!-- option-2 -->
-# Authentication Patterns
 
-## Using Better-Auth with Prisma
+DB <-> Action <-> hook <-> store
 
-```typescript
-import { getAuthenticatedClient } from '@/lib/auth.util';
+- Better-auth client methods are called directly in react-query hooks.
+- Prisma client queries are called in actions via getAuthenticatedClient.
+- Actions are called via react-query hooks.
+- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.
+- Loading and error state is managed via the react-query hooks, NOT the zustand store.
+- All db types should be defined from `"@prisma/client"`
 
-export async function getData() {
-  const { db, session } = await getAuthenticatedClient();
-  return await db.user.findMany();
-}
-```
+## Example of file patterns - [`docs/util.md`](docs/util.md)
 
-## Client-side Authentication
+Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, action, store or type files. The file also contains the `prisma-rls.ts` and `action.util.ts` files for reference.
 
-```typescript
-import { authClient } from '@/lib/auth-client';
-
-const { data: session } = authClient.useSession();
-```
 <!-- /option-2 -->
 
 <!-- option-3 -->
-# Authentication Patterns
 
-## Using Better-Auth with NeonDB
+DB <-> Action/Supabase Client <-> hook <-> store
 
-```typescript
-import { getAuthenticatedClient } from '@/lib/auth.util';
+- Better-auth client methods are called directly in react-query hooks.
+- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.
+- Supabase client queries are called directly in react-query hooks for real-time features.
+- Actions are called via react-query hooks.
+- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.
+- Loading and error state is managed via the react-query hooks, NOT the zustand store.
+- Database types should be defined from `"@prisma/client"` for NeonDB and `@/integrations/supabase/types` for Supabase.
 
-export async function getData() {
-  const { db, session } = await getAuthenticatedClient();
-  return await db.user.findMany();
-}
-```
-
-## Using Supabase for Real-time Features
-
-```typescript
-import { createClient } from '@/lib/supabase/client';
-import { generateSupabaseJWT } from '@/lib/auth.util';
-
-const supabase = createClient();
-const jwt = generateSupabaseJWT(userId, userRole);
-await supabase.auth.setSession({ access_token: jwt, refresh_token: '' });
-```
 <!-- /option-3 -->
 
 <!-- option-4 -->
-# Authentication Patterns
 
-No authentication required - this is a public application without user accounts.
+Component <-> hook <-> store
+
+- No database interactions - frontend only.
+- API calls (if any) are made directly in react-query hooks.
+- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.
+- Loading and error state is managed via the react-query hooks, NOT the zustand store.
+- All types should be defined in `.types.ts` files alongside components.
+
+## Example of file patterns - [`docs/util.md`](docs/util.md)
+
+Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.
+
 <!-- /option-4 -->

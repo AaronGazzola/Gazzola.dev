@@ -25,7 +25,7 @@ export interface SignInData {
 import { UserRole } from "@prisma/client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AppState, ExtendedUser, RedirectState } from "./layout.types";
+import { AppState, ExtendedUser, RedirectState } from "@/layout.types";
 
 const initialState = {
   user: null,
@@ -80,12 +80,12 @@ import { signIn } from "@/lib/auth-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Toast } from "../(components)/Toast";
-import { CypressDataAttributes } from "../../types/cypress.types";
-import { useAppStore, useRedirectStore } from "../layout.stores";
-import { SignInData } from "../layout.types";
-import { getUserAction } from "./layout.actions";
-import { useAuthLayoutStore } from "./layout.stores";
+import { Toast } from "@/(components)/Toast";
+import { CypressDataAttributes } from "@/types/cypress.types";
+import { useAppStore, useRedirectStore } from "@/layout.stores";
+import { SignInData } from "@/layout.types";
+import { getUserAction } from "@/layout.actions";
+import { useAuthLayoutStore } from "@/layout.stores";
 
 export const useGetUser = () => {
   const { setUser, reset } = useAppStore();
@@ -184,7 +184,7 @@ export const useSignIn = () => {
 
 ```typescript
 import { Prisma } from "@prisma/client";
-import { prisma } from "./prisma";
+import { prisma } from "@/lib/prisma";
 
 function forUser(userId: string, tenantId?: string) {
   return Prisma.defineExtension((prisma) =>
@@ -224,8 +224,8 @@ export function createRLSClient(userId: string, tenantId?: string) {
 import { User } from "better-auth";
 import jwt from "jsonwebtoken";
 import { headers } from "next/headers";
-import { auth, Session } from "./auth";
-import { createRLSClient } from "./prisma-rls";
+import { auth, Session } from "@/lib/auth";
+import { createRLSClient } from "@/lib/prisma-rls";
 
 export async function getAuthenticatedClient(user?: User): Promise<{
   db: ReturnType<typeof createRLSClient>;

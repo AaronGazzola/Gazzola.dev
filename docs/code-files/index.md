@@ -6,7 +6,7 @@ Auto-generated documentation for all code files based on configuration.
 
 | File | Path | Always Included | Technologies | Features |
 |------|------|-----------------|--------------|----------|
-| [globals.css](./globals_css.md) | `app/globals.css` | Yes | tailwindcss | - |
+| [globals.css](./globals_css.md) | `styles/globals.css` | Yes | tailwindcss | - |
 | [auth.ts](./auth_ts.md) | `lib/auth.ts` | No | betterAuth, prisma | authentication |
 | [auth-client.ts](./auth-client_ts.md) | `lib/auth-client.ts` | No | betterAuth | authentication |
 | [auth.util.ts](./auth_util_ts.md) | `lib/auth.util.ts` | No | prisma, betterAuth | authentication |
