@@ -1,4 +1,4 @@
-# Next steps
+# Integrated Development Environment
 
 <!-- component-IDESelection -->
 

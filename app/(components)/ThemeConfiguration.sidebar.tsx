@@ -78,12 +78,9 @@ export const ThemeConfigurationSidebar = ({
       hasInitialized.current = true;
       loadThemesAction().then((loadedThemes) => {
         setThemes(loadedThemes);
-        if (loadedThemes[selectedTheme]) {
-          applyThemePreset(selectedTheme, loadedThemes[selectedTheme]);
-        }
       });
     }
-  }, [selectedTheme, applyThemePreset]);
+  }, []);
 
   useEffect(() => {
     conditionalLog(

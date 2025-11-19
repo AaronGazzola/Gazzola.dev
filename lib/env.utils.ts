@@ -8,6 +8,7 @@ export const ENV = {
     ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
     : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
+  MODE: process.env.NODE_ENV || "production",
 };
 
 export function getBrowserAPI<T>(accessor: () => T): T | undefined {

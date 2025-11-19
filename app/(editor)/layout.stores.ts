@@ -423,7 +423,7 @@ export const useEditorStore = create<EditorState>()(
             : [...state.visitedPages, path];
           console.log('[VISITED] New visitedPages:', newVisitedPages);
 
-          if (path === "next-steps" && !state.visitedPages.includes(path)) {
+          if (path === "ide" && !state.visitedPages.includes(path)) {
             const themeStore = useThemeStore.getState();
             const databaseStore = useDatabaseStore.getState();
 
@@ -489,18 +489,35 @@ export const useEditorStore = create<EditorState>()(
         set((state) => {
           const targetNode = state.data.flatIndex[filePath];
           if (targetNode && targetNode.type === "file") {
-            if (!targetNode.sections[sectionId]) {
-              targetNode.sections[sectionId] = {};
-            }
-            if (!targetNode.sections[sectionId][optionId]) {
-              targetNode.sections[sectionId][optionId] = {
-                content: "",
-                include: false,
-              };
-            }
-            targetNode.sections[sectionId][optionId].content = content;
+            const existingSection = targetNode.sections[sectionId] || {};
+            const existingOption = existingSection[optionId] || {
+              content: "",
+              include: false,
+            };
+
+            return {
+              data: {
+                ...state.data,
+                flatIndex: {
+                  ...state.data.flatIndex,
+                  [filePath]: {
+                    ...targetNode,
+                    sections: {
+                      ...targetNode.sections,
+                      [sectionId]: {
+                        ...existingSection,
+                        [optionId]: {
+                          ...existingOption,
+                          content: content,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            };
           }
-          return { data: { ...state.data } };
+          return state;
         });
       },
       setSectionInclude: (
@@ -512,18 +529,35 @@ export const useEditorStore = create<EditorState>()(
         set((state) => {
           const targetNode = state.data.flatIndex[filePath];
           if (targetNode && targetNode.type === "file") {
-            if (!targetNode.sections[sectionId]) {
-              targetNode.sections[sectionId] = {};
-            }
-            if (!targetNode.sections[sectionId][optionId]) {
-              targetNode.sections[sectionId][optionId] = {
-                content: "",
-                include: false,
-              };
-            }
-            targetNode.sections[sectionId][optionId].include = include;
+            const existingSection = targetNode.sections[sectionId] || {};
+            const existingOption = existingSection[optionId] || {
+              content: "",
+              include: false,
+            };
+
+            return {
+              data: {
+                ...state.data,
+                flatIndex: {
+                  ...state.data.flatIndex,
+                  [filePath]: {
+                    ...targetNode,
+                    sections: {
+                      ...targetNode.sections,
+                      [sectionId]: {
+                        ...existingSection,
+                        [optionId]: {
+                          ...existingOption,
+                          include: include,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            };
           }
-          return { data: { ...state.data } };
+          return state;
         });
       },
       getSectionInclude: (

@@ -4,10 +4,10 @@ import { IDE_ROBOTS_DISPLAY_NAMES } from "@/app/(editor)/layout.types";
 export const getSelectedIDE = (
   getSectionInclude: (filePath: string, sectionId: string, optionId: string) => boolean
 ): IDEType => {
-  const lovableIncluded = getSectionInclude("next-steps", "section1", "option1");
-  const replitIncluded = getSectionInclude("next-steps", "section1", "option2");
-  const claudecodeIncluded = getSectionInclude("next-steps", "section1", "option3");
-  const cursorIncluded = getSectionInclude("next-steps", "section1", "option4");
+  const lovableIncluded = getSectionInclude("ide", "section1", "option1");
+  const replitIncluded = getSectionInclude("ide", "section1", "option2");
+  const claudecodeIncluded = getSectionInclude("ide", "section1", "option3");
+  const cursorIncluded = getSectionInclude("ide", "section1", "option4");
 
   if (lovableIncluded) return "lovable";
   if (replitIncluded) return "replit";

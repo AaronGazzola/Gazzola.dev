@@ -885,7 +885,7 @@ const createComponentFileNodes = (
       language: "typescript",
       content: () => content,
       includeCondition: () => shouldShowCodeFiles,
-      visibleAfterPage: "next-steps",
+      visibleAfterPage: "ide",
       parentPath: "components.ui",
       downloadPath: "components/ui",
       previewOnly: true,
@@ -904,7 +904,7 @@ export const createCodeFileNodes = (
   isPageVisited?: (path: string) => boolean
 ): CodeFileNode[] => {
   const nodes: CodeFileNode[] = [];
-  const shouldShowCodeFiles = isPageVisited?.("next-steps") ?? false;
+  const shouldShowCodeFiles = isPageVisited?.("ide") ?? false;
 
   const isBetterAuthEnabled = initialConfig.technologies.betterAuth;
   const isSupabaseOnly =
@@ -929,7 +929,7 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.betterAuth &&
         initialConfig.questions.databaseProvider !== "supabase",
-      visibleAfterPage: "next-steps",
+      visibleAfterPage: "ide",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -953,7 +953,7 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.betterAuth &&
         initialConfig.questions.databaseProvider !== "supabase",
-      visibleAfterPage: "next-steps",
+      visibleAfterPage: "ide",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -972,7 +972,7 @@ export const createCodeFileNodes = (
     language: "typescript",
     content: () => codeFileGenerators.log_utils_ts(),
     includeCondition: () => shouldShowCodeFiles,
-    visibleAfterPage: "start-here.next-steps",
+    visibleAfterPage: "ide",
     parentPath: "lib",
     downloadPath: "lib",
     previewOnly: true,
@@ -1000,7 +1000,7 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.prisma &&
         rlsPolicies.length > 0,
-      visibleAfterPage: "next-steps",
+      visibleAfterPage: "ide",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -1026,7 +1026,7 @@ export const createCodeFileNodes = (
         shouldShowCodeFiles &&
         initialConfig.technologies.prisma &&
         initialConfig.technologies.betterAuth,
-      visibleAfterPage: "next-steps",
+      visibleAfterPage: "ide",
       parentPath: "lib",
       downloadPath: "lib",
       previewOnly: true,
@@ -1049,7 +1049,7 @@ export const createCodeFileNodes = (
     language: robotsFileConfig.fileExtension === "md" ? "markdown" : "text",
     content: () => codeFileGenerators.robots_file(),
     includeCondition: () => shouldShowCodeFiles,
-    visibleAfterPage: "next-steps",
+    visibleAfterPage: "ide",
     parentPath: "",
     downloadPath: "",
     previewOnly: true,

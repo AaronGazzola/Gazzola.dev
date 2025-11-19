@@ -14,7 +14,7 @@ import {
   VSCodeLogo,
 } from "./IDESelection.utils";
 
-const SECTION_FILE_PATH = "next-steps";
+const SECTION_FILE_PATH = "ide";
 
 const IDE_LOGOS: Record<
   IDEType,

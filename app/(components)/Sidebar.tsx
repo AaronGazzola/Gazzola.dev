@@ -52,7 +52,6 @@ import {
   FolderOpen,
   Info,
   LayoutGrid,
-  ListChecks,
   Menu,
   Palette,
   Rocket,
@@ -73,7 +72,7 @@ const FILE_ICON_MAP: Record<string, LucideIcon> = {
   "theme": Palette,
   "app-structure": LayoutGrid,
   "database": Database,
-  "next-steps": ListChecks,
+  "ide": Code2,
   "docs.deployment-instructions": Rocket,
   "docs.util": Code2,
   "app.globals": Palette,
@@ -384,13 +383,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
     }
 
     const isActive = currentPath === item.path;
+    const FileIcon = getFileIconByPath(item.path || "");
 
     return (
       <Link href={buildLinkPath()}>
         <Button
           variant="ghost"
           className={cn(
-            "w-full justify-start text-white hover:bg-gray-800 h-8 px-2 relative"
+            "w-full justify-start text-white hover:bg-gray-800 h-8 px-2 relative gap-2"
           )}
           style={{
             paddingLeft: `${(level + 1) * 12 + 8}px`,
@@ -400,6 +400,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
             className="absolute opacity-30 inset-0 rounded"
             style={isActive ? getBackgroundStyle() : undefined}
           ></div>
+          <FileIcon className="h-4 w-4 flex-shrink-0 opacity-70" />
           <div className="flex items-center">{getDisplayName(item.name, item.path || "")}</div>
         </Button>
       </Link>
@@ -477,10 +478,17 @@ const TreeItem: React.FC<TreeItemProps> = ({
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full justify-between text-white hover:bg-gray-800 h-8 px-2"
+          className="w-full justify-between text-white hover:bg-gray-800 h-8 px-2 gap-2"
           style={{ paddingLeft: `${level * 12 + 8}px` }}
         >
-          {getDisplayName(item.name, itemPath)}
+          <div className="flex items-center gap-2">
+            {isOpen ? (
+              <FolderOpen className="h-4 w-4 flex-shrink-0 opacity-70" />
+            ) : (
+              <Folder className="h-4 w-4 flex-shrink-0 opacity-70" />
+            )}
+            {getDisplayName(item.name, itemPath)}
+          </div>
           {isOpen ? (
             <ChevronDown className="h-4 w-4" />
           ) : (

@@ -36,6 +36,7 @@ import {
 import { ListTodo } from "lucide-react";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
+import { ENV } from "@/lib/env.utils";
 // Import removed - ContentPath no longer exists
 
 export interface SerializedSectionNode
@@ -173,8 +174,18 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     const options = getSectionOptions(filePath, sectionKey);
     const included: { optionId: string; content: string }[] = [];
 
+    if (filePath === "robots" && typeof window !== "undefined") {
+      console.log(`[ROBOTS DEBUG] filePath: ${filePath}, sectionKey: ${sectionKey}`);
+      console.log(`[ROBOTS DEBUG] options:`, options);
+    }
+
     Object.entries(options).forEach(([optionId, optionData]) => {
       const isIncluded = getSectionInclude(filePath, sectionKey, optionId);
+
+      if (filePath === "robots" && typeof window !== "undefined") {
+        console.log(`[ROBOTS DEBUG] ${sectionKey}.${optionId} - isIncluded: ${isIncluded}`);
+      }
+
       if (isIncluded) {
         included.push({
           optionId,
@@ -183,8 +194,11 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
       }
     });
 
+    if (filePath === "robots" && typeof window !== "undefined") {
+      console.log(`[ROBOTS DEBUG] includedOptions count: ${included.length}`);
+    }
+
     return included;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getSectionOptions, getSectionInclude, filePath, sectionKey, data]);
 
   useEffect(() => {
@@ -283,7 +297,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
 
   return (
     <div className="w-full relative">
-      {sectionOptions.length > 0 && (
+      {sectionOptions.length > 0 && ENV.MODE === "development" && (
         <Popover open={sectionPopoverOpen} onOpenChange={setSectionPopoverOpen}>
           <PopoverTrigger asChild>
             <Button

@@ -92,10 +92,25 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "readme", sectionId: "section6", optionId: "option1", configPath: "technologies.vercel" },
   { filePath: "readme", sectionId: "section6", optionId: "option2", configPath: "technologies.railway" },
 
-  { filePath: "robots", sectionId: "section1", optionId: "option1", configPath: null },
-  { filePath: "robots", sectionId: "section2", optionId: "option1", configPath: null },
-  { filePath: "robots", sectionId: "section3", optionId: "option1", configPath: null },
-  { filePath: "robots", sectionId: "section4", optionId: "option1", configPath: null },
+  { filePath: "robots", sectionId: "section1", optionId: "option1", configPath: "questions.databaseProvider", matchValue: "supabase" },
+  { filePath: "robots", sectionId: "section1", optionId: "option2", configPath: "questions.databaseProvider", matchValue: "neondb" },
+  { filePath: "robots", sectionId: "section1", optionId: "option3", configPath: "questions.databaseProvider", matchValue: "both" },
+  { filePath: "robots", sectionId: "section1", optionId: "option4", configPath: "questions.databaseProvider", matchValue: "none" },
+
+  { filePath: "robots", sectionId: "section2", optionId: "option1", configPath: "questions.databaseProvider", matchValue: "supabase" },
+  { filePath: "robots", sectionId: "section2", optionId: "option2", configPath: "technologies.betterAuth" },
+  { filePath: "robots", sectionId: "section2", optionId: "option3", configPath: "questions.databaseProvider", matchValue: "both" },
+  { filePath: "robots", sectionId: "section2", optionId: "option4", configPath: "questions.databaseProvider", matchValue: "none" },
+
+  { filePath: "robots", sectionId: "section3", optionId: "option1", configPath: "questions.databaseProvider", matchValue: "supabase" },
+  { filePath: "robots", sectionId: "section3", optionId: "option2", configPath: "technologies.betterAuth" },
+  { filePath: "robots", sectionId: "section3", optionId: "option3", configPath: "questions.databaseProvider", matchValue: "both" },
+  { filePath: "robots", sectionId: "section3", optionId: "option4", configPath: "questions.databaseProvider", matchValue: "none" },
+
+  { filePath: "robots", sectionId: "section4", optionId: "option1", configPath: "technologies.playwright" },
+  { filePath: "robots", sectionId: "section4", optionId: "option2", configPath: "technologies.cypress" },
+  { filePath: "robots", sectionId: "section4", optionId: "option3", configPath: null },
+  { filePath: "robots", sectionId: "section4", optionId: "option4", configPath: "questions.databaseProvider", matchValue: "none" },
 
   { filePath: "docs.deployment-instructions", sectionId: "section1", optionId: "option1", configPath: "technologies.vercel" },
   { filePath: "docs.deployment-instructions", sectionId: "section1", optionId: "option2", configPath: "technologies.railway" },
@@ -149,9 +164,9 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "docs.util", sectionId: "section5", optionId: "option2", configPath: "technologies.betterAuth" },
   { filePath: "docs.util", sectionId: "section5", optionId: "option3", configPath: "technologies.supabase" },
 
-  { filePath: "next-steps", sectionId: "section1", optionId: "option1", configPath: null },
-  { filePath: "next-steps", sectionId: "section1", optionId: "option2", configPath: null },
-  { filePath: "next-steps", sectionId: "section1", optionId: "option3", configPath: null },
+  { filePath: "ide", sectionId: "section1", optionId: "option1", configPath: null },
+  { filePath: "ide", sectionId: "section1", optionId: "option2", configPath: null },
+  { filePath: "ide", sectionId: "section1", optionId: "option3", configPath: null },
 ];
 
 export function getConfigValue(config: InitialConfigurationType, path: ConfigPath): any {
