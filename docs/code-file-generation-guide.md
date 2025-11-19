@@ -16,11 +16,64 @@ This guide explains how to modify output file content based on configuration usi
 
 ## Overview
 
-The code file generation system uses three main files:
+The code file generation system is part of a unified configuration control architecture that determines all output content in the application.
 
-1. **`lib/config-snapshot.ts`** - Type-safe configuration interface
+### Core Components
+
+1. **`lib/config-snapshot.ts`** - Type-safe configuration interface (single source of truth)
 2. **`lib/code-templates.ts`** - Template functions that generate file content
 3. **`lib/code-file-config.ts`** - Declarative file definitions with conditions
+4. **`lib/section-option-mappings.ts`** - Controls markdown section visibility based on configuration
+5. **`lib/section-filter.utils.ts`** - Automatic section filtering system
+
+### Unified Configuration Architecture
+
+```
+User Configuration (InitialConfigurationType + Theme + Plugins + Tables)
+    ↓
+ConfigSnapshot (lib/config-snapshot.ts)
+    ↓
+Controls two output systems:
+    ├─→ Code File Generation (lib/code-file-config.ts)
+    │   └─→ Conditional file inclusion
+    │       └─→ Dynamic content generation
+    └─→ Markdown Section Filtering (lib/section-option-mappings.ts)
+        └─→ Section option visibility
+            └─→ Static content selection
+```
+
+Both systems use ConfigSnapshot as the single source of truth for determining what content appears in the output.
+
+## Configuration-Driven Content
+
+### Code Files vs Markdown Sections
+
+The system controls two types of content:
+
+| Aspect | Code Files | Markdown Sections |
+|--------|-----------|-------------------|
+| **Purpose** | Generated source code | Documentation content |
+| **Content** | Dynamic (templates) | Static (markdown files) |
+| **Control** | Conditional inclusion | Visibility filtering |
+| **Location** | `lib/code-file-config.ts` | `lib/section-option-mappings.ts` |
+| **Example** | `lib/auth.ts`, `lib/prisma-rls.ts` | Types examples, hooks examples |
+
+### How Section Filtering Works
+
+Markdown files (e.g., `docs/util.md`) contain multiple section options for different tech stacks:
+
+1. **Section Definition**: Markdown file contains `<!-- section-1 -->` markers
+2. **Option Files**: Corresponding `.section-1.md` files contain multiple options
+3. **Mapping Configuration**: `section-option-mappings.ts` links each option to a config path
+4. **Automatic Filtering**: System shows/hides options based on user's configuration
+5. **User Sees**: Only relevant options for their tech stack
+
+**Example**: The `docs/util.md` file shows different code examples:
+- Client-side only: Shows simple useState examples
+- Prisma + Better-Auth: Shows auth utilities with RLS
+- Supabase: Shows Supabase client examples
+
+All controlled automatically via `SECTION_OPTION_MAPPINGS`.
 
 ## Quick Start
 
@@ -640,15 +693,94 @@ Common issues:
 
 ---
 
+## Controlling Markdown Section Visibility
+
+While code files have dynamic content generation, markdown sections use static content with visibility control.
+
+### Adding Section Mappings
+
+To control which markdown section options appear based on configuration:
+
+**Step 1**: Identify the section option in your markdown file structure:
+- File: `public/data/markdown/docs/10-util.md`
+- Section marker: `<!-- section-3 -->`
+- Option file: `public/data/markdown/docs/10-util.section-3.md`
+- Option: `<!-- option-2 -->`
+
+**Step 2**: Add mapping to `lib/section-option-mappings.ts`:
+
+```typescript
+export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
+  // ... existing mappings
+
+  {
+    filePath: "docs.util",  // Path uses dots instead of slashes
+    sectionId: "section3",   // section-3 becomes section3
+    optionId: "option2",     // option-2 becomes option2
+    configPath: "technologies.betterAuth"  // Show when Better Auth is enabled
+  },
+
+  {
+    filePath: "docs.util",
+    sectionId: "section3",
+    optionId: "option3",
+    configPath: "questions.databaseProvider",
+    matchValue: "both"  // Only show when databaseProvider === "both"
+  },
+];
+```
+
+**Step 3**: Test your configuration:
+- Change configuration values in the UI
+- Section options should automatically show/hide
+- Check download includes correct options
+
+### Section Mapping Patterns
+
+**Always Include** (user choice):
+```typescript
+{ filePath: "ide", sectionId: "section1", optionId: "option1", configPath: null }
+```
+
+**Boolean Check**:
+```typescript
+{ filePath: "docs.util", sectionId: "section2", optionId: "option1", configPath: "technologies.prisma" }
+```
+
+**Value Match**:
+```typescript
+{ filePath: "docs.util", sectionId: "section3", optionId: "option4",
+  configPath: "questions.databaseProvider", matchValue: "supabase" }
+```
+
+### Section vs Code File Decision
+
+**Use Section Options when**:
+- Content is documentation/examples
+- Multiple valid variations exist (all equally correct)
+- Content is static markdown
+- User might want to see multiple options
+
+**Use Code Files when**:
+- Content is actual source code to be generated
+- Only one version should exist per configuration
+- Content is dynamically generated from config
+- File should appear in downloads automatically
+
 ## Related Documentation
 
 - [Code Files Reference](./code-files/index.md) - Auto-generated documentation of all files
+- [Markdown Data System](./markdown-data.md) - Markdown file structure and sections
 - `lib/config-snapshot.ts` - Complete configuration interface
 - `lib/code-templates.ts` - All template functions
 - `lib/code-file-config.ts` - All file definitions
+- `lib/section-option-mappings.ts` - All section visibility mappings
+- `lib/section-filter.utils.ts` - Automatic filtering implementation
 
 ---
 
 ## Questions?
 
-For more complex scenarios or questions, refer to existing file configurations in `lib/code-file-config.ts` as examples.
+For more complex scenarios or questions, refer to existing configurations:
+- Code file patterns: `lib/code-file-config.ts`
+- Section mapping patterns: `lib/section-option-mappings.ts`

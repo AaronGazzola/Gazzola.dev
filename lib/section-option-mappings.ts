@@ -167,6 +167,7 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "ide", sectionId: "section1", optionId: "option1", configPath: null },
   { filePath: "ide", sectionId: "section1", optionId: "option2", configPath: null },
   { filePath: "ide", sectionId: "section1", optionId: "option3", configPath: null },
+  { filePath: "ide", sectionId: "section1", optionId: "option4", configPath: null },
 ];
 
 export function getConfigValue(config: InitialConfigurationType, path: ConfigPath): any {

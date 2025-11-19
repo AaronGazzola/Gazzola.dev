@@ -36,3 +36,5 @@ The commands and numbers below are shorthand references to the corresponding pro
 17. `_roadmap_phase`: "Continue to follow the roadmap. After completing a phase, update the roadmap to document the completed and remaining tasks and push a commit"
 
 18. `_roadmap_review`: "Review this repo and the latest roadmap ("docs/roadmap[date].md"). If the app and the roadmap deviate, then make a plan to make the app more aligned with the roadmap"
+
+19. `_config_output`: "Review the configuration control files: @lib/config-snapshot.ts, @lib/section-option-mappings.ts, @lib/code-file-config.ts, and @lib/code-templates.ts. To control markdown section visibility, edit section-option-mappings.ts. To control code file generation, edit code-file-config.ts. To change code file content, edit code-templates.ts. All systems use config-snapshot.ts as the single source of truth."

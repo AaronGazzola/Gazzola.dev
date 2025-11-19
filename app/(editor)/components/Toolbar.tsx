@@ -58,6 +58,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
+import { useDatabaseStore } from "../../(components)/DatabaseConfiguration.stores";
 import { useHeaderStore } from "../../(components)/Header.store";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { useThemeStore } from "../../layout.stores";
@@ -133,6 +134,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme } = useThemeConfigStore();
+  const { reset: resetDatabase } = useDatabaseStore();
   const {
     shouldShowStep,
     markStepComplete,
@@ -141,6 +143,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     isStepOpen,
     setStepOpen,
     initialDialogShown,
+    resetWalkthrough,
   } = useWalkthroughStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
@@ -440,6 +443,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         setMarkdownData(freshData);
         reset();
         resetTheme();
+        resetDatabase();
+        resetWalkthrough();
         setRefreshKey(resetKey);
 
         conditionalLog(

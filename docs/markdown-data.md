@@ -2,6 +2,22 @@
 
 This document explains how to create and organize markdown content in the `data/markdown/` directory. The markdown files are parsed by `scripts/parse-markdown.ts` into a structured data format that powers the editor interface.
 
+## Unified Configuration Control
+
+The markdown section system is part of a larger configuration-driven architecture that controls all output content in the application:
+
+```
+ConfigSnapshot (single source of truth)
+    ↓
+Controls two output systems:
+    ├─→ Code File Generation [lib/code-file-config.ts]
+    │   └─→ Conditional file inclusion & dynamic content
+    └─→ Markdown Section Filtering [lib/section-option-mappings.ts]
+        └─→ Section option visibility (this document)
+```
+
+Both systems use the same `ConfigSnapshot` to determine what content appears. This ensures consistent behavior across generated code files and documentation sections. See [Code File Generation Guide](./code-file-generation-guide.md) for details on the unified architecture.
+
 ## File Structure and Organization
 
 ### Directory Layout
@@ -340,6 +356,93 @@ interface SectionOption {
 }
 ```
 
+### Configuration-Based Section Filtering
+
+Section options are automatically shown/hidden based on user configuration. This system ensures users only see relevant content for their tech stack.
+
+#### How It Works
+
+```
+User Configuration (technologies, questions, features)
+    ↓
+applyAutomaticSectionFiltering() [lib/section-filter.utils.ts]
+    ↓
+Reads SECTION_OPTION_MAPPINGS [lib/section-option-mappings.ts]
+    ↓
+For each mapping:
+  - Get config value (e.g., technologies.prisma)
+  - Determine if option should be included
+  - Call setSectionInclude() to update store
+    ↓
+Editor displays only included options
+```
+
+#### Section Option Mappings
+
+Mappings connect section options to configuration paths:
+
+```typescript
+// lib/section-option-mappings.ts
+export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
+  // Show Prisma types when Prisma is enabled
+  {
+    filePath: "docs.util",
+    sectionId: "section1",
+    optionId: "option2",
+    configPath: "technologies.prisma"
+  },
+
+  // Show Supabase actions when database is Supabase
+  {
+    filePath: "docs.util",
+    sectionId: "section3",
+    optionId: "option4",
+    configPath: "questions.databaseProvider",
+    matchValue: "supabase"
+  },
+
+  // Always include (user choice)
+  {
+    filePath: "ide",
+    sectionId: "section1",
+    optionId: "option1",
+    configPath: null
+  },
+];
+```
+
+#### Mapping Types
+
+**Boolean Configuration Check**:
+- `configPath`: Points to boolean config value
+- `matchValue`: Omitted
+- Result: Option included if config value is `true`
+
+**Value Match Check**:
+- `configPath`: Points to any config value
+- `matchValue`: Specific value to match
+- Result: Option included if config value equals matchValue
+
+**Always Include**:
+- `configPath`: `null`
+- Result: Option always included (user chooses manually)
+
+#### Example: util.md File
+
+The `docs/util.md` file demonstrates configuration-based filtering:
+
+**Section 1 (Types)**:
+- Option 1: Client-side types → shown when `databaseProvider === "none"`
+- Option 2: Prisma types → shown when `technologies.prisma === true`
+
+**Section 3 (Actions)**:
+- Option 1: No actions → shown when `databaseProvider === "none"`
+- Option 2: Better-Auth actions → shown when `technologies.betterAuth === true`
+- Option 3: Supabase + Better-Auth → shown when `databaseProvider === "both"`
+- Option 4: Supabase only → shown when `databaseProvider === "supabase"`
+
+Users automatically see only the examples relevant to their stack.
+
 ### Section Content Management
 
 The store provides methods for dynamic section manipulation:
@@ -502,3 +605,15 @@ if (state.storedContentVersion !== serverContentVersion) {
 **Component not rendering**: Verify component ID matches the registered components
 **Placeholder not working**: Check placeholder syntax `{{key:defaultValue}}`
 **Store migration failing**: Check store version and migration logic in layout.stores.ts
+**Section option not filtering**: Check `lib/section-option-mappings.ts` for correct mapping
+**Option always hidden**: Verify config value is correctly set in user configuration
+**Filtering not automatic**: Check that `applyAutomaticSectionFiltering()` is called in InitialConfiguration component
+
+## Related Documentation
+
+- [Code File Generation Guide](./code-file-generation-guide.md) - Unified configuration architecture
+- `lib/section-option-mappings.ts` - All section visibility mappings
+- `lib/section-filter.utils.ts` - Automatic filtering implementation
+- `lib/config-snapshot.ts` - Configuration snapshot interface
+- `scripts/parse-markdown.ts` - Markdown parser implementation
+- `app/(editor)/layout.stores.ts` - Store implementation with section methods
