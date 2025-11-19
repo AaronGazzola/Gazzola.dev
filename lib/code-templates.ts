@@ -1,49 +1,16 @@
-import type {
-  Plugin,
-  PrismaTable,
-  RLSPolicy,
-  RLSRolePolicy,
-} from "@/app/(components)/DatabaseConfiguration.types";
-import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
-import type {
-  CodeFileNode,
-  InitialConfigurationType,
-} from "@/app/(editor)/layout.types";
-import type { IDEType } from "@/app/(components)/IDESelection.types";
-import { componentFileContents } from "./component-files.generated";
-import { getSelectedIDE } from "./robots-file.utils";
+import type { ConfigSnapshot } from "./config-snapshot";
+import type { Plugin, PrismaTable, RLSPolicy, RLSRolePolicy } from "@/app/(components)/DatabaseConfiguration.types";
 
-export interface CodeFileRegistry {
-  globals_css: (theme: ThemeConfiguration) => string;
-  auth_ts: (plugins: Plugin[]) => string;
-  auth_client_ts: (plugins: Plugin[]) => string;
-  prisma_schema: (tables: PrismaTable[]) => string;
-  prisma_rls_ts: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]) => string;
-  supabase_migration_sql: (
-    rlsPolicies: RLSPolicy[],
-    tables: PrismaTable[]
-  ) => string;
-  log_utils_ts: () => string;
-  prisma_rls_client_ts: () => string;
-  auth_util_ts: () => string;
-  robots_file: () => string;
-}
+export const TEMPLATES = {
+  globals_css: (config: ConfigSnapshot): string => {
+    const { theme } = config;
+    const { colors, typography, other } = theme;
 
-export const IDE_ROBOTS_FILES: Record<IDEType, { fileName: string; fileExtension: string }> = {
-  claudecode: { fileName: "CLAUDE", fileExtension: "md" },
-  cursor: { fileName: ".cursorrules", fileExtension: "cursorrules" },
-  lovable: { fileName: ".lovablerules", fileExtension: "lovablerules" },
-  replit: { fileName: ".replitai", fileExtension: "replitai" },
-};
+    const formatShadow = (shadow: typeof other.light.shadow) => {
+      return `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${shadow.color} / ${shadow.opacity}`;
+    };
 
-const generateThemeCSS = (theme: ThemeConfiguration): string => {
-  const { colors, typography, other } = theme;
-
-  const formatShadow = (shadow: typeof other.light.shadow) => {
-    return `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${shadow.color} / ${shadow.opacity}`;
-  };
-
-  return `@tailwind base;
+    return `@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -294,21 +261,11 @@ const generateThemeCSS = (theme: ThemeConfiguration): string => {
 .focus-ring-color:focus-visible {
   --tw-ring-color: var(--ring);
 }`;
-};
+  },
 
-const getPluginImportStatement = (pluginName: string): string => {
-  return `import { ${pluginName} } from "better-auth/plugins";`;
-};
-
-const getPluginConfig = (pluginName: string): string => {
-  return `${pluginName}()`;
-};
-
-const generateAuthFile = (plugins: Plugin[]): string => {
-  const enabledPlugins = plugins.filter((p) => p.enabled && p.file === "auth");
-
-  if (enabledPlugins.length === 0) {
-    return `import { betterAuth } from "better-auth";
+  auth: {
+    basic: (): string => {
+      return `import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -322,16 +279,18 @@ export const auth = betterAuth({
     enabled: true,
   },
 });`;
-  }
+    },
 
-  const pluginImports = enabledPlugins
-    .map((p) => getPluginImportStatement(p.name))
-    .join("\n");
-  const pluginConfigs = enabledPlugins
-    .map((p) => getPluginConfig(p.name))
-    .join(",\n    ");
+    withPlugins: (plugins: Plugin[]): string => {
+      const enabledPlugins = plugins.filter((p) => p.enabled && p.file === "auth");
+      const pluginImports = enabledPlugins
+        .map((p) => `import { ${p.name} } from "better-auth/plugins";`)
+        .join("\n");
+      const pluginConfigs = enabledPlugins
+        .map((p) => `${p.name}()`)
+        .join(",\n    ");
 
-  return `import { betterAuth } from "better-auth";
+      return `import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 ${pluginImports}
@@ -346,29 +305,28 @@ export const auth = betterAuth({
     ${pluginConfigs}
   ],
 });`;
-};
+    },
+  },
 
-const generateAuthClientFile = (plugins: Plugin[]): string => {
-  const enabledPlugins = plugins.filter(
-    (p) => p.enabled && p.file === "auth-client"
-  );
-
-  if (enabledPlugins.length === 0) {
-    return `import { createAuthClient } from "better-auth/react";
+  authClient: {
+    basic: (): string => {
+      return `import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL,
 });`;
-  }
+    },
 
-  const pluginImports = enabledPlugins
-    .map((p) => getPluginImportStatement(p.name))
-    .join("\n");
-  const pluginConfigs = enabledPlugins
-    .map((p) => getPluginConfig(p.name))
-    .join(",\n    ");
+    withPlugins: (plugins: Plugin[]): string => {
+      const enabledPlugins = plugins.filter((p) => p.enabled && p.file === "auth-client");
+      const pluginImports = enabledPlugins
+        .map((p) => `import { ${p.name} } from "better-auth/plugins";`)
+        .join("\n");
+      const pluginConfigs = enabledPlugins
+        .map((p) => `${p.name}()`)
+        .join(",\n    ");
 
-  return `import { createAuthClient } from "better-auth/react";
+      return `import { createAuthClient } from "better-auth/react";
 ${pluginImports}
 
 export const authClient = createAuthClient({
@@ -377,31 +335,32 @@ export const authClient = createAuthClient({
     ${pluginConfigs}
   ],
 });`;
-};
+    },
+  },
 
-const generatePrismaSchema = (tables: PrismaTable[]): string => {
-  const generateColumn = (col: (typeof tables)[0]["columns"][0]) => {
-    const parts: string[] = [col.name, col.type];
-    if (col.isArray) parts[1] += "[]";
-    if (col.isOptional) parts[1] += "?";
-    if (col.attributes.length > 0)
-      parts.push(...col.attributes.map((a) => `@${a}`));
-    return `  ${parts.join(" ")}`;
-  };
+  prismaSchema: (tables: PrismaTable[]): string => {
+    const generateColumn = (col: (typeof tables)[0]["columns"][0]) => {
+      const parts: string[] = [col.name, col.type];
+      if (col.isArray) parts[1] += "[]";
+      if (col.isOptional) parts[1] += "?";
+      if (col.attributes.length > 0)
+        parts.push(...col.attributes.map((a) => `@${a}`));
+      return `  ${parts.join(" ")}`;
+    };
 
-  const generateTable = (table: PrismaTable) => {
-    const columns = table.columns.map(generateColumn).join("\n");
-    const uniqueConstraints = table.uniqueConstraints
-      .map((uc) => `  @@unique([${uc.join(", ")}])`)
-      .join("\n");
+    const generateTable = (table: PrismaTable) => {
+      const columns = table.columns.map(generateColumn).join("\n");
+      const uniqueConstraints = table.uniqueConstraints
+        .map((uc) => `  @@unique([${uc.join(", ")}])`)
+        .join("\n");
 
-    return `model ${table.name} {
+      return `model ${table.name} {
 ${columns}${uniqueConstraints ? "\n" + uniqueConstraints : ""}
   @@schema("${table.schema}")
 }`;
-  };
+    };
 
-  return `generator client {
+    return `generator client {
   provider = "prisma-client-js"
   previewFeatures = ["multiSchema"]
 }
@@ -413,71 +372,68 @@ datasource db {
 }
 
 ${tables.map(generateTable).join("\n\n")}`;
-};
+  },
 
-const generatePrismaRLSFile = (
-  rlsPolicies: RLSPolicy[],
-  tables: PrismaTable[]
-): string => {
-  const policyGroups = rlsPolicies.reduce(
-    (acc, policy) => {
-      const table = tables.find((t) => t.id === policy.tableId);
-      if (!table) return acc;
+  prismaRLS: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]): string => {
+    const policyGroups = rlsPolicies.reduce(
+      (acc, policy) => {
+        const table = tables.find((t) => t.id === policy.tableId);
+        if (!table) return acc;
 
-      if (!acc[table.name]) {
-        acc[table.name] = [];
-      }
-      acc[table.name].push(policy);
-      return acc;
-    },
-    {} as Record<string, RLSPolicy[]>
-  );
-
-  const generateUsingClause = (
-    rolePolicy: RLSRolePolicy,
-    tableName: string
-  ): string => {
-    switch (rolePolicy.accessType) {
-      case "global":
-        return "true";
-      case "own":
-        return "auth.uid() = user_id";
-      case "organization":
-        return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
-      case "related":
-        if (rolePolicy.relatedTable) {
-          return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+        if (!acc[table.name]) {
+          acc[table.name] = [];
         }
-        return "true";
-      default:
-        return "true";
-    }
-  };
+        acc[table.name].push(policy);
+        return acc;
+      },
+      {} as Record<string, RLSPolicy[]>
+    );
 
-  const policyFunctions = Object.entries(policyGroups)
-    .map(([tableName, policies]) => {
-      const policyChecks = policies
-        .flatMap((p) =>
-          p.rolePolicies.map((rolePolicy) => {
-            const usingClause = generateUsingClause(rolePolicy, tableName);
-            return `    {
+    const generateUsingClause = (
+      rolePolicy: RLSRolePolicy,
+      tableName: string
+    ): string => {
+      switch (rolePolicy.accessType) {
+        case "global":
+          return "true";
+        case "own":
+          return "auth.uid() = user_id";
+        case "organization":
+          return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
+        case "related":
+          if (rolePolicy.relatedTable) {
+            return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+          }
+          return "true";
+        default:
+          return "true";
+      }
+    };
+
+    const policyFunctions = Object.entries(policyGroups)
+      .map(([tableName, policies]) => {
+        const policyChecks = policies
+          .flatMap((p) =>
+            p.rolePolicies.map((rolePolicy) => {
+              const usingClause = generateUsingClause(rolePolicy, tableName);
+              return `    {
       operation: "${p.operation}",
       role: "${rolePolicy.role}",
       using: \`${usingClause}\`
     }`;
-          })
-        )
-        .join(",\n");
+            })
+          )
+          .join(",\n");
 
-      return `export const ${tableName}RLS = {
+        return `export const ${tableName}RLS = {
   policies: [
 ${policyChecks}
   ],
 };`;
-    })
-    .join("\n\n");
+      })
+      .join("\n\n");
 
-  return `export type RLSOperation = "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "ALL";
+    return `export type RLSOperation = "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "ALL";
 
 export interface RLSPolicy {
   operation: RLSOperation;
@@ -486,80 +442,77 @@ export interface RLSPolicy {
 }
 
 ${policyFunctions}`;
-};
+  },
 
-const generateSupabaseMigration = (
-  rlsPolicies: RLSPolicy[],
-  tables: PrismaTable[]
-): string => {
-  const timestamp = Date.now();
-  const policyGroups = rlsPolicies.reduce(
-    (acc, policy) => {
-      const table = tables.find((t) => t.id === policy.tableId);
-      if (!table) return acc;
+  supabaseMigration: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]): string => {
+    const timestamp = Date.now();
+    const policyGroups = rlsPolicies.reduce(
+      (acc, policy) => {
+        const table = tables.find((t) => t.id === policy.tableId);
+        if (!table) return acc;
 
-      if (!acc[table.name]) {
-        acc[table.name] = [];
-      }
-      acc[table.name].push(policy);
-      return acc;
-    },
-    {} as Record<string, RLSPolicy[]>
-  );
-
-  const generateUsingClause = (
-    rolePolicy: RLSRolePolicy,
-    tableName: string
-  ): string => {
-    switch (rolePolicy.accessType) {
-      case "global":
-        return "true";
-      case "own":
-        return "auth.uid() = user_id";
-      case "organization":
-        return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
-      case "related":
-        if (rolePolicy.relatedTable) {
-          return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+        if (!acc[table.name]) {
+          acc[table.name] = [];
         }
-        return "true";
-      default:
-        return "true";
-    }
-  };
+        acc[table.name].push(policy);
+        return acc;
+      },
+      {} as Record<string, RLSPolicy[]>
+    );
 
-  const enableRLS = Object.keys(policyGroups)
-    .map(
-      (tableName) =>
-        `ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY;`
-    )
-    .join("\n");
+    const generateUsingClause = (
+      rolePolicy: RLSRolePolicy,
+      tableName: string
+    ): string => {
+      switch (rolePolicy.accessType) {
+        case "global":
+          return "true";
+        case "own":
+          return "auth.uid() = user_id";
+        case "organization":
+          return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
+        case "related":
+          if (rolePolicy.relatedTable) {
+            return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+          }
+          return "true";
+        default:
+          return "true";
+      }
+    };
 
-  const createPolicies = Object.entries(policyGroups)
-    .flatMap(([tableName, policies]) =>
-      policies.flatMap((policy) =>
-        policy.rolePolicies.map((rolePolicy) => {
-          const policyName = `${tableName}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
-          const usingClause = generateUsingClause(rolePolicy, tableName);
-          return `CREATE POLICY "${policyName}" ON public."${tableName}"
+    const enableRLS = Object.keys(policyGroups)
+      .map(
+        (tableName) =>
+          `ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY;`
+      )
+      .join("\n");
+
+    const createPolicies = Object.entries(policyGroups)
+      .flatMap(([tableName, policies]) =>
+        policies.flatMap((policy) =>
+          policy.rolePolicies.map((rolePolicy) => {
+            const policyName = `${tableName}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
+            const usingClause = generateUsingClause(rolePolicy, tableName);
+            return `CREATE POLICY "${policyName}" ON public."${tableName}"
   FOR ${policy.operation}
   TO ${rolePolicy.role}
   USING (${usingClause});`;
-        })
+          })
+        )
       )
-    )
-    .join("\n\n");
+      .join("\n\n");
 
-  return `-- Migration: ${timestamp}_rls_policies.sql
+    return `-- Migration: ${timestamp}_rls_policies.sql
 -- Enable RLS on tables
 ${enableRLS}
 
 -- Create RLS policies
 ${createPolicies}`;
-};
+  },
 
-const generateLogUtils = (): string => {
-  return `export enum LOG_LABELS {
+  logUtils: (): string => {
+    return `export enum LOG_LABELS {
   GENERATE = "generate",
   API = "api",
   AUTH = "auth",
@@ -666,10 +619,10 @@ function truncateString(str: string, maxLength: number): string {
 
   return str.slice(0, startLength) + "..." + str.slice(-endLength);
 }`;
-};
+  },
 
-const generatePrismaRLSClient = (): string => {
-  return `import { Prisma } from "@prisma/client";
+  prismaRLSClient: (): string => {
+    return `import { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
 
 function forUser(userId: string, tenantId?: string) {
@@ -702,10 +655,10 @@ function forUser(userId: string, tenantId?: string) {
 export function createRLSClient(userId: string, tenantId?: string) {
   return prisma.$extends(forUser(userId, tenantId));
 }`;
-};
+  },
 
-const generateAuthUtil = (): string => {
-  return `import { User } from "better-auth";
+  authUtil: (): string => {
+    return `import { User } from "better-auth";
 import jwt from "jsonwebtoken";
 import { headers } from "next/headers";
 import { auth, Session } from "./auth";
@@ -759,10 +712,10 @@ export function generateSupabaseJWT(userId: string, userRole: string): string {
     algorithm: "HS256",
   });
 }`;
-};
+  },
 
-const generateRobotsFile = (): string => {
-  return `# CLAUDE.md
+  robotsFile: (): string => {
+    return `# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -850,74 +803,5 @@ This ensures universal compatibility between browser and Node.js test environmen
 All logging should be performed using the \\\`conditionalLog\\\` function exported from \\\`lib/log.utils.ts\\\`
 The \\\`VITE_LOG_LABELS\\\` variable in \\\`.env.local\\\` stores a comma separated string of log labels. Logs are returned if \\\`VITE_LOG_LABELS="all"\\\`, or if \\\`VITE_LOG_LABELS\\\` includes the label arg in \\\`conditionalLog\\\`.
 `;
-};
-
-export const codeFileGenerators: CodeFileRegistry = {
-  globals_css: generateThemeCSS,
-  auth_ts: generateAuthFile,
-  auth_client_ts: generateAuthClientFile,
-  prisma_schema: generatePrismaSchema,
-  prisma_rls_ts: generatePrismaRLSFile,
-  supabase_migration_sql: generateSupabaseMigration,
-  log_utils_ts: generateLogUtils,
-  prisma_rls_client_ts: generatePrismaRLSClient,
-  auth_util_ts: generateAuthUtil,
-  robots_file: generateRobotsFile,
-};
-
-const createComponentFileNodes = (
-  shouldShowCodeFiles: boolean
-): CodeFileNode[] => {
-  const nodes: CodeFileNode[] = [];
-
-  Object.entries(componentFileContents).forEach(([componentName, content]) => {
-    const fileName = `${componentName}.tsx`;
-
-    nodes.push({
-      id: `code-file-component-${componentName}`,
-      name: fileName,
-      displayName: fileName,
-      type: "code-file",
-      path: `ui.${componentName}`,
-      urlPath: `/ui/${componentName}`,
-      include: shouldShowCodeFiles,
-      fileExtension: "tsx",
-      language: "typescript",
-      content: () => content,
-      includeCondition: () => shouldShowCodeFiles,
-      visibleAfterPage: "ide",
-      parentPath: "components.ui",
-      downloadPath: "components/ui",
-      previewOnly: true,
-    });
-  });
-
-  return nodes;
-};
-
-export const createCodeFileNodes = (
-  initialConfig: InitialConfigurationType,
-  theme: ThemeConfiguration,
-  plugins: Plugin[],
-  tables: PrismaTable[],
-  rlsPolicies: RLSPolicy[],
-  isPageVisited?: (path: string) => boolean
-): CodeFileNode[] => {
-  const { getSectionInclude } = require("@/app/(editor)/layout.stores").useEditorStore.getState();
-  const { getCodeFiles } = require("./code-file-generator");
-
-  const newSystemFiles = getCodeFiles(
-    initialConfig,
-    theme,
-    plugins,
-    tables,
-    rlsPolicies,
-    isPageVisited,
-    getSectionInclude
-  );
-
-  const shouldShowCodeFiles = isPageVisited?.("ide") ?? false;
-  const componentNodes = createComponentFileNodes(shouldShowCodeFiles);
-
-  return [...newSystemFiles, ...componentNodes];
+  },
 };

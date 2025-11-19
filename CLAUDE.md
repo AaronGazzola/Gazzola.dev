@@ -85,3 +85,22 @@ This ensures universal compatibility between browser and Node.js test environmen
 
 All logging should be performed using the `conditionalLog` function exported from `lib/log.utils.ts`
 The `VITE_LOG_LABELS` variable in `.env.local` stores a comma separated string of log labels. Logs are returned if `VITE_LOG_LABELS="all"`, or if `VITE_LOG_LABELS` includes the label arg in `conditionalLog`.
+
+# Code File Generation
+
+This project uses a declarative configuration system for generating code files. The system is documented in:
+
+- **[Code Files Documentation](docs/code-files/index.md)** - Overview of all generated files and their variations
+- **Configuration System** - Located in `lib/code-file-config.ts`
+- **Templates** - Located in `lib/code-templates.ts`
+
+To regenerate documentation after making changes to the configuration system:
+```bash
+npm run docs:generate
+```
+
+This will create/update markdown files in `docs/code-files/` showing:
+- All file variations based on configuration
+- Inclusion conditions for each file
+- Required technologies and features
+- Generated code examples

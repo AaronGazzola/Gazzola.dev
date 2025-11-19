@@ -144,7 +144,7 @@ export const IDESelection = () => {
               )}
             >
               <div className="flex items-center theme-gap-4 flex-1">
-                <div className="flex flex-col xs:flex-row xs:items-center theme-gap-2 flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-center theme-gap-2 flex-1">
                   <div className="flex items-center theme-gap-4">
                     <LogoComponent className="w-8 h-8 flex-shrink-0 theme-text-foreground" />
                     <h4
@@ -159,15 +159,25 @@ export const IDESelection = () => {
                     </h4>
                   </div>
 
-                  <div className="flex items-center theme-gap-2 ml-12 xs:ml-0">
-                    <Plus className="w-4 h-4 theme-text-muted-foreground" />
-                    <GitHubSmallLogo className="w-5 h-5 theme-text-muted-foreground" />
+                  <div className="flex items-center theme-gap-2 ml-12 sm:ml-0">
                     {ide.id === "claudecode" && (
                       <>
                         <Plus className="w-4 h-4 theme-text-muted-foreground" />
-                        <VSCodeLogo className="w-5 h-5 theme-text-muted-foreground" />
+                        <VSCodeLogo className="w-8 h-8 flex-shrink-0 theme-text-muted-foreground" />
+                        <h4
+                          className={cn(
+                            "hidden sm:block text-lg font-semibold theme-font-sans theme-tracking",
+                            isSelected
+                              ? "theme-text-primary"
+                              : "theme-text-foreground"
+                          )}
+                        >
+                          Visual Studio Code
+                        </h4>
                       </>
                     )}
+                    <Plus className="w-4 h-4 theme-text-muted-foreground" />
+                    <GitHubSmallLogo className="w-5 h-5 theme-text-muted-foreground" />
                   </div>
                 </div>
 
