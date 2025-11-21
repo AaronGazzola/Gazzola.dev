@@ -13,6 +13,8 @@ const buttonVariants = cva(
           "border-2 theme-bg-primary theme-text-primary-foreground theme-border-primary theme-shadow hover:opacity-90",
         destructive:
           "border-2 theme-bg-destructive theme-text-destructive-foreground theme-border-destructive theme-shadow hover:opacity-90",
+        highlight:
+          "border-2 shadow-sm text-gray-300 bg-black/60 hover:bg-black/10 font-semibold flex items-center gap-4 px-10 py-8 hover:theme-text-accent-foreground",
         outline:
           "border-2 theme-border-input theme-bg-background theme-text-foreground theme-shadow hover:theme-bg-accent hover:theme-text-accent-foreground",
         secondary:

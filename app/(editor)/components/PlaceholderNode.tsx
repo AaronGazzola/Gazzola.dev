@@ -1,6 +1,5 @@
 "use client";
 
-import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { cn } from "@/lib/utils";
 import {
   DecoratorNode,
@@ -18,8 +17,6 @@ import {
   useState,
 } from "react";
 import { useEditorStore } from "../layout.stores";
-import { useWalkthroughStore } from "../layout.walkthrough.stores";
-import { WalkthroughStep } from "../layout.walkthrough.types";
 
 export interface SerializedPlaceholderNode
   extends Spread<
@@ -149,25 +146,13 @@ function PlaceholderNodeComponent({
 }: PlaceholderNodeComponentProps) {
   const { getPlaceholderValue, setPlaceholderValue, darkMode } =
     useEditorStore();
-  const { shouldShowStep, markStepComplete, isStepOpen, setStepOpen } =
-    useWalkthroughStore();
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState("");
   const [inputWidth, setInputWidth] = useState(0);
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const currentValue = getPlaceholderValue(placeholderKey) || defaultValue;
-  const showPlaceholderHelp =
-    mounted &&
-    isFirstPlaceholder &&
-    shouldShowStep(WalkthroughStep.PLACEHOLDER);
 
   useEffect(() => {
     setLocalValue(currentValue);
@@ -199,10 +184,7 @@ function PlaceholderNodeComponent({
 
   const handleBlur = useCallback(() => {
     handleSave();
-    if (isFirstPlaceholder && showPlaceholderHelp) {
-      markStepComplete(WalkthroughStep.PLACEHOLDER);
-    }
-  }, [handleSave, isFirstPlaceholder, showPlaceholderHelp, markStepComplete]);
+  }, [handleSave]);
 
   useLayoutEffect(() => {
     if (measureRef.current) {
@@ -267,25 +249,6 @@ function PlaceholderNodeComponent({
         >
           {currentValue}
         </span>
-      )}
-      {showPlaceholderHelp && (
-        <div className="absolute -top-3 right-0">
-          <WalkthroughHelper
-            isOpen={popoverOpen}
-            onOpenChange={(open) => {
-              setPopoverOpen(open);
-              if (!open && isStepOpen(WalkthroughStep.PLACEHOLDER)) {
-                markStepComplete(WalkthroughStep.PLACEHOLDER);
-              } else if (open && !isStepOpen(WalkthroughStep.PLACEHOLDER)) {
-                setStepOpen(WalkthroughStep.PLACEHOLDER, true);
-              }
-            }}
-            showAnimation={!isStepOpen(WalkthroughStep.PLACEHOLDER)}
-            title="Placeholder Values"
-            description="Click on any placeholder like this to edit it. When you change a placeholder value, it will automatically update everywhere it appears throughout your roadmap documents."
-            iconSize="sm"
-          />
-        </div>
       )}
     </span>
   );

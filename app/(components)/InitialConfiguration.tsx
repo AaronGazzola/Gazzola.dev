@@ -2,8 +2,6 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
-import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
-import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +15,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/editor/ui/tooltip";
-import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import { cn } from "@/lib/utils";
 import {
@@ -566,22 +563,9 @@ export const InitialConfiguration = () => {
     setSectionInclude,
   } = useEditorStore();
 
-  const { shouldShowStep, markStepComplete, isStepOpen, setStepOpen } =
-    useWalkthroughStore();
-
-  const [configHelpOpen, setConfigHelpOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   useEffect(() => {
     applyAutomaticSectionFiltering(initialConfiguration, setSectionInclude);
   }, [initialConfiguration, setSectionInclude]);
-
-  const showConfigHelp =
-    mounted && shouldShowStep(WalkthroughStep.CONFIGURATION);
 
   const getFeatureEnabled = (featureId: string): boolean => {
     if (featureId === "databaseChoice") {
@@ -810,7 +794,6 @@ export const InitialConfiguration = () => {
     <TooltipProvider>
       <div
         className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow theme-p-2 border theme-font-sans theme-tracking"
-        data-walkthrough="initial-configuration"
       >
         {enabledTechnologies.length > 0 && (
           <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 theme-mb-1 theme-p-3 md:theme-p-6 backdrop-blur-lg">
@@ -855,11 +838,6 @@ export const InitialConfiguration = () => {
           collapsible
           defaultValue="databaseChoice"
           className="flex flex-col theme-gap-1"
-          onValueChange={(value) => {
-            if (value === "databaseChoice" && showConfigHelp) {
-              markStepComplete(WalkthroughStep.CONFIGURATION);
-            }
-          }}
         >
           {questionConfigs(initialConfiguration).map((question) => {
             const Icon = question.icon;
@@ -942,33 +920,6 @@ export const InitialConfiguration = () => {
                         </span>
                       )}
                     </div>
-                    {question.id === "databaseChoice" && showConfigHelp && (
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <WalkthroughHelper
-                          isOpen={configHelpOpen}
-                          onOpenChange={(open) => {
-                            setConfigHelpOpen(open);
-                            if (
-                              !open &&
-                              isStepOpen(WalkthroughStep.CONFIGURATION)
-                            ) {
-                              markStepComplete(WalkthroughStep.CONFIGURATION);
-                            } else if (
-                              open &&
-                              !isStepOpen(WalkthroughStep.CONFIGURATION)
-                            ) {
-                              setStepOpen(WalkthroughStep.CONFIGURATION, true);
-                            }
-                          }}
-                          showAnimation={
-                            !isStepOpen(WalkthroughStep.CONFIGURATION)
-                          }
-                          title="Technology Selection"
-                          description="Select options in these questions to customize your technology stack. Your selections will automatically determine which technologies are required for your web application."
-                          iconSize="sm"
-                        />
-                      </div>
-                    )}
                   </div>
 
                   <div className="flex items-center theme-gap-2 shrink-0">

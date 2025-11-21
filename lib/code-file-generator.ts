@@ -16,7 +16,7 @@ export const getCodeFiles = (
   isPageVisited?: (path: string) => boolean,
   getSectionInclude?: (filePath: string, sectionId: string, optionId: string) => boolean
 ): CodeFileNode[] => {
-  const shouldShowCodeFiles = isPageVisited?.("ide") ?? false;
+  const shouldShowCodeFiles = isPageVisited?.("readme") ?? false;
 
   if (!shouldShowCodeFiles) {
     return [];
@@ -56,7 +56,7 @@ export const getCodeFiles = (
       fileExtension = "css";
     } else if (fileName.endsWith(".md")) {
       fileExtension = "md";
-    } else if (fileName === ".cursorrules" || fileName === ".lovablerules" || fileName === ".replitai") {
+    } else if (fileName === ".cursorrules" || fileName === ".windsurfrules") {
       fileExtension = fileName.substring(1);
     } else if (fileName === "CLAUDE") {
       fileExtension = "md";
@@ -67,7 +67,7 @@ export const getCodeFiles = (
       language = "css";
     } else if (fileExtension === "md") {
       language = "markdown";
-    } else if (fileExtension === "cursorrules" || fileExtension === "lovablerules" || fileExtension === "replitai") {
+    } else if (fileExtension === "cursorrules" || fileExtension === "windsurfrules") {
       language = "plaintext";
     }
 
@@ -83,7 +83,7 @@ export const getCodeFiles = (
       language,
       content: () => fileConfig.generator(config),
       includeCondition: () => fileConfig.conditions.include(config),
-      visibleAfterPage: "ide",
+      visibleAfterPage: "readme",
       parentPath,
       downloadPath,
       previewOnly: true,

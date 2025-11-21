@@ -231,11 +231,15 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
   };
 
   if (sanitizedName === "robot-readme" || isRobotsFile) {
-    fileNode.visibleAfterPage = "ide";
+    fileNode.visibleAfterPage = "readme";
   }
 
-  if (order && order >= 6) {
-    fileNode.visibleAfterPage = "ide";
+  if (order && order >= 5 && sanitizedName !== "readme" && sanitizedName !== "robots") {
+    fileNode.visibleAfterPage = "readme";
+  }
+
+  if (sanitizedName === "util") {
+    fileNode.includeInToolbar = false;
   }
 
   return fileNode;
@@ -284,7 +288,7 @@ function buildMarkdownTree(
       };
 
       if (sanitizedName === "robots") {
-        directoryNode.visibleAfterPage = "ide";
+        directoryNode.visibleAfterPage = "readme";
       }
 
       nodes.push(directoryNode);

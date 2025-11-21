@@ -17,11 +17,11 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  Bot,
   BrainCog,
   Briefcase,
-  CheckCircle,
   GraduationCap,
-  MessagesSquare,
+  ListTodo,
   Palette,
   Plus,
   Rocket,
@@ -118,17 +118,17 @@ const nextSteps = [
   {
     title: "Design",
     description: "Configure your web app and download your roadmap",
-    icon: Palette,
+    icon: ListTodo,
   },
   {
     title: "Build",
     description: "Use your roadmap to generate your web app",
-    icon: MessagesSquare,
+    icon: Bot,
   },
   {
     title: "Review",
     description: "Apply for a free code review and QA analysis",
-    icon: CheckCircle,
+    icon: Rocket,
   },
 ];
 
@@ -682,38 +682,48 @@ const Page = () => {
                       className="flex flex-col items-center relative z-10 bg-black w-full max-w-[250px]"
                     >
                       <div className="mb-4 relative">
-                        <svg
-                          className="w-20 h-20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                        >
-                          <defs>
-                            <linearGradient
-                              id={`gradient-next-${index}`}
-                              x1="0%"
-                              y1="0%"
-                              x2="100%"
-                              y2="100%"
-                            >
-                              {gradientEnabled ? (
-                                gradientColors.map((color, colorIndex) => (
-                                  <stop
-                                    key={colorIndex}
-                                    offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                    stopColor={color}
-                                  />
-                                ))
-                              ) : (
-                                <stop offset="0%" stopColor={singleColor} />
-                              )}
-                            </linearGradient>
-                          </defs>
+                        <div className="relative w-20 h-20">
                           <step.icon
-                            className="w-20 h-20 stroke-1"
-                            stroke={`url(#gradient-next-${index})`}
+                            className="w-20 h-20 stroke-1 absolute inset-0 z-0"
+                            style={{
+                              color:
+                                gradientColors[index % gradientColors.length],
+                            }}
                             fill="none"
                           />
-                        </svg>
+                          <svg
+                            className="w-20 h-20 relative z-10"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <defs>
+                              <linearGradient
+                                id={`gradient-next-${index}`}
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="100%"
+                              >
+                                {gradientEnabled ? (
+                                  gradientColors.map((color, colorIndex) => (
+                                    <stop
+                                      key={colorIndex}
+                                      offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                      stopColor={color}
+                                    />
+                                  ))
+                                ) : (
+                                  <stop offset="0%" stopColor={singleColor} />
+                                )}
+                              </linearGradient>
+                            </defs>
+                            <step.icon
+                              className="w-20 h-20 stroke-1"
+                              stroke={`url(#gradient-next-${index})`}
+                              fill="none"
+                            />
+                          </svg>
+                        </div>
                       </div>
 
                       <div className="text-center">
@@ -851,38 +861,47 @@ const Page = () => {
                     className="flex flex-col items-center relative z-10 bg-black w-full max-w-[250px]"
                   >
                     <div className="mb-4 relative">
-                      <svg
-                        className="w-20 h-20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <defs>
-                          <linearGradient
-                            id={`gradient-next-last`}
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="100%"
-                          >
-                            {gradientEnabled ? (
-                              gradientColors.map((color, colorIndex) => (
-                                <stop
-                                  key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                  stopColor={color}
-                                />
-                              ))
-                            ) : (
-                              <stop offset="0%" stopColor={singleColor} />
-                            )}
-                          </linearGradient>
-                        </defs>
+                      <div className="relative w-20 h-20">
                         <LastIcon
-                          className="w-20 h-20 stroke-1"
-                          stroke={`url(#gradient-next-last)`}
+                          className="w-20 h-20 stroke-1 absolute inset-0 z-0"
+                          style={{
+                            color: gradientColors[2 % gradientColors.length],
+                          }}
                           fill="none"
                         />
-                      </svg>
+                        <svg
+                          className="w-20 h-20 relative z-10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <defs>
+                            <linearGradient
+                              id={`gradient-next-last`}
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="100%"
+                            >
+                              {gradientEnabled ? (
+                                gradientColors.map((color, colorIndex) => (
+                                  <stop
+                                    key={colorIndex}
+                                    offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                    stopColor={color}
+                                  />
+                                ))
+                              ) : (
+                                <stop offset="0%" stopColor={singleColor} />
+                              )}
+                            </linearGradient>
+                          </defs>
+                          <LastIcon
+                            className="w-20 h-20 stroke-1"
+                            stroke={`url(#gradient-next-last)`}
+                            fill="none"
+                          />
+                        </svg>
+                      </div>
                     </div>
 
                     <div className="text-center">
@@ -912,38 +931,48 @@ const Page = () => {
                     className="flex flex-col items-center gap-4 w-full"
                   >
                     <div className="flex-shrink-0 relative">
-                      <svg
-                        className="w-16 h-16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <defs>
-                          <linearGradient
-                            id={`gradient-next-mobile-${index}`}
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="100%"
-                          >
-                            {gradientEnabled ? (
-                              gradientColors.map((color, colorIndex) => (
-                                <stop
-                                  key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                  stopColor={color}
-                                />
-                              ))
-                            ) : (
-                              <stop offset="0%" stopColor={singleColor} />
-                            )}
-                          </linearGradient>
-                        </defs>
+                      <div className="relative w-16 h-16">
                         <step.icon
-                          className="w-16 h-16 stroke-1"
-                          stroke={`url(#gradient-next-mobile-${index})`}
+                          className="w-16 h-16 stroke-1 absolute inset-0 z-0"
+                          style={{
+                            color:
+                              gradientColors[index % gradientColors.length],
+                          }}
                           fill="none"
                         />
-                      </svg>
+                        <svg
+                          className="w-16 h-16 relative z-10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <defs>
+                            <linearGradient
+                              id={`gradient-next-mobile-${index}`}
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="100%"
+                            >
+                              {gradientEnabled ? (
+                                gradientColors.map((color, colorIndex) => (
+                                  <stop
+                                    key={colorIndex}
+                                    offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                    stopColor={color}
+                                  />
+                                ))
+                              ) : (
+                                <stop offset="0%" stopColor={singleColor} />
+                              )}
+                            </linearGradient>
+                          </defs>
+                          <step.icon
+                            className="w-16 h-16 stroke-1"
+                            stroke={`url(#gradient-next-mobile-${index})`}
+                            fill="none"
+                          />
+                        </svg>
+                      </div>
                     </div>
 
                     <div className="flex-1 text-center">
@@ -987,8 +1016,8 @@ const Page = () => {
         >
           <Link href={configuration.paths.home}>
             <Button
-              variant="outline"
-              className="border border-transparent bg-transparent text-gray-300 bg-black font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
+              variant="highlight"
+              className="border border-transparent  text-gray-300  font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
             >
               Get Started
               <Rocket className="!w-7 !h-7" />

@@ -1,3 +1,5 @@
+export type RelationType = "one-to-many" | "many-to-one" | "one-to-one";
+
 export interface PrismaColumn {
   id: string;
   name: string;
@@ -13,6 +15,9 @@ export interface PrismaColumn {
     table: string;
     field: string;
     onDelete?: "Cascade" | "Restrict" | "SetNull" | "NoAction";
+    relationType?: RelationType;
+    inverseFieldName?: string;
+    foreignKeyFieldId?: string;
   };
   attributes: string[];
 }
@@ -74,6 +79,7 @@ export interface DatabaseConfigurationState {
   updateTableName: (tableId: string, name: string) => void;
   updateTableSchema: (tableId: string, schema: string) => void;
   getAvailableSchemas: () => string[];
+  getAvailableSchemasWithConfig: (config: import("@/app/(editor)/layout.types").InitialConfigurationType) => string[];
 
   addColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
   deleteColumn: (tableId: string, columnId: string) => void;

@@ -317,6 +317,7 @@ const createInitialState = (data: MarkdownData) => ({
     fileType: null,
   },
   testSuites: [],
+  isResetting: false,
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -416,14 +417,11 @@ export const useEditorStore = create<EditorState>()(
       setPreviewMode: (previewMode: boolean) => set({ previewMode }),
       markPageVisited: (path) =>
         set((state) => {
-          console.log('[VISITED] Marking page as visited:', path);
-          console.log('[VISITED] Current visitedPages:', state.visitedPages);
           const newVisitedPages = state.visitedPages.includes(path)
             ? state.visitedPages
             : [...state.visitedPages, path];
-          console.log('[VISITED] New visitedPages:', newVisitedPages);
 
-          if (path === "ide" && !state.visitedPages.includes(path)) {
+          if ((path === "robots" || path === "readme") && !state.visitedPages.includes(path)) {
             const themeStore = useThemeStore.getState();
             const databaseStore = useDatabaseStore.getState();
 
@@ -436,7 +434,6 @@ export const useEditorStore = create<EditorState>()(
               (checkPath: string) => newVisitedPages.includes(checkPath)
             );
 
-            console.log('[VISITED] Regenerating code files after visiting next steps');
             return { visitedPages: newVisitedPages, codeFiles };
           }
 
@@ -1017,6 +1014,8 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({ refreshKey: state.refreshKey + 1 })),
       setRefreshKey: (key: number) =>
         set({ refreshKey: key }),
+      setIsResetting: (isResetting: boolean) =>
+        set({ isResetting }),
       setWireframeCurrentPage: (pageIndex: number) => {
         set((state) => ({
           wireframeState: {

@@ -1,120 +1,13 @@
-export const LovableLogo = ({ className }: { className?: string }) => (
+export const WindsurfLogo = ({ className }: { className?: string }) => (
   <svg
-    viewBox="0 0 121 122"
+    viewBox="0 0 1024 1024"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className={className}
   >
-    <mask
-      id="mask0_572_319"
-      style={{ maskType: "alpha" }}
-      maskUnits="userSpaceOnUse"
-      x="0"
-      y="0"
-      width="121"
-      height="122"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M36.0687 0C55.9888 0 72.1373 16.1551 72.1373 36.0835V49.7975H84.141C104.061 49.7975 120.21 65.9526 120.21 85.8809C120.21 105.809 104.061 121.964 84.141 121.964H0V36.0835C0 16.1551 16.1485 0 36.0687 0Z"
-        fill="url(#paint0_linear_572_319)"
-      />
-    </mask>
-    <g mask="url(#mask0_572_319)">
-      <g filter="url(#filter0_f_572_319)">
-        <ellipse cx="52.7381" cy="65.1011" rx="81.3729" ry="81.1923" fill="#4B73FF" />
-      </g>
-      <g filter="url(#filter1_f_572_319)">
-        <ellipse cx="61.6734" cy="20.547" rx="104.216" ry="81.1923" fill="#FF66F4" />
-      </g>
-      <g filter="url(#filter2_f_572_319)">
-        <ellipse cx="78.6659" cy="5.26802" rx="81.3729" ry="71.3042" fill="#FF0105" />
-      </g>
-      <g filter="url(#filter3_f_572_319)">
-        <ellipse cx="63.121" cy="20.5275" rx="48.9374" ry="48.8288" fill="#FE7B02" />
-      </g>
-    </g>
-    <defs>
-      <filter
-        id="filter0_f_572_319"
-        x="-65.0219"
-        y="-52.4784"
-        width="235.52"
-        height="235.159"
-        filterUnits="userSpaceOnUse"
-        colorInterpolationFilters="sRGB"
-      >
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="18.1936" result="effect1_foregroundBlur_572_319" />
-      </filter>
-      <filter
-        id="filter1_f_572_319"
-        x="-78.9301"
-        y="-97.0324"
-        width="281.208"
-        height="235.159"
-        filterUnits="userSpaceOnUse"
-        colorInterpolationFilters="sRGB"
-      >
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="18.1936" result="effect1_foregroundBlur_572_319" />
-      </filter>
-      <filter
-        id="filter2_f_572_319"
-        x="-39.0942"
-        y="-102.423"
-        width="235.52"
-        height="215.383"
-        filterUnits="userSpaceOnUse"
-        colorInterpolationFilters="sRGB"
-      >
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="18.1936" result="effect1_foregroundBlur_572_319" />
-      </filter>
-      <filter
-        id="filter3_f_572_319"
-        x="-22.2036"
-        y="-64.6884"
-        width="170.649"
-        height="170.432"
-        filterUnits="userSpaceOnUse"
-        colorInterpolationFilters="sRGB"
-      >
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="18.1936" result="effect1_foregroundBlur_572_319" />
-      </filter>
-      <linearGradient
-        id="paint0_linear_572_319"
-        x1="40.4527"
-        y1="21.4331"
-        x2="76.9327"
-        y2="121.971"
-        gradientUnits="userSpaceOnUse"
-      >
-        <stop offset="0.025" stopColor="#FF8E63" />
-        <stop offset="0.56" stopColor="#FF7EB0" />
-        <stop offset="0.95" stopColor="#4B73FF" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
-export const ReplitLogo = ({ className }: { className?: string }) => (
-  <svg
-    role="img"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-  >
-    <title>Replit</title>
     <path
-      d="M12.265.002a11.911 11.911 0 00-2.437.204c13.876 1.704 10.27 17.94 1.717 17.819 0 0 12.453 1.625 11.673-10.215A11.911 11.911 0 0012.265.002zM8.213.827c-.2.002-.402.008-.61.016A11.856 11.856 0 00.146 13.608C2.93-.421 18.805 4.122 17.9 12.688c0 0 2.85-12.014-9.688-11.861zm1.454 5.035C6.002 5.886.691 7.45.816 16.344a12.013 12.013 0 002.897 4.33c.052.051.108.1.162.149a12.02 12.02 0 001.137.926c.061.044.12.092.181.135a11.93 11.93 0 001.312.779c.132.068.266.13.4.193a11.854 11.854 0 001.199.486c.1.034.195.077.297.109a11.874 11.874 0 001.49.353c.153.027.307.05.461.07a12.016 12.016 0 001.578.123l.06.003c.4 0 .792-.021 1.18-.06-13.949-3.327-8.645-18.924-.114-17.68 0 0-1.469-.41-3.389-.398zm2.436 2.762a3.355 3.355 0 103.354 3.356 3.355 3.355 0 00-3.354-3.356z"
-      fill="#F26207"
+      d="M897.246 286.869H889.819C850.735 286.808 819.017 318.46 819.017 357.539V515.589C819.017 547.15 792.93 572.716 761.882 572.716C743.436 572.716 725.02 563.433 714.093 547.85L552.673 317.304C539.28 298.16 517.486 286.747 493.895 286.747C457.094 286.747 423.976 318.034 423.976 356.657V515.619C423.976 547.181 398.103 572.746 366.842 572.746C348.335 572.746 329.949 563.463 319.021 547.881L138.395 289.882C134.316 284.038 125.154 286.93 125.154 294.052V431.892C125.154 438.862 127.285 445.619 131.272 451.34L309.037 705.2C319.539 720.204 335.033 731.344 352.9 735.392C397.616 745.557 438.77 711.135 438.77 667.278V508.406C438.77 476.845 464.339 451.279 495.904 451.279H495.995C515.02 451.279 532.857 460.562 543.785 476.145L705.235 706.661C718.659 725.835 739.327 737.218 763.983 737.218C801.606 737.218 833.841 705.9 833.841 667.308V508.376C833.841 476.815 859.41 451.249 890.975 451.249H897.276C901.233 451.249 904.43 448.053 904.43 444.097V294.021C904.43 290.065 901.233 286.869 897.276 286.869H897.246Z"
+      fill="currentColor"
     />
   </svg>
 );

@@ -164,10 +164,13 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "docs.util", sectionId: "section5", optionId: "option2", configPath: "technologies.betterAuth" },
   { filePath: "docs.util", sectionId: "section5", optionId: "option3", configPath: "technologies.supabase" },
 
+  { filePath: "robots", sectionId: "section1", optionId: "option1", configPath: null },
+  { filePath: "robots", sectionId: "section1", optionId: "option2", configPath: null },
+  { filePath: "robots", sectionId: "section1", optionId: "option3", configPath: null },
+
   { filePath: "ide", sectionId: "section1", optionId: "option1", configPath: null },
   { filePath: "ide", sectionId: "section1", optionId: "option2", configPath: null },
   { filePath: "ide", sectionId: "section1", optionId: "option3", configPath: null },
-  { filePath: "ide", sectionId: "section1", optionId: "option4", configPath: null },
 ];
 
 export function getConfigValue(config: InitialConfigurationType, path: ConfigPath): any {

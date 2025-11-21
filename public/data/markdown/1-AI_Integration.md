@@ -1,4 +1,4 @@
-# Integrated Development Environment
+# AI Integration
 
 <!-- component-IDESelection -->
 

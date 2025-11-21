@@ -5,8 +5,7 @@ export type NodeType = "directory" | "file" | "segment" | "component" | "code-fi
 export const IDE_ROBOTS_DISPLAY_NAMES: Record<IDEType, string> = {
   claudecode: "CLAUDE",
   cursor: ".cursorrules",
-  lovable: ".lovablerules",
-  replit: ".replitai",
+  windsurf: ".windsurfrules",
 };
 
 export interface BaseNode {
@@ -227,6 +226,8 @@ export interface EditorState {
   resetToLatestData: () => void;
   forceRefresh: () => void;
   setRefreshKey: (key: number) => void;
+  isResetting: boolean;
+  setIsResetting: (isResetting: boolean) => void;
   wireframeState: WireframeState;
   setWireframeCurrentPage: (pageIndex: number) => void;
   getWireframeCurrentPage: () => string | null;

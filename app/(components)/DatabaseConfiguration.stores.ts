@@ -8,14 +8,32 @@ import type {
   RLSPolicy,
   Plugin,
 } from "./DatabaseConfiguration.types";
+import {
+  getAllRequiredTables,
+  getAllConditionalFields,
+} from "./DatabaseConfiguration.schema-mapping";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
-const getDefaultAuthTables = (): PrismaTable[] => [
+const pluralize = (word: string): string => {
+  if (word.endsWith('y') && !['a', 'e', 'i', 'o', 'u'].includes(word[word.length - 2])) {
+    return word.slice(0, -1) + 'ies';
+  }
+  if (word.endsWith('s') || word.endsWith('x') || word.endsWith('z') || word.endsWith('ch') || word.endsWith('sh')) {
+    return word + 'es';
+  }
+  return word + 's';
+};
+
+const getForeignKeyName = (tableName: string): string => {
+  return `${tableName}Id`;
+};
+
+const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
   {
     id: "default-user",
     name: "user",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
@@ -222,7 +240,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
   {
     id: "default-session",
     name: "session",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
@@ -374,7 +392,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
   {
     id: "default-account",
     name: "account",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["providerId", "accountId"]],
@@ -562,7 +580,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
   {
     id: "default-verification",
     name: "verification",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["identifier", "value"]],
@@ -647,7 +665,7 @@ const getDefaultAuthTables = (): PrismaTable[] => [
   {
     id: "default-MagicLink",
     name: "MagicLink",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
@@ -750,11 +768,11 @@ const getDefaultAuthTables = (): PrismaTable[] => [
   },
 ];
 
-const getOrganizationTables = (): PrismaTable[] => [
+const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => [
   {
     id: "default-organization",
     name: "organization",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
@@ -875,7 +893,7 @@ const getOrganizationTables = (): PrismaTable[] => [
   {
     id: "default-member",
     name: "member",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["userId", "organizationId"]],
@@ -999,7 +1017,7 @@ const getOrganizationTables = (): PrismaTable[] => [
   {
     id: "default-invitation",
     name: "invitation",
-    schema: "auth",
+    schema: isBetterAuth ? "better_auth" : "auth",
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["email", "organizationId"]],
@@ -1232,21 +1250,115 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         const { tables } = get();
         const schemas = new Set<string>();
         tables.forEach((t) => schemas.add(t.schema));
+        if (!schemas.has("public")) {
+          schemas.add("public");
+        }
+        return Array.from(schemas).sort();
+      },
+
+      getAvailableSchemasWithConfig: (config: InitialConfigurationType) => {
+        const { tables } = get();
+        const schemas = new Set<string>();
+        tables.forEach((t) => schemas.add(t.schema));
+
+        if (!schemas.has("public")) {
+          schemas.add("public");
+        }
+
+        if (config.technologies.supabase && !config.technologies.betterAuth && !schemas.has("auth")) {
+          schemas.add("auth");
+        }
+
+        if (config.technologies.betterAuth && !schemas.has("better_auth")) {
+          schemas.add("better_auth");
+        }
+
         return Array.from(schemas).sort();
       },
 
       addColumn: (tableId, column) => {
+        const state = get();
+        const currentTable = state.tables.find((t) => t.id === tableId);
+        if (!currentTable) return;
+
         const newColumn: PrismaColumn = {
           ...column,
           id: generateId(),
         };
-        set((state) => ({
-          tables: state.tables.map((t) =>
-            t.id === tableId
-              ? { ...t, columns: [...t.columns, newColumn] }
-              : t
-          ),
-        }));
+
+        const updatedTables = state.tables.map((t) =>
+          t.id === tableId
+            ? { ...t, columns: [...t.columns, newColumn] }
+            : t
+        );
+
+        if (column.relation) {
+          const relatedTable = state.tables.find((t) => t.name === column.relation?.table);
+          if (relatedTable && column.relation.relationType) {
+            const fkColumnId = generateId();
+            const fkColumnName = getForeignKeyName(column.relation.table);
+
+            const fkColumn: PrismaColumn = {
+              id: fkColumnId,
+              name: fkColumnName,
+              type: "String",
+              isDefault: false,
+              isEditable: true,
+              isOptional: column.isOptional,
+              isUnique: false,
+              isId: false,
+              isArray: false,
+              attributes: [],
+            };
+
+            const relationColumn: PrismaColumn = {
+              ...newColumn,
+              relation: {
+                ...column.relation,
+                foreignKeyFieldId: fkColumnId,
+              },
+              attributes: [
+                `@relation(fields: [${fkColumnName}], references: [${column.relation.field}]${column.relation.onDelete ? `, onDelete: ${column.relation.onDelete}` : ""})`,
+              ],
+            };
+
+            updatedTables.forEach((t) => {
+              if (t.id === tableId) {
+                const existingFk = t.columns.find((c) => c.name === fkColumnName);
+                if (!existingFk) {
+                  t.columns = t.columns.filter((c) => c.id !== newColumn.id);
+                  t.columns.push(fkColumn, relationColumn);
+                }
+              }
+            });
+
+            if (column.relation.relationType === "many-to-one" && column.relation.inverseFieldName) {
+              const inverseColumn: PrismaColumn = {
+                id: generateId(),
+                name: column.relation.inverseFieldName,
+                type: currentTable.name,
+                isDefault: false,
+                isEditable: true,
+                isOptional: false,
+                isUnique: false,
+                isId: false,
+                isArray: true,
+                attributes: [],
+              };
+
+              updatedTables.forEach((t) => {
+                if (t.id === relatedTable.id) {
+                  const existingInverse = t.columns.find((c) => c.name === column.relation?.inverseFieldName);
+                  if (!existingInverse) {
+                    t.columns.push(inverseColumn);
+                  }
+                }
+              });
+            }
+          }
+        }
+
+        set({ tables: updatedTables });
       },
 
       deleteColumn: (tableId, columnId) => {
@@ -1468,28 +1580,57 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
       },
 
       initializeFromConfig: (config: InitialConfigurationType) => {
-        const currentState = get();
-        if (currentState.tables.length > 0) {
-          return;
-        }
-
         let tables: PrismaTable[] = [];
         const plugins: Plugin[] = [];
 
-        const isBetterAuthEnabled =
-          config.questions.databaseProvider !== "none" &&
-          config.technologies.betterAuth;
+        const currentState = get();
+        const userCreatedTables = currentState.tables.filter((t) => !t.isDefault);
 
         if (config.questions.databaseProvider === "none") {
-          tables = [];
-        } else if (isBetterAuthEnabled) {
-          tables = [...getDefaultAuthTables()];
+          tables = [...userCreatedTables];
+        } else if (config.technologies.betterAuth) {
+          const schemaTables = getAllRequiredTables(config);
+          const conditionalFields = getAllConditionalFields(config);
 
-          if (config.features.admin.organizations) {
-            tables = [...tables, ...getOrganizationTables()];
-          }
+          const betterAuthTables = schemaTables.map((schemaTable) => {
+            let columns = schemaTable.columns.map((col, index) => ({
+              ...col,
+              id: `${schemaTable.name}-${col.name}-${index}`,
+            }));
 
-          if (config.features.authentication.magicLink && tables.some((t) => t.name === "MagicLink")) {
+            conditionalFields
+              .filter(
+                (field) =>
+                  field.tableName === schemaTable.name &&
+                  field.schema === schemaTable.schema
+              )
+              .forEach((field, index) => {
+                const existingColumn = columns.find(
+                  (c) => c.name === field.column.name
+                );
+                if (!existingColumn) {
+                  columns.push({
+                    ...field.column,
+                    id: `${schemaTable.name}-${field.column.name}-conditional-${index}`,
+                  });
+                }
+              });
+
+            return {
+              id: `default-${schemaTable.name}`,
+              name: schemaTable.name,
+              schema: schemaTable.schema,
+              isDefault: true,
+              isEditable: schemaTable.isEditable,
+              uniqueConstraints: [],
+              questionId: "authentication",
+              columns,
+            };
+          });
+
+          tables = [...betterAuthTables, ...userCreatedTables];
+
+          if (config.features.authentication.magicLink) {
             plugins.push({
               id: generateId(),
               name: "magicLink",
@@ -1527,7 +1668,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             });
           }
 
-          if ((config.features.admin.admin || config.features.admin.superAdmin) && tables.some((t) => t.name === "user" && t.columns.some((c) => c.name === "role"))) {
+          if (config.features.admin.admin || config.features.admin.superAdmin) {
             plugins.push({
               id: generateId(),
               name: "admin",
@@ -1546,7 +1687,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             });
           }
 
-          if (config.features.admin.organizations && tables.some((t) => t.name === "organization")) {
+          if (config.features.admin.organizations) {
             plugins.push({
               id: generateId(),
               name: "organization",
@@ -1734,6 +1875,10 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             questionId: "authentication",
             description: "Client-side multi-session support"
           });
+        } else if (config.technologies.supabase) {
+          tables = [...userCreatedTables];
+        } else {
+          tables = [...userCreatedTables];
         }
 
         set({ tables, rlsPolicies: [], plugins });

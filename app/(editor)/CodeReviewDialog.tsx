@@ -195,7 +195,7 @@ export const CodeReviewDialog = ({
       <DialogContent data-cy={FooterDataAttributes.CODE_REVIEW_DIALOG}>
         <DialogHeader className="flex flex-col gap-1 pb-4">
           <DialogTitle className="text-xl">
-            Do you have a prototype?
+            Do you have a prototype or an MVP?
           </DialogTitle>
           <DialogDescription asChild className="text-base">
             <div className="!text-gray-100 font-medium">

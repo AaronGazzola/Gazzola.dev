@@ -330,11 +330,12 @@ const Header = () => {
         <div className="px-5 sm:px-10 relative  flex flex-col items-center">
           <h1
             className={cn(
-              "text-[40px] pl-4 tracking-[1.1rem] text-center leading-[3rem]  sm:block ",
+              "text-[40px] pl-4 tracking-[1.1rem] text-center leading-[3rem]  xs:block ",
               isExpanded ? "mt-24 sm:mt-2" : "mt-0 sm:mt-2 hidden"
             )}
           >
-            AITDD
+            <span className="sm:hidden">AI<br/>TDD</span>
+            <span className="hidden sm:inline">AITDD</span>
           </h1>
 
           {isExpanded && (

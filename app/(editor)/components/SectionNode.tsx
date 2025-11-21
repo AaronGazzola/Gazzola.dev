@@ -174,17 +174,8 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     const options = getSectionOptions(filePath, sectionKey);
     const included: { optionId: string; content: string }[] = [];
 
-    if (filePath === "robots" && typeof window !== "undefined") {
-      console.log(`[ROBOTS DEBUG] filePath: ${filePath}, sectionKey: ${sectionKey}`);
-      console.log(`[ROBOTS DEBUG] options:`, options);
-    }
-
     Object.entries(options).forEach(([optionId, optionData]) => {
       const isIncluded = getSectionInclude(filePath, sectionKey, optionId);
-
-      if (filePath === "robots" && typeof window !== "undefined") {
-        console.log(`[ROBOTS DEBUG] ${sectionKey}.${optionId} - isIncluded: ${isIncluded}`);
-      }
 
       if (isIncluded) {
         included.push({
@@ -193,10 +184,6 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
         });
       }
     });
-
-    if (filePath === "robots" && typeof window !== "undefined") {
-      console.log(`[ROBOTS DEBUG] includedOptions count: ${included.length}`);
-    }
 
     return included;
   }, [getSectionOptions, getSectionInclude, filePath, sectionKey, data]);

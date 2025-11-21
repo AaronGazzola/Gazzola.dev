@@ -32,8 +32,7 @@ export interface CodeFileRegistry {
 export const IDE_ROBOTS_FILES: Record<IDEType, { fileName: string; fileExtension: string }> = {
   claudecode: { fileName: "CLAUDE", fileExtension: "md" },
   cursor: { fileName: ".cursorrules", fileExtension: "cursorrules" },
-  lovable: { fileName: ".lovablerules", fileExtension: "lovablerules" },
-  replit: { fileName: ".replitai", fileExtension: "replitai" },
+  windsurf: { fileName: ".windsurfrules", fileExtension: "windsurfrules" },
 };
 
 const generateThemeCSS = (theme: ThemeConfiguration): string => {
@@ -885,7 +884,7 @@ const createComponentFileNodes = (
       language: "typescript",
       content: () => content,
       includeCondition: () => shouldShowCodeFiles,
-      visibleAfterPage: "ide",
+      visibleAfterPage: "readme",
       parentPath: "components.ui",
       downloadPath: "components/ui",
       previewOnly: true,
@@ -916,7 +915,7 @@ export const createCodeFileNodes = (
     getSectionInclude
   );
 
-  const shouldShowCodeFiles = isPageVisited?.("ide") ?? false;
+  const shouldShowCodeFiles = isPageVisited?.("readme") ?? false;
   const componentNodes = createComponentFileNodes(shouldShowCodeFiles);
 
   return [...newSystemFiles, ...componentNodes];

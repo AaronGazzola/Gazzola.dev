@@ -2,10 +2,7 @@
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import type { CodeFileNode } from "@/app/(editor)/layout.types";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
-import { useWalkthroughStore } from "@/app/(editor)/layout.walkthrough.stores";
-import { WalkthroughStep } from "@/app/(editor)/layout.walkthrough.types";
 import { useThemeStore } from "@/app/layout.stores";
-import { getDynamicRobotsFileName } from "@/lib/robots-file.utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,17 +27,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { WalkthroughHelper } from "@/components/WalkthroughHelper";
 import { generateAndDownloadZip } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
+import { getDynamicRobotsFileName } from "@/lib/robots-file.utils";
 import { cn } from "@/lib/utils";
 import { DataCyAttributes } from "@/types/cypress.types";
 import type { LucideIcon } from "lucide-react";
 import {
-  BookOpen,
+  ArrowRight,
   Bot,
   Box,
-  Boxes,
   ChevronDown,
   ChevronRight,
   Code2,
@@ -50,9 +46,11 @@ import {
   FileText,
   Folder,
   FolderOpen,
+  FolderTree,
   Info,
-  LayoutGrid,
+  ListTodo,
   Menu,
+  MessagesSquare,
   Palette,
   Rocket,
   Shield,
@@ -64,15 +62,20 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+const nextSteps = [
+  { icon: ListTodo, title: "Design" },
+  { icon: Bot, title: "Build" },
+  { icon: Rocket, title: "Review" },
+];
+
 const FILE_ICON_MAP: Record<string, LucideIcon> = {
-  readme: BookOpen,
+  readme: MessagesSquare,
   robots: Bot,
   claude: Sparkles,
-  "tech-stack": Boxes,
-  "theme": Palette,
-  "app-structure": LayoutGrid,
-  "database": Database,
-  "ide": Code2,
+  theme: Palette,
+  "app-structure": FolderTree,
+  database: Database,
+  "ai-integration": MessagesSquare,
   "docs.deployment-instructions": Rocket,
   "docs.util": Code2,
   "app.globals": Palette,
@@ -376,8 +379,8 @@ const TreeItem: React.FC<TreeItemProps> = ({
       if (!isPageVisited(item.path)) {
         return null;
       }
-    } else if (node?.type === "code-file") {
-      if (node.visibleAfterPage && !isPageVisited(node.visibleAfterPage)) {
+    } else if (node?.type === "code-file" && node.visibleAfterPage) {
+      if (!isPageVisited(node.visibleAfterPage)) {
         return null;
       }
     }
@@ -401,7 +404,9 @@ const TreeItem: React.FC<TreeItemProps> = ({
             style={isActive ? getBackgroundStyle() : undefined}
           ></div>
           <FileIcon className="h-4 w-4 flex-shrink-0 opacity-70" />
-          <div className="flex items-center">{getDisplayName(item.name, item.path || "")}</div>
+          <div className="flex items-center">
+            {getDisplayName(item.name, item.path || "")}
+          </div>
         </Button>
       </Link>
     );
@@ -444,6 +449,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
     .some((child) => {
       if (child.type === "page" && child.path) {
         const childNode = getNode(child.path || "");
+        const childCodeFile = codeFiles.find((cf) => cf.path === child.path);
 
         if (isPageVisited(child.path)) {
           return true;
@@ -451,6 +457,10 @@ const TreeItem: React.FC<TreeItemProps> = ({
 
         if (childNode?.type === "file" && (childNode as any).visibleAfterPage) {
           return isPageVisited((childNode as any).visibleAfterPage);
+        }
+
+        if (childCodeFile?.visibleAfterPage) {
+          return isPageVisited(childCodeFile.visibleAfterPage);
         }
 
         if (
@@ -595,8 +605,8 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
       if (!isPageVisited(item.path)) {
         return null;
       }
-    } else if (node?.type === "code-file") {
-      if (node.visibleAfterPage && !isPageVisited(node.visibleAfterPage)) {
+    } else if (node?.type === "code-file" && node.visibleAfterPage) {
+      if (!isPageVisited(node.visibleAfterPage)) {
         return null;
       }
     }
@@ -702,6 +712,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     .some((child) => {
       if (child.type === "page" && child.path) {
         const childNode = getNode(child.path || "");
+        const childCodeFile = codeFiles.find((cf) => cf.path === child.path);
 
         if (isPageVisited(child.path)) {
           return true;
@@ -709,6 +720,10 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
 
         if (childNode?.type === "file" && (childNode as any).visibleAfterPage) {
           return isPageVisited((childNode as any).visibleAfterPage);
+        }
+
+        if (childCodeFile?.visibleAfterPage) {
+          return isPageVisited(childCodeFile.visibleAfterPage);
         }
 
         if (
@@ -787,7 +802,6 @@ const Sidebar = () => {
   const { toggleSidebar } = useSidebar();
   const {
     isPageVisited,
-    visitedPages,
     data,
     codeFiles,
     appStructure,
@@ -797,18 +811,9 @@ const Sidebar = () => {
     getPlaceholderValue,
     getInitialConfiguration,
   } = useEditorStore();
-  const { shouldShowStep, markStepComplete, isStepOpen, setStepOpen } =
-    useWalkthroughStore();
+  const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [downloadHelpOpen, setDownloadHelpOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const params = useParams();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const showDownloadHelp = mounted && shouldShowStep(WalkthroughStep.DOWNLOAD);
 
   const navigationData = useMemo(() => {
     return generateNavigationFromMarkdownData(data.root.children, codeFiles);
@@ -922,22 +927,83 @@ const Sidebar = () => {
     <SidebarContent className="flex-grow bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
       <SidebarHeader className="pl-6 pr-2 pt-6 pb-2">
         <div className="flex items-start justify-between">
-          <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-white">Gazzola.dev</h1>
-            <p className="text-sm text-white font-medium mt-1 italic">
-              Design, Build, Review.
-            </p>
+          <div className="flex flex-col w-full">
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-xl font-bold text-white">Gazzola.dev</h1>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="-mt-1 text-white hover:text-white hover:bg-gray-800"
+                onClick={toggleSidebar}
+                data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle Sidebar</span>
+              </Button>
+            </div>
+            <div className="flex flex-row items-center justify-center relative gap-2">
+              {nextSteps.map((step, index) => (
+                <div
+                  key={index}
+                  className="relative flex flex-row items-center gap-2"
+                >
+                  <div className="flex flex-col items-center relative z-10">
+                    <div className="relative w-6 h-6">
+                      <svg
+                        className="w-6 h-6 absolute inset-0 z-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <step.icon
+                          className="w-6 h-6 stroke-2"
+                          style={{ color: gradientColors[index % gradientColors.length] }}
+                          fill="none"
+                        />
+                      </svg>
+                      <svg
+                        className="w-6 h-6 relative z-10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`gradient-sidebar-${index}`}
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                          >
+                            {gradientEnabled ? (
+                              gradientColors.map((color, colorIndex) => (
+                                <stop
+                                  key={colorIndex}
+                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
+                                  stopColor={color}
+                                />
+                              ))
+                            ) : (
+                              <stop offset="0%" stopColor={singleColor} />
+                            )}
+                          </linearGradient>
+                        </defs>
+                        <step.icon
+                          className="w-6 h-6 stroke-1"
+                          stroke={`url(#gradient-sidebar-${index})`}
+                          fill="none"
+                        />
+                      </svg>
+                    </div>
+                    <span className="text-xs font-bold text-center whitespace-nowrap text-white opacity-70">
+                      {step.title}
+                    </span>
+                  </div>
+                  {index < nextSteps.length - 1 && (
+                    <ArrowRight className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)] text-white opacity-70" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="-mt-1 text-white hover:text-white hover:bg-gray-800"
-            onClick={toggleSidebar}
-            data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle Sidebar</span>
-          </Button>
         </div>
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden px-3 py-2">
@@ -981,34 +1047,10 @@ const Sidebar = () => {
           </PopoverContent>
         </Popover>
         <div className="relative w-full">
-          {showDownloadHelp && (
-            <div className="absolute -top-2 -right-2 z-30">
-              <WalkthroughHelper
-                isOpen={downloadHelpOpen}
-                onOpenChange={(open) => {
-                  setDownloadHelpOpen(open);
-                  if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
-                    markStepComplete(WalkthroughStep.DOWNLOAD);
-                  } else if (open && !isStepOpen(WalkthroughStep.DOWNLOAD)) {
-                    setStepOpen(WalkthroughStep.DOWNLOAD, true);
-                  }
-                }}
-                showAnimation={!isStepOpen(WalkthroughStep.DOWNLOAD)}
-                title="Download Your Roadmap"
-                description="Click here to download all your customized roadmap documents as a ZIP file. You can download at any time to save your progress."
-                iconSize="sm"
-              />
-            </div>
-          )}
           <Button
             variant="outline"
             className=" text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500 z-10"
-            onClick={() => {
-              handleDownload();
-              if (showDownloadHelp) {
-                markStepComplete(WalkthroughStep.DOWNLOAD);
-              }
-            }}
+            onClick={handleDownload}
           >
             <Download className="h-4 w-4 mr-2" />
             Download
@@ -1087,37 +1129,13 @@ const Sidebar = () => {
           </TooltipContent>
         </Tooltip>
         <div className="relative">
-          {showDownloadHelp && (
-            <div className="absolute -top-2 -right-2 z-30">
-              <WalkthroughHelper
-                isOpen={downloadHelpOpen}
-                onOpenChange={(open) => {
-                  setDownloadHelpOpen(open);
-                  if (!open && isStepOpen(WalkthroughStep.DOWNLOAD)) {
-                    markStepComplete(WalkthroughStep.DOWNLOAD);
-                  } else if (open && !isStepOpen(WalkthroughStep.DOWNLOAD)) {
-                    setStepOpen(WalkthroughStep.DOWNLOAD, true);
-                  }
-                }}
-                showAnimation={!isStepOpen(WalkthroughStep.DOWNLOAD)}
-                title="Download Your Roadmap"
-                description="Click here to download all your customized roadmap documents as a ZIP file. You can download at any time to save your progress."
-                iconSize="sm"
-              />
-            </div>
-          )}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
                 className="w-full text-white hover:bg-gray-800"
-                onClick={() => {
-                  handleDownload();
-                  if (showDownloadHelp) {
-                    markStepComplete(WalkthroughStep.DOWNLOAD);
-                  }
-                }}
+                onClick={handleDownload}
               >
                 <Download className="h-5 w-5" />
                 <span className="sr-only">Download Roadmap</span>

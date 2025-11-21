@@ -9,8 +9,7 @@ import {
   ClaudeCodeLogo,
   CursorLogo,
   GitHubSmallLogo,
-  LovableLogo,
-  ReplitLogo,
+  WindsurfLogo,
   VSCodeLogo,
 } from "./IDESelection.utils";
 
@@ -20,15 +19,14 @@ const IDE_LOGOS: Record<
   IDEType,
   React.ComponentType<{ className?: string }>
 > = {
-  lovable: LovableLogo,
-  replit: ReplitLogo,
+  windsurf: WindsurfLogo,
   claudecode: ClaudeCodeLogo,
   cursor: CursorLogo,
 };
 
 export const IDESelection = () => {
   const { darkMode, setSectionInclude, getSectionInclude } = useEditorStore();
-  const [selectedIDE, setSelectedIDE] = useState<IDEType>("lovable");
+  const [selectedIDE, setSelectedIDE] = useState<IDEType>("claudecode");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -38,43 +36,35 @@ export const IDESelection = () => {
   useEffect(() => {
     if (!mounted) return;
 
-    const lovableIncluded = getSectionInclude(
+    const windsurfIncluded = getSectionInclude(
       SECTION_FILE_PATH,
       "section1",
       "option1"
     );
-    const replitIncluded = getSectionInclude(
+    const claudecodeIncluded = getSectionInclude(
       SECTION_FILE_PATH,
       "section1",
       "option2"
     );
-    const claudecodeIncluded = getSectionInclude(
+    const cursorIncluded = getSectionInclude(
       SECTION_FILE_PATH,
       "section1",
       "option3"
     );
-    const cursorIncluded = getSectionInclude(
-      SECTION_FILE_PATH,
-      "section1",
-      "option4"
-    );
 
     const selectedCount = [
-      lovableIncluded,
-      replitIncluded,
+      windsurfIncluded,
       claudecodeIncluded,
       cursorIncluded,
     ].filter(Boolean).length;
 
     if (selectedCount !== 1) {
-      setSectionInclude(SECTION_FILE_PATH, "section1", "option1", true);
-      setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
+      setSectionInclude(SECTION_FILE_PATH, "section1", "option1", false);
+      setSectionInclude(SECTION_FILE_PATH, "section1", "option2", true);
       setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
-      setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
-      setSelectedIDE("lovable");
+      setSelectedIDE("claudecode");
     } else {
-      if (lovableIncluded) setSelectedIDE("lovable");
-      else if (replitIncluded) setSelectedIDE("replit");
+      if (windsurfIncluded) setSelectedIDE("windsurf");
       else if (claudecodeIncluded) setSelectedIDE("claudecode");
       else if (cursorIncluded) setSelectedIDE("cursor");
     }
@@ -84,26 +74,18 @@ export const IDESelection = () => {
     (ideType: IDEType) => {
       setSelectedIDE(ideType);
 
-      if (ideType === "lovable") {
+      if (ideType === "windsurf") {
         setSectionInclude(SECTION_FILE_PATH, "section1", "option1", true);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
-      } else if (ideType === "replit") {
+      } else if (ideType === "claudecode") {
         setSectionInclude(SECTION_FILE_PATH, "section1", "option1", false);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option2", true);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
-      } else if (ideType === "claudecode") {
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option1", false);
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option3", true);
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", false);
       } else if (ideType === "cursor") {
         setSectionInclude(SECTION_FILE_PATH, "section1", "option1", false);
         setSectionInclude(SECTION_FILE_PATH, "section1", "option2", false);
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option3", false);
-        setSectionInclude(SECTION_FILE_PATH, "section1", "option4", true);
+        setSectionInclude(SECTION_FILE_PATH, "section1", "option3", true);
       }
     },
     [setSectionInclude]
@@ -115,15 +97,6 @@ export const IDESelection = () => {
 
   return (
     <div className="w-full theme-my-8 theme-font-sans theme-tracking">
-      <div className="theme-mb-6">
-        <h3 className="text-xl font-semibold theme-mb-2 theme-text-foreground theme-font-sans theme-tracking">
-          Choose Your Development Environment
-        </h3>
-        <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
-          Select the IDE you&apos;ll use to build your application
-        </p>
-      </div>
-
       <div className="grid grid-cols-1 theme-gap-3">
         {IDE_OPTIONS.map((ide) => {
           const isSelected = selectedIDE === ide.id;
@@ -166,13 +139,13 @@ export const IDESelection = () => {
                         <VSCodeLogo className="w-8 h-8 flex-shrink-0 theme-text-muted-foreground" />
                         <h4
                           className={cn(
-                            "hidden sm:block text-lg font-semibold theme-font-sans theme-tracking",
+                            "hidden xs:block text-lg font-semibold theme-font-sans theme-tracking",
                             isSelected
                               ? "theme-text-primary"
                               : "theme-text-foreground"
                           )}
                         >
-                          Visual Studio Code
+                          VS Code
                         </h4>
                       </>
                     )}
