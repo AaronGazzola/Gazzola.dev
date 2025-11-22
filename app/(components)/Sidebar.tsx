@@ -956,7 +956,10 @@ const Sidebar = () => {
                       >
                         <step.icon
                           className="w-6 h-6 stroke-2"
-                          style={{ color: gradientColors[index % gradientColors.length] }}
+                          style={{
+                            color:
+                              gradientColors[index % gradientColors.length],
+                          }}
                           fill="none"
                         />
                       </svg>
@@ -993,12 +996,12 @@ const Sidebar = () => {
                         />
                       </svg>
                     </div>
-                    <span className="text-xs font-bold text-center whitespace-nowrap text-white opacity-70">
+                    <span className="text-xs font-bold text-center whitespace-nowrap text-white ">
                       {step.title}
                     </span>
                   </div>
                   {index < nextSteps.length - 1 && (
-                    <ArrowRight className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)] text-white opacity-70" />
+                    <ArrowRight className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)] text-white " />
                   )}
                 </div>
               ))}

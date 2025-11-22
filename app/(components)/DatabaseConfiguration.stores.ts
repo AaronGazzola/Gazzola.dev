@@ -5,8 +5,12 @@ import type {
   DatabaseConfigurationState,
   PrismaColumn,
   PrismaTable,
+  PrismaEnum,
+  PrismaEnumValue,
   RLSPolicy,
   Plugin,
+  DatabaseTemplate,
+  ColumnTemplate,
 } from "./DatabaseConfiguration.types";
 import {
   getAllRequiredTables,
@@ -1194,6 +1198,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
     (set, get) => ({
       activeTab: "schema",
       tables: [],
+      enums: [],
       rlsPolicies: [],
       plugins: [],
 
@@ -1274,6 +1279,81 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         }
 
         return Array.from(schemas).sort();
+      },
+
+      addEnum: (name, schema) => {
+        const newEnum: PrismaEnum = {
+          id: generateId(),
+          name,
+          schema,
+          values: [],
+          isDefault: false,
+          isEditable: true,
+        };
+        set((state) => ({ enums: [...state.enums, newEnum] }));
+        return newEnum.id;
+      },
+
+      deleteEnum: (enumId) => {
+        set((state) => ({
+          enums: state.enums.filter((e) => e.id !== enumId),
+        }));
+      },
+
+      updateEnumName: (enumId, name) => {
+        set((state) => ({
+          enums: state.enums.map((e) =>
+            e.id === enumId && e.isEditable ? { ...e, name } : e
+          ),
+        }));
+      },
+
+      addEnumValue: (enumId, value) => {
+        set((state) => ({
+          enums: state.enums.map((e) =>
+            e.id === enumId
+              ? {
+                  ...e,
+                  values: [
+                    ...e.values,
+                    { id: generateId(), value },
+                  ],
+                }
+              : e
+          ),
+        }));
+      },
+
+      deleteEnumValue: (enumId, valueId) => {
+        set((state) => ({
+          enums: state.enums.map((e) =>
+            e.id === enumId
+              ? {
+                  ...e,
+                  values: e.values.filter((v) => v.id !== valueId),
+                }
+              : e
+          ),
+        }));
+      },
+
+      updateEnumValue: (enumId, valueId, value) => {
+        set((state) => ({
+          enums: state.enums.map((e) =>
+            e.id === enumId
+              ? {
+                  ...e,
+                  values: e.values.map((v) =>
+                    v.id === valueId ? { ...v, value } : v
+                  ),
+                }
+              : e
+          ),
+        }));
+      },
+
+      getEnumsBySchema: (schema) => {
+        return get().enums.filter((e) => e.schema === schema);
       },
 
       addColumn: (tableId, column) => {
@@ -1408,6 +1488,46 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
               : t
           ),
         }));
+      },
+
+      applyTemplate: (template: DatabaseTemplate, schema: string) => {
+        const state = get();
+        const tablesToDelete = state.tables.filter(
+          (t) => t.schema === schema && !t.isDefault
+        );
+        tablesToDelete.forEach((t) => get().deleteTable(t.id));
+
+        const buildAttributes = (col: ColumnTemplate): string[] => {
+          const attrs: string[] = [];
+          if (col.isId) attrs.push("@id");
+          if (col.isUnique) attrs.push("@unique");
+          if (col.defaultValue) attrs.push(`@default(${col.defaultValue})`);
+          if (col.attributes?.includes("@updatedAt")) attrs.push("@updatedAt");
+          return attrs;
+        };
+
+        let firstTableId = "";
+        template.tables.forEach((tableTemplate) => {
+          const tableId = get().addTable(tableTemplate.name, schema);
+          if (!firstTableId) firstTableId = tableId;
+
+          tableTemplate.columns.forEach((colTemplate) => {
+            get().addColumn(tableId, {
+              name: colTemplate.name,
+              type: colTemplate.type,
+              isDefault: false,
+              isEditable: true,
+              isOptional: colTemplate.isOptional || false,
+              isUnique: colTemplate.isUnique || false,
+              isId: colTemplate.isId || false,
+              isArray: colTemplate.isArray || false,
+              defaultValue: colTemplate.defaultValue,
+              attributes: buildAttributes(colTemplate),
+            });
+          });
+        });
+
+        return firstTableId;
       },
 
       addOrUpdateRLSPolicy: (tableId, operation, role, accessType, relatedTable) => {
@@ -1881,10 +2001,10 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           tables = [...userCreatedTables];
         }
 
-        set({ tables, rlsPolicies: [], plugins });
+        set({ tables, enums: [], rlsPolicies: [], plugins });
       },
 
-      reset: () => set({ tables: [], rlsPolicies: [], plugins: [], activeTab: "schema" }),
+      reset: () => set({ tables: [], enums: [], rlsPolicies: [], plugins: [], activeTab: "schema" }),
     }),
     {
       name: "database-configuration-storage",

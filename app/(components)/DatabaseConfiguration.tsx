@@ -25,9 +25,14 @@ import {
 } from "@/components/editor/ui/tabs";
 import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Database, Ellipsis, Link2, Lock, Plus, Trash2, Shield, Users, Building2, Mail, KeyRound, Smartphone, ShieldCheck, Fingerprint, UserX, Chrome, Github, Apple } from "lucide-react";
+import { ChevronDown, ChevronRight, Database, Ellipsis, Link2, Lock, Plus, Trash2, Shield, Users, Building2, Mail, KeyRound, Smartphone, ShieldCheck, Fingerprint, UserX, Chrome, Github, Apple } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SiSupabase, SiPrisma, SiPostgresql, SiGoogle } from "react-icons/si";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/editor/ui/collapsible";
 import { Badge } from "@/components/editor/ui/badge";
 import {
   Tooltip,
@@ -41,6 +46,7 @@ import type {
   PrismaColumn,
   PrismaTable,
 } from "./DatabaseConfiguration.types";
+import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
 
 const BetterAuthIcon = ({ className }: { className?: string }) => (
   <svg
@@ -137,7 +143,8 @@ const ColumnLine = ({
   const [tempName, setTempName] = useState(column.name);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { tables } = useDatabaseStore();
+  const { tables, getEnumsBySchema } = useDatabaseStore();
+  const schemaEnums = getEnumsBySchema(table.schema);
 
   useEffect(() => {
     if (isEditingName && inputRef.current) {
@@ -259,6 +266,18 @@ const ColumnLine = ({
                         {type}
                       </SelectItem>
                     ))}
+                    {schemaEnums.length > 0 && (
+                      <>
+                        <div className="theme-px-2 theme-py-1 text-xs theme-text-muted-foreground font-semibold">
+                          Enums
+                        </div>
+                        {schemaEnums.map((enumItem) => (
+                          <SelectItem key={enumItem.name} value={enumItem.name}>
+                            {enumItem.name}
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               )}
@@ -590,9 +609,10 @@ const AddColumnPopover = ({
   const [relationType, setRelationType] = useState<import("./DatabaseConfiguration.types").RelationType>("many-to-one");
   const [createInverse, setCreateInverse] = useState(true);
   const [inverseFieldName, setInverseFieldName] = useState("");
-  const { tables } = useDatabaseStore();
+  const { tables, getEnumsBySchema } = useDatabaseStore();
 
   const availableTables = tables.filter((t) => t.id !== table.id);
+  const schemaEnums = getEnumsBySchema(table.schema);
   const isRelationType = columnType === "Relation";
 
   const pluralize = (word: string): string => {
@@ -697,6 +717,18 @@ const AddColumnPopover = ({
                   {type}
                 </SelectItem>
               ))}
+              {schemaEnums.length > 0 && (
+                <>
+                  <div className="theme-px-2 theme-py-1 text-xs theme-text-muted-foreground font-semibold">
+                    Enums
+                  </div>
+                  {schemaEnums.map((enumItem) => (
+                    <SelectItem key={enumItem.name} value={enumItem.name}>
+                      {enumItem.name}
+                    </SelectItem>
+                  ))}
+                </>
+              )}
               <SelectItem value="Relation">Relation</SelectItem>
             </SelectContent>
           </Select>
@@ -825,6 +857,294 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
         ))}
         {!isBetterAuth && <AddColumnPopover table={table} onAddColumn={addColumn} />}
       </div>
+    </div>
+  );
+};
+
+const EnumsContent = ({ schema }: { schema: string }) => {
+  const { addEnum, deleteEnum, updateEnumName, addEnumValue, deleteEnumValue, updateEnumValue, getEnumsBySchema } = useDatabaseStore();
+  const enums = getEnumsBySchema(schema);
+  const [isAddingEnum, setIsAddingEnum] = useState(false);
+  const [newEnumName, setNewEnumName] = useState("");
+
+  const handleAddEnum = () => {
+    if (newEnumName.trim()) {
+      addEnum(newEnumName.trim(), schema);
+      setNewEnumName("");
+    }
+    setIsAddingEnum(false);
+  };
+
+  return (
+    <div className="flex flex-col theme-gap-2 theme-p-4">
+      {enums.length === 0 && !isAddingEnum ? (
+        <div className="flex flex-col items-center theme-gap-4 theme-text-muted-foreground theme-py-8">
+          <p className="text-sm theme-font-sans theme-tracking">No enums defined for this schema</p>
+        </div>
+      ) : (
+        <div className="flex flex-col theme-gap-2">
+          {enums.map((enumItem) => (
+            <EnumItem key={enumItem.id} enumItem={enumItem} />
+          ))}
+        </div>
+      )}
+      {isAddingEnum ? (
+        <Input
+          autoFocus
+          value={newEnumName}
+          onChange={(e) => setNewEnumName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleAddEnum();
+            if (e.key === "Escape") {
+              setIsAddingEnum(false);
+              setNewEnumName("");
+            }
+          }}
+          onBlur={handleAddEnum}
+          placeholder="Enum name"
+          className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono"
+        />
+      ) : (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsAddingEnum(true)}
+          className="h-7 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-xs w-fit"
+        >
+          <Plus className="h-3 w-3" />
+          Add enum
+        </Button>
+      )}
+    </div>
+  );
+};
+
+const EnumItem = ({ enumItem }: { enumItem: import("./DatabaseConfiguration.types").PrismaEnum }) => {
+  const { deleteEnum, updateEnumName, addEnumValue, deleteEnumValue, updateEnumValue } = useDatabaseStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(enumItem.name);
+  const [isAddingValue, setIsAddingValue] = useState(false);
+  const [newValue, setNewValue] = useState("");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditingName && nameInputRef.current) {
+      nameInputRef.current.focus();
+      nameInputRef.current.select();
+    }
+  }, [isEditingName]);
+
+  const handleNameSubmit = () => {
+    if (tempName.trim()) {
+      updateEnumName(enumItem.id, tempName.trim());
+    }
+    setIsEditingName(false);
+  };
+
+  const handleAddValue = () => {
+    if (newValue.trim()) {
+      addEnumValue(enumItem.id, newValue.trim());
+      setNewValue("");
+    }
+    setIsAddingValue(false);
+  };
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="theme-bg-muted theme-radius theme-p-2">
+        <div className="flex items-center theme-gap-2">
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-6 w-6">
+              {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+          {isEditingName ? (
+            <Input
+              ref={nameInputRef}
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              onBlur={handleNameSubmit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleNameSubmit();
+                if (e.key === "Escape") {
+                  setTempName(enumItem.name);
+                  setIsEditingName(false);
+                }
+              }}
+              className="h-7 theme-px-2 text-sm w-fit theme-shadow theme-font-mono flex-1"
+            />
+          ) : (
+            <span
+              className="text-sm theme-font-mono theme-text-foreground cursor-pointer hover:underline flex-1"
+              onClick={() => setIsEditingName(true)}
+            >
+              {enumItem.name}
+            </span>
+          )}
+          <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-6 w-6">
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+              <div className="flex flex-col theme-gap-2">
+                <p className="text-sm theme-text-foreground">
+                  Delete enum &quot;{enumItem.name}&quot;?
+                </p>
+                <div className="flex theme-gap-2">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      deleteEnum(enumItem.id);
+                      setDeleteConfirmOpen(false);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDeleteConfirmOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+        <CollapsibleContent>
+          <div className="flex flex-col theme-gap-1 theme-mt-2 theme-ml-8">
+            {enumItem.values.map((value) => (
+              <EnumValueItem
+                key={value.id}
+                enumId={enumItem.id}
+                value={value}
+              />
+            ))}
+            {isAddingValue ? (
+              <Input
+                autoFocus
+                value={newValue}
+                onChange={(e) => setNewValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddValue();
+                  if (e.key === "Escape") {
+                    setIsAddingValue(false);
+                    setNewValue("");
+                  }
+                }}
+                onBlur={handleAddValue}
+                placeholder="Value"
+                className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono"
+              />
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsAddingValue(true)}
+                className="h-6 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-xs w-fit"
+              >
+                <Plus className="h-3 w-3" />
+                Add value
+              </Button>
+            )}
+          </div>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+};
+
+const EnumValueItem = ({
+  enumId,
+  value
+}: {
+  enumId: string;
+  value: import("./DatabaseConfiguration.types").PrismaEnumValue;
+}) => {
+  const { deleteEnumValue, updateEnumValue } = useDatabaseStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempValue, setTempValue] = useState(value.value);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleSubmit = () => {
+    if (tempValue.trim()) {
+      updateEnumValue(enumId, value.id, tempValue.trim());
+    }
+    setIsEditing(false);
+  };
+
+  return (
+    <div className="flex items-center theme-gap-2 theme-bg-background theme-radius theme-px-2 theme-py-1">
+      {isEditing ? (
+        <Input
+          ref={inputRef}
+          value={tempValue}
+          onChange={(e) => setTempValue(e.target.value)}
+          onBlur={handleSubmit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSubmit();
+            if (e.key === "Escape") {
+              setTempValue(value.value);
+              setIsEditing(false);
+            }
+          }}
+          className="h-6 theme-px-2 text-xs theme-shadow theme-font-mono flex-1"
+        />
+      ) : (
+        <span
+          className="text-xs theme-font-mono theme-text-foreground cursor-pointer hover:underline flex-1"
+          onClick={() => setIsEditing(true)}
+        >
+          {value.value}
+        </span>
+      )}
+      <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-5 w-5">
+            <Trash2 className="h-3 w-3" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+          <div className="flex flex-col theme-gap-2">
+            <p className="text-sm theme-text-foreground">
+              Delete value &quot;{value.value}&quot;?
+            </p>
+            <div className="flex theme-gap-2">
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  deleteEnumValue(enumId, value.id);
+                  setDeleteConfirmOpen(false);
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDeleteConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };
@@ -987,6 +1307,7 @@ export const DatabaseConfiguration = () => {
     deleteSchema,
     getAvailableSchemas,
     getAvailableSchemasWithConfig,
+    applyTemplate,
   } = useDatabaseStore();
   const {
     initialConfiguration,
@@ -1384,7 +1705,55 @@ export const DatabaseConfiguration = () => {
         <div className="theme-bg-card theme-radius theme-shadow overflow-auto border theme-border-border">
           <Tabs defaultValue="columns" className="w-full">
             <TabsList className="w-full theme-p-1 h-auto flex-col items-stretch theme-gap-2">
-              <div className="flex flex-col md:flex-row theme-gap-2 md:theme-gap-0 theme-px-2 justify-center items-center theme-py-2">
+              <div className="flex flex-col md:flex-row theme-gap-2 md:theme-gap-0 theme-px-2 justify-center items-center theme-py-2 relative">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={selectedSchema === "auth" || selectedSchema === "better_auth"}
+                      className="absolute left-2 top-2 h-7 theme-px-2 theme-gap-1 text-xs"
+                    >
+                      <Database className="h-3 w-3" />
+                      Templates
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 theme-p-3 theme-shadow" align="start">
+                    <div className="flex flex-col theme-gap-2">
+                      <h4 className="text-sm font-semibold theme-text-foreground theme-mb-1">Database Templates</h4>
+                      <p className="text-xs theme-text-muted-foreground theme-mb-2">
+                        Select a template to replace existing tables in the current schema
+                      </p>
+                      {DATABASE_TEMPLATES.map((template) => (
+                        <Button
+                          key={template.id}
+                          variant="outline"
+                          size="sm"
+                          className="justify-start h-auto theme-p-3 flex-col items-start theme-gap-1"
+                          onClick={() => {
+                            const firstTableId = applyTemplate(template, selectedSchema);
+                            setSelectedTableId(firstTableId);
+                          }}
+                        >
+                          <div className="flex items-center theme-gap-2 w-full">
+                            <Database className="h-4 w-4 shrink-0" />
+                            <span className="font-semibold text-sm">{template.name}</span>
+                          </div>
+                          <p className="text-xs theme-text-muted-foreground text-left">
+                            {template.description}
+                          </p>
+                          <div className="flex flex-wrap theme-gap-1 theme-mt-1">
+                            {template.tables.map((table, idx) => (
+                              <Badge key={idx} variant="secondary" className="text-xs theme-font-mono">
+                                {table.name}
+                              </Badge>
+                            ))}
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
                 <div className="flex items-center theme-gap-2">
                   <span className="text-xs theme-text-muted-foreground whitespace-nowrap">
                     Schema:
@@ -1595,6 +1964,12 @@ export const DatabaseConfiguration = () => {
                   Columns
                 </TabsTrigger>
                 <TabsTrigger
+                  value="enums"
+                  className="flex-1 text-sm font-semibold"
+                >
+                  Enums
+                </TabsTrigger>
+                <TabsTrigger
                   value="rls"
                   className="flex-1 text-sm font-semibold"
                 >
@@ -1606,6 +1981,9 @@ export const DatabaseConfiguration = () => {
               <>
                 <TabsContent value="columns" className="theme-mt-0">
                   <TableColumnsContent table={selectedTable} />
+                </TabsContent>
+                <TabsContent value="enums" className="theme-mt-0">
+                  <EnumsContent schema={selectedSchema} />
                 </TabsContent>
                 <TabsContent value="rls" className="theme-mt-0">
                   <TableRLSContent table={selectedTable} />

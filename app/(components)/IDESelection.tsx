@@ -13,7 +13,7 @@ import {
   VSCodeLogo,
 } from "./IDESelection.utils";
 
-const SECTION_FILE_PATH = "ide";
+const SECTION_FILE_PATH = "ai-integration";
 
 const IDE_LOGOS: Record<
   IDEType,
