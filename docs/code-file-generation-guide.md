@@ -50,17 +50,17 @@ Both systems use ConfigSnapshot as the single source of truth for determining wh
 
 The system controls two types of content:
 
-| Aspect | Code Files | Markdown Sections |
-|--------|-----------|-------------------|
-| **Purpose** | Generated source code | Documentation content |
-| **Content** | Dynamic (templates) | Static (markdown files) |
-| **Control** | Conditional inclusion | Visibility filtering |
-| **Location** | `lib/code-file-config.ts` | `lib/section-option-mappings.ts` |
-| **Example** | `lib/auth.ts`, `lib/prisma-rls.ts` | Types examples, hooks examples |
+| Aspect       | Code Files                         | Markdown Sections                |
+| ------------ | ---------------------------------- | -------------------------------- |
+| **Purpose**  | Generated source code              | Documentation content            |
+| **Content**  | Dynamic (templates)                | Static (markdown files)          |
+| **Control**  | Conditional inclusion              | Visibility filtering             |
+| **Location** | `lib/code-file-config.ts`          | `lib/section-option-mappings.ts` |
+| **Example**  | `lib/auth.ts`, `lib/prisma-rls.ts` | Types examples, hooks examples   |
 
 ### How Section Filtering Works
 
-Markdown files (e.g., `docs/util.md`) contain multiple section options for different tech stacks:
+Markdown files (e.g., `util.md`) contain multiple section options for different tech stacks:
 
 1. **Section Definition**: Markdown file contains `<!-- section-1 -->` markers
 2. **Option Files**: Corresponding `.section-1.md` files contain multiple options
@@ -68,7 +68,8 @@ Markdown files (e.g., `docs/util.md`) contain multiple section options for diffe
 4. **Automatic Filtering**: System shows/hides options based on user's configuration
 5. **User Sees**: Only relevant options for their tech stack
 
-**Example**: The `docs/util.md` file shows different code examples:
+**Example**: The `util.md` file shows different code examples:
+
 - Client-side only: Shows simple useState examples
 - Prisma + Better-Auth: Shows auth utilities with RLS
 - Supabase: Shows Supabase client examples
@@ -147,7 +148,7 @@ export const TEMPLATES = {
 
     // Template with parameters
     withFeatures: (features: string[]): string => {
-      const featureList = features.map(f => `"${f}"`).join(", ");
+      const featureList = features.map((f) => `"${f}"`).join(", ");
       return `export const config = {
   features: [${featureList}]
 };`;
@@ -157,7 +158,7 @@ export const TEMPLATES = {
     dynamic: (config: ConfigSnapshot): string => {
       const imports = config.betterAuth
         ? 'import { betterAuth } from "better-auth";'
-        : '';
+        : "";
 
       return `${imports}
 
@@ -314,7 +315,7 @@ export const TEMPLATES = {
     if (config.paymentsEnabled) {
       features.push(`payments: {
       enabled: true,
-      providers: [${config.payments.stripePayments ? '"stripe"' : ''}]
+      providers: [${config.payments.stripePayments ? '"stripe"' : ""}]
     }`);
     }
 
@@ -368,49 +369,49 @@ Inside `generator: (config) => {}`, you have access to:
 ### Technologies
 
 ```typescript
-config.betterAuth      // boolean
-config.prisma          // boolean
-config.supabase        // boolean
-config.nextjs          // boolean
-config.tailwindcss     // boolean
-config.shadcn          // boolean
+config.betterAuth; // boolean
+config.prisma; // boolean
+config.supabase; // boolean
+config.nextjs; // boolean
+config.tailwindcss; // boolean
+config.shadcn; // boolean
 // ... etc
 ```
 
 ### Questions/Settings
 
 ```typescript
-config.databaseProvider  // 'none' | 'supabase' | 'neondb' | 'both'
-config.alwaysOnServer    // boolean
-config.selectedIDE       // 'lovable' | 'cursor' | 'claudecode' | 'replit'
+config.databaseProvider; // 'none' | 'supabase' | 'neondb' | 'both'
+config.alwaysOnServer; // boolean
+config.selectedIDE; // 'lovable' | 'cursor' | 'claudecode' | 'replit'
 ```
 
 ### Features
 
 ```typescript
-config.authEnabled       // boolean
-config.authMethods       // { magicLink: boolean, emailPassword: boolean, ... }
-config.adminEnabled      // boolean
-config.adminRoles        // { admin: boolean, superAdmin: boolean, ... }
-config.paymentsEnabled   // boolean
-config.payments          // { stripePayments: boolean, ... }
+config.authEnabled; // boolean
+config.authMethods; // { magicLink: boolean, emailPassword: boolean, ... }
+config.adminEnabled; // boolean
+config.adminRoles; // { admin: boolean, superAdmin: boolean, ... }
+config.paymentsEnabled; // boolean
+config.payments; // { stripePayments: boolean, ... }
 ```
 
 ### Database
 
 ```typescript
-config.tables            // PrismaTable[]
-config.rlsPolicies       // RLSPolicy[]
-config.plugins           // Plugin[]
+config.tables; // PrismaTable[]
+config.rlsPolicies; // RLSPolicy[]
+config.plugins; // Plugin[]
 ```
 
 ### Theme
 
 ```typescript
-config.theme             // ThemeConfiguration
-config.theme.colors.light.primary
-config.theme.typography.light.fontSans
-config.theme.other.light.radius
+config.theme; // ThemeConfiguration
+config.theme.colors.light.primary;
+config.theme.typography.light.fontSans;
+config.theme.other.light.radius;
 ```
 
 See `lib/config-snapshot.ts` for the complete `ConfigSnapshot` interface.
@@ -444,8 +445,8 @@ Extract complex logic into helper functions:
 ```typescript
 const getEnabledPlugins = (config: ConfigSnapshot) => {
   return config.plugins
-    .filter(p => p.enabled && p.file === "auth")
-    .map(p => p.name)
+    .filter((p) => p.enabled && p.file === "auth")
+    .map((p) => p.name)
     .sort();
 };
 
@@ -453,14 +454,14 @@ export const TEMPLATES = {
   auth: {
     withPlugins: (config: ConfigSnapshot): string => {
       const plugins = getEnabledPlugins(config);
-      const imports = plugins.map(p =>
-        `import { ${p} } from "better-auth/plugins";`
-      ).join("\n");
+      const imports = plugins
+        .map((p) => `import { ${p} } from "better-auth/plugins";`)
+        .join("\n");
 
       return `${imports}
 
 export const auth = betterAuth({
-  plugins: [${plugins.map(p => `${p}()`).join(", ")}]
+  plugins: [${plugins.map((p) => `${p}()`).join(", ")}]
 });`;
     },
   },
@@ -495,6 +496,7 @@ Update metadata when changing requirements:
 ### 5. Use Consistent Naming
 
 Follow conventions:
+
 - Template IDs: `snake_case` (e.g., `auth_ts`, `prisma_rls_ts`)
 - File IDs: `kebab-case` with extension (e.g., `auth.ts`, `auth-client.ts`)
 - Template groups: `camelCase` (e.g., `auth`, `prismaRLS`)
@@ -675,7 +677,7 @@ generator: (config) => {
   const result = TEMPLATES.myFile(config);
   console.log("Generated:", result);
   return result;
-}
+};
 ```
 
 ### TypeScript Errors
@@ -687,6 +689,7 @@ npm run typecheck
 ```
 
 Common issues:
+
 - Missing properties in `ConfigSnapshot`
 - Incorrect return type from template functions
 - Type mismatches in `path` (use `string | ((config) => string)`)
@@ -702,6 +705,7 @@ While code files have dynamic content generation, markdown sections use static c
 To control which markdown section options appear based on configuration:
 
 **Step 1**: Identify the section option in your markdown file structure:
+
 - File: `public/data/markdown/docs/10-util.md`
 - Section marker: `<!-- section-3 -->`
 - Option file: `public/data/markdown/docs/10-util.section-3.md`
@@ -714,10 +718,10 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   // ... existing mappings
 
   {
-    filePath: "docs.util",  // Path uses dots instead of slashes
-    sectionId: "section3",   // section-3 becomes section3
-    optionId: "option2",     // option-2 becomes option2
-    configPath: "technologies.betterAuth"  // Show when Better Auth is enabled
+    filePath: "docs.util", // Path uses dots instead of slashes
+    sectionId: "section3", // section-3 becomes section3
+    optionId: "option2", // option-2 becomes option2
+    configPath: "technologies.betterAuth", // Show when Better Auth is enabled
   },
 
   {
@@ -725,12 +729,13 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
     sectionId: "section3",
     optionId: "option3",
     configPath: "questions.databaseProvider",
-    matchValue: "both"  // Only show when databaseProvider === "both"
+    matchValue: "both", // Only show when databaseProvider === "both"
   },
 ];
 ```
 
 **Step 3**: Test your configuration:
+
 - Change configuration values in the UI
 - Section options should automatically show/hide
 - Check download includes correct options
@@ -738,16 +743,19 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
 ### Section Mapping Patterns
 
 **Always Include** (user choice):
+
 ```typescript
 { filePath: "ide", sectionId: "section1", optionId: "option1", configPath: null }
 ```
 
 **Boolean Check**:
+
 ```typescript
 { filePath: "docs.util", sectionId: "section2", optionId: "option1", configPath: "technologies.prisma" }
 ```
 
 **Value Match**:
+
 ```typescript
 { filePath: "docs.util", sectionId: "section3", optionId: "option4",
   configPath: "questions.databaseProvider", matchValue: "supabase" }
@@ -756,12 +764,14 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
 ### Section vs Code File Decision
 
 **Use Section Options when**:
+
 - Content is documentation/examples
 - Multiple valid variations exist (all equally correct)
 - Content is static markdown
 - User might want to see multiple options
 
 **Use Code Files when**:
+
 - Content is actual source code to be generated
 - Only one version should exist per configuration
 - Content is dynamically generated from config
@@ -782,5 +792,6 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
 ## Questions?
 
 For more complex scenarios or questions, refer to existing configurations:
+
 - Code file patterns: `lib/code-file-config.ts`
 - Section mapping patterns: `lib/section-option-mappings.ts`

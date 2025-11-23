@@ -4,14 +4,13 @@ import type {
   RLSPolicy,
   RLSRolePolicy,
 } from "@/app/(components)/DatabaseConfiguration.types";
+import type { IDEType } from "@/app/(components)/IDESelection.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
 import type {
   CodeFileNode,
   InitialConfigurationType,
 } from "@/app/(editor)/layout.types";
-import type { IDEType } from "@/app/(components)/IDESelection.types";
 import { componentFileContents } from "./component-files.generated";
-import { getSelectedIDE } from "./robots-file.utils";
 
 export interface CodeFileRegistry {
   globals_css: (theme: ThemeConfiguration) => string;
@@ -29,7 +28,10 @@ export interface CodeFileRegistry {
   robots_file: () => string;
 }
 
-export const IDE_ROBOTS_FILES: Record<IDEType, { fileName: string; fileExtension: string }> = {
+export const IDE_ROBOTS_FILES: Record<
+  IDEType,
+  { fileName: string; fileExtension: string }
+> = {
   claudecode: { fileName: "CLAUDE", fileExtension: "md" },
   cursor: { fileName: ".cursorrules", fileExtension: "cursorrules" },
   windsurf: { fileName: ".windsurfrules", fileExtension: "windsurfrules" },
@@ -814,9 +816,9 @@ DB <-> Supabase Client <-> hook <-> store
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All db types should be defined from \\\`@/integrations/supabase/types\\\`.
 
-## Example of file patterns - [\\\`docs/util.md\\\`](docs/util.md)
+## Example of file patterns - [\\\`util.md\\\`](util.md)
 
-Follow the examples outlined in [\\\`docs/util.md\\\`](docs/util.md) when working on hook, store or type files.
+Follow the examples outlined in [\\\`util.md\\\`](util.md) when working on hook, store or type files.
 
 # Testing
 
@@ -902,7 +904,8 @@ export const createCodeFileNodes = (
   rlsPolicies: RLSPolicy[],
   isPageVisited?: (path: string) => boolean
 ): CodeFileNode[] => {
-  const { getSectionInclude } = require("@/app/(editor)/layout.stores").useEditorStore.getState();
+  const { getSectionInclude } =
+    require("@/app/(editor)/layout.stores").useEditorStore.getState();
   const { getCodeFiles } = require("./code-file-generator");
 
   const newSystemFiles = getCodeFiles(

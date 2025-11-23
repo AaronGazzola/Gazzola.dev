@@ -2,13 +2,14 @@
 
 ## Overview
 
-Update `docs/util.md` and `public/data/markdown/7-CLAUDE.md` to use the markdown section system to represent all possible configuration options from the interactive components. This will allow users to select different technology stacks and configurations dynamically.
+Update `util.md` and `public/data/markdown/7-CLAUDE.md` to use the markdown section system to represent all possible configuration options from the interactive components. This will allow users to select different technology stacks and configurations dynamically.
 
 ## Context Analysis
 
 ### Current Components and Their Options
 
 #### 1. InitialConfiguration.tsx
+
 - **Database Options**: None, NeonDB, Supabase with Better-Auth, Supabase Only
 - **Deployment Options**: Serverless (Vercel), Always-on (Railway)
 - **Authentication Methods**: Magic Link, Email/Password, OTP, 2FA, Passkey, Anonymous, Google OAuth, GitHub OAuth, Apple Sign In, Password Only
@@ -20,11 +21,13 @@ Update `docs/util.md` and `public/data/markdown/7-CLAUDE.md` to use the markdown
 - **Technologies**: Next.js, TailwindCSS, Shadcn, Zustand, React Query, Supabase, NeonDB, Prisma, Better Auth, PostgreSQL, Vercel, Railway, Cypress, Resend, Stripe, PayPal, OpenRouter
 
 #### 2. AppStructure.tsx
+
 - **Templates**: Blank, Auth (grouped routes), Nested layouts, Blog structure
 - **File Types**: page.tsx, layout.tsx, stores, hooks, actions, types
 - **Features**: Custom routes, dynamic segments, route groups
 
 #### 3. DatabaseConfiguration.tsx
+
 - **Schema Options**: auth schema, public schema
 - **Column Types**: String, Int, Float, Boolean, DateTime, Json, BigInt, Decimal, Bytes
 - **Attributes**: @id, @unique, optional (?), array ([])
@@ -33,6 +36,7 @@ Update `docs/util.md` and `public/data/markdown/7-CLAUDE.md` to use the markdown
 - **Plugins**: Better-Auth plugins for auth.ts and auth-client.ts
 
 #### 4. ThemeConfiguration.tsx
+
 - **Theme Elements**: Colors, typography, spacing, shadows, borders
 - **Color Schemes**: Light/dark mode support
 - **CSS Variables**: Theme-specific styling
@@ -44,20 +48,24 @@ Update `docs/util.md` and `public/data/markdown/7-CLAUDE.md` to use the markdown
 Create section files in `public/data/markdown/` directory:
 
 **File: `7-CLAUDE.section-1.md`** (Core Technologies)
+
 - Options for each technology stack combination
 - Include: Next.js, TypeScript, TailwindCSS, Shadcn, Zustand, React Query
 
 **File: `7-CLAUDE.section-2.md`** (Database & Authentication)
+
 - Option 1: No database
 - Option 2: NeonDB with Better-Auth + Prisma + PostgreSQL
 - Option 3: Supabase with Better-Auth + Prisma + PostgreSQL
 - Option 4: Supabase Only + Prisma + PostgreSQL
 
 **File: `7-CLAUDE.section-3.md`** (Deployment)
+
 - Option 1: Serverless with Vercel
 - Option 2: Always-on with Railway
 
 **File: `7-CLAUDE.section-4.md`** (Authentication Methods)
+
 - Option 1: No authentication
 - Option 2: Magic Link (requires Resend)
 - Option 3: Email & Password (requires Resend)
@@ -71,12 +79,14 @@ Create section files in `public/data/markdown/` directory:
 - Option 11: Password Only
 
 **File: `7-CLAUDE.section-5.md`** (Additional Features)
+
 - File Storage (Supabase only)
 - Payments (PayPal, Stripe, Subscriptions)
 - AI Integration (OpenRouter for images/text)
 - Notifications (Email with Resend, In-app)
 
 **File: `7-CLAUDE.section-6.md`** (Testing)
+
 - Cypress for E2E testing
 
 ### Step 2: Update 7-CLAUDE.md Structure
@@ -128,6 +138,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Create section files in `public/data/markdown/` directory:
 
 **File: `8-util.section-1.md`** (Types File Patterns)
+
 - Option 1: Basic types (no database)
 - Option 2: Types with Prisma imports
 - Option 3: Types with Better-Auth session types
@@ -136,12 +147,14 @@ Create section files in `public/data/markdown/` directory:
 - Option 6: Types with AI integration
 
 **File: `8-util.section-2.md`** (Stores File Patterns)
+
 - Option 1: Basic Zustand store
 - Option 2: Persisted store
 - Option 3: Store with authentication state
 - Option 4: Store with multi-tenant support
 
 **File: `8-util.section-3.md`** (Actions File Patterns)
+
 - Option 1: Basic server actions
 - Option 2: Actions with Better-Auth
 - Option 3: Actions with Prisma + RLS
@@ -150,6 +163,7 @@ Create section files in `public/data/markdown/` directory:
 - Option 6: Actions with AI integration (OpenRouter)
 
 **File: `8-util.section-4.md`** (Hooks File Patterns)
+
 - Option 1: Basic React Query hooks
 - Option 2: Hooks with Better-Auth client
 - Option 3: Hooks with optimistic updates
@@ -157,6 +171,7 @@ Create section files in `public/data/markdown/` directory:
 - Option 5: Hooks with real-time subscriptions (Supabase)
 
 **File: `8-util.section-5.md`** (Utility Files)
+
 - Option 1: Basic utilities (no database)
 - Option 2: prisma-rls.ts (with RLS support)
 - Option 3: auth.utils.ts (Better-Auth utilities)
@@ -166,7 +181,7 @@ Create section files in `public/data/markdown/` directory:
 
 ### Step 4: Update util.md Structure
 
-Rename `docs/util.md` to `public/data/markdown/8-util.md` and update:
+Rename `util.md` to `public/data/markdown/8-util.md` and update:
 
 ```markdown
 # Utility File Patterns
@@ -210,25 +225,31 @@ Each option block should include:
 
 Example structure for an option:
 
-```markdown
+````markdown
 <!-- option-1 -->
+
 ## No Database Configuration
 
 **When to use**: Selected when "No database" is chosen in InitialConfiguration
 
 **Technologies**:
+
 - Next.js
 - TypeScript
 - TailwindCSS
 
 **Example**:
+
 ```typescript
 export interface AppState {
-  theme: 'light' | 'dark';
-  setTheme: (theme: 'light' | 'dark') => void;
+  theme: "light" | "dark";
+  setTheme: (theme: "light" | "dark") => void;
 }
 ```
+````
+
 <!-- /option-1 -->
+
 ```
 
 ### Step 6: Mapping Component Options to Sections
@@ -279,3 +300,4 @@ After implementation:
 - Consider adding a "Configuration Guide" section explaining how to use the sections
 - Each option should be self-contained and not reference other options
 - Include technology badges/indicators in options to show dependencies
+```

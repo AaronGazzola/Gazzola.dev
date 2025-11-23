@@ -7,9 +7,9 @@ DB <-> Supabase Client <-> hook <-> store
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All db types should be defined from `@/integrations/supabase/types`.
 
-## Example of file patterns - [`docs/util.md`](docs/util.md)
+## Example of file patterns - [`util.md`](util.md)
 
-Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.
+Follow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.
 
 <!-- /option-1 -->
 
@@ -24,9 +24,9 @@ DB <-> Action <-> hook <-> store
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All db types should be defined from `"@prisma/client"`
 
-## Example of file patterns - [`docs/util.md`](docs/util.md)
+## Example of file patterns - [`util.md`](util.md)
 
-Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, action, store or type files. The file also contains the `prisma-rls.ts` and `action.util.ts` files for reference.
+Follow the examples outlined in [`util.md`](util.md) when working on hook, action, store or type files. The file also contains the `prisma-rls.ts` and `action.util.ts` files for reference.
 
 <!-- /option-2 -->
 
@@ -54,8 +54,8 @@ Component <-> hook <-> store
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All types should be defined in `.types.ts` files alongside components.
 
-## Example of file patterns - [`docs/util.md`](docs/util.md)
+## Example of file patterns - [`util.md`](util.md)
 
-Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.
+Follow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.
 
 <!-- /option-4 -->

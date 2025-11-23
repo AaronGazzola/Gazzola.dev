@@ -1,14 +1,18 @@
-import type { ConfigSnapshot } from "./config-snapshot";
-import type { Plugin, PrismaTable, RLSPolicy, RLSRolePolicy } from "@/app/(components)/DatabaseConfiguration.types";
+import type {
+  PrismaTable,
+  RLSPolicy,
+  RLSRolePolicy,
+} from "@/app/(components)/DatabaseConfiguration.types";
 import {
+  AUTH_PLUGIN_REGISTRY,
+  getClientPlugins,
   getOAuthProviders,
+  getPluginImports,
+  getServerPlugins,
   hasEmailPasswordBase,
   needsAppName,
-  getServerPlugins,
-  getClientPlugins,
-  getPluginImports,
-  AUTH_PLUGIN_REGISTRY,
 } from "./auth-plugin-mappings";
+import type { ConfigSnapshot } from "./config-snapshot";
 
 export const TEMPLATES = {
   globals_css: (config: ConfigSnapshot): string => {
@@ -279,20 +283,30 @@ export const TEMPLATES = {
     const hasEmailPassword = hasEmailPasswordBase(config);
     const requiresAppName = needsAppName(config);
 
-    const hasAdminOrOrg = serverPlugins.some(p => p.name === "admin" || p.name === "organization");
+    const hasAdminOrOrg = serverPlugins.some(
+      (p) => p.name === "admin" || p.name === "organization"
+    );
     const needsAccessControl = hasAdminOrOrg;
 
     const imports: string[] = ['import { betterAuth } from "better-auth";'];
-    imports.push('import { prismaAdapter } from "better-auth/adapters/prisma";');
+    imports.push(
+      'import { prismaAdapter } from "better-auth/adapters/prisma";'
+    );
     imports.push('import { PrismaClient } from "@prisma/client";');
 
     pluginImportGroups.forEach(({ imports: pluginNames, importPath }) => {
-      imports.push(`import { ${pluginNames.join(", ")} } from "${importPath}";`);
+      imports.push(
+        `import { ${pluginNames.join(", ")} } from "${importPath}";`
+      );
     });
 
     if (needsAccessControl) {
-      imports.push('import { createAccessControl } from "better-auth/plugins/access";');
-      imports.push('import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";');
+      imports.push(
+        'import { createAccessControl } from "better-auth/plugins/access";'
+      );
+      imports.push(
+        'import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";'
+      );
     }
 
     const configLines: string[] = [];
@@ -314,13 +328,15 @@ export const TEMPLATES = {
     }
 
     if (oauthProviders.length > 0) {
-      const providerConfigs = oauthProviders.map(provider => {
-        const upperProvider = provider.toUpperCase();
-        return `    ${provider}: {
+      const providerConfigs = oauthProviders
+        .map((provider) => {
+          const upperProvider = provider.toUpperCase();
+          return `    ${provider}: {
       clientId: process.env.${upperProvider}_CLIENT_ID!,
       clientSecret: process.env.${upperProvider}_CLIENT_SECRET!,
     },`;
-      }).join("\n");
+        })
+        .join("\n");
 
       configLines.push(`  socialProviders: {
 ${providerConfigs}
@@ -329,7 +345,7 @@ ${providerConfigs}
 
     const pluginConfigs: string[] = [];
 
-    serverPlugins.forEach(plugin => {
+    serverPlugins.forEach((plugin) => {
       const info = AUTH_PLUGIN_REGISTRY[plugin.name];
 
       switch (plugin.name) {
@@ -428,23 +444,33 @@ export type Session = typeof auth.$Infer.Session;`;
     const clientPlugins = getClientPlugins(config);
     const pluginImportGroups = getPluginImports(clientPlugins, "client");
 
-    const hasAdminOrOrg = clientPlugins.some(p => p.name === "admin" || p.name === "organization");
+    const hasAdminOrOrg = clientPlugins.some(
+      (p) => p.name === "admin" || p.name === "organization"
+    );
     const needsAccessControl = hasAdminOrOrg;
 
-    const imports: string[] = ['import { createAuthClient } from "better-auth/react";'];
+    const imports: string[] = [
+      'import { createAuthClient } from "better-auth/react";',
+    ];
 
     pluginImportGroups.forEach(({ imports: pluginNames, importPath }) => {
-      imports.push(`import { ${pluginNames.join(", ")} } from "${importPath}";`);
+      imports.push(
+        `import { ${pluginNames.join(", ")} } from "${importPath}";`
+      );
     });
 
     if (needsAccessControl) {
-      imports.push('import { createAccessControl } from "better-auth/plugins/access";');
-      imports.push('import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";');
+      imports.push(
+        'import { createAccessControl } from "better-auth/plugins/access";'
+      );
+      imports.push(
+        'import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";'
+      );
     }
 
     const pluginConfigs: string[] = [];
 
-    clientPlugins.forEach(plugin => {
+    clientPlugins.forEach((plugin) => {
       const info = AUTH_PLUGIN_REGISTRY[plugin.name];
 
       switch (plugin.name) {
@@ -502,7 +528,9 @@ const superAdmin = ac.newRole({
 `;
     }
 
-    const configLines: string[] = ['  baseURL: process.env.NEXT_PUBLIC_APP_URL,'];
+    const configLines: string[] = [
+      "  baseURL: process.env.NEXT_PUBLIC_APP_URL,",
+    ];
 
     if (pluginConfigs.length > 0) {
       configLines.push(`  plugins: [\n${pluginConfigs.join(",\n")}\n  ],`);
@@ -621,7 +649,10 @@ export interface RLSPolicy {
 ${policyFunctions}`;
   },
 
-  supabaseMigration: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]): string => {
+  supabaseMigration: (
+    rlsPolicies: RLSPolicy[],
+    tables: PrismaTable[]
+  ): string => {
     const timestamp = Date.now();
     const policyGroups = rlsPolicies.reduce(
       (acc, policy) => {
@@ -945,9 +976,9 @@ DB <-> Supabase Client <-> hook <-> store
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All db types should be defined from \\\`@/integrations/supabase/types\\\`.
 
-## Example of file patterns - [\\\`docs/util.md\\\`](docs/util.md)
+## Example of file patterns - [\\\`util.md\\\`](util.md)
 
-Follow the examples outlined in [\\\`docs/util.md\\\`](docs/util.md) when working on hook, store or type files.
+Follow the examples outlined in [\\\`util.md\\\`](util.md) when working on hook, store or type files.
 
 # Testing
 

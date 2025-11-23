@@ -30,6 +30,7 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
+  CircleHelp,
   Home,
   MessagesSquare,
   Palette,
@@ -119,6 +120,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [resetAllLoading, setResetAllLoading] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
+  const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -538,6 +540,60 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             >
               <RefreshCcw className="h-4 w-4" />
             </IconButton>
+
+            <EditorPopover
+              open={helpPopoverOpen}
+              onOpenChange={setHelpPopoverOpen}
+            >
+              <EditorPopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-[3px] h-8 w-8"
+                >
+                  <CircleHelp className="h-4 w-4" />
+                </Button>
+              </EditorPopoverTrigger>
+              <EditorPopoverContent className="sm:w-96  theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0">
+                <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
+                  <h4 className="font-semibold text-base theme-font-sans theme-tracking">
+                    Your web app documentation
+                  </h4>
+                  <div className="flex flex-col theme-gap-2 text-sm">
+                    <p className="theme-font-sans theme-tracking">
+                      This interactive editor allows you to configure and
+                      customize your project documentation.
+                    </p>
+                    <div className="theme-pt-2">
+                      <h5 className="font-semibold theme-font-sans theme-tracking theme-pb-1">
+                        How it works:
+                      </h5>
+                      <ul className="list-disc list-inside flex flex-col theme-gap-1 theme-pl-2">
+                        <li className="theme-font-sans theme-tracking">
+                          Each page represents a file in your Documentation
+                          directory
+                        </li>
+                        <li className="theme-font-sans theme-tracking">
+                          Navigate through pages using the toolbar controls
+                        </li>
+                        <li className="theme-font-sans theme-tracking">
+                          Toggle Preview mode to see the final output that will
+                          be generated
+                        </li>
+                        <li className="theme-font-sans theme-tracking">
+                          Click the download button in the sidebar to export
+                          your documentation
+                        </li>
+                      </ul>
+                    </div>
+                    <p className="theme-font-sans theme-tracking theme-pt-2">
+                      All changes are saved automatically as you work. Use the
+                      Reset button to restore default configurations.
+                    </p>
+                  </div>
+                </div>
+              </EditorPopoverContent>
+            </EditorPopover>
           </div>
 
           <div className="flex items-center theme-gap-3">

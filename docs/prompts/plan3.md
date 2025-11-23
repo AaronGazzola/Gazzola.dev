@@ -26,7 +26,7 @@ Refactor the Header component to replace the three static floating elements with
 
 **File**: `app/(components)/Header.store.ts`
 
-Create a new zustand persist store alongside Header.tsx following the pattern from [docs/util.md](docs/util.md#stores-file-example):
+Create a new zustand persist store alongside Header.tsx following the pattern from [util.md](util.md#stores-file-example):
 
 **Store interface** (define in `Header.types.ts`):
 

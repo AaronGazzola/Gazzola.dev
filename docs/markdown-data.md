@@ -21,6 +21,7 @@ Both systems use the same `ConfigSnapshot` to determine what content appears. Th
 ## File Structure and Organization
 
 ### Directory Layout
+
 ```
 data/markdown/
 ├── 1-Getting Started/
@@ -37,25 +38,30 @@ data/markdown/
 ### File and Directory Naming
 
 **Basic Names**: Files and directories can use any valid filename
+
 - `welcome.md`
 - `Getting Started/`
 
 **Ordered Names**: Prepend numbers to control ordering
+
 - `1-welcome.md` → Order: 1, Display: "welcome"
 - `2-setup.md` → Order: 2, Display: "setup"
 - `10-advanced.md` → Order: 10, Display: "advanced"
 
-**Excluded Content**: Prepend asterisk (*) to exclude from the editor
+**Excluded Content**: Prepend asterisk (\*) to exclude from the editor
+
 - `*1-hidden.md` → Excluded file
 - `*Hidden/` → Excluded directory (and all children)
 
 ## URL Generation
 
 Files are automatically converted to URLs based on their path:
+
 - `data/markdown/1-Getting Started/2-Setup.md` → `/getting-started/setup`
 - `data/markdown/Features/Basic.md` → `/features/basic`
 
 The system:
+
 - Removes numeric prefixes and file extensions
 - Converts to lowercase
 - Replaces spaces with hyphens
@@ -84,6 +90,7 @@ Final content.
 ### Creating Section Files
 
 For each section marker, create a corresponding section file:
+
 - Main file: `1-welcome.md`
 - Section file: `1-welcome.section-1.md`
 - Section file: `1-welcome.section-2.md`
@@ -94,28 +101,36 @@ Section files contain multiple options using option blocks:
 
 ```markdown
 <!-- option-1 -->
+
 This is the first option for this section.
 It can contain **markdown** and multiple paragraphs.
+
 <!-- /option-1 -->
 
 <!-- option-2 -->
+
 This is the second option.
 Users can choose between different options.
+
 <!-- /option-2 -->
 
 <!-- option-3 -->
+
 This is a third alternative.
 Each option is independent.
+
 <!-- /option-3 -->
 ```
 
 ### How Sections Work in the Editor
 
 When the parser encounters:
+
 1. `<!-- section-1 -->` in `welcome.md`
 2. A corresponding `welcome.section-1.md` file
 
 It creates a **SectionNode** in the editor with:
+
 - A dropdown to select between options
 - A nested editor for the selected option content
 - All options available for switching
@@ -139,6 +154,7 @@ The component will be rendered here.
 ### Component Processing
 
 The parser:
+
 - Finds `<!-- component-AppStructure -->`
 - Creates a **ComponentRef** with ID "AppStructure"
 - The editor renders the actual React component
@@ -146,12 +162,14 @@ The parser:
 ## Inclusion and Exclusion Rules
 
 ### File-Level Exclusion
+
 ```
 *1-hidden.md          # File excluded
 1-visible.md          # File included
 ```
 
 ### Directory-Level Exclusion
+
 ```
 *Hidden/              # Directory and ALL children excluded
 ├── 1-secret.md       # Excluded (parent excluded)
@@ -161,13 +179,15 @@ The parser:
 ```
 
 ### Inheritance Behavior
+
 - Child nodes inherit the `include` status from their parents
-- If a parent directory is excluded (*), all children are excluded
+- If a parent directory is excluded (\*), all children are excluded
 - If a parent directory is included, children can still be individually excluded
 
 ## Complete Example
 
 ### File Structure
+
 ```
 data/markdown/
 ├── 1-Tutorial/
@@ -180,6 +200,7 @@ data/markdown/
 ```
 
 ### Main File: `1-Tutorial/1-basics.md`
+
 ```markdown
 # Getting Started
 
@@ -199,26 +220,34 @@ Continue to the advanced section.
 ```
 
 ### Section File: `1-Tutorial/1-basics.section-1.md`
+
 ```markdown
 <!-- option-1 -->
+
 **Beginner Path**: Start with the simple examples.
 We'll walk through each step carefully.
+
 <!-- /option-1 -->
 
 <!-- option-2 -->
+
 **Advanced Path**: Jump to complex examples.
 This assumes you have prior experience.
+
 <!-- /option-2 -->
 
 <!-- option-3 -->
+
 **Interactive Path**: Learn by doing.
 Complete hands-on exercises as you go.
+
 <!-- /option-3 -->
 ```
 
 ### Resulting Structure
 
 The parser creates:
+
 1. **FileNode** for `basics.md` with:
    - Content: Full markdown with section markers
    - Section: `section1` with 3 options
@@ -254,6 +283,7 @@ This processes all files in `data/markdown/` and generates `app/(editor)/layout.
 ### Processed Data Storage
 
 The parser generates structured data that's stored in:
+
 - `public/data/processed-markdown.json` - Complete parsed markdown structure
 - `public/data/content-version.json` - Content version tracking
 
@@ -263,14 +293,18 @@ The editor loads markdown data through server actions:
 
 ```typescript
 // app/(editor)/layout.actions.ts
-export const getMarkdownDataAction = async (): Promise<ActionResponse<MarkdownData>> => {
+export const getMarkdownDataAction = async (): Promise<
+  ActionResponse<MarkdownData>
+> => {
   // Fetches processed-markdown.json via HTTP request
   const response = await fetch(`${baseUrl}/data/processed-markdown.json`);
   const data: MarkdownData = await response.json();
   return getActionResponse({ data });
 };
 
-export const getContentVersionAction = async (): Promise<ActionResponse<number>> => {
+export const getContentVersionAction = async (): Promise<
+  ActionResponse<number>
+> => {
   // Reads content-version.json to check for updates
   const versionData = JSON.parse(fs.readFileSync(VERSION_FILE, "utf8"));
   return getActionResponse({ data: versionData.version });
@@ -280,6 +314,7 @@ export const getContentVersionAction = async (): Promise<ActionResponse<number>>
 ### Content Versioning
 
 The system tracks content changes using version numbers:
+
 - Parser increments version on each run
 - Editor store checks for version mismatches
 - Automatic refresh when new content is available
@@ -293,12 +328,12 @@ The editor uses Zustand for state management with persistence:
 ```typescript
 interface EditorState {
   version: number;
-  data: MarkdownData;          // Complete parsed markdown tree
+  data: MarkdownData; // Complete parsed markdown tree
   darkMode: boolean;
   previewMode: boolean;
   refreshKey: number;
-  visitedPages: string[];      // Navigation tracking
-  placeholderValues: Record<string, string>;  // {{key:value}} replacements
+  visitedPages: string[]; // Navigation tracking
+  placeholderValues: Record<string, string>; // {{key:value}} replacements
   initialConfiguration: InitialConfigurationType;
   storedContentVersion?: number;
   // ... methods for data manipulation
@@ -312,7 +347,7 @@ The store maintains a `flatIndex` for O(1) node lookups:
 ```typescript
 interface MarkdownData {
   root: DirectoryNode;
-  flatIndex: Record<string, MarkdownNode>;  // path -> node mapping
+  flatIndex: Record<string, MarkdownNode>; // path -> node mapping
   contentVersion: number;
 }
 
@@ -327,7 +362,9 @@ The store persists to localStorage with version-based migrations:
 ```typescript
 export const useEditorStore = create<EditorState>()(
   persist(
-    (set, get) => ({ /* store implementation */ }),
+    (set, get) => ({
+      /* store implementation */
+    }),
     {
       name: "editor-storage",
       version: STORE_VERSION,
@@ -337,7 +374,7 @@ export const useEditorStore = create<EditorState>()(
           return migrateSections(persistedState);
         }
         return persistedState;
-      }
+      },
     }
   )
 );
@@ -352,7 +389,7 @@ Each section option has an `include` boolean flag:
 ```typescript
 interface SectionOption {
   content: string;
-  include: boolean;  // Controls whether option appears in editor
+  include: boolean; // Controls whether option appears in editor
 }
 ```
 
@@ -389,7 +426,7 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
     filePath: "docs.util",
     sectionId: "section1",
     optionId: "option2",
-    configPath: "technologies.prisma"
+    configPath: "technologies.prisma",
   },
 
   // Show Supabase actions when database is Supabase
@@ -398,7 +435,7 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
     sectionId: "section3",
     optionId: "option4",
     configPath: "questions.databaseProvider",
-    matchValue: "supabase"
+    matchValue: "supabase",
   },
 
   // Always include (user choice)
@@ -406,7 +443,7 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
     filePath: "ide",
     sectionId: "section1",
     optionId: "option1",
-    configPath: null
+    configPath: null,
   },
 ];
 ```
@@ -414,28 +451,33 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
 #### Mapping Types
 
 **Boolean Configuration Check**:
+
 - `configPath`: Points to boolean config value
 - `matchValue`: Omitted
 - Result: Option included if config value is `true`
 
 **Value Match Check**:
+
 - `configPath`: Points to any config value
 - `matchValue`: Specific value to match
 - Result: Option included if config value equals matchValue
 
 **Always Include**:
+
 - `configPath`: `null`
 - Result: Option always included (user chooses manually)
 
 #### Example: util.md File
 
-The `docs/util.md` file demonstrates configuration-based filtering:
+The `util.md` file demonstrates configuration-based filtering:
 
 **Section 1 (Types)**:
+
 - Option 1: Client-side types → shown when `databaseProvider === "none"`
 - Option 2: Prisma types → shown when `technologies.prisma === true`
 
 **Section 3 (Actions)**:
+
 - Option 1: No actions → shown when `databaseProvider === "none"`
 - Option 2: Better-Auth actions → shown when `technologies.betterAuth === true`
 - Option 3: Supabase + Better-Auth → shown when `databaseProvider === "both"`
@@ -464,11 +506,15 @@ Exclude options from the editor by prefixing with asterisk:
 
 ```markdown
 <!-- option-1 -->
+
 This option will be included.
+
 <!-- /option-1 -->
 
 <!-- *option-2 -->
+
 This option will be excluded from the editor.
+
 <!-- /*option-2 -->
 ```
 
@@ -514,13 +560,14 @@ This creates a ComponentRef node:
 ```typescript
 interface ComponentRef extends BaseNode {
   type: "component";
-  componentId: string;  // "InitialConfiguration"
+  componentId: string; // "InitialConfiguration"
 }
 ```
 
 ### Component Processing
 
 Components are:
+
 - Detected during parsing
 - Stored in file nodes' `components` array
 - Added to flatIndex for lookup
@@ -544,7 +591,7 @@ function generateUrlPath(relativePath: string): string {
   const cleanParts = parts.map((part) => {
     const orderMatch = part.match(/^(\d+)-(.+)$/);
     const cleanPart = orderMatch ? orderMatch[2] : part;
-    return slugify(cleanPart.replace(/\*/g, '').replace(/\.md$/, ''));
+    return slugify(cleanPart.replace(/\*/g, "").replace(/\.md$/, ""));
   });
   return "/" + cleanParts.join("/");
 }
@@ -599,7 +646,7 @@ if (state.storedContentVersion !== serverContentVersion) {
 **Section not showing**: Ensure the section file exists and follows naming convention
 **Wrong order**: Check numeric prefixes are correct
 **Content not updating**: Re-run the parser after changes
-**File excluded**: Check for asterisk (*) prefix in filename or parent directory
+**File excluded**: Check for asterisk (\*) prefix in filename or parent directory
 **Store data missing**: Check browser localStorage for `editor-storage` key
 **Version mismatch**: Clear localStorage or run parser to update content version
 **Component not rendering**: Verify component ID matches the registered components

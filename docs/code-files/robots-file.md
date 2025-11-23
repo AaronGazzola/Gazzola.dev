@@ -7,10 +7,11 @@
 ## Inclusion Conditions
 
 ```typescript
-()=>true
+() => true;
 ```
 
 **Excluded When:**
+
 - File is conditionally included based on configuration
 
 ---
@@ -20,6 +21,7 @@
 **Config Requirements:**
 
 **Generated Code:**
+
 ```typescript
 # CLAUDE.md
 
@@ -74,9 +76,9 @@ DB <-> Supabase Client <-> hook <-> store
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All db types should be defined from \`@/integrations/supabase/types\`.
 
-## Example of file patterns - [\`docs/util.md\`](docs/util.md)
+## Example of file patterns - [\`util.md\`](util.md)
 
-Follow the examples outlined in [\`docs/util.md\`](docs/util.md) when working on hook, store or type files.
+Follow the examples outlined in [\`util.md\`](util.md) when working on hook, store or type files.
 
 # Testing
 

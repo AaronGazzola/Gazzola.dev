@@ -51,9 +51,9 @@ DB <-> Supabase Client <-> hook <-> store
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
 - All db types should be defined from `@/integrations/supabase/types`.
 
-## Example of file patterns - [`docs/util.md`](docs/util.md)
+## Example of file patterns - [`util.md`](util.md)
 
-Follow the examples outlined in [`docs/util.md`](docs/util.md) when working on hook, store or type files.
+Follow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.
 
 # Testing
 
@@ -95,11 +95,13 @@ This project uses a declarative configuration system for generating code files. 
 - **Templates** - Located in `lib/code-templates.ts`
 
 To regenerate documentation after making changes to the configuration system:
+
 ```bash
 npm run docs:generate
 ```
 
 This will create/update markdown files in `docs/code-files/` showing:
+
 - All file variations based on configuration
 - Inclusion conditions for each file
 - Required technologies and features
