@@ -163,3 +163,5 @@ Poll complete: 6 votes
 - Primer (channel) videos on Altruism
 - Shodan UI
 -
+- resposnive viewer in browser
+- Check gemini stats
