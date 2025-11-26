@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
+import { ENV } from "@/lib/env.utils";
 import { cn } from "@/lib/utils";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
@@ -36,7 +37,6 @@ import {
 import { ListTodo } from "lucide-react";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useEditorStore } from "../layout.stores";
-import { ENV } from "@/lib/env.utils";
 // Import removed - ContentPath no longer exists
 
 export interface SerializedSectionNode

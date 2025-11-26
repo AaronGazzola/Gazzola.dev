@@ -48,7 +48,7 @@ const ThemeControlPanel = () => {
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Colors</h3>
+          <h3 className="text-base font-semibold">Colors</h3>
           <Switch
             checked={gradientEnabled}
             onCheckedChange={setGradientEnabled}
@@ -78,7 +78,7 @@ const ThemeControlPanel = () => {
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Stars</h3>
+          <h3 className="text-base font-semibold">Stars</h3>
           <Switch checked={starsEnabled} onCheckedChange={setStarsEnabled} />
         </div>
 
@@ -99,8 +99,8 @@ const ThemeControlPanel = () => {
         <div className="space-y-3">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Size</label>
-              <span className="text-sm text-muted-foreground">{starSize}%</span>
+              <label className="text-base font-semibold">Size</label>
+              <span className="text-base font-semibold text-muted-foreground">{starSize}%</span>
             </div>
             <Slider
               min={0}
@@ -114,8 +114,8 @@ const ThemeControlPanel = () => {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Number</label>
-              <span className="text-sm text-muted-foreground">
+              <label className="text-base font-semibold">Number</label>
+              <span className="text-base font-semibold text-muted-foreground">
                 {starNumber}%
               </span>
             </div>

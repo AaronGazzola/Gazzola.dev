@@ -111,6 +111,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setDarkMode,
     isResetting,
     setIsResetting,
+    helpPopoverOpened,
+    setHelpPopoverOpened,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme } = useThemeConfigStore();
@@ -543,13 +545,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
             <EditorPopover
               open={helpPopoverOpen}
-              onOpenChange={setHelpPopoverOpen}
+              onOpenChange={(open) => {
+                setHelpPopoverOpen(open);
+                if (open && !helpPopoverOpened) {
+                  setHelpPopoverOpened(true);
+                }
+              }}
             >
               <EditorPopoverTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-[3px] h-8 w-8"
+                  className={`rounded-full h-8 w-8 ${!helpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90 animate-pulse" : ""}`}
                 >
                   <CircleHelp className="h-4 w-4" />
                 </Button>

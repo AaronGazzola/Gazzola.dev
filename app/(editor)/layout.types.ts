@@ -268,6 +268,7 @@ export interface EditorState {
   updateFeature: (fileId: string, featureId: string, updates: Partial<Feature>) => void;
   removeFeature: (fileId: string, featureId: string) => void;
   getFeatures: (fileId: string) => Feature[];
+  setFeatures: (features: Record<string, Feature[]>) => void;
   linkFeatureFile: (fileId: string, featureId: string, fileType: UserExperienceFileType, filePath: string) => void;
   unlinkFeatureFile: (fileId: string, featureId: string, fileType: UserExperienceFileType) => void;
   getUtilFileFunctions: (utilFilePath: string) => string[];
@@ -283,6 +284,10 @@ export interface EditorState {
   removeTestCase: (suiteId: string, caseId: string) => void;
   resetTestsFromFeatures: () => void;
   reorderTestSuites: (fromIndex: number, toIndex: number) => void;
+  readmeGenerated: boolean;
+  setReadmeGenerated: (generated: boolean) => void;
+  helpPopoverOpened: boolean;
+  setHelpPopoverOpened: (opened: boolean) => void;
 }
 
 export interface NavigationItem {

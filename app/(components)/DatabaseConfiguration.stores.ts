@@ -1281,11 +1281,10 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         return Array.from(schemas).sort();
       },
 
-      addEnum: (name, schema) => {
+      addEnum: (name) => {
         const newEnum: PrismaEnum = {
           id: generateId(),
           name,
-          schema,
           values: [],
           isDefault: false,
           isEditable: true,
@@ -1352,8 +1351,8 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         }));
       },
 
-      getEnumsBySchema: (schema) => {
-        return get().enums.filter((e) => e.schema === schema);
+      getAllEnums: () => {
+        return get().enums;
       },
 
       addColumn: (tableId, column) => {
@@ -1624,8 +1623,16 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
       },
 
       generatePrismaSchema: () => {
-        const { tables } = get();
+        const { tables, enums } = get();
         let schema = `datasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n  schemas  = ["auth", "public"]\n}\n\ngenerator client {\n  provider = "prisma-client-js"\n}\n\n`;
+
+        enums.forEach((enumDef) => {
+          schema += `enum ${enumDef.name} {\n`;
+          enumDef.values.forEach((val) => {
+            schema += `  ${val.value}\n`;
+          });
+          schema += `}\n\n`;
+        });
 
         tables.forEach((table) => {
           schema += `model ${table.name} {\n`;

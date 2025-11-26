@@ -75,6 +75,11 @@ const componentMap: Record<string, any> = {
       default: m.IDESelection,
     }))
   ),
+  READMEComponent: lazy(() =>
+    import("@/app/(components)/READMEComponent").then((m) => ({
+      default: m.READMEComponent,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

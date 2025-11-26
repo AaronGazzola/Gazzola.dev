@@ -147,19 +147,27 @@ export const ThemeConfigurationSidebar = ({
 
   return (
     <div
-      className="flex flex-col theme-bg-background theme-border-border theme-radius theme-shadow lg:sticky lg:top-0 w-full lg:w-[360px] lg:h-full"
+      className="flex flex-col theme-bg-background theme-border-primary theme-radius theme-shadow lg:sticky lg:top-0 w-full lg:w-[360px] lg:h-full"
       style={{
-        borderRightWidth: "0px",
+        borderWidth: "2px",
+        borderStyle: "solid",
       }}
     >
       <div
         className="theme-border-border theme-p-2 md:theme-p-4"
         style={{ borderBottomWidth: "1px" }}
       >
-        <div className="flex items-center theme-gap-3">
+        <div className="flex items-center theme-gap-2">
+          <button
+            onClick={handlePrevTheme}
+            className="h-10 w-10 p-0 shrink-0 theme-bg-muted theme-border-primary theme-radius inline-flex items-center justify-center hover:theme-bg-accent transition-colors"
+            style={{ borderWidth: "2px", borderStyle: "solid" }}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
           <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
-              <button className="flex-1 min-w-0 h-9 flex items-center justify-between text-sm font-medium theme-text-foreground bg-transparent theme-font-sans theme-tracking">
+              <button className="flex-1 min-w-0 h-10 flex items-center justify-between text-sm font-semibold theme-text-foreground theme-bg-muted theme-border-primary theme-radius px-3 hover:theme-bg-accent transition-colors theme-font-sans theme-tracking" style={{ borderWidth: "2px", borderStyle: "solid" }}>
                 <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0 theme-font-sans theme-tracking">
                   {themes[selectedTheme]?.name || "Loading..."}
                 </span>
@@ -169,14 +177,15 @@ export const ThemeConfigurationSidebar = ({
                       key={idx}
                       className="theme-radius theme-border-border"
                       style={{
-                        width: "12px",
-                        height: "12px",
+                        width: "14px",
+                        height: "14px",
                         borderRadius: "calc(var(--theme-radius) * 0.5)",
                         borderWidth: "1px",
                         backgroundColor: color,
                       }}
                     />
                   ))}
+                  <ChevronDown className="h-4 w-4 theme-text-muted-foreground ml-1" />
                 </div>
               </button>
             </PopoverTrigger>
@@ -252,22 +261,13 @@ export const ThemeConfigurationSidebar = ({
               </ScrollArea>
             </PopoverContent>
           </Popover>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handlePrevTheme}
-            className="h-8 w-8 md:h-9 md:w-9 p-0 shrink-0"
-          >
-            <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={handleNextTheme}
-            className="h-8 w-8 md:h-9 md:w-9 p-0 shrink-0"
+            className="h-10 w-10 p-0 shrink-0 theme-bg-muted theme-border-primary theme-radius inline-flex items-center justify-center hover:theme-bg-accent transition-colors"
+            style={{ borderWidth: "2px", borderStyle: "solid" }}
           >
-            <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
-          </Button>
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
       </div>
 
@@ -293,7 +293,7 @@ export const ThemeConfigurationSidebar = ({
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 theme-p-4 md:theme-p-6">
         <div className="theme-p-2 md:theme-p-4">
           {activeTab === "colors" && (
             <div className="flex flex-col theme-gap-4">

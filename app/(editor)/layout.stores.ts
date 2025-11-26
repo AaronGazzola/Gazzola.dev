@@ -318,6 +318,8 @@ const createInitialState = (data: MarkdownData) => ({
   },
   testSuites: [],
   isResetting: false,
+  readmeGenerated: false,
+  helpPopoverOpened: false,
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -1289,6 +1291,7 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         return state.features[fileId] || [];
       },
+      setFeatures: (features) => set({ features }),
       linkFeatureFile: (fileId, featureId, fileType, filePath) => {
         set((state) => {
           const features = state.features[fileId] || [];
@@ -1495,6 +1498,8 @@ export const useEditorStore = create<EditorState>()(
           return { testSuites: newSuites };
         });
       },
+      setReadmeGenerated: (generated: boolean) => set({ readmeGenerated: generated }),
+      setHelpPopoverOpened: (opened: boolean) => set({ helpPopoverOpened: opened }),
     }),
     {
       name: "editor-storage",
@@ -1516,6 +1521,8 @@ export const useEditorStore = create<EditorState>()(
         features: state.features,
         featureFileSelection: state.featureFileSelection,
         testSuites: state.testSuites,
+        readmeGenerated: state.readmeGenerated,
+        helpPopoverOpened: state.helpPopoverOpened,
       }),
       migrate: (persistedState: any, version: number) => {
         let state = persistedState;

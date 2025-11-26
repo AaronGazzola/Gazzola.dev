@@ -15,6 +15,12 @@ import {
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/editor/ui/tooltip";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { getBrowserAPI } from "@/lib/env.utils";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
@@ -89,6 +95,7 @@ type AppStructureTemplate = {
   id: string;
   name: string;
   structure: FileSystemEntry[];
+  features?: Record<string, Feature[]>;
 };
 
 const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
@@ -104,9 +111,26 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
         children: [
           { id: "layout-blank", name: "layout.tsx", type: "file" },
           { id: "page-blank", name: "page.tsx", type: "file" },
+          { id: "page-blank-stores", name: "page.stores.ts", type: "file" },
+          { id: "page-blank-hooks", name: "page.hooks.tsx", type: "file" },
         ],
       },
     ],
+    features: {
+      "page-blank": [
+        {
+          id: "home-feature",
+          title: "Home Page",
+          description: "Main landing page content and hero section",
+          linkedFiles: {
+            stores: "/app/page.stores.ts",
+            hooks: "/app/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+    },
   },
   {
     id: "auth",
@@ -133,6 +157,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
                 isExpanded: true,
                 children: [
                   { id: "login-page", name: "page.tsx", type: "file" },
+                  { id: "login-stores", name: "page.stores.ts", type: "file" },
+                  { id: "login-hooks", name: "page.hooks.tsx", type: "file" },
                 ],
               },
               {
@@ -142,6 +168,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
                 isExpanded: true,
                 children: [
                   { id: "register-page", name: "page.tsx", type: "file" },
+                  { id: "register-stores", name: "page.stores.ts", type: "file" },
+                  { id: "register-hooks", name: "page.hooks.tsx", type: "file" },
                 ],
               },
             ],
@@ -154,6 +182,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
             children: [
               { id: "dashboard-layout", name: "layout.tsx", type: "file" },
               { id: "dashboard-page", name: "page.tsx", type: "file" },
+              { id: "dashboard-stores", name: "page.stores.ts", type: "file" },
+              { id: "dashboard-hooks", name: "page.hooks.tsx", type: "file" },
               {
                 id: "settings-dir",
                 name: "settings",
@@ -161,6 +191,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
                 isExpanded: true,
                 children: [
                   { id: "settings-page", name: "page.tsx", type: "file" },
+                  { id: "settings-stores", name: "page.stores.ts", type: "file" },
+                  { id: "settings-hooks", name: "page.hooks.tsx", type: "file" },
                 ],
               },
             ],
@@ -168,6 +200,60 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
         ],
       },
     ],
+    features: {
+      "login-page": [
+        {
+          id: "login-feature",
+          title: "Login Form",
+          description: "User authentication form with email and password",
+          linkedFiles: {
+            stores: "/app/(auth)/login/page.stores.ts",
+            hooks: "/app/(auth)/login/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "register-page": [
+        {
+          id: "register-feature",
+          title: "Registration Form",
+          description: "New user account creation form",
+          linkedFiles: {
+            stores: "/app/(auth)/register/page.stores.ts",
+            hooks: "/app/(auth)/register/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "dashboard-page": [
+        {
+          id: "dashboard-feature",
+          title: "Dashboard Overview",
+          description: "Main dashboard view with user data summary",
+          linkedFiles: {
+            stores: "/app/(dashboard)/page.stores.ts",
+            hooks: "/app/(dashboard)/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "settings-page": [
+        {
+          id: "settings-feature",
+          title: "User Settings",
+          description: "Account settings and preferences management",
+          linkedFiles: {
+            stores: "/app/(dashboard)/settings/page.stores.ts",
+            hooks: "/app/(dashboard)/settings/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+    },
   },
   {
     id: "nested",
@@ -181,6 +267,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
         children: [
           { id: "layout-nested", name: "layout.tsx", type: "file" },
           { id: "page-nested", name: "page.tsx", type: "file" },
+          { id: "page-nested-stores", name: "page.stores.ts", type: "file" },
+          { id: "page-nested-hooks", name: "page.hooks.tsx", type: "file" },
           {
             id: "products-dir",
             name: "products",
@@ -189,6 +277,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
             children: [
               { id: "products-layout", name: "layout.tsx", type: "file" },
               { id: "products-page", name: "page.tsx", type: "file" },
+              { id: "products-stores", name: "page.stores.ts", type: "file" },
+              { id: "products-hooks", name: "page.hooks.tsx", type: "file" },
               {
                 id: "category-dir",
                 name: "[category]",
@@ -197,6 +287,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
                 children: [
                   { id: "category-layout", name: "layout.tsx", type: "file" },
                   { id: "category-page", name: "page.tsx", type: "file" },
+                  { id: "category-stores", name: "page.stores.ts", type: "file" },
+                  { id: "category-hooks", name: "page.hooks.tsx", type: "file" },
                   {
                     id: "product-dir",
                     name: "[id]",
@@ -204,6 +296,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
                     isExpanded: true,
                     children: [
                       { id: "product-page", name: "page.tsx", type: "file" },
+                      { id: "product-stores", name: "page.stores.ts", type: "file" },
+                      { id: "product-hooks", name: "page.hooks.tsx", type: "file" },
                     ],
                   },
                 ],
@@ -213,6 +307,60 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
         ],
       },
     ],
+    features: {
+      "page-nested": [
+        {
+          id: "home-nested-feature",
+          title: "Home Page",
+          description: "Main landing page with navigation to products",
+          linkedFiles: {
+            stores: "/app/page.stores.ts",
+            hooks: "/app/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "products-page": [
+        {
+          id: "products-feature",
+          title: "Product List",
+          description: "Grid display of product catalog",
+          linkedFiles: {
+            stores: "/app/products/page.stores.ts",
+            hooks: "/app/products/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "category-page": [
+        {
+          id: "category-feature",
+          title: "Category View",
+          description: "Filtered products by category",
+          linkedFiles: {
+            stores: "/app/products/[category]/page.stores.ts",
+            hooks: "/app/products/[category]/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "product-page": [
+        {
+          id: "product-feature",
+          title: "Product Details",
+          description: "Individual product information and actions",
+          linkedFiles: {
+            stores: "/app/products/[category]/[id]/page.stores.ts",
+            hooks: "/app/products/[category]/[id]/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+    },
   },
   {
     id: "blog",
@@ -226,6 +374,8 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
         children: [
           { id: "layout-blog", name: "layout.tsx", type: "file" },
           { id: "page-blog", name: "page.tsx", type: "file" },
+          { id: "page-blog-stores", name: "page.stores.ts", type: "file" },
+          { id: "page-blog-hooks", name: "page.hooks.tsx", type: "file" },
           {
             id: "blog-dir",
             name: "blog",
@@ -234,12 +384,18 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
             children: [
               { id: "blog-layout", name: "layout.tsx", type: "file" },
               { id: "blog-page", name: "page.tsx", type: "file" },
+              { id: "blog-stores", name: "page.stores.ts", type: "file" },
+              { id: "blog-hooks", name: "page.hooks.tsx", type: "file" },
               {
                 id: "slug-dir",
                 name: "[slug]",
                 type: "directory",
                 isExpanded: true,
-                children: [{ id: "slug-page", name: "page.tsx", type: "file" }],
+                children: [
+                  { id: "slug-page", name: "page.tsx", type: "file" },
+                  { id: "slug-stores", name: "page.stores.ts", type: "file" },
+                  { id: "slug-hooks", name: "page.hooks.tsx", type: "file" },
+                ],
               },
             ],
           },
@@ -248,18 +404,93 @@ const APP_STRUCTURE_TEMPLATES: AppStructureTemplate[] = [
             name: "about",
             type: "directory",
             isExpanded: true,
-            children: [{ id: "about-page", name: "page.tsx", type: "file" }],
+            children: [
+              { id: "about-page", name: "page.tsx", type: "file" },
+              { id: "about-stores", name: "page.stores.ts", type: "file" },
+              { id: "about-hooks", name: "page.hooks.tsx", type: "file" },
+            ],
           },
           {
             id: "contact-dir",
             name: "contact",
             type: "directory",
             isExpanded: true,
-            children: [{ id: "contact-page", name: "page.tsx", type: "file" }],
+            children: [
+              { id: "contact-page", name: "page.tsx", type: "file" },
+              { id: "contact-stores", name: "page.stores.ts", type: "file" },
+              { id: "contact-hooks", name: "page.hooks.tsx", type: "file" },
+            ],
           },
         ],
       },
     ],
+    features: {
+      "page-blog": [
+        {
+          id: "blog-home-feature",
+          title: "Blog Home",
+          description: "Featured posts and recent articles",
+          linkedFiles: {
+            stores: "/app/page.stores.ts",
+            hooks: "/app/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "blog-page": [
+        {
+          id: "post-list-feature",
+          title: "Post List",
+          description: "Paginated blog post listing",
+          linkedFiles: {
+            stores: "/app/blog/page.stores.ts",
+            hooks: "/app/blog/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "slug-page": [
+        {
+          id: "post-content-feature",
+          title: "Post Content",
+          description: "Full blog post with comments",
+          linkedFiles: {
+            stores: "/app/blog/[slug]/page.stores.ts",
+            hooks: "/app/blog/[slug]/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "about-page": [
+        {
+          id: "about-feature",
+          title: "About Section",
+          description: "Company/author information",
+          linkedFiles: {
+            stores: "/app/about/page.stores.ts",
+            hooks: "/app/about/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+      "contact-page": [
+        {
+          id: "contact-feature",
+          title: "Contact Form",
+          description: "Contact form submission",
+          linkedFiles: {
+            stores: "/app/contact/page.stores.ts",
+            hooks: "/app/contact/page.hooks.tsx",
+          },
+          functionNames: {},
+          isEditing: false,
+        },
+      ],
+    },
   },
 ];
 
@@ -768,18 +999,29 @@ const InlineFeatureCard = ({
   return (
     <div className="theme-bg-muted/50 theme-radius theme-p-2 theme-border-border border">
       {isCollapsed ? (
-        <div
-          className="flex items-center justify-between theme-gap-2 cursor-pointer hover:theme-bg-accent/50 transition-colors theme-radius theme-p-1 -theme-m-1"
-          onClick={onToggleCollapse}
-        >
-          <div className="text-xs font-medium theme-text-foreground truncate">
-            {feature.title || "Untitled"}
-          </div>
-          <ChevronDown className="h-3 w-3 flex-shrink-0" />
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                className="flex items-center justify-between theme-gap-2 cursor-pointer hover:theme-bg-accent/50 transition-colors theme-radius theme-p-1 -theme-m-1"
+                onClick={onToggleCollapse}
+              >
+                <div className="text-base font-semibold theme-text-foreground truncate">
+                  {feature.title || "Untitled"}
+                </div>
+                <ChevronDown className="h-3 w-3 flex-shrink-0" />
+              </div>
+            </TooltipTrigger>
+            {feature.description && (
+              <TooltipContent side="top" className="max-w-xs">
+                <p className="text-base font-semibold">{feature.description}</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       ) : (
         <>
-          <div className="flex items-start justify-between theme-gap-2 theme-mb-2">
+          <div className="flex items-start justify-between theme-gap-2 theme-mb-1">
             <Input
               ref={titleInputRef}
               value={feature.title}
@@ -787,7 +1029,7 @@ const InlineFeatureCard = ({
                 updateFeature(fileId, feature.id, { title: e.target.value })
               }
               onKeyDown={handleKeyDown}
-              className="h-6 text-xs font-medium theme-shadow flex-1"
+              className="h-6 text-base font-semibold theme-shadow flex-1"
               placeholder="Feature title"
             />
             <div className="flex items-center theme-gap-1">
@@ -809,7 +1051,7 @@ const InlineFeatureCard = ({
                   align="end"
                 >
                   <div className="flex flex-col theme-gap-2">
-                    <p className="text-xs theme-text-foreground">
+                    <p className="text-base font-semibold theme-text-foreground">
                       Delete {feature.title}?
                     </p>
                     <div className="flex theme-gap-1">
@@ -850,6 +1092,16 @@ const InlineFeatureCard = ({
             </div>
           </div>
 
+          <Textarea
+            value={feature.description}
+            onChange={(e) =>
+              updateFeature(fileId, feature.id, { description: e.target.value })
+            }
+            className="text-xs theme-shadow min-h-[40px] resize-none theme-mb-2"
+            placeholder="Feature description"
+            rows={2}
+          />
+
           <div className="flex flex-col theme-gap-2">
             {fileTypes.map((fileType) => {
               const linkedFile = feature.linkedFiles[fileType];
@@ -882,7 +1134,7 @@ const InlineFeatureCard = ({
                       }
                     }}
                   >
-                    <span className="text-xs font-medium theme-text-foreground">
+                    <span className="text-base font-semibold theme-text-foreground">
                       {getUtilLabel(fileType)}
                     </span>
                     <div className="flex items-center theme-gap-1">
@@ -922,7 +1174,7 @@ const InlineFeatureCard = ({
                           </div>
                         ) : (
                           <div
-                            className="text-xs theme-text-muted-foreground theme-px-2 theme-py-1 theme-bg-muted/50 theme-radius cursor-pointer hover:theme-bg-accent/50 transition-colors border border-dashed theme-border-muted-foreground/30 flex-1"
+                            className="text-base font-semibold theme-text-muted-foreground theme-px-2 theme-py-1 theme-bg-muted/50 theme-radius cursor-pointer hover:theme-bg-accent/50 transition-colors border border-dashed theme-border-muted-foreground/30 flex-1"
                             onClick={(e) => {
                               e.stopPropagation();
                               handlePlaceholderClick(fileType);
@@ -1022,11 +1274,11 @@ const FeatureCard = ({
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <div className="flex items-center theme-gap-2 theme-mb-1">
-                <span className="text-sm font-medium theme-text-foreground">
+                <span className="text-base font-semibold theme-text-foreground">
                   {feature.title}
                 </span>
               </div>
-              <div className="text-xs theme-text-muted-foreground theme-truncate">
+              <div className="text-base font-semibold theme-text-muted-foreground theme-truncate">
                 {feature.description}
               </div>
             </div>
@@ -1050,7 +1302,7 @@ const FeatureCard = ({
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex flex-col theme-gap-2">
-                  <p className="text-sm theme-text-foreground">
+                  <p className="text-base font-semibold theme-text-foreground">
                     Delete feature {feature.title}?
                   </p>
                   <div className="flex theme-gap-2">
@@ -1092,7 +1344,7 @@ const FeatureCard = ({
                 )}
                 onClick={() => handlePlaceholderClick(fileType)}
               >
-                <div className="text-xs theme-font-mono theme-text-muted-foreground capitalize theme-mb-1">
+                <div className="text-base font-semibold theme-font-mono theme-text-muted-foreground capitalize theme-mb-1">
                   {fileType}
                 </div>
                 {linkedFile ? (
@@ -1110,7 +1362,7 @@ const FeatureCard = ({
                     </Button>
                   </div>
                 ) : (
-                  <div className="text-xs theme-text-muted-foreground/50">
+                  <div className="text-base font-semibold theme-text-muted-foreground/50">
                     Click to select
                   </div>
                 )}
@@ -1131,7 +1383,7 @@ const FeatureCard = ({
             updateFeature(fileId, feature.id, { title: e.target.value })
           }
           onKeyDown={handleKeyDown}
-          className="h-7 text-sm font-medium theme-shadow"
+          className="h-7 text-base font-semibold theme-shadow"
           placeholder="Feature title"
         />
         <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
@@ -1142,7 +1394,7 @@ const FeatureCard = ({
           </PopoverTrigger>
           <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
             <div className="flex flex-col theme-gap-2">
-              <p className="text-sm theme-text-foreground">
+              <p className="text-base font-semibold theme-text-foreground">
                 Delete feature {feature.title}?
               </p>
               <div className="flex theme-gap-2">
@@ -1171,7 +1423,7 @@ const FeatureCard = ({
 
       <div className="flex flex-col theme-gap-2">
         <div>
-          <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+          <label className="text-base font-semibold theme-text-muted-foreground theme-mb-1 block">
             Description
           </label>
           <Textarea
@@ -1200,7 +1452,7 @@ const FeatureCard = ({
               )}
               onClick={() => handlePlaceholderClick(fileType)}
             >
-              <div className="text-xs theme-font-mono theme-text-muted-foreground capitalize theme-mb-1">
+              <div className="text-base font-semibold theme-font-mono theme-text-muted-foreground capitalize theme-mb-1">
                 {fileType}
               </div>
               {linkedFile ? (
@@ -1218,7 +1470,7 @@ const FeatureCard = ({
                   </Button>
                 </div>
               ) : (
-                <div className="text-xs theme-text-muted-foreground/50">
+                <div className="text-base font-semibold theme-text-muted-foreground/50">
                   Click to select
                 </div>
               )}
@@ -3114,7 +3366,7 @@ const TreeNode = ({
 
       {isClickableFile && isExpanded && (
         <div className="theme-mt-1 theme-p-2 theme-bg-background theme-radius animate-in slide-in-from-top-2">
-          <div className="text-sm font-medium theme-text-muted-foreground theme-mb-2">
+          <div className="text-base font-semibold theme-text-muted-foreground theme-mb-2">
             Features
           </div>
           <div className="flex flex-col theme-gap-2">
@@ -3135,7 +3387,7 @@ const TreeNode = ({
                 />
               ))
             ) : (
-              <div className="text-xs theme-text-muted-foreground text-center theme-py-2">
+              <div className="text-base font-semibold theme-text-muted-foreground text-center theme-py-2">
                 No features yet
               </div>
             )}
@@ -3195,6 +3447,7 @@ export const LayoutAndStructure = () => {
     deleteAppStructureNode,
     addAppStructureNode,
     setAppStructure,
+    setFeatures,
     featureFileSelection,
     selectedFilePath,
   } = useEditorStore();
@@ -3222,6 +3475,9 @@ export const LayoutAndStructure = () => {
     const template = APP_STRUCTURE_TEMPLATES.find((t) => t.id === templateId);
     if (template) {
       setAppStructure(template.structure);
+      if (template.features) {
+        setFeatures(template.features);
+      }
     }
     setTemplatePopoverOpen(false);
   };
@@ -3343,7 +3599,7 @@ export const LayoutAndStructure = () => {
                 align="end"
               >
                 <div className="flex flex-col theme-gap-1">
-                  <div className="theme-px-2 theme-py-1 text-xs font-semibold theme-text-muted-foreground">
+                  <div className="theme-px-2 theme-py-1 text-base font-semibold theme-text-muted-foreground">
                     Templates
                   </div>
                   {APP_STRUCTURE_TEMPLATES.map((template) => (
@@ -3385,7 +3641,7 @@ export const LayoutAndStructure = () => {
             ))}
 
             {appStructure.length === 0 && (
-              <div className="text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
+              <div className="text-base font-semibold text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
                 Select a template above to start building your app structure
               </div>
             )}
@@ -3490,7 +3746,7 @@ export const WireFrame = () => {
   const renderNestedBoxes = () => {
     if (!currentPage) {
       return (
-        <div className="text-center theme-py-8 text-[hsl(var(--muted-foreground))]">
+        <div className="text-base font-semibold text-center theme-py-8 text-[hsl(var(--muted-foreground))]">
           No pages available
         </div>
       );
@@ -3791,7 +4047,7 @@ export const AppStructure = () => {
           ))}
 
         {appStructure.length === 0 && (
-          <div className="text-center theme-py-8 text-[hsl(var(--muted-foreground))]">
+          <div className="text-base font-semibold text-center theme-py-8 text-[hsl(var(--muted-foreground))]">
             Click the buttons above to start building your app structure
           </div>
         )}

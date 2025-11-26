@@ -96,7 +96,7 @@ export const IDESelection = () => {
   }
 
   return (
-    <div className="w-full theme-my-8 theme-font-sans theme-tracking">
+    <div className="w-full max-w-3xl mx-auto theme-my-8 theme-font-sans theme-tracking">
       <div className="grid grid-cols-1 theme-gap-3">
         {IDE_OPTIONS.map((ide) => {
           const isSelected = selectedIDE === ide.id;
@@ -120,14 +120,7 @@ export const IDESelection = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center theme-gap-2 flex-1">
                   <div className="flex items-center theme-gap-4">
                     <LogoComponent className="w-8 h-8 flex-shrink-0 theme-text-foreground" />
-                    <h4
-                      className={cn(
-                        "text-lg font-semibold theme-font-sans theme-tracking",
-                        isSelected
-                          ? "theme-text-primary"
-                          : "theme-text-foreground"
-                      )}
-                    >
+                    <h4 className="text-lg font-semibold theme-font-sans theme-tracking theme-text-foreground">
                       {ide.name}
                     </h4>
                   </div>
@@ -137,14 +130,7 @@ export const IDESelection = () => {
                       <>
                         <Plus className="w-4 h-4 theme-text-muted-foreground" />
                         <VSCodeLogo className="w-8 h-8 flex-shrink-0 theme-text-muted-foreground" />
-                        <h4
-                          className={cn(
-                            "hidden xs:block text-lg font-semibold theme-font-sans theme-tracking",
-                            isSelected
-                              ? "theme-text-primary"
-                              : "theme-text-foreground"
-                          )}
-                        >
+                        <h4 className="hidden xs:block text-lg font-semibold theme-font-sans theme-tracking theme-text-foreground">
                           VS Code
                         </h4>
                       </>
@@ -156,14 +142,12 @@ export const IDESelection = () => {
 
                 <div
                   className={cn(
-                    "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0",
-                    isSelected
-                      ? "theme-border-primary theme-bg-primary"
-                      : "theme-border-muted-foreground"
+                    "w-5 h-5 rounded-full theme-border-primary flex items-center justify-center flex-shrink-0",
+                    isSelected ? "border-2" : "border"
                   )}
                 >
                   {isSelected && (
-                    <div className="w-2 h-2 rounded-full theme-bg-primary-foreground" />
+                    <div className="w-2.5 h-2.5 rounded-full theme-bg-primary" />
                   )}
                 </div>
               </div>

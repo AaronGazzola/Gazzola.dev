@@ -63,8 +63,10 @@ const Header = () => {
   const pauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    useHeaderStore.persist.rehydrate();
-  }, []);
+    if (dialogOpen) {
+      setIsExpanded(true);
+    }
+  }, [dialogOpen, setIsExpanded]);
 
   useHeaderCollapseOnScroll();
 

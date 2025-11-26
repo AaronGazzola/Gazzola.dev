@@ -21,6 +21,7 @@
     "docs:generate": "npx tsx scripts/generate-config-docs.ts"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^5.0.1",
     "@hookform/resolvers": "^5.1.1",
     "@lexical/code": "^0.34.0",
     "@lexical/link": "^0.34.0",

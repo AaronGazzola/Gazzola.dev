@@ -16,6 +16,7 @@ export enum LOG_LABELS {
   APP_STRUCTURE = "app-structure",
   PROGRESS = "progress",
   PROGRESS_DEBUG = "progress-debug",
+  OPENROUTER = "openrouter",
 }
 
 interface ConditionalLogOptions {

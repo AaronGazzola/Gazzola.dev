@@ -3,7 +3,6 @@ export type RelationType = "one-to-many" | "many-to-one" | "one-to-one";
 export interface PrismaEnum {
   id: string;
   name: string;
-  schema: string;
   values: PrismaEnumValue[];
   isDefault: boolean;
   isEditable: boolean;
@@ -96,13 +95,13 @@ export interface DatabaseConfigurationState {
   getAvailableSchemas: () => string[];
   getAvailableSchemasWithConfig: (config: import("@/app/(editor)/layout.types").InitialConfigurationType) => string[];
 
-  addEnum: (name: string, schema: string) => string;
+  addEnum: (name: string) => string;
   deleteEnum: (enumId: string) => void;
   updateEnumName: (enumId: string, name: string) => void;
   addEnumValue: (enumId: string, value: string) => void;
   deleteEnumValue: (enumId: string, valueId: string) => void;
   updateEnumValue: (enumId: string, valueId: string, value: string) => void;
-  getEnumsBySchema: (schema: string) => PrismaEnum[];
+  getAllEnums: () => PrismaEnum[];
 
   addColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
   deleteColumn: (tableId: string, columnId: string) => void;

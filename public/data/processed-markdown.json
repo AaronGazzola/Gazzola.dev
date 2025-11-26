@@ -9,11 +9,36 @@
     "include": true,
     "children": [
       {
+        "id": "readme",
+        "name": "readme",
+        "displayName": "README",
+        "type": "file",
+        "order": 1,
+        "path": "readme",
+        "urlPath": "/readme",
+        "content": "# README\n\n<!-- component-READMEComponent -->\n",
+        "components": [
+          {
+            "id": "component-READMEComponent",
+            "name": "READMEComponent",
+            "displayName": "READMEComponent",
+            "type": "component",
+            "path": "readme.component.READMEComponent",
+            "urlPath": "",
+            "componentId": "READMEComponent",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true,
+        "isDynamicRobotsFile": false
+      },
+      {
         "id": "ai-integration",
         "name": "ai-integration",
         "displayName": "AI Integration",
         "type": "file",
-        "order": 1,
+        "order": 2,
         "path": "ai-integration",
         "urlPath": "/ai-integration",
         "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
@@ -53,7 +78,7 @@
         "name": "theme",
         "displayName": "Theme",
         "type": "file",
-        "order": 2,
+        "order": 3,
         "path": "theme",
         "urlPath": "/theme",
         "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
@@ -78,7 +103,7 @@
         "name": "database",
         "displayName": "Database",
         "type": "file",
-        "order": 3,
+        "order": 4,
         "path": "database",
         "urlPath": "/database",
         "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
@@ -103,7 +128,7 @@
         "name": "app-structure",
         "displayName": "App Structure",
         "type": "file",
-        "order": 4,
+        "order": 5,
         "path": "app-structure",
         "urlPath": "/app-structure",
         "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
@@ -121,36 +146,8 @@
         ],
         "sections": {},
         "include": true,
-        "isDynamicRobotsFile": false
-      },
-      {
-        "id": "readme",
-        "name": "readme",
-        "displayName": "README",
-        "type": "file",
-        "order": 5,
-        "path": "readme",
-        "urlPath": "/readme",
-        "content": "# README\n\n## Project Roadmap Overview\n\nThis roadmap directory contains all the configuration and setup files needed to build your web application. The files have been customized based on your technology selections and will help your AI assistant understand the architecture and implementation patterns for your project.\n\n## Generated Files\n\nCopy the files below to their relevant locations to initialize the web app with the reqquired configuration\n\n<!-- section-1 -->\n",
-        "components": [],
-        "sections": {
-          "section1": {
-            "option1": {
-              "content": "### Base Project Files\n\nEssential files included in every project setup:\n\n- `globals.css` - Global application styles and Tailwind directives\n- `components/ui/*` - Shadcn component library for building interfaces\n- `lib/log.utils.ts` - Logging utility functions for development and debugging",
-              "include": true
-            },
-            "option2": {
-              "content": "### Prisma Database Integration\n\nFiles for Prisma ORM and database management:\n\n- `prisma/schema.prisma` - Database schema definition and model configuration\n- `prisma/migrations/` - Database migration history\n- `lib/prisma.ts` - Prisma client instance and configuration\n- `prisma/.env.local` - Database connection string for local development\n\n**Setup:**\n\n```bash\nnpm install @prisma/client\nnpm install -D prisma\n```",
-              "include": true
-            },
-            "option3": {
-              "content": "### Supabase Integration\n\nFiles for Supabase client and database configuration:\n\n- `lib/supabase.ts` - Supabase client initialization\n- `integrations/supabase/types.ts` - Auto-generated TypeScript types\n- `integrations/supabase/client.ts` - Supabase browser client\n- `.env.local` - Supabase API keys and project URL\n\n**Setup:**\n\n```bash\nnpm install @supabase/supabase-js\n```",
-              "include": true
-            }
-          }
-        },
-        "include": true,
-        "isDynamicRobotsFile": false
+        "isDynamicRobotsFile": false,
+        "visibleAfterPage": "readme"
       },
       {
         "id": "robots",
@@ -205,13 +202,13 @@
         "visibleAfterPage": "readme"
       },
       {
-        "id": "deployment-instructions",
-        "name": "deployment-instructions",
-        "displayName": "Deployment instructions",
+        "id": "deployment",
+        "name": "deployment",
+        "displayName": "Deployment",
         "type": "file",
         "order": 7,
-        "path": "deployment-instructions",
-        "urlPath": "/deployment-instructions",
+        "path": "deployment",
+        "urlPath": "/deployment",
         "content": "# Deployment Instructions\n\nThis guide provides step-by-step instructions for deploying your application based on your selected technology stack.\n\n## Platform Setup\n\n<!-- section-1 -->\n\n## Database Deployment\n\n<!-- section-2 -->\n\n## Environment Variables\n\n<!-- section-3 -->\n\n## Authentication Setup\n\n<!-- section-4 -->\n\n## Post-Deployment Tasks\n\n<!-- section-5 -->\n",
         "components": [],
         "sections": {
@@ -448,11 +445,36 @@
       "include": true,
       "children": [
         {
+          "id": "readme",
+          "name": "readme",
+          "displayName": "README",
+          "type": "file",
+          "order": 1,
+          "path": "readme",
+          "urlPath": "/readme",
+          "content": "# README\n\n<!-- component-READMEComponent -->\n",
+          "components": [
+            {
+              "id": "component-READMEComponent",
+              "name": "READMEComponent",
+              "displayName": "READMEComponent",
+              "type": "component",
+              "path": "readme.component.READMEComponent",
+              "urlPath": "",
+              "componentId": "READMEComponent",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true,
+          "isDynamicRobotsFile": false
+        },
+        {
           "id": "ai-integration",
           "name": "ai-integration",
           "displayName": "AI Integration",
           "type": "file",
-          "order": 1,
+          "order": 2,
           "path": "ai-integration",
           "urlPath": "/ai-integration",
           "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
@@ -492,7 +514,7 @@
           "name": "theme",
           "displayName": "Theme",
           "type": "file",
-          "order": 2,
+          "order": 3,
           "path": "theme",
           "urlPath": "/theme",
           "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
@@ -517,7 +539,7 @@
           "name": "database",
           "displayName": "Database",
           "type": "file",
-          "order": 3,
+          "order": 4,
           "path": "database",
           "urlPath": "/database",
           "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
@@ -542,7 +564,7 @@
           "name": "app-structure",
           "displayName": "App Structure",
           "type": "file",
-          "order": 4,
+          "order": 5,
           "path": "app-structure",
           "urlPath": "/app-structure",
           "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
@@ -560,36 +582,8 @@
           ],
           "sections": {},
           "include": true,
-          "isDynamicRobotsFile": false
-        },
-        {
-          "id": "readme",
-          "name": "readme",
-          "displayName": "README",
-          "type": "file",
-          "order": 5,
-          "path": "readme",
-          "urlPath": "/readme",
-          "content": "# README\n\n## Project Roadmap Overview\n\nThis roadmap directory contains all the configuration and setup files needed to build your web application. The files have been customized based on your technology selections and will help your AI assistant understand the architecture and implementation patterns for your project.\n\n## Generated Files\n\nCopy the files below to their relevant locations to initialize the web app with the reqquired configuration\n\n<!-- section-1 -->\n",
-          "components": [],
-          "sections": {
-            "section1": {
-              "option1": {
-                "content": "### Base Project Files\n\nEssential files included in every project setup:\n\n- `globals.css` - Global application styles and Tailwind directives\n- `components/ui/*` - Shadcn component library for building interfaces\n- `lib/log.utils.ts` - Logging utility functions for development and debugging",
-                "include": true
-              },
-              "option2": {
-                "content": "### Prisma Database Integration\n\nFiles for Prisma ORM and database management:\n\n- `prisma/schema.prisma` - Database schema definition and model configuration\n- `prisma/migrations/` - Database migration history\n- `lib/prisma.ts` - Prisma client instance and configuration\n- `prisma/.env.local` - Database connection string for local development\n\n**Setup:**\n\n```bash\nnpm install @prisma/client\nnpm install -D prisma\n```",
-                "include": true
-              },
-              "option3": {
-                "content": "### Supabase Integration\n\nFiles for Supabase client and database configuration:\n\n- `lib/supabase.ts` - Supabase client initialization\n- `integrations/supabase/types.ts` - Auto-generated TypeScript types\n- `integrations/supabase/client.ts` - Supabase browser client\n- `.env.local` - Supabase API keys and project URL\n\n**Setup:**\n\n```bash\nnpm install @supabase/supabase-js\n```",
-                "include": true
-              }
-            }
-          },
-          "include": true,
-          "isDynamicRobotsFile": false
+          "isDynamicRobotsFile": false,
+          "visibleAfterPage": "readme"
         },
         {
           "id": "robots",
@@ -644,13 +638,13 @@
           "visibleAfterPage": "readme"
         },
         {
-          "id": "deployment-instructions",
-          "name": "deployment-instructions",
-          "displayName": "Deployment instructions",
+          "id": "deployment",
+          "name": "deployment",
+          "displayName": "Deployment",
           "type": "file",
           "order": 7,
-          "path": "deployment-instructions",
-          "urlPath": "/deployment-instructions",
+          "path": "deployment",
+          "urlPath": "/deployment",
           "content": "# Deployment Instructions\n\nThis guide provides step-by-step instructions for deploying your application based on your selected technology stack.\n\n## Platform Setup\n\n<!-- section-1 -->\n\n## Database Deployment\n\n<!-- section-2 -->\n\n## Environment Variables\n\n<!-- section-3 -->\n\n## Authentication Setup\n\n<!-- section-4 -->\n\n## Post-Deployment Tasks\n\n<!-- section-5 -->\n",
           "components": [],
           "sections": {
@@ -876,12 +870,47 @@
         }
       ]
     },
+    "readme": {
+      "id": "readme",
+      "name": "readme",
+      "displayName": "README",
+      "type": "file",
+      "order": 1,
+      "path": "readme",
+      "urlPath": "/readme",
+      "content": "# README\n\n<!-- component-READMEComponent -->\n",
+      "components": [
+        {
+          "id": "component-READMEComponent",
+          "name": "READMEComponent",
+          "displayName": "READMEComponent",
+          "type": "component",
+          "path": "readme.component.READMEComponent",
+          "urlPath": "",
+          "componentId": "READMEComponent",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true,
+      "isDynamicRobotsFile": false
+    },
+    "readme.component.READMEComponent": {
+      "id": "component-READMEComponent",
+      "name": "READMEComponent",
+      "displayName": "READMEComponent",
+      "type": "component",
+      "path": "readme.component.READMEComponent",
+      "urlPath": "",
+      "componentId": "READMEComponent",
+      "include": true
+    },
     "ai-integration": {
       "id": "ai-integration",
       "name": "ai-integration",
       "displayName": "AI Integration",
       "type": "file",
-      "order": 1,
+      "order": 2,
       "path": "ai-integration",
       "urlPath": "/ai-integration",
       "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
@@ -931,7 +960,7 @@
       "name": "theme",
       "displayName": "Theme",
       "type": "file",
-      "order": 2,
+      "order": 3,
       "path": "theme",
       "urlPath": "/theme",
       "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
@@ -966,7 +995,7 @@
       "name": "database",
       "displayName": "Database",
       "type": "file",
-      "order": 3,
+      "order": 4,
       "path": "database",
       "urlPath": "/database",
       "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
@@ -1001,7 +1030,7 @@
       "name": "app-structure",
       "displayName": "App Structure",
       "type": "file",
-      "order": 4,
+      "order": 5,
       "path": "app-structure",
       "urlPath": "/app-structure",
       "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
@@ -1019,7 +1048,8 @@
       ],
       "sections": {},
       "include": true,
-      "isDynamicRobotsFile": false
+      "isDynamicRobotsFile": false,
+      "visibleAfterPage": "readme"
     },
     "app-structure.component.LayoutAndStructure": {
       "id": "component-LayoutAndStructure",
@@ -1030,35 +1060,6 @@
       "urlPath": "",
       "componentId": "LayoutAndStructure",
       "include": true
-    },
-    "readme": {
-      "id": "readme",
-      "name": "readme",
-      "displayName": "README",
-      "type": "file",
-      "order": 5,
-      "path": "readme",
-      "urlPath": "/readme",
-      "content": "# README\n\n## Project Roadmap Overview\n\nThis roadmap directory contains all the configuration and setup files needed to build your web application. The files have been customized based on your technology selections and will help your AI assistant understand the architecture and implementation patterns for your project.\n\n## Generated Files\n\nCopy the files below to their relevant locations to initialize the web app with the reqquired configuration\n\n<!-- section-1 -->\n",
-      "components": [],
-      "sections": {
-        "section1": {
-          "option1": {
-            "content": "### Base Project Files\n\nEssential files included in every project setup:\n\n- `globals.css` - Global application styles and Tailwind directives\n- `components/ui/*` - Shadcn component library for building interfaces\n- `lib/log.utils.ts` - Logging utility functions for development and debugging",
-            "include": true
-          },
-          "option2": {
-            "content": "### Prisma Database Integration\n\nFiles for Prisma ORM and database management:\n\n- `prisma/schema.prisma` - Database schema definition and model configuration\n- `prisma/migrations/` - Database migration history\n- `lib/prisma.ts` - Prisma client instance and configuration\n- `prisma/.env.local` - Database connection string for local development\n\n**Setup:**\n\n```bash\nnpm install @prisma/client\nnpm install -D prisma\n```",
-            "include": true
-          },
-          "option3": {
-            "content": "### Supabase Integration\n\nFiles for Supabase client and database configuration:\n\n- `lib/supabase.ts` - Supabase client initialization\n- `integrations/supabase/types.ts` - Auto-generated TypeScript types\n- `integrations/supabase/client.ts` - Supabase browser client\n- `.env.local` - Supabase API keys and project URL\n\n**Setup:**\n\n```bash\nnpm install @supabase/supabase-js\n```",
-            "include": true
-          }
-        }
-      },
-      "include": true,
-      "isDynamicRobotsFile": false
     },
     "robots": {
       "id": "robots",
@@ -1112,14 +1113,14 @@
       "isDynamicRobotsFile": true,
       "visibleAfterPage": "readme"
     },
-    "deployment-instructions": {
-      "id": "deployment-instructions",
-      "name": "deployment-instructions",
-      "displayName": "Deployment instructions",
+    "deployment": {
+      "id": "deployment",
+      "name": "deployment",
+      "displayName": "Deployment",
       "type": "file",
       "order": 7,
-      "path": "deployment-instructions",
-      "urlPath": "/deployment-instructions",
+      "path": "deployment",
+      "urlPath": "/deployment",
       "content": "# Deployment Instructions\n\nThis guide provides step-by-step instructions for deploying your application based on your selected technology stack.\n\n## Platform Setup\n\n<!-- section-1 -->\n\n## Database Deployment\n\n<!-- section-2 -->\n\n## Environment Variables\n\n<!-- section-3 -->\n\n## Authentication Setup\n\n<!-- section-4 -->\n\n## Post-Deployment Tasks\n\n<!-- section-5 -->\n",
       "components": [],
       "sections": {
@@ -1344,5 +1345,5 @@
       "children": []
     }
   },
-  "contentVersion": 54
+  "contentVersion": 55
 }

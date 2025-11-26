@@ -4,6 +4,10 @@ import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
+import {
+  Collapsible,
+  CollapsibleContent,
+} from "@/components/editor/ui/collapsible";
 import { Input } from "@/components/editor/ui/input";
 import {
   Popover,
@@ -23,30 +27,42 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/editor/ui/tabs";
-import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
-import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronRight, Database, Ellipsis, Link2, Lock, Plus, Trash2, Shield, Users, Building2, Mail, KeyRound, Smartphone, ShieldCheck, Fingerprint, UserX, Chrome, Github, Apple } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { SiSupabase, SiPrisma, SiPostgresql, SiGoogle } from "react-icons/si";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/editor/ui/collapsible";
-import { Badge } from "@/components/editor/ui/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/editor/ui/tooltip";
+import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
+import { cn } from "@/lib/utils";
+import {
+  Apple,
+  Building2,
+  ChevronDown,
+  ChevronRight,
+  Ellipsis,
+  Fingerprint,
+  Github,
+  KeyRound,
+  Link2,
+  Lock,
+  Mail,
+  Plus,
+  Shield,
+  ShieldCheck,
+  Smartphone,
+  Trash2,
+  Users,
+  UserX,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { SiGoogle, SiPostgresql, SiPrisma, SiSupabase } from "react-icons/si";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import type {
   PRISMA_TYPES,
   PrismaColumn,
   PrismaTable,
 } from "./DatabaseConfiguration.types";
-import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
 
 const BetterAuthIcon = ({ className }: { className?: string }) => (
   <svg
@@ -143,8 +159,8 @@ const ColumnLine = ({
   const [tempName, setTempName] = useState(column.name);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { tables, getEnumsBySchema } = useDatabaseStore();
-  const schemaEnums = getEnumsBySchema(table.schema);
+  const { tables, getAllEnums } = useDatabaseStore();
+  const allEnums = getAllEnums();
 
   useEffect(() => {
     if (isEditingName && inputRef.current) {
@@ -183,11 +199,11 @@ const ColumnLine = ({
             onChange={(e) => setTempName(e.target.value)}
             onBlur={handleNameSubmit}
             onKeyDown={handleKeyDown}
-            className="h-7 theme-px-2 text-sm w-fit theme-shadow theme-font-mono"
+            className="h-7 theme-px-2 text-base w-fit theme-shadow theme-font-mono"
           />
         ) : (
           <span
-            className="text-sm theme-font-mono theme-text-foreground cursor-pointer hover:underline whitespace-nowrap"
+            className="text-base theme-font-mono theme-text-foreground cursor-pointer hover:underline whitespace-nowrap"
             onClick={() => setIsEditingName(true)}
           >
             {column.name}
@@ -204,7 +220,7 @@ const ColumnLine = ({
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 theme-px-2 theme-gap-1 theme-font-mono text-xs whitespace-nowrap"
+            className="h-7 theme-px-2 theme-gap-1 theme-font-mono text-sm whitespace-nowrap"
           >
             {isRelation && <Link2 className="h-3 w-3 theme-text-chart-2" />}
             <span className="theme-text-muted-foreground whitespace-nowrap">
@@ -217,7 +233,7 @@ const ColumnLine = ({
         <PopoverContent className="w-64 theme-p-3 theme-shadow" align="start">
           <div className="flex flex-col theme-gap-3">
             <div>
-              <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+              <label className="text-base font-semibold theme-text-muted-foreground theme-mb-1 block">
                 Type
               </label>
               {isRelation ? (
@@ -266,12 +282,12 @@ const ColumnLine = ({
                         {type}
                       </SelectItem>
                     ))}
-                    {schemaEnums.length > 0 && (
+                    {allEnums.length > 0 && (
                       <>
-                        <div className="theme-px-2 theme-py-1 text-xs theme-text-muted-foreground font-semibold">
+                        <div className="theme-px-2 theme-py-1 text-sm theme-text-muted-foreground font-semibold">
                           Enums
                         </div>
-                        {schemaEnums.map((enumItem) => (
+                        {allEnums.map((enumItem) => (
                           <SelectItem key={enumItem.name} value={enumItem.name}>
                             {enumItem.name}
                           </SelectItem>
@@ -295,7 +311,7 @@ const ColumnLine = ({
               />
               <label
                 htmlFor={`${column.id}-optional`}
-                className="text-xs theme-text-foreground cursor-pointer"
+                className="text-base font-semibold theme-text-foreground cursor-pointer"
               >
                 Optional (?)
               </label>
@@ -311,7 +327,7 @@ const ColumnLine = ({
               />
               <label
                 htmlFor={`${column.id}-array`}
-                className="text-xs theme-text-foreground cursor-pointer"
+                className="text-base font-semibold theme-text-foreground cursor-pointer"
               >
                 Array ([])
               </label>
@@ -325,7 +341,7 @@ const ColumnLine = ({
           {column.attributes.map((attr, i) => (
             <span
               key={i}
-              className="text-xs theme-font-mono theme-text-muted-foreground whitespace-nowrap"
+              className="text-sm theme-font-mono theme-text-muted-foreground whitespace-nowrap"
             >
               {attr}
             </span>
@@ -361,7 +377,7 @@ const ColumnLine = ({
             </Button>
             <div className="flex flex-col theme-gap-3">
               <div>
-                <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                <label className="text-base font-semibold theme-text-muted-foreground theme-mb-1 block">
                   Attributes
                 </label>
                 <div className="flex flex-col theme-gap-2">
@@ -377,7 +393,7 @@ const ColumnLine = ({
                     />
                     <label
                       htmlFor={`${column.id}-id`}
-                      className="text-xs theme-text-foreground cursor-pointer theme-font-mono"
+                      className="text-base font-semibold theme-text-foreground cursor-pointer theme-font-mono"
                     >
                       @id
                     </label>
@@ -395,7 +411,7 @@ const ColumnLine = ({
                     />
                     <label
                       htmlFor={`${column.id}-unique`}
-                      className="text-xs theme-text-foreground cursor-pointer theme-font-mono"
+                      className="text-base font-semibold theme-text-foreground cursor-pointer theme-font-mono"
                     >
                       @unique
                     </label>
@@ -404,7 +420,7 @@ const ColumnLine = ({
               </div>
 
               <div>
-                <label className="text-xs theme-text-muted-foreground theme-mb-1 block">
+                <label className="text-base font-semibold theme-text-muted-foreground theme-mb-1 block">
                   Default Value
                 </label>
                 <Input
@@ -426,174 +442,6 @@ const ColumnLine = ({
   );
 };
 
-const EditableSelect = ({
-  value,
-  options,
-  onValueChange,
-  onNameChange,
-  onDelete,
-  placeholder,
-  isEditable = true,
-  showDelete = false,
-  className,
-}: {
-  value: string;
-  options: {
-    value: string;
-    label: string | React.ReactNode;
-    disabled?: boolean;
-  }[];
-  onValueChange: (value: string) => void;
-  onNameChange?: (name: string) => void;
-  onDelete?: () => void;
-  placeholder?: string;
-  isEditable?: boolean;
-  showDelete?: boolean;
-  className?: string;
-}) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempName, setTempName] = useState(value);
-  const [isOpen, setIsOpen] = useState(false);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setTempName(value);
-  }, [value]);
-
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-
-  const handleNameSubmit = () => {
-    if (tempName.trim() && onNameChange) {
-      onNameChange(tempName.trim());
-    }
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleNameSubmit();
-    }
-    if (e.key === "Escape") {
-      setTempName(value);
-      setIsEditing(false);
-    }
-  };
-
-  const selectedOption = options.find((opt) => opt.value === value);
-
-  return (
-    <div className={className}>
-      {isEditing ? (
-        <Input
-          ref={inputRef}
-          value={tempName}
-          onChange={(e) => setTempName(e.target.value)}
-          onBlur={handleNameSubmit}
-          onKeyDown={handleKeyDown}
-          className="h-9 theme-px-2 text-sm theme-shadow theme-font-mono"
-        />
-      ) : (
-        <div className="flex items-center theme-gap-1">
-          <div className="flex items-center border theme-border-border rounded overflow-hidden theme-bg-background">
-            <span
-              className="text-sm theme-font-mono theme-text-foreground cursor-pointer hover:underline theme-px-2 theme-py-1.5"
-              onClick={() => isEditable && setIsEditing(true)}
-            >
-              {selectedOption?.label || value || placeholder}
-            </span>
-            <Popover open={isOpen} onOpenChange={setIsOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-none border-l theme-border-border"
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-56 theme-p-2 theme-shadow"
-                align="start"
-              >
-                <div className="flex flex-col theme-gap-1">
-                  {options.map((option) => (
-                    <Button
-                      key={option.value}
-                      variant="ghost"
-                      size="sm"
-                      disabled={option.disabled}
-                      className="justify-start text-sm"
-                      onClick={() => {
-                        onValueChange(option.value);
-                        setIsOpen(false);
-                      }}
-                    >
-                      {option.label}
-                    </Button>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-          {showDelete && onDelete && (
-            <Popover
-              open={deleteConfirmOpen}
-              onOpenChange={setDeleteConfirmOpen}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-64 theme-p-3 theme-shadow"
-                align="end"
-              >
-                <div className="flex flex-col theme-gap-2">
-                  <p className="text-sm theme-text-foreground">
-                    {placeholder?.includes("schema")
-                      ? `Delete schema "${value}" and all its tables?`
-                      : `Delete table "${selectedOption?.label || value}"?`}
-                  </p>
-                  <div className="flex theme-gap-2">
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        onDelete();
-                        setDeleteConfirmOpen(false);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeleteConfirmOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
 const AddColumnPopover = ({
   table,
   onAddColumn,
@@ -603,26 +451,39 @@ const AddColumnPopover = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [columnName, setColumnName] = useState("");
-  const [columnType, setColumnType] =
-    useState<(typeof PRISMA_TYPES)[number] | "Relation">("String");
+  const [columnType, setColumnType] = useState<
+    (typeof PRISMA_TYPES)[number] | "Relation"
+  >("String");
   const [relatedTable, setRelatedTable] = useState<string>("");
-  const [relationType, setRelationType] = useState<import("./DatabaseConfiguration.types").RelationType>("many-to-one");
+  const [relationType, setRelationType] =
+    useState<import("./DatabaseConfiguration.types").RelationType>(
+      "many-to-one"
+    );
   const [createInverse, setCreateInverse] = useState(true);
   const [inverseFieldName, setInverseFieldName] = useState("");
-  const { tables, getEnumsBySchema } = useDatabaseStore();
+  const { tables, getAllEnums } = useDatabaseStore();
 
   const availableTables = tables.filter((t) => t.id !== table.id);
-  const schemaEnums = getEnumsBySchema(table.schema);
+  const allEnums = getAllEnums();
   const isRelationType = columnType === "Relation";
 
   const pluralize = (word: string): string => {
-    if (word.endsWith('y') && !['a', 'e', 'i', 'o', 'u'].includes(word[word.length - 2])) {
-      return word.slice(0, -1) + 'ies';
+    if (
+      word.endsWith("y") &&
+      !["a", "e", "i", "o", "u"].includes(word[word.length - 2])
+    ) {
+      return word.slice(0, -1) + "ies";
     }
-    if (word.endsWith('s') || word.endsWith('x') || word.endsWith('z') || word.endsWith('ch') || word.endsWith('sh')) {
-      return word + 'es';
+    if (
+      word.endsWith("s") ||
+      word.endsWith("x") ||
+      word.endsWith("z") ||
+      word.endsWith("ch") ||
+      word.endsWith("sh")
+    ) {
+      return word + "es";
     }
-    return word + 's';
+    return word + "s";
   };
 
   const handleAdd = () => {
@@ -680,7 +541,7 @@ const AddColumnPopover = ({
         <Button
           variant="ghost"
           size="sm"
-          className="h-5 theme-ml-4 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-xs"
+          className="h-5 theme-ml-4 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm"
         >
           <Plus className="h-3 w-3 theme-mr-1" />
           Add column...
@@ -717,12 +578,12 @@ const AddColumnPopover = ({
                   {type}
                 </SelectItem>
               ))}
-              {schemaEnums.length > 0 && (
+              {allEnums.length > 0 && (
                 <>
-                  <div className="theme-px-2 theme-py-1 text-xs theme-text-muted-foreground font-semibold">
+                  <div className="theme-px-2 theme-py-1 text-sm theme-text-muted-foreground font-semibold">
                     Enums
                   </div>
-                  {schemaEnums.map((enumItem) => (
+                  {allEnums.map((enumItem) => (
                     <SelectItem key={enumItem.name} value={enumItem.name}>
                       {enumItem.name}
                     </SelectItem>
@@ -770,9 +631,14 @@ const AddColumnPopover = ({
                   <Checkbox
                     id="create-inverse"
                     checked={createInverse}
-                    onCheckedChange={(checked) => setCreateInverse(checked === true)}
+                    onCheckedChange={(checked) =>
+                      setCreateInverse(checked === true)
+                    }
                   />
-                  <label htmlFor="create-inverse" className="text-xs theme-text-foreground cursor-pointer">
+                  <label
+                    htmlFor="create-inverse"
+                    className="text-base font-semibold theme-text-foreground cursor-pointer"
+                  >
                     Create inverse field on {relatedTable || "related table"}
                   </label>
                 </div>
@@ -787,7 +653,14 @@ const AddColumnPopover = ({
               </div>
             </>
           )}
-          <Button onClick={handleAdd} size="sm" disabled={isRelationType && (!relatedTable || (createInverse && !inverseFieldName.trim()))}>
+          <Button
+            onClick={handleAdd}
+            size="sm"
+            disabled={
+              isRelationType &&
+              (!relatedTable || (createInverse && !inverseFieldName.trim()))
+            }
+          >
             Add Column
           </Button>
         </div>
@@ -796,12 +669,12 @@ const AddColumnPopover = ({
   );
 };
 
-
 const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
   const { addColumn, deleteColumn, updateColumn } = useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
-  const isSupabaseAuth = table.schema === "auth" && !initialConfiguration.technologies.betterAuth;
+  const isSupabaseAuth =
+    table.schema === "auth" && !initialConfiguration.technologies.betterAuth;
   const isBetterAuth = table.schema === "better_auth";
 
   if (isSupabaseAuth) {
@@ -809,8 +682,9 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
       <div className="flex flex-col theme-p-4 theme-gap-2">
         <div className="flex items-center theme-gap-2 theme-text-muted-foreground">
           <Lock className="h-4 w-4" />
-          <p className="text-sm theme-font-sans theme-tracking">
-            The {table.schema} schema is managed by Supabase and cannot be edited directly.
+          <p className="text-base font-semibold theme-font-sans theme-tracking">
+            The {table.schema} schema is managed by Supabase and cannot be
+            edited directly.
           </p>
         </div>
       </div>
@@ -822,12 +696,18 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
       {isBetterAuth && (
         <div className="flex items-center theme-gap-2 theme-text-muted-foreground theme-p-4 theme-bg-muted/50">
           <Lock className="h-6 w-6" />
-          <p className="text-sm theme-font-sans theme-tracking">
-            The better_auth schema is managed by Better Auth and cannot be edited directly.
+          <p className="text-base font-semibold theme-font-sans theme-tracking">
+            The better_auth schema is managed by Better Auth and cannot be
+            edited directly.
           </p>
         </div>
       )}
-      <div className={cn("flex flex-col theme-p-2 theme-gap-2", isBetterAuth && "opacity-60 pointer-events-none")}>
+      <div
+        className={cn(
+          "flex flex-col theme-p-2 theme-gap-2",
+          isBetterAuth && "opacity-60 pointer-events-none"
+        )}
+      >
         {table.columns.map((column) => (
           <div
             key={column.id}
@@ -855,72 +735,132 @@ const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
             </div>
           </div>
         ))}
-        {!isBetterAuth && <AddColumnPopover table={table} onAddColumn={addColumn} />}
+        {!isBetterAuth && (
+          <AddColumnPopover table={table} onAddColumn={addColumn} />
+        )}
       </div>
     </div>
   );
 };
 
-const EnumsContent = ({ schema }: { schema: string }) => {
-  const { addEnum, deleteEnum, updateEnumName, addEnumValue, deleteEnumValue, updateEnumValue, getEnumsBySchema } = useDatabaseStore();
-  const enums = getEnumsBySchema(schema);
+const EnumsCollapsible = ({
+  isExpanded,
+  onToggle,
+}: {
+  isExpanded: boolean;
+  onToggle: () => void;
+}) => {
+  const { addEnum, getAllEnums } = useDatabaseStore();
+  const enums = getAllEnums();
   const [isAddingEnum, setIsAddingEnum] = useState(false);
   const [newEnumName, setNewEnumName] = useState("");
+  const newEnumInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isAddingEnum && newEnumInputRef.current) {
+      newEnumInputRef.current.focus();
+    }
+  }, [isAddingEnum]);
 
   const handleAddEnum = () => {
     if (newEnumName.trim()) {
-      addEnum(newEnumName.trim(), schema);
+      addEnum(newEnumName.trim());
       setNewEnumName("");
     }
     setIsAddingEnum(false);
   };
 
   return (
-    <div className="flex flex-col theme-gap-2 theme-p-4">
-      {enums.length === 0 && !isAddingEnum ? (
-        <div className="flex flex-col items-center theme-gap-4 theme-text-muted-foreground theme-py-8">
-          <p className="text-sm theme-font-sans theme-tracking">No enums defined for this schema</p>
+    <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <div
+        className="theme-bg-muted theme-radius theme-p-2 cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="flex items-center theme-gap-2">
+          <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0">
+            {isExpanded ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </Button>
+          <span className="text-base font-semibold theme-font-mono theme-text-foreground flex-1">
+            Enums
+          </span>
+          <span className="text-sm theme-text-muted-foreground">
+            {enums.length} {enums.length === 1 ? "enum" : "enums"}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 shrink-0 opacity-60 hover:opacity-100"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsAddingEnum(true);
+            }}
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
         </div>
-      ) : (
-        <div className="flex flex-col theme-gap-2">
+      </div>
+      <CollapsibleContent>
+        <div className="flex flex-col theme-gap-2 theme-ml-4 theme-mt-2">
+          {enums.length === 0 && !isAddingEnum && (
+            <div className="flex items-center theme-gap-2 theme-text-muted-foreground theme-p-4">
+              <p className="text-base font-semibold theme-font-sans theme-tracking">
+                No enums defined
+              </p>
+            </div>
+          )}
           {enums.map((enumItem) => (
             <EnumItem key={enumItem.id} enumItem={enumItem} />
           ))}
+          {isAddingEnum && (
+            <div className="theme-bg-background theme-radius theme-p-2 border theme-border-border">
+              <Input
+                ref={newEnumInputRef}
+                value={newEnumName}
+                onChange={(e) => setNewEnumName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddEnum();
+                  if (e.key === "Escape") {
+                    setIsAddingEnum(false);
+                    setNewEnumName("");
+                  }
+                }}
+                onBlur={handleAddEnum}
+                placeholder="Enum name"
+                className="h-7 theme-px-2 text-base theme-shadow theme-font-mono"
+              />
+            </div>
+          )}
+          {!isAddingEnum && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsAddingEnum(true)}
+              className="h-7 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
+            >
+              <Plus className="h-3 w-3" />
+              Add enum
+            </Button>
+          )}
         </div>
-      )}
-      {isAddingEnum ? (
-        <Input
-          autoFocus
-          value={newEnumName}
-          onChange={(e) => setNewEnumName(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleAddEnum();
-            if (e.key === "Escape") {
-              setIsAddingEnum(false);
-              setNewEnumName("");
-            }
-          }}
-          onBlur={handleAddEnum}
-          placeholder="Enum name"
-          className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono"
-        />
-      ) : (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsAddingEnum(true)}
-          className="h-7 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-xs w-fit"
-        >
-          <Plus className="h-3 w-3" />
-          Add enum
-        </Button>
-      )}
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 
-const EnumItem = ({ enumItem }: { enumItem: import("./DatabaseConfiguration.types").PrismaEnum }) => {
-  const { deleteEnum, updateEnumName, addEnumValue, deleteEnumValue, updateEnumValue } = useDatabaseStore();
+const EnumItem = ({
+  enumItem,
+}: {
+  enumItem: import("./DatabaseConfiguration.types").PrismaEnum;
+}) => {
+  const {
+    deleteEnum,
+    updateEnumName,
+    addEnumValue,
+  } = useDatabaseStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(enumItem.name);
@@ -951,21 +891,29 @@ const EnumItem = ({ enumItem }: { enumItem: import("./DatabaseConfiguration.type
     setIsAddingValue(false);
   };
 
+  const handleToggle = () => setIsOpen(!isOpen);
+
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className="theme-bg-muted theme-radius theme-p-2">
+      <div
+        className="theme-bg-background theme-radius theme-p-2 border theme-border-border cursor-pointer"
+        onClick={handleToggle}
+      >
         <div className="flex items-center theme-gap-2">
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-6 w-6">
-              {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            </Button>
-          </CollapsibleTrigger>
+          <Button variant="ghost" size="icon" className="h-6 w-6">
+            {isOpen ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </Button>
           {isEditingName ? (
             <Input
               ref={nameInputRef}
               value={tempName}
               onChange={(e) => setTempName(e.target.value)}
               onBlur={handleNameSubmit}
+              onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleNameSubmit();
                 if (e.key === "Escape") {
@@ -973,25 +921,36 @@ const EnumItem = ({ enumItem }: { enumItem: import("./DatabaseConfiguration.type
                   setIsEditingName(false);
                 }
               }}
-              className="h-7 theme-px-2 text-sm w-fit theme-shadow theme-font-mono flex-1"
+              className="h-7 theme-px-2 text-base w-fit theme-shadow theme-font-mono flex-1"
             />
           ) : (
             <span
-              className="text-sm theme-font-mono theme-text-foreground cursor-pointer hover:underline flex-1"
-              onClick={() => setIsEditingName(true)}
+              className="text-base theme-font-mono theme-text-foreground cursor-pointer hover:underline flex-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditingName(true);
+              }}
             >
               {enumItem.name}
             </span>
           )}
+          <span className="text-sm theme-text-muted-foreground">
+            {enumItem.values.length} {enumItem.values.length === 1 ? "value" : "values"}
+          </span>
           <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 opacity-60 hover:opacity-100"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Trash2 className="h-3 w-3" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
               <div className="flex flex-col theme-gap-2">
-                <p className="text-sm theme-text-foreground">
+                <p className="text-lg font-semibold theme-text-foreground">
                   Delete enum &quot;{enumItem.name}&quot;?
                 </p>
                 <div className="flex theme-gap-2">
@@ -1017,52 +976,52 @@ const EnumItem = ({ enumItem }: { enumItem: import("./DatabaseConfiguration.type
             </PopoverContent>
           </Popover>
         </div>
-        <CollapsibleContent>
-          <div className="flex flex-col theme-gap-1 theme-mt-2 theme-ml-8">
-            {enumItem.values.map((value) => (
-              <EnumValueItem
-                key={value.id}
-                enumId={enumItem.id}
-                value={value}
-              />
-            ))}
-            {isAddingValue ? (
-              <Input
-                autoFocus
-                value={newValue}
-                onChange={(e) => setNewValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAddValue();
-                  if (e.key === "Escape") {
-                    setIsAddingValue(false);
-                    setNewValue("");
-                  }
-                }}
-                onBlur={handleAddValue}
-                placeholder="Value"
-                className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono"
-              />
-            ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsAddingValue(true)}
-                className="h-6 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-xs w-fit"
-              >
-                <Plus className="h-3 w-3" />
-                Add value
-              </Button>
-            )}
-          </div>
-        </CollapsibleContent>
       </div>
+      <CollapsibleContent>
+        <div className="flex flex-col theme-gap-1 theme-mt-2 theme-ml-8">
+          {enumItem.values.map((value) => (
+            <EnumValueItem
+              key={value.id}
+              enumId={enumItem.id}
+              value={value}
+            />
+          ))}
+          {isAddingValue ? (
+            <Input
+              autoFocus
+              value={newValue}
+              onChange={(e) => setNewValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleAddValue();
+                if (e.key === "Escape") {
+                  setIsAddingValue(false);
+                  setNewValue("");
+                }
+              }}
+              onBlur={handleAddValue}
+              placeholder="Value"
+              className="h-7 theme-px-2 text-sm theme-shadow theme-font-mono"
+            />
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsAddingValue(true)}
+              className="h-6 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
+            >
+              <Plus className="h-3 w-3" />
+              Add value
+            </Button>
+          )}
+        </div>
+      </CollapsibleContent>
     </Collapsible>
   );
 };
 
 const EnumValueItem = ({
   enumId,
-  value
+  value,
 }: {
   enumId: string;
   value: import("./DatabaseConfiguration.types").PrismaEnumValue;
@@ -1088,7 +1047,7 @@ const EnumValueItem = ({
   };
 
   return (
-    <div className="flex items-center theme-gap-2 theme-bg-background theme-radius theme-px-2 theme-py-1">
+    <div className="flex items-center theme-gap-2 theme-bg-muted theme-radius theme-px-2 theme-py-1">
       {isEditing ? (
         <Input
           ref={inputRef}
@@ -1102,11 +1061,11 @@ const EnumValueItem = ({
               setIsEditing(false);
             }
           }}
-          className="h-6 theme-px-2 text-xs theme-shadow theme-font-mono flex-1"
+          className="h-6 theme-px-2 text-sm theme-shadow theme-font-mono flex-1"
         />
       ) : (
         <span
-          className="text-xs theme-font-mono theme-text-foreground cursor-pointer hover:underline flex-1"
+          className="text-sm theme-font-mono theme-text-foreground cursor-pointer hover:underline flex-1"
           onClick={() => setIsEditing(true)}
         >
           {value.value}
@@ -1114,13 +1073,13 @@ const EnumValueItem = ({
       )}
       <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-5 w-5">
+          <Button variant="ghost" size="icon" className="h-5 w-5 opacity-60 hover:opacity-100">
             <Trash2 className="h-3 w-3" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
           <div className="flex flex-col theme-gap-2">
-            <p className="text-sm theme-text-foreground">
+            <p className="text-lg font-semibold theme-text-foreground">
               Delete value &quot;{value.value}&quot;?
             </p>
             <div className="flex theme-gap-2">
@@ -1149,18 +1108,401 @@ const EnumValueItem = ({
   );
 };
 
+const TableCollapsible = ({
+  table,
+  schema,
+  isExpanded,
+  onToggle,
+  onUpdateName,
+  onDelete,
+}: {
+  table: PrismaTable;
+  schema: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onUpdateName: (name: string) => void;
+  onDelete: () => void;
+}) => {
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(table.name);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditingName && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditingName]);
+
+  const handleNameSubmit = () => {
+    if (tempName.trim() && tempName !== table.name) {
+      onUpdateName(tempName.trim());
+    }
+    setIsEditingName(false);
+  };
+
+  const isSystemSchema = schema === "auth" || schema === "better_auth";
+
+  return (
+    <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <div
+        className="theme-bg-background theme-radius theme-p-2 border theme-border-border cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="flex items-center theme-gap-2">
+          <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0">
+            {isExpanded ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </Button>
+          {isEditingName ? (
+            <Input
+              ref={inputRef}
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              onBlur={handleNameSubmit}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleNameSubmit();
+                if (e.key === "Escape") {
+                  setTempName(table.name);
+                  setIsEditingName(false);
+                }
+              }}
+              className="h-7 theme-px-2 text-base theme-shadow theme-font-mono flex-1"
+            />
+          ) : (
+            <span
+              className={cn(
+                "text-base theme-font-mono theme-text-foreground flex-1",
+                table.isEditable &&
+                  !isSystemSchema &&
+                  "cursor-pointer hover:underline"
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (table.isEditable && !isSystemSchema) setIsEditingName(true);
+              }}
+            >
+              {table.name}
+            </span>
+          )}
+          {table.isEditable && !isSystemSchema && (
+            <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 shrink-0 opacity-60 hover:opacity-100"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+                <div className="flex flex-col theme-gap-2">
+                  <p className="text-lg font-semibold theme-text-foreground">
+                    Delete table &quot;{table.name}&quot;?
+                  </p>
+                  <div className="flex theme-gap-2">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        onDelete();
+                        setDeleteConfirmOpen(false);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteConfirmOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
+      </div>
+      <CollapsibleContent>
+        <div className="theme-ml-4 theme-mt-2">
+          <Tabs defaultValue="columns" className="w-full">
+            <TabsList className="w-full theme-p-1 h-auto">
+              <div className="flex flex-1 theme-gap-1">
+                <TabsTrigger
+                  value="columns"
+                  className="flex-1 text-base font-semibold"
+                >
+                  Columns
+                </TabsTrigger>
+                <TabsTrigger
+                  value="rls"
+                  className="flex-1 text-base font-semibold"
+                >
+                  RLS
+                </TabsTrigger>
+              </div>
+            </TabsList>
+            <TabsContent value="columns" className="theme-mt-0">
+              <TableColumnsContent table={table} />
+            </TabsContent>
+            <TabsContent value="rls" className="theme-mt-0">
+              <TableRLSContent table={table} />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+};
+
+const SchemaCollapsible = ({
+  schema,
+  tables,
+  isExpanded,
+  onToggle,
+  expandedTableId,
+  onTableToggle,
+  onAddTable,
+  onUpdateTableName,
+  onDeleteTable,
+  onUpdateSchemaName,
+  onDeleteSchema,
+  isEditable,
+  isSystemSchema,
+}: {
+  schema: string;
+  tables: PrismaTable[];
+  isExpanded: boolean;
+  onToggle: () => void;
+  expandedTableId: string | null;
+  onTableToggle: (tableId: string) => void;
+  onAddTable: (tableName: string) => void;
+  onUpdateTableName: (tableId: string, name: string) => void;
+  onDeleteTable: (tableId: string) => void;
+  onUpdateSchemaName: (name: string) => void;
+  onDeleteSchema: () => void;
+  isEditable: boolean;
+  isSystemSchema: boolean;
+}) => {
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(schema);
+  const [isAddingTable, setIsAddingTable] = useState(false);
+  const [newTableName, setNewTableName] = useState("");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const newTableInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditingName && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditingName]);
+
+  useEffect(() => {
+    if (isAddingTable && newTableInputRef.current) {
+      newTableInputRef.current.focus();
+    }
+  }, [isAddingTable]);
+
+  const handleNameSubmit = () => {
+    if (tempName.trim() && tempName !== schema) {
+      onUpdateSchemaName(tempName.trim());
+    }
+    setIsEditingName(false);
+  };
+
+  const handleAddTable = () => {
+    if (newTableName.trim()) {
+      onAddTable(newTableName.trim());
+      setNewTableName("");
+    }
+    setIsAddingTable(false);
+  };
+
+  return (
+    <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <div
+        className="theme-bg-muted theme-radius theme-p-2 cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="flex items-center theme-gap-2">
+          <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0">
+            {isExpanded ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </Button>
+          {isSystemSchema && <Lock className="h-4 w-4 theme-text-muted-foreground shrink-0" />}
+          {isEditingName ? (
+            <Input
+              ref={inputRef}
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              onBlur={handleNameSubmit}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleNameSubmit();
+                if (e.key === "Escape") {
+                  setTempName(schema);
+                  setIsEditingName(false);
+                }
+              }}
+              className="h-7 theme-px-2 text-base theme-shadow theme-font-mono flex-1"
+            />
+          ) : (
+            <span
+              className={cn(
+                "text-base font-semibold theme-font-mono theme-text-foreground flex-1",
+                isEditable && "cursor-pointer hover:underline"
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isEditable) setIsEditingName(true);
+              }}
+            >
+              {schema}
+            </span>
+          )}
+          <span className="text-sm theme-text-muted-foreground">
+            {tables.length} {tables.length === 1 ? "table" : "tables"}
+          </span>
+          {!isSystemSchema && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 shrink-0 opacity-60 hover:opacity-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddingTable(true);
+              }}
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          )}
+          {isEditable && (
+            <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 shrink-0 opacity-60 hover:opacity-100"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+                <div className="flex flex-col theme-gap-2">
+                  <p className="text-lg font-semibold theme-text-foreground">
+                    Delete schema &quot;{schema}&quot; and all its tables?
+                  </p>
+                  <div className="flex theme-gap-2">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        onDeleteSchema();
+                        setDeleteConfirmOpen(false);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteConfirmOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
+      </div>
+      <CollapsibleContent>
+        <div className="flex flex-col theme-gap-2 theme-ml-4 theme-mt-2">
+          {isSystemSchema && tables.length === 0 && (
+            <div className="flex items-center theme-gap-2 theme-text-muted-foreground theme-p-4">
+              <Lock className="h-4 w-4" />
+              <p className="text-base font-semibold theme-font-sans theme-tracking">
+                This schema is managed automatically.
+              </p>
+            </div>
+          )}
+          {tables.map((table) => (
+            <TableCollapsible
+              key={table.id}
+              table={table}
+              schema={schema}
+              isExpanded={expandedTableId === table.id}
+              onToggle={() => onTableToggle(table.id)}
+              onUpdateName={(name) => onUpdateTableName(table.id, name)}
+              onDelete={() => onDeleteTable(table.id)}
+            />
+          ))}
+          {isAddingTable && (
+            <div className="theme-bg-background theme-radius theme-p-2 border theme-border-border">
+              <Input
+                ref={newTableInputRef}
+                value={newTableName}
+                onChange={(e) => setNewTableName(e.target.value)}
+                onBlur={handleAddTable}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddTable();
+                  if (e.key === "Escape") {
+                    setIsAddingTable(false);
+                    setNewTableName("");
+                  }
+                }}
+                placeholder="Table name"
+                className="h-7 theme-px-2 text-base theme-shadow theme-font-mono"
+              />
+            </div>
+          )}
+          {!isSystemSchema && !isAddingTable && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsAddingTable(true)}
+              className="h-7 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
+            >
+              <Plus className="h-3 w-3" />
+              Add table
+            </Button>
+          )}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+};
+
 const TableRLSContent = ({ table }: { table: PrismaTable }) => {
   const { addOrUpdateRLSPolicy, getRLSPolicyForOperation, tables } =
     useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
-  const authProvider =
-    !initialConfiguration.technologies.betterAuth
-      ? "Supabase"
-      : "Better Auth";
-  const isAuthSchema = table.schema === "auth" || table.schema === "better_auth";
+  const authProvider = !initialConfiguration.technologies.betterAuth
+    ? "Supabase"
+    : "Better Auth";
+  const isAuthSchema =
+    table.schema === "auth" || table.schema === "better_auth";
 
-  const enabledRoles: import("./DatabaseConfiguration.types").UserRole[] = ["user"];
+  const enabledRoles: import("./DatabaseConfiguration.types").UserRole[] = [
+    "user",
+  ];
   if (initialConfiguration.features.admin.admin) enabledRoles.push("admin");
   if (initialConfiguration.features.admin.superAdmin)
     enabledRoles.push("super-admin");
@@ -1178,14 +1520,13 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
       <div className="flex flex-col theme-p-4 theme-gap-2">
         <div className="flex items-center theme-gap-2 theme-text-muted-foreground">
           <Lock className="h-4 w-4" />
-          <p className="text-sm theme-font-sans theme-tracking">
+          <p className="text-base font-semibold theme-font-sans theme-tracking">
             All auth schema security is handled by {authProvider}
           </p>
         </div>
       </div>
     );
   }
-
 
   return (
     <div className="flex flex-col items-stretch theme-gap-3 theme-p-4">
@@ -1197,7 +1538,7 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
             key={operation}
             className="theme-bg-muted theme-radius theme-p-3"
           >
-            <h4 className="text-sm font-semibold theme-text-foreground theme-mb-2 theme-font-sans theme-tracking">
+            <h4 className="text-base font-semibold theme-text-foreground theme-mb-2 theme-font-sans theme-tracking">
               {operation}
             </h4>
             <div className="flex flex-col items-stretch theme-gap-2">
@@ -1211,7 +1552,7 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                 return (
                   <div key={role} className="flex flex-col theme-gap-2">
                     <div className="flex items-center theme-gap-2">
-                      <span className="text-xs theme-text-foreground theme-font-mono min-w-[6rem]">
+                      <span className="text-sm theme-text-foreground theme-font-mono min-w-[6rem]">
                         {role}
                       </span>
                       <Select
@@ -1239,7 +1580,7 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                           }
                         }}
                       >
-                        <SelectTrigger className="h-7 text-xs flex-1">
+                        <SelectTrigger className="h-7 text-sm flex-1">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1257,7 +1598,7 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                     </div>
                     {accessType === "related" && (
                       <div className="flex items-center theme-gap-2">
-                        <span className="text-xs theme-text-muted-foreground theme-font-mono min-w-[6rem]">
+                        <span className="text-sm theme-text-muted-foreground theme-font-mono min-w-[6rem]">
                           Related to:
                         </span>
                         <Select
@@ -1272,7 +1613,7 @@ const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                             );
                           }}
                         >
-                          <SelectTrigger className="h-7 text-xs flex-1">
+                          <SelectTrigger className="h-7 text-sm flex-1">
                             <SelectValue placeholder="Select table" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1305,9 +1646,7 @@ export const DatabaseConfiguration = () => {
     updateTableSchema,
     deleteTable,
     deleteSchema,
-    getAvailableSchemas,
     getAvailableSchemasWithConfig,
-    applyTemplate,
   } = useDatabaseStore();
   const {
     initialConfiguration,
@@ -1316,13 +1655,12 @@ export const DatabaseConfiguration = () => {
     updateAdminOption,
     updateAuthenticationOption,
   } = useEditorStore();
-  const [selectedSchema, setSelectedSchema] = useState<string>("public");
-  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+  const [expandedSchema, setExpandedSchema] = useState<string | null>(null);
+  const [expandedTableId, setExpandedTableId] = useState<string | null>(null);
+  const [expandedEnums, setExpandedEnums] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isAddingSchema, setIsAddingSchema] = useState(false);
   const [newSchemaName, setNewSchemaName] = useState("");
-  const [isAddingTable, setIsAddingTable] = useState(false);
-  const [newTableName, setNewTableName] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -1348,104 +1686,190 @@ export const DatabaseConfiguration = () => {
   const isNoDatabaseSelected =
     initialConfiguration.questions.databaseProvider === "none";
 
-  const filteredTables = tables.filter((t) => t.schema === selectedSchema);
-  const isSupabaseAuthSchema = selectedSchema === "auth" && initialConfiguration.technologies.supabase && !initialConfiguration.technologies.betterAuth;
-  const isBetterAuthSchema = selectedSchema === "better_auth" && initialConfiguration.technologies.betterAuth;
-
-  const selectedTable = selectedTableId
-    ? tables.find((t) => t.id === selectedTableId)
-    : null;
-
-  const handleAddTable = (tableName?: string) => {
-    if (!tableName) {
-      setIsAddingTable(true);
-      return;
+  const handleSchemaToggle = (schema: string) => {
+    if (expandedSchema === schema) {
+      setExpandedSchema(null);
+      setExpandedTableId(null);
+    } else {
+      setExpandedSchema(schema);
+      setExpandedTableId(null);
     }
+  };
 
-    if (!tableName.trim()) return;
+  const handleTableToggle = (tableId: string) => {
+    if (expandedTableId === tableId) {
+      setExpandedTableId(null);
+    } else {
+      setExpandedTableId(tableId);
+    }
+  };
 
-    const newTableId = addTable(tableName.trim(), selectedSchema);
-    setSelectedTableId(newTableId);
-    setIsAddingTable(false);
-    setNewTableName("");
+  const handleAddTableToSchema = (schema: string, tableName: string) => {
+    const newTableId = addTable(tableName, schema);
+    setExpandedSchema(schema);
+    setExpandedTableId(newTableId);
   };
 
   const handleAddSchema = (schemaName: string) => {
     if (!schemaName.trim()) return;
     const trimmedName = schemaName.trim();
     const newTableId = addTable("new-table", trimmedName);
-    setSelectedSchema(trimmedName);
-    setSelectedTableId(newTableId);
+    setExpandedSchema(trimmedName);
+    setExpandedTableId(newTableId);
   };
 
-  useEffect(() => {
-    if (filteredTables.length > 0 && !selectedTableId) {
-      setSelectedTableId(filteredTables[0].id);
-    } else if (
-      filteredTables.length > 0 &&
-      selectedTableId &&
-      !filteredTables.find((t) => t.id === selectedTableId)
-    ) {
-      setSelectedTableId(filteredTables[0].id);
+  const handleDeleteTable = (tableId: string) => {
+    deleteTable(tableId);
+    if (expandedTableId === tableId) {
+      setExpandedTableId(null);
     }
-  }, [filteredTables, selectedTableId]);
+  };
+
+  const handleDeleteSchema = (schema: string) => {
+    deleteSchema(schema);
+    if (expandedSchema === schema) {
+      setExpandedSchema(null);
+      setExpandedTableId(null);
+    }
+  };
+
+  const handleUpdateSchemaName = (oldSchema: string, newName: string) => {
+    tables
+      .filter((t) => t.schema === oldSchema)
+      .forEach((t) => {
+        updateTableSchema(t.id, newName);
+      });
+    if (expandedSchema === oldSchema) {
+      setExpandedSchema(newName);
+    }
+  };
 
   if (!mounted) {
     return null;
   }
 
   const authMethods = [
-    { id: "magicLink", label: "Magic Link", description: "Passwordless authentication via email links", icon: Mail },
-    { id: "emailPassword", label: "Email & Password", description: "Traditional email and password authentication", icon: Mail },
-    { id: "otp", label: "OTP (One-Time Password)", description: "Email-based one-time password authentication", icon: Smartphone },
-    { id: "twoFactor", label: "Two-Factor Authentication (2FA)", description: "TOTP/OTP two-factor authentication for enhanced security", icon: ShieldCheck },
-    { id: "passkey", label: "Passkey (WebAuthn)", description: "Passwordless authentication using biometrics or security keys", icon: Fingerprint },
-    { id: "anonymous", label: "Anonymous Sessions", description: "Allow users to use the app without authentication", icon: UserX },
-    { id: "googleAuth", label: "Google OAuth", description: "Sign in with Google accounts", icon: SiGoogle },
-    { id: "githubAuth", label: "GitHub OAuth", description: "Sign in with GitHub accounts", icon: Github },
-    { id: "appleAuth", label: "Apple Sign In", description: "Sign in with Apple ID", icon: Apple },
-    { id: "passwordOnly", label: "Password only", description: "Basic password authentication", icon: KeyRound },
+    {
+      id: "magicLink",
+      label: "Magic Link",
+      description: "Passwordless authentication via email links",
+      icon: Mail,
+    },
+    {
+      id: "emailPassword",
+      label: "Email & Password",
+      description: "Traditional email and password authentication",
+      icon: Mail,
+    },
+    {
+      id: "otp",
+      label: "OTP (One-Time Password)",
+      description: "Email-based one-time password authentication",
+      icon: Smartphone,
+    },
+    {
+      id: "twoFactor",
+      label: "Two-Factor Authentication (2FA)",
+      description: "TOTP/OTP two-factor authentication for enhanced security",
+      icon: ShieldCheck,
+    },
+    {
+      id: "passkey",
+      label: "Passkey (WebAuthn)",
+      description:
+        "Passwordless authentication using biometrics or security keys",
+      icon: Fingerprint,
+    },
+    {
+      id: "anonymous",
+      label: "Anonymous Sessions",
+      description: "Allow users to use the app without authentication",
+      icon: UserX,
+    },
+    {
+      id: "googleAuth",
+      label: "Google OAuth",
+      description: "Sign in with Google accounts",
+      icon: SiGoogle,
+    },
+    {
+      id: "githubAuth",
+      label: "GitHub OAuth",
+      description: "Sign in with GitHub accounts",
+      icon: Github,
+    },
+    {
+      id: "appleAuth",
+      label: "Apple Sign In",
+      description: "Sign in with Apple ID",
+      icon: Apple,
+    },
+    {
+      id: "passwordOnly",
+      label: "Password only",
+      description: "Basic password authentication",
+      icon: KeyRound,
+    },
   ];
 
   const roleOptions = [
     { id: "admin", label: "Admin", icon: Shield },
     { id: "superAdmin", label: "Super Admin", icon: Users },
-    { id: "organizations", label: "Organizations", disabled: !initialConfiguration.technologies.betterAuth, icon: Building2 },
+    {
+      id: "organizations",
+      label: "Organizations",
+      disabled: !initialConfiguration.technologies.betterAuth,
+      icon: Building2,
+    },
   ];
 
   const roleDescriptions = {
     admin: "Regular admin users with elevated permissions",
-    superAdmin: "Super admins have full access and can manage all users and content",
-    organizations: "Enable organization-based access with org-admin and org-member roles",
+    superAdmin:
+      "Super admins have full access and can manage all users and content",
+    organizations:
+      "Enable organization-based access with org-admin and org-member roles",
   };
 
   return (
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-4">
         <div>
-          <h4 className="font-semibold theme-mb-2">
-            Do you need a database?
-          </h4>
+          <h4 className="font-semibold theme-mb-2">Do you need a database?</h4>
           <p className="text-sm theme-text-muted-foreground theme-mb-3 font-semibold">
             Choose your database and authentication provider.
           </p>
           <div className="flex flex-col xs:flex-row theme-gap-3">
             <div
               onClick={() => {
-                const currentSupabase = initialConfiguration.technologies.supabase;
-                const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
+                const currentSupabase =
+                  initialConfiguration.technologies.supabase;
+                const techUpdates: Partial<
+                  InitialConfigurationType["technologies"]
+                > = {};
 
                 techUpdates.supabase = !currentSupabase;
-                techUpdates.prisma = !currentSupabase || initialConfiguration.technologies.betterAuth;
-                techUpdates.postgresql = !currentSupabase || initialConfiguration.technologies.betterAuth;
+                techUpdates.prisma =
+                  !currentSupabase ||
+                  initialConfiguration.technologies.betterAuth;
+                techUpdates.postgresql =
+                  !currentSupabase ||
+                  initialConfiguration.technologies.betterAuth;
 
-                if (!currentSupabase && !initialConfiguration.technologies.betterAuth) {
+                if (
+                  !currentSupabase &&
+                  !initialConfiguration.technologies.betterAuth
+                ) {
                   techUpdates.neondb = false;
                 }
 
                 const newProvider = !currentSupabase
-                  ? (initialConfiguration.technologies.betterAuth ? "both" : "supabase")
-                  : (initialConfiguration.technologies.betterAuth ? "neondb" : "none");
+                  ? initialConfiguration.technologies.betterAuth
+                    ? "both"
+                    : "supabase"
+                  : initialConfiguration.technologies.betterAuth
+                    ? "neondb"
+                    : "none";
 
                 updateInitialConfiguration({
                   questions: {
@@ -1453,7 +1877,11 @@ export const DatabaseConfiguration = () => {
                     databaseProvider: newProvider,
                   },
                   database: {
-                    hosting: !currentSupabase ? "supabase" : (initialConfiguration.technologies.betterAuth ? "neondb" : "postgresql"),
+                    hosting: !currentSupabase
+                      ? "supabase"
+                      : initialConfiguration.technologies.betterAuth
+                        ? "neondb"
+                        : "postgresql",
                   },
                   technologies: {
                     ...initialConfiguration.technologies,
@@ -1472,23 +1900,38 @@ export const DatabaseConfiguration = () => {
               />
               <div className="flex flex-col items-center theme-gap-2 text-center">
                 <SiSupabase className="w-12 h-12 theme-text-foreground" />
-                <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">Supabase</h4>
+                <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                  Supabase
+                </h4>
               </div>
             </div>
 
             <div
               onClick={() => {
-                const currentBetterAuth = initialConfiguration.technologies.betterAuth;
-                const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
+                const currentBetterAuth =
+                  initialConfiguration.technologies.betterAuth;
+                const techUpdates: Partial<
+                  InitialConfigurationType["technologies"]
+                > = {};
 
                 techUpdates.betterAuth = !currentBetterAuth;
-                techUpdates.neondb = !currentBetterAuth && !initialConfiguration.technologies.supabase;
-                techUpdates.prisma = !currentBetterAuth || initialConfiguration.technologies.supabase;
-                techUpdates.postgresql = !currentBetterAuth || initialConfiguration.technologies.supabase;
+                techUpdates.neondb =
+                  !currentBetterAuth &&
+                  !initialConfiguration.technologies.supabase;
+                techUpdates.prisma =
+                  !currentBetterAuth ||
+                  initialConfiguration.technologies.supabase;
+                techUpdates.postgresql =
+                  !currentBetterAuth ||
+                  initialConfiguration.technologies.supabase;
 
                 const newProvider = !currentBetterAuth
-                  ? (initialConfiguration.technologies.supabase ? "both" : "neondb")
-                  : (initialConfiguration.technologies.supabase ? "supabase" : "none");
+                  ? initialConfiguration.technologies.supabase
+                    ? "both"
+                    : "neondb"
+                  : initialConfiguration.technologies.supabase
+                    ? "supabase"
+                    : "none";
 
                 updateInitialConfiguration({
                   questions: {
@@ -1497,8 +1940,12 @@ export const DatabaseConfiguration = () => {
                   },
                   database: {
                     hosting: !currentBetterAuth
-                      ? (initialConfiguration.technologies.supabase ? "supabase" : "neondb")
-                      : (initialConfiguration.technologies.supabase ? "supabase" : "postgresql"),
+                      ? initialConfiguration.technologies.supabase
+                        ? "supabase"
+                        : "neondb"
+                      : initialConfiguration.technologies.supabase
+                        ? "supabase"
+                        : "postgresql",
                   },
                   technologies: {
                     ...initialConfiguration.technologies,
@@ -1517,7 +1964,9 @@ export const DatabaseConfiguration = () => {
               />
               <div className="flex flex-col items-center theme-gap-2 text-center">
                 <BetterAuthIcon className="w-12 h-12 theme-text-foreground" />
-                <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">Better Auth</h4>
+                <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                  Better Auth
+                </h4>
               </div>
             </div>
           </div>
@@ -1527,18 +1976,33 @@ export const DatabaseConfiguration = () => {
               <div className="flex flex-wrap theme-gap-1">
                 {(() => {
                   let techIds: string[] = [];
-                  if (initialConfiguration.questions.databaseProvider === "supabase") {
+                  if (
+                    initialConfiguration.questions.databaseProvider ===
+                    "supabase"
+                  ) {
                     techIds = ["supabase", "prisma", "postgresql"];
-                  } else if (initialConfiguration.questions.databaseProvider === "neondb") {
+                  } else if (
+                    initialConfiguration.questions.databaseProvider === "neondb"
+                  ) {
                     techIds = ["neondb", "betterAuth", "prisma", "postgresql"];
-                  } else if (initialConfiguration.questions.databaseProvider === "both") {
-                    techIds = ["supabase", "betterAuth", "prisma", "postgresql"];
+                  } else if (
+                    initialConfiguration.questions.databaseProvider === "both"
+                  ) {
+                    techIds = [
+                      "supabase",
+                      "betterAuth",
+                      "prisma",
+                      "postgresql",
+                    ];
                   }
                   return techIds.map((techId) => {
                     const tech = technologies.find((t) => t.id === techId);
                     if (!tech) return null;
                     const Icon = tech.icon;
-                    const isActive = initialConfiguration.technologies[techId as keyof InitialConfigurationType["technologies"]];
+                    const isActive =
+                      initialConfiguration.technologies[
+                        techId as keyof InitialConfigurationType["technologies"]
+                      ];
                     return (
                       <div
                         key={techId}
@@ -1557,7 +2021,8 @@ export const DatabaseConfiguration = () => {
                 })()}
               </div>
               <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                {initialConfiguration.questions.databaseProvider === "supabase" &&
+                {initialConfiguration.questions.databaseProvider ===
+                  "supabase" &&
                   "Supabase for all backend logic and database functionality. Excellent for enterprise audit compliance"}
                 {initialConfiguration.questions.databaseProvider === "neondb" &&
                   "Better-Auth with a NeonDB Postgres DB for low friction and high value development"}
@@ -1566,11 +2031,12 @@ export const DatabaseConfiguration = () => {
               </p>
             </div>
           )}
-          {!initialConfiguration.technologies.supabase && !initialConfiguration.technologies.betterAuth && (
-            <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-              No database required, this app is front-end only
-            </p>
-          )}
+          {!initialConfiguration.technologies.supabase &&
+            !initialConfiguration.technologies.betterAuth && (
+              <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
+                No database required, this app is front-end only
+              </p>
+            )}
         </div>
 
         {!isNoDatabaseSelected && (
@@ -1624,18 +2090,21 @@ export const DatabaseConfiguration = () => {
                 initialConfiguration.features.admin.organizations) && (
                 <div className="flex flex-col theme-gap-2 theme-mt-4">
                   {initialConfiguration.features.admin.admin && (
-                    <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                      <span className="font-bold">Admin:</span> {roleDescriptions.admin}
+                    <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
+                      <span className="font-bold">Admin:</span>{" "}
+                      {roleDescriptions.admin}
                     </p>
                   )}
                   {initialConfiguration.features.admin.superAdmin && (
-                    <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                      <span className="font-bold">Super Admin:</span> {roleDescriptions.superAdmin}
+                    <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
+                      <span className="font-bold">Super Admin:</span>{" "}
+                      {roleDescriptions.superAdmin}
                     </p>
                   )}
                   {initialConfiguration.features.admin.organizations && (
-                    <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                      <span className="font-bold">Organizations:</span> {roleDescriptions.organizations}
+                    <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
+                      <span className="font-bold">Organizations:</span>{" "}
+                      {roleDescriptions.organizations}
                     </p>
                   )}
                 </div>
@@ -1671,8 +2140,8 @@ export const DatabaseConfiguration = () => {
                             )}
                           >
                             <div className="flex items-center theme-gap-2">
-                              <Icon className="w-4 h-4 theme-text-foreground shrink-0" />
-                              <span className="text-xs font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                              <Icon className="w-5 h-5 theme-text-foreground shrink-0" />
+                              <span className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">
                                 {method.label}
                               </span>
                               <Checkbox
@@ -1702,321 +2171,86 @@ export const DatabaseConfiguration = () => {
           </p>
         </div>
       ) : (
-        <div className="theme-bg-card theme-radius theme-shadow overflow-auto border theme-border-border">
-          <Tabs defaultValue="columns" className="w-full">
-            <TabsList className="w-full theme-p-1 h-auto flex-col items-stretch theme-gap-2">
-              <div className="flex flex-col md:flex-row theme-gap-2 md:theme-gap-0 theme-px-2 justify-center items-center theme-py-2 relative">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={selectedSchema === "auth" || selectedSchema === "better_auth"}
-                      className="absolute left-2 top-2 h-7 theme-px-2 theme-gap-1 text-xs"
-                    >
-                      <Database className="h-3 w-3" />
-                      Templates
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 theme-p-3 theme-shadow" align="start">
-                    <div className="flex flex-col theme-gap-2">
-                      <h4 className="text-sm font-semibold theme-text-foreground theme-mb-1">Database Templates</h4>
-                      <p className="text-xs theme-text-muted-foreground theme-mb-2">
-                        Select a template to replace existing tables in the current schema
-                      </p>
-                      {DATABASE_TEMPLATES.map((template) => (
-                        <Button
-                          key={template.id}
-                          variant="outline"
-                          size="sm"
-                          className="justify-start h-auto theme-p-3 flex-col items-start theme-gap-1"
-                          onClick={() => {
-                            const firstTableId = applyTemplate(template, selectedSchema);
-                            setSelectedTableId(firstTableId);
-                          }}
-                        >
-                          <div className="flex items-center theme-gap-2 w-full">
-                            <Database className="h-4 w-4 shrink-0" />
-                            <span className="font-semibold text-sm">{template.name}</span>
-                          </div>
-                          <p className="text-xs theme-text-muted-foreground text-left">
-                            {template.description}
-                          </p>
-                          <div className="flex flex-wrap theme-gap-1 theme-mt-1">
-                            {template.tables.map((table, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-xs theme-font-mono">
-                                {table.name}
-                              </Badge>
-                            ))}
-                          </div>
-                        </Button>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                <div className="flex items-center theme-gap-2">
-                  <span className="text-xs theme-text-muted-foreground whitespace-nowrap">
-                    Schema:
-                  </span>
-                  {isAddingSchema ? (
-                    <Input
-                      autoFocus
-                      value={newSchemaName}
-                      onChange={(e) => setNewSchemaName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleAddSchema(newSchemaName);
-                          setIsAddingSchema(false);
-                          setNewSchemaName("");
-                        }
-                        if (e.key === "Escape") {
-                          setIsAddingSchema(false);
-                          setNewSchemaName("");
-                        }
-                      }}
-                      onBlur={() => {
-                        if (newSchemaName.trim()) {
-                          handleAddSchema(newSchemaName);
-                        }
-                        setIsAddingSchema(false);
-                        setNewSchemaName("");
-                      }}
-                      placeholder="Schema name"
-                      className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono w-28"
-                    />
-                  ) : (
-                    <EditableSelect
-                      value={selectedSchema}
-                      options={[
-                        ...getAvailableSchemasWithConfig(initialConfiguration).map((schema) => ({
-                          value: schema,
-                          label:
-                            schema === "auth" &&
-                            !initialConfiguration.technologies.betterAuth ? (
-                              <div className="flex items-center theme-gap-1">
-                                <Lock className="h-3 w-3" />
-                                <span>{schema}</span>
-                              </div>
-                            ) : (
-                              schema
-                            ),
-                        })),
-                        {
-                          value: "__add_new__",
-                          label: (
-                            <div className="flex items-center theme-gap-1">
-                              <Plus className="h-3 w-3" />
-                              <span>Add new schema...</span>
-                            </div>
-                          ),
-                        },
-                      ]}
-                      onValueChange={(v) => {
-                        if (v === "__add_new__") {
-                          setIsAddingSchema(true);
-                        } else {
-                          setSelectedSchema(v);
-                        }
-                      }}
-                      onNameChange={(name) => {
-                        const oldSchema = selectedSchema;
-                        tables
-                          .filter((t) => t.schema === oldSchema)
-                          .forEach((t) => {
-                            updateTableSchema(t.id, name);
-                          });
-                        setSelectedSchema(name);
-                      }}
-                      onDelete={
-                        selectedSchema !== "auth" &&
-                        selectedSchema !== "better_auth" &&
-                        selectedSchema !== "public"
-                          ? () => {
-                              const schemas = getAvailableSchemasWithConfig(initialConfiguration).filter(
-                                (s) => s !== selectedSchema
-                              );
-                              deleteSchema(selectedSchema);
-                              setSelectedSchema(schemas[0] || "public");
-                              setSelectedTableId(null);
-                            }
-                          : undefined
-                      }
-                      isEditable={
-                        selectedSchema !== "auth" &&
-                        selectedSchema !== "better_auth" &&
-                        selectedSchema !== "public"
-                      }
-                      showDelete={
-                        selectedSchema !== "auth" &&
-                        selectedSchema !== "better_auth" &&
-                        selectedSchema !== "public"
-                      }
-                      placeholder="Select schema"
-                      className="min-w-0"
-                    />
-                  )}
-                </div>
-                <div className="flex items-center theme-gap-2">
-                  <span className="text-xs theme-text-muted-foreground whitespace-nowrap">
-                    Table:
-                  </span>
-                  {isAddingTable ? (
-                    <Input
-                      autoFocus
-                      value={newTableName}
-                      onChange={(e) => setNewTableName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleAddTable(newTableName);
-                        }
-                        if (e.key === "Escape") {
-                          setIsAddingTable(false);
-                          setNewTableName("");
-                        }
-                      }}
-                      onBlur={() => {
-                        if (newTableName.trim()) {
-                          handleAddTable(newTableName);
-                        } else {
-                          setIsAddingTable(false);
-                          setNewTableName("");
-                        }
-                      }}
-                      placeholder="Table name"
-                      className="h-7 theme-px-2 text-xs theme-shadow theme-font-mono w-28"
-                    />
-                  ) : (
-                    <EditableSelect
-                      value={selectedTableId || ""}
-                      options={[
-                        ...(isSupabaseAuthSchema || isBetterAuthSchema
-                          ? filteredTables.length > 0
-                            ? filteredTables.map((table) => ({
-                                value: table.id,
-                                label: table.name,
-                              }))
-                            : [
-                                {
-                                  value: "locked",
-                                  label: (
-                                    <div className="flex items-center theme-gap-1">
-                                      <Lock className="h-3 w-3" />
-                                      <span>No tables</span>
-                                    </div>
-                                  ),
-                                  disabled: true,
-                                },
-                              ]
-                          : [
-                              ...filteredTables.map((table) => ({
-                                value: table.id,
-                                label: table.name,
-                              })),
-                              {
-                                value: "__add_new__",
-                                label: (
-                                  <div className="flex items-center theme-gap-1">
-                                    <Plus className="h-3 w-3" />
-                                    <span>Add new table...</span>
-                                  </div>
-                                ),
-                              },
-                            ]),
-                      ]}
-                      onValueChange={(v) => {
-                        if (v === "__add_new__") {
-                          handleAddTable();
-                        } else if (v !== "locked") {
-                          setSelectedTableId(v);
-                        }
-                      }}
-                      onNameChange={(name) => {
-                        if (selectedTable) {
-                          updateTableName(selectedTable.id, name);
-                        }
-                      }}
-                      onDelete={
-                        selectedTable && selectedTable.isEditable
-                          ? () => {
-                              deleteTable(selectedTable.id);
-                              const remainingTables = filteredTables.filter(
-                                (t) => t.id !== selectedTable.id
-                              );
-                              setSelectedTableId(
-                                remainingTables[0]?.id || null
-                              );
-                            }
-                          : undefined
-                      }
-                      placeholder="Select table"
-                      isEditable={selectedTable?.isEditable}
-                      showDelete={selectedTable?.isEditable}
-                      className="min-w-0"
-                    />
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-1 theme-gap-1">
-                <TabsTrigger
-                  value="columns"
-                  className="flex-1 text-sm font-semibold"
-                >
-                  Columns
-                </TabsTrigger>
-                <TabsTrigger
-                  value="enums"
-                  className="flex-1 text-sm font-semibold"
-                >
-                  Enums
-                </TabsTrigger>
-                <TabsTrigger
-                  value="rls"
-                  className="flex-1 text-sm font-semibold"
-                >
-                  RLS
-                </TabsTrigger>
-              </div>
-            </TabsList>
-            {selectedTable ? (
-              <>
-                <TabsContent value="columns" className="theme-mt-0">
-                  <TableColumnsContent table={selectedTable} />
-                </TabsContent>
-                <TabsContent value="enums" className="theme-mt-0">
-                  <EnumsContent schema={selectedSchema} />
-                </TabsContent>
-                <TabsContent value="rls" className="theme-mt-0">
-                  <TableRLSContent table={selectedTable} />
-                </TabsContent>
-              </>
-            ) : (
-              <div className="theme-p-8 flex items-center justify-center">
-                {isSupabaseAuthSchema ? (
-                  <div className="flex flex-col items-center theme-gap-4 theme-text-muted-foreground max-w-md text-center">
-                    <Lock className="h-12 w-12 theme-mt-4" />
-                    <div className="flex flex-col theme-gap-2 theme-mb-4">
-                      <p className="text-sm theme-font-sans theme-tracking font-semibold">
-                        The auth schema is managed by Supabase
-                      </p>
-                      <p className="text-xs theme-font-sans theme-tracking">
-                        Supabase handles all authentication tables and schema management automatically. You cannot add or modify tables in this schema.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="theme-gap-2"
-                    onClick={() => handleAddTable()}
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add table
-                  </Button>
-                )}
-              </div>
+        <div className="theme-bg-card theme-radius theme-shadow overflow-auto border theme-border-border theme-p-4">
+          <div className="flex flex-col theme-gap-2">
+            <EnumsCollapsible
+              isExpanded={expandedEnums}
+              onToggle={() => setExpandedEnums(!expandedEnums)}
+            />
+            {getAvailableSchemasWithConfig(initialConfiguration).map(
+              (schema) => {
+                const schemaTables = tables.filter((t) => t.schema === schema);
+                const isSystemSchema =
+                  schema === "auth" || schema === "better_auth";
+                const isEditable =
+                  schema !== "auth" &&
+                  schema !== "better_auth" &&
+                  schema !== "public";
+
+                return (
+                  <SchemaCollapsible
+                    key={schema}
+                    schema={schema}
+                    tables={schemaTables}
+                    isExpanded={expandedSchema === schema}
+                    onToggle={() => handleSchemaToggle(schema)}
+                    expandedTableId={expandedTableId}
+                    onTableToggle={handleTableToggle}
+                    onAddTable={(tableName) =>
+                      handleAddTableToSchema(schema, tableName)
+                    }
+                    onUpdateTableName={updateTableName}
+                    onDeleteTable={handleDeleteTable}
+                    onUpdateSchemaName={(name) =>
+                      handleUpdateSchemaName(schema, name)
+                    }
+                    onDeleteSchema={() => handleDeleteSchema(schema)}
+                    isEditable={isEditable}
+                    isSystemSchema={isSystemSchema}
+                  />
+                );
+              }
             )}
-          </Tabs>
+            {isAddingSchema ? (
+              <div className="theme-bg-muted theme-radius theme-p-2">
+                <Input
+                  autoFocus
+                  value={newSchemaName}
+                  onChange={(e) => setNewSchemaName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddSchema(newSchemaName);
+                      setIsAddingSchema(false);
+                      setNewSchemaName("");
+                    }
+                    if (e.key === "Escape") {
+                      setIsAddingSchema(false);
+                      setNewSchemaName("");
+                    }
+                  }}
+                  onBlur={() => {
+                    if (newSchemaName.trim()) {
+                      handleAddSchema(newSchemaName);
+                    }
+                    setIsAddingSchema(false);
+                    setNewSchemaName("");
+                  }}
+                  placeholder="Schema name"
+                  className="h-7 theme-px-2 text-base theme-shadow theme-font-mono"
+                />
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsAddingSchema(true)}
+                className="h-7 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
+              >
+                <Plus className="h-3 w-3" />
+                Add schema
+              </Button>
+            )}
+          </div>
         </div>
       )}
     </div>
