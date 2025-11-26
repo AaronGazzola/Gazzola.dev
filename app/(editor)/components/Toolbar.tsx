@@ -404,13 +404,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         queryClient.invalidateQueries({ queryKey: ["markdownData"] });
         queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
-        const firstPagePath = Object.values(freshData.flatIndex)
+        const firstPagePath = Object.values(freshData.flatIndex).find(
+          (node) =>
+            node.type === "file" &&
+            node.path === "readme" &&
+            node.include !== false
+        ) || Object.values(freshData.flatIndex)
           .filter(
             (node) =>
               node.type === "file" &&
               node.include !== false &&
-              !(node as any).previewOnly &&
-              !(node as any).visibleAfterPage
+              !(node as any).previewOnly
           )
           .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
