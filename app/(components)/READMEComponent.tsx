@@ -5,7 +5,13 @@ import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
 import { Textarea } from "@/components/editor/ui/textarea";
-import { Loader2, Sparkles, MessageCircleQuestion } from "lucide-react";
+import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
+import {
+  Loader2,
+  MessageCircleQuestion,
+  RotateCcw,
+  Sparkles,
+} from "lucide-react";
 import { useCallback, useState } from "react";
 
 type Stage = "initial" | "questions";
@@ -69,20 +75,21 @@ const QuestionAnswerItem = ({
   );
 };
 
+const initialState: READMEState = {
+  title: "",
+  description: "",
+  questions: [],
+  stage: "initial",
+};
+
 export const READMEComponent = () => {
   const { setContent, readmeGenerated, setReadmeGenerated, forceRefresh } =
     useEditorStore();
 
-  const [state, setState] = useState<READMEState>({
-    title: "",
-    description: "",
-    questions: [],
-    stage: "initial",
-  });
+  const [state, setState] = useState<READMEState>(initialState);
 
-  if (readmeGenerated) {
-    return null;
-  }
+  const isDev =
+    typeof window !== "undefined" && window.location.hostname === "localhost";
 
   const { mutate: generateQuestions, isPending: isGeneratingQuestions } =
     useCodeGeneration((response) => {
@@ -99,11 +106,16 @@ export const READMEComponent = () => {
       const generatedContent = response.content;
       setContent(
         "readme",
-        `# README\n\n<!-- component-READMEComponent -->\n\n${generatedContent}`
+        `<!-- component-READMEComponent -->\n\n${generatedContent}`
       );
       setReadmeGenerated(true);
       forceRefresh();
     });
+
+  const handleReset = useCallback(() => {
+    setState(initialState);
+    setReadmeGenerated(false);
+  }, [setReadmeGenerated]);
 
   const handleSubmitInitial = useCallback(() => {
     const prompt = `You are helping a user create a README for their web application. Based on their initial description, generate 3-5 clarifying questions to better understand the functionality and user experience.
@@ -159,6 +171,48 @@ Requirements:
       ),
     }));
   }, []);
+
+  conditionalLog(
+    {
+      readmeGenerated,
+      isDev,
+      hostname:
+        typeof window !== "undefined" ? window.location.hostname : "ssr",
+    },
+    { label: LOG_LABELS.README }
+  );
+
+  if (readmeGenerated && !isDev) {
+    conditionalLog(
+      { action: "returning null - not dev mode" },
+      { label: LOG_LABELS.README }
+    );
+    return null;
+  }
+
+  if (readmeGenerated && isDev) {
+    conditionalLog(
+      { action: "showing reset button" },
+      { label: LOG_LABELS.README }
+    );
+    return (
+      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+        <div className="flex flex-col theme-gap-2 items-center">
+          <p className="text-sm theme-text-muted-foreground font-semibold">
+            README generated successfully
+          </p>
+          <Button
+            onClick={handleReset}
+            variant="outline"
+            className="theme-gap-2"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Reset (Dev Mode)
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const isPending = isGeneratingQuestions || isGeneratingReadme;
   const isTitleValid = state.title.trim().length >= MIN_TITLE_LENGTH;

@@ -128,6 +128,8 @@ export interface DatabaseConfigurationState {
   initializeFromConfig: (
     config: import("@/app/(editor)/layout.types").InitialConfigurationType
   ) => void;
+  setTablesFromAI: (tables: PrismaTable[]) => void;
+  setEnumsFromAI: (enums: PrismaEnum[]) => void;
   reset: () => void;
 }
 

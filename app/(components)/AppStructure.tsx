@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import {
   Feature,
   FileSystemEntry,
@@ -27,6 +28,8 @@ import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { cn } from "@/lib/utils";
 import { generateDefaultFunctionName } from "@/lib/feature.utils";
 import {
+  BotMessageSquare,
+  BotOff,
   Check,
   ChevronDown,
   ChevronUp,
@@ -34,7 +37,7 @@ import {
   File,
   Folder,
   FolderOpen,
-  LayoutTemplate,
+  Loader2,
   Plus,
   RotateCcw,
   Save,
@@ -3406,7 +3409,7 @@ const TreeNode = ({
         </div>
       )}
 
-      {node.type === "directory" && node.isExpanded && node.children && (
+      {node.type === "directory" && node.isExpanded !== false && node.children && (
         <div>
           {[...node.children]
             .sort((a, b) => {
@@ -3440,6 +3443,136 @@ const TreeNode = ({
   );
 };
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
+const ensureDirectoriesExpanded = (entries: FileSystemEntry[]): FileSystemEntry[] => {
+  return entries.map((entry) => {
+    if (entry.type === "directory") {
+      return {
+        ...entry,
+        isExpanded: true,
+        children: entry.children ? ensureDirectoriesExpanded(entry.children) : [],
+      };
+    }
+    return entry;
+  });
+};
+
+const parseAppStructureFromResponse = (
+  response: string
+): { structure: FileSystemEntry[]; features: Record<string, Feature[]> } | null => {
+  try {
+    const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
+    const jsonContent = jsonMatch ? jsonMatch[1] : response;
+    const parsed = JSON.parse(jsonContent.trim());
+
+    if (parsed.structure && Array.isArray(parsed.structure)) {
+      return {
+        structure: ensureDirectoriesExpanded(parsed.structure),
+        features: parsed.features || {},
+      };
+    }
+    return null;
+  } catch (error) {
+    conditionalLog(
+      { message: "Failed to parse app structure response", error },
+      { label: LOG_LABELS.APP_STRUCTURE }
+    );
+    return null;
+  }
+};
+
+const generateAppStructurePrompt = (
+  readmeContent: string,
+  templates: AppStructureTemplate[]
+): string => {
+  const templateExamples = templates.map((t) => ({
+    name: t.name,
+    structure: t.structure,
+    features: t.features,
+  }));
+
+  return `Based on the following README content, generate a Next.js App Router file structure.
+
+README Content:
+${readmeContent}
+
+Here are example templates showing the expected format:
+${JSON.stringify(templateExamples, null, 2)}
+
+## Next.js App Router Rules (MUST FOLLOW):
+
+1. **page.tsx is REQUIRED for routes**: A route is ONLY publicly accessible when it has a page.tsx file. For example, to have "website.com/dashboard", you MUST have "app/dashboard/page.tsx".
+
+2. **layout.tsx for shared UI**: Layouts wrap child segments and are shared across pages. The root layout (app/layout.tsx) is required and must define <html> and <body> tags.
+
+3. **Route Groups with parentheses**: Use (folderName) to organize routes without affecting the URL path. For example, "(auth)/login/page.tsx" creates the route "/login", not "/(auth)/login".
+
+4. **Dynamic Routes with brackets**: Use [param] for dynamic segments (e.g., "[id]" matches any value), [...param] for catch-all routes, and [[...param]] for optional catch-all.
+
+5. **Nested Routes**: Folders create URL segments. "app/blog/posts/page.tsx" creates the route "/blog/posts".
+
+6. **Private Folders**: Prefix with underscore (_folderName) to exclude from routing.
+
+## Requirements:
+
+1. Analyze the README to identify pages, features, and user workflows
+2. Generate a file structure using the Next.js conventions above
+3. Include companion files for each page: page.stores.ts, page.hooks.tsx
+4. Generate features for BOTH page.tsx AND layout.tsx files that describe functionality
+5. Features should describe user-facing functionality and UI behavior
+
+Return ONLY a JSON object with this exact structure:
+\`\`\`json
+{
+  "structure": [
+    {
+      "id": "unique-id",
+      "name": "app",
+      "type": "directory",
+      "children": [
+        { "id": "unique-id", "name": "layout.tsx", "type": "file" },
+        { "id": "unique-id", "name": "page.tsx", "type": "file" },
+        ...
+      ]
+    }
+  ],
+  "features": {
+    "page-file-id": [
+      {
+        "id": "feature-id",
+        "title": "Feature Title",
+        "description": "Feature description",
+        "linkedFiles": {
+          "stores": "/app/path/page.stores.ts",
+          "hooks": "/app/path/page.hooks.tsx"
+        },
+        "functionNames": {},
+        "isEditing": false
+      }
+    ],
+    "layout-file-id": [
+      {
+        "id": "feature-id",
+        "title": "Navigation Header",
+        "description": "Shared navigation component across all pages",
+        "linkedFiles": {},
+        "functionNames": {},
+        "isEditing": false
+      }
+    ]
+  }
+}
+\`\`\`
+
+Important:
+- Generate unique IDs for each entry (alphanumeric strings)
+- The features object keys must match the IDs of page.tsx OR layout.tsx files
+- Create meaningful feature titles and descriptions based on the README
+- Link stores and hooks files appropriately for pages
+- Every route segment that should be accessible MUST have a page.tsx file`;
+};
+
 export const LayoutAndStructure = () => {
   const {
     appStructure,
@@ -3450,17 +3583,20 @@ export const LayoutAndStructure = () => {
     setFeatures,
     featureFileSelection,
     selectedFilePath,
+    data,
+    appStructureGenerated,
+    setAppStructureGenerated,
+    readmeGenerated,
   } = useEditorStore();
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("blank");
-  const [templatePopoverOpen, setTemplatePopoverOpen] = useState(false);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
   const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<
     string | null
   >(null);
+  const [generatePopoverOpen, setGeneratePopoverOpen] = useState(false);
 
   const qualifyingFilePaths = featureFileSelection.fileType
     ? getQualifyingFiles(
@@ -3470,16 +3606,55 @@ export const LayoutAndStructure = () => {
       )
     : [];
 
-  const handleTemplateChange = (templateId: string) => {
-    setSelectedTemplate(templateId);
-    const template = APP_STRUCTURE_TEMPLATES.find((t) => t.id === templateId);
-    if (template) {
-      setAppStructure(template.structure);
-      if (template.features) {
-        setFeatures(template.features);
+  const readmeNode = data.flatIndex["readme"];
+  const readmeContent = readmeNode?.type === "file" ? readmeNode.content : "";
+
+  const { mutate: generateStructure, isPending: isGenerating } =
+    useCodeGeneration((response) => {
+      conditionalLog(
+        {
+          message: "AI response received for app structure generation",
+          responseContent: response.content,
+        },
+        { label: LOG_LABELS.APP_STRUCTURE, maxStringLength: 50000 }
+      );
+
+      const parsed = parseAppStructureFromResponse(response.content);
+
+      conditionalLog(
+        {
+          message: "Parsed app structure response",
+          parsed,
+          parseSuccess: !!parsed,
+        },
+        { label: LOG_LABELS.APP_STRUCTURE, maxStringLength: 50000 }
+      );
+
+      if (parsed) {
+        setAppStructure(parsed.structure);
+        if (parsed.features) {
+          setFeatures(parsed.features);
+        }
+        setAppStructureGenerated(true);
+        setGeneratePopoverOpen(false);
       }
-    }
-    setTemplatePopoverOpen(false);
+    });
+
+  const handleGenerateFromReadme = () => {
+    if (!readmeContent) return;
+
+    const prompt = generateAppStructurePrompt(readmeContent, APP_STRUCTURE_TEMPLATES);
+
+    conditionalLog(
+      {
+        message: "Sending prompt for app structure generation",
+        prompt,
+        readmeContentLength: readmeContent.length,
+      },
+      { label: LOG_LABELS.APP_STRUCTURE, maxStringLength: 50000 }
+    );
+
+    generateStructure({ prompt, maxTokens: 4000 });
   };
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
@@ -3572,53 +3747,77 @@ export const LayoutAndStructure = () => {
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
+  const isGenerateDisabled = !isDevelopment && appStructureGenerated;
+  const hasReadme = readmeGenerated && readmeContent;
+
   return (
-    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
+      <Popover open={generatePopoverOpen} onOpenChange={setGeneratePopoverOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "absolute top-2 right-2 rounded-full h-8 w-8",
+              !isGenerateDisabled && "theme-bg-primary theme-text-primary-foreground hover:opacity-90"
+            )}
+            disabled={isGenerateDisabled || isGenerating}
+            title={isGenerateDisabled ? "Structure already generated" : "Generate from README"}
+          >
+            {isGenerating ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : isGenerateDisabled ? (
+              <BotOff className="h-4 w-4" />
+            ) : (
+              <BotMessageSquare className="h-4 w-4" />
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-64 theme-p-3 theme-shadow"
+          align="end"
+        >
+          <div className="flex flex-col theme-gap-3">
+            <h4 className="font-semibold text-sm">Generate App Structure</h4>
+            {hasReadme ? (
+              <>
+                <p className="text-xs theme-text-muted-foreground">
+                  Generate a file structure based on your README content.
+                </p>
+                <Button
+                  onClick={handleGenerateFromReadme}
+                  disabled={isGenerating}
+                  className="w-full theme-gap-2"
+                  size="sm"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <BotMessageSquare className="h-4 w-4" />
+                      Generate from README
+                    </>
+                  )}
+                </Button>
+              </>
+            ) : (
+              <p className="text-xs theme-text-muted-foreground">
+                Please generate a README first to use this feature.
+              </p>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
+
       <div className="flex flex-col theme-gap-2 md:theme-gap-4 min-h-[calc(100vh-800px)]">
         <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
           <div className="flex items-center justify-between theme-mb-2">
             <h3 className="text-base md:text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
               App Directory
             </h3>
-            <Popover
-              open={templatePopoverOpen}
-              onOpenChange={setTemplatePopoverOpen}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 theme-shadow"
-                  title="Select template"
-                >
-                  <LayoutTemplate className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-56 theme-p-2 theme-shadow"
-                align="end"
-              >
-                <div className="flex flex-col theme-gap-1">
-                  <div className="theme-px-2 theme-py-1 text-base font-semibold theme-text-muted-foreground">
-                    Templates
-                  </div>
-                  {APP_STRUCTURE_TEMPLATES.map((template) => (
-                    <Button
-                      key={template.id}
-                      variant={
-                        selectedTemplate === template.id ? "secondary" : "ghost"
-                      }
-                      size="sm"
-                      className="justify-start theme-gap-2 w-full"
-                      onClick={() => handleTemplateChange(template.id)}
-                    >
-                      <LayoutTemplate className="h-4 w-4" />
-                      <span>{template.name}</span>
-                    </Button>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
           </div>
 
           <div className="theme-font-mono text-sm md:text-base theme-bg-background theme-p-2 md:theme-p-3 theme-radius overflow-x-auto overflow-y-auto flex-1 theme-shadow">
@@ -3642,7 +3841,7 @@ export const LayoutAndStructure = () => {
 
             {appStructure.length === 0 && (
               <div className="text-base font-semibold text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
-                Select a template above to start building your app structure
+                Click the bot icon above to generate your app structure from README
               </div>
             )}
           </div>

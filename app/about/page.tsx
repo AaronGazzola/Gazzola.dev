@@ -1020,7 +1020,7 @@ const Page = () => {
               className="border border-transparent  text-gray-300  font-semibold flex items-center gap-4 group-hover:border-transparent text-2xl px-10 py-8"
             >
               Get Started
-              <ListTodo className="!w-7 !h-7" />
+              <Rocket className="!w-7 !h-7" />
             </Button>
           </Link>
         </motion.div>

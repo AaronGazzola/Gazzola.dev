@@ -32,9 +32,11 @@ import {
   ChevronRight,
   CircleHelp,
   Home,
+  ListRestart,
+  Menu,
   MessagesSquare,
   Palette,
-  RefreshCcw,
+  RotateCcw,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
@@ -113,6 +115,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setIsResetting,
     helpPopoverOpened,
     setHelpPopoverOpened,
+    setAppStructureGenerated,
+    setReadmeGenerated,
+    setDatabaseGenerated,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme } = useThemeConfigStore();
@@ -123,6 +128,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -317,19 +323,46 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     }
   };
 
-  const handleResetPage = () => {
-    const node = data.flatIndex[currentContentPath];
-    if (node && node.type === "file") {
-      const originalContent = node.content
-        .replace(/\\n/g, "\n")
-        .replace(/\\`/g, "`")
-        .replace(/\\\$/g, "$")
-        .replace(/\\\\/g, "\\");
-      setContent(currentContentPath, originalContent);
+  const handleResetPage = async () => {
+    const { data: freshData } = await getMarkdownDataAction();
+
+    if (freshData) {
+      const freshNode = freshData.flatIndex[currentContentPath];
+      if (freshNode && freshNode.type === "file") {
+        const originalContent = freshNode.content
+          .replace(/\\n/g, "\n")
+          .replace(/\\`/g, "`")
+          .replace(/\\\$/g, "$")
+          .replace(/\\\\/g, "\\");
+        setContent(currentContentPath, originalContent);
+
+        if (freshNode.sections) {
+          Object.entries(freshNode.sections).forEach(([sectionId, options]) => {
+            Object.entries(options).forEach(([optionId, option]) => {
+              setSectionInclude(currentContentPath, sectionId, optionId, option.include);
+            });
+          });
+        }
+      }
     }
+
     if (currentContentPath === "theme") {
       resetTheme();
     }
+
+    if (currentContentPath === "database") {
+      resetDatabase();
+      setDatabaseGenerated(false);
+    }
+
+    if (currentContentPath === "app-structure") {
+      setAppStructureGenerated(false);
+    }
+
+    if (currentContentPath === "readme") {
+      setReadmeGenerated(false);
+    }
+
     forceRefresh();
     setResetPageDialogOpen(false);
   };
@@ -396,6 +429,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         reset();
         resetTheme();
         resetDatabase();
+        setAppStructureGenerated(false);
+        setReadmeGenerated(false);
         setRefreshKey(resetKey);
 
         conditionalLog(
@@ -504,44 +539,106 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         </Tooltip>
 
         <div className="flex items-center justify-between h-12 theme-px-2 max-w-full">
-          <div className="flex items-center theme-gap-4">
+          <div className="flex items-center gap-1 md:theme-gap-2">
             {canGoBack && (
               <Button
                 onClick={() => {
                   handleBack();
                 }}
                 variant="outline"
-                className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking"
+                className="theme-py-1 px-2 md:theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="hidden md:inline">Back</span>
               </Button>
             )}
 
-            <Tooltip>
-              <TooltipTrigger asChild>
+            <EditorPopover open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <EditorPopoverTrigger asChild>
                 <Button
-                  onClick={handleHome}
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className="md:hidden rounded-[3px] h-8 w-8"
                 >
-                  <Home className="h-4 w-4" />
+                  <Menu className="h-4 w-4" />
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Go to first page</p>
-              </TooltipContent>
-            </Tooltip>
+              </EditorPopoverTrigger>
+              <EditorPopoverContent className="w-48 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+                <div className="flex flex-col theme-gap-1">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      handleHome();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Home className="h-4 w-4" />
+                    Go to first page
+                  </Button>
+                  <div className="flex items-center justify-between px-2 py-1">
+                    <span className="text-sm">Dark mode</span>
+                    <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      setResetPageDialogOpen(true);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset page
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      setResetAllDialogOpen(true);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <ListRestart className="h-4 w-4" />
+                    Reset all
+                  </Button>
+                </div>
+              </EditorPopoverContent>
+            </EditorPopover>
 
-            <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+            <div className="hidden md:flex items-center theme-gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleHome}
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9"
+                  >
+                    <Home className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Go to first page</p>
+                </TooltipContent>
+              </Tooltip>
 
-            <IconButton
-              onClick={() => setResetAllDialogOpen(true)}
-              tooltip="Reset all pages"
-            >
-              <RefreshCcw className="h-4 w-4" />
-            </IconButton>
+              <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+
+              <IconButton
+                onClick={() => setResetPageDialogOpen(true)}
+                tooltip="Reset current page"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </IconButton>
+
+              <IconButton
+                onClick={() => setResetAllDialogOpen(true)}
+                tooltip="Reset all pages"
+              >
+                <ListRestart className="h-4 w-4" />
+              </IconButton>
+            </div>
 
             <EditorPopover
               open={helpPopoverOpen}
@@ -556,7 +653,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={`rounded-full h-8 w-8 ${!helpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90 animate-pulse" : ""}`}
+                  className={`rounded-full h-8 w-8 ${!helpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90 " : ""}`}
                 >
                   <CircleHelp className="h-4 w-4" />
                 </Button>
@@ -612,8 +709,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 <EditorDialogHeader>
                   <EditorDialogTitle>Reset Current Page</EditorDialogTitle>
                   <EditorDialogDescription>
-                    Are you sure you want to reset the current file? This will
-                    restore it to its original content and cannot be undone.
+                    Are you sure you want to reset this page? This will restore
+                    the content to its original state
+                    {currentContentPath === "theme" && " and reset all theme configuration"}
+                    {currentContentPath === "database" && " and reset all database configuration"}
+                    {currentContentPath === "app-structure" && " and reset the app structure"}
+                    . This action cannot be undone.
                   </EditorDialogDescription>
                 </EditorDialogHeader>
                 <EditorDialogFooter>

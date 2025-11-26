@@ -16,7 +16,7 @@
         "order": 1,
         "path": "readme",
         "urlPath": "/readme",
-        "content": "# README\n\n<!-- component-READMEComponent -->\n",
+        "content": "<!-- component-READMEComponent -->\n",
         "components": [
           {
             "id": "component-READMEComponent",
@@ -99,36 +99,11 @@
         "isDynamicRobotsFile": false
       },
       {
-        "id": "database",
-        "name": "database",
-        "displayName": "Database",
-        "type": "file",
-        "order": 4,
-        "path": "database",
-        "urlPath": "/database",
-        "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
-        "components": [
-          {
-            "id": "component-DatabaseConfiguration",
-            "name": "DatabaseConfiguration",
-            "displayName": "DatabaseConfiguration",
-            "type": "component",
-            "path": "database.component.DatabaseConfiguration",
-            "urlPath": "",
-            "componentId": "DatabaseConfiguration",
-            "include": true
-          }
-        ],
-        "sections": {},
-        "include": true,
-        "isDynamicRobotsFile": false
-      },
-      {
         "id": "app-structure",
         "name": "app-structure",
         "displayName": "App Structure",
         "type": "file",
-        "order": 5,
+        "order": 4,
         "path": "app-structure",
         "urlPath": "/app-structure",
         "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
@@ -146,8 +121,32 @@
         ],
         "sections": {},
         "include": true,
-        "isDynamicRobotsFile": false,
-        "visibleAfterPage": "readme"
+        "isDynamicRobotsFile": false
+      },
+      {
+        "id": "database",
+        "name": "database",
+        "displayName": "Database",
+        "type": "file",
+        "order": 5,
+        "path": "database",
+        "urlPath": "/database",
+        "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
+        "components": [
+          {
+            "id": "component-DatabaseConfiguration",
+            "name": "DatabaseConfiguration",
+            "displayName": "DatabaseConfiguration",
+            "type": "component",
+            "path": "database.component.DatabaseConfiguration",
+            "urlPath": "",
+            "componentId": "DatabaseConfiguration",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true,
+        "isDynamicRobotsFile": false
       },
       {
         "id": "robots",
@@ -337,7 +336,7 @@
         },
         "include": true,
         "isDynamicRobotsFile": false,
-        "visibleAfterPage": "readme"
+        "visibleAfterPage": "robots"
       },
       {
         "id": "util",
@@ -419,7 +418,7 @@
         },
         "include": true,
         "isDynamicRobotsFile": false,
-        "visibleAfterPage": "readme",
+        "visibleAfterPage": "robots",
         "includeInToolbar": false
       },
       {
@@ -452,7 +451,7 @@
           "order": 1,
           "path": "readme",
           "urlPath": "/readme",
-          "content": "# README\n\n<!-- component-READMEComponent -->\n",
+          "content": "<!-- component-READMEComponent -->\n",
           "components": [
             {
               "id": "component-READMEComponent",
@@ -535,36 +534,11 @@
           "isDynamicRobotsFile": false
         },
         {
-          "id": "database",
-          "name": "database",
-          "displayName": "Database",
-          "type": "file",
-          "order": 4,
-          "path": "database",
-          "urlPath": "/database",
-          "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
-          "components": [
-            {
-              "id": "component-DatabaseConfiguration",
-              "name": "DatabaseConfiguration",
-              "displayName": "DatabaseConfiguration",
-              "type": "component",
-              "path": "database.component.DatabaseConfiguration",
-              "urlPath": "",
-              "componentId": "DatabaseConfiguration",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true,
-          "isDynamicRobotsFile": false
-        },
-        {
           "id": "app-structure",
           "name": "app-structure",
           "displayName": "App Structure",
           "type": "file",
-          "order": 5,
+          "order": 4,
           "path": "app-structure",
           "urlPath": "/app-structure",
           "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
@@ -582,8 +556,32 @@
           ],
           "sections": {},
           "include": true,
-          "isDynamicRobotsFile": false,
-          "visibleAfterPage": "readme"
+          "isDynamicRobotsFile": false
+        },
+        {
+          "id": "database",
+          "name": "database",
+          "displayName": "Database",
+          "type": "file",
+          "order": 5,
+          "path": "database",
+          "urlPath": "/database",
+          "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-DatabaseConfiguration",
+              "name": "DatabaseConfiguration",
+              "displayName": "DatabaseConfiguration",
+              "type": "component",
+              "path": "database.component.DatabaseConfiguration",
+              "urlPath": "",
+              "componentId": "DatabaseConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true,
+          "isDynamicRobotsFile": false
         },
         {
           "id": "robots",
@@ -773,7 +771,7 @@
           },
           "include": true,
           "isDynamicRobotsFile": false,
-          "visibleAfterPage": "readme"
+          "visibleAfterPage": "robots"
         },
         {
           "id": "util",
@@ -855,7 +853,7 @@
           },
           "include": true,
           "isDynamicRobotsFile": false,
-          "visibleAfterPage": "readme",
+          "visibleAfterPage": "robots",
           "includeInToolbar": false
         },
         {
@@ -878,7 +876,7 @@
       "order": 1,
       "path": "readme",
       "urlPath": "/readme",
-      "content": "# README\n\n<!-- component-READMEComponent -->\n",
+      "content": "<!-- component-READMEComponent -->\n",
       "components": [
         {
           "id": "component-READMEComponent",
@@ -990,15 +988,50 @@
       "componentId": "ThemeConfiguration",
       "include": true
     },
+    "app-structure": {
+      "id": "app-structure",
+      "name": "app-structure",
+      "displayName": "App Structure",
+      "type": "file",
+      "order": 4,
+      "path": "app-structure",
+      "urlPath": "/app-structure",
+      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+      "components": [
+        {
+          "id": "component-LayoutAndStructure",
+          "name": "LayoutAndStructure",
+          "displayName": "LayoutAndStructure",
+          "type": "component",
+          "path": "app-structure.component.LayoutAndStructure",
+          "urlPath": "",
+          "componentId": "LayoutAndStructure",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true,
+      "isDynamicRobotsFile": false
+    },
+    "app-structure.component.LayoutAndStructure": {
+      "id": "component-LayoutAndStructure",
+      "name": "LayoutAndStructure",
+      "displayName": "LayoutAndStructure",
+      "type": "component",
+      "path": "app-structure.component.LayoutAndStructure",
+      "urlPath": "",
+      "componentId": "LayoutAndStructure",
+      "include": true
+    },
     "database": {
       "id": "database",
       "name": "database",
       "displayName": "Database",
       "type": "file",
-      "order": 4,
+      "order": 5,
       "path": "database",
       "urlPath": "/database",
-      "content": "# Database\n\nDefine your schema, client files and Row Level Security to configure your database.\n\n<!-- component-DatabaseConfiguration -->\n",
+      "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
       "components": [
         {
           "id": "component-DatabaseConfiguration",
@@ -1023,42 +1056,6 @@
       "path": "database.component.DatabaseConfiguration",
       "urlPath": "",
       "componentId": "DatabaseConfiguration",
-      "include": true
-    },
-    "app-structure": {
-      "id": "app-structure",
-      "name": "app-structure",
-      "displayName": "App Structure",
-      "type": "file",
-      "order": 5,
-      "path": "app-structure",
-      "urlPath": "/app-structure",
-      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-      "components": [
-        {
-          "id": "component-LayoutAndStructure",
-          "name": "LayoutAndStructure",
-          "displayName": "LayoutAndStructure",
-          "type": "component",
-          "path": "app-structure.component.LayoutAndStructure",
-          "urlPath": "",
-          "componentId": "LayoutAndStructure",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true,
-      "isDynamicRobotsFile": false,
-      "visibleAfterPage": "readme"
-    },
-    "app-structure.component.LayoutAndStructure": {
-      "id": "component-LayoutAndStructure",
-      "name": "LayoutAndStructure",
-      "displayName": "LayoutAndStructure",
-      "type": "component",
-      "path": "app-structure.component.LayoutAndStructure",
-      "urlPath": "",
-      "componentId": "LayoutAndStructure",
       "include": true
     },
     "robots": {
@@ -1249,7 +1246,7 @@
       },
       "include": true,
       "isDynamicRobotsFile": false,
-      "visibleAfterPage": "readme"
+      "visibleAfterPage": "robots"
     },
     "util": {
       "id": "util",
@@ -1331,7 +1328,7 @@
       },
       "include": true,
       "isDynamicRobotsFile": false,
-      "visibleAfterPage": "readme",
+      "visibleAfterPage": "robots",
       "includeInToolbar": false
     },
     "code-files": {

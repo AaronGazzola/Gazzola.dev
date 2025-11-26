@@ -22,14 +22,6 @@ import { generateDefaultFunctionName } from "@/lib/feature.utils";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
-const getFirstPagePath = (data: MarkdownData): string => {
-  const pages = Object.values(data.flatIndex)
-    .filter((node) => node.type === "file" && node.include !== false && !(node as any).previewOnly && !(node as any).visibleAfterPage)
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
-
-  return pages.length > 0 ? pages[0].path : "";
-};
-
 const defaultAppStructure: FileSystemEntry[] = [
   {
     id: generateId(),
@@ -301,7 +293,7 @@ const createInitialState = (data: MarkdownData) => ({
   darkMode: true,
   previewMode: false,
   refreshKey: 0,
-  visitedPages: [getFirstPagePath(data)],
+  visitedPages: [],
   appStructure: defaultAppStructure,
   placeholderValues: {},
   initialConfiguration: defaultInitialConfiguration,
@@ -319,6 +311,8 @@ const createInitialState = (data: MarkdownData) => ({
   testSuites: [],
   isResetting: false,
   readmeGenerated: false,
+  appStructureGenerated: false,
+  databaseGenerated: false,
   helpPopoverOpened: false,
 });
 
@@ -992,7 +986,6 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({
           data: newData,
           storedContentVersion: newData.contentVersion,
-          visitedPages: state.visitedPages.length === 0 ? [getFirstPagePath(newData)] : state.visitedPages,
         }));
         get().generateCodeFiles();
       },
@@ -1499,6 +1492,8 @@ export const useEditorStore = create<EditorState>()(
         });
       },
       setReadmeGenerated: (generated: boolean) => set({ readmeGenerated: generated }),
+      setAppStructureGenerated: (generated: boolean) => set({ appStructureGenerated: generated }),
+      setDatabaseGenerated: (generated: boolean) => set({ databaseGenerated: generated }),
       setHelpPopoverOpened: (opened: boolean) => set({ helpPopoverOpened: opened }),
     }),
     {
@@ -1522,6 +1517,8 @@ export const useEditorStore = create<EditorState>()(
         featureFileSelection: state.featureFileSelection,
         testSuites: state.testSuites,
         readmeGenerated: state.readmeGenerated,
+        appStructureGenerated: state.appStructureGenerated,
+        databaseGenerated: state.databaseGenerated,
         helpPopoverOpened: state.helpPopoverOpened,
       }),
       migrate: (persistedState: any, version: number) => {

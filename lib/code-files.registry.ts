@@ -886,7 +886,7 @@ const createComponentFileNodes = (
       language: "typescript",
       content: () => content,
       includeCondition: () => shouldShowCodeFiles,
-      visibleAfterPage: "readme",
+      visibleAfterPage: "robots",
       parentPath: "components.ui",
       downloadPath: "components/ui",
       previewOnly: true,

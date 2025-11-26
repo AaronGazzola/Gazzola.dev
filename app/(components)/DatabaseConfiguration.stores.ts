@@ -2008,7 +2008,25 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           tables = [...userCreatedTables];
         }
 
-        set({ tables, enums: [], rlsPolicies: [], plugins });
+        set((state) => ({
+          tables,
+          enums: state.enums,
+          rlsPolicies: [],
+          plugins,
+        }));
+      },
+
+      setTablesFromAI: (newTables) => {
+        set((state) => {
+          const authTables = state.tables.filter(
+            (t) => t.schema === "auth" || t.schema === "better_auth"
+          );
+          return { tables: [...authTables, ...newTables] };
+        });
+      },
+
+      setEnumsFromAI: (newEnums) => {
+        set({ enums: newEnums });
       },
 
       reset: () => set({ tables: [], enums: [], rlsPolicies: [], plugins: [], activeTab: "schema" }),

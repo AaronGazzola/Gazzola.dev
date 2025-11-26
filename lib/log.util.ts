@@ -14,9 +14,11 @@ export enum LOG_LABELS {
   REALTIME = "realtime",
   THEME = "theme",
   APP_STRUCTURE = "app-structure",
+  DATABASE = "database",
   PROGRESS = "progress",
   PROGRESS_DEBUG = "progress-debug",
   OPENROUTER = "openrouter",
+  README = "readme",
 }
 
 interface ConditionalLogOptions {

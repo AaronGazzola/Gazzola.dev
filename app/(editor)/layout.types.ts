@@ -286,6 +286,10 @@ export interface EditorState {
   reorderTestSuites: (fromIndex: number, toIndex: number) => void;
   readmeGenerated: boolean;
   setReadmeGenerated: (generated: boolean) => void;
+  appStructureGenerated: boolean;
+  setAppStructureGenerated: (generated: boolean) => void;
+  databaseGenerated: boolean;
+  setDatabaseGenerated: (generated: boolean) => void;
   helpPopoverOpened: boolean;
   setHelpPopoverOpened: (opened: boolean) => void;
 }

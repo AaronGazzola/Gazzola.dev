@@ -10,6 +10,7 @@ export const ENV = {
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY || "",
   MODE: process.env.NODE_ENV || "production",
+  DEV: process.env.NODE_ENV === "development",
 };
 
 export function getBrowserAPI<T>(accessor: () => T): T | undefined {

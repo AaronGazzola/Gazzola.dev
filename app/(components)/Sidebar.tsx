@@ -35,6 +35,7 @@ import { DataCyAttributes } from "@/types/cypress.types";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
+  BookText,
   Bot,
   Box,
   ChevronDown,
@@ -69,7 +70,7 @@ const nextSteps = [
 ];
 
 const FILE_ICON_MAP: Record<string, LucideIcon> = {
-  readme: MessagesSquare,
+  readme: BookText,
   robots: Bot,
   claude: Sparkles,
   theme: Palette,
@@ -369,18 +370,27 @@ const TreeItem: React.FC<TreeItemProps> = ({
       return null;
     }
 
-    if (node?.type === "file" && node.visibleAfterPage) {
-      const hasVisitedRequiredPage = isPageVisited(node.visibleAfterPage);
+    if (node?.type === "file") {
       const isPageIncluded = node.include === true;
-      if (!hasVisitedRequiredPage || !isPageIncluded) {
+      const hasVisitedThisPage = isPageVisited(item.path);
+      const hasVisitedRobots = isPageVisited("robots");
+      const isReadme = item.path === "readme";
+
+      if (!isPageIncluded) {
         return null;
       }
-    } else if (node?.type === "file" && !node.previewOnly) {
-      if (!isPageVisited(item.path)) {
+
+      if (node.visibleAfterPage) {
+        if (!hasVisitedThisPage && !hasVisitedRobots) {
+          return null;
+        }
+      } else if (!isReadme && !hasVisitedThisPage) {
         return null;
       }
     } else if (node?.type === "code-file" && node.visibleAfterPage) {
-      if (!isPageVisited(node.visibleAfterPage)) {
+      const hasVisitedThisPage = isPageVisited(item.path);
+      const hasVisitedRobots = isPageVisited("robots");
+      if (!hasVisitedThisPage && !hasVisitedRobots) {
         return null;
       }
     }
@@ -427,6 +437,8 @@ const TreeItem: React.FC<TreeItemProps> = ({
     return null;
   }
 
+  const hasVisitedRobots = isPageVisited("robots");
+
   const childCodeFiles =
     item.children
       ?.filter((child) => child.include !== false && child.path)
@@ -437,37 +449,27 @@ const TreeItem: React.FC<TreeItemProps> = ({
     childCodeFiles.length > 0 &&
     childCodeFiles.every((cf) => cf.visibleAfterPage);
 
-  if (hasCodeFilesWithVisibilityRequirement) {
-    const requiredPage = childCodeFiles[0]?.visibleAfterPage;
-    if (requiredPage && !isPageVisited(requiredPage)) {
+  if (hasCodeFilesWithVisibilityRequirement && !hasVisitedRobots) {
+    const hasAnyVisitedCodeFile = childCodeFiles.some((cf) =>
+      isPageVisited(cf.path)
+    );
+    if (!hasAnyVisitedCodeFile) {
       return null;
     }
   }
 
-  const hasVisitedChildren = item.children
+  const hasVisibleChildren = item.children
     ?.filter((child) => child.include !== false)
     .some((child) => {
       if (child.type === "page" && child.path) {
         const childNode = getNode(child.path || "");
-        const childCodeFile = codeFiles.find((cf) => cf.path === child.path);
 
         if (isPageVisited(child.path)) {
           return true;
         }
 
-        if (childNode?.type === "file" && (childNode as any).visibleAfterPage) {
-          return isPageVisited((childNode as any).visibleAfterPage);
-        }
-
-        if (childCodeFile?.visibleAfterPage) {
-          return isPageVisited(childCodeFile.visibleAfterPage);
-        }
-
-        if (
-          childNode?.type === "code-file" &&
-          (childNode as any).visibleAfterPage
-        ) {
-          return isPageVisited((childNode as any).visibleAfterPage);
+        if (hasVisitedRobots && childNode?.visibleAfterPage) {
+          return true;
         }
       }
       return false;
@@ -479,7 +481,11 @@ const TreeItem: React.FC<TreeItemProps> = ({
     codeFiles
   );
 
-  if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
+  if (
+    !hasVisibleChildren &&
+    !hasRequiredPageVisit &&
+    !(hasPreviewDescendants && hasVisitedRobots)
+  ) {
     return null;
   }
 
@@ -595,18 +601,27 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
       return null;
     }
 
-    if (node?.type === "file" && node.visibleAfterPage) {
-      const hasVisitedRequiredPage = isPageVisited(node.visibleAfterPage);
+    if (node?.type === "file") {
       const isPageIncluded = node.include === true;
-      if (!hasVisitedRequiredPage || !isPageIncluded) {
+      const hasVisitedThisPage = isPageVisited(item.path);
+      const hasVisitedRobots = isPageVisited("robots");
+      const isReadme = item.path === "readme";
+
+      if (!isPageIncluded) {
         return null;
       }
-    } else if (node?.type === "file" && !node.previewOnly) {
-      if (!isPageVisited(item.path)) {
+
+      if (node.visibleAfterPage) {
+        if (!hasVisitedThisPage && !hasVisitedRobots) {
+          return null;
+        }
+      } else if (!isReadme && !hasVisitedThisPage) {
         return null;
       }
     } else if (node?.type === "code-file" && node.visibleAfterPage) {
-      if (!isPageVisited(node.visibleAfterPage)) {
+      const hasVisitedThisPage = isPageVisited(item.path);
+      const hasVisitedRobots = isPageVisited("robots");
+      if (!hasVisitedThisPage && !hasVisitedRobots) {
         return null;
       }
     }
@@ -690,6 +705,8 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     return null;
   }
 
+  const hasVisitedRobots = isPageVisited("robots");
+
   const childCodeFiles =
     item.children
       ?.filter((child) => child.include !== false && child.path)
@@ -700,37 +717,27 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     childCodeFiles.length > 0 &&
     childCodeFiles.every((cf) => cf.visibleAfterPage);
 
-  if (hasCodeFilesWithVisibilityRequirement) {
-    const requiredPage = childCodeFiles[0]?.visibleAfterPage;
-    if (requiredPage && !isPageVisited(requiredPage)) {
+  if (hasCodeFilesWithVisibilityRequirement && !hasVisitedRobots) {
+    const hasAnyVisitedCodeFile = childCodeFiles.some((cf) =>
+      isPageVisited(cf.path)
+    );
+    if (!hasAnyVisitedCodeFile) {
       return null;
     }
   }
 
-  const hasVisitedChildren = item.children
+  const hasVisibleChildren = item.children
     ?.filter((child) => child.include !== false)
     .some((child) => {
       if (child.type === "page" && child.path) {
         const childNode = getNode(child.path || "");
-        const childCodeFile = codeFiles.find((cf) => cf.path === child.path);
 
         if (isPageVisited(child.path)) {
           return true;
         }
 
-        if (childNode?.type === "file" && (childNode as any).visibleAfterPage) {
-          return isPageVisited((childNode as any).visibleAfterPage);
-        }
-
-        if (childCodeFile?.visibleAfterPage) {
-          return isPageVisited(childCodeFile.visibleAfterPage);
-        }
-
-        if (
-          childNode?.type === "code-file" &&
-          (childNode as any).visibleAfterPage
-        ) {
-          return isPageVisited((childNode as any).visibleAfterPage);
+        if (hasVisitedRobots && childNode?.visibleAfterPage) {
+          return true;
         }
       }
       return false;
@@ -742,7 +749,11 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     codeFiles
   );
 
-  if (!hasVisitedChildren && !hasRequiredPageVisit && !hasPreviewDescendants) {
+  if (
+    !hasVisibleChildren &&
+    !hasRequiredPageVisit &&
+    !(hasPreviewDescendants && hasVisitedRobots)
+  ) {
     return null;
   }
 

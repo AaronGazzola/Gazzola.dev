@@ -230,12 +230,11 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     isDynamicRobotsFile: isRobotsFile,
   };
 
+  const robotsOrder = 6;
   if (sanitizedName === "robot-readme" || isRobotsFile) {
     fileNode.visibleAfterPage = "readme";
-  }
-
-  if (order && order >= 5 && sanitizedName !== "readme" && sanitizedName !== "robots") {
-    fileNode.visibleAfterPage = "readme";
+  } else if (sanitizedName !== "readme" && order && order > robotsOrder) {
+    fileNode.visibleAfterPage = "robots";
   }
 
   if (sanitizedName === "util") {
