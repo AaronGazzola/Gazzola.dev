@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
+import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight, List, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
@@ -26,6 +27,7 @@ export const EnumsCollapsible = ({
   const enums = getAllEnums();
   const [isAddingEnum, setIsAddingEnum] = useState(false);
   const [newEnumName, setNewEnumName] = useState("");
+  const [expandedEnumId, setExpandedEnumId] = useState<string | null>(null);
   const newEnumInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -40,6 +42,14 @@ export const EnumsCollapsible = ({
       setNewEnumName("");
     }
     setIsAddingEnum(false);
+  };
+
+  const handleEnumToggle = (enumId: string) => {
+    if (expandedEnumId === enumId) {
+      setExpandedEnumId(null);
+    } else {
+      setExpandedEnumId(enumId);
+    }
   };
 
   return (
@@ -86,7 +96,12 @@ export const EnumsCollapsible = ({
             </div>
           )}
           {enums.map((enumItem) => (
-            <EnumItem key={enumItem.id} enumItem={enumItem} />
+            <EnumItem
+              key={enumItem.id}
+              enumItem={enumItem}
+              isExpanded={expandedEnumId === enumItem.id}
+              onToggle={() => handleEnumToggle(enumItem.id)}
+            />
           ))}
           {isAddingEnum && (
             <div className="theme-bg-background theme-radius theme-p-2 border theme-border-border">
@@ -126,15 +141,18 @@ export const EnumsCollapsible = ({
 
 const EnumItem = ({
   enumItem,
+  isExpanded,
+  onToggle,
 }: {
   enumItem: import("./DatabaseConfiguration.types").PrismaEnum;
+  isExpanded: boolean;
+  onToggle: () => void;
 }) => {
   const {
     deleteEnum,
     updateEnumName,
     addEnumValue,
   } = useDatabaseStore();
-  const [isOpen, setIsOpen] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(enumItem.name);
   const [isAddingValue, setIsAddingValue] = useState(false);
@@ -164,17 +182,16 @@ const EnumItem = ({
     setIsAddingValue(false);
   };
 
-  const handleToggle = () => setIsOpen(!isOpen);
-
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <div className={cn(isExpanded && "border theme-border-chart-4 theme-radius theme-p-1")}>
       <div
         className="theme-bg-background theme-radius theme-p-2 border theme-border-border cursor-pointer"
-        onClick={handleToggle}
+        onClick={onToggle}
       >
         <div className="flex items-center theme-gap-2">
           <Button variant="ghost" size="icon" className="h-6 w-6">
-            {isOpen ? (
+            {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
             ) : (
               <ChevronRight className="h-4 w-4" />
@@ -254,7 +271,7 @@ const EnumItem = ({
         </div>
       </div>
       <CollapsibleContent>
-        <div className="flex flex-col theme-gap-1 theme-mt-2 theme-ml-8">
+        <div className="flex flex-col theme-gap-1 theme-mt-1 theme-ml-8 theme-p-2 theme-radius theme-bg-background">
           {enumItem.values.map((value) => (
             <EnumValueItem
               key={value.id}
@@ -291,6 +308,7 @@ const EnumItem = ({
           )}
         </div>
       </CollapsibleContent>
+      </div>
     </Collapsible>
   );
 };

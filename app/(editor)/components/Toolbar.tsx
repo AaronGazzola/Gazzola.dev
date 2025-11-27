@@ -31,9 +31,9 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleHelp,
+  Ellipsis,
   Home,
   ListRestart,
-  Menu,
   MessagesSquare,
   Palette,
   RotateCcw,
@@ -557,6 +557,27 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               </Button>
             )}
 
+            <div className="xs:flex hidden md:hidden items-center gap-1 pl-2 pr-1">
+              <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+              <Button
+                onClick={handleHome}
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+              >
+                <Home className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <Button
+              onClick={handleHome}
+              variant="outline"
+              size="icon"
+              className="xs:hidden h-8 w-8"
+            >
+              <Home className="h-4 w-4" />
+            </Button>
+
             <EditorPopover open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <EditorPopoverTrigger asChild>
                 <Button
@@ -564,23 +585,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   size="icon"
                   className="md:hidden rounded-[3px] h-8 w-8"
                 >
-                  <Menu className="h-4 w-4" />
+                  <Ellipsis className="h-4 w-4" />
                 </Button>
               </EditorPopoverTrigger>
               <EditorPopoverContent className="w-48 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
                 <div className="flex flex-col theme-gap-1">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start theme-gap-2 h-9"
-                    onClick={() => {
-                      handleHome();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <Home className="h-4 w-4" />
-                    Go to first page
-                  </Button>
-                  <div className="flex items-center justify-between px-2 py-1">
+                  <div className="xs:hidden flex items-center justify-between px-2 py-1">
                     <span className="text-sm">Dark mode</span>
                     <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
                   </div>
@@ -592,7 +602,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <RotateCcw className="h-4 w-4" />
+                    <ListRestart className="h-4 w-4" />
                     Reset page
                   </Button>
                   <Button
@@ -603,7 +613,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <ListRestart className="h-4 w-4" />
+                    <RotateCcw className="h-4 w-4" />
                     Reset all
                   </Button>
                 </div>
@@ -627,81 +637,83 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </TooltipContent>
               </Tooltip>
 
-              <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+              <div className="px-1">
+                <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+              </div>
 
               <IconButton
                 onClick={() => setResetPageDialogOpen(true)}
                 tooltip="Reset current page"
               >
-                <RotateCcw className="h-4 w-4" />
+                <ListRestart className="h-4 w-4" />
               </IconButton>
 
               <IconButton
                 onClick={() => setResetAllDialogOpen(true)}
                 tooltip="Reset all pages"
               >
-                <ListRestart className="h-4 w-4" />
+                <RotateCcw className="h-4 w-4" />
               </IconButton>
-            </div>
 
-            <EditorPopover
-              open={helpPopoverOpen}
-              onOpenChange={(open) => {
-                setHelpPopoverOpen(open);
-                if (open && !helpPopoverOpened) {
-                  setHelpPopoverOpened(true);
-                }
-              }}
-            >
-              <EditorPopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`rounded-full h-8 w-8 ${!helpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90 " : ""}`}
-                >
-                  <CircleHelp className="h-4 w-4" />
-                </Button>
-              </EditorPopoverTrigger>
-              <EditorPopoverContent className="sm:w-96  theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0">
-                <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
-                  <h4 className="font-semibold text-base theme-font-sans theme-tracking">
-                    Your web app documentation
-                  </h4>
-                  <div className="flex flex-col theme-gap-2 text-sm">
-                    <p className="theme-font-sans theme-tracking">
-                      This interactive editor allows you to configure and
-                      customize your project documentation.
-                    </p>
-                    <div className="theme-pt-2">
-                      <h5 className="font-semibold theme-font-sans theme-tracking theme-pb-1">
-                        How it works:
-                      </h5>
-                      <ul className="list-disc list-inside flex flex-col theme-gap-1 theme-pl-2">
-                        <li className="theme-font-sans theme-tracking">
-                          Each page represents a file in your Documentation
-                          directory
-                        </li>
-                        <li className="theme-font-sans theme-tracking">
-                          Navigate through pages using the toolbar controls
-                        </li>
-                        <li className="theme-font-sans theme-tracking">
-                          Toggle Preview mode to see the final output that will
-                          be generated
-                        </li>
-                        <li className="theme-font-sans theme-tracking">
-                          Click the download button in the sidebar to export
-                          your documentation
-                        </li>
-                      </ul>
+              <EditorPopover
+                open={helpPopoverOpen}
+                onOpenChange={(open) => {
+                  setHelpPopoverOpen(open);
+                  if (open && !helpPopoverOpened) {
+                    setHelpPopoverOpened(true);
+                  }
+                }}
+              >
+                <EditorPopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`rounded-full h-8 w-8 ${!helpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90 " : ""}`}
+                  >
+                    <CircleHelp className="h-4 w-4" />
+                  </Button>
+                </EditorPopoverTrigger>
+                <EditorPopoverContent className="sm:w-96  theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0">
+                  <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
+                    <h4 className="font-semibold text-base theme-font-sans theme-tracking">
+                      Your web app documentation
+                    </h4>
+                    <div className="flex flex-col theme-gap-2 text-sm">
+                      <p className="theme-font-sans theme-tracking">
+                        This interactive editor allows you to configure and
+                        customize your project documentation.
+                      </p>
+                      <div className="theme-pt-2">
+                        <h5 className="font-semibold theme-font-sans theme-tracking theme-pb-1">
+                          How it works:
+                        </h5>
+                        <ul className="list-disc list-inside flex flex-col theme-gap-1 theme-pl-2">
+                          <li className="theme-font-sans theme-tracking">
+                            Each page represents a file in your Documentation
+                            directory
+                          </li>
+                          <li className="theme-font-sans theme-tracking">
+                            Navigate through pages using the toolbar controls
+                          </li>
+                          <li className="theme-font-sans theme-tracking">
+                            Toggle Preview mode to see the final output that will
+                            be generated
+                          </li>
+                          <li className="theme-font-sans theme-tracking">
+                            Click the download button in the sidebar to export
+                            your documentation
+                          </li>
+                        </ul>
+                      </div>
+                      <p className="theme-font-sans theme-tracking theme-pt-2">
+                        All changes are saved automatically as you work. Use the
+                        Reset button to restore default configurations.
+                      </p>
                     </div>
-                    <p className="theme-font-sans theme-tracking theme-pt-2">
-                      All changes are saved automatically as you work. Use the
-                      Reset button to restore default configurations.
-                    </p>
                   </div>
-                </div>
-              </EditorPopoverContent>
-            </EditorPopover>
+                </EditorPopoverContent>
+              </EditorPopover>
+            </div>
           </div>
 
           <div className="flex items-center theme-gap-3">

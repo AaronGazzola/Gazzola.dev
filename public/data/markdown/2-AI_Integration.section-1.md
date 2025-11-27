@@ -1,4 +1,4 @@
-<!-- option-1 -->
+<!-- *option-1 -->
 
 ## Setup Instructions for Windsurf
 
@@ -107,7 +107,7 @@ the features and requirements described there.
 ```
 <!-- /option-2 -->
 
-<!-- option-3 -->
+<!-- *option-3 -->
 
 ## Setup Instructions for Cursor
 

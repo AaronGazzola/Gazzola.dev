@@ -6,12 +6,16 @@ import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
 import { Textarea } from "@/components/editor/ui/textarea";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
+import { extractJsonArrayFromResponse } from "@/lib/ai-response.utils";
 import {
   Loader2,
   MessageCircleQuestion,
   RotateCcw,
   Sparkles,
+  X,
 } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/editor/ui/radio-group";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import { useCallback, useState } from "react";
 
 type Stage = "initial" | "questions";
@@ -19,10 +23,18 @@ type Stage = "initial" | "questions";
 const MIN_TITLE_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 50;
 
+interface QuestionOption {
+  id: string;
+  label: string;
+}
+
 interface Question {
   id: string;
   question: string;
-  answer: string;
+  type: "single" | "multiple";
+  options: QuestionOption[];
+  selectedOptions: string[];
+  additionalInfo: string;
 }
 
 interface READMEState {
@@ -32,7 +44,38 @@ interface READMEState {
   stage: Stage;
 }
 
+interface QuestionAIResponse {
+  question: string;
+  type?: "single" | "multiple";
+  options?: string[];
+}
+
 const parseQuestionsFromResponse = (response: string): Question[] => {
+  const parsed = extractJsonArrayFromResponse<QuestionAIResponse>(
+    response,
+    LOG_LABELS.README
+  );
+
+  if (parsed) {
+    return parsed.slice(0, 5).map((q, index) => {
+      const questionText = typeof q === "string" ? q : q.question;
+      const questionType = typeof q === "string" ? "single" : (q.type || "single");
+      const rawOptions = typeof q === "string" ? [] : (q.options || []);
+
+      return {
+        id: `q-${index + 1}`,
+        question: questionText,
+        type: questionType,
+        options: rawOptions.map((opt, optIndex) => ({
+          id: `q-${index + 1}-opt-${optIndex + 1}`,
+          label: opt,
+        })),
+        selectedOptions: [],
+        additionalInfo: "",
+      };
+    });
+  }
+
   const lines = response.split("\n").filter((line) => line.trim());
   const questions: Question[] = [];
 
@@ -42,7 +85,10 @@ const parseQuestionsFromResponse = (response: string): Question[] => {
       questions.push({
         id: `q-${questions.length + 1}`,
         question: cleanedLine,
-        answer: "",
+        type: "single",
+        options: [],
+        selectedOptions: [],
+        additionalInfo: "",
       });
     }
   }
@@ -52,25 +98,93 @@ const parseQuestionsFromResponse = (response: string): Question[] => {
 
 const QuestionAnswerItem = ({
   question,
-  onAnswerChange,
+  onOptionSelect,
+  onClearSelection,
+  onAdditionalInfoChange,
 }: {
   question: Question;
-  onAnswerChange: (id: string, answer: string) => void;
+  onOptionSelect: (questionId: string, optionId: string, isSelected: boolean) => void;
+  onClearSelection: (questionId: string) => void;
+  onAdditionalInfoChange: (questionId: string, text: string) => void;
 }) => {
+  const hasSelection = question.selectedOptions.length > 0;
+
   return (
-    <div className="flex flex-col theme-gap-2 theme-p-3 theme-bg-muted theme-radius">
-      <div className="flex items-start theme-gap-2">
-        <MessageCircleQuestion className="h-5 w-5 theme-text-primary shrink-0 mt-0.5" />
-        <p className="text-sm font-semibold theme-text-foreground">
-          {question.question}
-        </p>
+    <div className="flex flex-col theme-gap-3 theme-p-3 theme-bg-muted theme-radius">
+      <div className="flex items-start justify-between theme-gap-2">
+        <div className="flex items-start theme-gap-2 flex-1">
+          <MessageCircleQuestion className="h-5 w-5 theme-text-primary shrink-0 mt-0.5" />
+          <p className="text-sm font-semibold theme-text-foreground">
+            {question.question}
+          </p>
+        </div>
+        {hasSelection && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onClearSelection(question.id)}
+            className="h-6 px-2 theme-text-muted-foreground hover:theme-text-foreground"
+          >
+            <X className="h-3 w-3 mr-1" />
+            Clear
+          </Button>
+        )}
       </div>
-      <Textarea
-        value={question.answer}
-        onChange={(e) => onAnswerChange(question.id, e.target.value)}
-        placeholder="Your answer..."
-        className="theme-shadow min-h-[80px] text-sm"
-      />
+
+      {question.options.length > 0 && (
+        <div className="pl-7">
+          {question.type === "single" ? (
+            <RadioGroup
+              value={question.selectedOptions[0] || ""}
+              onValueChange={(value) => onOptionSelect(question.id, value, true)}
+              className="flex flex-col theme-gap-2"
+            >
+              {question.options.map((option) => (
+                <label
+                  key={option.id}
+                  className="flex items-center theme-gap-2 cursor-pointer"
+                >
+                  <RadioGroupItem value={option.id} id={option.id} />
+                  <span className="text-sm theme-text-foreground">{option.label}</span>
+                </label>
+              ))}
+            </RadioGroup>
+          ) : (
+            <div className="flex flex-col theme-gap-2">
+              {question.options.map((option) => {
+                const isChecked = question.selectedOptions.includes(option.id);
+                return (
+                  <label
+                    key={option.id}
+                    className="flex items-center theme-gap-2 cursor-pointer"
+                  >
+                    <Checkbox
+                      id={option.id}
+                      checked={isChecked}
+                      onCheckedChange={(checked) =>
+                        onOptionSelect(question.id, option.id, checked === true)
+                      }
+                    />
+                    <span className="text-sm theme-text-foreground">{option.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="pl-7">
+        <label className="text-xs theme-text-muted-foreground font-semibold block mb-1">
+          Additional details (optional)
+        </label>
+        <Textarea
+          value={question.additionalInfo}
+          onChange={(e) => onAdditionalInfoChange(question.id, e.target.value)}
+          placeholder="Add any extra context..."
+          className="theme-shadow min-h-[60px] text-sm"
+        />
+      </div>
     </div>
   );
 };
@@ -118,26 +232,50 @@ export const READMEComponent = () => {
   }, [setReadmeGenerated]);
 
   const handleSubmitInitial = useCallback(() => {
-    const prompt = `You are helping a user create a README for their web application. Based on their initial description, generate 3-5 clarifying questions to better understand the functionality and user experience.
+    const prompt = `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with [ end with ]
 
 App Title: ${state.title}
 App Description: ${state.description}
 
-Generate questions that will help clarify:
-- The main pages/screens of the application
-- The primary user workflows and interactions
+Generate 3-5 clarifying questions about the application. Each question should have multiple choice options.
+Topics to cover:
+- Main pages/screens of the application
+- Primary user workflows and interactions
 - Key components and their functionality
-- The target audience and their goals
-- Any unique features or user experience elements
+- Target audience and their goals
+- Unique features or user experience elements
 
-Format: Return ONLY the questions, one per line, numbered 1-5. Each question should end with a question mark. Do not include any other text or explanations.`;
+JSON Format (array of question objects with options):
+[
+  {"question": "What type of authentication will users need?", "type": "single", "options": ["Email/Password", "Social Login", "Magic Link", "No authentication"]},
+  {"question": "Which main pages will your app have?", "type": "multiple", "options": ["Dashboard", "User Profile", "Settings", "Landing Page", "Admin Panel"]},
+  {"question": "Who is the primary target audience?", "type": "single", "options": ["Consumers/General public", "Business professionals", "Developers", "Students/Educators"]}
+]
 
-    generateQuestions({ prompt, maxTokens: 500 });
+Rules:
+- Use "single" type when user should pick exactly one option
+- Use "multiple" type when user can select several options
+- Provide 3-6 relevant options per question
+- Options should be concise (1-4 words each)`;
+
+    generateQuestions({ prompt, maxTokens: 1000 });
   }, [state.title, state.description, generateQuestions]);
 
   const handleSubmitAnswers = useCallback(() => {
     const qaPairs = state.questions
-      .map((q) => `Q: ${q.question}\nA: ${q.answer || "Not answered"}`)
+      .map((q) => {
+        const selectedLabels = q.selectedOptions
+          .map((optId) => q.options.find((opt) => opt.id === optId)?.label)
+          .filter(Boolean)
+          .join(", ");
+
+        const selected = selectedLabels || "Not answered";
+        const additional = q.additionalInfo.trim()
+          ? `\nAdditional: ${q.additionalInfo.trim()}`
+          : "";
+
+        return `Q: ${q.question}\nSelected: ${selected}${additional}`;
+      })
       .join("\n\n");
 
     const prompt = `Generate a detailed, professional README.md for a web application based on the following information:
@@ -163,14 +301,48 @@ Requirements:
     generateReadme({ prompt, maxTokens: 3000 });
   }, [state, generateReadme]);
 
-  const handleAnswerChange = useCallback((id: string, answer: string) => {
+  const handleOptionSelect = useCallback(
+    (questionId: string, optionId: string, isSelected: boolean) => {
+      setState((prev) => ({
+        ...prev,
+        questions: prev.questions.map((q) => {
+          if (q.id !== questionId) return q;
+
+          if (q.type === "single") {
+            return { ...q, selectedOptions: isSelected ? [optionId] : [] };
+          }
+
+          const newSelected = isSelected
+            ? [...q.selectedOptions, optionId]
+            : q.selectedOptions.filter((id) => id !== optionId);
+
+          return { ...q, selectedOptions: newSelected };
+        }),
+      }));
+    },
+    []
+  );
+
+  const handleClearSelection = useCallback((questionId: string) => {
     setState((prev) => ({
       ...prev,
       questions: prev.questions.map((q) =>
-        q.id === id ? { ...q, answer } : q
+        q.id === questionId ? { ...q, selectedOptions: [] } : q
       ),
     }));
   }, []);
+
+  const handleAdditionalInfoChange = useCallback(
+    (questionId: string, text: string) => {
+      setState((prev) => ({
+        ...prev,
+        questions: prev.questions.map((q) =>
+          q.id === questionId ? { ...q, additionalInfo: text } : q
+        ),
+      }));
+    },
+    []
+  );
 
   conditionalLog(
     {
@@ -297,7 +469,9 @@ Requirements:
               <QuestionAnswerItem
                 key={question.id}
                 question={question}
-                onAnswerChange={handleAnswerChange}
+                onOptionSelect={handleOptionSelect}
+                onClearSelection={handleClearSelection}
+                onAdditionalInfoChange={handleAdditionalInfoChange}
               />
             ))}
           </div>

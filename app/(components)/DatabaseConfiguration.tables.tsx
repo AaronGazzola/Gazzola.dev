@@ -138,6 +138,7 @@ export const TableCollapsible = ({
 
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <div className={cn(isExpanded && "border theme-border-chart-3 theme-radius theme-p-1")}>
       <div
         className="theme-bg-background theme-radius theme-p-2 border theme-border-border cursor-pointer"
         onClick={onToggle}
@@ -230,7 +231,7 @@ export const TableCollapsible = ({
         </div>
       </div>
       <CollapsibleContent>
-        <div className="theme-ml-4 theme-mt-2">
+        <div className="theme-mt-1 theme-p-2 theme-bg-background theme-radius">
           <Tabs defaultValue="columns" className="w-full">
             <TabsList className="w-full theme-p-1 h-auto">
               <div className="flex flex-1 theme-gap-1">
@@ -257,6 +258,7 @@ export const TableCollapsible = ({
           </Tabs>
         </div>
       </CollapsibleContent>
+      </div>
     </Collapsible>
   );
 };
