@@ -19,14 +19,23 @@ export const useCodeGeneration = (
     ): Promise<OpenRouterResponse> => {
       const fingerprint = await getDeviceFingerprint();
 
-      const response = await fetch("/api/openrouter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...input,
-          fingerprint,
-        } as OpenRouterRequest),
-      });
+      let response: Response;
+      try {
+        response = await fetch("/api/openrouter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...input,
+            fingerprint,
+          } as OpenRouterRequest),
+          signal: AbortSignal.timeout(58000),
+        });
+      } catch (error) {
+        if (error instanceof Error && error.name === "TimeoutError") {
+          throw { message: "Request timed out. Please try again." };
+        }
+        throw { message: "Network error. Please check your connection." };
+      }
 
       if (response.status === 429) {
         const data = await response.json();

@@ -8,6 +8,8 @@ import {
   OpenRouterResponse,
 } from "@/lib/openrouter.types";
 
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest) {
   const body: OpenRouterRequest = await request.json();
 
@@ -45,29 +47,46 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const openRouterResponse = await fetch(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${ENV.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://gazzola.dev",
-        "X-Title": "Gazzola.dev Code Generator",
-      },
-      body: JSON.stringify({
-        model: "anthropic/claude-3.5-sonnet",
-        messages: [
-          {
-            role: "system",
-            content: body.context || "You are a code generation assistant.",
-          },
-          { role: "user", content: body.prompt },
-        ],
-        max_tokens: body.maxTokens || 4096,
-      }),
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 55000);
+
+  let openRouterResponse: Response;
+  try {
+    openRouterResponse = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${ENV.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://gazzola.dev",
+          "X-Title": "Gazzola.dev Code Generator",
+        },
+        body: JSON.stringify({
+          model: "anthropic/claude-3.5-sonnet",
+          messages: [
+            {
+              role: "system",
+              content: body.context || "You are a code generation assistant.",
+            },
+            { role: "user", content: body.prompt },
+          ],
+          max_tokens: body.maxTokens || 4096,
+        }),
+      }
+    );
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === "AbortError") {
+      return NextResponse.json(
+        { error: "Request timed out. Please try again." },
+        { status: 504 }
+      );
     }
-  );
+    throw error;
+  }
+  clearTimeout(timeoutId);
 
   if (!openRouterResponse.ok) {
     const errorData = await openRouterResponse.json();
