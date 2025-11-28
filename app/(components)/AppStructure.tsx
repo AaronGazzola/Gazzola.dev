@@ -1,8 +1,8 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { FileSystemEntry } from "@/app/(editor)/layout.types";
+import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
 import {
@@ -11,24 +11,24 @@ import {
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
-import { cn } from "@/lib/utils";
-import { BotMessageSquare, BotOff, Loader2 } from "lucide-react";
+import { BotMessageSquare, HelpCircle, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { APP_STRUCTURE_TEMPLATES } from "./AppStructure.types";
 import {
-  generateId,
-  getQualifyingFiles,
-  generateRoutesFromFileSystem,
-  deleteRouteFromFileSystem,
-  generateUniqueSegmentName,
   addRouteSegment,
-  validateRoutePath,
   createRouteFromPath,
-  parseAppStructureFromResponse,
+  deleteRouteFromFileSystem,
   generateAppStructurePrompt,
+  generateId,
+  generateRoutesFromFileSystem,
+  generateUniqueSegmentName,
+  getQualifyingFiles,
+  parseAppStructureFromResponse,
+  validateRoutePath,
 } from "./AppStructure.utils";
-import { TreeNode } from "./TreeNode";
 import { SiteMapNode } from "./SiteMapNode";
+import { TreeNode } from "./TreeNode";
 
 export { WireFrame } from "./WireFrame";
 
@@ -48,6 +48,8 @@ export const LayoutAndStructure = () => {
     appStructureGenerated,
     setAppStructureGenerated,
     readmeGenerated,
+    appStructureHelpPopoverOpened,
+    setAppStructureHelpPopoverOpened,
   } = useEditorStore();
 
   const [routeInputValue, setRouteInputValue] = useState("");
@@ -57,7 +59,7 @@ export const LayoutAndStructure = () => {
   const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<
     string | null
   >(null);
-  const [generatePopoverOpen, setGeneratePopoverOpen] = useState(false);
+  const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
 
   const qualifyingFilePaths = featureFileSelection.fileType
     ? getQualifyingFiles(
@@ -97,14 +99,16 @@ export const LayoutAndStructure = () => {
           setFeatures(parsed.features);
         }
         setAppStructureGenerated(true);
-        setGeneratePopoverOpen(false);
       }
     });
 
   const handleGenerateFromReadme = () => {
     if (!readmeContent) return;
 
-    const prompt = generateAppStructurePrompt(readmeContent, APP_STRUCTURE_TEMPLATES);
+    const prompt = generateAppStructurePrompt(
+      readmeContent,
+      APP_STRUCTURE_TEMPLATES
+    );
 
     conditionalLog(
       {
@@ -211,64 +215,114 @@ export const LayoutAndStructure = () => {
   const isGenerateDisabled = !isDevelopment && appStructureGenerated;
   const hasReadme = readmeGenerated && readmeContent;
 
+  if (appStructure.length === 0) {
+    return (
+      <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+        <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
+          <p className="text-base font-semibold theme-text-muted-foreground text-center">
+            {hasReadme ? (
+              "Generate your app structure from the README"
+            ) : (
+              <>
+                Generate a{" "}
+                <Link
+                  href="/readme"
+                  className="theme-text-primary hover:underline"
+                >
+                  README
+                </Link>{" "}
+                first to create your app structure
+              </>
+            )}
+          </p>
+          <Button
+            onClick={handleGenerateFromReadme}
+            disabled={isGenerateDisabled || isGenerating || !hasReadme}
+            className="theme-gap-2"
+            title={
+              isGenerateDisabled
+                ? "Structure already generated"
+                : !hasReadme
+                  ? "Generate README first"
+                  : "Generate App Structure"
+            }
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <BotMessageSquare className="h-4 w-4" />
+                Generate App Structure
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
-      <Popover open={generatePopoverOpen} onOpenChange={setGeneratePopoverOpen}>
+      <Popover
+        open={helpPopoverOpen}
+        onOpenChange={(open) => {
+          setHelpPopoverOpen(open);
+          if (open && !appStructureHelpPopoverOpened) {
+            setAppStructureHelpPopoverOpened(true);
+          }
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className={cn(
-              "absolute top-2 right-2 rounded-full h-8 w-8",
-              !isGenerateDisabled && "theme-bg-primary theme-text-primary-foreground hover:opacity-90"
-            )}
-            disabled={isGenerateDisabled || isGenerating}
-            title={isGenerateDisabled ? "Structure already generated" : "Generate from README"}
+            className={`absolute top-2 right-2 h-8 w-8 rounded-full ${!appStructureHelpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90" : ""}`}
           >
-            {isGenerating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : isGenerateDisabled ? (
-              <BotOff className="h-4 w-4" />
-            ) : (
-              <BotMessageSquare className="h-4 w-4" />
-            )}
+            <HelpCircle className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-64 theme-p-3 theme-shadow"
+          className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
+          style={{ borderColor: "var(--theme-primary)" }}
           align="end"
         >
-          <div className="flex flex-col theme-gap-3">
-            <h4 className="font-semibold text-sm">Generate App Structure</h4>
-            {hasReadme ? (
-              <>
-                <p className="text-xs theme-text-muted-foreground">
-                  Generate a file structure based on your README content.
-                </p>
-                <Button
-                  onClick={handleGenerateFromReadme}
-                  disabled={isGenerating}
-                  className="w-full theme-gap-2"
-                  size="sm"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <BotMessageSquare className="h-4 w-4" />
-                      Generate from README
-                    </>
-                  )}
-                </Button>
-              </>
-            ) : (
-              <p className="text-xs theme-text-muted-foreground">
-                Please generate a README first to use this feature.
+          <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
+            <h4 className="font-semibold text-base theme-font-sans theme-tracking">
+              App Structure
+            </h4>
+            <div className="flex flex-col theme-gap-2 text-sm">
+              <p className="theme-font-sans theme-tracking">
+                This is your Next.js web app architecture.
               </p>
-            )}
+              <p className="theme-font-sans theme-tracking">
+                <strong>Page.tsx</strong> files define pages of your app.
+              </p>
+              <p className="theme-font-sans theme-tracking">
+                <strong>Layout.tsx</strong> files wrap child pages with shared
+                UI
+              </p>
+              <p className="theme-font-sans theme-tracking">
+                Add <strong>Features</strong> to pages or layouts
+              </p>
+              <p className="theme-font-sans theme-tracking">
+                Add <strong>hooks, actions, stores or types</strong> to features
+              </p>
+              <p className="theme-font-sans theme-tracking">
+                Each hook, action, store, and type is assigned to a utility file
+                in any parent directory (eg. <strong>page.hooks.ts</strong>)
+              </p>
+              <a
+                href="https://nextjs.org/docs/app/building-your-application/routing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm theme-text-primary hover:underline theme-font-sans theme-tracking theme-pt-2"
+              >
+                Next.js App Router docs →
+              </a>
+            </div>
           </div>
         </PopoverContent>
       </Popover>
@@ -299,12 +353,6 @@ export const LayoutAndStructure = () => {
                 setExpandedFileId={setExpandedFileId}
               />
             ))}
-
-            {appStructure.length === 0 && (
-              <div className="text-base font-semibold text-center theme-py-8 theme-text-muted-foreground theme-font-sans theme-tracking">
-                Click the bot icon above to generate your app structure from README
-              </div>
-            )}
           </div>
         </div>
 

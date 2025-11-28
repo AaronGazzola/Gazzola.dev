@@ -47,6 +47,7 @@ import { useThemeStore } from "../../layout.stores";
 import { getMarkdownDataAction } from "../layout.actions";
 import { useContentVersionCheck } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
+import type { InitialConfigurationType } from "../layout.types";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -118,6 +119,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setAppStructureGenerated,
     setReadmeGenerated,
     setDatabaseGenerated,
+    setAppStructure,
+    updateInitialConfiguration,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme } = useThemeConfigStore();
@@ -357,10 +360,48 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
     if (currentContentPath === "database") {
       resetDatabase();
+      updateInitialConfiguration({
+        questions: {
+          databaseProvider: "none",
+          alwaysOnServer: false,
+        },
+        technologies: {
+          supabase: false,
+          neondb: false,
+          prisma: false,
+          betterAuth: false,
+          postgresql: false,
+        } as InitialConfigurationType["technologies"],
+        features: {
+          authentication: {
+            enabled: false,
+            magicLink: false,
+            emailPassword: false,
+            otp: false,
+            twoFactor: false,
+            passkey: false,
+            anonymous: false,
+            googleAuth: false,
+            githubAuth: false,
+            appleAuth: false,
+            passwordOnly: false,
+          },
+          admin: {
+            enabled: false,
+            admin: false,
+            superAdmin: false,
+            organizations: false,
+          },
+        } as InitialConfigurationType["features"],
+        database: {
+          hosting: "neondb",
+        },
+      });
       setDatabaseGenerated(false);
     }
 
     if (currentContentPath === "app-structure") {
+      setAppStructure([]);
       setAppStructureGenerated(false);
     }
 
@@ -698,7 +739,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   </Button>
                 </EditorPopoverTrigger>
                 <EditorPopoverContent
-                  className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[95vh] overflow-y-auto"
+                  className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
                   style={{ borderColor: "var(--theme-primary)" }}
                 >
                   <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
@@ -735,11 +776,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       <p className="theme-font-sans theme-tracking theme-pt-2">
                         All changes are saved automatically as you work. Use the
                         Reset button to restore default configurations.
-                      </p>
-                      <p className="theme-font-sans theme-tracking theme-pt-2">
-                        These docs provide AI assistants with context to build
-                        your app using proven patterns, allowing you to describe
-                        features naturally and get reliable, maintainable code.
                       </p>
                     </div>
                   </div>

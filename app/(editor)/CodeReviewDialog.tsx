@@ -199,9 +199,197 @@ export const CodeReviewDialog = ({
           </DialogTitle>
           <DialogDescription asChild className="text-base">
             <div className="!text-gray-100 font-medium">
-              Let&apos;s <strong>test, fix, and ship</strong> your web app!
+              Then you need a testing suite!
               <br />
               Enter your details below for a free code review.
+              <br />
+              <span className=" italic flex items-center gap-1">
+                Projects built with
+                <strong className="inline-flex items-center gap-1">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 37 38"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="inline-block"
+                  >
+                    <mask
+                      id="lovable-mask"
+                      style={{ maskType: "alpha" }}
+                      maskUnits="userSpaceOnUse"
+                      x="0"
+                      y="0"
+                      width="37"
+                      height="38"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M11.3017 0.696625C17.2674 0.696625 22.1034 5.54547 22.1034 11.5268V15.643H25.6983C31.6639 15.643 36.5 20.4918 36.5 26.4732C36.5 32.4545 31.6639 37.3034 25.6983 37.3034H0.5V11.5268C0.5 5.54547 5.3361 0.696625 11.3017 0.696625Z"
+                        fill="url(#lovable-gradient)"
+                      />
+                    </mask>
+                    <g mask="url(#lovable-mask)">
+                      <g filter="url(#lovable-filter0)">
+                        <circle
+                          cx="16.2931"
+                          cy="20.2368"
+                          r="24.3693"
+                          fill="#4B73FF"
+                        />
+                      </g>
+                      <g filter="url(#lovable-filter1)">
+                        <ellipse
+                          cx="18.9662"
+                          cy="6.86334"
+                          rx="31.2104"
+                          ry="24.3693"
+                          fill="#FF66F4"
+                        />
+                      </g>
+                      <g filter="url(#lovable-filter2)">
+                        <ellipse
+                          cx="24.0617"
+                          cy="2.27707"
+                          rx="24.3693"
+                          ry="21.4014"
+                          fill="#FF0105"
+                        />
+                      </g>
+                      <g filter="url(#lovable-filter3)">
+                        <circle
+                          cx="19.4036"
+                          cy="6.85751"
+                          r="14.6556"
+                          fill="#FE7B02"
+                        />
+                      </g>
+                    </g>
+                    <defs>
+                      <filter
+                        id="lovable-filter0"
+                        x="-18.9975"
+                        y="-15.0538"
+                        width="70.581"
+                        height="70.5813"
+                        filterUnits="userSpaceOnUse"
+                        colorInterpolationFilters="sRGB"
+                      >
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                        <feBlend
+                          mode="normal"
+                          in="SourceGraphic"
+                          in2="BackgroundImageFix"
+                          result="shape"
+                        />
+                        <feGaussianBlur
+                          stdDeviation="5.46067"
+                          result="effect1_foregroundBlur"
+                        />
+                      </filter>
+                      <filter
+                        id="lovable-filter1"
+                        x="-23.1655"
+                        y="-28.4273"
+                        width="84.2636"
+                        height="70.5813"
+                        filterUnits="userSpaceOnUse"
+                        colorInterpolationFilters="sRGB"
+                      >
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                        <feBlend
+                          mode="normal"
+                          in="SourceGraphic"
+                          in2="BackgroundImageFix"
+                          result="shape"
+                        />
+                        <feGaussianBlur
+                          stdDeviation="5.46067"
+                          result="effect1_foregroundBlur"
+                        />
+                      </filter>
+                      <filter
+                        id="lovable-filter2"
+                        x="-11.229"
+                        y="-30.0457"
+                        width="70.581"
+                        height="64.6456"
+                        filterUnits="userSpaceOnUse"
+                        colorInterpolationFilters="sRGB"
+                      >
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                        <feBlend
+                          mode="normal"
+                          in="SourceGraphic"
+                          in2="BackgroundImageFix"
+                          result="shape"
+                        />
+                        <feGaussianBlur
+                          stdDeviation="5.46067"
+                          result="effect1_foregroundBlur"
+                        />
+                      </filter>
+                      <filter
+                        id="lovable-filter3"
+                        x="-6.1733"
+                        y="-18.7194"
+                        width="51.1542"
+                        height="51.1539"
+                        filterUnits="userSpaceOnUse"
+                        colorInterpolationFilters="sRGB"
+                      >
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                        <feBlend
+                          mode="normal"
+                          in="SourceGraphic"
+                          in2="BackgroundImageFix"
+                          result="shape"
+                        />
+                        <feGaussianBlur
+                          stdDeviation="5.46067"
+                          result="effect1_foregroundBlur"
+                        />
+                      </filter>
+                      <linearGradient
+                        id="lovable-gradient"
+                        x1="12.6146"
+                        y1="7.12961"
+                        x2="23.5825"
+                        y2="37.2896"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop offset="0.025" stopColor="#FF8E63" />
+                        <stop offset="0.56" stopColor="#FF7EB0" />
+                        <stop offset="0.95" stopColor="#4B73FF" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  Lovable
+                </strong>
+                or
+                <strong>
+                  <svg
+                    viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    strokeLinejoin="round"
+                    strokeMiterlimit={2}
+                    width="16"
+                    height="16"
+                    className="inline-block"
+                  >
+                    <path
+                      d="M253.397 165.568H74.005c-17.088 0-31.189-13.995-31.338-31.083V31.083C42.667 13.739 56.96 0 74.283 0H221.76c17.643 0 31.637 14.037 31.637 31.083v134.485zM445.483 345.92H253.589V165.333h191.894c18.56 0 33.877 15.296 33.877 33.835v112.939c0 18.88-15.296 33.835-33.877 33.835v-.022zM221.76 512H74.283c-17.323 0-31.616-14.016-31.616-31.018V377.45c0-17.003 14.293-31.019 31.616-31.019h179.114v134.55c0 17.002-14.293 31.018-31.637 31.018z"
+                      fill="#fd5402"
+                      fillRule="nonzero"
+                    />
+                  </svg>
+                  Replit
+                </strong>{" "}
+                are welcome!
+              </span>
             </div>
           </DialogDescription>
         </DialogHeader>

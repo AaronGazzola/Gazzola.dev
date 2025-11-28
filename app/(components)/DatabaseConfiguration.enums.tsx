@@ -55,7 +55,7 @@ export const EnumsCollapsible = ({
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggle}>
       <div
-        className="theme-bg-secondary/50 theme-radius theme-p-2 cursor-pointer border-l-4 border-l-amber-500/70"
+        className="theme-bg-secondary/50 theme-radius theme-p-2 cursor-pointer"
         onClick={onToggle}
       >
         <div className="flex items-center theme-gap-2">

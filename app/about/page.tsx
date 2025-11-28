@@ -226,7 +226,9 @@ const Page = () => {
           <h1 className="text-[36px] sm:text-[48px] tracking-[1.1rem] text-center my-4 leading-[3rem] sm:leading-[3.5rem] font-light">
             AZ GAZZOLA
           </h1>
-          <h1 className="text-2xl sm:text-3xl mb-8">AI Quality Assurance</h1>
+          <h1 className="text-2xl sm:text-3xl mb-8">
+            AI Test Driven Development
+          </h1>
 
           {/* Profile Image with Radial Gradient Fade */}
           <div className="relative w-64 h-64 sm:w-96 sm:h-96  mx-auto">

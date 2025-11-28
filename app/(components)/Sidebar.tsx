@@ -952,7 +952,7 @@ const Sidebar = () => {
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
             </div>
-            <div className="flex flex-row items-center justify-center relative gap-2">
+            <div className="flex flex-row items-center justify-between relative w-full pr-4">
               {nextSteps.map((step, index) => (
                 <div
                   key={index}
@@ -1007,7 +1007,7 @@ const Sidebar = () => {
                         />
                       </svg>
                     </div>
-                    <span className="text-xs font-bold text-center whitespace-nowrap text-white ">
+                    <span className="text-sm font-bold text-center whitespace-nowrap text-white">
                       {step.title}
                     </span>
                   </div>

@@ -1101,6 +1101,7 @@ Next.js App Router Rules:
 - page.tsx is REQUIRED for routes (website.com/dashboard needs app/dashboard/page.tsx)
 - layout.tsx for shared UI (root layout app/layout.tsx is required)
 - Route Groups: (folderName) organizes without affecting URL ("(auth)/login/page.tsx" = "/login")
+- Never have BOTH app/page.tsx AND app/(groupName)/page.tsx - they both resolve to "/" causing duplicate routes. Choose ONE location for the root page.
 - Dynamic Routes: [param] for dynamic segments, [...param] for catch-all
 - Nested Routes: Folders create URL segments (app/blog/posts/page.tsx = "/blog/posts")
 

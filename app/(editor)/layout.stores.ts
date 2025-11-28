@@ -314,6 +314,8 @@ const createInitialState = (data: MarkdownData) => ({
   appStructureGenerated: false,
   databaseGenerated: false,
   helpPopoverOpened: false,
+  appStructureHelpPopoverOpened: false,
+  databaseHelpPopoverOpened: false,
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -1284,7 +1286,33 @@ export const useEditorStore = create<EditorState>()(
         const state = get();
         return state.features[fileId] || [];
       },
-      setFeatures: (features) => set({ features }),
+      setFeatures: (features) => {
+        const populatedFeatures: Record<string, Feature[]> = {};
+
+        Object.entries(features).forEach(([fileId, featureList]) => {
+          populatedFeatures[fileId] = featureList.map((feature) => {
+            const populatedFunctionNames: Partial<Record<UserExperienceFileType, string | FunctionNameData>> = { ...feature.functionNames };
+
+            const fileTypes: UserExperienceFileType[] = ["stores", "hooks", "actions", "types"];
+            fileTypes.forEach((fileType) => {
+              const linkedFile = feature.linkedFiles[fileType];
+              if (linkedFile && !populatedFunctionNames[fileType]) {
+                populatedFunctionNames[fileType] = {
+                  name: generateDefaultFunctionName(feature.title || "Untitled", fileType),
+                  utilFile: linkedFile,
+                };
+              }
+            });
+
+            return {
+              ...feature,
+              functionNames: populatedFunctionNames,
+            };
+          });
+        });
+
+        set({ features: populatedFeatures });
+      },
       linkFeatureFile: (fileId, featureId, fileType, filePath) => {
         set((state) => {
           const features = state.features[fileId] || [];
@@ -1495,6 +1523,8 @@ export const useEditorStore = create<EditorState>()(
       setAppStructureGenerated: (generated: boolean) => set({ appStructureGenerated: generated }),
       setDatabaseGenerated: (generated: boolean) => set({ databaseGenerated: generated }),
       setHelpPopoverOpened: (opened: boolean) => set({ helpPopoverOpened: opened }),
+      setAppStructureHelpPopoverOpened: (opened: boolean) => set({ appStructureHelpPopoverOpened: opened }),
+      setDatabaseHelpPopoverOpened: (opened: boolean) => set({ databaseHelpPopoverOpened: opened }),
     }),
     {
       name: "editor-storage",
@@ -1520,6 +1550,8 @@ export const useEditorStore = create<EditorState>()(
         appStructureGenerated: state.appStructureGenerated,
         databaseGenerated: state.databaseGenerated,
         helpPopoverOpened: state.helpPopoverOpened,
+        appStructureHelpPopoverOpened: state.appStructureHelpPopoverOpened,
+        databaseHelpPopoverOpened: state.databaseHelpPopoverOpened,
       }),
       migrate: (persistedState: any, version: number) => {
         let state = persistedState;

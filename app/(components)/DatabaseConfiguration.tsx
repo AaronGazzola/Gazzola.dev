@@ -1,8 +1,8 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
+import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
@@ -17,16 +17,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/editor/ui/tooltip";
-import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
+import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import { cn } from "@/lib/utils";
 import {
   Apple,
   BotMessageSquare,
-  BotOff,
   Building2,
   Fingerprint,
   Github,
+  HelpCircle,
   KeyRound,
   Loader2,
   Mail,
@@ -37,17 +37,18 @@ import {
   Users,
   UserX,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SiGoogle, SiSupabase } from "react-icons/si";
-import { useDatabaseStore } from "./DatabaseConfiguration.stores";
-import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
-import { BetterAuthIcon, technologies } from "./DatabaseConfiguration.icons";
-import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
-import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
 import {
   generateDatabaseSchemaPrompt,
   parseDatabaseSchemaFromResponse,
 } from "./DatabaseConfiguration.ai";
+import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
+import { BetterAuthIcon, technologies } from "./DatabaseConfiguration.icons";
+import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
+import { useDatabaseStore } from "./DatabaseConfiguration.stores";
+import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -75,20 +76,22 @@ export const DatabaseConfiguration = () => {
     databaseGenerated,
     setDatabaseGenerated,
     readmeGenerated,
+    databaseHelpPopoverOpened,
+    setDatabaseHelpPopoverOpened,
   } = useEditorStore();
   const [expandedSchema, setExpandedSchema] = useState<string | null>(null);
   const [expandedTableId, setExpandedTableId] = useState<string | null>(null);
   const [expandedEnums, setExpandedEnums] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [generatePopoverOpen, setGeneratePopoverOpen] = useState(false);
   const [isAddingSchema, setIsAddingSchema] = useState(false);
   const [newSchemaName, setNewSchemaName] = useState("");
+  const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
 
   const readmeNode = data.flatIndex["readme"];
   const readmeContent = readmeNode?.type === "file" ? readmeNode.content : "";
 
-  const { mutate: generateSchema, isPending: isGenerating } =
-    useCodeGeneration((response) => {
+  const { mutate: generateSchema, isPending: isGenerating } = useCodeGeneration(
+    (response) => {
       conditionalLog(
         {
           message: "AI response received for database schema generation",
@@ -111,7 +114,8 @@ export const DatabaseConfiguration = () => {
       if (parsed) {
         const { configuration } = parsed;
 
-        const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
+        const techUpdates: Partial<InitialConfigurationType["technologies"]> =
+          {};
         if (configuration.databaseProvider === "supabase") {
           techUpdates.supabase = true;
           techUpdates.betterAuth = false;
@@ -145,7 +149,8 @@ export const DatabaseConfiguration = () => {
           },
           database: {
             hosting:
-              configuration.databaseProvider === "supabase" || configuration.databaseProvider === "both"
+              configuration.databaseProvider === "supabase" ||
+              configuration.databaseProvider === "both"
                 ? "supabase"
                 : configuration.databaseProvider === "neondb"
                   ? "neondb"
@@ -161,14 +166,15 @@ export const DatabaseConfiguration = () => {
           updateAdminOption(roleId, enabled as boolean);
         });
 
-        Object.entries(configuration.authentication).forEach(([authId, enabled]) => {
-          updateAuthenticationOption(authId, enabled as boolean);
-        });
+        Object.entries(configuration.authentication).forEach(
+          ([authId, enabled]) => {
+            updateAuthenticationOption(authId, enabled as boolean);
+          }
+        );
 
         setTablesFromAI(parsed.tables);
         setEnumsFromAI(parsed.enums);
         setDatabaseGenerated(true);
-        setGeneratePopoverOpen(false);
 
         conditionalLog(
           {
@@ -182,7 +188,8 @@ export const DatabaseConfiguration = () => {
           { label: LOG_LABELS.DATABASE }
         );
       }
-    });
+    }
+  );
 
   const handleGenerateFromReadme = () => {
     if (!readmeContent) return;
@@ -377,70 +384,150 @@ export const DatabaseConfiguration = () => {
 
   const isGenerateDisabled = !isDevelopment && databaseGenerated;
   const hasReadme = readmeGenerated && readmeContent;
+  const hasAppStructure = appStructure.length > 0;
+  const canGenerate = hasReadme && hasAppStructure;
+
+  if (!databaseGenerated) {
+    const renderMessage = () => {
+      if (!hasReadme && !hasAppStructure) {
+        return (
+          <>
+            Generate a{" "}
+            <Link href="/readme" className="theme-text-primary hover:underline">
+              README
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/app-structure"
+              className="theme-text-primary hover:underline"
+            >
+              App Structure
+            </Link>{" "}
+            first
+          </>
+        );
+      }
+      if (!hasReadme) {
+        return (
+          <>
+            Generate a{" "}
+            <Link href="/readme" className="theme-text-primary hover:underline">
+              README
+            </Link>{" "}
+            first
+          </>
+        );
+      }
+      if (!hasAppStructure) {
+        return (
+          <>
+            Generate an{" "}
+            <Link
+              href="/app-structure"
+              className="theme-text-primary hover:underline"
+            >
+              App Structure
+            </Link>{" "}
+            first
+          </>
+        );
+      }
+      return "Generate your database configuration";
+    };
+
+    return (
+      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+        <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
+          <p className="text-base font-semibold theme-text-muted-foreground text-center">
+            {renderMessage()}
+          </p>
+          <Button
+            onClick={handleGenerateFromReadme}
+            disabled={isGenerateDisabled || isGenerating || !canGenerate}
+            className="theme-gap-2"
+            title={
+              isGenerateDisabled
+                ? "Schema already generated"
+                : !hasReadme
+                  ? "Generate README first"
+                  : !hasAppStructure
+                    ? "Generate App Structure first"
+                    : "Generate Database"
+            }
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <BotMessageSquare className="h-4 w-4" />
+                Generate Database
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
-      <Popover open={generatePopoverOpen} onOpenChange={setGeneratePopoverOpen}>
+      <Popover
+        open={helpPopoverOpen}
+        onOpenChange={(open) => {
+          setHelpPopoverOpen(open);
+          if (open && !databaseHelpPopoverOpened) {
+            setDatabaseHelpPopoverOpened(true);
+          }
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className={cn(
-              "absolute top-2 right-2 h-8 w-8 z-10 rounded-full",
-              !isGenerateDisabled && "theme-bg-primary theme-text-primary-foreground hover:opacity-90"
-            )}
-            disabled={isGenerateDisabled || isGenerating}
-            title={isGenerateDisabled ? "Schema already generated" : "Generate from README"}
+            className={`absolute top-2 right-2 h-8 w-8 z-10 rounded-full ${!databaseHelpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90" : ""}`}
           >
-            {isGenerating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : isGenerateDisabled ? (
-              <BotOff className="h-4 w-4" />
-            ) : (
-              <BotMessageSquare className="h-4 w-4" />
-            )}
+            <HelpCircle className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
-          <div className="flex flex-col theme-gap-2">
-            {hasReadme ? (
-              <>
-                <p className="text-sm theme-text-foreground font-semibold">
-                  Generate Database Configuration
-                </p>
-                <p className="text-xs theme-text-muted-foreground">
-                  Analyzes your README to configure database provider, authentication methods, user roles, and generate tables/enums.
-                </p>
-                <Button
-                  onClick={handleGenerateFromReadme}
-                  disabled={isGenerating}
-                  size="sm"
-                  className="w-full theme-gap-1"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <BotMessageSquare className="h-4 w-4" />
-                      Generate Configuration
-                    </>
-                  )}
-                </Button>
-              </>
-            ) : (
-              <p className="text-xs theme-text-muted-foreground">
-                Please generate a README first to use this feature.
+        <PopoverContent
+          className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
+          style={{ borderColor: "var(--theme-primary)" }}
+          align="end"
+        >
+          <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
+            <h4 className="font-semibold text-base theme-font-sans theme-tracking">
+              Database Configuration
+            </h4>
+            <div className="flex flex-col theme-gap-2 text-sm">
+              <p className="theme-font-sans theme-tracking">
+                Select your <strong>provider</strong>, <strong>roles</strong>,
+                and <strong>authentication</strong> methods above.
               </p>
-            )}
+              <p className="theme-font-sans theme-tracking">
+                Add and edit <strong>enums</strong>, <strong>schemas</strong>,{" "}
+                <strong>tables</strong>, and <strong>columns</strong> below.
+              </p>
+
+              <a
+                href="https://www.prisma.io/docs/orm/prisma-schema"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm theme-text-primary hover:underline theme-font-sans theme-tracking theme-pt-2"
+              >
+                Prisma Schema docs →
+              </a>
+            </div>
           </div>
         </PopoverContent>
       </Popover>
       <div className="flex flex-col theme-gap-4">
         <div>
-          <h3 className="text-lg font-semibold theme-mb-2">Do you need a database?</h3>
+          <h3 className="text-lg font-semibold theme-mb-2">
+            Do you need a database?
+          </h3>
           <p className="text-sm theme-text-muted-foreground theme-mb-3 font-semibold">
             Choose your database and authentication provider.
           </p>

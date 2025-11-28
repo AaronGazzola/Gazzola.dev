@@ -292,6 +292,10 @@ export interface EditorState {
   setDatabaseGenerated: (generated: boolean) => void;
   helpPopoverOpened: boolean;
   setHelpPopoverOpened: (opened: boolean) => void;
+  appStructureHelpPopoverOpened: boolean;
+  setAppStructureHelpPopoverOpened: (opened: boolean) => void;
+  databaseHelpPopoverOpened: boolean;
+  setDatabaseHelpPopoverOpened: (opened: boolean) => void;
 }
 
 export interface NavigationItem {

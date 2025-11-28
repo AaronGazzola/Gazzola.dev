@@ -336,7 +336,11 @@ const Header = () => {
               isExpanded ? "mt-24 sm:mt-2" : "mt-0 sm:mt-2 hidden"
             )}
           >
-            <span className="sm:hidden">AI<br/>TDD</span>
+            <span className="sm:hidden">
+              AI
+              <br />
+              TDD
+            </span>
             <span className="hidden sm:inline">AITDD</span>
           </h1>
 
