@@ -339,7 +339,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         if (freshNode.sections) {
           Object.entries(freshNode.sections).forEach(([sectionId, options]) => {
             Object.entries(options).forEach(([optionId, option]) => {
-              setSectionInclude(currentContentPath, sectionId, optionId, option.include);
+              setSectionInclude(
+                currentContentPath,
+                sectionId,
+                optionId,
+                option.include
+              );
             });
           });
         }
@@ -404,19 +409,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         queryClient.invalidateQueries({ queryKey: ["markdownData"] });
         queryClient.invalidateQueries({ queryKey: ["contentVersion"] });
 
-        const firstPagePath = Object.values(freshData.flatIndex).find(
-          (node) =>
-            node.type === "file" &&
-            node.path === "readme" &&
-            node.include !== false
-        ) || Object.values(freshData.flatIndex)
-          .filter(
+        const firstPagePath =
+          Object.values(freshData.flatIndex).find(
             (node) =>
               node.type === "file" &&
-              node.include !== false &&
-              !(node as any).previewOnly
-          )
-          .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
+              node.path === "readme" &&
+              node.include !== false
+          ) ||
+          Object.values(freshData.flatIndex)
+            .filter(
+              (node) =>
+                node.type === "file" &&
+                node.include !== false &&
+                !(node as any).previewOnly
+            )
+            .sort((a, b) => (a.order || 0) - (b.order || 0))[0];
 
         const resetKey = Date.now();
 
@@ -578,7 +585,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               <Home className="h-4 w-4" />
             </Button>
 
-            <EditorPopover open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <EditorPopover
+              open={mobileMenuOpen}
+              onOpenChange={setMobileMenuOpen}
+            >
               <EditorPopoverTrigger asChild>
                 <Button
                   variant="ghost"
@@ -615,6 +625,20 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   >
                     <RotateCcw className="h-4 w-4" />
                     Reset all
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      setHelpPopoverOpen(true);
+                      setMobileMenuOpen(false);
+                      if (!helpPopoverOpened) {
+                        setHelpPopoverOpened(true);
+                      }
+                    }}
+                  >
+                    <CircleHelp className="h-4 w-4" />
+                    Help
                   </Button>
                 </div>
               </EditorPopoverContent>
@@ -673,7 +697,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <CircleHelp className="h-4 w-4" />
                   </Button>
                 </EditorPopoverTrigger>
-                <EditorPopoverContent className="sm:w-96  theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0">
+                <EditorPopoverContent
+                  className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[95vh] overflow-y-auto"
+                  style={{ borderColor: "var(--theme-primary)" }}
+                >
                   <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
                     <h4 className="font-semibold text-base theme-font-sans theme-tracking">
                       Your web app documentation
@@ -696,8 +723,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                             Navigate through pages using the toolbar controls
                           </li>
                           <li className="theme-font-sans theme-tracking">
-                            Toggle Preview mode to see the final output that will
-                            be generated
+                            Toggle Preview mode to see the final output that
+                            will be generated
                           </li>
                           <li className="theme-font-sans theme-tracking">
                             Click the download button in the sidebar to export
@@ -708,6 +735,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       <p className="theme-font-sans theme-tracking theme-pt-2">
                         All changes are saved automatically as you work. Use the
                         Reset button to restore default configurations.
+                      </p>
+                      <p className="theme-font-sans theme-tracking theme-pt-2">
+                        These docs provide AI assistants with context to build
+                        your app using proven patterns, allowing you to describe
+                        features naturally and get reliable, maintainable code.
                       </p>
                     </div>
                   </div>
@@ -727,9 +759,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <EditorDialogDescription>
                     Are you sure you want to reset this page? This will restore
                     the content to its original state
-                    {currentContentPath === "theme" && " and reset all theme configuration"}
-                    {currentContentPath === "database" && " and reset all database configuration"}
-                    {currentContentPath === "app-structure" && " and reset the app structure"}
+                    {currentContentPath === "theme" &&
+                      " and reset all theme configuration"}
+                    {currentContentPath === "database" &&
+                      " and reset all database configuration"}
+                    {currentContentPath === "app-structure" &&
+                      " and reset the app structure"}
                     . This action cannot be undone.
                   </EditorDialogDescription>
                 </EditorDialogHeader>
