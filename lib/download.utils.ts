@@ -14,6 +14,13 @@ import type {
 import { useDatabaseStore } from "@/app/(components)/DatabaseConfiguration.stores";
 import JSZip from "jszip";
 import { getDynamicRobotsFileName } from "./robots-file.utils";
+import { CODE_FILE_CONFIGS } from "./code-file-config";
+import type { ConfigSnapshot } from "./config-snapshot";
+import {
+  getServerPlugins,
+  getClientPlugins,
+  getOAuthProviders,
+} from "./auth-plugin-mappings";
 
 type RouteEntry = {
   path: string;
@@ -991,33 +998,11 @@ export const processContent = (
       const databaseState = useDatabaseStore.getState();
       const initialConfig = getInitialConfiguration();
 
-      if (initialConfig.questions.databaseProvider === "none") {
-        return "No database configuration selected.";
-      }
-
-      const prismaSchema = generatePrismaSchema(
+      return generateDatabaseConfigurationDoc(
+        initialConfig,
         databaseState.tables,
-        initialConfig
+        databaseState.rlsPolicies
       );
-      const rlsSQL = generateRLSMigrationSQL(
-        databaseState.rlsPolicies,
-        databaseState.tables,
-        initialConfig
-      );
-
-      let output = "## Database Schema\n\n";
-      output += "### Prisma Schema\n\n";
-      output += "File: `prisma/schema.prisma`\n\n";
-      output += "```prisma\n";
-      output += prismaSchema;
-      output += "\n```\n\n";
-      output += "### RLS Migration SQL\n\n";
-      output += "File: `prisma/migrations/enable-rls.sql`\n\n";
-      output += "```sql\n";
-      output += rlsSQL;
-      output += "\n```";
-
-      return output;
     }
   );
 
@@ -1032,6 +1017,285 @@ export const processContent = (
   );
 
   return processedContent;
+};
+
+const createConfigSnapshotFromInitialConfig = (
+  initialConfig: InitialConfigurationType,
+  tables: PrismaTable[],
+  rlsPolicies: RLSPolicy[]
+): ConfigSnapshot => {
+  return {
+    betterAuth: initialConfig.technologies.betterAuth,
+    prisma: initialConfig.technologies.prisma,
+    supabase: initialConfig.technologies.supabase,
+    neondb: initialConfig.technologies.neondb,
+    postgresql: initialConfig.technologies.postgresql,
+    nextjs: initialConfig.technologies.nextjs,
+    typescript: initialConfig.technologies.typescript,
+    tailwindcss: initialConfig.technologies.tailwindcss,
+    shadcn: initialConfig.technologies.shadcn,
+    zustand: initialConfig.technologies.zustand,
+    reactQuery: initialConfig.technologies.reactQuery,
+    vercel: initialConfig.technologies.vercel,
+    railway: initialConfig.technologies.railway,
+    playwright: initialConfig.technologies.playwright,
+    cypress: initialConfig.technologies.cypress,
+    resend: initialConfig.technologies.resend,
+    stripe: initialConfig.technologies.stripe,
+    paypal: initialConfig.technologies.paypal,
+    openrouter: initialConfig.technologies.openrouter,
+    databaseProvider: initialConfig.questions.databaseProvider,
+    alwaysOnServer: initialConfig.questions.alwaysOnServer,
+    tables,
+    rlsPolicies,
+    plugins: [],
+    authEnabled: initialConfig.features.authentication.enabled,
+    authMethods: {
+      magicLink: initialConfig.features.authentication.magicLink,
+      emailPassword: initialConfig.features.authentication.emailPassword,
+      otp: initialConfig.features.authentication.otp,
+      twoFactor: initialConfig.features.authentication.twoFactor,
+      passkey: initialConfig.features.authentication.passkey,
+      anonymous: initialConfig.features.authentication.anonymous,
+      googleAuth: initialConfig.features.authentication.googleAuth,
+      githubAuth: initialConfig.features.authentication.githubAuth,
+      appleAuth: initialConfig.features.authentication.appleAuth,
+      passwordOnly: initialConfig.features.authentication.passwordOnly,
+    },
+    adminEnabled: initialConfig.features.admin.enabled,
+    adminRoles: {
+      admin: initialConfig.features.admin.admin,
+      superAdmin: initialConfig.features.admin.superAdmin,
+      organizations: initialConfig.features.admin.organizations,
+    },
+    paymentsEnabled: initialConfig.features.payments.enabled,
+    payments: {
+      paypalPayments: initialConfig.features.payments.paypalPayments,
+      stripePayments: initialConfig.features.payments.stripePayments,
+      stripeSubscriptions: initialConfig.features.payments.stripeSubscriptions,
+    },
+    aiIntegrationEnabled: initialConfig.features.aiIntegration.enabled,
+    aiIntegration: {
+      imageGeneration: initialConfig.features.aiIntegration.imageGeneration,
+      textGeneration: initialConfig.features.aiIntegration.textGeneration,
+    },
+    realTimeNotificationsEnabled: initialConfig.features.realTimeNotifications.enabled,
+    realTimeNotifications: {
+      emailNotifications: initialConfig.features.realTimeNotifications.emailNotifications,
+      inAppNotifications: initialConfig.features.realTimeNotifications.inAppNotifications,
+    },
+    fileStorage: initialConfig.features.fileStorage,
+    selectedIDE: "claudecode",
+    theme: {
+      selectedTheme: 0,
+      colors: {
+        light: {} as any,
+        dark: {} as any,
+      },
+      typography: {
+        light: {} as any,
+        dark: {} as any,
+      },
+      other: {
+        light: {} as any,
+        dark: {} as any,
+      },
+    },
+  };
+};
+
+const generateDatabaseConfigurationDoc = (
+  initialConfig: InitialConfigurationType,
+  tables: PrismaTable[],
+  rlsPolicies: RLSPolicy[]
+): string => {
+  if (initialConfig.questions.databaseProvider === "none") {
+    return "No database configuration selected.";
+  }
+
+  const config = createConfigSnapshotFromInitialConfig(initialConfig, tables, rlsPolicies);
+  const lines: string[] = [];
+
+  lines.push("## Database Configuration");
+  lines.push("");
+  lines.push("### Generated Files");
+  lines.push("");
+
+  const NON_DATABASE_FILE_IDS = ["globals.css", "log.utils.ts", "robots-file"];
+
+  const includedFiles = CODE_FILE_CONFIGS.filter((fileConfig) =>
+    fileConfig.conditions.include(config) &&
+    !NON_DATABASE_FILE_IDS.includes(fileConfig.id)
+  );
+
+  includedFiles.forEach((fileConfig) => {
+    const filePath = typeof fileConfig.path === "function"
+      ? fileConfig.path(config)
+      : fileConfig.path;
+
+    lines.push(`#### \`${filePath}\``);
+
+    switch (fileConfig.id) {
+      case "schema.prisma": {
+        const schemas = Array.from(new Set(tables.map((t) => t.schema)));
+        lines.push(`- Provider: PostgreSQL with multiSchema preview feature`);
+        lines.push(`- Schemas: ${schemas.join(", ")}`);
+        lines.push(`- Models:`);
+        tables.forEach((table) => {
+          const keyColumns = table.columns
+            .slice(0, 5)
+            .map((c) => c.name)
+            .join(", ");
+          const suffix = table.columns.length > 5 ? ", ..." : "";
+          lines.push(`  - ${table.name} (${table.schema} schema) - ${keyColumns}${suffix}`);
+        });
+        break;
+      }
+
+      case "rls-migration.sql": {
+        const tablesWithRLS = Array.from(
+          new Set(rlsPolicies.map((p) => {
+            const table = tables.find((t) => t.id === p.tableId);
+            return table?.name;
+          }).filter(Boolean))
+        );
+        lines.push(`- Enables RLS on: ${tablesWithRLS.join(", ") || "none"}`);
+        lines.push(`- Policies:`);
+
+        const policyByTableAndRole: Record<string, Record<string, Record<string, string>>> = {};
+        rlsPolicies.forEach((policy) => {
+          const table = tables.find((t) => t.id === policy.tableId);
+          if (!table) return;
+          if (!policyByTableAndRole[table.name]) {
+            policyByTableAndRole[table.name] = {};
+          }
+          policy.rolePolicies?.forEach((rp) => {
+            if (!policyByTableAndRole[table.name][rp.role]) {
+              policyByTableAndRole[table.name][rp.role] = {};
+            }
+            policyByTableAndRole[table.name][rp.role][policy.operation] = rp.accessType;
+          });
+        });
+
+        Object.entries(policyByTableAndRole).forEach(([tableName, rolesPolicies]) => {
+          lines.push(`  - ${tableName}:`);
+          Object.entries(rolesPolicies).forEach(([role, operations]) => {
+            const operationsList = Object.entries(operations)
+              .map(([operation, accessType]) => `${operation}: ${accessType}`)
+              .join("; ");
+            lines.push(`    - ${role}: ${operationsList}`);
+          });
+        });
+        break;
+      }
+
+      case "auth.ts": {
+        const serverPlugins = getServerPlugins(config);
+        const oauthProviders = getOAuthProviders(config);
+
+        lines.push(`- Adapter: Prisma PostgreSQL`);
+
+        if (config.authMethods.emailPassword) {
+          const verification = config.authMethods.twoFactor ? "enabled with verification" : "enabled";
+          lines.push(`- Email/Password: ${verification}`);
+        }
+
+        if (serverPlugins.length > 0) {
+          lines.push(`- Plugins:`);
+          serverPlugins.forEach((plugin) => {
+            let description = plugin.name;
+            switch (plugin.name) {
+              case "twoFactor":
+                description = "twoFactor - TOTP two-factor authentication";
+                break;
+              case "admin":
+                description = "admin - Role-based access control";
+                break;
+              case "organization":
+                description = "organization - Multi-tenant organization support";
+                break;
+              case "passkey":
+                description = "passkey - WebAuthn passkey authentication";
+                break;
+              case "magicLink":
+                description = "magicLink - Passwordless magic link authentication";
+                break;
+              case "emailOTP":
+                description = "emailOTP - Email OTP verification";
+                break;
+              case "anonymous":
+                description = "anonymous - Anonymous user sessions";
+                break;
+            }
+            lines.push(`  - ${description}`);
+          });
+        }
+
+        if (oauthProviders.length > 0) {
+          lines.push(`- OAuth Providers: ${oauthProviders.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(", ")}`);
+        }
+        break;
+      }
+
+      case "auth-client.ts": {
+        const clientPlugins = getClientPlugins(config);
+        lines.push(`- Client plugins matching server configuration`);
+        if (config.adminRoles.admin || config.adminRoles.superAdmin) {
+          const roles = [];
+          roles.push("user");
+          if (config.adminRoles.admin) roles.push("admin");
+          if (config.adminRoles.superAdmin) roles.push("superAdmin");
+          lines.push(`- Access control roles: ${roles.join(", ")}`);
+        }
+        break;
+      }
+
+      case "globals.css": {
+        lines.push(`- Theme: Custom theme with light/dark mode`);
+        lines.push(`- Colors: primary, secondary, accent, muted, destructive, etc.`);
+        lines.push(`- Typography: sans, serif, mono font families`);
+        break;
+      }
+
+      case "prisma-rls.ts": {
+        lines.push(`- TypeScript RLS policy definitions`);
+        lines.push(`- Policy count: ${rlsPolicies.length}`);
+        break;
+      }
+
+      case "prisma-rls-client.ts": {
+        lines.push(`- Prisma client extension for RLS`);
+        lines.push(`- Sets user context for database queries`);
+        break;
+      }
+
+      case "auth.util.ts": {
+        lines.push(`- getAuthenticatedClient - Returns RLS-enabled Prisma client`);
+        lines.push(`- generateSupabaseJWT - Creates JWT for Supabase RLS`);
+        break;
+      }
+
+      case "log.utils.ts": {
+        lines.push(`- conditionalLog - Conditional logging with labels`);
+        lines.push(`- LOG_LABELS enum for categorized logging`);
+        break;
+      }
+
+      case "robots-file": {
+        lines.push(`- IDE configuration for AI coding assistants`);
+        lines.push(`- Core technologies and patterns documentation`);
+        break;
+      }
+
+      default: {
+        lines.push(`- ${fileConfig.metadata.description}`);
+      }
+    }
+
+    lines.push("");
+  });
+
+  return lines.join("\n").trim();
 };
 
 export const generatePrismaSchema = (

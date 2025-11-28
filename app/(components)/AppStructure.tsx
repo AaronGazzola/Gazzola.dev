@@ -215,7 +215,7 @@ export const LayoutAndStructure = () => {
   const isGenerateDisabled = !isDevelopment && appStructureGenerated;
   const hasReadme = readmeGenerated && readmeContent;
 
-  if (appStructure.length === 0) {
+  if (appStructure.length === 0 || !appStructureGenerated) {
     return (
       <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
         <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
@@ -224,14 +224,14 @@ export const LayoutAndStructure = () => {
               "Generate your app structure from the README"
             ) : (
               <>
-                Generate a{" "}
+                Generate your{" "}
                 <Link
                   href="/readme"
                   className="theme-text-primary hover:underline"
                 >
                   README
                 </Link>{" "}
-                first to create your app structure
+                first
               </>
             )}
           </p>

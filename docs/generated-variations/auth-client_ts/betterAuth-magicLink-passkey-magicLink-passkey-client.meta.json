@@ -1,0 +1,10 @@
+{
+  "version": "betterAuth-magicLink-passkey-magicLink-passkey-client",
+  "variationCount": 4,
+  "variations": [
+    "neondb-auth_magicLink+passkey-roles_none",
+    "neondb-auth_magicLink+passkey-roles_none-withRLS",
+    "both-auth_magicLink+passkey-roles_none",
+    "both-auth_magicLink+passkey-roles_none-withRLS"
+  ]
+}

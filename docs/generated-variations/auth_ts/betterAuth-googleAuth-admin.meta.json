@@ -1,0 +1,18 @@
+{
+  "version": "betterAuth-googleAuth-admin",
+  "variationCount": 12,
+  "variations": [
+    "neondb-auth_googleAuth-roles_admin",
+    "neondb-auth_googleAuth-roles_admin-withRLS",
+    "neondb-auth_googleAuth-roles_superAdmin",
+    "neondb-auth_googleAuth-roles_superAdmin-withRLS",
+    "neondb-auth_googleAuth-roles_admin+superAdmin",
+    "neondb-auth_googleAuth-roles_admin+superAdmin-withRLS",
+    "both-auth_googleAuth-roles_admin",
+    "both-auth_googleAuth-roles_admin-withRLS",
+    "both-auth_googleAuth-roles_superAdmin",
+    "both-auth_googleAuth-roles_superAdmin-withRLS",
+    "both-auth_googleAuth-roles_admin+superAdmin",
+    "both-auth_googleAuth-roles_admin+superAdmin-withRLS"
+  ]
+}

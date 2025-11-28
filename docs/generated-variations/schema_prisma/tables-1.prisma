@@ -1,0 +1,20 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public"]
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+model Post {
+  id                  String                   id default(cuid())
+  title               String
+  content             String?
+  userId              String
+  createdAt           DateTime                 default(now())
+
+  @@schema("public")
+}

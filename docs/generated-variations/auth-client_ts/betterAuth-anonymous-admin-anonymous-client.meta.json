@@ -1,0 +1,18 @@
+{
+  "version": "betterAuth-anonymous-admin-anonymous-client",
+  "variationCount": 12,
+  "variations": [
+    "neondb-auth_anonymous-roles_admin",
+    "neondb-auth_anonymous-roles_admin-withRLS",
+    "neondb-auth_anonymous-roles_superAdmin",
+    "neondb-auth_anonymous-roles_superAdmin-withRLS",
+    "neondb-auth_anonymous-roles_admin+superAdmin",
+    "neondb-auth_anonymous-roles_admin+superAdmin-withRLS",
+    "both-auth_anonymous-roles_admin",
+    "both-auth_anonymous-roles_admin-withRLS",
+    "both-auth_anonymous-roles_superAdmin",
+    "both-auth_anonymous-roles_superAdmin-withRLS",
+    "both-auth_anonymous-roles_admin+superAdmin",
+    "both-auth_anonymous-roles_admin+superAdmin-withRLS"
+  ]
+}

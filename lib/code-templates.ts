@@ -543,40 +543,244 @@ ${configLines.join("\n")}
 });`;
   },
 
-  prismaSchema: (tables: PrismaTable[]): string => {
-    const generateColumn = (col: (typeof tables)[0]["columns"][0]) => {
-      const parts: string[] = [col.name, col.type];
-      if (col.isArray) parts[1] += "[]";
-      if (col.isOptional) parts[1] += "?";
-      if (col.attributes.length > 0)
-        parts.push(...col.attributes.map((a) => `@${a}`));
-      return `  ${parts.join(" ")}`;
-    };
+  prismaSchema: (config: ConfigSnapshot): string => {
+    const tables = config.tables;
+    const shouldExcludeAuthSchema =
+      config.databaseProvider === "supabase" && !config.betterAuth;
 
-    const generateTable = (table: PrismaTable) => {
-      const columns = table.columns.map(generateColumn).join("\n");
-      const uniqueConstraints = table.uniqueConstraints
-        .map((uc) => `  @@unique([${uc.join(", ")}])`)
-        .join("\n");
+    const filteredTables = tables.filter((table) => {
+      if (shouldExcludeAuthSchema && table.schema === "auth") {
+        return false;
+      }
+      return true;
+    });
 
-      return `model ${table.name} {
-${columns}${uniqueConstraints ? "\n" + uniqueConstraints : ""}
-  @@schema("${table.schema}")
-}`;
-    };
+    const schemas = Array.from(new Set(filteredTables.map((t) => t.schema)));
+    const schemasStr = schemas.map((s) => `"${s}"`).join(", ");
 
-    return `generator client {
+    let schema = `datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = [${schemasStr}]
+}
+
+generator client {
   provider = "prisma-client-js"
   previewFeatures = ["multiSchema"]
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = ["auth", "public"]
-}
+`;
 
-${tables.map(generateTable).join("\n\n")}`;
+    filteredTables.forEach((table) => {
+      schema += `model ${table.name} {\n`;
+
+      table.columns.forEach((col) => {
+        const typeStr = col.isArray ? `${col.type}[]` : col.type;
+        const optionalStr = col.isOptional ? "?" : "";
+        const namePadding = " ".repeat(Math.max(1, 20 - col.name.length));
+
+        let line = `  ${col.name}${namePadding}${typeStr}${optionalStr}`;
+
+        if (col.attributes.length > 0) {
+          const typePadding = " ".repeat(
+            Math.max(2, 25 - typeStr.length - optionalStr.length)
+          );
+          line += `${typePadding}${col.attributes.join(" ")}`;
+        }
+
+        if (col.relation) {
+          const relationName = `${table.name}To${col.relation.table}`;
+          const fields = `fields: [${col.name}]`;
+          const references = `references: [${col.relation.field}]`;
+          const onDelete = col.relation.onDelete
+            ? `, onDelete: ${col.relation.onDelete}`
+            : "";
+          line += ` @relation("${relationName}", ${fields}, ${references}${onDelete})`;
+        }
+
+        schema += `${line}\n`;
+      });
+
+      if (table.uniqueConstraints.length > 0) {
+        schema += "\n";
+        table.uniqueConstraints.forEach((constraint) => {
+          const fields = constraint.map((f) => `${f}`).join(", ");
+          schema += `  @@unique([${fields}])\n`;
+        });
+      }
+
+      schema += `\n  @@schema("${table.schema}")\n`;
+      schema += `}\n\n`;
+    });
+
+    return schema.trim();
+  },
+
+  rlsMigration: (config: ConfigSnapshot): string => {
+    const tables = config.tables;
+    const rlsPolicies = config.rlsPolicies;
+
+    const authProvider =
+      config.databaseProvider === "supabase" && !config.betterAuth
+        ? "supabase"
+        : "better-auth";
+
+    const lines: string[] = [];
+
+    lines.push(`-- Enable Row Level Security on all tables`);
+    lines.push(``);
+
+    tables.forEach((table) => {
+      if (table.schema === "auth" && authProvider === "supabase") {
+        return;
+      }
+
+      if (table.schema === "better_auth") {
+        return;
+      }
+
+      lines.push(
+        `ALTER TABLE ${table.schema}.${table.name} ENABLE ROW LEVEL SECURITY;`
+      );
+    });
+
+    lines.push(``);
+    lines.push(`-- Create RLS Policies`);
+    lines.push(``);
+
+    type RLSAccessType = "global" | "own" | "organization" | "related";
+
+    const getUSINGClause = (
+      accessType: RLSAccessType,
+      table: PrismaTable,
+      relatedTable?: string
+    ): string => {
+      if (accessType === "global") {
+        return "true";
+      }
+
+      const userIdColumn =
+        table.columns.find((c) => c.name === "userId" || c.name === "user_id")
+          ?.name || "user_id";
+
+      if (accessType === "own") {
+        if (authProvider === "supabase") {
+          return `auth.uid() = ${userIdColumn}`;
+        } else {
+          return `(SELECT id FROM better_auth.user WHERE id = ${userIdColumn}) IS NOT NULL`;
+        }
+      }
+
+      if (accessType === "organization") {
+        const orgIdColumn =
+          table.columns.find(
+            (c) => c.name === "organizationId" || c.name === "organization_id"
+          )?.name || "organization_id";
+
+        if (authProvider === "supabase") {
+          return `${orgIdColumn} IN (
+      SELECT organization_id
+      FROM public.user_organizations
+      WHERE user_id = auth.uid()
+    )`;
+        } else {
+          return `${orgIdColumn} IN (
+      SELECT organization_id
+      FROM public.user_organizations
+      WHERE user_id = (SELECT id FROM better_auth.user LIMIT 1)
+    )`;
+        }
+      }
+
+      if (accessType === "related" && relatedTable) {
+        const relatedColumn = table.columns.find(
+          (c) => c.type === relatedTable || c.relation?.table === relatedTable
+        );
+
+        if (relatedColumn) {
+          const columnName = relatedColumn.name;
+          const relatedTableObj = tables.find((t) => t.name === relatedTable);
+          const relatedUserColumn =
+            relatedTableObj?.columns.find(
+              (c) => c.name === "userId" || c.name === "user_id"
+            )?.name || "user_id";
+
+          if (authProvider === "supabase") {
+            return `${columnName} IN (
+      SELECT id
+      FROM ${relatedTableObj?.schema || "public"}.${relatedTable}
+      WHERE ${relatedUserColumn} = auth.uid()
+    )`;
+          } else {
+            return `${columnName} IN (
+      SELECT id
+      FROM ${relatedTableObj?.schema || "public"}.${relatedTable}
+      WHERE ${relatedUserColumn} = (SELECT id FROM better_auth.user LIMIT 1)
+    )`;
+          }
+        }
+      }
+
+      return "false";
+    };
+
+    const groupedPolicies: Record<string, RLSPolicy[]> = {};
+    rlsPolicies.forEach((policy) => {
+      if (!groupedPolicies[policy.tableId]) {
+        groupedPolicies[policy.tableId] = [];
+      }
+      groupedPolicies[policy.tableId].push(policy);
+    });
+
+    Object.entries(groupedPolicies).forEach(([tableId, policies]) => {
+      const table = tables.find((t) => t.id === tableId);
+      if (!table) return;
+
+      if (table.schema === "auth" && authProvider === "supabase") {
+        return;
+      }
+
+      if (table.schema === "better_auth") {
+        return;
+      }
+
+      lines.push(`-- Policies for ${table.schema}.${table.name}`);
+
+      policies.forEach((policy) => {
+        policy.rolePolicies?.forEach((rolePolicy) => {
+          const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role.replace("-", "_")}`;
+          const usingClause = getUSINGClause(
+            rolePolicy.accessType as RLSAccessType,
+            table,
+            rolePolicy.relatedTable
+          );
+
+          lines.push(`CREATE POLICY "${policyName}"`);
+          lines.push(`  ON ${table.schema}.${table.name}`);
+          lines.push(`  FOR ${policy.operation}`);
+          lines.push(`  TO ${rolePolicy.role.replace("-", "_")}`);
+          lines.push(`  USING (${usingClause});`);
+          lines.push(``);
+        });
+      });
+    });
+
+    if (authProvider === "better-auth") {
+      lines.push(`-- Create database roles for Better Auth`);
+      lines.push(``);
+
+      const roles = ["user", "admin", "super_admin"];
+      if (config.adminRoles.organizations) {
+        roles.push("org_admin", "org_member");
+      }
+
+      roles.forEach((role) => {
+        lines.push(`CREATE ROLE ${role};`);
+      });
+      lines.push(``);
+    }
+
+    return lines.join("\n").trim();
   },
 
   prismaRLS: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]): string => {

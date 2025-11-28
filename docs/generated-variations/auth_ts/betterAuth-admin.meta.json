@@ -1,0 +1,18 @@
+{
+  "version": "betterAuth-admin",
+  "variationCount": 12,
+  "variations": [
+    "neondb-auth_none-roles_admin",
+    "neondb-auth_none-roles_admin-withRLS",
+    "neondb-auth_none-roles_superAdmin",
+    "neondb-auth_none-roles_superAdmin-withRLS",
+    "neondb-auth_none-roles_admin+superAdmin",
+    "neondb-auth_none-roles_admin+superAdmin-withRLS",
+    "both-auth_none-roles_admin",
+    "both-auth_none-roles_admin-withRLS",
+    "both-auth_none-roles_superAdmin",
+    "both-auth_none-roles_superAdmin-withRLS",
+    "both-auth_none-roles_admin+superAdmin",
+    "both-auth_none-roles_admin+superAdmin-withRLS"
+  ]
+}

@@ -48,7 +48,7 @@ export interface PrismaTable {
 
 export type UserRole = "user" | "admin" | "super-admin" | "org-admin" | "org-member";
 
-export type RLSAccessType = "global" | "own" | "organization" | "related";
+export type RLSAccessType = "none" | "global" | "own" | "organization" | "related";
 
 export interface RLSRolePolicy {
   role: UserRole;
@@ -130,6 +130,14 @@ export interface DatabaseConfigurationState {
   ) => void;
   setTablesFromAI: (tables: PrismaTable[]) => void;
   setEnumsFromAI: (enums: PrismaEnum[]) => void;
+  setRLSPoliciesFromAI: (
+    policies: {
+      tableName: string;
+      operation: RLSPolicy["operation"];
+      rolePolicies: { role: UserRole; accessType: RLSAccessType; relatedTable?: string }[];
+    }[],
+    tables: PrismaTable[]
+  ) => void;
   reset: () => void;
 }
 

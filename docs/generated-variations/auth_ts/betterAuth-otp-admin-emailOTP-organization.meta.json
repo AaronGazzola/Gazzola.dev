@@ -1,0 +1,18 @@
+{
+  "version": "betterAuth-otp-admin-emailOTP-organization",
+  "variationCount": 12,
+  "variations": [
+    "neondb-auth_otp-roles_organizations",
+    "neondb-auth_otp-roles_organizations-withRLS",
+    "neondb-auth_otp-roles_admin+orgs",
+    "neondb-auth_otp-roles_admin+orgs-withRLS",
+    "neondb-auth_otp-roles_full",
+    "neondb-auth_otp-roles_full-withRLS",
+    "both-auth_otp-roles_organizations",
+    "both-auth_otp-roles_organizations-withRLS",
+    "both-auth_otp-roles_admin+orgs",
+    "both-auth_otp-roles_admin+orgs-withRLS",
+    "both-auth_otp-roles_full",
+    "both-auth_otp-roles_full-withRLS"
+  ]
+}

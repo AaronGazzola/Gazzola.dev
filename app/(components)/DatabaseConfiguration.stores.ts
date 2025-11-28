@@ -1670,6 +1670,8 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           if (!table) return;
 
           policy.rolePolicies.forEach((rolePolicy) => {
+            if (rolePolicy.accessType === "none") return;
+
             const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
 
             sql += `CREATE POLICY "${policyName}"\n`;
@@ -2011,7 +2013,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         set((state) => ({
           tables,
           enums: state.enums,
-          rlsPolicies: [],
+          rlsPolicies: state.rlsPolicies,
           plugins,
         }));
       },
@@ -2027,6 +2029,28 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
 
       setEnumsFromAI: (newEnums) => {
         set({ enums: newEnums });
+      },
+
+      setRLSPoliciesFromAI: (policies, tables) => {
+        const rlsPolicies: RLSPolicy[] = [];
+
+        policies.forEach((policy) => {
+          const table = tables.find((t) => t.name === policy.tableName);
+          if (!table) return;
+
+          rlsPolicies.push({
+            id: generateId(),
+            tableId: table.id,
+            operation: policy.operation,
+            rolePolicies: policy.rolePolicies.map((rp) => ({
+              role: rp.role,
+              accessType: rp.accessType,
+              relatedTable: rp.relatedTable,
+            })),
+          });
+        });
+
+        set({ rlsPolicies });
       },
 
       reset: () => set({ tables: [], enums: [], rlsPolicies: [], plugins: [], activeTab: "schema" }),

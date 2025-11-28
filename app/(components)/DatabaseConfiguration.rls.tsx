@@ -69,7 +69,7 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                 const rolePolicy = policy?.rolePolicies?.find(
                   (rp) => rp.role === role
                 );
-                const accessType = rolePolicy?.accessType || "global";
+                const accessType = rolePolicy?.accessType || "none";
                 const relatedTable = rolePolicy?.relatedTable;
 
                 return (
@@ -82,6 +82,7 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                         value={accessType}
                         onValueChange={(value) => {
                           if (
+                            value === "none" ||
                             value === "global" ||
                             value === "own" ||
                             value === "organization"
@@ -107,6 +108,7 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="none">No access</SelectItem>
                           <SelectItem value="global">Global</SelectItem>
                           <SelectItem value="own">Own data</SelectItem>
                           {initialConfiguration.features.admin

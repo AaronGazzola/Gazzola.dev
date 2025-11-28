@@ -1,0 +1,10 @@
+{
+  "version": "betterAuth-googleAuth-client",
+  "variationCount": 4,
+  "variations": [
+    "neondb-auth_googleAuth-roles_none",
+    "neondb-auth_googleAuth-roles_none-withRLS",
+    "both-auth_googleAuth-roles_none",
+    "both-auth_googleAuth-roles_none-withRLS"
+  ]
+}

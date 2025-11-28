@@ -80,6 +80,36 @@ export const CODE_FILE_CONFIGS: FileConfig[] = [
   },
 
   {
+    id: "schema.prisma",
+    path: "prisma/schema.prisma",
+    conditions: {
+      include: (config) => config.databaseProvider !== "none" && config.prisma,
+      version: (config) => `tables-${config.tables.length}`,
+    },
+    generator: (config) => TEMPLATES.prismaSchema(config),
+    metadata: {
+      description: "Prisma database schema with models",
+      requiredTech: ["prisma", "postgresql"],
+      requiredFeatures: [],
+    },
+  },
+
+  {
+    id: "rls-migration.sql",
+    path: "prisma/migrations/RLS_init.sql",
+    conditions: {
+      include: (config) => config.databaseProvider !== "none" && config.rlsPolicies.length > 0,
+      version: (config) => `rls-${config.rlsPolicies.length}`,
+    },
+    generator: (config) => TEMPLATES.rlsMigration(config),
+    metadata: {
+      description: "Row Level Security migration SQL",
+      requiredTech: ["prisma", "postgresql"],
+      requiredFeatures: [],
+    },
+  },
+
+  {
     id: "prisma-rls.ts",
     path: "lib/prisma-rls.ts",
     conditions: {

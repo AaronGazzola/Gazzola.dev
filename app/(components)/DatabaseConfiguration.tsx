@@ -64,6 +64,7 @@ export const DatabaseConfiguration = () => {
     getAvailableSchemasWithConfig,
     setTablesFromAI,
     setEnumsFromAI,
+    setRLSPoliciesFromAI,
   } = useDatabaseStore();
   const {
     initialConfiguration,
@@ -174,6 +175,9 @@ export const DatabaseConfiguration = () => {
 
         setTablesFromAI(parsed.tables);
         setEnumsFromAI(parsed.enums);
+        if (parsed.rlsPolicies && parsed.rlsPolicies.length > 0) {
+          setRLSPoliciesFromAI(parsed.rlsPolicies, parsed.tables);
+        }
         setDatabaseGenerated(true);
 
         conditionalLog(
@@ -184,6 +188,7 @@ export const DatabaseConfiguration = () => {
             authentication: configuration.authentication,
             tableCount: parsed.tables.length,
             enumCount: parsed.enums.length,
+            rlsPolicyCount: parsed.rlsPolicies?.length || 0,
           },
           { label: LOG_LABELS.DATABASE }
         );
@@ -410,9 +415,16 @@ export const DatabaseConfiguration = () => {
       if (!hasReadme) {
         return (
           <>
-            Generate a{" "}
+            Generate your{" "}
             <Link href="/readme" className="theme-text-primary hover:underline">
               README
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/app-structure"
+              className="theme-text-primary hover:underline"
+            >
+              App Structure
             </Link>{" "}
             first
           </>
@@ -421,7 +433,7 @@ export const DatabaseConfiguration = () => {
       if (!hasAppStructure) {
         return (
           <>
-            Generate an{" "}
+            Generate your{" "}
             <Link
               href="/app-structure"
               className="theme-text-primary hover:underline"

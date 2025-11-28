@@ -5,9 +5,23 @@ import type {
   PrismaColumn,
   PrismaEnum,
   PrismaTable,
+  RLSAccessType,
+  UserRole,
 } from "./DatabaseConfiguration.types";
 
 export const generateId = () => Math.random().toString(36).substring(2, 11);
+
+export interface AIRLSRolePolicy {
+  role: UserRole;
+  accessType: RLSAccessType;
+  relatedTable?: string;
+}
+
+export interface AIRLSPolicy {
+  tableName: string;
+  operation: "SELECT" | "INSERT" | "UPDATE" | "DELETE";
+  rolePolicies: AIRLSRolePolicy[];
+}
 
 export interface DatabaseSchemaResponse {
   configuration: {
@@ -32,6 +46,7 @@ export interface DatabaseSchemaResponse {
   };
   tables: PrismaTable[];
   enums: PrismaEnum[];
+  rlsPolicies: AIRLSPolicy[];
 }
 
 export const generateDatabaseSchemaPrompt = (
@@ -59,6 +74,18 @@ Rules:
 - Prisma types: String, Int, Float, Boolean, DateTime, Json, Decimal
 - Foreign keys: String type named userId, postId, etc.
 
+RLS Policy Rules:
+- Generate rlsPolicies for EVERY table with ALL operations: SELECT, INSERT, UPDATE, DELETE
+- Access types: none (no access - default), global (all rows), own (user's own data via userId), organization (org members), related (via related table)
+- Roles: user (always), admin (if roles.admin), super-admin (if roles.superAdmin), org-admin/org-member (if roles.organizations)
+- IMPORTANT: Every role must have an explicit policy for every operation on every table. Default to "none" if no access should be granted
+- Tables with userId/authorId/ownerId column: user role gets "own" for SELECT/UPDATE/DELETE, "own" for INSERT
+- Tables with organizationId: org-admin/org-member get "organization" access
+- super-admin gets "global" access to all tables for all operations
+- admin gets "global" access only to tables they should manage (user data tables, not system tables)
+- user role: "own" for their data, "none" for admin-only tables
+- Public reference tables (categories, tags, products): "global" SELECT for all roles, "none" for INSERT/UPDATE/DELETE except admins
+
 JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
 {
   "configuration": {
@@ -71,12 +98,19 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
     "name": "Task",
     "columns": [
       { "name": "id", "type": "String", "isId": true, "defaultValue": "cuid()", "attributes": ["@id", "@default(cuid())"] },
+      { "name": "userId", "type": "String" },
       { "name": "status", "type": "Status", "defaultValue": "ACTIVE", "attributes": ["@default(ACTIVE)"] },
       { "name": "title", "type": "String" },
       { "name": "createdAt", "type": "DateTime", "defaultValue": "now()", "attributes": ["@default(now())"] },
       { "name": "updatedAt", "type": "DateTime", "attributes": ["@updatedAt"] }
     ]
-  }]
+  }],
+  "rlsPolicies": [
+    { "tableName": "Task", "operation": "SELECT", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
+    { "tableName": "Task", "operation": "INSERT", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
+    { "tableName": "Task", "operation": "UPDATE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
+    { "tableName": "Task", "operation": "DELETE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] }
+  ]
 }`;
 };
 
@@ -114,8 +148,10 @@ export const parseDatabaseSchemaFromResponse = (
         hasConfiguration: !!parsed.configuration,
         hasTables: !!parsed.tables,
         hasEnums: !!parsed.enums,
+        hasRLSPolicies: !!parsed.rlsPolicies,
         tableCount: parsed.tables?.length || 0,
         enumCount: parsed.enums?.length || 0,
+        rlsPolicyCount: parsed.rlsPolicies?.length || 0,
         databaseProvider: parsed.configuration?.databaseProvider,
         rawParsedKeys: Object.keys(parsed),
       },
@@ -170,10 +206,23 @@ export const parseDatabaseSchemaFromResponse = (
       })),
     }));
 
+    const rlsPolicies: AIRLSPolicy[] = (parsed.rlsPolicies || []).map(
+      (policy: AIRLSPolicy) => ({
+        tableName: policy.tableName,
+        operation: policy.operation,
+        rolePolicies: (policy.rolePolicies || []).map((rp) => ({
+          role: rp.role,
+          accessType: rp.accessType,
+          relatedTable: rp.relatedTable,
+        })),
+      })
+    );
+
     return {
       configuration,
       tables,
       enums,
+      rlsPolicies,
     };
   } catch (error) {
     conditionalLog(
