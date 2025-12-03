@@ -1,5 +1,5 @@
 import type { InitialConfigurationType } from "@/app/(editor)/layout.types";
-import type { Plugin, PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
+import type { Plugin, PrismaEnum, PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
 import type { IDEType } from "@/app/(components)/IDESelection.types";
 
@@ -28,6 +28,7 @@ export interface ConfigSnapshot {
   alwaysOnServer: boolean;
 
   tables: PrismaTable[];
+  enums: PrismaEnum[];
   rlsPolicies: RLSPolicy[];
   plugins: Plugin[];
 
@@ -82,6 +83,7 @@ export const createConfigSnapshot = (
   theme: ThemeConfiguration,
   plugins: Plugin[],
   tables: PrismaTable[],
+  enums: PrismaEnum[],
   rlsPolicies: RLSPolicy[],
   selectedIDE: IDEType
 ): ConfigSnapshot => {
@@ -110,6 +112,7 @@ export const createConfigSnapshot = (
     alwaysOnServer: initialConfig.questions.alwaysOnServer,
 
     tables,
+    enums,
     rlsPolicies,
     plugins,
 

@@ -1046,6 +1046,7 @@ const createConfigSnapshotFromInitialConfig = (
     databaseProvider: initialConfig.questions.databaseProvider,
     alwaysOnServer: initialConfig.questions.alwaysOnServer,
     tables,
+    enums: [],
     rlsPolicies,
     plugins: [],
     authEnabled: initialConfig.features.authentication.enabled,

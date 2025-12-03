@@ -1,4 +1,5 @@
 import type {
+  PrismaEnum,
   PrismaTable,
   RLSPolicy,
   RLSRolePolicy,
@@ -13,6 +14,18 @@ import {
   needsAppName,
 } from "./auth-plugin-mappings";
 import type { ConfigSnapshot } from "./config-snapshot";
+
+const SCALAR_TYPES = [
+  "String",
+  "Int",
+  "Float",
+  "Boolean",
+  "DateTime",
+  "Json",
+  "BigInt",
+  "Decimal",
+  "Bytes",
+];
 
 export const TEMPLATES = {
   globals_css: (config: ConfigSnapshot): string => {
@@ -542,6 +555,7 @@ ${configLines.join("\n")}
 
   prismaSchema: (config: ConfigSnapshot): string => {
     const tables = config.tables;
+    const enums = config.enums || [];
     const shouldExcludeAuthSchema =
       config.databaseProvider === "supabase" && !config.betterAuth;
 
@@ -555,34 +569,88 @@ ${configLines.join("\n")}
     const schemas = Array.from(new Set(filteredTables.map((t) => t.schema)));
     const schemasStr = schemas.map((s) => `"${s}"`).join(", ");
 
+    const collectInferredEnums = (
+      tables: PrismaTable[],
+      definedEnums: PrismaEnum[]
+    ): Set<string> => {
+      const definedEnumNames = new Set(definedEnums.map((e) => e.name));
+      const enumTypes = new Set<string>();
+      tables.forEach((table) => {
+        table.columns.forEach((col) => {
+          if (
+            !SCALAR_TYPES.includes(col.type) &&
+            !tables.some((t) => t.name === col.type) &&
+            !definedEnumNames.has(col.type) &&
+            col.type.match(/^[A-Z][a-zA-Z]*$/)
+          ) {
+            enumTypes.add(col.type);
+          }
+        });
+      });
+      return enumTypes;
+    };
+
+    const inferredEnums = collectInferredEnums(filteredTables, enums);
+
     let schema = `datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = [${schemasStr}]
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
+  schemas   = [${schemasStr}]
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  output          = "node_modules/.prisma/client"
   previewFeatures = ["multiSchema"]
 }
 
 `;
 
+    enums.forEach((prismaEnum) => {
+      schema += `enum ${prismaEnum.name} {\n`;
+      if (prismaEnum.values.length > 0) {
+        prismaEnum.values.forEach((val) => {
+          schema += `  ${val.value}\n`;
+        });
+      }
+      schema += `}\n\n`;
+    });
+
+    inferredEnums.forEach((enumName) => {
+      schema += `enum ${enumName} {\n`;
+      schema += `  // TODO: Add enum values\n`;
+      schema += `}\n\n`;
+    });
+
     filteredTables.forEach((table) => {
       schema += `model ${table.name} {\n`;
+
+      const maxNameLen = Math.max(
+        ...table.columns.map((col) => col.name.length)
+      );
+      const maxTypeLen = Math.max(
+        ...table.columns.map((col) => {
+          const typeStr = col.isArray ? `${col.type}[]` : col.type;
+          const optionalStr = col.isOptional ? "?" : "";
+          return typeStr.length + optionalStr.length;
+        })
+      );
 
       table.columns.forEach((col) => {
         const typeStr = col.isArray ? `${col.type}[]` : col.type;
         const optionalStr = col.isOptional ? "?" : "";
-        const namePadding = " ".repeat(Math.max(1, 20 - col.name.length));
+        const namePadding = " ".repeat(
+          Math.max(1, maxNameLen + 2 - col.name.length)
+        );
+        const fullType = `${typeStr}${optionalStr}`;
 
-        let line = `  ${col.name}${namePadding}${typeStr}${optionalStr}`;
+        let line = `  ${col.name}${namePadding}${fullType}`;
+
+        const attrs: string[] = [];
 
         if (col.attributes.length > 0) {
-          const typePadding = " ".repeat(
-            Math.max(2, 25 - typeStr.length - optionalStr.length)
-          );
-          line += `${typePadding}${col.attributes.join(" ")}`;
+          attrs.push(...col.attributes);
         }
 
         if (col.relation) {
@@ -592,7 +660,16 @@ generator client {
           const onDelete = col.relation.onDelete
             ? `, onDelete: ${col.relation.onDelete}`
             : "";
-          line += ` @relation("${relationName}", ${fields}, ${references}${onDelete})`;
+          attrs.push(
+            `@relation("${relationName}", ${fields}, ${references}${onDelete})`
+          );
+        }
+
+        if (attrs.length > 0) {
+          const typePadding = " ".repeat(
+            Math.max(1, maxTypeLen + 2 - fullType.length)
+          );
+          line += `${typePadding}${attrs.join(" ")}`;
         }
 
         schema += `${line}\n`;

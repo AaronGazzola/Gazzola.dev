@@ -208,6 +208,7 @@ const createMinimalConfig = (): ConfigSnapshot => {
     [],
     [],
     [],
+    [],
     "claudecode"
   );
 };

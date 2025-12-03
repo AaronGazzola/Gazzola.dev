@@ -333,6 +333,7 @@ function generateFileForVariation(
     DEFAULT_THEME,
     variation.plugins,
     variation.tables,
+    [],
     variation.rlsPolicies,
     "claudecode" as IDEType
   );

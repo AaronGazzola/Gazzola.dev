@@ -1,5 +1,6 @@
 import type {
   Plugin,
+  PrismaEnum,
   PrismaTable,
   RLSPolicy,
   RLSRolePolicy,
@@ -901,6 +902,7 @@ export const createCodeFileNodes = (
   theme: ThemeConfiguration,
   plugins: Plugin[],
   tables: PrismaTable[],
+  enums: PrismaEnum[],
   rlsPolicies: RLSPolicy[],
   isPageVisited?: (path: string) => boolean
 ): CodeFileNode[] => {
@@ -913,6 +915,7 @@ export const createCodeFileNodes = (
     theme,
     plugins,
     tables,
+    enums,
     rlsPolicies,
     isPageVisited,
     getSectionInclude

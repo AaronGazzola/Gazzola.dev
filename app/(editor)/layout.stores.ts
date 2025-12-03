@@ -396,6 +396,7 @@ export const useEditorStore = create<EditorState>()(
           themeStore.theme,
           databaseStore.plugins,
           databaseStore.tables,
+          databaseStore.enums,
           databaseStore.rlsPolicies,
           state.isPageVisited
         );
@@ -428,6 +429,7 @@ export const useEditorStore = create<EditorState>()(
               themeStore.theme,
               databaseStore.plugins,
               databaseStore.tables,
+              databaseStore.enums,
               databaseStore.rlsPolicies,
               (checkPath: string) => newVisitedPages.includes(checkPath)
             );
@@ -1586,6 +1588,7 @@ export const useEditorStore = create<EditorState>()(
               themeStore.theme,
               databaseStore.plugins,
               databaseStore.tables,
+              databaseStore.enums,
               databaseStore.rlsPolicies,
               state.isPageVisited
             );
