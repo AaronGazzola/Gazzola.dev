@@ -24,7 +24,7 @@ export const CODE_FILE_CONFIGS: FileConfig[] = [
     path: "styles/globals.css",
     conditions: {
       include: () => true,
-      version: (config) => `theme-v1`,
+      version: (config) => `theme-v2`,
     },
     generator: (config) => TEMPLATES.globals_css(config),
     metadata: {

@@ -681,59 +681,58 @@ const generateThemeCss = (): string => {
       { key: "sidebarRing", css: "--sidebar-ring" },
     ];
 
-    const lines: string[] = ["```css", "", "@tailwind base;", "@tailwind components;", "@tailwind utilities;", "", "@layer base {", "  :root {"];
+    const lines: string[] = ["```css", "", "@import \"tailwindcss\";", "@import \"tw-animate-css\";", "", ":root {"];
 
     colorKeys.forEach(({ key, css }) => {
       const color = (lightColors as any)[key];
       if (color) {
-        lines.push(`    ${css}: ${color};`);
+        lines.push(`  ${css}: ${color};`);
       }
     });
 
     lines.push(``);
-    lines.push(`    --font-sans: ${lightTypography.fontSans};`);
-    lines.push(`    --font-serif: ${lightTypography.fontSerif};`);
-    lines.push(`    --font-mono: ${lightTypography.fontMono};`);
-    lines.push(`    --letter-spacing: ${lightTypography.letterSpacing}px;`);
+    lines.push(`  --font-sans: ${lightTypography.fontSans};`);
+    lines.push(`  --font-serif: ${lightTypography.fontSerif};`);
+    lines.push(`  --font-mono: ${lightTypography.fontMono};`);
+    lines.push(`  --letter-spacing: ${lightTypography.letterSpacing}px;`);
     lines.push(``);
-    lines.push(`    --radius: ${lightOther.radius}rem;`);
-    lines.push(`    --spacing: ${lightOther.spacing}rem;`);
-    lines.push(`    --shadow: ${formatShadow(lightOther.shadow)};`);
-    lines.push(`    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
-    lines.push(`  }`);
+    lines.push(`  --radius: ${lightOther.radius}rem;`);
+    lines.push(`  --spacing: ${lightOther.spacing}rem;`);
+    lines.push(`  --shadow: ${formatShadow(lightOther.shadow)};`);
+    lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
+    lines.push(`}`);
     lines.push(``);
-    lines.push(`  .dark {`);
+    lines.push(`.dark {`);
 
     colorKeys.forEach(({ key, css }) => {
       const color = (darkColors as any)[key];
       if (color) {
-        lines.push(`    ${css}: ${color};`);
+        lines.push(`  ${css}: ${color};`);
       }
     });
 
     lines.push(``);
-    lines.push(`    --font-sans: ${darkTypography.fontSans};`);
-    lines.push(`    --font-serif: ${darkTypography.fontSerif};`);
-    lines.push(`    --font-mono: ${darkTypography.fontMono};`);
-    lines.push(`    --letter-spacing: ${darkTypography.letterSpacing}px;`);
+    lines.push(`  --font-sans: ${darkTypography.fontSans};`);
+    lines.push(`  --font-serif: ${darkTypography.fontSerif};`);
+    lines.push(`  --font-mono: ${darkTypography.fontMono};`);
+    lines.push(`  --letter-spacing: ${darkTypography.letterSpacing}px;`);
     lines.push(``);
-    lines.push(`    --radius: ${darkOther.radius}rem;`);
-    lines.push(`    --spacing: ${darkOther.spacing}rem;`);
-    lines.push(`    --shadow: ${formatShadow(darkOther.shadow)};`);
-    lines.push(`    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
-    lines.push(`    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
-    lines.push(`    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
-    lines.push(`  }`);
+    lines.push(`  --radius: ${darkOther.radius}rem;`);
+    lines.push(`  --spacing: ${darkOther.spacing}rem;`);
+    lines.push(`  --shadow: ${formatShadow(darkOther.shadow)};`);
+    lines.push(`  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);`);
+    lines.push(`  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);`);
+    lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
     lines.push(`}`);
     lines.push(``);
     lines.push(`@layer base {`);
