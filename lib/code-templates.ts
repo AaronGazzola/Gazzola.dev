@@ -566,8 +566,32 @@ ${configLines.join("\n")}
       return true;
     });
 
-    const schemas = Array.from(new Set(filteredTables.map((t) => t.schema)));
-    const schemasStr = schemas.map((s) => `"${s}"`).join(", ");
+    const schemas = new Set(filteredTables.map((t) => t.schema));
+    if (!schemas.has("public")) {
+      schemas.add("public");
+    }
+    if (config.betterAuth && !schemas.has("better_auth")) {
+      schemas.add("better_auth");
+    }
+    if (
+      config.databaseProvider === "supabase" &&
+      !config.betterAuth &&
+      !schemas.has("auth")
+    ) {
+      schemas.add("auth");
+    }
+
+    const sortedSchemas = Array.from(schemas).sort((a, b) => {
+      const systemSchemas = ["auth", "better_auth", "public"];
+      const aIndex = systemSchemas.indexOf(a);
+      const bIndex = systemSchemas.indexOf(b);
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return a.localeCompare(b);
+    });
+
+    const schemasStr = sortedSchemas.map((s) => `"${s}"`).join(", ");
 
     const collectInferredEnums = (
       tables: PrismaTable[],
