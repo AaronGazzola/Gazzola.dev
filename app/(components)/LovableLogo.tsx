@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 
 interface LovableLogoProps {
   className?: string;
@@ -14,6 +14,12 @@ export const LovableLogo = ({
   className,
   size = 16,
 }: LovableLogoProps) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const id = useId();
   const maskId = `mask-${id}`;
   const gradientId = `gradient-${id}`;
@@ -21,6 +27,20 @@ export const LovableLogo = ({
   const filter1Id = `filter1-${id}`;
   const filter2Id = `filter2-${id}`;
   const filter3Id = `filter3-${id}`;
+
+  if (!mounted) {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 37 38"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={cn("inline-block flex-shrink-0", className)}
+        style={{ overflow: "visible" }}
+      />
+    );
+  }
 
   return (
     <svg

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -13,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { LovableLogo } from "../(components)/LovableLogo";
 import { useSubmitCodeReview } from "./Footer.hooks";
 import { CodeReviewFormData, FooterDataAttributes } from "./Footer.types";
 
@@ -80,15 +78,19 @@ export const CodeReviewDialog = ({
       >
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-2">
-            <LovableLogo size={24} />
-            Lovable Web App Quality Assurance
+            AI-Generated Web App Quality Assurance
           </DialogTitle>
-          <DialogDescription className="text-base text-foreground">
-            In-depth analysis, refactoring, enhancement and automated testing.
-            You will receive in-depth progress reports and test results at each
-            stage of development - lifting the veil on the inner workings of
-            your creation.
-          </DialogDescription>
+          <div className="text-base text-foreground space-y-2">
+            <p>Comprehensive Quality Assurance services:</p>
+            <ul className="list-disc list-inside">
+              <li>Code Review</li>
+              <li>Automated Testing</li>
+              <li>Migration Validation</li>
+              <li>Seed Script Generation</li>
+              <li>Functional Verification</li>
+            </ul>
+            <p>With detailed progress reports at every stage.</p>
+          </div>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -102,7 +104,7 @@ export const CodeReviewDialog = ({
                 onChange={(e) => {
                   setFormData({ ...formData, name: e.target.value });
                 }}
-                onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
+                onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
                 className={cn(touched.name && !isNameValid && "border-red-500")}
                 data-cy={FooterDataAttributes.CODE_REVIEW_NAME_INPUT}
               />
@@ -121,7 +123,7 @@ export const CodeReviewDialog = ({
                 onChange={(e) => {
                   setFormData({ ...formData, email: e.target.value });
                 }}
-                onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
+                onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                 className={cn(
                   touched.email && !isEmailValid && "border-red-500"
                 )}
@@ -144,7 +146,9 @@ export const CodeReviewDialog = ({
                 onChange={(e) => {
                   setFormData({ ...formData, message: e.target.value });
                 }}
-                onBlur={() => setTouched(prev => ({ ...prev, message: true }))}
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, message: true }))
+                }
                 className={cn(
                   touched.message && !isMessageValid && "border-red-500"
                 )}

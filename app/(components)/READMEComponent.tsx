@@ -3,10 +3,12 @@
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { Button } from "@/components/editor/ui/button";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/editor/ui/radio-group";
 import { Textarea } from "@/components/editor/ui/textarea";
-import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { extractJsonArrayFromResponse } from "@/lib/ai-response.utils";
+import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import {
   Loader2,
   MessageCircleQuestion,
@@ -14,8 +16,6 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/editor/ui/radio-group";
-import { Checkbox } from "@/components/editor/ui/checkbox";
 import { useCallback, useState } from "react";
 
 type Stage = "initial" | "questions";
@@ -59,8 +59,9 @@ const parseQuestionsFromResponse = (response: string): Question[] => {
   if (parsed) {
     return parsed.slice(0, 5).map((q, index) => {
       const questionText = typeof q === "string" ? q : q.question;
-      const questionType = typeof q === "string" ? "single" : (q.type || "single");
-      const rawOptions = typeof q === "string" ? [] : (q.options || []);
+      const questionType =
+        typeof q === "string" ? "single" : q.type || "single";
+      const rawOptions = typeof q === "string" ? [] : q.options || [];
 
       return {
         id: `q-${index + 1}`,
@@ -103,7 +104,11 @@ const QuestionAnswerItem = ({
   onAdditionalInfoChange,
 }: {
   question: Question;
-  onOptionSelect: (questionId: string, optionId: string, isSelected: boolean) => void;
+  onOptionSelect: (
+    questionId: string,
+    optionId: string,
+    isSelected: boolean
+  ) => void;
   onClearSelection: (questionId: string) => void;
   onAdditionalInfoChange: (questionId: string, text: string) => void;
 }) => {
@@ -136,7 +141,9 @@ const QuestionAnswerItem = ({
           {question.type === "single" ? (
             <RadioGroup
               value={question.selectedOptions[0] || ""}
-              onValueChange={(value) => onOptionSelect(question.id, value, true)}
+              onValueChange={(value) =>
+                onOptionSelect(question.id, value, true)
+              }
               className="flex flex-col theme-gap-2"
             >
               {question.options.map((option) => (
@@ -145,7 +152,9 @@ const QuestionAnswerItem = ({
                   className="flex items-center theme-gap-2 cursor-pointer"
                 >
                   <RadioGroupItem value={option.id} id={option.id} />
-                  <span className="text-sm theme-text-foreground">{option.label}</span>
+                  <span className="text-sm theme-text-foreground">
+                    {option.label}
+                  </span>
                 </label>
               ))}
             </RadioGroup>
@@ -165,7 +174,9 @@ const QuestionAnswerItem = ({
                         onOptionSelect(question.id, option.id, checked === true)
                       }
                     />
-                    <span className="text-sm theme-text-foreground">{option.label}</span>
+                    <span className="text-sm theme-text-foreground">
+                      {option.label}
+                    </span>
                   </label>
                 );
               })}
@@ -397,6 +408,19 @@ Requirements:
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
       {state.stage === "initial" && (
         <>
+          <div className="flex flex-col theme-gap-2 mb-4">
+            <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
+              <Sparkles className="h-5 w-5 theme-text-primary" />
+              Generate your custom Next.js web app!
+            </h2>
+            <p className="theme-text-foreground">
+              Follow the steps to generate your web app, starting with a title
+              and description. This process will create detailed documentation
+              to enable an AI to build your app according to your specifications
+              and following my recommended programming patterns.
+            </p>
+          </div>
+
           <div className="flex flex-col theme-gap-2">
             <label className="font-semibold">App Title</label>
             <Input
