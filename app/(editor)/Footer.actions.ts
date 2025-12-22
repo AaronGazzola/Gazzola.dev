@@ -3,21 +3,24 @@
 import { ActionResponse, getActionResponse } from "@/lib/action.utils";
 import { Resend } from "resend";
 import { CodeReviewRequestEmail } from "@/emails/CodeReviewRequest";
-import { CodeReviewFormData, RepositoryVisibility } from "./Footer.types";
-import { generateNDAPDFServer } from "./nda.server.utils";
+import { CodeReviewFormData } from "./Footer.types";
 
 export const submitCodeReviewAction = async (
   formData: CodeReviewFormData
 ): Promise<ActionResponse<{ success: boolean }>> => {
   try {
-    const githubUrlRegex = /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w.-]+\/?$/;
-    if (!githubUrlRegex.test(formData.githubUrl)) {
-      throw new Error("Invalid GitHub URL format");
+    const nameRegex = /^[\p{L}\s'-]{2,100}$/u;
+    if (!nameRegex.test(formData.name.trim())) {
+      throw new Error("Invalid name format");
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       throw new Error("Invalid email format");
+    }
+
+    if (!formData.message.trim()) {
+      throw new Error("Message cannot be empty");
     }
 
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -32,35 +35,17 @@ export const submitCodeReviewAction = async (
 
     const resend = new Resend(resendApiKey);
 
-    const isPrivate = formData.visibility === RepositoryVisibility.PRIVATE;
-    const ndaRequired = isPrivate && !!formData.nda.legalEntityName;
-
-    const emailData: any = {
-      from: "Code Review Requests <onboarding@resend.dev>",
+    const { error } = await resend.emails.send({
+      from: "Contact Form <onboarding@resend.dev>",
       to: adminEmail,
       replyTo: formData.email,
-      subject: `Code Review Request from ${formData.email}${isPrivate ? " [Private - NDA Required]" : ""}`,
+      subject: `Quality Assurance Inquiry from ${formData.name}`,
       react: CodeReviewRequestEmail({
-        githubUrl: formData.githubUrl,
+        name: formData.name,
+        email: formData.email,
         message: formData.message,
-        userEmail: formData.email,
-        isPrivate,
-        ndaRequested: ndaRequired,
-        ndaDetails: ndaRequired ? formData.nda : undefined,
       }),
-    };
-
-    if (ndaRequired && formData.nda.jurisdiction) {
-      const { content, filename } = generateNDAPDFServer(formData.nda);
-      emailData.attachments = [
-        {
-          filename,
-          content,
-        },
-      ];
-    }
-
-    const { error } = await resend.emails.send(emailData);
+    });
 
     if (error) {
       throw new Error(error.message);

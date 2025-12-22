@@ -824,7 +824,12 @@ const Sidebar = () => {
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [mounted, setMounted] = useState(false);
   const params = useParams();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navigationData = useMemo(() => {
     return generateNavigationFromMarkdownData(data.root.children, codeFiles);
@@ -1038,28 +1043,30 @@ const Sidebar = () => {
           ))}
       </div>
       <div className="border-t border-gray-700 p-3 space-y-3">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Badge
-              variant="outline"
-              className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
-            >
-              <Info className="h-4 w-4 text-orange-500 absolute left-3" />
-              Work in Progress
-            </Badge>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
-            <div className="space-y-2">
-              <h4 className="font-semibold">Work in Progress</h4>
-              <p className="text-sm text-gray-300">
-                This app is a work in progress and will likely change often.
-              </p>
-              <p className="text-sm text-gray-300 font-medium">
-                Some of the functionality may be incomplete or error prone.
-              </p>
-            </div>
-          </PopoverContent>
-        </Popover>
+        {mounted && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Badge
+                variant="outline"
+                className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
+              >
+                <Info className="h-4 w-4 text-orange-500 absolute left-3" />
+                Work in Progress
+              </Badge>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
+              <div className="space-y-2">
+                <h4 className="font-semibold">Work in Progress</h4>
+                <p className="text-sm text-gray-300">
+                  This app is a work in progress and will likely change often.
+                </p>
+                <p className="text-sm text-gray-300 font-medium">
+                  Some of the functionality may be incomplete or error prone.
+                </p>
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
         <div className="relative w-full">
           <Button
             variant="outline"
@@ -1106,42 +1113,44 @@ const Sidebar = () => {
           ))}
       </div>
       <div className="border-t border-gray-700 p-2 space-y-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-full text-orange-500 hover:text-orange-400 hover:bg-gray-800"
+        {mounted && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-full text-orange-500 hover:text-orange-400 hover:bg-gray-800"
+                  >
+                    <Info className="h-5 w-5" />
+                    <span className="sr-only">Work in Progress Info</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="right"
+                  className="w-80 bg-black border-orange-500 text-white rounded-xl"
                 >
-                  <Info className="h-5 w-5" />
-                  <span className="sr-only">Work in Progress Info</span>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                side="right"
-                className="w-80 bg-black border-orange-500 text-white rounded-xl"
-              >
-                <div className="space-y-2">
-                  <h4 className="font-semibold">Work in Progress</h4>
-                  <p className="text-sm text-gray-300">
-                    This app is a work in progress and will likely change often.
-                  </p>
-                  <p className="text-sm text-gray-300 font-medium">
-                    Some of the functionality may be incomplete or error prone.
-                  </p>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </TooltipTrigger>
-          <TooltipContent
-            side="right"
-            className="bg-gray-900 text-white border-gray-700"
-          >
-            Work in Progress
-          </TooltipContent>
-        </Tooltip>
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Work in Progress</h4>
+                    <p className="text-sm text-gray-300">
+                      This app is a work in progress and will likely change often.
+                    </p>
+                    <p className="text-sm text-gray-300 font-medium">
+                      Some of the functionality may be incomplete or error prone.
+                    </p>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="bg-gray-900 text-white border-gray-700"
+            >
+              Work in Progress
+            </TooltipContent>
+          </Tooltip>
+        )}
         <div className="relative">
           <Tooltip>
             <TooltipTrigger asChild>

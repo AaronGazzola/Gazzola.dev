@@ -19,9 +19,6 @@ const createMinimalConfig = (): ConfigSnapshot => {
       zustand: false,
       reactQuery: false,
       supabase: false,
-      neondb: false,
-      prisma: false,
-      betterAuth: false,
       postgresql: false,
       vercel: true,
       railway: false,
@@ -54,7 +51,6 @@ const createMinimalConfig = (): ConfigSnapshot => {
         enabled: false,
         admin: false,
         superAdmin: false,
-        organizations: false,
       },
       payments: {
         enabled: false,
@@ -207,7 +203,6 @@ const createMinimalConfig = (): ConfigSnapshot => {
     minimalTheme,
     [],
     [],
-    [],
     "claudecode"
   );
 };
@@ -280,39 +275,7 @@ const generateVariations = (fileConfig: FileConfig): Array<{ name: string; confi
 
   const baseConfig = createMinimalConfig();
 
-  if (fileConfig.id === "auth.ts") {
-    const basicAuthConfig = {
-      ...baseConfig,
-      betterAuth: true,
-      prisma: true,
-      databaseProvider: "neondb" as const,
-    };
-
-    variations.push({
-      name: "Basic (No Plugins)",
-      config: { betterAuth: true, databaseProvider: "neondb", plugins: [] },
-      code: fileConfig.generator(basicAuthConfig),
-    });
-
-    const organizationConfig = {
-      ...basicAuthConfig,
-      plugins: [
-        {
-          id: "1",
-          name: "organization",
-          enabled: true,
-          file: "auth" as const,
-          description: "Organization plugin",
-        },
-      ],
-    };
-
-    variations.push({
-      name: "With Organization Plugin",
-      config: { betterAuth: true, databaseProvider: "neondb", plugins: ["organization"] },
-      code: fileConfig.generator(organizationConfig),
-    });
-  } else if (fileConfig.id === "globals.css") {
+  if (fileConfig.id === "globals.css") {
     variations.push({
       name: "Default Theme",
       config: { theme: "default" },

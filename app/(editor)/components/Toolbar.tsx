@@ -367,9 +367,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         },
         technologies: {
           supabase: false,
-          neondb: false,
-          prisma: false,
-          betterAuth: false,
           postgresql: false,
         } as InitialConfigurationType["technologies"],
         features: {
@@ -390,8 +387,24 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             enabled: false,
             admin: false,
             superAdmin: false,
-            organizations: false,
           },
+          payments: {
+            enabled: false,
+            paypalPayments: false,
+            stripePayments: false,
+            stripeSubscriptions: false,
+          },
+          aiIntegration: {
+            enabled: false,
+            imageGeneration: false,
+            textGeneration: false,
+          },
+          realTimeNotifications: {
+            enabled: false,
+            emailNotifications: false,
+            inAppNotifications: false,
+          },
+          fileStorage: false,
         } as InitialConfigurationType["features"],
         database: {
           hosting: "neondb",

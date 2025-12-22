@@ -1,7 +1,6 @@
 import type { ConfigSnapshot } from "./config-snapshot";
 import { TEMPLATES } from "./code-templates";
 import { IDE_ROBOTS_FILES } from "./code-files.registry";
-import { generateVersionString } from "./auth-plugin-mappings";
 
 export interface FileConfig {
   id: string;
@@ -30,111 +29,6 @@ export const CODE_FILE_CONFIGS: FileConfig[] = [
     metadata: {
       description: "Global CSS styles with theme configuration",
       requiredTech: ["tailwindcss"],
-      requiredFeatures: [],
-    },
-  },
-
-  {
-    id: "auth.ts",
-    path: "lib/auth.ts",
-    conditions: {
-      include: (config) => config.betterAuth && config.databaseProvider !== "supabase",
-      version: (config) => generateVersionString(config),
-    },
-    generator: (config) => TEMPLATES.auth(config),
-    metadata: {
-      description: "Better Auth server configuration with plugins based on selected auth methods and roles",
-      requiredTech: ["betterAuth", "prisma"],
-      requiredFeatures: ["authentication"],
-    },
-  },
-
-  {
-    id: "auth-client.ts",
-    path: "lib/auth-client.ts",
-    conditions: {
-      include: (config) => config.betterAuth && config.databaseProvider !== "supabase",
-      version: (config) => `${generateVersionString(config)}-client`,
-    },
-    generator: (config) => TEMPLATES.authClient(config),
-    metadata: {
-      description: "Better Auth client-side configuration with plugins matching server setup",
-      requiredTech: ["betterAuth"],
-      requiredFeatures: ["authentication"],
-    },
-  },
-
-  {
-    id: "auth.util.ts",
-    path: "lib/auth.util.ts",
-    conditions: {
-      include: (config) => config.prisma && config.betterAuth,
-      version: () => "v1",
-    },
-    generator: () => TEMPLATES.authUtil(),
-    metadata: {
-      description: "Authentication utility functions for RLS and JWT",
-      requiredTech: ["prisma", "betterAuth"],
-      requiredFeatures: ["authentication"],
-    },
-  },
-
-  {
-    id: "schema.prisma",
-    path: "prisma/schema.prisma",
-    conditions: {
-      include: (config) => config.databaseProvider !== "none" && config.prisma,
-      version: (config) => `tables-${config.tables.length}`,
-    },
-    generator: (config) => TEMPLATES.prismaSchema(config),
-    metadata: {
-      description: "Prisma database schema with models",
-      requiredTech: ["prisma", "postgresql"],
-      requiredFeatures: [],
-    },
-  },
-
-  {
-    id: "rls-migration.sql",
-    path: "prisma/migrations/RLS_init.sql",
-    conditions: {
-      include: (config) => config.databaseProvider !== "none" && config.rlsPolicies.length > 0,
-      version: (config) => `rls-${config.rlsPolicies.length}`,
-    },
-    generator: (config) => TEMPLATES.rlsMigration(config),
-    metadata: {
-      description: "Row Level Security migration SQL",
-      requiredTech: ["prisma", "postgresql"],
-      requiredFeatures: [],
-    },
-  },
-
-  {
-    id: "prisma-rls.ts",
-    path: "lib/prisma-rls.ts",
-    conditions: {
-      include: (config) => config.prisma && config.rlsPolicies.length > 0,
-      version: (config) => `rls-${config.rlsPolicies.length}-policies`,
-    },
-    generator: (config) => TEMPLATES.prismaRLS(config.rlsPolicies, config.tables),
-    metadata: {
-      description: "Prisma RLS policy definitions",
-      requiredTech: ["prisma"],
-      requiredFeatures: [],
-    },
-  },
-
-  {
-    id: "prisma-rls-client.ts",
-    path: "lib/prisma-rls-client.ts",
-    conditions: {
-      include: (config) => config.prisma && config.rlsPolicies.length > 0,
-      version: () => "v1",
-    },
-    generator: () => TEMPLATES.prismaRLSClient(),
-    metadata: {
-      description: "Prisma RLS client wrapper",
-      requiredTech: ["prisma"],
       requiredFeatures: [],
     },
   },

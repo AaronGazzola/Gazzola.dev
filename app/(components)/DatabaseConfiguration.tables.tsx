@@ -30,9 +30,7 @@ export const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
   const { addColumn, deleteColumn, updateColumn } = useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
-  const isSupabaseAuth =
-    table.schema === "auth" && !initialConfiguration.technologies.betterAuth;
-  const isBetterAuth = table.schema === "better_auth";
+  const isSupabaseAuth = table.schema === "auth";
 
   if (isSupabaseAuth) {
     return (
@@ -50,21 +48,7 @@ export const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
 
   return (
     <div className="flex flex-col theme-gap-2">
-      {isBetterAuth && (
-        <div className="flex items-center theme-gap-2 theme-text-muted-foreground theme-p-4 theme-bg-muted/50">
-          <Lock className="h-6 w-6" />
-          <p className="text-base font-semibold theme-font-sans theme-tracking">
-            The better_auth schema is managed by Better Auth and cannot be
-            edited directly.
-          </p>
-        </div>
-      )}
-      <div
-        className={cn(
-          "flex flex-col theme-p-2 theme-gap-2",
-          isBetterAuth && "opacity-60 pointer-events-none"
-        )}
-      >
+      <div className="flex flex-col theme-p-2 theme-gap-2">
         {table.columns.map((column) => (
           <div
             key={column.id}
@@ -92,9 +76,7 @@ export const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
             </div>
           </div>
         ))}
-        {!isBetterAuth && (
-          <AddColumnPopover table={table} onAddColumn={addColumn} />
-        )}
+        <AddColumnPopover table={table} onAddColumn={addColumn} />
       </div>
     </div>
   );

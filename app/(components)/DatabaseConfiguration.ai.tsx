@@ -25,7 +25,7 @@ export interface AIRLSPolicy {
 
 export interface DatabaseSchemaResponse {
   configuration: {
-    databaseProvider: "supabase" | "neondb" | "both" | "none";
+    databaseProvider: "supabase" | "none";
     roles: {
       admin: boolean;
       superAdmin: boolean;
@@ -63,8 +63,8 @@ App Structure:
 ${JSON.stringify(appStructure)}
 
 Options:
-- databaseProvider: supabase | neondb | both | none
-- roles: admin, superAdmin, organizations (organizations requires neondb/both)
+- databaseProvider: supabase | none
+- roles: admin, superAdmin, organizations
 - authentication: magicLink, emailPassword, otp, twoFactor, passkey, anonymous, googleAuth, githubAuth, appleAuth, passwordOnly
 
 Rules:

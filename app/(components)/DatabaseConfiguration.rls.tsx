@@ -17,11 +17,8 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
     useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
-  const authProvider = !initialConfiguration.technologies.betterAuth
-    ? "Supabase"
-    : "Better Auth";
-  const isAuthSchema =
-    table.schema === "auth" || table.schema === "better_auth";
+  const authProvider = "Supabase";
+  const isAuthSchema = table.schema === "auth";
 
   const enabledRoles: UserRole[] = [
     "user",
@@ -29,9 +26,6 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
   if (initialConfiguration.features.admin.admin) enabledRoles.push("admin");
   if (initialConfiguration.features.admin.superAdmin)
     enabledRoles.push("super-admin");
-  if (initialConfiguration.features.admin.organizations) {
-    enabledRoles.push("org-admin", "org-member");
-  }
 
   const operations: RLSPolicy["operation"][] =
     ["INSERT", "SELECT", "UPDATE", "DELETE"];
@@ -111,12 +105,6 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                           <SelectItem value="none">No access</SelectItem>
                           <SelectItem value="global">Global</SelectItem>
                           <SelectItem value="own">Own data</SelectItem>
-                          {initialConfiguration.features.admin
-                            .organizations && (
-                            <SelectItem value="organization">
-                              Organization
-                            </SelectItem>
-                          )}
                           <SelectItem value="related">Related</SelectItem>
                         </SelectContent>
                       </Select>

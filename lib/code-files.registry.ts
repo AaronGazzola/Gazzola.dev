@@ -1,11 +1,6 @@
-import type {
-  Plugin,
-  PrismaTable,
-  RLSPolicy,
-  RLSRolePolicy,
-} from "@/app/(components)/DatabaseConfiguration.types";
 import type { IDEType } from "@/app/(components)/IDESelection.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
+import type { PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
 import type {
   CodeFileNode,
   InitialConfigurationType,
@@ -14,17 +9,7 @@ import { componentFileContents } from "./component-files.generated";
 
 export interface CodeFileRegistry {
   globals_css: (theme: ThemeConfiguration) => string;
-  auth_ts: (plugins: Plugin[]) => string;
-  auth_client_ts: (plugins: Plugin[]) => string;
-  prisma_schema: (tables: PrismaTable[]) => string;
-  prisma_rls_ts: (rlsPolicies: RLSPolicy[], tables: PrismaTable[]) => string;
-  supabase_migration_sql: (
-    rlsPolicies: RLSPolicy[],
-    tables: PrismaTable[]
-  ) => string;
   log_utils_ts: () => string;
-  prisma_rls_client_ts: () => string;
-  auth_util_ts: () => string;
   robots_file: () => string;
 }
 
@@ -305,260 +290,6 @@ const getPluginConfig = (pluginName: string): string => {
   return `${pluginName}()`;
 };
 
-const generateAuthFile = (plugins: Plugin[]): string => {
-  const enabledPlugins = plugins.filter((p) => p.enabled && p.file === "auth");
-
-  if (enabledPlugins.length === 0) {
-    return `import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-  emailAndPassword: {
-    enabled: true,
-  },
-});`;
-  }
-
-  const pluginImports = enabledPlugins
-    .map((p) => getPluginImportStatement(p.name))
-    .join("\n");
-  const pluginConfigs = enabledPlugins
-    .map((p) => getPluginConfig(p.name))
-    .join(",\n    ");
-
-  return `import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client";
-${pluginImports}
-
-const prisma = new PrismaClient();
-
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-  plugins: [
-    ${pluginConfigs}
-  ],
-});`;
-};
-
-const generateAuthClientFile = (plugins: Plugin[]): string => {
-  const enabledPlugins = plugins.filter(
-    (p) => p.enabled && p.file === "auth-client"
-  );
-
-  if (enabledPlugins.length === 0) {
-    return `import { createAuthClient } from "better-auth/react";
-
-export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL,
-});`;
-  }
-
-  const pluginImports = enabledPlugins
-    .map((p) => getPluginImportStatement(p.name))
-    .join("\n");
-  const pluginConfigs = enabledPlugins
-    .map((p) => getPluginConfig(p.name))
-    .join(",\n    ");
-
-  return `import { createAuthClient } from "better-auth/react";
-${pluginImports}
-
-export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL,
-  plugins: [
-    ${pluginConfigs}
-  ],
-});`;
-};
-
-const generatePrismaSchema = (tables: PrismaTable[]): string => {
-  const generateColumn = (col: (typeof tables)[0]["columns"][0]) => {
-    const parts: string[] = [col.name, col.type];
-    if (col.isArray) parts[1] += "[]";
-    if (col.isOptional) parts[1] += "?";
-    if (col.attributes.length > 0)
-      parts.push(...col.attributes.map((a) => `@${a}`));
-    return `  ${parts.join(" ")}`;
-  };
-
-  const generateTable = (table: PrismaTable) => {
-    const columns = table.columns.map(generateColumn).join("\n");
-    const uniqueConstraints = table.uniqueConstraints
-      .map((uc) => `  @@unique([${uc.join(", ")}])`)
-      .join("\n");
-
-    return `model ${table.name} {
-${columns}${uniqueConstraints ? "\n" + uniqueConstraints : ""}
-  @@schema("${table.schema}")
-}`;
-  };
-
-  return `generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = ["auth", "public"]
-}
-
-${tables.map(generateTable).join("\n\n")}`;
-};
-
-const generatePrismaRLSFile = (
-  rlsPolicies: RLSPolicy[],
-  tables: PrismaTable[]
-): string => {
-  const policyGroups = rlsPolicies.reduce(
-    (acc, policy) => {
-      const table = tables.find((t) => t.id === policy.tableId);
-      if (!table) return acc;
-
-      if (!acc[table.name]) {
-        acc[table.name] = [];
-      }
-      acc[table.name].push(policy);
-      return acc;
-    },
-    {} as Record<string, RLSPolicy[]>
-  );
-
-  const generateUsingClause = (
-    rolePolicy: RLSRolePolicy,
-    tableName: string
-  ): string => {
-    switch (rolePolicy.accessType) {
-      case "global":
-        return "true";
-      case "own":
-        return "auth.uid() = user_id";
-      case "organization":
-        return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
-      case "related":
-        if (rolePolicy.relatedTable) {
-          return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
-        }
-        return "true";
-      default:
-        return "true";
-    }
-  };
-
-  const policyFunctions = Object.entries(policyGroups)
-    .map(([tableName, policies]) => {
-      const policyChecks = policies
-        .flatMap((p) =>
-          p.rolePolicies.map((rolePolicy) => {
-            const usingClause = generateUsingClause(rolePolicy, tableName);
-            return `    {
-      operation: "${p.operation}",
-      role: "${rolePolicy.role}",
-      using: \`${usingClause}\`
-    }`;
-          })
-        )
-        .join(",\n");
-
-      return `export const ${tableName}RLS = {
-  policies: [
-${policyChecks}
-  ],
-};`;
-    })
-    .join("\n\n");
-
-  return `export type RLSOperation = "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "ALL";
-
-export interface RLSPolicy {
-  operation: RLSOperation;
-  role: string;
-  using: string;
-}
-
-${policyFunctions}`;
-};
-
-const generateSupabaseMigration = (
-  rlsPolicies: RLSPolicy[],
-  tables: PrismaTable[]
-): string => {
-  const timestamp = Date.now();
-  const policyGroups = rlsPolicies.reduce(
-    (acc, policy) => {
-      const table = tables.find((t) => t.id === policy.tableId);
-      if (!table) return acc;
-
-      if (!acc[table.name]) {
-        acc[table.name] = [];
-      }
-      acc[table.name].push(policy);
-      return acc;
-    },
-    {} as Record<string, RLSPolicy[]>
-  );
-
-  const generateUsingClause = (
-    rolePolicy: RLSRolePolicy,
-    tableName: string
-  ): string => {
-    switch (rolePolicy.accessType) {
-      case "global":
-        return "true";
-      case "own":
-        return "auth.uid() = user_id";
-      case "organization":
-        return "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
-      case "related":
-        if (rolePolicy.relatedTable) {
-          return `id IN (SELECT ${tableName}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
-        }
-        return "true";
-      default:
-        return "true";
-    }
-  };
-
-  const enableRLS = Object.keys(policyGroups)
-    .map(
-      (tableName) =>
-        `ALTER TABLE public."${tableName}" ENABLE ROW LEVEL SECURITY;`
-    )
-    .join("\n");
-
-  const createPolicies = Object.entries(policyGroups)
-    .flatMap(([tableName, policies]) =>
-      policies.flatMap((policy) =>
-        policy.rolePolicies.map((rolePolicy) => {
-          const policyName = `${tableName}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
-          const usingClause = generateUsingClause(rolePolicy, tableName);
-          return `CREATE POLICY "${policyName}" ON public."${tableName}"
-  FOR ${policy.operation}
-  TO ${rolePolicy.role}
-  USING (${usingClause});`;
-        })
-      )
-    )
-    .join("\n\n");
-
-  return `-- Migration: ${timestamp}_rls_policies.sql
--- Enable RLS on tables
-${enableRLS}
-
--- Create RLS policies
-${createPolicies}`;
-};
-
 const generateLogUtils = (): string => {
   return `export enum LOG_LABELS {
   GENERATE = "generate",
@@ -669,99 +400,6 @@ function truncateString(str: string, maxLength: number): string {
 }`;
 };
 
-const generatePrismaRLSClient = (): string => {
-  return `import { Prisma } from "@prisma/client";
-import { prisma } from "./prisma";
-
-function forUser(userId: string, tenantId?: string) {
-  return Prisma.defineExtension((prisma) =>
-    prisma.$extends({
-      query: {
-        $allModels: {
-          async $allOperations({ args, query }) {
-            if (tenantId) {
-              const [, , result] = await prisma.$transaction([
-                prisma.$executeRaw\\\`SELECT set_config('app.current_user_id', \${userId}, TRUE)\\\`,
-                prisma.$executeRaw\\\`SELECT set_config('app.current_tenant_id', \${tenantId}, TRUE)\\\`,
-                query(args),
-              ]);
-              return result;
-            } else {
-              const [, result] = await prisma.$transaction([
-                prisma.$executeRaw\\\`SELECT set_config('app.current_user_id', \${userId}, TRUE)\\\`,
-                query(args),
-              ]);
-              return result;
-            }
-          },
-        },
-      },
-    })
-  );
-}
-
-export function createRLSClient(userId: string, tenantId?: string) {
-  return prisma.$extends(forUser(userId, tenantId));
-}`;
-};
-
-const generateAuthUtil = (): string => {
-  return `import { User } from "better-auth";
-import jwt from "jsonwebtoken";
-import { headers } from "next/headers";
-import { auth, Session } from "./auth";
-import { createRLSClient } from "./prisma-rls";
-
-export async function getAuthenticatedClient(user?: User): Promise<{
-  db: ReturnType<typeof createRLSClient>;
-  session: Session | null;
-}> {
-  const headersList = await headers();
-
-  const session = await auth.api.getSession({
-    headers: headersList,
-  });
-
-  const userId = user?.id || session?.user.id;
-
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  const db = createRLSClient(userId);
-
-  return { db, session };
-}
-
-export function generateSupabaseJWT(userId: string, userRole: string): string {
-  const jwtSecret = process.env.SUPABASE_JWT_SECRET;
-
-  if (!jwtSecret) {
-    throw new Error("SUPABASE_JWT_SECRET is required for JWT generation");
-  }
-
-  const payload = {
-    aud: "authenticated",
-    exp: Math.floor(Date.now() / 1000) + 60 * 60,
-    sub: userId,
-    email: \\\`\${userId}@better-auth.local\\\`,
-    role: "authenticated",
-    user_metadata: {
-      better_auth_user_id: userId,
-      better_auth_role: userRole,
-    },
-    app_metadata: {
-      provider: "better-auth",
-      providers: ["better-auth"],
-    },
-  };
-
-  return jwt.sign(payload, jwtSecret, {
-    algorithm: "HS256",
-  });
-}`;
-};
-
 const generateRobotsFile = (): string => {
   return `# CLAUDE.md
 
@@ -855,14 +493,7 @@ The \\\`VITE_LOG_LABELS\\\` variable in \\\`.env.local\\\` stores a comma separa
 
 export const codeFileGenerators: CodeFileRegistry = {
   globals_css: generateThemeCSS,
-  auth_ts: generateAuthFile,
-  auth_client_ts: generateAuthClientFile,
-  prisma_schema: generatePrismaSchema,
-  prisma_rls_ts: generatePrismaRLSFile,
-  supabase_migration_sql: generateSupabaseMigration,
   log_utils_ts: generateLogUtils,
-  prisma_rls_client_ts: generatePrismaRLSClient,
-  auth_util_ts: generateAuthUtil,
   robots_file: generateRobotsFile,
 };
 
@@ -899,7 +530,6 @@ const createComponentFileNodes = (
 export const createCodeFileNodes = (
   initialConfig: InitialConfigurationType,
   theme: ThemeConfiguration,
-  plugins: Plugin[],
   tables: PrismaTable[],
   rlsPolicies: RLSPolicy[],
   isPageVisited?: (path: string) => boolean
@@ -911,7 +541,6 @@ export const createCodeFileNodes = (
   const newSystemFiles = getCodeFiles(
     initialConfig,
     theme,
-    plugins,
     tables,
     rlsPolicies,
     isPageVisited,

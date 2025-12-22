@@ -12,10 +12,6 @@ import type {
   DatabaseTemplate,
   ColumnTemplate,
 } from "./DatabaseConfiguration.types";
-import {
-  getAllRequiredTables,
-  getAllConditionalFields,
-} from "./DatabaseConfiguration.schema-mapping";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -1270,12 +1266,8 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           schemas.add("public");
         }
 
-        if (config.technologies.supabase && !config.technologies.betterAuth && !schemas.has("auth")) {
+        if (config.technologies.supabase && !schemas.has("auth")) {
           schemas.add("auth");
-        }
-
-        if (config.technologies.betterAuth && !schemas.has("better_auth")) {
-          schemas.add("better_auth");
         }
 
         return Array.from(schemas).sort();
@@ -1709,320 +1701,20 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
       },
 
       initializeFromConfig: (config: InitialConfigurationType) => {
-        let tables: PrismaTable[] = [];
-        const plugins: Plugin[] = [];
-
         const currentState = get();
         const userCreatedTables = currentState.tables.filter((t) => !t.isDefault);
 
-        if (config.questions.databaseProvider === "none") {
-          tables = [...userCreatedTables];
-        } else if (config.technologies.betterAuth) {
-          const schemaTables = getAllRequiredTables(config);
-          const conditionalFields = getAllConditionalFields(config);
-
-          const betterAuthTables = schemaTables.map((schemaTable) => {
-            let columns = schemaTable.columns.map((col, index) => ({
-              ...col,
-              id: `${schemaTable.name}-${col.name}-${index}`,
-            }));
-
-            conditionalFields
-              .filter(
-                (field) =>
-                  field.tableName === schemaTable.name &&
-                  field.schema === schemaTable.schema
-              )
-              .forEach((field, index) => {
-                const existingColumn = columns.find(
-                  (c) => c.name === field.column.name
-                );
-                if (!existingColumn) {
-                  columns.push({
-                    ...field.column,
-                    id: `${schemaTable.name}-${field.column.name}-conditional-${index}`,
-                  });
-                }
-              });
-
-            return {
-              id: `default-${schemaTable.name}`,
-              name: schemaTable.name,
-              schema: schemaTable.schema,
-              isDefault: true,
-              isEditable: schemaTable.isEditable,
-              uniqueConstraints: [],
-              questionId: "authentication",
-              columns,
-            };
-          });
-
-          tables = [...betterAuthTables, ...userCreatedTables];
-
-          if (config.features.authentication.magicLink) {
-            plugins.push({
-              id: generateId(),
-              name: "magicLink",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Email-based authentication with magic links"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "magicLinkClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "authentication",
-              description: "Client-side magic link functionality"
-            });
-          }
-
-          if (config.features.authentication.otp) {
-            plugins.push({
-              id: generateId(),
-              name: "emailOTP",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "One-time password via email"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "emailOTPClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "authentication",
-              description: "Client-side OTP functionality"
-            });
-          }
-
-          if (config.features.admin.admin || config.features.admin.superAdmin) {
-            plugins.push({
-              id: generateId(),
-              name: "admin",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Admin role management and impersonation"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "adminClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "authentication",
-              description: "Client-side admin functionality"
-            });
-          }
-
-          if (config.features.admin.organizations) {
-            plugins.push({
-              id: generateId(),
-              name: "organization",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Organization and member management with invitations"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "organizationClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "authentication",
-              description: "Client-side organization functionality"
-            });
-          }
-
-          if (config.features.authentication.emailPassword) {
-            plugins.push({
-              id: generateId(),
-              name: "emailAndPassword",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Email and password authentication"
-            });
-          }
-
-          if (config.features.authentication.passwordOnly) {
-            plugins.push({
-              id: generateId(),
-              name: "username",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Username-based authentication"
-            });
-          }
-
-          if (config.features.authentication.googleAuth) {
-            plugins.push({
-              id: generateId(),
-              name: "google",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Google OAuth social authentication"
-            });
-          }
-
-          if (config.features.authentication.githubAuth) {
-            plugins.push({
-              id: generateId(),
-              name: "github",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "GitHub OAuth social authentication"
-            });
-          }
-
-          if (config.features.authentication.appleAuth) {
-            plugins.push({
-              id: generateId(),
-              name: "apple",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Apple Sign In social authentication"
-            });
-          }
-
-          if (config.features.payments.stripePayments || config.features.payments.stripeSubscriptions) {
-            plugins.push({
-              id: generateId(),
-              name: "stripe",
-              enabled: true,
-              file: "auth",
-              questionId: "payments",
-              description: "Stripe payment and subscription management"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "stripeClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "payments",
-              description: "Client-side Stripe functionality"
-            });
-          }
-
-          if (config.features.realTimeNotifications.emailNotifications) {
-            plugins.push({
-              id: generateId(),
-              name: "emailVerification",
-              enabled: true,
-              file: "auth",
-              questionId: "realTimeNotifications",
-              description: "Email verification and notifications"
-            });
-          }
-
-          if (config.features.fileStorage && (config.questions.databaseProvider === "supabase" || config.questions.databaseProvider === "both")) {
-            plugins.push({
-              id: generateId(),
-              name: "supabaseStorage",
-              enabled: true,
-              file: "auth",
-              questionId: "fileStorage",
-              description: "Supabase file storage integration"
-            });
-          }
-
-          if (config.features.authentication.twoFactor) {
-            plugins.push({
-              id: generateId(),
-              name: "twoFactor",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Two-factor authentication with TOTP/OTP"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "twoFactorClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "authentication",
-              description: "Client-side 2FA functionality"
-            });
-          }
-
-          if (config.features.authentication.passkey) {
-            plugins.push({
-              id: generateId(),
-              name: "passkey",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Passwordless authentication with passkeys"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "passkeyClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "authentication",
-              description: "Client-side passkey support"
-            });
-          }
-
-          if (config.features.authentication.anonymous) {
-            plugins.push({
-              id: generateId(),
-              name: "anonymous",
-              enabled: true,
-              file: "auth",
-              questionId: "authentication",
-              description: "Anonymous user authentication"
-            });
-            plugins.push({
-              id: generateId(),
-              name: "anonymousClient",
-              enabled: true,
-              file: "auth-client",
-              questionId: "authentication",
-              description: "Client-side anonymous authentication"
-            });
-          }
-
-          plugins.push({
-            id: generateId(),
-            name: "multiSession",
-            enabled: true,
-            file: "auth",
-            questionId: "authentication",
-            description: "Multiple active sessions across different accounts"
-          });
-          plugins.push({
-            id: generateId(),
-            name: "multiSessionClient",
-            enabled: true,
-            file: "auth-client",
-            questionId: "authentication",
-            description: "Client-side multi-session support"
-          });
-        } else if (config.technologies.supabase) {
-          tables = [...userCreatedTables];
-        } else {
-          tables = [...userCreatedTables];
-        }
-
         set((state) => ({
-          tables,
+          tables: userCreatedTables,
           enums: state.enums,
           rlsPolicies: state.rlsPolicies,
-          plugins,
+          plugins: [],
         }));
       },
 
       setTablesFromAI: (newTables) => {
         set((state) => {
-          const authTables = state.tables.filter(
-            (t) => t.schema === "auth" || t.schema === "better_auth"
-          );
+          const authTables = state.tables.filter((t) => t.schema === "auth");
           return { tables: [...authTables, ...newTables] };
         });
       },

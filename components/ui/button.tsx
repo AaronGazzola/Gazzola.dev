@@ -75,7 +75,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <div
             className={cn(
               "group absolute z-0",
-              isActive || disabled ? "inset-0" : "-inset-[1px]"
+              isActive || disabled ? "inset-0" : "-inset-[1px]",
+              disabled && "opacity-50"
             )}
             style={{
               borderRadius: "0.375rem",
@@ -85,7 +86,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <Comp
             className={cn(
               buttonVariants({ variant, size, className }),
-              isActive && "bg-black/60",
+              (isActive || disabled) && "!bg-black/60 !text-gray-300",
               "relative z-10 w-full"
             )}
             ref={ref}
