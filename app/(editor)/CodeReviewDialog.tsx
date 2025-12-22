@@ -86,10 +86,12 @@ export const CodeReviewDialog = ({
               <li>Code Review</li>
               <li>Automated Testing</li>
               <li>Migration Validation</li>
-              <li>Seed Script Generation</li>
-              <li>Functional Verification</li>
+              <li>Complex Feature Implementation</li>
             </ul>
-            <p>With detailed progress reports at every stage.</p>
+            <p>
+              Lift the veil on the inner workings of your AI-generated web app
+              with in-depth analysis and detailed progress reports.
+            </p>
           </div>
         </DialogHeader>
 

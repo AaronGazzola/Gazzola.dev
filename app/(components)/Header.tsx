@@ -530,8 +530,7 @@ const Header = () => {
                   setIsExpanded(true);
                 }}
               >
-                Got a Lovable web app?
-                <LovableLogo size={24} />
+                AI QA Services
               </Button>
             </div>
 
