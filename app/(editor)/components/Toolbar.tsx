@@ -114,14 +114,16 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     isResetting,
     setIsResetting,
     setAppStructureGenerated,
+    appStructureGenerated,
     setReadmeGenerated,
     readmeGenerated,
     setDatabaseGenerated,
+    databaseGenerated,
     setAppStructure,
     updateInitialConfiguration,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
-  const { resetTheme } = useThemeConfigStore();
+  const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
   const { reset: resetDatabase } = useDatabaseStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
@@ -260,6 +262,22 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     return currentContentPath === "readme" && !readmeGenerated;
   }, [currentContentPath, readmeGenerated]);
 
+  const isReadmePage = useMemo(() => {
+    return currentContentPath === "readme";
+  }, [currentContentPath]);
+
+  const isThemeNotInteracted = useMemo(() => {
+    return currentContentPath === "theme" && !themeHasInteracted;
+  }, [currentContentPath, themeHasInteracted]);
+
+  const isAppStructureNotGenerated = useMemo(() => {
+    return currentContentPath === "app-directory" && !appStructureGenerated;
+  }, [currentContentPath, appStructureGenerated]);
+
+  const isDatabaseNotGenerated = useMemo(() => {
+    return currentContentPath === "database" && !databaseGenerated;
+  }, [currentContentPath, databaseGenerated]);
+
   const nextPage =
     currentPageIndex >= 0 && currentPageIndex < numberedPages.length - 1
       ? numberedPages[currentPageIndex + 1]
@@ -332,7 +350,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleNextWrapperClick = () => {
-    if (isReadmeNotGenerated) {
+    if (isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated) {
       if (nextTooltipTimeoutRef.current) {
         clearTimeout(nextTooltipTimeoutRef.current);
       }
@@ -453,7 +471,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       setDatabaseGenerated(false);
     }
 
-    if (currentContentPath === "app-structure") {
+    if (currentContentPath === "app-directory") {
       setAppStructure([]);
       setAppStructureGenerated(false);
     }
@@ -776,7 +794,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       " and reset all theme configuration"}
                     {currentContentPath === "database" &&
                       " and reset all database configuration"}
-                    {currentContentPath === "app-structure" &&
+                    {currentContentPath === "app-directory" &&
                       " and reset the app structure"}
                     . This action cannot be undone.
                   </EditorDialogDescription>
@@ -862,13 +880,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
 
             <EditModeSwitch
-              previewMode={isViewingComponentFile ? true : isReadmeNotGenerated ? false : previewMode}
+              previewMode={isViewingComponentFile ? true : isReadmePage ? false : previewMode}
               onToggle={(checked) => {
-                if (!isViewingComponentFile && !isReadmeNotGenerated) {
+                if (!isViewingComponentFile && !isReadmePage) {
                   setPreviewMode(checked);
                 }
               }}
-              disabled={isViewingComponentFile || isReadmeNotGenerated}
+              disabled={isViewingComponentFile || isReadmePage}
             />
             {canGoNext && (
               <Tooltip open={nextTooltipOpen} onOpenChange={handleNextTooltipOpenChange}>
@@ -883,7 +901,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       size={currentPageIndex <= 4 ? "sm" : "default"}
                       variant={currentPageIndex <= 4 ? "default" : "outline"}
                       className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
-                      disabled={isReadmeNotGenerated}
+                      disabled={isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated}
                     >
                       Next
                       <ChevronRight className="h-4 w-4" />
@@ -894,9 +912,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <p>
                     {isReadmeNotGenerated
                       ? "Generate your README file to continue"
-                      : canGoNext
-                        ? `Next: ${nextPageTitle}`
-                        : "No next page"}
+                      : isThemeNotInteracted
+                        ? "Select your theme to continue"
+                        : isAppStructureNotGenerated
+                          ? "Generate your app directory to continue"
+                          : isDatabaseNotGenerated
+                            ? "Generate your database configuration to continue"
+                            : canGoNext
+                              ? `Next: ${nextPageTitle}`
+                              : "No next page"}
                   </p>
                 </TooltipContent>
               </Tooltip>

@@ -33,7 +33,9 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           "h-[calc(100vh-100px)]"
         )}
       >
-        <Sidebar />
+        <Suspense fallback={null}>
+          <Sidebar />
+        </Suspense>
         <div className="w-full max-w-full flex flex-col h-full overflow-hidden">
           <main className="w-full max-w-full flex-1 bg-black min-h-0 overflow-hidden">
             {children}

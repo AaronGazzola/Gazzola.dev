@@ -1,3 +1,4 @@
+import { CodeReviewFormData } from "@/app/(editor)/Footer.types";
 import {
   Body,
   Container,
@@ -8,8 +9,6 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
-import { CodeReviewFormData } from "@/app/(editor)/Footer.types";
 
 interface CodeReviewRequestEmailProps extends CodeReviewFormData {}
 
@@ -24,18 +23,6 @@ export const CodeReviewRequestEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>Quality Assurance Inquiry</Heading>
-        <Section style={introSection}>
-          <Text style={introText}>
-            Hi, I'm Aaron (34M; BSc. Hons.), I specialize in Quality Assurance
-            for web apps generated with Lovable. I provide in-depth analysis,
-            refactoring, and automated testing for every aspect of your web
-            app. My 5 years of experience in full-stack design and development
-            provide me with critical insight and comprehensive knowledge of
-            every aspect of your project. You will receive in-depth progress
-            reports and test results at each stage of development - lifting the
-            veil on the inner workings of your creation.
-          </Text>
-        </Section>
         <Section style={section}>
           <Text style={label}>Name:</Text>
           <Text style={text}>{name}</Text>

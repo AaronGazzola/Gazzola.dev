@@ -76,7 +76,7 @@ const FILE_ICON_MAP: Record<string, LucideIcon> = {
   robots: Bot,
   claude: Sparkles,
   theme: Palette,
-  "app-structure": FolderTree,
+  "app-directory": FolderTree,
   database: Database,
   "ai-integration": MessagesSquare,
   "docs.deployment-instructions": Rocket,
@@ -969,31 +969,33 @@ const Sidebar = () => {
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
             </div>
-            <Button
-              variant="highlight"
-              className="border border-transparent text-white font-semibold flex items-center gap-2 w-full px-4 py-6 justify-between"
-              onClick={() => {
-                setDialogOpen("yesPlease");
-                setIsExpanded(true);
-              }}
-            >
-              {nextSteps.map((step, index) => (
-                <div
-                  key={index}
-                  className="relative flex flex-row items-center gap-2"
-                >
-                  <div className="flex flex-col items-center relative z-10">
-                    <step.icon className="w-5 h-5" />
-                    <span className="text-xs font-bold text-center whitespace-nowrap">
-                      {step.title}
-                    </span>
+            <div className="pr-3 -ml-2">
+              <Button
+                variant="highlight"
+                className="border border-transparent text-white font-semibold flex items-center gap-2 w-full px-4 py-7 justify-between"
+                onClick={() => {
+                  setDialogOpen("yesPlease");
+                  setIsExpanded(true);
+                }}
+              >
+                {nextSteps.map((step, index) => (
+                  <div
+                    key={index}
+                    className="relative flex flex-row items-center gap-2"
+                  >
+                    <div className="flex flex-col items-center relative z-10">
+                      <step.icon className="w-5 h-5" />
+                      <span className="text-xs font-bold text-center whitespace-nowrap">
+                        {step.title}
+                      </span>
+                    </div>
+                    {index < nextSteps.length - 1 && (
+                      <ArrowRight className="w-4 h-4 shrink-0" />
+                    )}
                   </div>
-                  {index < nextSteps.length - 1 && (
-                    <ArrowRight className="w-3 h-3 shrink-0" />
-                  )}
-                </div>
-              ))}
-            </Button>
+                ))}
+              </Button>
+            </div>
           </div>
         </div>
       </SidebarHeader>

@@ -68,7 +68,7 @@
         "order": 3,
         "path": "app-directory",
         "urlPath": "/app-directory",
-        "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+        "content": "# App Directory\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
         "components": [
           {
             "id": "component-LayoutAndStructure",
@@ -506,7 +506,7 @@
           "order": 3,
           "path": "app-directory",
           "urlPath": "/app-directory",
-          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+          "content": "# App Directory\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
           "components": [
             {
               "id": "component-LayoutAndStructure",
@@ -954,7 +954,7 @@
       "order": 3,
       "path": "app-directory",
       "urlPath": "/app-directory",
-      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+      "content": "# App Directory\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
       "components": [
         {
           "id": "component-LayoutAndStructure",
