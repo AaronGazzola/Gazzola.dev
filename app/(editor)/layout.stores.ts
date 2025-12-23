@@ -44,9 +44,6 @@ const defaultInitialConfiguration: InitialConfigurationType = {
     zustand: true,
     reactQuery: true,
     supabase: false,
-    neondb: false,
-    prisma: false,
-    betterAuth: false,
     postgresql: false,
     vercel: true,
     railway: false,
@@ -79,7 +76,6 @@ const defaultInitialConfiguration: InitialConfigurationType = {
       enabled: false,
       admin: false,
       superAdmin: false,
-      organizations: false,
     },
     payments: {
       enabled: false,
@@ -394,7 +390,6 @@ export const useEditorStore = create<EditorState>()(
         const codeFiles = createCodeFileNodes(
           state.initialConfiguration,
           themeStore.theme,
-          databaseStore.plugins,
           databaseStore.tables,
           databaseStore.rlsPolicies,
           state.isPageVisited
@@ -426,7 +421,6 @@ export const useEditorStore = create<EditorState>()(
             const codeFiles = createCodeFileNodes(
               state.initialConfiguration,
               themeStore.theme,
-              databaseStore.plugins,
               databaseStore.tables,
               databaseStore.rlsPolicies,
               (checkPath: string) => newVisitedPages.includes(checkPath)
@@ -718,7 +712,6 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
-            newTechnologies.prisma = true;
             newTechnologies.postgresql = true;
           }
 
@@ -784,7 +777,6 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
-            techUpdates.prisma = true;
             techUpdates.postgresql = true;
           }
 
@@ -799,21 +791,12 @@ export const useEditorStore = create<EditorState>()(
       },
       updateAdminOption: (optionId: string, enabled: boolean) => {
         set((state) => {
-          if (!state.initialConfiguration.technologies.betterAuth &&
-              optionId === "organizations") {
-            return state;
-          }
-
           const techUpdates: InitialConfigurationType["technologies"] = {
             ...state.initialConfiguration.technologies,
             nextjs: true,
             tailwindcss: true,
             shadcn: true,
           };
-
-          if (enabled && optionId === "organizations") {
-            techUpdates.betterAuth = true;
-          }
 
           const newFeatures = {
             ...state.initialConfiguration.features,
@@ -831,7 +814,6 @@ export const useEditorStore = create<EditorState>()(
             newFeatures.realTimeNotifications.enabled;
 
           if (hasDatabaseFunctionality) {
-            techUpdates.prisma = true;
             techUpdates.postgresql = true;
           }
 
@@ -863,16 +845,9 @@ export const useEditorStore = create<EditorState>()(
           const hasStripeSubscriptions = newPaymentConfig.stripeSubscriptions;
 
           if (hasStripePayments) {
-            if (!state.initialConfiguration.technologies.betterAuth && hasStripeSubscriptions && enabled && optionId === "stripeSubscriptions") {
-              return state;
-            }
             techUpdates.stripe = true;
           } else {
             techUpdates.stripe = false;
-          }
-
-          if (hasStripeSubscriptions) {
-            techUpdates.betterAuth = true;
           }
 
           if (hasPaypalPayments) {
@@ -965,7 +940,6 @@ export const useEditorStore = create<EditorState>()(
             true;
 
           if (hasDatabaseFunctionality) {
-            techUpdates.prisma = true;
             techUpdates.postgresql = true;
           }
 
@@ -1584,7 +1558,6 @@ export const useEditorStore = create<EditorState>()(
             const codeFiles = createCodeFileNodes(
               state.initialConfiguration,
               themeStore.theme,
-              databaseStore.plugins,
               databaseStore.tables,
               databaseStore.rlsPolicies,
               state.isPageVisited

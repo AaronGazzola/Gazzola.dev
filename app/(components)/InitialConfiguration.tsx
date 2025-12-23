@@ -166,9 +166,6 @@ const technologies: Technology[] = [
   { id: "zustand", name: "Zustand", icon: ZustandIcon },
   { id: "reactQuery", name: "React Query", icon: ReactQueryIcon },
   { id: "supabase", name: "Supabase", icon: SiSupabase },
-  { id: "neondb", name: "NeonDB", icon: NeonDBIcon },
-  { id: "prisma", name: "Prisma", icon: SiPrisma },
-  { id: "betterAuth", name: "Better Auth", icon: BetterAuthIcon },
   { id: "postgresql", name: "PostgreSQL", icon: SiPostgresql },
   { id: "vercel", name: "Vercel", icon: SiVercel },
   { id: "railway", name: "Railway", icon: RailwayIcon },
@@ -286,13 +283,6 @@ const questionConfigs: (
         description:
           "Super admins have full access and can manage all users and content",
       },
-      {
-        id: "organizations",
-        label: "Organizations",
-        description:
-          "Enable organization-based access with org-admin and org-member roles",
-        disabledWhen: (config) => !config.technologies.betterAuth,
-      },
     ],
   },
   {
@@ -407,9 +397,6 @@ const getRequiredTechnologiesForPayments = (
   if (paymentFeatures.stripePayments || paymentFeatures.stripeSubscriptions) {
     required.push("stripe");
   }
-  if (paymentFeatures.stripeSubscriptions) {
-    required.push("betterAuth");
-  }
 
   return required;
 };
@@ -422,18 +409,14 @@ const getRequiredTechnologiesForSubOption = (
 
   if (questionId === "databaseChoice") {
     if (optionId === "noDatabase") {
-    } else if (optionId === "neondb") {
-      required.push("neondb", "betterAuth", "prisma", "postgresql");
-    } else if (optionId === "supabaseWithBetter") {
-      required.push("supabase", "betterAuth", "prisma", "postgresql");
     } else if (optionId === "supabaseOnly") {
-      required.push("supabase", "prisma", "postgresql");
+      required.push("supabase", "postgresql");
     }
   } else if (questionId === "payments") {
     if (optionId === "stripePayments") {
       required.push("stripe");
     } else if (optionId === "stripeSubscriptions") {
-      required.push("stripe", "betterAuth");
+      required.push("stripe");
     }
   } else if (questionId === "authentication") {
     if (
@@ -444,9 +427,6 @@ const getRequiredTechnologiesForSubOption = (
       required.push("resend");
     }
   } else if (questionId === "admin") {
-    if (optionId === "organizations") {
-      required.push("betterAuth");
-    }
   } else if (questionId === "realTimeNotifications") {
     required.push("supabase");
     if (optionId === "emailNotifications") {
@@ -471,8 +451,7 @@ const hasAnyChildrenSelected = (
   } else if (questionId === "admin") {
     return (
       initialConfiguration.features.admin.admin ||
-      initialConfiguration.features.admin.superAdmin ||
-      initialConfiguration.features.admin.organizations
+      initialConfiguration.features.admin.superAdmin
     );
   } else if (questionId === "authentication") {
     return (
@@ -518,30 +497,15 @@ const getDisabledReason = (
     if (config.questions.databaseProvider === "none") {
       return "Requires a database (Question 1)";
     }
-    if (config.questions.databaseProvider === "neondb") {
-      return "Requires Supabase (Question 1)";
-    }
   }
 
   if (questionId === "realTimeNotifications" && !optionId) {
     if (config.questions.databaseProvider === "none") {
       return "Requires a database (Question 1)";
     }
-    if (config.questions.databaseProvider === "neondb") {
-      return "Requires Supabase (Question 1)";
-    }
-  }
-
-  if (questionId === "admin" && optionId === "organizations") {
-    if (!config.technologies.betterAuth) {
-      return "Requires Better-Auth (Question 1: choose Better Auth or Both)";
-    }
   }
 
   if (questionId === "payments" && optionId === "stripeSubscriptions") {
-    if (!config.technologies.betterAuth) {
-      return "Requires Better-Auth (Question 1: choose Better Auth or Both)";
-    }
     if (!config.features.authentication.enabled) {
       return "Requires user authentication (Question 3)";
     }
@@ -627,7 +591,7 @@ export const InitialConfiguration = () => {
       }
     });
 
-    if (techId === "prisma" || techId === "postgresql") {
+    if (techId === "postgresql") {
       const hasDatabaseFunctionality =
         initialConfiguration.features.authentication.enabled ||
         initialConfiguration.features.admin.enabled ||
@@ -639,18 +603,9 @@ export const InitialConfiguration = () => {
       }
     }
 
-    if (techId === "neondb") {
-      if (initialConfiguration.questions.databaseProvider === "neondb") {
-        requiredBy.push("NeonDB database hosting");
-      }
-    }
-
-    if (
-      techId === "betterAuth" &&
-      initialConfiguration.features.authentication.enabled
-    ) {
-      if (initialConfiguration.technologies.betterAuth) {
-        requiredBy.push("Can users sign in to your app?");
+    if (techId === "supabase") {
+      if (initialConfiguration.questions.databaseProvider === "supabase") {
+        requiredBy.push("Supabase database hosting");
       }
     }
 
@@ -703,14 +658,7 @@ export const InitialConfiguration = () => {
       });
 
       if (featureId === "authentication") {
-        if (initialConfiguration.questions.databaseProvider === "neondb") {
-          techUpdates["betterAuth"] = true;
-        } else if (
-          initialConfiguration.questions.databaseProvider === "both"
-        ) {
-          techUpdates["supabase"] = true;
-          techUpdates["betterAuth"] = true;
-        } else if (initialConfiguration.questions.databaseProvider === "supabase") {
+        if (initialConfiguration.questions.databaseProvider === "supabase") {
           techUpdates["supabase"] = true;
         }
       }
@@ -863,17 +811,6 @@ export const InitialConfiguration = () => {
                   ];
                 }
               }
-              if (initialConfiguration.technologies.betterAuth) {
-                const betterAuthTech = technologies.find(
-                  (t) => t.id === "betterAuth"
-                );
-                if (betterAuthTech) {
-                  questionRequiredTechs = [
-                    ...questionRequiredTechs,
-                    betterAuthTech,
-                  ];
-                }
-              }
             }
 
             if (question.id === "payments") {
@@ -937,16 +874,9 @@ export const InitialConfiguration = () => {
                               const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
 
                               techUpdates.supabase = !currentSupabase;
-                              techUpdates.prisma = !currentSupabase || initialConfiguration.technologies.betterAuth;
-                              techUpdates.postgresql = !currentSupabase || initialConfiguration.technologies.betterAuth;
+                              techUpdates.postgresql = !currentSupabase;
 
-                              if (!currentSupabase && !initialConfiguration.technologies.betterAuth) {
-                                techUpdates.neondb = false;
-                              }
-
-                              const newProvider = !currentSupabase
-                                ? (initialConfiguration.technologies.betterAuth ? "both" : "supabase")
-                                : (initialConfiguration.technologies.betterAuth ? "neondb" : "none");
+                              const newProvider = !currentSupabase ? "supabase" : "none";
 
                               updateInitialConfiguration({
                                 questions: {
@@ -954,7 +884,7 @@ export const InitialConfiguration = () => {
                                   databaseProvider: newProvider,
                                 },
                                 database: {
-                                  hosting: !currentSupabase ? "supabase" : (initialConfiguration.technologies.betterAuth ? "neondb" : "postgresql"),
+                                  hosting: !currentSupabase ? "supabase" : "postgresql",
                                 },
                                 technologies: {
                                   ...initialConfiguration.technologies,
@@ -976,66 +906,12 @@ export const InitialConfiguration = () => {
                               <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">Supabase</h4>
                             </div>
                           </div>
-
-                          <div
-                            onClick={() => {
-                              const currentBetterAuth = initialConfiguration.technologies.betterAuth;
-                              const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
-
-                              techUpdates.betterAuth = !currentBetterAuth;
-                              techUpdates.neondb = !currentBetterAuth && !initialConfiguration.technologies.supabase;
-                              techUpdates.prisma = !currentBetterAuth || initialConfiguration.technologies.supabase;
-                              techUpdates.postgresql = !currentBetterAuth || initialConfiguration.technologies.supabase;
-
-                              const newProvider = !currentBetterAuth
-                                ? (initialConfiguration.technologies.supabase ? "both" : "neondb")
-                                : (initialConfiguration.technologies.supabase ? "supabase" : "none");
-
-                              updateInitialConfiguration({
-                                questions: {
-                                  ...initialConfiguration.questions,
-                                  databaseProvider: newProvider,
-                                },
-                                database: {
-                                  hosting: !currentBetterAuth
-                                    ? (initialConfiguration.technologies.supabase ? "supabase" : "neondb")
-                                    : (initialConfiguration.technologies.supabase ? "supabase" : "postgresql"),
-                                },
-                                technologies: {
-                                  ...initialConfiguration.technologies,
-                                  ...techUpdates,
-                                },
-                              });
-                            }}
-                            className={cn(
-                              "theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-4 cursor-pointer transition-all hover:theme-bg-accent flex-1 relative",
-                              initialConfiguration.technologies.betterAuth && "border-white"
-                            )}
-                          >
-                            <Checkbox
-                              checked={initialConfiguration.technologies.betterAuth}
-                              className="size-6 border-2 border-white/30 dark:border-black/30 data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none absolute top-2 right-2"
-                            />
-                            <div className="flex flex-col items-center theme-gap-2 text-center">
-                              <BetterAuthIcon className="w-12 h-12 theme-text-foreground" />
-                              <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">Better Auth</h4>
-                            </div>
-                          </div>
                         </div>
 
                         {initialConfiguration.questions.databaseProvider !== "none" && (
                           <div className="flex flex-col theme-gap-3">
                             <div className="flex flex-wrap theme-gap-1">
-                              {(() => {
-                                let techIds: string[] = [];
-                                if (initialConfiguration.questions.databaseProvider === "supabase") {
-                                  techIds = ["supabase", "prisma", "postgresql"];
-                                } else if (initialConfiguration.questions.databaseProvider === "neondb") {
-                                  techIds = ["neondb", "betterAuth", "prisma", "postgresql"];
-                                } else if (initialConfiguration.questions.databaseProvider === "both") {
-                                  techIds = ["supabase", "betterAuth", "prisma", "postgresql"];
-                                }
-                                return techIds.map((techId) => {
+                              {["supabase", "postgresql"].map((techId) => {
                                   const tech = technologies.find((t) => t.id === techId);
                                   if (!tech) return null;
                                   const Icon = tech.icon;
@@ -1054,20 +930,14 @@ export const InitialConfiguration = () => {
                                       <span>{tech.name}</span>
                                     </div>
                                   );
-                                });
-                              })()}
+                                })}
                             </div>
                             <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
-                              {initialConfiguration.questions.databaseProvider === "supabase" &&
-                                "Supabase for all backend logic and database functionality. Excellent for enterprise audit compliance"}
-                              {initialConfiguration.questions.databaseProvider === "neondb" &&
-                                "Better-Auth with a NeonDB Postgres DB for low friction and high value development"}
-                              {initialConfiguration.questions.databaseProvider === "both" &&
-                                "Supabase and Better-Auth for maximum flexibility and functionality"}
+                              Supabase for all backend logic and database functionality. Excellent for enterprise audit compliance
                             </p>
                           </div>
                         )}
-                        {!initialConfiguration.technologies.supabase && !initialConfiguration.technologies.betterAuth && (
+                        {!initialConfiguration.technologies.supabase && (
                           <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
                             No database required, this app is front-end only
                           </p>

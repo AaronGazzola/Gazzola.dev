@@ -91,6 +91,7 @@ export interface ParsedTheme {
 
 export interface ThemeState {
   theme: ThemeConfiguration;
+  hasInteracted: boolean;
   setTheme: (theme: Partial<ThemeConfiguration>) => void;
   updateColors: (mode: "light" | "dark", colors: Partial<ThemeColors>) => void;
   updateColor: (mode: "light" | "dark", colorKey: keyof ThemeColors, value: string) => void;
@@ -99,5 +100,6 @@ export interface ThemeState {
   updateShadow: (mode: "light" | "dark", shadowField: keyof ThemeShadow, value: number | string) => void;
   setThemePreset: (themeIndex: number) => void;
   applyThemePreset: (themeIndex: number, parsedTheme: ParsedTheme) => void;
+  setHasInteracted: (value: boolean) => void;
   resetTheme: () => void;
 }

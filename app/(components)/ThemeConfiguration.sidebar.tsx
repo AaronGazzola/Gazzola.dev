@@ -65,6 +65,7 @@ export const ThemeConfigurationSidebar = ({
   const updateTypography = useThemeStore((state) => state.updateTypography);
   const updateOther = useThemeStore((state) => state.updateOther);
   const updateShadow = useThemeStore((state) => state.updateShadow);
+  const setHasInteracted = useThemeStore((state) => state.setHasInteracted);
 
   const [themes, setThemes] = useState<ParsedTheme[]>([]);
 
@@ -121,17 +122,20 @@ export const ThemeConfigurationSidebar = ({
     const newIndex =
       selectedTheme === 0 ? themes.length - 1 : selectedTheme - 1;
     applyThemePreset(newIndex, themes[newIndex]);
+    setHasInteracted(true);
   };
 
   const handleNextTheme = () => {
     const newIndex =
       selectedTheme === themes.length - 1 ? 0 : selectedTheme + 1;
     applyThemePreset(newIndex, themes[newIndex]);
+    setHasInteracted(true);
   };
 
   const handleRandomTheme = () => {
     const randomIndex = Math.floor(Math.random() * themes.length);
     applyThemePreset(randomIndex, themes[randomIndex]);
+    setHasInteracted(true);
     setIsPopoverOpen(false);
   };
 
@@ -165,7 +169,12 @@ export const ThemeConfigurationSidebar = ({
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+          <Popover open={isPopoverOpen} onOpenChange={(open) => {
+            setIsPopoverOpen(open);
+            if (open) {
+              setHasInteracted(true);
+            }
+          }}>
             <PopoverTrigger asChild>
               <button className="flex-1 min-w-0 h-10 flex items-center justify-between text-md font-semibold theme-text-foreground theme-bg-muted theme-border-primary theme-radius px-3 hover:theme-bg-accent transition-colors theme-font-sans theme-tracking" style={{ borderWidth: "2px", borderStyle: "solid" }}>
                 <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0 theme-font-sans theme-tracking">
@@ -233,6 +242,7 @@ export const ThemeConfigurationSidebar = ({
                             { label: LOG_LABELS.THEME }
                           );
                           applyThemePreset(themeIndex, themeItem);
+                          setHasInteracted(true);
                           setIsPopoverOpen(false);
                           setSearchQuery("");
                         }}

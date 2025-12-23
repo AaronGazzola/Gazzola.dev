@@ -100,9 +100,6 @@ const createBaseConfig = (): InitialConfigurationType => ({
     zustand: false,
     reactQuery: false,
     supabase: false,
-    neondb: false,
-    prisma: false,
-    betterAuth: false,
     postgresql: false,
     vercel: true,
     railway: false,
@@ -135,7 +132,6 @@ const createBaseConfig = (): InitialConfigurationType => ({
       enabled: false,
       admin: false,
       superAdmin: false,
-      organizations: false,
     },
     payments: {
       enabled: false,
@@ -196,17 +192,12 @@ const ROLE_COMBINATIONS: Array<{
   { name: "none", roles: {} },
   { name: "admin", roles: { admin: true, enabled: true } },
   { name: "superAdmin", roles: { superAdmin: true, enabled: true } },
-  { name: "admin+superAdmin", roles: { admin: true, superAdmin: true, enabled: true } },
-  { name: "organizations", roles: { organizations: true, enabled: true } },
-  { name: "admin+orgs", roles: { admin: true, organizations: true, enabled: true } },
-  { name: "full", roles: { admin: true, superAdmin: true, organizations: true, enabled: true } },
+  { name: "full", roles: { admin: true, superAdmin: true, enabled: true } },
 ];
 
-const DATABASE_PROVIDERS: Array<"none" | "supabase" | "neondb" | "both"> = [
+const DATABASE_PROVIDERS: Array<"none" | "supabase"> = [
   "none",
   "supabase",
-  "neondb",
-  "both",
 ];
 
 const SAMPLE_TABLE: PrismaTable = {
@@ -263,26 +254,11 @@ function generateVariations(): ConfigVariation[] {
 
     for (const authCombo of relevantAuthCombos) {
       for (const roleCombo of relevantRoleCombos) {
-        if (provider !== "supabase" && roleCombo.roles.organizations && !authCombo.methods.enabled) {
-          continue;
-        }
-
         const config = createBaseConfig();
         config.questions.databaseProvider = provider;
 
         if (provider === "supabase") {
           config.technologies.supabase = true;
-          config.technologies.prisma = true;
-          config.technologies.postgresql = true;
-        } else if (provider === "neondb") {
-          config.technologies.neondb = true;
-          config.technologies.betterAuth = true;
-          config.technologies.prisma = true;
-          config.technologies.postgresql = true;
-        } else if (provider === "both") {
-          config.technologies.supabase = true;
-          config.technologies.betterAuth = true;
-          config.technologies.prisma = true;
           config.technologies.postgresql = true;
         }
 
@@ -331,7 +307,6 @@ function generateFileForVariation(
   const snapshot = createConfigSnapshot(
     variation.config,
     DEFAULT_THEME,
-    variation.plugins,
     variation.tables,
     variation.rlsPolicies,
     "claudecode" as IDEType

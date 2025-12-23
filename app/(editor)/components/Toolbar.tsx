@@ -30,7 +30,6 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  CircleHelp,
   Ellipsis,
   Home,
   ListRestart,
@@ -40,7 +39,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useDatabaseStore } from "../../(components)/DatabaseConfiguration.stores";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { useThemeStore } from "../../layout.stores";
@@ -114,36 +113,40 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     setDarkMode,
     isResetting,
     setIsResetting,
-    helpPopoverOpened,
-    setHelpPopoverOpened,
     setAppStructureGenerated,
+    appStructureGenerated,
     setReadmeGenerated,
+    readmeGenerated,
     setDatabaseGenerated,
+    databaseGenerated,
     setAppStructure,
     updateInitialConfiguration,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
-  const { resetTheme } = useThemeConfigStore();
+  const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
   const { reset: resetDatabase } = useDatabaseStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
   const [resetAllLoading, setResetAllLoading] = useState(false);
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
-  const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [nextTooltipOpen, setNextTooltipOpen] = useState(false);
+  const [nextTooltipLocked, setNextTooltipLocked] = useState(false);
+  const nextTooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const nextTooltipHoveringRef = useRef(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
       [];
 
     const extractPages = (node: any, parentUrl = ""): void => {
-      if (node.include === false) {
+      if (node.include === false || node.includeInSidebar === false) {
         return;
       }
 
       if (node.type === "file") {
-        if (node.includeInToolbar !== false) {
+        if (node.includeInToolbar !== false && node.includeInSidebar !== false) {
           pages.push({
             path: node.path,
             url: node.urlPath,
@@ -255,6 +258,26 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     return currentNode?.type === "file" && currentNode.previewOnly === true;
   }, [data, currentContentPath]);
 
+  const isReadmeNotGenerated = useMemo(() => {
+    return currentContentPath === "readme" && !readmeGenerated;
+  }, [currentContentPath, readmeGenerated]);
+
+  const isReadmePage = useMemo(() => {
+    return currentContentPath === "readme";
+  }, [currentContentPath]);
+
+  const isThemeNotInteracted = useMemo(() => {
+    return currentContentPath === "theme" && !themeHasInteracted;
+  }, [currentContentPath, themeHasInteracted]);
+
+  const isAppStructureNotGenerated = useMemo(() => {
+    return currentContentPath === "app-directory" && !appStructureGenerated;
+  }, [currentContentPath, appStructureGenerated]);
+
+  const isDatabaseNotGenerated = useMemo(() => {
+    return currentContentPath === "database" && !databaseGenerated;
+  }, [currentContentPath, databaseGenerated]);
+
   const nextPage =
     currentPageIndex >= 0 && currentPageIndex < numberedPages.length - 1
       ? numberedPages[currentPageIndex + 1]
@@ -326,6 +349,41 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     }
   };
 
+  const handleNextWrapperClick = () => {
+    if (isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated) {
+      if (nextTooltipTimeoutRef.current) {
+        clearTimeout(nextTooltipTimeoutRef.current);
+      }
+
+      setNextTooltipLocked(true);
+      setNextTooltipOpen(true);
+
+      nextTooltipTimeoutRef.current = setTimeout(() => {
+        setNextTooltipLocked(false);
+        if (!nextTooltipHoveringRef.current) {
+          setNextTooltipOpen(false);
+        }
+        nextTooltipTimeoutRef.current = null;
+      }, 3000);
+    }
+  };
+
+  const handleNextTooltipOpenChange = (open: boolean) => {
+    if (!nextTooltipLocked) {
+      setNextTooltipOpen(open);
+    } else if (open) {
+      setNextTooltipOpen(true);
+    }
+  };
+
+  const handleNextTooltipPointerEnter = () => {
+    nextTooltipHoveringRef.current = true;
+  };
+
+  const handleNextTooltipPointerLeave = () => {
+    nextTooltipHoveringRef.current = false;
+  };
+
   const handleResetPage = async () => {
     const { data: freshData } = await getMarkdownDataAction();
 
@@ -367,9 +425,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         },
         technologies: {
           supabase: false,
-          neondb: false,
-          prisma: false,
-          betterAuth: false,
           postgresql: false,
         } as InitialConfigurationType["technologies"],
         features: {
@@ -390,8 +445,24 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             enabled: false,
             admin: false,
             superAdmin: false,
-            organizations: false,
           },
+          payments: {
+            enabled: false,
+            paypalPayments: false,
+            stripePayments: false,
+            stripeSubscriptions: false,
+          },
+          aiIntegration: {
+            enabled: false,
+            imageGeneration: false,
+            textGeneration: false,
+          },
+          realTimeNotifications: {
+            enabled: false,
+            emailNotifications: false,
+            inAppNotifications: false,
+          },
+          fileStorage: false,
         } as InitialConfigurationType["features"],
         database: {
           hosting: "neondb",
@@ -400,7 +471,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       setDatabaseGenerated(false);
     }
 
-    if (currentContentPath === "app-structure") {
+    if (currentContentPath === "app-directory") {
       setAppStructure([]);
       setAppStructureGenerated(false);
     }
@@ -667,20 +738,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <RotateCcw className="h-4 w-4" />
                     Reset all
                   </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start theme-gap-2 h-9"
-                    onClick={() => {
-                      setHelpPopoverOpen(true);
-                      setMobileMenuOpen(false);
-                      if (!helpPopoverOpened) {
-                        setHelpPopoverOpened(true);
-                      }
-                    }}
-                  >
-                    <CircleHelp className="h-4 w-4" />
-                    Help
-                  </Button>
                 </div>
               </EditorPopoverContent>
             </EditorPopover>
@@ -719,68 +776,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               >
                 <RotateCcw className="h-4 w-4" />
               </IconButton>
-
-              <EditorPopover
-                open={helpPopoverOpen}
-                onOpenChange={(open) => {
-                  setHelpPopoverOpen(open);
-                  if (open && !helpPopoverOpened) {
-                    setHelpPopoverOpened(true);
-                  }
-                }}
-              >
-                <EditorPopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`rounded-full h-8 w-8 ${!helpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90 " : ""}`}
-                  >
-                    <CircleHelp className="h-4 w-4" />
-                  </Button>
-                </EditorPopoverTrigger>
-                <EditorPopoverContent
-                  className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
-                  style={{ borderColor: "var(--theme-primary)" }}
-                >
-                  <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
-                    <h4 className="font-semibold text-base theme-font-sans theme-tracking">
-                      Your web app documentation
-                    </h4>
-                    <div className="flex flex-col theme-gap-2 text-sm">
-                      <p className="theme-font-sans theme-tracking">
-                        This interactive editor allows you to configure and
-                        customize your project documentation.
-                      </p>
-                      <div className="theme-pt-2">
-                        <h5 className="font-semibold theme-font-sans theme-tracking theme-pb-1">
-                          How it works:
-                        </h5>
-                        <ul className="list-disc list-inside flex flex-col theme-gap-1 theme-pl-2">
-                          <li className="theme-font-sans theme-tracking">
-                            Each page represents a file in your Documentation
-                            directory
-                          </li>
-                          <li className="theme-font-sans theme-tracking">
-                            Navigate through pages using the toolbar controls
-                          </li>
-                          <li className="theme-font-sans theme-tracking">
-                            Toggle Preview mode to see the final output that
-                            will be generated
-                          </li>
-                          <li className="theme-font-sans theme-tracking">
-                            Click the download button in the sidebar to export
-                            your documentation
-                          </li>
-                        </ul>
-                      </div>
-                      <p className="theme-font-sans theme-tracking theme-pt-2">
-                        All changes are saved automatically as you work. Use the
-                        Reset button to restore default configurations.
-                      </p>
-                    </div>
-                  </div>
-                </EditorPopoverContent>
-              </EditorPopover>
             </div>
           </div>
 
@@ -799,7 +794,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       " and reset all theme configuration"}
                     {currentContentPath === "database" &&
                       " and reset all database configuration"}
-                    {currentContentPath === "app-structure" &&
+                    {currentContentPath === "app-directory" &&
                       " and reset the app structure"}
                     . This action cannot be undone.
                   </EditorDialogDescription>
@@ -885,29 +880,48 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             )}
 
             <EditModeSwitch
-              previewMode={isViewingComponentFile ? true : previewMode}
+              previewMode={isViewingComponentFile ? true : isReadmePage ? false : previewMode}
               onToggle={(checked) => {
-                if (!isViewingComponentFile) {
+                if (!isViewingComponentFile && !isReadmePage) {
                   setPreviewMode(checked);
                 }
               }}
-              disabled={isViewingComponentFile}
+              disabled={isViewingComponentFile || isReadmePage}
             />
             {canGoNext && (
-              <Tooltip>
+              <Tooltip open={nextTooltipOpen} onOpenChange={handleNextTooltipOpenChange}>
                 <TooltipTrigger asChild>
-                  <Button
-                    onClick={handleNext}
-                    size={currentPageIndex <= 4 ? "sm" : "default"}
-                    variant={currentPageIndex <= 4 ? "default" : "outline"}
-                    className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
+                  <span
+                    onClick={handleNextWrapperClick}
+                    onPointerEnter={handleNextTooltipPointerEnter}
+                    onPointerLeave={handleNextTooltipPointerLeave}
                   >
-                    Next
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                    <Button
+                      onClick={handleNext}
+                      size={currentPageIndex <= 4 ? "sm" : "default"}
+                      variant={currentPageIndex <= 4 ? "default" : "outline"}
+                      className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
+                      disabled={isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
-                  <p>{canGoNext ? `Next: ${nextPageTitle}` : "No next page"}</p>
+                  <p>
+                    {isReadmeNotGenerated
+                      ? "Generate your README file to continue"
+                      : isThemeNotInteracted
+                        ? "Select your theme to continue"
+                        : isAppStructureNotGenerated
+                          ? "Generate your app directory to continue"
+                          : isDatabaseNotGenerated
+                            ? "Generate your database configuration to continue"
+                            : canGoNext
+                              ? `Next: ${nextPageTitle}`
+                              : "No next page"}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             )}

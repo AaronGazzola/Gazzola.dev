@@ -1,78 +1,36 @@
+import { CodeReviewFormData } from "@/app/(editor)/Footer.types";
 import {
   Body,
   Container,
   Head,
   Heading,
   Html,
-  Link,
   Preview,
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
-import { NDAFormData } from "@/app/(editor)/Footer.types";
 
-interface CodeReviewRequestEmailProps {
-  githubUrl: string;
-  message: string;
-  userEmail: string;
-  isPrivate: boolean;
-  ndaRequested?: boolean;
-  ndaDetails?: NDAFormData;
-}
+interface CodeReviewRequestEmailProps extends CodeReviewFormData {}
 
 export const CodeReviewRequestEmail = ({
-  githubUrl,
+  name,
+  email,
   message,
-  userEmail,
-  isPrivate,
-  ndaRequested,
-  ndaDetails,
 }: CodeReviewRequestEmailProps) => (
   <Html>
     <Head />
-    <Preview>New Code Review Request from {userEmail}</Preview>
+    <Preview>New inquiry from {name}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>New Code Review Request</Heading>
+        <Heading style={h1}>Quality Assurance Inquiry</Heading>
         <Section style={section}>
-          <Text style={label}>Repository URL:</Text>
-          <Link href={githubUrl} style={link}>
-            {githubUrl}
-          </Link>
+          <Text style={label}>Name:</Text>
+          <Text style={text}>{name}</Text>
         </Section>
         <Section style={section}>
-          <Text style={label}>User Email:</Text>
-          <Text style={text}>{userEmail}</Text>
+          <Text style={label}>Email:</Text>
+          <Text style={text}>{email}</Text>
         </Section>
-        <Section style={section}>
-          <Text style={label}>Repository Type:</Text>
-          <Text style={text}>{isPrivate ? "Private" : "Public"}</Text>
-        </Section>
-        {ndaRequested && (
-          <>
-            <Section style={section}>
-              <Text style={label}>NDA Requested:</Text>
-              <Text style={text}>Yes</Text>
-            </Section>
-            {ndaDetails && (
-              <>
-                <Section style={section}>
-                  <Text style={label}>Legal Entity Name:</Text>
-                  <Text style={text}>{ndaDetails.legalEntityName}</Text>
-                </Section>
-                <Section style={section}>
-                  <Text style={label}>Jurisdiction:</Text>
-                  <Text style={text}>{ndaDetails.jurisdiction}</Text>
-                </Section>
-                <Section style={section}>
-                  <Text style={label}>Effective Date:</Text>
-                  <Text style={text}>{ndaDetails.effectiveDate}</Text>
-                </Section>
-              </>
-            )}
-          </>
-        )}
         <Section style={section}>
           <Text style={label}>Message:</Text>
           <Text style={text}>{message}</Text>
@@ -107,6 +65,22 @@ const h1 = {
   padding: "0 40px",
 };
 
+const introSection = {
+  padding: "0 40px",
+  marginBottom: "32px",
+  backgroundColor: "#1a1a1a",
+  borderLeft: "3px solid #4B73FF",
+  paddingLeft: "37px",
+};
+
+const introText = {
+  color: "#cccccc",
+  fontSize: "14px",
+  lineHeight: "24px",
+  margin: "16px 0",
+  fontStyle: "italic",
+};
+
 const section = {
   padding: "0 40px",
   marginBottom: "16px",
@@ -126,12 +100,4 @@ const text = {
   fontSize: "14px",
   lineHeight: "24px",
   margin: "0",
-};
-
-const link = {
-  color: "#3b82f6",
-  fontSize: "14px",
-  lineHeight: "24px",
-  textDecoration: "none",
-  display: "block",
 };

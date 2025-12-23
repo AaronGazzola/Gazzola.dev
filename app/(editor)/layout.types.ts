@@ -17,6 +17,7 @@ export interface BaseNode {
   path: string;
   urlPath: string;
   include: boolean;
+  includeInSidebar?: boolean;
   previewOnly?: boolean;
   includeInToolbar?: boolean;
   fileExtension?: string;
@@ -88,9 +89,6 @@ export interface InitialConfigurationType {
     zustand: boolean;
     reactQuery: boolean;
     supabase: boolean;
-    neondb: boolean;
-    prisma: boolean;
-    betterAuth: boolean;
     postgresql: boolean;
     vercel: boolean;
     railway: boolean;
@@ -102,7 +100,7 @@ export interface InitialConfigurationType {
     openrouter: boolean;
   };
   questions: {
-    databaseProvider: "none" | "supabase" | "neondb" | "both";
+    databaseProvider: "none" | "supabase";
     alwaysOnServer: boolean;
   };
   features: {
@@ -123,7 +121,6 @@ export interface InitialConfigurationType {
       enabled: boolean;
       admin: boolean;
       superAdmin: boolean;
-      organizations: boolean;
     };
     payments: {
       enabled: boolean;
@@ -304,6 +301,7 @@ export interface NavigationItem {
   order?: number;
   path?: string;
   include?: boolean;
+  includeInSidebar?: boolean;
   icon?: string;
   children?: NavigationItem[];
 }

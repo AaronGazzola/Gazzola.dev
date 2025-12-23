@@ -16,11 +16,6 @@ import JSZip from "jszip";
 import { getDynamicRobotsFileName } from "./robots-file.utils";
 import { CODE_FILE_CONFIGS } from "./code-file-config";
 import type { ConfigSnapshot } from "./config-snapshot";
-import {
-  getServerPlugins,
-  getClientPlugins,
-  getOAuthProviders,
-} from "./auth-plugin-mappings";
 
 type RouteEntry = {
   path: string;
@@ -447,9 +442,6 @@ const generateInitialConfigurationContent = (
     { id: "zustand", name: "Zustand" },
     { id: "reactQuery", name: "React Query" },
     { id: "supabase", name: "Supabase" },
-    { id: "neondb", name: "NeonDB" },
-    { id: "prisma", name: "Prisma" },
-    { id: "betterAuth", name: "Better Auth" },
     { id: "postgresql", name: "PostgreSQL" },
     { id: "vercel", name: "Vercel" },
     { id: "railway", name: "Railway" },
@@ -505,36 +497,8 @@ const generateInitialConfigurationContent = (
       case "railway":
         return "Always-on server deployment platform required for continuous monitoring and background processes.";
 
-      case "prisma":
-        return "Type-safe database ORM providing schema management, migrations, and query building for PostgreSQL database operations.";
-
       case "postgresql":
         return "Relational database system storing application data including user accounts, authentication sessions, and application-specific data.";
-
-      case "neondb":
-        return "Serverless PostgreSQL database hosting platform providing automatic scaling and branching capabilities.";
-
-      case "betterAuth": {
-        const authMethods: string[] = [];
-        if (initialConfiguration.features.authentication.magicLink)
-          authMethods.push("magic link");
-        if (initialConfiguration.features.authentication.emailPassword)
-          authMethods.push("email/password");
-        if (initialConfiguration.features.authentication.otp)
-          authMethods.push("OTP");
-        if (initialConfiguration.features.authentication.googleAuth)
-          authMethods.push("Google OAuth");
-        if (initialConfiguration.features.authentication.githubAuth)
-          authMethods.push("GitHub OAuth");
-        if (initialConfiguration.features.authentication.appleAuth)
-          authMethods.push("Apple Sign In");
-        if (initialConfiguration.features.authentication.passwordOnly)
-          authMethods.push("password-only");
-
-        const methodsList =
-          authMethods.length > 0 ? ` supporting ${authMethods.join(", ")}` : "";
-        return `Authentication library providing secure user authentication and session management${methodsList}.`;
-      }
 
       case "supabase": {
         const features: string[] = [];
@@ -1024,10 +988,7 @@ const createConfigSnapshotFromInitialConfig = (
   rlsPolicies: RLSPolicy[]
 ): ConfigSnapshot => {
   return {
-    betterAuth: initialConfig.technologies.betterAuth,
-    prisma: initialConfig.technologies.prisma,
     supabase: initialConfig.technologies.supabase,
-    neondb: initialConfig.technologies.neondb,
     postgresql: initialConfig.technologies.postgresql,
     nextjs: initialConfig.technologies.nextjs,
     typescript: initialConfig.technologies.typescript,
@@ -1047,7 +1008,6 @@ const createConfigSnapshotFromInitialConfig = (
     alwaysOnServer: initialConfig.questions.alwaysOnServer,
     tables,
     rlsPolicies,
-    plugins: [],
     authEnabled: initialConfig.features.authentication.enabled,
     authMethods: {
       magicLink: initialConfig.features.authentication.magicLink,
@@ -1065,7 +1025,6 @@ const createConfigSnapshotFromInitialConfig = (
     adminRoles: {
       admin: initialConfig.features.admin.admin,
       superAdmin: initialConfig.features.admin.superAdmin,
-      organizations: initialConfig.features.admin.organizations,
     },
     paymentsEnabled: initialConfig.features.payments.enabled,
     payments: {
@@ -1135,142 +1094,10 @@ const generateDatabaseConfigurationDoc = (
     lines.push(`#### \`${filePath}\``);
 
     switch (fileConfig.id) {
-      case "schema.prisma": {
-        const schemas = Array.from(new Set(tables.map((t) => t.schema)));
-        lines.push(`- Provider: PostgreSQL with multiSchema preview feature`);
-        lines.push(`- Schemas: ${schemas.join(", ")}`);
-        lines.push(`- Models:`);
-        tables.forEach((table) => {
-          const keyColumns = table.columns
-            .slice(0, 5)
-            .map((c) => c.name)
-            .join(", ");
-          const suffix = table.columns.length > 5 ? ", ..." : "";
-          lines.push(`  - ${table.name} (${table.schema} schema) - ${keyColumns}${suffix}`);
-        });
-        break;
-      }
-
-      case "rls-migration.sql": {
-        const tablesWithRLS = Array.from(
-          new Set(rlsPolicies.map((p) => {
-            const table = tables.find((t) => t.id === p.tableId);
-            return table?.name;
-          }).filter(Boolean))
-        );
-        lines.push(`- Enables RLS on: ${tablesWithRLS.join(", ") || "none"}`);
-        lines.push(`- Policies:`);
-
-        const policyByTableAndRole: Record<string, Record<string, Record<string, string>>> = {};
-        rlsPolicies.forEach((policy) => {
-          const table = tables.find((t) => t.id === policy.tableId);
-          if (!table) return;
-          if (!policyByTableAndRole[table.name]) {
-            policyByTableAndRole[table.name] = {};
-          }
-          policy.rolePolicies?.forEach((rp) => {
-            if (!policyByTableAndRole[table.name][rp.role]) {
-              policyByTableAndRole[table.name][rp.role] = {};
-            }
-            policyByTableAndRole[table.name][rp.role][policy.operation] = rp.accessType;
-          });
-        });
-
-        Object.entries(policyByTableAndRole).forEach(([tableName, rolesPolicies]) => {
-          lines.push(`  - ${tableName}:`);
-          Object.entries(rolesPolicies).forEach(([role, operations]) => {
-            const operationsList = Object.entries(operations)
-              .map(([operation, accessType]) => `${operation}: ${accessType}`)
-              .join("; ");
-            lines.push(`    - ${role}: ${operationsList}`);
-          });
-        });
-        break;
-      }
-
-      case "auth.ts": {
-        const serverPlugins = getServerPlugins(config);
-        const oauthProviders = getOAuthProviders(config);
-
-        lines.push(`- Adapter: Prisma PostgreSQL`);
-
-        if (config.authMethods.emailPassword) {
-          const verification = config.authMethods.twoFactor ? "enabled with verification" : "enabled";
-          lines.push(`- Email/Password: ${verification}`);
-        }
-
-        if (serverPlugins.length > 0) {
-          lines.push(`- Plugins:`);
-          serverPlugins.forEach((plugin) => {
-            let description = plugin.name;
-            switch (plugin.name) {
-              case "twoFactor":
-                description = "twoFactor - TOTP two-factor authentication";
-                break;
-              case "admin":
-                description = "admin - Role-based access control";
-                break;
-              case "organization":
-                description = "organization - Multi-tenant organization support";
-                break;
-              case "passkey":
-                description = "passkey - WebAuthn passkey authentication";
-                break;
-              case "magicLink":
-                description = "magicLink - Passwordless magic link authentication";
-                break;
-              case "emailOTP":
-                description = "emailOTP - Email OTP verification";
-                break;
-              case "anonymous":
-                description = "anonymous - Anonymous user sessions";
-                break;
-            }
-            lines.push(`  - ${description}`);
-          });
-        }
-
-        if (oauthProviders.length > 0) {
-          lines.push(`- OAuth Providers: ${oauthProviders.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(", ")}`);
-        }
-        break;
-      }
-
-      case "auth-client.ts": {
-        const clientPlugins = getClientPlugins(config);
-        lines.push(`- Client plugins matching server configuration`);
-        if (config.adminRoles.admin || config.adminRoles.superAdmin) {
-          const roles = [];
-          roles.push("user");
-          if (config.adminRoles.admin) roles.push("admin");
-          if (config.adminRoles.superAdmin) roles.push("superAdmin");
-          lines.push(`- Access control roles: ${roles.join(", ")}`);
-        }
-        break;
-      }
-
       case "globals.css": {
         lines.push(`- Theme: Custom theme with light/dark mode`);
         lines.push(`- Colors: primary, secondary, accent, muted, destructive, etc.`);
         lines.push(`- Typography: sans, serif, mono font families`);
-        break;
-      }
-
-      case "prisma-rls.ts": {
-        lines.push(`- TypeScript RLS policy definitions`);
-        lines.push(`- Policy count: ${rlsPolicies.length}`);
-        break;
-      }
-
-      case "prisma-rls-client.ts": {
-        lines.push(`- Prisma client extension for RLS`);
-        lines.push(`- Sets user context for database queries`);
-        break;
-      }
-
-      case "auth.util.ts": {
-        lines.push(`- getAuthenticatedClient - Returns RLS-enabled Prisma client`);
-        lines.push(`- generateSupabaseJWT - Creates JWT for Supabase RLS`);
         break;
       }
 
@@ -1302,8 +1129,7 @@ export const generatePrismaSchema = (
   initialConfiguration: InitialConfigurationType
 ): string => {
   const shouldExcludeAuthSchema =
-    initialConfiguration.questions.databaseProvider === "supabase" &&
-    !initialConfiguration.technologies.betterAuth;
+    initialConfiguration.questions.databaseProvider === "supabase";
 
   const filteredTables = tables.filter((table) => {
     if (shouldExcludeAuthSchema && table.schema === "auth") {
@@ -1372,10 +1198,9 @@ export const generateRLSMigrationSQL = (
   const lines: string[] = [];
 
   const authProvider =
-    initialConfiguration.questions.databaseProvider === "supabase" &&
-    !initialConfiguration.technologies.betterAuth
+    initialConfiguration.questions.databaseProvider === "supabase"
       ? "supabase"
-      : "better-auth";
+      : "none";
 
   lines.push(`-- Enable Row Level Security on all tables`);
   lines.push(``);
@@ -1514,21 +1339,6 @@ export const generateRLSMigrationSQL = (
       });
     });
   });
-
-  if (authProvider === "better-auth") {
-    lines.push(`-- Create database roles for Better Auth`);
-    lines.push(``);
-
-    const roles = ["user", "admin", "super_admin"];
-    if (initialConfiguration.features.admin.organizations) {
-      roles.push("org_admin", "org_member");
-    }
-
-    roles.forEach((role) => {
-      lines.push(`CREATE ROLE ${role};`);
-    });
-    lines.push(``);
-  }
 
   return lines.join("\n").trim();
 };

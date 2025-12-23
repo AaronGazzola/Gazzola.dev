@@ -22,7 +22,7 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { EditorState } from "lexical";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CodeViewer } from "../components/CodeViewer";
 import { ComponentNode } from "../components/ComponentNode";
@@ -50,6 +50,7 @@ import { useEditorStore } from "../layout.stores";
 const Page = () => {
   const [mounted, setMounted] = useState(false);
   const params = useParams();
+  const router = useRouter();
   const themeReady = useThemeCSSVariables();
   const { isExpanded } = useHeaderStore();
   const {
@@ -120,6 +121,7 @@ const Page = () => {
         (node) =>
           node.type === "file" &&
           node.include !== false &&
+          node.includeInSidebar !== false &&
           !(node as any).previewOnly &&
           !(node as any).visibleAfterPage
       )
@@ -204,6 +206,24 @@ const Page = () => {
     data,
     codeFiles,
   ]);
+
+  const isAccessible = useMemo(() => {
+    if (!currentNode) return false;
+    if (currentNode.type === "code-file") return true;
+    return currentNode.includeInSidebar !== false;
+  }, [currentNode]);
+
+  useEffect(() => {
+    if (canRender && currentNode && !isAccessible) {
+      const firstPath = getFirstPagePath();
+      if (firstPath) {
+        const firstNode = getNode(firstPath);
+        if (firstNode && firstNode.type === 'file') {
+          router.push(firstNode.urlPath);
+        }
+      }
+    }
+  }, [canRender, currentNode, isAccessible, getFirstPagePath, getNode, router]);
 
   const isCodeFile = useMemo(() => {
     return currentNode?.type === "code-file";
@@ -427,6 +447,10 @@ const Page = () => {
   }
 
   if (!isInitialized) {
+    return <EditorSkeleton />;
+  }
+
+  if (!isAccessible) {
     return <EditorSkeleton />;
   }
 

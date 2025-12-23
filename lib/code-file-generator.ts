@@ -10,7 +10,6 @@ import type { Plugin, PrismaTable, RLSPolicy } from "@/app/(components)/Database
 export const getCodeFiles = (
   initialConfiguration: InitialConfigurationType,
   theme: ThemeConfiguration,
-  plugins: Plugin[],
   tables: PrismaTable[],
   rlsPolicies: RLSPolicy[],
   isPageVisited?: (path: string) => boolean,
@@ -29,7 +28,6 @@ export const getCodeFiles = (
   const config = createConfigSnapshot(
     initialConfiguration,
     theme,
-    plugins,
     tables,
     rlsPolicies,
     selectedIDE

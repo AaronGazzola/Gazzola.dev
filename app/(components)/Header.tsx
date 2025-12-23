@@ -25,7 +25,6 @@ import {
   Palette,
   Pause,
   Play,
-  Rocket,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -45,6 +44,7 @@ import {
 } from "./Header.hooks";
 import { useHeaderStore } from "./Header.store";
 import { testimonials } from "./Header.types";
+import { LovableLogo } from "./LovableLogo";
 import { TestimonialCard } from "./TestimonialCard";
 import ThemeControlPanel from "./ThemeControlPanel";
 
@@ -58,9 +58,14 @@ const Header = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [progressWidth, setProgressWidth] = useState(0);
   const [isGrowing, setIsGrowing] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const swiperRef = useRef<any>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (dialogOpen) {
@@ -245,7 +250,7 @@ const Header = () => {
           </Button>
         </div>
         <div className="absolute top-3 right-3 md:top-6 md:right-6 z-30 flex gap-2">
-          {!isExpanded && (
+          {!isExpanded && mounted && (
             <div className="md:flex hidden gap-2">
               <TooltipProvider>
                 <Popover>
@@ -279,7 +284,7 @@ const Header = () => {
             </Button>
           </Link>
         </div>
-        {!isExpanded && (
+        {!isExpanded && mounted && (
           <div className="absolute bottom-2 right-3 z-30 flex md:hidden gap-2 items-center">
             <TooltipProvider>
               <Popover>
@@ -318,12 +323,12 @@ const Header = () => {
                         setIsExpanded(true);
                       }}
                     >
-                      <Rocket className="w-4 h-4" />
+                      <LovableLogo size={16} />
                     </Button>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Apply for a free code review!</p>
+                  <p>Apply for quality assurance services</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -339,15 +344,17 @@ const Header = () => {
             <span className="sm:hidden">
               AI
               <br />
-              TDD
+              QA
             </span>
-            <span className="hidden sm:inline">AITDD</span>
+            <span className="hidden sm:inline">
+              AI<span className="ml-3"></span>QA
+            </span>
           </h1>
 
           {isExpanded && (
             <h2 className="text-lg font-medium">
               Artificial Intelligence <br />
-              Test Driven Development
+              Quality Assurance
             </h2>
           )}
           {!isExpanded && (
@@ -361,12 +368,8 @@ const Header = () => {
                   setDialogOpen("yesPlease");
                 }}
               >
-                <span className="hidden md:inline">
-                  Apply for a free code review
-                </span>
-                <span className="md:hidden">Free code review</span>
-
-                <Rocket className="w-4 h-4" />
+                Got a Lovable web app?
+                <LovableLogo size={16} />
               </Button>
             </span>
           )}
@@ -527,11 +530,7 @@ const Header = () => {
                   setIsExpanded(true);
                 }}
               >
-                <span className="hidden sm:inline">
-                  Apply for a free code review
-                </span>
-                <span className="sm:hidden">Free code review</span>
-                <Rocket className="w-6 h-6" />
+                AI QA Services
               </Button>
             </div>
 

@@ -123,6 +123,7 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       theme: defaultTheme,
+      hasInteracted: false,
       setTheme: (theme) =>
         set((state) => ({
           theme: { ...state.theme, ...theme },
@@ -242,14 +243,18 @@ export const useThemeStore = create<ThemeState>()(
           return { theme: newTheme };
         });
       },
-      resetTheme: () => set({ theme: defaultTheme }),
+      setHasInteracted: (value) => set({ hasInteracted: value }),
+      resetTheme: () => set({ theme: defaultTheme, hasInteracted: false }),
     }),
     {
       name: "theme-storage",
-      version: 3,
+      version: 4,
       migrate: (persistedState: any, version: number) => {
         if (version < 3 || !persistedState?.theme?.typography?.light) {
-          return { theme: defaultTheme };
+          return { theme: defaultTheme, hasInteracted: false };
+        }
+        if (version < 4) {
+          return { ...persistedState, hasInteracted: false };
         }
         return persistedState;
       },

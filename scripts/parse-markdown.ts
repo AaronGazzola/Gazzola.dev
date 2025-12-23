@@ -38,6 +38,7 @@ interface FileNode {
   components: ComponentRef[];
   sections: Record<string, Record<string, { content: string; include: boolean }>>;
   include: boolean;
+  includeInSidebar?: boolean;
   previewOnly?: boolean;
   includeInToolbar?: boolean;
   visibleAfterPage?: string;
@@ -54,6 +55,7 @@ interface DirectoryNode {
   path: string;
   urlPath: string;
   include: boolean;
+  includeInSidebar?: boolean;
   previewOnly?: boolean;
   includeInToolbar?: boolean;
   visibleAfterPage?: string;
@@ -205,7 +207,9 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
   const sanitizedName = sanitizeFileName(fileName);
 
   const hasAsterisk = fileName.includes("*");
+  const hasUnderscore = fileName.startsWith("_");
   const include = !hasAsterisk && parentInclude;
+  const includeInSidebar = !hasAsterisk && !hasUnderscore && parentInclude;
 
   const { components, sections } = extractSectionsAndComponents(
     content,
@@ -227,6 +231,7 @@ function parseMarkdownFile(filePath: string, relativePath: string, parentInclude
     components: components,
     sections: sections,
     include: include,
+    includeInSidebar: includeInSidebar,
     isDynamicRobotsFile: isRobotsFile,
   };
 
@@ -270,7 +275,9 @@ function buildMarkdownTree(
         : sanitizedName;
 
       const hasAsterisk = dirName.includes("*");
+      const hasUnderscore = dirName.startsWith("_");
       const include = !hasAsterisk && parentInclude;
+      const includeInSidebar = !hasAsterisk && !hasUnderscore && parentInclude;
 
       const children = buildMarkdownTree(fullPath, itemRelativePath, nodePath, include);
 
@@ -283,6 +290,7 @@ function buildMarkdownTree(
         path: nodePath,
         urlPath: generateUrlPath(itemRelativePath),
         include: include,
+        includeInSidebar: includeInSidebar,
         children: children,
       };
 

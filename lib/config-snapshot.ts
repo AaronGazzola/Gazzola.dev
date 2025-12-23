@@ -4,10 +4,7 @@ import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.t
 import type { IDEType } from "@/app/(components)/IDESelection.types";
 
 export interface ConfigSnapshot {
-  betterAuth: boolean;
-  prisma: boolean;
   supabase: boolean;
-  neondb: boolean;
   postgresql: boolean;
   nextjs: boolean;
   typescript: boolean;
@@ -24,12 +21,11 @@ export interface ConfigSnapshot {
   paypal: boolean;
   openrouter: boolean;
 
-  databaseProvider: 'none' | 'supabase' | 'neondb' | 'both';
+  databaseProvider: 'none' | 'supabase';
   alwaysOnServer: boolean;
 
   tables: PrismaTable[];
   rlsPolicies: RLSPolicy[];
-  plugins: Plugin[];
 
   authEnabled: boolean;
   authMethods: {
@@ -49,7 +45,6 @@ export interface ConfigSnapshot {
   adminRoles: {
     admin: boolean;
     superAdmin: boolean;
-    organizations: boolean;
   };
 
   paymentsEnabled: boolean;
@@ -80,16 +75,12 @@ export interface ConfigSnapshot {
 export const createConfigSnapshot = (
   initialConfig: InitialConfigurationType,
   theme: ThemeConfiguration,
-  plugins: Plugin[],
   tables: PrismaTable[],
   rlsPolicies: RLSPolicy[],
   selectedIDE: IDEType
 ): ConfigSnapshot => {
   return {
-    betterAuth: initialConfig.technologies.betterAuth,
-    prisma: initialConfig.technologies.prisma,
     supabase: initialConfig.technologies.supabase,
-    neondb: initialConfig.technologies.neondb,
     postgresql: initialConfig.technologies.postgresql,
     nextjs: initialConfig.technologies.nextjs,
     typescript: initialConfig.technologies.typescript,
@@ -111,7 +102,6 @@ export const createConfigSnapshot = (
 
     tables,
     rlsPolicies,
-    plugins,
 
     authEnabled: initialConfig.features.authentication.enabled,
     authMethods: {
@@ -131,7 +121,6 @@ export const createConfigSnapshot = (
     adminRoles: {
       admin: initialConfig.features.admin.admin,
       superAdmin: initialConfig.features.admin.superAdmin,
-      organizations: initialConfig.features.admin.organizations,
     },
 
     paymentsEnabled: initialConfig.features.payments.enabled,
@@ -170,10 +159,6 @@ export const hasAuth = (config: ConfigSnapshot): boolean => {
 
 export const hasRLS = (config: ConfigSnapshot): boolean => {
   return config.rlsPolicies.length > 0;
-};
-
-export const isBetterAuthEnabled = (config: ConfigSnapshot): boolean => {
-  return config.betterAuth && config.databaseProvider !== 'supabase';
 };
 
 export const isSupabaseOnly = (config: ConfigSnapshot): boolean => {

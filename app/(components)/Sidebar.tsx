@@ -61,7 +61,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
+import { useHeaderStore } from "./Header.store";
 
 const nextSteps = [
   { icon: ListTodo, title: "Design" },
@@ -74,7 +76,7 @@ const FILE_ICON_MAP: Record<string, LucideIcon> = {
   robots: Bot,
   claude: Sparkles,
   theme: Palette,
-  "app-structure": FolderTree,
+  "app-directory": FolderTree,
   database: Database,
   "ai-integration": MessagesSquare,
   "docs.deployment-instructions": Rocket,
@@ -191,6 +193,7 @@ const generateNavigationFromMarkdownData = (
           order: cf.order,
           path: cf.path,
           include: cf.include,
+          includeInSidebar: cf.includeInSidebar,
         })
       );
 
@@ -200,6 +203,7 @@ const generateNavigationFromMarkdownData = (
         order: node.order,
         path: node.path,
         include: node.include,
+        includeInSidebar: node.includeInSidebar,
         children: [
           ...generateNavigationFromMarkdownData(
             node.children,
@@ -216,6 +220,7 @@ const generateNavigationFromMarkdownData = (
         order: node.order,
         path: node.path,
         include: node.include,
+        includeInSidebar: node.includeInSidebar,
       });
     }
   }
@@ -242,6 +247,7 @@ const generateNavigationFromMarkdownData = (
         order: cf.order || 999,
         path: cf.path,
         include: cf.include,
+        includeInSidebar: cf.includeInSidebar,
       }));
 
       const dirItem: NavigationItem = {
@@ -250,6 +256,7 @@ const generateNavigationFromMarkdownData = (
         order: 999,
         path: parentPath,
         include: true,
+        includeInSidebar: true,
         children: childCodeFileItems,
       };
 
@@ -376,7 +383,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
       const hasVisitedRobots = isPageVisited("robots");
       const isReadme = item.path === "readme";
 
-      if (!isPageIncluded) {
+      if (!isPageIncluded || node.includeInSidebar === false) {
         return null;
       }
 
@@ -403,7 +410,10 @@ const TreeItem: React.FC<TreeItemProps> = ({
         <Button
           variant="ghost"
           className={cn(
-            "w-full justify-start text-white hover:bg-gray-800 h-8 px-2 relative gap-2"
+            "w-full justify-start hover:bg-gray-800 h-8 px-2 relative gap-2",
+            isActive
+              ? "text-white font-bold text-base"
+              : "text-white font-medium"
           )}
           style={{
             paddingLeft: `${(level + 1) * 12 + 8}px`,
@@ -413,7 +423,9 @@ const TreeItem: React.FC<TreeItemProps> = ({
             className="absolute opacity-30 inset-0 rounded"
             style={isActive ? getBackgroundStyle() : undefined}
           ></div>
-          <FileIcon className="h-4 w-4 flex-shrink-0 opacity-70" />
+          <FileIcon
+            className={cn("flex-shrink-0", isActive ? "h-5 w-5" : "h-4 w-4")}
+          />
           <div className="flex items-center">
             {getDisplayName(item.name, item.path || "")}
           </div>
@@ -494,14 +506,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full justify-between text-white hover:bg-gray-800 h-8 px-2 gap-2"
+          className="w-full justify-between !text-white !font-medium hover:bg-gray-800 h-8 px-2 gap-2"
           style={{ paddingLeft: `${level * 12 + 8}px` }}
         >
           <div className="flex items-center gap-2">
             {isOpen ? (
-              <FolderOpen className="h-4 w-4 flex-shrink-0 opacity-70" />
+              <FolderOpen className="h-4 w-4 flex-shrink-0" />
             ) : (
-              <Folder className="h-4 w-4 flex-shrink-0 opacity-70" />
+              <Folder className="h-4 w-4 flex-shrink-0" />
             )}
             {getDisplayName(item.name, itemPath)}
           </div>
@@ -607,7 +619,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
       const hasVisitedRobots = isPageVisited("robots");
       const isReadme = item.path === "readme";
 
-      if (!isPageIncluded) {
+      if (!isPageIncluded || node.includeInSidebar === false) {
         return null;
       }
 
@@ -652,9 +664,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
                 <FileIcon
                   className={cn(
                     "h-5 w-5",
-                    isActive
-                      ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-                      : "opacity-70"
+                    isActive && "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
                   )}
                 />
               </Button>
@@ -773,7 +783,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
             {isOpen ? (
               <FolderOpen className="h-5 w-5" />
             ) : (
-              <Folder className="h-5 w-5 opacity-70" />
+              <Folder className="h-5 w-5" />
             )}
           </Button>
         </TooltipTrigger>
@@ -823,8 +833,15 @@ const Sidebar = () => {
     getInitialConfiguration,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+  const { setIsExpanded } = useHeaderStore();
+  const [_dialogOpen, setDialogOpen] = useQueryState("codeReview");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [mounted, setMounted] = useState(false);
   const params = useParams();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navigationData = useMemo(() => {
     return generateNavigationFromMarkdownData(data.root.children, codeFiles);
@@ -952,77 +969,39 @@ const Sidebar = () => {
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
             </div>
-            <div className="flex flex-row items-center justify-between relative w-full pr-4">
-              {nextSteps.map((step, index) => (
-                <div
-                  key={index}
-                  className="relative flex flex-row items-center gap-2"
-                >
-                  <div className="flex flex-col items-center relative z-10">
-                    <div className="relative w-6 h-6">
-                      <svg
-                        className="w-6 h-6 absolute inset-0 z-0"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <step.icon
-                          className="w-6 h-6 stroke-2"
-                          style={{
-                            color:
-                              gradientColors[index % gradientColors.length],
-                          }}
-                          fill="none"
-                        />
-                      </svg>
-                      <svg
-                        className="w-6 h-6 relative z-10"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <defs>
-                          <linearGradient
-                            id={`gradient-sidebar-${index}`}
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="100%"
-                          >
-                            {gradientEnabled ? (
-                              gradientColors.map((color, colorIndex) => (
-                                <stop
-                                  key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                  stopColor={color}
-                                />
-                              ))
-                            ) : (
-                              <stop offset="0%" stopColor={singleColor} />
-                            )}
-                          </linearGradient>
-                        </defs>
-                        <step.icon
-                          className="w-6 h-6 stroke-1"
-                          stroke={`url(#gradient-sidebar-${index})`}
-                          fill="none"
-                        />
-                      </svg>
+            <div className="pr-3 -ml-2">
+              <Button
+                variant="highlight"
+                className="border border-transparent text-white font-semibold flex items-center gap-2 w-full px-4 py-7 justify-between"
+                onClick={() => {
+                  setDialogOpen("yesPlease");
+                  setIsExpanded(true);
+                }}
+              >
+                {nextSteps.map((step, index) => (
+                  <div
+                    key={index}
+                    className="relative flex flex-row items-center gap-2"
+                  >
+                    <div className="flex flex-col items-center relative z-10">
+                      <step.icon className="w-5 h-5" />
+                      <span className="text-xs font-bold text-center whitespace-nowrap">
+                        {step.title}
+                      </span>
                     </div>
-                    <span className="text-sm font-bold text-center whitespace-nowrap text-white">
-                      {step.title}
-                    </span>
+                    {index < nextSteps.length - 1 && (
+                      <ArrowRight className="w-4 h-4 shrink-0" />
+                    )}
                   </div>
-                  {index < nextSteps.length - 1 && (
-                    <ArrowRight className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)] text-white " />
-                  )}
-                </div>
-              ))}
+                ))}
+              </Button>
             </div>
           </div>
         </div>
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden px-3 py-2">
         {navigationData
-          .filter((item) => item.include !== false)
+          .filter((item) => item.includeInSidebar !== false)
           .map((item, index) => (
             <TreeItem
               key={index}
@@ -1038,28 +1017,30 @@ const Sidebar = () => {
           ))}
       </div>
       <div className="border-t border-gray-700 p-3 space-y-3">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Badge
-              variant="outline"
-              className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
-            >
-              <Info className="h-4 w-4 text-orange-500 absolute left-3" />
-              Work in Progress
-            </Badge>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
-            <div className="space-y-2">
-              <h4 className="font-semibold">Work in Progress</h4>
-              <p className="text-sm text-gray-300">
-                This app is a work in progress and will likely change often.
-              </p>
-              <p className="text-sm text-gray-300 font-medium">
-                Some of the functionality may be incomplete or error prone.
-              </p>
-            </div>
-          </PopoverContent>
-        </Popover>
+        {mounted && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Badge
+                variant="outline"
+                className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
+              >
+                <Info className="h-4 w-4 text-orange-500 absolute left-3" />
+                Work in Progress
+              </Badge>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
+              <div className="space-y-2">
+                <h4 className="font-semibold">Work in Progress</h4>
+                <p className="text-sm text-gray-300">
+                  This app is a work in progress and will likely change often.
+                </p>
+                <p className="text-sm text-gray-300 font-medium">
+                  Some of the functionality may be incomplete or error prone.
+                </p>
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
         <div className="relative w-full">
           <Button
             variant="outline"
@@ -1090,7 +1071,7 @@ const Sidebar = () => {
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {navigationData
-          .filter((item) => item.include !== false)
+          .filter((item) => item.includeInSidebar !== false)
           .map((item, index) => (
             <IconTreeItem
               key={index}
@@ -1106,42 +1087,46 @@ const Sidebar = () => {
           ))}
       </div>
       <div className="border-t border-gray-700 p-2 space-y-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-full text-orange-500 hover:text-orange-400 hover:bg-gray-800"
+        {mounted && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-full text-orange-500 hover:text-orange-400 hover:bg-gray-800"
+                  >
+                    <Info className="h-5 w-5" />
+                    <span className="sr-only">Work in Progress Info</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="right"
+                  className="w-80 bg-black border-orange-500 text-white rounded-xl"
                 >
-                  <Info className="h-5 w-5" />
-                  <span className="sr-only">Work in Progress Info</span>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                side="right"
-                className="w-80 bg-black border-orange-500 text-white rounded-xl"
-              >
-                <div className="space-y-2">
-                  <h4 className="font-semibold">Work in Progress</h4>
-                  <p className="text-sm text-gray-300">
-                    This app is a work in progress and will likely change often.
-                  </p>
-                  <p className="text-sm text-gray-300 font-medium">
-                    Some of the functionality may be incomplete or error prone.
-                  </p>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </TooltipTrigger>
-          <TooltipContent
-            side="right"
-            className="bg-gray-900 text-white border-gray-700"
-          >
-            Work in Progress
-          </TooltipContent>
-        </Tooltip>
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Work in Progress</h4>
+                    <p className="text-sm text-gray-300">
+                      This app is a work in progress and will likely change
+                      often.
+                    </p>
+                    <p className="text-sm text-gray-300 font-medium">
+                      Some of the functionality may be incomplete or error
+                      prone.
+                    </p>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="bg-gray-900 text-white border-gray-700"
+            >
+              Work in Progress
+            </TooltipContent>
+          </Tooltip>
+        )}
         <div className="relative">
           <Tooltip>
             <TooltipTrigger asChild>
