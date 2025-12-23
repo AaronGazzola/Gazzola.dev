@@ -5,12 +5,13 @@ import { IDE_ROBOTS_FILES } from "./code-files.registry";
 import { getSelectedIDE } from "./robots-file.utils";
 import type { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
-import type { Plugin, PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
+import type { Plugin, PrismaEnum, PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
 
 export const getCodeFiles = (
   initialConfiguration: InitialConfigurationType,
   theme: ThemeConfiguration,
   tables: PrismaTable[],
+  enums: PrismaEnum[],
   rlsPolicies: RLSPolicy[],
   isPageVisited?: (path: string) => boolean,
   getSectionInclude?: (filePath: string, sectionId: string, optionId: string) => boolean
@@ -29,6 +30,7 @@ export const getCodeFiles = (
     initialConfiguration,
     theme,
     tables,
+    enums,
     rlsPolicies,
     selectedIDE
   );
