@@ -117,17 +117,17 @@ const careerSteps = [
 const nextSteps = [
   {
     title: "Design",
-    description: "Configure your web app and download your roadmap",
+    description: "Configure your web app and download your starter kit",
     icon: ListTodo,
   },
   {
     title: "Build",
-    description: "Use your roadmap to generate your web app",
+    description: "Use your starter kit to generate your web app",
     icon: Bot,
   },
   {
     title: "Review",
-    description: "Apply for a free code review and QA analysis",
+    description: "Apply for AI-Generated Web App Quality Assurance",
     icon: Rocket,
   },
 ];
@@ -226,8 +226,9 @@ const Page = () => {
           <h1 className="text-[36px] sm:text-[48px] tracking-[1.1rem] text-center my-4 leading-[3rem] sm:leading-[3.5rem] font-light">
             AZ GAZZOLA
           </h1>
-          <h1 className="text-2xl sm:text-3xl mb-8">
-            AI Test Driven Development
+          <h1 className="font-normal text-xl sm:text-3xl mb-8">
+            Artificial Intelligence <br />
+            Quality Assurance
           </h1>
 
           {/* Profile Image with Radial Gradient Fade */}

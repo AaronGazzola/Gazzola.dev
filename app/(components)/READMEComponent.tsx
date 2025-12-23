@@ -414,10 +414,11 @@ Requirements:
               Generate your custom Next.js web app!
             </h2>
             <p className="theme-text-foreground">
-              Follow the steps to generate your web app, starting with a title
-              and description. This process will create detailed documentation
-              to enable an AI to build your app according to your specifications
-              and following my recommended programming patterns.
+              Enter a title and description to generate your README file, then
+              click &quot;Next&quot; to continue.
+              <br />
+              This is the first step in a process that will generate a starter
+              kit for your custom Next.js web app.
             </p>
           </div>
 

@@ -31,6 +31,85 @@
         ],
         "sections": {},
         "include": true,
+        "includeInSidebar": true,
+        "isDynamicRobotsFile": false
+      },
+      {
+        "id": "theme",
+        "name": "theme",
+        "displayName": "Theme",
+        "type": "file",
+        "order": 2,
+        "path": "theme",
+        "urlPath": "/theme",
+        "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
+        "components": [
+          {
+            "id": "component-ThemeConfiguration",
+            "name": "ThemeConfiguration",
+            "displayName": "ThemeConfiguration",
+            "type": "component",
+            "path": "theme.component.ThemeConfiguration",
+            "urlPath": "",
+            "componentId": "ThemeConfiguration",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true,
+        "includeInSidebar": true,
+        "isDynamicRobotsFile": false
+      },
+      {
+        "id": "app-directory",
+        "name": "app-directory",
+        "displayName": "App Directory",
+        "type": "file",
+        "order": 3,
+        "path": "app-directory",
+        "urlPath": "/app-directory",
+        "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+        "components": [
+          {
+            "id": "component-LayoutAndStructure",
+            "name": "LayoutAndStructure",
+            "displayName": "LayoutAndStructure",
+            "type": "component",
+            "path": "app-directory.component.LayoutAndStructure",
+            "urlPath": "",
+            "componentId": "LayoutAndStructure",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true,
+        "includeInSidebar": true,
+        "isDynamicRobotsFile": false
+      },
+      {
+        "id": "database",
+        "name": "database",
+        "displayName": "Database",
+        "type": "file",
+        "order": 4,
+        "path": "database",
+        "urlPath": "/database",
+        "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
+        "components": [
+          {
+            "id": "component-DatabaseConfiguration",
+            "name": "DatabaseConfiguration",
+            "displayName": "DatabaseConfiguration",
+            "type": "component",
+            "path": "database.component.DatabaseConfiguration",
+            "urlPath": "",
+            "componentId": "DatabaseConfiguration",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true,
+        "includeInSidebar": true,
         "isDynamicRobotsFile": false
       },
       {
@@ -38,7 +117,7 @@
         "name": "ai-integration",
         "displayName": "AI Integration",
         "type": "file",
-        "order": 2,
+        "order": 5,
         "path": "ai-integration",
         "urlPath": "/ai-integration",
         "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
@@ -71,91 +150,97 @@
           }
         },
         "include": true,
+        "includeInSidebar": true,
         "isDynamicRobotsFile": false
       },
       {
-        "id": "theme",
-        "name": "theme",
-        "displayName": "Theme",
+        "id": "10-util",
+        "name": "10-util",
+        "displayName": " 10-util",
         "type": "file",
-        "order": 3,
-        "path": "theme",
-        "urlPath": "/theme",
-        "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
-        "components": [
-          {
-            "id": "component-ThemeConfiguration",
-            "name": "ThemeConfiguration",
-            "displayName": "ThemeConfiguration",
-            "type": "component",
-            "path": "theme.component.ThemeConfiguration",
-            "urlPath": "",
-            "componentId": "ThemeConfiguration",
-            "include": true
+        "path": "10-util",
+        "urlPath": "/10-util",
+        "content": "# File examples\n\nThis guide provides code examples and patterns for organizing your application code following best practices.\n\n## Types file example\n\nType definitions establish contracts and ensure type safety throughout your application.\n\n<!-- section-1 -->\n\n## Stores file example\n\nZustand stores manage application state with persistence and middleware support.\n\n<!-- section-2 -->\n\n## Actions file example\n\nServer actions handle data mutations and communicate with your backend services.\n\n<!-- section-3 -->\n\n## Hooks file example\n\nReact Query hooks manage data fetching, caching, and synchronization.\n\n<!-- section-4 -->\n\n## Utility files\n\nUtility modules provide reusable helper functions and configurations.\n\n<!-- section-5 -->\n",
+        "components": [],
+        "sections": {
+          "section1": {
+            "option1": {
+              "content": "**Types file example (Client-side):**\n\n```typescript\nexport interface AppState {\n  data: any[];\n  setData: (data: any[]) => void;\n  isLoading: boolean;\n  setIsLoading: (isLoading: boolean) => void;\n  reset: () => void;\n}\n\nexport interface ApiData {\n  id: string;\n  name: string;\n  value: number;\n}\n```",
+              "include": true
+            },
+            "option2": {
+              "content": "**Types file example (With Database):**\n\n```typescript\nimport { User } from \"@prisma/client\";\n\nexport interface AppState {\n  user: User | null;\n  setUser: (user: User | null) => void;\n  tempEmail?: string;\n  setTempEmail: (tempEmail: string) => void;\n  reset: () => void;\n}\n\nexport interface SignInData {\n  email: string;\n  password: string;\n}\n```",
+              "include": true
+            }
+          },
+          "section2": {
+            "option1": {
+              "content": "### Store Example (With Database)\n\n```typescript\nimport { UserRole } from \"@prisma/client\";\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\nimport { AppState, ExtendedUser, RedirectState } from \"./layout.types\";\n\nconst initialState = {\n  user: null,\n};\n\nexport const useAppStore = create<AppState>()((set) => ({\n  ...initialState,\n  setUser: (user) => set({ user, profile: user?.profile || null }),\n  reset: () => set(initialState),\n}));\n```\n\n**Usage with React Query:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\nimport { useGetUser } from \"@/hooks/user.hooks\";\n\nexport const UserProfile = () => {\n  const setUser = useAppStore((state) => state.setUser);\n  const user = useAppStore((state) => state.user);\n\n  const { isLoading } = useGetUser({\n    onSuccess: (data) => setUser(data),\n  });\n\n  if (isLoading) return <div>Loading...</div>;\n\n  return <div>Welcome, {user?.name}</div>;\n};\n```",
+              "include": true
+            },
+            "option2": {
+              "content": "### Store Example (Without Database)\n\n```typescript\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\n\ninterface AppState {\n  theme: \"light\" | \"dark\";\n  setTheme: (theme: \"light\" | \"dark\") => void;\n  sidebarOpen: boolean;\n  toggleSidebar: () => void;\n}\n\nexport const useAppStore = create<AppState>()(\n  persist(\n    (set) => ({\n      theme: \"light\",\n      setTheme: (theme) => set({ theme }),\n      sidebarOpen: true,\n      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),\n    }),\n    {\n      name: \"app-storage\",\n    }\n  )\n);\n```\n\n**Usage:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\n\nexport const ThemeToggle = () => {\n  const { theme, setTheme } = useAppStore();\n\n  return (\n    <button onClick={() => setTheme(theme === \"light\" ? \"dark\" : \"light\")}>\n      Toggle Theme\n    </button>\n  );\n};\n```",
+              "include": true
+            }
+          },
+          "section3": {
+            "option1": {
+              "content": "**No actions file needed for client-side only applications.**\n\nUse API routes or external API calls directly in hooks with React Query.",
+              "include": true
+            },
+            "option2": {
+              "content": "**Actions file example (NeonDB + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+              "include": true
+            },
+            "option3": {
+              "content": "**Actions file example (Supabase + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+              "include": true
+            },
+            "option4": {
+              "content": "**Actions file example (Supabase Auth Only):**\n\n```typescript\n\"use server\";\n\nimport { createClient } from \"@/lib/supabase/server\";\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\n\nexport const getUserAction = async (): Promise<ActionResponse<any>> => {\n  try {\n    const supabase = await createClient();\n\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n    if (authError || !user) {\n      return getActionResponse({ error: authError?.message || \"Not authenticated\" });\n    }\n\n    const { data, error } = await supabase\n      .from('users')\n      .select('*')\n      .eq('id', user.id)\n      .single();\n\n    if (error) throw error;\n\n    return getActionResponse({ data });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+              "include": true
+            }
+          },
+          "section4": {
+            "option1": {
+              "content": "**Hooks file example (Client-side):**\n\n```typescript\n\"use client\";\n\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetData = () => {\n  const { setData } = useAppStore();\n\n  return useQuery({\n    queryKey: [\"data\"],\n    queryFn: async () => {\n      const response = await fetch(\"/api/data\");\n      if (!response.ok) throw new Error(\"Failed to fetch\");\n      const data = await response.json();\n      setData(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useCreateData = () => {\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (newData: any) => {\n      const response = await fetch(\"/api/data\", {\n        method: \"POST\",\n        headers: { \"Content-Type\": \"application/json\" },\n        body: JSON.stringify(newData),\n      });\n      if (!response.ok) throw new Error(\"Failed to create\");\n      return response.json();\n    },\n    onSuccess: () => {\n      router.refresh();\n    },\n  });\n};\n```",
+              "include": true
+            },
+            "option2": {
+              "content": "**Hooks file example (Better Auth):**\n\n```typescript\n\"use client\";\n\nimport { configuration, privatePaths } from \"@/configuration\";\nimport { signIn } from \"@/lib/auth-client\";\nimport { useMutation, useQuery } from \"@tanstack/react-query\";\nimport { usePathname, useRouter } from \"next/navigation\";\nimport { toast } from \"sonner\";\nimport { Toast } from \"../(components)/Toast\";\nimport { CypressDataAttributes } from \"../../types/cypress.types\";\nimport { useAppStore, useRedirectStore } from \"../layout.stores\";\nimport { SignInData } from \"../layout.types\";\nimport { getUserAction } from \"./layout.actions\";\nimport { useAuthLayoutStore } from \"./layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const { reset: resetAuthLayout } = useAuthLayoutStore();\n  const { setUserData } = useRedirectStore();\n  const pathname = usePathname();\n\n  const router = useRouter();\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const { data, error } = await getUserAction();\n      if (!data || error) {\n        if (privatePaths.includes(pathname)) {\n          router.push(configuration.paths.signIn);\n        }\n        reset();\n        resetAuthLayout();\n      }\n      if (error) throw error;\n      setUser(data ?? null);\n\n      setUserData(data);\n\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser, setTempEmail } = useAppStore();\n  const { setUserData } = useRedirectStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (signInData: SignInData) => {\n      const { error } = await signIn.email({\n        email: signInData.email,\n        password: signInData.password,\n      });\n\n      if (error?.status === 403) setTempEmail(signInData.email);\n\n      if (error) throw error;\n      const { data: userData, error: userError } = await getUserAction();\n\n      if (userError) throw new Error(userError);\n\n      return userData;\n    },\n    onSuccess: (data) => {\n      if (data) {\n        setUser(data);\n        setUserData(data);\n      }\n      toast.custom(() => (\n        <Toast\n          variant=\"success\"\n          title=\"Success\"\n          message=\"Successfully signed in\"\n          data-cy={CypressDataAttributes.TOAST_SUCCESS}\n        />\n      ));\n      if (data && !data.profile?.isOnboardingComplete) {\n        router.push(configuration.paths.onboarding);\n        return;\n      }\n      router.push(configuration.paths.home);\n    },\n    onError: (\n      error: {\n        code?: string | undefined;\n        message?: string | undefined;\n        status: number;\n        statusText: string;\n      } | null\n    ) => {\n      if (error?.status === 403) return;\n      toast.custom(() => (\n        <Toast\n          variant=\"error\"\n          title=\"Sign In Failed\"\n          message={error?.message || \"Failed to sign in\"}\n          data-cy={CypressDataAttributes.TOAST_ERROR}\n        />\n      ));\n    },\n  });\n};\n```",
+              "include": true
+            },
+            "option3": {
+              "content": "**Hooks file example (Supabase Auth):**\n\n```typescript\n\"use client\";\n\nimport { createClient } from \"@/lib/supabase/client\";\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const router = useRouter();\n\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const supabase = createClient();\n      const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n      if (authError || !user) {\n        reset();\n        return null;\n      }\n\n      const { data, error } = await supabase\n        .from('users')\n        .select('*')\n        .eq('id', user.id)\n        .single();\n\n      if (error) throw error;\n\n      setUser(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser } = useAppStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async ({ email, password }: { email: string; password: string }) => {\n      const supabase = createClient();\n      const { data, error } = await supabase.auth.signInWithPassword({\n        email,\n        password,\n      });\n\n      if (error) throw error;\n\n      return data.user;\n    },\n    onSuccess: (user) => {\n      setUser(user);\n      router.push('/dashboard');\n    },\n  });\n};\n```",
+              "include": true
+            }
+          },
+          "section5": {
+            "option1": {
+              "content": "**No utility files needed for client-side only applications.**",
+              "include": true
+            },
+            "option2": {
+              "content": "**Utility files (Better Auth + Prisma):**\n\n## `prisma-rls.ts`:\n\n```typescript\nimport { Prisma } from \"@prisma/client\";\nimport { prisma } from \"./prisma\";\n\nfunction forUser(userId: string, tenantId?: string) {\n  return Prisma.defineExtension((prisma) =>\n    prisma.$extends({\n      query: {\n        $allModels: {\n          async $allOperations({ args, query }) {\n            if (tenantId) {\n              const [, , result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                prisma.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            } else {\n              const [, result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            }\n          },\n        },\n      },\n    })\n  );\n}\n\nexport function createRLSClient(userId: string, tenantId?: string) {\n  return prisma.$extends(forUser(userId, tenantId));\n}\n```\n\n## `auth.util.ts`\n\n```typescript\nimport { User } from \"better-auth\";\nimport jwt from \"jsonwebtoken\";\nimport { headers } from \"next/headers\";\nimport { auth, Session } from \"./auth\";\nimport { createRLSClient } from \"./prisma-rls\";\n\nexport async function getAuthenticatedClient(user?: User): Promise<{\n  db: ReturnType<typeof createRLSClient>;\n  session: Session | null;\n}> {\n  const headersList = await headers();\n\n  const session = await auth.api.getSession({\n    headers: headersList,\n  });\n\n  const userId = user?.id || session?.user.id;\n\n  if (!userId) {\n    throw new Error(\"Unauthorized\");\n  }\n\n  const db = createRLSClient(userId);\n\n  return { db, session };\n}\n\nexport function generateSupabaseJWT(userId: string, userRole: string): string {\n  const jwtSecret = process.env.SUPABASE_JWT_SECRET;\n\n  if (!jwtSecret) {\n    throw new Error(\"SUPABASE_JWT_SECRET is required for JWT generation\");\n  }\n\n  const payload = {\n    aud: \"authenticated\",\n    exp: Math.floor(Date.now() / 1000) + 60 * 60,\n    sub: userId,\n    email: `${userId}@better-auth.local`,\n    role: \"authenticated\",\n    user_metadata: {\n      better_auth_user_id: userId,\n      better_auth_role: userRole,\n    },\n    app_metadata: {\n      provider: \"better-auth\",\n      providers: [\"better-auth\"],\n    },\n  };\n\n  return jwt.sign(payload, jwtSecret, {\n    algorithm: \"HS256\",\n  });\n}\n```\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
+              "include": true
+            },
+            "option3": {
+              "content": "**Utility files (Supabase):**\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
+              "include": true
+            }
           }
-        ],
-        "sections": {},
+        },
         "include": true,
+        "includeInSidebar": false,
         "isDynamicRobotsFile": false
       },
       {
-        "id": "app-structure",
-        "name": "app-structure",
-        "displayName": "App Structure",
+        "id": "6-robots",
+        "name": "6-robots",
+        "displayName": " 6-ROBOTS",
         "type": "file",
-        "order": 4,
-        "path": "app-structure",
-        "urlPath": "/app-structure",
-        "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-        "components": [
-          {
-            "id": "component-LayoutAndStructure",
-            "name": "LayoutAndStructure",
-            "displayName": "LayoutAndStructure",
-            "type": "component",
-            "path": "app-structure.component.LayoutAndStructure",
-            "urlPath": "",
-            "componentId": "LayoutAndStructure",
-            "include": true
-          }
-        ],
-        "sections": {},
-        "include": true,
-        "isDynamicRobotsFile": false
-      },
-      {
-        "id": "database",
-        "name": "database",
-        "displayName": "Database",
-        "type": "file",
-        "order": 5,
-        "path": "database",
-        "urlPath": "/database",
-        "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
-        "components": [
-          {
-            "id": "component-DatabaseConfiguration",
-            "name": "DatabaseConfiguration",
-            "displayName": "DatabaseConfiguration",
-            "type": "component",
-            "path": "database.component.DatabaseConfiguration",
-            "urlPath": "",
-            "componentId": "DatabaseConfiguration",
-            "include": true
-          }
-        ],
-        "sections": {},
-        "include": true,
-        "isDynamicRobotsFile": false
-      },
-      {
-        "id": "robots",
-        "name": "robots",
-        "displayName": "ROBOTS",
-        "type": "file",
-        "order": 6,
-        "path": "robots",
-        "urlPath": "/robots",
+        "path": "6-robots",
+        "urlPath": "/6-robots",
         "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Tech stack\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-2 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n\\`\\`\\`\n",
         "components": [],
         "sections": {
@@ -197,17 +282,17 @@
           }
         },
         "include": true,
+        "includeInSidebar": false,
         "isDynamicRobotsFile": true,
         "visibleAfterPage": "readme"
       },
       {
-        "id": "deployment",
-        "name": "deployment",
-        "displayName": "Deployment",
+        "id": "7-deployment",
+        "name": "7-deployment",
+        "displayName": " 7-Deployment",
         "type": "file",
-        "order": 7,
-        "path": "deployment",
-        "urlPath": "/deployment",
+        "path": "7-deployment",
+        "urlPath": "/7-deployment",
         "content": "# Deployment Instructions\n\nThis guide provides step-by-step instructions for deploying your application based on your selected technology stack.\n\n## Platform Setup\n\n<!-- section-1 -->\n\n## Database Deployment\n\n<!-- section-2 -->\n\n## Environment Variables\n\n<!-- section-3 -->\n\n## Authentication Setup\n\n<!-- section-4 -->\n\n## Post-Deployment Tasks\n\n<!-- section-5 -->\n",
         "components": [],
         "sections": {
@@ -335,91 +420,8 @@
           }
         },
         "include": true,
-        "isDynamicRobotsFile": false,
-        "visibleAfterPage": "robots"
-      },
-      {
-        "id": "util",
-        "name": "util",
-        "displayName": "util",
-        "type": "file",
-        "order": 10,
-        "path": "util",
-        "urlPath": "/util",
-        "content": "# File examples\n\nThis guide provides code examples and patterns for organizing your application code following best practices.\n\n## Types file example\n\nType definitions establish contracts and ensure type safety throughout your application.\n\n<!-- section-1 -->\n\n## Stores file example\n\nZustand stores manage application state with persistence and middleware support.\n\n<!-- section-2 -->\n\n## Actions file example\n\nServer actions handle data mutations and communicate with your backend services.\n\n<!-- section-3 -->\n\n## Hooks file example\n\nReact Query hooks manage data fetching, caching, and synchronization.\n\n<!-- section-4 -->\n\n## Utility files\n\nUtility modules provide reusable helper functions and configurations.\n\n<!-- section-5 -->\n",
-        "components": [],
-        "sections": {
-          "section1": {
-            "option1": {
-              "content": "**Types file example (Client-side):**\n\n```typescript\nexport interface AppState {\n  data: any[];\n  setData: (data: any[]) => void;\n  isLoading: boolean;\n  setIsLoading: (isLoading: boolean) => void;\n  reset: () => void;\n}\n\nexport interface ApiData {\n  id: string;\n  name: string;\n  value: number;\n}\n```",
-              "include": true
-            },
-            "option2": {
-              "content": "**Types file example (With Database):**\n\n```typescript\nimport { User } from \"@prisma/client\";\n\nexport interface AppState {\n  user: User | null;\n  setUser: (user: User | null) => void;\n  tempEmail?: string;\n  setTempEmail: (tempEmail: string) => void;\n  reset: () => void;\n}\n\nexport interface SignInData {\n  email: string;\n  password: string;\n}\n```",
-              "include": true
-            }
-          },
-          "section2": {
-            "option1": {
-              "content": "### Store Example (With Database)\n\n```typescript\nimport { UserRole } from \"@prisma/client\";\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\nimport { AppState, ExtendedUser, RedirectState } from \"./layout.types\";\n\nconst initialState = {\n  user: null,\n};\n\nexport const useAppStore = create<AppState>()((set) => ({\n  ...initialState,\n  setUser: (user) => set({ user, profile: user?.profile || null }),\n  reset: () => set(initialState),\n}));\n```\n\n**Usage with React Query:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\nimport { useGetUser } from \"@/hooks/user.hooks\";\n\nexport const UserProfile = () => {\n  const setUser = useAppStore((state) => state.setUser);\n  const user = useAppStore((state) => state.user);\n\n  const { isLoading } = useGetUser({\n    onSuccess: (data) => setUser(data),\n  });\n\n  if (isLoading) return <div>Loading...</div>;\n\n  return <div>Welcome, {user?.name}</div>;\n};\n```",
-              "include": true
-            },
-            "option2": {
-              "content": "### Store Example (Without Database)\n\n```typescript\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\n\ninterface AppState {\n  theme: \"light\" | \"dark\";\n  setTheme: (theme: \"light\" | \"dark\") => void;\n  sidebarOpen: boolean;\n  toggleSidebar: () => void;\n}\n\nexport const useAppStore = create<AppState>()(\n  persist(\n    (set) => ({\n      theme: \"light\",\n      setTheme: (theme) => set({ theme }),\n      sidebarOpen: true,\n      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),\n    }),\n    {\n      name: \"app-storage\",\n    }\n  )\n);\n```\n\n**Usage:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\n\nexport const ThemeToggle = () => {\n  const { theme, setTheme } = useAppStore();\n\n  return (\n    <button onClick={() => setTheme(theme === \"light\" ? \"dark\" : \"light\")}>\n      Toggle Theme\n    </button>\n  );\n};\n```",
-              "include": true
-            }
-          },
-          "section3": {
-            "option1": {
-              "content": "**No actions file needed for client-side only applications.**\n\nUse API routes or external API calls directly in hooks with React Query.",
-              "include": true
-            },
-            "option2": {
-              "content": "**Actions file example (NeonDB + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-              "include": true
-            },
-            "option3": {
-              "content": "**Actions file example (Supabase + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-              "include": true
-            },
-            "option4": {
-              "content": "**Actions file example (Supabase Auth Only):**\n\n```typescript\n\"use server\";\n\nimport { createClient } from \"@/lib/supabase/server\";\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\n\nexport const getUserAction = async (): Promise<ActionResponse<any>> => {\n  try {\n    const supabase = await createClient();\n\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n    if (authError || !user) {\n      return getActionResponse({ error: authError?.message || \"Not authenticated\" });\n    }\n\n    const { data, error } = await supabase\n      .from('users')\n      .select('*')\n      .eq('id', user.id)\n      .single();\n\n    if (error) throw error;\n\n    return getActionResponse({ data });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-              "include": true
-            }
-          },
-          "section4": {
-            "option1": {
-              "content": "**Hooks file example (Client-side):**\n\n```typescript\n\"use client\";\n\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetData = () => {\n  const { setData } = useAppStore();\n\n  return useQuery({\n    queryKey: [\"data\"],\n    queryFn: async () => {\n      const response = await fetch(\"/api/data\");\n      if (!response.ok) throw new Error(\"Failed to fetch\");\n      const data = await response.json();\n      setData(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useCreateData = () => {\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (newData: any) => {\n      const response = await fetch(\"/api/data\", {\n        method: \"POST\",\n        headers: { \"Content-Type\": \"application/json\" },\n        body: JSON.stringify(newData),\n      });\n      if (!response.ok) throw new Error(\"Failed to create\");\n      return response.json();\n    },\n    onSuccess: () => {\n      router.refresh();\n    },\n  });\n};\n```",
-              "include": true
-            },
-            "option2": {
-              "content": "**Hooks file example (Better Auth):**\n\n```typescript\n\"use client\";\n\nimport { configuration, privatePaths } from \"@/configuration\";\nimport { signIn } from \"@/lib/auth-client\";\nimport { useMutation, useQuery } from \"@tanstack/react-query\";\nimport { usePathname, useRouter } from \"next/navigation\";\nimport { toast } from \"sonner\";\nimport { Toast } from \"../(components)/Toast\";\nimport { CypressDataAttributes } from \"../../types/cypress.types\";\nimport { useAppStore, useRedirectStore } from \"../layout.stores\";\nimport { SignInData } from \"../layout.types\";\nimport { getUserAction } from \"./layout.actions\";\nimport { useAuthLayoutStore } from \"./layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const { reset: resetAuthLayout } = useAuthLayoutStore();\n  const { setUserData } = useRedirectStore();\n  const pathname = usePathname();\n\n  const router = useRouter();\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const { data, error } = await getUserAction();\n      if (!data || error) {\n        if (privatePaths.includes(pathname)) {\n          router.push(configuration.paths.signIn);\n        }\n        reset();\n        resetAuthLayout();\n      }\n      if (error) throw error;\n      setUser(data ?? null);\n\n      setUserData(data);\n\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser, setTempEmail } = useAppStore();\n  const { setUserData } = useRedirectStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (signInData: SignInData) => {\n      const { error } = await signIn.email({\n        email: signInData.email,\n        password: signInData.password,\n      });\n\n      if (error?.status === 403) setTempEmail(signInData.email);\n\n      if (error) throw error;\n      const { data: userData, error: userError } = await getUserAction();\n\n      if (userError) throw new Error(userError);\n\n      return userData;\n    },\n    onSuccess: (data) => {\n      if (data) {\n        setUser(data);\n        setUserData(data);\n      }\n      toast.custom(() => (\n        <Toast\n          variant=\"success\"\n          title=\"Success\"\n          message=\"Successfully signed in\"\n          data-cy={CypressDataAttributes.TOAST_SUCCESS}\n        />\n      ));\n      if (data && !data.profile?.isOnboardingComplete) {\n        router.push(configuration.paths.onboarding);\n        return;\n      }\n      router.push(configuration.paths.home);\n    },\n    onError: (\n      error: {\n        code?: string | undefined;\n        message?: string | undefined;\n        status: number;\n        statusText: string;\n      } | null\n    ) => {\n      if (error?.status === 403) return;\n      toast.custom(() => (\n        <Toast\n          variant=\"error\"\n          title=\"Sign In Failed\"\n          message={error?.message || \"Failed to sign in\"}\n          data-cy={CypressDataAttributes.TOAST_ERROR}\n        />\n      ));\n    },\n  });\n};\n```",
-              "include": true
-            },
-            "option3": {
-              "content": "**Hooks file example (Supabase Auth):**\n\n```typescript\n\"use client\";\n\nimport { createClient } from \"@/lib/supabase/client\";\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const router = useRouter();\n\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const supabase = createClient();\n      const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n      if (authError || !user) {\n        reset();\n        return null;\n      }\n\n      const { data, error } = await supabase\n        .from('users')\n        .select('*')\n        .eq('id', user.id)\n        .single();\n\n      if (error) throw error;\n\n      setUser(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser } = useAppStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async ({ email, password }: { email: string; password: string }) => {\n      const supabase = createClient();\n      const { data, error } = await supabase.auth.signInWithPassword({\n        email,\n        password,\n      });\n\n      if (error) throw error;\n\n      return data.user;\n    },\n    onSuccess: (user) => {\n      setUser(user);\n      router.push('/dashboard');\n    },\n  });\n};\n```",
-              "include": true
-            }
-          },
-          "section5": {
-            "option1": {
-              "content": "**No utility files needed for client-side only applications.**",
-              "include": true
-            },
-            "option2": {
-              "content": "**Utility files (Better Auth + Prisma):**\n\n## `prisma-rls.ts`:\n\n```typescript\nimport { Prisma } from \"@prisma/client\";\nimport { prisma } from \"./prisma\";\n\nfunction forUser(userId: string, tenantId?: string) {\n  return Prisma.defineExtension((prisma) =>\n    prisma.$extends({\n      query: {\n        $allModels: {\n          async $allOperations({ args, query }) {\n            if (tenantId) {\n              const [, , result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                prisma.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            } else {\n              const [, result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            }\n          },\n        },\n      },\n    })\n  );\n}\n\nexport function createRLSClient(userId: string, tenantId?: string) {\n  return prisma.$extends(forUser(userId, tenantId));\n}\n```\n\n## `auth.util.ts`\n\n```typescript\nimport { User } from \"better-auth\";\nimport jwt from \"jsonwebtoken\";\nimport { headers } from \"next/headers\";\nimport { auth, Session } from \"./auth\";\nimport { createRLSClient } from \"./prisma-rls\";\n\nexport async function getAuthenticatedClient(user?: User): Promise<{\n  db: ReturnType<typeof createRLSClient>;\n  session: Session | null;\n}> {\n  const headersList = await headers();\n\n  const session = await auth.api.getSession({\n    headers: headersList,\n  });\n\n  const userId = user?.id || session?.user.id;\n\n  if (!userId) {\n    throw new Error(\"Unauthorized\");\n  }\n\n  const db = createRLSClient(userId);\n\n  return { db, session };\n}\n\nexport function generateSupabaseJWT(userId: string, userRole: string): string {\n  const jwtSecret = process.env.SUPABASE_JWT_SECRET;\n\n  if (!jwtSecret) {\n    throw new Error(\"SUPABASE_JWT_SECRET is required for JWT generation\");\n  }\n\n  const payload = {\n    aud: \"authenticated\",\n    exp: Math.floor(Date.now() / 1000) + 60 * 60,\n    sub: userId,\n    email: `${userId}@better-auth.local`,\n    role: \"authenticated\",\n    user_metadata: {\n      better_auth_user_id: userId,\n      better_auth_role: userRole,\n    },\n    app_metadata: {\n      provider: \"better-auth\",\n      providers: [\"better-auth\"],\n    },\n  };\n\n  return jwt.sign(payload, jwtSecret, {\n    algorithm: \"HS256\",\n  });\n}\n```\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
-              "include": true
-            },
-            "option3": {
-              "content": "**Utility files (Supabase):**\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
-              "include": true
-            }
-          }
-        },
-        "include": true,
-        "isDynamicRobotsFile": false,
-        "visibleAfterPage": "robots",
-        "includeInToolbar": false
+        "includeInSidebar": false,
+        "isDynamicRobotsFile": false
       },
       {
         "id": "code-files",
@@ -429,6 +431,7 @@
         "path": "code-files",
         "urlPath": "/code-files",
         "include": true,
+        "includeInSidebar": true,
         "children": []
       }
     ]
@@ -466,6 +469,85 @@
           ],
           "sections": {},
           "include": true,
+          "includeInSidebar": true,
+          "isDynamicRobotsFile": false
+        },
+        {
+          "id": "theme",
+          "name": "theme",
+          "displayName": "Theme",
+          "type": "file",
+          "order": 2,
+          "path": "theme",
+          "urlPath": "/theme",
+          "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-ThemeConfiguration",
+              "name": "ThemeConfiguration",
+              "displayName": "ThemeConfiguration",
+              "type": "component",
+              "path": "theme.component.ThemeConfiguration",
+              "urlPath": "",
+              "componentId": "ThemeConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true,
+          "includeInSidebar": true,
+          "isDynamicRobotsFile": false
+        },
+        {
+          "id": "app-directory",
+          "name": "app-directory",
+          "displayName": "App Directory",
+          "type": "file",
+          "order": 3,
+          "path": "app-directory",
+          "urlPath": "/app-directory",
+          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+          "components": [
+            {
+              "id": "component-LayoutAndStructure",
+              "name": "LayoutAndStructure",
+              "displayName": "LayoutAndStructure",
+              "type": "component",
+              "path": "app-directory.component.LayoutAndStructure",
+              "urlPath": "",
+              "componentId": "LayoutAndStructure",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true,
+          "includeInSidebar": true,
+          "isDynamicRobotsFile": false
+        },
+        {
+          "id": "database",
+          "name": "database",
+          "displayName": "Database",
+          "type": "file",
+          "order": 4,
+          "path": "database",
+          "urlPath": "/database",
+          "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
+          "components": [
+            {
+              "id": "component-DatabaseConfiguration",
+              "name": "DatabaseConfiguration",
+              "displayName": "DatabaseConfiguration",
+              "type": "component",
+              "path": "database.component.DatabaseConfiguration",
+              "urlPath": "",
+              "componentId": "DatabaseConfiguration",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true,
+          "includeInSidebar": true,
           "isDynamicRobotsFile": false
         },
         {
@@ -473,7 +555,7 @@
           "name": "ai-integration",
           "displayName": "AI Integration",
           "type": "file",
-          "order": 2,
+          "order": 5,
           "path": "ai-integration",
           "urlPath": "/ai-integration",
           "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
@@ -506,91 +588,97 @@
             }
           },
           "include": true,
+          "includeInSidebar": true,
           "isDynamicRobotsFile": false
         },
         {
-          "id": "theme",
-          "name": "theme",
-          "displayName": "Theme",
+          "id": "10-util",
+          "name": "10-util",
+          "displayName": " 10-util",
           "type": "file",
-          "order": 3,
-          "path": "theme",
-          "urlPath": "/theme",
-          "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
-          "components": [
-            {
-              "id": "component-ThemeConfiguration",
-              "name": "ThemeConfiguration",
-              "displayName": "ThemeConfiguration",
-              "type": "component",
-              "path": "theme.component.ThemeConfiguration",
-              "urlPath": "",
-              "componentId": "ThemeConfiguration",
-              "include": true
+          "path": "10-util",
+          "urlPath": "/10-util",
+          "content": "# File examples\n\nThis guide provides code examples and patterns for organizing your application code following best practices.\n\n## Types file example\n\nType definitions establish contracts and ensure type safety throughout your application.\n\n<!-- section-1 -->\n\n## Stores file example\n\nZustand stores manage application state with persistence and middleware support.\n\n<!-- section-2 -->\n\n## Actions file example\n\nServer actions handle data mutations and communicate with your backend services.\n\n<!-- section-3 -->\n\n## Hooks file example\n\nReact Query hooks manage data fetching, caching, and synchronization.\n\n<!-- section-4 -->\n\n## Utility files\n\nUtility modules provide reusable helper functions and configurations.\n\n<!-- section-5 -->\n",
+          "components": [],
+          "sections": {
+            "section1": {
+              "option1": {
+                "content": "**Types file example (Client-side):**\n\n```typescript\nexport interface AppState {\n  data: any[];\n  setData: (data: any[]) => void;\n  isLoading: boolean;\n  setIsLoading: (isLoading: boolean) => void;\n  reset: () => void;\n}\n\nexport interface ApiData {\n  id: string;\n  name: string;\n  value: number;\n}\n```",
+                "include": true
+              },
+              "option2": {
+                "content": "**Types file example (With Database):**\n\n```typescript\nimport { User } from \"@prisma/client\";\n\nexport interface AppState {\n  user: User | null;\n  setUser: (user: User | null) => void;\n  tempEmail?: string;\n  setTempEmail: (tempEmail: string) => void;\n  reset: () => void;\n}\n\nexport interface SignInData {\n  email: string;\n  password: string;\n}\n```",
+                "include": true
+              }
+            },
+            "section2": {
+              "option1": {
+                "content": "### Store Example (With Database)\n\n```typescript\nimport { UserRole } from \"@prisma/client\";\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\nimport { AppState, ExtendedUser, RedirectState } from \"./layout.types\";\n\nconst initialState = {\n  user: null,\n};\n\nexport const useAppStore = create<AppState>()((set) => ({\n  ...initialState,\n  setUser: (user) => set({ user, profile: user?.profile || null }),\n  reset: () => set(initialState),\n}));\n```\n\n**Usage with React Query:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\nimport { useGetUser } from \"@/hooks/user.hooks\";\n\nexport const UserProfile = () => {\n  const setUser = useAppStore((state) => state.setUser);\n  const user = useAppStore((state) => state.user);\n\n  const { isLoading } = useGetUser({\n    onSuccess: (data) => setUser(data),\n  });\n\n  if (isLoading) return <div>Loading...</div>;\n\n  return <div>Welcome, {user?.name}</div>;\n};\n```",
+                "include": true
+              },
+              "option2": {
+                "content": "### Store Example (Without Database)\n\n```typescript\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\n\ninterface AppState {\n  theme: \"light\" | \"dark\";\n  setTheme: (theme: \"light\" | \"dark\") => void;\n  sidebarOpen: boolean;\n  toggleSidebar: () => void;\n}\n\nexport const useAppStore = create<AppState>()(\n  persist(\n    (set) => ({\n      theme: \"light\",\n      setTheme: (theme) => set({ theme }),\n      sidebarOpen: true,\n      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),\n    }),\n    {\n      name: \"app-storage\",\n    }\n  )\n);\n```\n\n**Usage:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\n\nexport const ThemeToggle = () => {\n  const { theme, setTheme } = useAppStore();\n\n  return (\n    <button onClick={() => setTheme(theme === \"light\" ? \"dark\" : \"light\")}>\n      Toggle Theme\n    </button>\n  );\n};\n```",
+                "include": true
+              }
+            },
+            "section3": {
+              "option1": {
+                "content": "**No actions file needed for client-side only applications.**\n\nUse API routes or external API calls directly in hooks with React Query.",
+                "include": true
+              },
+              "option2": {
+                "content": "**Actions file example (NeonDB + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+                "include": true
+              },
+              "option3": {
+                "content": "**Actions file example (Supabase + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+                "include": true
+              },
+              "option4": {
+                "content": "**Actions file example (Supabase Auth Only):**\n\n```typescript\n\"use server\";\n\nimport { createClient } from \"@/lib/supabase/server\";\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\n\nexport const getUserAction = async (): Promise<ActionResponse<any>> => {\n  try {\n    const supabase = await createClient();\n\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n    if (authError || !user) {\n      return getActionResponse({ error: authError?.message || \"Not authenticated\" });\n    }\n\n    const { data, error } = await supabase\n      .from('users')\n      .select('*')\n      .eq('id', user.id)\n      .single();\n\n    if (error) throw error;\n\n    return getActionResponse({ data });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+                "include": true
+              }
+            },
+            "section4": {
+              "option1": {
+                "content": "**Hooks file example (Client-side):**\n\n```typescript\n\"use client\";\n\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetData = () => {\n  const { setData } = useAppStore();\n\n  return useQuery({\n    queryKey: [\"data\"],\n    queryFn: async () => {\n      const response = await fetch(\"/api/data\");\n      if (!response.ok) throw new Error(\"Failed to fetch\");\n      const data = await response.json();\n      setData(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useCreateData = () => {\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (newData: any) => {\n      const response = await fetch(\"/api/data\", {\n        method: \"POST\",\n        headers: { \"Content-Type\": \"application/json\" },\n        body: JSON.stringify(newData),\n      });\n      if (!response.ok) throw new Error(\"Failed to create\");\n      return response.json();\n    },\n    onSuccess: () => {\n      router.refresh();\n    },\n  });\n};\n```",
+                "include": true
+              },
+              "option2": {
+                "content": "**Hooks file example (Better Auth):**\n\n```typescript\n\"use client\";\n\nimport { configuration, privatePaths } from \"@/configuration\";\nimport { signIn } from \"@/lib/auth-client\";\nimport { useMutation, useQuery } from \"@tanstack/react-query\";\nimport { usePathname, useRouter } from \"next/navigation\";\nimport { toast } from \"sonner\";\nimport { Toast } from \"../(components)/Toast\";\nimport { CypressDataAttributes } from \"../../types/cypress.types\";\nimport { useAppStore, useRedirectStore } from \"../layout.stores\";\nimport { SignInData } from \"../layout.types\";\nimport { getUserAction } from \"./layout.actions\";\nimport { useAuthLayoutStore } from \"./layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const { reset: resetAuthLayout } = useAuthLayoutStore();\n  const { setUserData } = useRedirectStore();\n  const pathname = usePathname();\n\n  const router = useRouter();\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const { data, error } = await getUserAction();\n      if (!data || error) {\n        if (privatePaths.includes(pathname)) {\n          router.push(configuration.paths.signIn);\n        }\n        reset();\n        resetAuthLayout();\n      }\n      if (error) throw error;\n      setUser(data ?? null);\n\n      setUserData(data);\n\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser, setTempEmail } = useAppStore();\n  const { setUserData } = useRedirectStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (signInData: SignInData) => {\n      const { error } = await signIn.email({\n        email: signInData.email,\n        password: signInData.password,\n      });\n\n      if (error?.status === 403) setTempEmail(signInData.email);\n\n      if (error) throw error;\n      const { data: userData, error: userError } = await getUserAction();\n\n      if (userError) throw new Error(userError);\n\n      return userData;\n    },\n    onSuccess: (data) => {\n      if (data) {\n        setUser(data);\n        setUserData(data);\n      }\n      toast.custom(() => (\n        <Toast\n          variant=\"success\"\n          title=\"Success\"\n          message=\"Successfully signed in\"\n          data-cy={CypressDataAttributes.TOAST_SUCCESS}\n        />\n      ));\n      if (data && !data.profile?.isOnboardingComplete) {\n        router.push(configuration.paths.onboarding);\n        return;\n      }\n      router.push(configuration.paths.home);\n    },\n    onError: (\n      error: {\n        code?: string | undefined;\n        message?: string | undefined;\n        status: number;\n        statusText: string;\n      } | null\n    ) => {\n      if (error?.status === 403) return;\n      toast.custom(() => (\n        <Toast\n          variant=\"error\"\n          title=\"Sign In Failed\"\n          message={error?.message || \"Failed to sign in\"}\n          data-cy={CypressDataAttributes.TOAST_ERROR}\n        />\n      ));\n    },\n  });\n};\n```",
+                "include": true
+              },
+              "option3": {
+                "content": "**Hooks file example (Supabase Auth):**\n\n```typescript\n\"use client\";\n\nimport { createClient } from \"@/lib/supabase/client\";\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const router = useRouter();\n\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const supabase = createClient();\n      const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n      if (authError || !user) {\n        reset();\n        return null;\n      }\n\n      const { data, error } = await supabase\n        .from('users')\n        .select('*')\n        .eq('id', user.id)\n        .single();\n\n      if (error) throw error;\n\n      setUser(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser } = useAppStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async ({ email, password }: { email: string; password: string }) => {\n      const supabase = createClient();\n      const { data, error } = await supabase.auth.signInWithPassword({\n        email,\n        password,\n      });\n\n      if (error) throw error;\n\n      return data.user;\n    },\n    onSuccess: (user) => {\n      setUser(user);\n      router.push('/dashboard');\n    },\n  });\n};\n```",
+                "include": true
+              }
+            },
+            "section5": {
+              "option1": {
+                "content": "**No utility files needed for client-side only applications.**",
+                "include": true
+              },
+              "option2": {
+                "content": "**Utility files (Better Auth + Prisma):**\n\n## `prisma-rls.ts`:\n\n```typescript\nimport { Prisma } from \"@prisma/client\";\nimport { prisma } from \"./prisma\";\n\nfunction forUser(userId: string, tenantId?: string) {\n  return Prisma.defineExtension((prisma) =>\n    prisma.$extends({\n      query: {\n        $allModels: {\n          async $allOperations({ args, query }) {\n            if (tenantId) {\n              const [, , result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                prisma.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            } else {\n              const [, result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            }\n          },\n        },\n      },\n    })\n  );\n}\n\nexport function createRLSClient(userId: string, tenantId?: string) {\n  return prisma.$extends(forUser(userId, tenantId));\n}\n```\n\n## `auth.util.ts`\n\n```typescript\nimport { User } from \"better-auth\";\nimport jwt from \"jsonwebtoken\";\nimport { headers } from \"next/headers\";\nimport { auth, Session } from \"./auth\";\nimport { createRLSClient } from \"./prisma-rls\";\n\nexport async function getAuthenticatedClient(user?: User): Promise<{\n  db: ReturnType<typeof createRLSClient>;\n  session: Session | null;\n}> {\n  const headersList = await headers();\n\n  const session = await auth.api.getSession({\n    headers: headersList,\n  });\n\n  const userId = user?.id || session?.user.id;\n\n  if (!userId) {\n    throw new Error(\"Unauthorized\");\n  }\n\n  const db = createRLSClient(userId);\n\n  return { db, session };\n}\n\nexport function generateSupabaseJWT(userId: string, userRole: string): string {\n  const jwtSecret = process.env.SUPABASE_JWT_SECRET;\n\n  if (!jwtSecret) {\n    throw new Error(\"SUPABASE_JWT_SECRET is required for JWT generation\");\n  }\n\n  const payload = {\n    aud: \"authenticated\",\n    exp: Math.floor(Date.now() / 1000) + 60 * 60,\n    sub: userId,\n    email: `${userId}@better-auth.local`,\n    role: \"authenticated\",\n    user_metadata: {\n      better_auth_user_id: userId,\n      better_auth_role: userRole,\n    },\n    app_metadata: {\n      provider: \"better-auth\",\n      providers: [\"better-auth\"],\n    },\n  };\n\n  return jwt.sign(payload, jwtSecret, {\n    algorithm: \"HS256\",\n  });\n}\n```\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
+                "include": true
+              },
+              "option3": {
+                "content": "**Utility files (Supabase):**\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
+                "include": true
+              }
             }
-          ],
-          "sections": {},
+          },
           "include": true,
+          "includeInSidebar": false,
           "isDynamicRobotsFile": false
         },
         {
-          "id": "app-structure",
-          "name": "app-structure",
-          "displayName": "App Structure",
+          "id": "6-robots",
+          "name": "6-robots",
+          "displayName": " 6-ROBOTS",
           "type": "file",
-          "order": 4,
-          "path": "app-structure",
-          "urlPath": "/app-structure",
-          "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-          "components": [
-            {
-              "id": "component-LayoutAndStructure",
-              "name": "LayoutAndStructure",
-              "displayName": "LayoutAndStructure",
-              "type": "component",
-              "path": "app-structure.component.LayoutAndStructure",
-              "urlPath": "",
-              "componentId": "LayoutAndStructure",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true,
-          "isDynamicRobotsFile": false
-        },
-        {
-          "id": "database",
-          "name": "database",
-          "displayName": "Database",
-          "type": "file",
-          "order": 5,
-          "path": "database",
-          "urlPath": "/database",
-          "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
-          "components": [
-            {
-              "id": "component-DatabaseConfiguration",
-              "name": "DatabaseConfiguration",
-              "displayName": "DatabaseConfiguration",
-              "type": "component",
-              "path": "database.component.DatabaseConfiguration",
-              "urlPath": "",
-              "componentId": "DatabaseConfiguration",
-              "include": true
-            }
-          ],
-          "sections": {},
-          "include": true,
-          "isDynamicRobotsFile": false
-        },
-        {
-          "id": "robots",
-          "name": "robots",
-          "displayName": "ROBOTS",
-          "type": "file",
-          "order": 6,
-          "path": "robots",
-          "urlPath": "/robots",
+          "path": "6-robots",
+          "urlPath": "/6-robots",
           "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Tech stack\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-2 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n\\`\\`\\`\n",
           "components": [],
           "sections": {
@@ -632,17 +720,17 @@
             }
           },
           "include": true,
+          "includeInSidebar": false,
           "isDynamicRobotsFile": true,
           "visibleAfterPage": "readme"
         },
         {
-          "id": "deployment",
-          "name": "deployment",
-          "displayName": "Deployment",
+          "id": "7-deployment",
+          "name": "7-deployment",
+          "displayName": " 7-Deployment",
           "type": "file",
-          "order": 7,
-          "path": "deployment",
-          "urlPath": "/deployment",
+          "path": "7-deployment",
+          "urlPath": "/7-deployment",
           "content": "# Deployment Instructions\n\nThis guide provides step-by-step instructions for deploying your application based on your selected technology stack.\n\n## Platform Setup\n\n<!-- section-1 -->\n\n## Database Deployment\n\n<!-- section-2 -->\n\n## Environment Variables\n\n<!-- section-3 -->\n\n## Authentication Setup\n\n<!-- section-4 -->\n\n## Post-Deployment Tasks\n\n<!-- section-5 -->\n",
           "components": [],
           "sections": {
@@ -770,91 +858,8 @@
             }
           },
           "include": true,
-          "isDynamicRobotsFile": false,
-          "visibleAfterPage": "robots"
-        },
-        {
-          "id": "util",
-          "name": "util",
-          "displayName": "util",
-          "type": "file",
-          "order": 10,
-          "path": "util",
-          "urlPath": "/util",
-          "content": "# File examples\n\nThis guide provides code examples and patterns for organizing your application code following best practices.\n\n## Types file example\n\nType definitions establish contracts and ensure type safety throughout your application.\n\n<!-- section-1 -->\n\n## Stores file example\n\nZustand stores manage application state with persistence and middleware support.\n\n<!-- section-2 -->\n\n## Actions file example\n\nServer actions handle data mutations and communicate with your backend services.\n\n<!-- section-3 -->\n\n## Hooks file example\n\nReact Query hooks manage data fetching, caching, and synchronization.\n\n<!-- section-4 -->\n\n## Utility files\n\nUtility modules provide reusable helper functions and configurations.\n\n<!-- section-5 -->\n",
-          "components": [],
-          "sections": {
-            "section1": {
-              "option1": {
-                "content": "**Types file example (Client-side):**\n\n```typescript\nexport interface AppState {\n  data: any[];\n  setData: (data: any[]) => void;\n  isLoading: boolean;\n  setIsLoading: (isLoading: boolean) => void;\n  reset: () => void;\n}\n\nexport interface ApiData {\n  id: string;\n  name: string;\n  value: number;\n}\n```",
-                "include": true
-              },
-              "option2": {
-                "content": "**Types file example (With Database):**\n\n```typescript\nimport { User } from \"@prisma/client\";\n\nexport interface AppState {\n  user: User | null;\n  setUser: (user: User | null) => void;\n  tempEmail?: string;\n  setTempEmail: (tempEmail: string) => void;\n  reset: () => void;\n}\n\nexport interface SignInData {\n  email: string;\n  password: string;\n}\n```",
-                "include": true
-              }
-            },
-            "section2": {
-              "option1": {
-                "content": "### Store Example (With Database)\n\n```typescript\nimport { UserRole } from \"@prisma/client\";\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\nimport { AppState, ExtendedUser, RedirectState } from \"./layout.types\";\n\nconst initialState = {\n  user: null,\n};\n\nexport const useAppStore = create<AppState>()((set) => ({\n  ...initialState,\n  setUser: (user) => set({ user, profile: user?.profile || null }),\n  reset: () => set(initialState),\n}));\n```\n\n**Usage with React Query:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\nimport { useGetUser } from \"@/hooks/user.hooks\";\n\nexport const UserProfile = () => {\n  const setUser = useAppStore((state) => state.setUser);\n  const user = useAppStore((state) => state.user);\n\n  const { isLoading } = useGetUser({\n    onSuccess: (data) => setUser(data),\n  });\n\n  if (isLoading) return <div>Loading...</div>;\n\n  return <div>Welcome, {user?.name}</div>;\n};\n```",
-                "include": true
-              },
-              "option2": {
-                "content": "### Store Example (Without Database)\n\n```typescript\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\n\ninterface AppState {\n  theme: \"light\" | \"dark\";\n  setTheme: (theme: \"light\" | \"dark\") => void;\n  sidebarOpen: boolean;\n  toggleSidebar: () => void;\n}\n\nexport const useAppStore = create<AppState>()(\n  persist(\n    (set) => ({\n      theme: \"light\",\n      setTheme: (theme) => set({ theme }),\n      sidebarOpen: true,\n      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),\n    }),\n    {\n      name: \"app-storage\",\n    }\n  )\n);\n```\n\n**Usage:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\n\nexport const ThemeToggle = () => {\n  const { theme, setTheme } = useAppStore();\n\n  return (\n    <button onClick={() => setTheme(theme === \"light\" ? \"dark\" : \"light\")}>\n      Toggle Theme\n    </button>\n  );\n};\n```",
-                "include": true
-              }
-            },
-            "section3": {
-              "option1": {
-                "content": "**No actions file needed for client-side only applications.**\n\nUse API routes or external API calls directly in hooks with React Query.",
-                "include": true
-              },
-              "option2": {
-                "content": "**Actions file example (NeonDB + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-                "include": true
-              },
-              "option3": {
-                "content": "**Actions file example (Supabase + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-                "include": true
-              },
-              "option4": {
-                "content": "**Actions file example (Supabase Auth Only):**\n\n```typescript\n\"use server\";\n\nimport { createClient } from \"@/lib/supabase/server\";\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\n\nexport const getUserAction = async (): Promise<ActionResponse<any>> => {\n  try {\n    const supabase = await createClient();\n\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n    if (authError || !user) {\n      return getActionResponse({ error: authError?.message || \"Not authenticated\" });\n    }\n\n    const { data, error } = await supabase\n      .from('users')\n      .select('*')\n      .eq('id', user.id)\n      .single();\n\n    if (error) throw error;\n\n    return getActionResponse({ data });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-                "include": true
-              }
-            },
-            "section4": {
-              "option1": {
-                "content": "**Hooks file example (Client-side):**\n\n```typescript\n\"use client\";\n\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetData = () => {\n  const { setData } = useAppStore();\n\n  return useQuery({\n    queryKey: [\"data\"],\n    queryFn: async () => {\n      const response = await fetch(\"/api/data\");\n      if (!response.ok) throw new Error(\"Failed to fetch\");\n      const data = await response.json();\n      setData(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useCreateData = () => {\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (newData: any) => {\n      const response = await fetch(\"/api/data\", {\n        method: \"POST\",\n        headers: { \"Content-Type\": \"application/json\" },\n        body: JSON.stringify(newData),\n      });\n      if (!response.ok) throw new Error(\"Failed to create\");\n      return response.json();\n    },\n    onSuccess: () => {\n      router.refresh();\n    },\n  });\n};\n```",
-                "include": true
-              },
-              "option2": {
-                "content": "**Hooks file example (Better Auth):**\n\n```typescript\n\"use client\";\n\nimport { configuration, privatePaths } from \"@/configuration\";\nimport { signIn } from \"@/lib/auth-client\";\nimport { useMutation, useQuery } from \"@tanstack/react-query\";\nimport { usePathname, useRouter } from \"next/navigation\";\nimport { toast } from \"sonner\";\nimport { Toast } from \"../(components)/Toast\";\nimport { CypressDataAttributes } from \"../../types/cypress.types\";\nimport { useAppStore, useRedirectStore } from \"../layout.stores\";\nimport { SignInData } from \"../layout.types\";\nimport { getUserAction } from \"./layout.actions\";\nimport { useAuthLayoutStore } from \"./layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const { reset: resetAuthLayout } = useAuthLayoutStore();\n  const { setUserData } = useRedirectStore();\n  const pathname = usePathname();\n\n  const router = useRouter();\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const { data, error } = await getUserAction();\n      if (!data || error) {\n        if (privatePaths.includes(pathname)) {\n          router.push(configuration.paths.signIn);\n        }\n        reset();\n        resetAuthLayout();\n      }\n      if (error) throw error;\n      setUser(data ?? null);\n\n      setUserData(data);\n\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser, setTempEmail } = useAppStore();\n  const { setUserData } = useRedirectStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (signInData: SignInData) => {\n      const { error } = await signIn.email({\n        email: signInData.email,\n        password: signInData.password,\n      });\n\n      if (error?.status === 403) setTempEmail(signInData.email);\n\n      if (error) throw error;\n      const { data: userData, error: userError } = await getUserAction();\n\n      if (userError) throw new Error(userError);\n\n      return userData;\n    },\n    onSuccess: (data) => {\n      if (data) {\n        setUser(data);\n        setUserData(data);\n      }\n      toast.custom(() => (\n        <Toast\n          variant=\"success\"\n          title=\"Success\"\n          message=\"Successfully signed in\"\n          data-cy={CypressDataAttributes.TOAST_SUCCESS}\n        />\n      ));\n      if (data && !data.profile?.isOnboardingComplete) {\n        router.push(configuration.paths.onboarding);\n        return;\n      }\n      router.push(configuration.paths.home);\n    },\n    onError: (\n      error: {\n        code?: string | undefined;\n        message?: string | undefined;\n        status: number;\n        statusText: string;\n      } | null\n    ) => {\n      if (error?.status === 403) return;\n      toast.custom(() => (\n        <Toast\n          variant=\"error\"\n          title=\"Sign In Failed\"\n          message={error?.message || \"Failed to sign in\"}\n          data-cy={CypressDataAttributes.TOAST_ERROR}\n        />\n      ));\n    },\n  });\n};\n```",
-                "include": true
-              },
-              "option3": {
-                "content": "**Hooks file example (Supabase Auth):**\n\n```typescript\n\"use client\";\n\nimport { createClient } from \"@/lib/supabase/client\";\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const router = useRouter();\n\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const supabase = createClient();\n      const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n      if (authError || !user) {\n        reset();\n        return null;\n      }\n\n      const { data, error } = await supabase\n        .from('users')\n        .select('*')\n        .eq('id', user.id)\n        .single();\n\n      if (error) throw error;\n\n      setUser(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser } = useAppStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async ({ email, password }: { email: string; password: string }) => {\n      const supabase = createClient();\n      const { data, error } = await supabase.auth.signInWithPassword({\n        email,\n        password,\n      });\n\n      if (error) throw error;\n\n      return data.user;\n    },\n    onSuccess: (user) => {\n      setUser(user);\n      router.push('/dashboard');\n    },\n  });\n};\n```",
-                "include": true
-              }
-            },
-            "section5": {
-              "option1": {
-                "content": "**No utility files needed for client-side only applications.**",
-                "include": true
-              },
-              "option2": {
-                "content": "**Utility files (Better Auth + Prisma):**\n\n## `prisma-rls.ts`:\n\n```typescript\nimport { Prisma } from \"@prisma/client\";\nimport { prisma } from \"./prisma\";\n\nfunction forUser(userId: string, tenantId?: string) {\n  return Prisma.defineExtension((prisma) =>\n    prisma.$extends({\n      query: {\n        $allModels: {\n          async $allOperations({ args, query }) {\n            if (tenantId) {\n              const [, , result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                prisma.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            } else {\n              const [, result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            }\n          },\n        },\n      },\n    })\n  );\n}\n\nexport function createRLSClient(userId: string, tenantId?: string) {\n  return prisma.$extends(forUser(userId, tenantId));\n}\n```\n\n## `auth.util.ts`\n\n```typescript\nimport { User } from \"better-auth\";\nimport jwt from \"jsonwebtoken\";\nimport { headers } from \"next/headers\";\nimport { auth, Session } from \"./auth\";\nimport { createRLSClient } from \"./prisma-rls\";\n\nexport async function getAuthenticatedClient(user?: User): Promise<{\n  db: ReturnType<typeof createRLSClient>;\n  session: Session | null;\n}> {\n  const headersList = await headers();\n\n  const session = await auth.api.getSession({\n    headers: headersList,\n  });\n\n  const userId = user?.id || session?.user.id;\n\n  if (!userId) {\n    throw new Error(\"Unauthorized\");\n  }\n\n  const db = createRLSClient(userId);\n\n  return { db, session };\n}\n\nexport function generateSupabaseJWT(userId: string, userRole: string): string {\n  const jwtSecret = process.env.SUPABASE_JWT_SECRET;\n\n  if (!jwtSecret) {\n    throw new Error(\"SUPABASE_JWT_SECRET is required for JWT generation\");\n  }\n\n  const payload = {\n    aud: \"authenticated\",\n    exp: Math.floor(Date.now() / 1000) + 60 * 60,\n    sub: userId,\n    email: `${userId}@better-auth.local`,\n    role: \"authenticated\",\n    user_metadata: {\n      better_auth_user_id: userId,\n      better_auth_role: userRole,\n    },\n    app_metadata: {\n      provider: \"better-auth\",\n      providers: [\"better-auth\"],\n    },\n  };\n\n  return jwt.sign(payload, jwtSecret, {\n    algorithm: \"HS256\",\n  });\n}\n```\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
-                "include": true
-              },
-              "option3": {
-                "content": "**Utility files (Supabase):**\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
-                "include": true
-              }
-            }
-          },
-          "include": true,
-          "isDynamicRobotsFile": false,
-          "visibleAfterPage": "robots",
-          "includeInToolbar": false
+          "includeInSidebar": false,
+          "isDynamicRobotsFile": false
         },
         {
           "id": "code-files",
@@ -864,6 +869,7 @@
           "path": "code-files",
           "urlPath": "/code-files",
           "include": true,
+          "includeInSidebar": true,
           "children": []
         }
       ]
@@ -891,6 +897,7 @@
       ],
       "sections": {},
       "include": true,
+      "includeInSidebar": true,
       "isDynamicRobotsFile": false
     },
     "readme.component.READMEComponent": {
@@ -903,12 +910,120 @@
       "componentId": "READMEComponent",
       "include": true
     },
+    "theme": {
+      "id": "theme",
+      "name": "theme",
+      "displayName": "Theme",
+      "type": "file",
+      "order": 2,
+      "path": "theme",
+      "urlPath": "/theme",
+      "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
+      "components": [
+        {
+          "id": "component-ThemeConfiguration",
+          "name": "ThemeConfiguration",
+          "displayName": "ThemeConfiguration",
+          "type": "component",
+          "path": "theme.component.ThemeConfiguration",
+          "urlPath": "",
+          "componentId": "ThemeConfiguration",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true,
+      "includeInSidebar": true,
+      "isDynamicRobotsFile": false
+    },
+    "theme.component.ThemeConfiguration": {
+      "id": "component-ThemeConfiguration",
+      "name": "ThemeConfiguration",
+      "displayName": "ThemeConfiguration",
+      "type": "component",
+      "path": "theme.component.ThemeConfiguration",
+      "urlPath": "",
+      "componentId": "ThemeConfiguration",
+      "include": true
+    },
+    "app-directory": {
+      "id": "app-directory",
+      "name": "app-directory",
+      "displayName": "App Directory",
+      "type": "file",
+      "order": 3,
+      "path": "app-directory",
+      "urlPath": "/app-directory",
+      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
+      "components": [
+        {
+          "id": "component-LayoutAndStructure",
+          "name": "LayoutAndStructure",
+          "displayName": "LayoutAndStructure",
+          "type": "component",
+          "path": "app-directory.component.LayoutAndStructure",
+          "urlPath": "",
+          "componentId": "LayoutAndStructure",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true,
+      "includeInSidebar": true,
+      "isDynamicRobotsFile": false
+    },
+    "app-directory.component.LayoutAndStructure": {
+      "id": "component-LayoutAndStructure",
+      "name": "LayoutAndStructure",
+      "displayName": "LayoutAndStructure",
+      "type": "component",
+      "path": "app-directory.component.LayoutAndStructure",
+      "urlPath": "",
+      "componentId": "LayoutAndStructure",
+      "include": true
+    },
+    "database": {
+      "id": "database",
+      "name": "database",
+      "displayName": "Database",
+      "type": "file",
+      "order": 4,
+      "path": "database",
+      "urlPath": "/database",
+      "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
+      "components": [
+        {
+          "id": "component-DatabaseConfiguration",
+          "name": "DatabaseConfiguration",
+          "displayName": "DatabaseConfiguration",
+          "type": "component",
+          "path": "database.component.DatabaseConfiguration",
+          "urlPath": "",
+          "componentId": "DatabaseConfiguration",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true,
+      "includeInSidebar": true,
+      "isDynamicRobotsFile": false
+    },
+    "database.component.DatabaseConfiguration": {
+      "id": "component-DatabaseConfiguration",
+      "name": "DatabaseConfiguration",
+      "displayName": "DatabaseConfiguration",
+      "type": "component",
+      "path": "database.component.DatabaseConfiguration",
+      "urlPath": "",
+      "componentId": "DatabaseConfiguration",
+      "include": true
+    },
     "ai-integration": {
       "id": "ai-integration",
       "name": "ai-integration",
       "displayName": "AI Integration",
       "type": "file",
-      "order": 2,
+      "order": 5,
       "path": "ai-integration",
       "urlPath": "/ai-integration",
       "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
@@ -941,6 +1056,7 @@
         }
       },
       "include": true,
+      "includeInSidebar": true,
       "isDynamicRobotsFile": false
     },
     "ai-integration.component.IDESelection": {
@@ -953,119 +1069,94 @@
       "componentId": "IDESelection",
       "include": true
     },
-    "theme": {
-      "id": "theme",
-      "name": "theme",
-      "displayName": "Theme",
+    "10-util": {
+      "id": "10-util",
+      "name": "10-util",
+      "displayName": " 10-util",
       "type": "file",
-      "order": 3,
-      "path": "theme",
-      "urlPath": "/theme",
-      "content": "# Theme configuration\n\nThis custom theme will be applied globally via Shadcn components and Tailwind classes.\n\n<!-- component-ThemeConfiguration -->\n",
-      "components": [
-        {
-          "id": "component-ThemeConfiguration",
-          "name": "ThemeConfiguration",
-          "displayName": "ThemeConfiguration",
-          "type": "component",
-          "path": "theme.component.ThemeConfiguration",
-          "urlPath": "",
-          "componentId": "ThemeConfiguration",
-          "include": true
+      "path": "10-util",
+      "urlPath": "/10-util",
+      "content": "# File examples\n\nThis guide provides code examples and patterns for organizing your application code following best practices.\n\n## Types file example\n\nType definitions establish contracts and ensure type safety throughout your application.\n\n<!-- section-1 -->\n\n## Stores file example\n\nZustand stores manage application state with persistence and middleware support.\n\n<!-- section-2 -->\n\n## Actions file example\n\nServer actions handle data mutations and communicate with your backend services.\n\n<!-- section-3 -->\n\n## Hooks file example\n\nReact Query hooks manage data fetching, caching, and synchronization.\n\n<!-- section-4 -->\n\n## Utility files\n\nUtility modules provide reusable helper functions and configurations.\n\n<!-- section-5 -->\n",
+      "components": [],
+      "sections": {
+        "section1": {
+          "option1": {
+            "content": "**Types file example (Client-side):**\n\n```typescript\nexport interface AppState {\n  data: any[];\n  setData: (data: any[]) => void;\n  isLoading: boolean;\n  setIsLoading: (isLoading: boolean) => void;\n  reset: () => void;\n}\n\nexport interface ApiData {\n  id: string;\n  name: string;\n  value: number;\n}\n```",
+            "include": true
+          },
+          "option2": {
+            "content": "**Types file example (With Database):**\n\n```typescript\nimport { User } from \"@prisma/client\";\n\nexport interface AppState {\n  user: User | null;\n  setUser: (user: User | null) => void;\n  tempEmail?: string;\n  setTempEmail: (tempEmail: string) => void;\n  reset: () => void;\n}\n\nexport interface SignInData {\n  email: string;\n  password: string;\n}\n```",
+            "include": true
+          }
+        },
+        "section2": {
+          "option1": {
+            "content": "### Store Example (With Database)\n\n```typescript\nimport { UserRole } from \"@prisma/client\";\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\nimport { AppState, ExtendedUser, RedirectState } from \"./layout.types\";\n\nconst initialState = {\n  user: null,\n};\n\nexport const useAppStore = create<AppState>()((set) => ({\n  ...initialState,\n  setUser: (user) => set({ user, profile: user?.profile || null }),\n  reset: () => set(initialState),\n}));\n```\n\n**Usage with React Query:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\nimport { useGetUser } from \"@/hooks/user.hooks\";\n\nexport const UserProfile = () => {\n  const setUser = useAppStore((state) => state.setUser);\n  const user = useAppStore((state) => state.user);\n\n  const { isLoading } = useGetUser({\n    onSuccess: (data) => setUser(data),\n  });\n\n  if (isLoading) return <div>Loading...</div>;\n\n  return <div>Welcome, {user?.name}</div>;\n};\n```",
+            "include": true
+          },
+          "option2": {
+            "content": "### Store Example (Without Database)\n\n```typescript\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\n\ninterface AppState {\n  theme: \"light\" | \"dark\";\n  setTheme: (theme: \"light\" | \"dark\") => void;\n  sidebarOpen: boolean;\n  toggleSidebar: () => void;\n}\n\nexport const useAppStore = create<AppState>()(\n  persist(\n    (set) => ({\n      theme: \"light\",\n      setTheme: (theme) => set({ theme }),\n      sidebarOpen: true,\n      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),\n    }),\n    {\n      name: \"app-storage\",\n    }\n  )\n);\n```\n\n**Usage:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\n\nexport const ThemeToggle = () => {\n  const { theme, setTheme } = useAppStore();\n\n  return (\n    <button onClick={() => setTheme(theme === \"light\" ? \"dark\" : \"light\")}>\n      Toggle Theme\n    </button>\n  );\n};\n```",
+            "include": true
+          }
+        },
+        "section3": {
+          "option1": {
+            "content": "**No actions file needed for client-side only applications.**\n\nUse API routes or external API calls directly in hooks with React Query.",
+            "include": true
+          },
+          "option2": {
+            "content": "**Actions file example (NeonDB + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+            "include": true
+          },
+          "option3": {
+            "content": "**Actions file example (Supabase + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+            "include": true
+          },
+          "option4": {
+            "content": "**Actions file example (Supabase Auth Only):**\n\n```typescript\n\"use server\";\n\nimport { createClient } from \"@/lib/supabase/server\";\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\n\nexport const getUserAction = async (): Promise<ActionResponse<any>> => {\n  try {\n    const supabase = await createClient();\n\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n    if (authError || !user) {\n      return getActionResponse({ error: authError?.message || \"Not authenticated\" });\n    }\n\n    const { data, error } = await supabase\n      .from('users')\n      .select('*')\n      .eq('id', user.id)\n      .single();\n\n    if (error) throw error;\n\n    return getActionResponse({ data });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
+            "include": true
+          }
+        },
+        "section4": {
+          "option1": {
+            "content": "**Hooks file example (Client-side):**\n\n```typescript\n\"use client\";\n\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetData = () => {\n  const { setData } = useAppStore();\n\n  return useQuery({\n    queryKey: [\"data\"],\n    queryFn: async () => {\n      const response = await fetch(\"/api/data\");\n      if (!response.ok) throw new Error(\"Failed to fetch\");\n      const data = await response.json();\n      setData(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useCreateData = () => {\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (newData: any) => {\n      const response = await fetch(\"/api/data\", {\n        method: \"POST\",\n        headers: { \"Content-Type\": \"application/json\" },\n        body: JSON.stringify(newData),\n      });\n      if (!response.ok) throw new Error(\"Failed to create\");\n      return response.json();\n    },\n    onSuccess: () => {\n      router.refresh();\n    },\n  });\n};\n```",
+            "include": true
+          },
+          "option2": {
+            "content": "**Hooks file example (Better Auth):**\n\n```typescript\n\"use client\";\n\nimport { configuration, privatePaths } from \"@/configuration\";\nimport { signIn } from \"@/lib/auth-client\";\nimport { useMutation, useQuery } from \"@tanstack/react-query\";\nimport { usePathname, useRouter } from \"next/navigation\";\nimport { toast } from \"sonner\";\nimport { Toast } from \"../(components)/Toast\";\nimport { CypressDataAttributes } from \"../../types/cypress.types\";\nimport { useAppStore, useRedirectStore } from \"../layout.stores\";\nimport { SignInData } from \"../layout.types\";\nimport { getUserAction } from \"./layout.actions\";\nimport { useAuthLayoutStore } from \"./layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const { reset: resetAuthLayout } = useAuthLayoutStore();\n  const { setUserData } = useRedirectStore();\n  const pathname = usePathname();\n\n  const router = useRouter();\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const { data, error } = await getUserAction();\n      if (!data || error) {\n        if (privatePaths.includes(pathname)) {\n          router.push(configuration.paths.signIn);\n        }\n        reset();\n        resetAuthLayout();\n      }\n      if (error) throw error;\n      setUser(data ?? null);\n\n      setUserData(data);\n\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser, setTempEmail } = useAppStore();\n  const { setUserData } = useRedirectStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (signInData: SignInData) => {\n      const { error } = await signIn.email({\n        email: signInData.email,\n        password: signInData.password,\n      });\n\n      if (error?.status === 403) setTempEmail(signInData.email);\n\n      if (error) throw error;\n      const { data: userData, error: userError } = await getUserAction();\n\n      if (userError) throw new Error(userError);\n\n      return userData;\n    },\n    onSuccess: (data) => {\n      if (data) {\n        setUser(data);\n        setUserData(data);\n      }\n      toast.custom(() => (\n        <Toast\n          variant=\"success\"\n          title=\"Success\"\n          message=\"Successfully signed in\"\n          data-cy={CypressDataAttributes.TOAST_SUCCESS}\n        />\n      ));\n      if (data && !data.profile?.isOnboardingComplete) {\n        router.push(configuration.paths.onboarding);\n        return;\n      }\n      router.push(configuration.paths.home);\n    },\n    onError: (\n      error: {\n        code?: string | undefined;\n        message?: string | undefined;\n        status: number;\n        statusText: string;\n      } | null\n    ) => {\n      if (error?.status === 403) return;\n      toast.custom(() => (\n        <Toast\n          variant=\"error\"\n          title=\"Sign In Failed\"\n          message={error?.message || \"Failed to sign in\"}\n          data-cy={CypressDataAttributes.TOAST_ERROR}\n        />\n      ));\n    },\n  });\n};\n```",
+            "include": true
+          },
+          "option3": {
+            "content": "**Hooks file example (Supabase Auth):**\n\n```typescript\n\"use client\";\n\nimport { createClient } from \"@/lib/supabase/client\";\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const router = useRouter();\n\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const supabase = createClient();\n      const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n      if (authError || !user) {\n        reset();\n        return null;\n      }\n\n      const { data, error } = await supabase\n        .from('users')\n        .select('*')\n        .eq('id', user.id)\n        .single();\n\n      if (error) throw error;\n\n      setUser(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser } = useAppStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async ({ email, password }: { email: string; password: string }) => {\n      const supabase = createClient();\n      const { data, error } = await supabase.auth.signInWithPassword({\n        email,\n        password,\n      });\n\n      if (error) throw error;\n\n      return data.user;\n    },\n    onSuccess: (user) => {\n      setUser(user);\n      router.push('/dashboard');\n    },\n  });\n};\n```",
+            "include": true
+          }
+        },
+        "section5": {
+          "option1": {
+            "content": "**No utility files needed for client-side only applications.**",
+            "include": true
+          },
+          "option2": {
+            "content": "**Utility files (Better Auth + Prisma):**\n\n## `prisma-rls.ts`:\n\n```typescript\nimport { Prisma } from \"@prisma/client\";\nimport { prisma } from \"./prisma\";\n\nfunction forUser(userId: string, tenantId?: string) {\n  return Prisma.defineExtension((prisma) =>\n    prisma.$extends({\n      query: {\n        $allModels: {\n          async $allOperations({ args, query }) {\n            if (tenantId) {\n              const [, , result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                prisma.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            } else {\n              const [, result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            }\n          },\n        },\n      },\n    })\n  );\n}\n\nexport function createRLSClient(userId: string, tenantId?: string) {\n  return prisma.$extends(forUser(userId, tenantId));\n}\n```\n\n## `auth.util.ts`\n\n```typescript\nimport { User } from \"better-auth\";\nimport jwt from \"jsonwebtoken\";\nimport { headers } from \"next/headers\";\nimport { auth, Session } from \"./auth\";\nimport { createRLSClient } from \"./prisma-rls\";\n\nexport async function getAuthenticatedClient(user?: User): Promise<{\n  db: ReturnType<typeof createRLSClient>;\n  session: Session | null;\n}> {\n  const headersList = await headers();\n\n  const session = await auth.api.getSession({\n    headers: headersList,\n  });\n\n  const userId = user?.id || session?.user.id;\n\n  if (!userId) {\n    throw new Error(\"Unauthorized\");\n  }\n\n  const db = createRLSClient(userId);\n\n  return { db, session };\n}\n\nexport function generateSupabaseJWT(userId: string, userRole: string): string {\n  const jwtSecret = process.env.SUPABASE_JWT_SECRET;\n\n  if (!jwtSecret) {\n    throw new Error(\"SUPABASE_JWT_SECRET is required for JWT generation\");\n  }\n\n  const payload = {\n    aud: \"authenticated\",\n    exp: Math.floor(Date.now() / 1000) + 60 * 60,\n    sub: userId,\n    email: `${userId}@better-auth.local`,\n    role: \"authenticated\",\n    user_metadata: {\n      better_auth_user_id: userId,\n      better_auth_role: userRole,\n    },\n    app_metadata: {\n      provider: \"better-auth\",\n      providers: [\"better-auth\"],\n    },\n  };\n\n  return jwt.sign(payload, jwtSecret, {\n    algorithm: \"HS256\",\n  });\n}\n```\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
+            "include": true
+          },
+          "option3": {
+            "content": "**Utility files (Supabase):**\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
+            "include": true
+          }
         }
-      ],
-      "sections": {},
+      },
       "include": true,
+      "includeInSidebar": false,
       "isDynamicRobotsFile": false
     },
-    "theme.component.ThemeConfiguration": {
-      "id": "component-ThemeConfiguration",
-      "name": "ThemeConfiguration",
-      "displayName": "ThemeConfiguration",
-      "type": "component",
-      "path": "theme.component.ThemeConfiguration",
-      "urlPath": "",
-      "componentId": "ThemeConfiguration",
-      "include": true
-    },
-    "app-structure": {
-      "id": "app-structure",
-      "name": "app-structure",
-      "displayName": "App Structure",
+    "6-robots": {
+      "id": "6-robots",
+      "name": "6-robots",
+      "displayName": " 6-ROBOTS",
       "type": "file",
-      "order": 4,
-      "path": "app-structure",
-      "urlPath": "/app-structure",
-      "content": "# App Structure\n\nThe app directory provides a site map, a UI layout heirarchy, and a data management strategy.\n\n<!-- component-LayoutAndStructure -->\n",
-      "components": [
-        {
-          "id": "component-LayoutAndStructure",
-          "name": "LayoutAndStructure",
-          "displayName": "LayoutAndStructure",
-          "type": "component",
-          "path": "app-structure.component.LayoutAndStructure",
-          "urlPath": "",
-          "componentId": "LayoutAndStructure",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true,
-      "isDynamicRobotsFile": false
-    },
-    "app-structure.component.LayoutAndStructure": {
-      "id": "component-LayoutAndStructure",
-      "name": "LayoutAndStructure",
-      "displayName": "LayoutAndStructure",
-      "type": "component",
-      "path": "app-structure.component.LayoutAndStructure",
-      "urlPath": "",
-      "componentId": "LayoutAndStructure",
-      "include": true
-    },
-    "database": {
-      "id": "database",
-      "name": "database",
-      "displayName": "Database",
-      "type": "file",
-      "order": 5,
-      "path": "database",
-      "urlPath": "/database",
-      "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
-      "components": [
-        {
-          "id": "component-DatabaseConfiguration",
-          "name": "DatabaseConfiguration",
-          "displayName": "DatabaseConfiguration",
-          "type": "component",
-          "path": "database.component.DatabaseConfiguration",
-          "urlPath": "",
-          "componentId": "DatabaseConfiguration",
-          "include": true
-        }
-      ],
-      "sections": {},
-      "include": true,
-      "isDynamicRobotsFile": false
-    },
-    "database.component.DatabaseConfiguration": {
-      "id": "component-DatabaseConfiguration",
-      "name": "DatabaseConfiguration",
-      "displayName": "DatabaseConfiguration",
-      "type": "component",
-      "path": "database.component.DatabaseConfiguration",
-      "urlPath": "",
-      "componentId": "DatabaseConfiguration",
-      "include": true
-    },
-    "robots": {
-      "id": "robots",
-      "name": "robots",
-      "displayName": "ROBOTS",
-      "type": "file",
-      "order": 6,
-      "path": "robots",
-      "urlPath": "/robots",
+      "path": "6-robots",
+      "urlPath": "/6-robots",
       "content": "# ROBOTS.md\n\nThis file provides guidance to AI assistants when working with code in this repository.\n\n### Tech stack\n\n- **Next.js 15** with App Router architecture\n- **TypeScript** for type safety\n- **TailwindCSS & Shadcn** for styling\n\n<!-- section-1 -->\n\n# General rules:\n\n- Don't include any comments in any files.\n- All errors should be thrown - no \"fallback\" functionality\n- Import \"cn\" from \"@/lib/utils\" to concatenate classes.\n\n# File Organization and Naming Conventions\n\n- Types and store files alongside ancestor files\n- Actions and hooks files alongside descendent files\n\n\\`\\`\\`\n\n# Hook, action, store and type patterns\n\n<!-- section-2 -->\n\n# Console.logging\n\nAll logging should be performed using the \\`conditionalLog\\` function exported from \\`lib/log.utils.ts\\`\nThe \\`NEXT_PUBLIC_LOG_LABELS\\` variable in \\`.env.local\\` stores a comma separated string of log labels. Logs are returned if \\`NEXT_PUBLIC_LOG_LABELS=\"all\"\\`, or if \\`NEXT_PUBLIC_LOG_LABELS\\` includes the label arg in \\`conditionalLog\\`.\n\n\\`\\`\\`\n",
       "components": [],
       "sections": {
@@ -1107,17 +1198,17 @@
         }
       },
       "include": true,
+      "includeInSidebar": false,
       "isDynamicRobotsFile": true,
       "visibleAfterPage": "readme"
     },
-    "deployment": {
-      "id": "deployment",
-      "name": "deployment",
-      "displayName": "Deployment",
+    "7-deployment": {
+      "id": "7-deployment",
+      "name": "7-deployment",
+      "displayName": " 7-Deployment",
       "type": "file",
-      "order": 7,
-      "path": "deployment",
-      "urlPath": "/deployment",
+      "path": "7-deployment",
+      "urlPath": "/7-deployment",
       "content": "# Deployment Instructions\n\nThis guide provides step-by-step instructions for deploying your application based on your selected technology stack.\n\n## Platform Setup\n\n<!-- section-1 -->\n\n## Database Deployment\n\n<!-- section-2 -->\n\n## Environment Variables\n\n<!-- section-3 -->\n\n## Authentication Setup\n\n<!-- section-4 -->\n\n## Post-Deployment Tasks\n\n<!-- section-5 -->\n",
       "components": [],
       "sections": {
@@ -1245,91 +1336,8 @@
         }
       },
       "include": true,
-      "isDynamicRobotsFile": false,
-      "visibleAfterPage": "robots"
-    },
-    "util": {
-      "id": "util",
-      "name": "util",
-      "displayName": "util",
-      "type": "file",
-      "order": 10,
-      "path": "util",
-      "urlPath": "/util",
-      "content": "# File examples\n\nThis guide provides code examples and patterns for organizing your application code following best practices.\n\n## Types file example\n\nType definitions establish contracts and ensure type safety throughout your application.\n\n<!-- section-1 -->\n\n## Stores file example\n\nZustand stores manage application state with persistence and middleware support.\n\n<!-- section-2 -->\n\n## Actions file example\n\nServer actions handle data mutations and communicate with your backend services.\n\n<!-- section-3 -->\n\n## Hooks file example\n\nReact Query hooks manage data fetching, caching, and synchronization.\n\n<!-- section-4 -->\n\n## Utility files\n\nUtility modules provide reusable helper functions and configurations.\n\n<!-- section-5 -->\n",
-      "components": [],
-      "sections": {
-        "section1": {
-          "option1": {
-            "content": "**Types file example (Client-side):**\n\n```typescript\nexport interface AppState {\n  data: any[];\n  setData: (data: any[]) => void;\n  isLoading: boolean;\n  setIsLoading: (isLoading: boolean) => void;\n  reset: () => void;\n}\n\nexport interface ApiData {\n  id: string;\n  name: string;\n  value: number;\n}\n```",
-            "include": true
-          },
-          "option2": {
-            "content": "**Types file example (With Database):**\n\n```typescript\nimport { User } from \"@prisma/client\";\n\nexport interface AppState {\n  user: User | null;\n  setUser: (user: User | null) => void;\n  tempEmail?: string;\n  setTempEmail: (tempEmail: string) => void;\n  reset: () => void;\n}\n\nexport interface SignInData {\n  email: string;\n  password: string;\n}\n```",
-            "include": true
-          }
-        },
-        "section2": {
-          "option1": {
-            "content": "### Store Example (With Database)\n\n```typescript\nimport { UserRole } from \"@prisma/client\";\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\nimport { AppState, ExtendedUser, RedirectState } from \"./layout.types\";\n\nconst initialState = {\n  user: null,\n};\n\nexport const useAppStore = create<AppState>()((set) => ({\n  ...initialState,\n  setUser: (user) => set({ user, profile: user?.profile || null }),\n  reset: () => set(initialState),\n}));\n```\n\n**Usage with React Query:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\nimport { useGetUser } from \"@/hooks/user.hooks\";\n\nexport const UserProfile = () => {\n  const setUser = useAppStore((state) => state.setUser);\n  const user = useAppStore((state) => state.user);\n\n  const { isLoading } = useGetUser({\n    onSuccess: (data) => setUser(data),\n  });\n\n  if (isLoading) return <div>Loading...</div>;\n\n  return <div>Welcome, {user?.name}</div>;\n};\n```",
-            "include": true
-          },
-          "option2": {
-            "content": "### Store Example (Without Database)\n\n```typescript\nimport { create } from \"zustand\";\nimport { persist } from \"zustand/middleware\";\n\ninterface AppState {\n  theme: \"light\" | \"dark\";\n  setTheme: (theme: \"light\" | \"dark\") => void;\n  sidebarOpen: boolean;\n  toggleSidebar: () => void;\n}\n\nexport const useAppStore = create<AppState>()(\n  persist(\n    (set) => ({\n      theme: \"light\",\n      setTheme: (theme) => set({ theme }),\n      sidebarOpen: true,\n      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),\n    }),\n    {\n      name: \"app-storage\",\n    }\n  )\n);\n```\n\n**Usage:**\n```typescript\nimport { useAppStore } from \"@/stores/app.stores\";\n\nexport const ThemeToggle = () => {\n  const { theme, setTheme } = useAppStore();\n\n  return (\n    <button onClick={() => setTheme(theme === \"light\" ? \"dark\" : \"light\")}>\n      Toggle Theme\n    </button>\n  );\n};\n```",
-            "include": true
-          }
-        },
-        "section3": {
-          "option1": {
-            "content": "**No actions file needed for client-side only applications.**\n\nUse API routes or external API calls directly in hooks with React Query.",
-            "include": true
-          },
-          "option2": {
-            "content": "**Actions file example (NeonDB + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-            "include": true
-          },
-          "option3": {
-            "content": "**Actions file example (Supabase + Better Auth):**\n\n```typescript\n\"use server\";\n\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\nimport { auth } from \"@/lib/auth\";\nimport { getAuthenticatedClient } from \"@/lib/auth.utils\";\nimport { User } from \"@prisma/client\";\nimport { headers } from \"next/headers\";\n\nexport const getUserAction = async (): Promise<ActionResponse<User | null>> => {\n  try {\n    const session = await auth.api.getSession({\n      headers: await headers(),\n    });\n\n    if (!session?.user) return getActionResponse();\n\n    const { db } = await getAuthenticatedClient();\n\n    const prismaUser = await db.user.findUnique({\n      where: { id: session.user.id },\n    });\n\n    return getActionResponse({ data: prismaUser });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-            "include": true
-          },
-          "option4": {
-            "content": "**Actions file example (Supabase Auth Only):**\n\n```typescript\n\"use server\";\n\nimport { createClient } from \"@/lib/supabase/server\";\nimport { ActionResponse, getActionResponse } from \"@/lib/action.utils\";\n\nexport const getUserAction = async (): Promise<ActionResponse<any>> => {\n  try {\n    const supabase = await createClient();\n\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n    if (authError || !user) {\n      return getActionResponse({ error: authError?.message || \"Not authenticated\" });\n    }\n\n    const { data, error } = await supabase\n      .from('users')\n      .select('*')\n      .eq('id', user.id)\n      .single();\n\n    if (error) throw error;\n\n    return getActionResponse({ data });\n  } catch (error) {\n    return getActionResponse({ error });\n  }\n};\n```",
-            "include": true
-          }
-        },
-        "section4": {
-          "option1": {
-            "content": "**Hooks file example (Client-side):**\n\n```typescript\n\"use client\";\n\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetData = () => {\n  const { setData } = useAppStore();\n\n  return useQuery({\n    queryKey: [\"data\"],\n    queryFn: async () => {\n      const response = await fetch(\"/api/data\");\n      if (!response.ok) throw new Error(\"Failed to fetch\");\n      const data = await response.json();\n      setData(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useCreateData = () => {\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (newData: any) => {\n      const response = await fetch(\"/api/data\", {\n        method: \"POST\",\n        headers: { \"Content-Type\": \"application/json\" },\n        body: JSON.stringify(newData),\n      });\n      if (!response.ok) throw new Error(\"Failed to create\");\n      return response.json();\n    },\n    onSuccess: () => {\n      router.refresh();\n    },\n  });\n};\n```",
-            "include": true
-          },
-          "option2": {
-            "content": "**Hooks file example (Better Auth):**\n\n```typescript\n\"use client\";\n\nimport { configuration, privatePaths } from \"@/configuration\";\nimport { signIn } from \"@/lib/auth-client\";\nimport { useMutation, useQuery } from \"@tanstack/react-query\";\nimport { usePathname, useRouter } from \"next/navigation\";\nimport { toast } from \"sonner\";\nimport { Toast } from \"../(components)/Toast\";\nimport { CypressDataAttributes } from \"../../types/cypress.types\";\nimport { useAppStore, useRedirectStore } from \"../layout.stores\";\nimport { SignInData } from \"../layout.types\";\nimport { getUserAction } from \"./layout.actions\";\nimport { useAuthLayoutStore } from \"./layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const { reset: resetAuthLayout } = useAuthLayoutStore();\n  const { setUserData } = useRedirectStore();\n  const pathname = usePathname();\n\n  const router = useRouter();\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const { data, error } = await getUserAction();\n      if (!data || error) {\n        if (privatePaths.includes(pathname)) {\n          router.push(configuration.paths.signIn);\n        }\n        reset();\n        resetAuthLayout();\n      }\n      if (error) throw error;\n      setUser(data ?? null);\n\n      setUserData(data);\n\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser, setTempEmail } = useAppStore();\n  const { setUserData } = useRedirectStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async (signInData: SignInData) => {\n      const { error } = await signIn.email({\n        email: signInData.email,\n        password: signInData.password,\n      });\n\n      if (error?.status === 403) setTempEmail(signInData.email);\n\n      if (error) throw error;\n      const { data: userData, error: userError } = await getUserAction();\n\n      if (userError) throw new Error(userError);\n\n      return userData;\n    },\n    onSuccess: (data) => {\n      if (data) {\n        setUser(data);\n        setUserData(data);\n      }\n      toast.custom(() => (\n        <Toast\n          variant=\"success\"\n          title=\"Success\"\n          message=\"Successfully signed in\"\n          data-cy={CypressDataAttributes.TOAST_SUCCESS}\n        />\n      ));\n      if (data && !data.profile?.isOnboardingComplete) {\n        router.push(configuration.paths.onboarding);\n        return;\n      }\n      router.push(configuration.paths.home);\n    },\n    onError: (\n      error: {\n        code?: string | undefined;\n        message?: string | undefined;\n        status: number;\n        statusText: string;\n      } | null\n    ) => {\n      if (error?.status === 403) return;\n      toast.custom(() => (\n        <Toast\n          variant=\"error\"\n          title=\"Sign In Failed\"\n          message={error?.message || \"Failed to sign in\"}\n          data-cy={CypressDataAttributes.TOAST_ERROR}\n        />\n      ));\n    },\n  });\n};\n```",
-            "include": true
-          },
-          "option3": {
-            "content": "**Hooks file example (Supabase Auth):**\n\n```typescript\n\"use client\";\n\nimport { createClient } from \"@/lib/supabase/client\";\nimport { useQuery, useMutation } from \"@tanstack/react-query\";\nimport { useRouter } from \"next/navigation\";\nimport { useAppStore } from \"../layout.stores\";\n\nexport const useGetUser = () => {\n  const { setUser, reset } = useAppStore();\n  const router = useRouter();\n\n  return useQuery({\n    queryKey: [\"user\"],\n    queryFn: async () => {\n      const supabase = createClient();\n      const { data: { user }, error: authError } = await supabase.auth.getUser();\n\n      if (authError || !user) {\n        reset();\n        return null;\n      }\n\n      const { data, error } = await supabase\n        .from('users')\n        .select('*')\n        .eq('id', user.id)\n        .single();\n\n      if (error) throw error;\n\n      setUser(data);\n      return data;\n    },\n    staleTime: 1000 * 60 * 5,\n  });\n};\n\nexport const useSignIn = () => {\n  const { setUser } = useAppStore();\n  const router = useRouter();\n\n  return useMutation({\n    mutationFn: async ({ email, password }: { email: string; password: string }) => {\n      const supabase = createClient();\n      const { data, error } = await supabase.auth.signInWithPassword({\n        email,\n        password,\n      });\n\n      if (error) throw error;\n\n      return data.user;\n    },\n    onSuccess: (user) => {\n      setUser(user);\n      router.push('/dashboard');\n    },\n  });\n};\n```",
-            "include": true
-          }
-        },
-        "section5": {
-          "option1": {
-            "content": "**No utility files needed for client-side only applications.**",
-            "include": true
-          },
-          "option2": {
-            "content": "**Utility files (Better Auth + Prisma):**\n\n## `prisma-rls.ts`:\n\n```typescript\nimport { Prisma } from \"@prisma/client\";\nimport { prisma } from \"./prisma\";\n\nfunction forUser(userId: string, tenantId?: string) {\n  return Prisma.defineExtension((prisma) =>\n    prisma.$extends({\n      query: {\n        $allModels: {\n          async $allOperations({ args, query }) {\n            if (tenantId) {\n              const [, , result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                prisma.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            } else {\n              const [, result] = await prisma.$transaction([\n                prisma.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, TRUE)`,\n                query(args),\n              ]);\n              return result;\n            }\n          },\n        },\n      },\n    })\n  );\n}\n\nexport function createRLSClient(userId: string, tenantId?: string) {\n  return prisma.$extends(forUser(userId, tenantId));\n}\n```\n\n## `auth.util.ts`\n\n```typescript\nimport { User } from \"better-auth\";\nimport jwt from \"jsonwebtoken\";\nimport { headers } from \"next/headers\";\nimport { auth, Session } from \"./auth\";\nimport { createRLSClient } from \"./prisma-rls\";\n\nexport async function getAuthenticatedClient(user?: User): Promise<{\n  db: ReturnType<typeof createRLSClient>;\n  session: Session | null;\n}> {\n  const headersList = await headers();\n\n  const session = await auth.api.getSession({\n    headers: headersList,\n  });\n\n  const userId = user?.id || session?.user.id;\n\n  if (!userId) {\n    throw new Error(\"Unauthorized\");\n  }\n\n  const db = createRLSClient(userId);\n\n  return { db, session };\n}\n\nexport function generateSupabaseJWT(userId: string, userRole: string): string {\n  const jwtSecret = process.env.SUPABASE_JWT_SECRET;\n\n  if (!jwtSecret) {\n    throw new Error(\"SUPABASE_JWT_SECRET is required for JWT generation\");\n  }\n\n  const payload = {\n    aud: \"authenticated\",\n    exp: Math.floor(Date.now() / 1000) + 60 * 60,\n    sub: userId,\n    email: `${userId}@better-auth.local`,\n    role: \"authenticated\",\n    user_metadata: {\n      better_auth_user_id: userId,\n      better_auth_role: userRole,\n    },\n    app_metadata: {\n      provider: \"better-auth\",\n      providers: [\"better-auth\"],\n    },\n  };\n\n  return jwt.sign(payload, jwtSecret, {\n    algorithm: \"HS256\",\n  });\n}\n```\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
-            "include": true
-          },
-          "option3": {
-            "content": "**Utility files (Supabase):**\n\n## `log.util.ts`:\n\n```typescript\nexport enum LOG_LABELS {\n  GENERATE = \"generate\",\n  API = \"api\",\n  AUTH = \"auth\",\n  DB = \"db\",\n  FETCH = \"fetch\",\n  RATE_LIMIT = \"rate-limit\",\n  IMAGE = \"image\",\n  WIDGET = \"widget\",\n}\n\ninterface ConditionalLogOptions {\n  maxStringLength?: number;\n  label: LOG_LABELS | string;\n}\n\nexport function conditionalLog(\n  data: unknown,\n  options: ConditionalLogOptions\n): string | null {\n  const { maxStringLength = 200, label } = options;\n\n  const logLabels = process.env.NEXT_PUBLIC_LOG_LABELS;\n\n  if (!logLabels || logLabels === \"none\") {\n    return null;\n  }\n\n  if (logLabels !== \"all\") {\n    const allowedLabels = logLabels.split(\",\").map((l) => l.trim());\n    if (!allowedLabels.includes(label)) {\n      return null;\n    }\n  }\n\n  try {\n    const processedData = deepStringify(data, maxStringLength, new WeakSet());\n    const result = JSON.stringify(processedData);\n    return result.replace(/\\\\s+/g, \"\");\n  } catch (error) {\n    return JSON.stringify({ error: \"Failed to stringify data\", label });\n  }\n}\n\nfunction deepStringify(\n  value: unknown,\n  maxLength: number,\n  seen: WeakSet<object>\n): unknown {\n  if (value === null || value === undefined) {\n    return value;\n  }\n\n  if (typeof value === \"string\") {\n    return truncateString(value, maxLength);\n  }\n\n  if (typeof value === \"number\" || typeof value === \"boolean\") {\n    return value;\n  }\n\n  if (value instanceof Date) {\n    return value.toISOString();\n  }\n\n  if (value instanceof Error) {\n    return {\n      name: value.name,\n      message: truncateString(value.message, maxLength),\n      stack: value.stack ? truncateString(value.stack, maxLength) : undefined,\n    };\n  }\n\n  if (typeof value === \"object\") {\n    if (seen.has(value)) {\n      return \"[Circular Reference]\";\n    }\n\n    seen.add(value);\n\n    if (Array.isArray(value)) {\n      const result = value.map((item) => deepStringify(item, maxLength, seen));\n      seen.delete(value);\n      return result;\n    }\n\n    const result: Record<string, unknown> = {};\n    for (const [key, val] of Object.entries(value)) {\n      result[key] = deepStringify(val, maxLength, seen);\n    }\n    seen.delete(value);\n    return result;\n  }\n\n  return String(value);\n}\n\nfunction truncateString(str: string, maxLength: number): string {\n  if (str.length <= maxLength) {\n    return str;\n  }\n\n  const startLength = Math.floor((maxLength - 3) / 2);\n  const endLength = maxLength - 3 - startLength;\n\n  return str.slice(0, startLength) + \"...\" + str.slice(-endLength);\n}\n```",
-            "include": true
-          }
-        }
-      },
-      "include": true,
-      "isDynamicRobotsFile": false,
-      "visibleAfterPage": "robots",
-      "includeInToolbar": false
+      "includeInSidebar": false,
+      "isDynamicRobotsFile": false
     },
     "code-files": {
       "id": "code-files",
@@ -1339,6 +1347,7 @@
       "path": "code-files",
       "urlPath": "/code-files",
       "include": true,
+      "includeInSidebar": true,
       "children": []
     }
   },

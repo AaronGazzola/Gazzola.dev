@@ -5,6 +5,8 @@ import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useHeaderStore } from "./Header.store";
+import { useQueryState } from "nuqs";
 import {
   Collapsible,
   CollapsibleContent,
@@ -191,6 +193,7 @@ const generateNavigationFromMarkdownData = (
           order: cf.order,
           path: cf.path,
           include: cf.include,
+          includeInSidebar: cf.includeInSidebar,
         })
       );
 
@@ -200,6 +203,7 @@ const generateNavigationFromMarkdownData = (
         order: node.order,
         path: node.path,
         include: node.include,
+        includeInSidebar: node.includeInSidebar,
         children: [
           ...generateNavigationFromMarkdownData(
             node.children,
@@ -216,6 +220,7 @@ const generateNavigationFromMarkdownData = (
         order: node.order,
         path: node.path,
         include: node.include,
+        includeInSidebar: node.includeInSidebar,
       });
     }
   }
@@ -242,6 +247,7 @@ const generateNavigationFromMarkdownData = (
         order: cf.order || 999,
         path: cf.path,
         include: cf.include,
+        includeInSidebar: cf.includeInSidebar,
       }));
 
       const dirItem: NavigationItem = {
@@ -250,6 +256,7 @@ const generateNavigationFromMarkdownData = (
         order: 999,
         path: parentPath,
         include: true,
+        includeInSidebar: true,
         children: childCodeFileItems,
       };
 
@@ -376,7 +383,7 @@ const TreeItem: React.FC<TreeItemProps> = ({
       const hasVisitedRobots = isPageVisited("robots");
       const isReadme = item.path === "readme";
 
-      if (!isPageIncluded) {
+      if (!isPageIncluded || node.includeInSidebar === false) {
         return null;
       }
 
@@ -607,7 +614,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
       const hasVisitedRobots = isPageVisited("robots");
       const isReadme = item.path === "readme";
 
-      if (!isPageIncluded) {
+      if (!isPageIncluded || node.includeInSidebar === false) {
         return null;
       }
 
@@ -823,6 +830,8 @@ const Sidebar = () => {
     getInitialConfiguration,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+  const { setIsExpanded } = useHeaderStore();
+  const [_dialogOpen, setDialogOpen] = useQueryState("codeReview");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [mounted, setMounted] = useState(false);
   const params = useParams();
@@ -957,77 +966,37 @@ const Sidebar = () => {
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
             </div>
-            <div className="flex flex-row items-center justify-between relative w-full pr-4">
+            <Button
+              variant="highlight"
+              className="border border-transparent text-white font-semibold flex items-center gap-2 w-full px-4 py-6 justify-between"
+              onClick={() => {
+                setDialogOpen("yesPlease");
+                setIsExpanded(true);
+              }}
+            >
               {nextSteps.map((step, index) => (
                 <div
                   key={index}
                   className="relative flex flex-row items-center gap-2"
                 >
                   <div className="flex flex-col items-center relative z-10">
-                    <div className="relative w-6 h-6">
-                      <svg
-                        className="w-6 h-6 absolute inset-0 z-0"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <step.icon
-                          className="w-6 h-6 stroke-2"
-                          style={{
-                            color:
-                              gradientColors[index % gradientColors.length],
-                          }}
-                          fill="none"
-                        />
-                      </svg>
-                      <svg
-                        className="w-6 h-6 relative z-10"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <defs>
-                          <linearGradient
-                            id={`gradient-sidebar-${index}`}
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="100%"
-                          >
-                            {gradientEnabled ? (
-                              gradientColors.map((color, colorIndex) => (
-                                <stop
-                                  key={colorIndex}
-                                  offset={`${(colorIndex / (gradientColors.length - 1)) * 100}%`}
-                                  stopColor={color}
-                                />
-                              ))
-                            ) : (
-                              <stop offset="0%" stopColor={singleColor} />
-                            )}
-                          </linearGradient>
-                        </defs>
-                        <step.icon
-                          className="w-6 h-6 stroke-1"
-                          stroke={`url(#gradient-sidebar-${index})`}
-                          fill="none"
-                        />
-                      </svg>
-                    </div>
-                    <span className="text-sm font-bold text-center whitespace-nowrap text-white">
+                    <step.icon className="w-5 h-5" />
+                    <span className="text-xs font-bold text-center whitespace-nowrap">
                       {step.title}
                     </span>
                   </div>
                   {index < nextSteps.length - 1 && (
-                    <ArrowRight className="w-4 h-4 shrink-0 drop-shadow-[0_0_4px_rgba(147,51,234,0.5)] text-white " />
+                    <ArrowRight className="w-3 h-3 shrink-0" />
                   )}
                 </div>
               ))}
-            </div>
+            </Button>
           </div>
         </div>
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden px-3 py-2">
         {navigationData
-          .filter((item) => item.include !== false)
+          .filter((item) => item.includeInSidebar !== false)
           .map((item, index) => (
             <TreeItem
               key={index}
@@ -1097,7 +1066,7 @@ const Sidebar = () => {
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {navigationData
-          .filter((item) => item.include !== false)
+          .filter((item) => item.includeInSidebar !== false)
           .map((item, index) => (
             <IconTreeItem
               key={index}

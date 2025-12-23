@@ -138,12 +138,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       [];
 
     const extractPages = (node: any, parentUrl = ""): void => {
-      if (node.include === false) {
+      if (node.include === false || node.includeInSidebar === false) {
         return;
       }
 
       if (node.type === "file") {
-        if (node.includeInToolbar !== false) {
+        if (node.includeInToolbar !== false && node.includeInSidebar !== false) {
           pages.push({
             path: node.path,
             url: node.urlPath,

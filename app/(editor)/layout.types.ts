@@ -17,6 +17,7 @@ export interface BaseNode {
   path: string;
   urlPath: string;
   include: boolean;
+  includeInSidebar?: boolean;
   previewOnly?: boolean;
   includeInToolbar?: boolean;
   fileExtension?: string;
@@ -300,6 +301,7 @@ export interface NavigationItem {
   order?: number;
   path?: string;
   include?: boolean;
+  includeInSidebar?: boolean;
   icon?: string;
   children?: NavigationItem[];
 }
