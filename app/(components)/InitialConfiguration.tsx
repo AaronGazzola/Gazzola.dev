@@ -458,13 +458,9 @@ const hasAnyChildrenSelected = (
       initialConfiguration.features.authentication.magicLink ||
       initialConfiguration.features.authentication.emailPassword ||
       initialConfiguration.features.authentication.otp ||
-      initialConfiguration.features.authentication.twoFactor ||
-      initialConfiguration.features.authentication.passkey ||
-      initialConfiguration.features.authentication.anonymous ||
       initialConfiguration.features.authentication.googleAuth ||
       initialConfiguration.features.authentication.githubAuth ||
-      initialConfiguration.features.authentication.appleAuth ||
-      initialConfiguration.features.authentication.passwordOnly
+      initialConfiguration.features.authentication.appleAuth
     );
   } else if (questionId === "realTimeNotifications") {
     return (

@@ -4,48 +4,29 @@ import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { Button } from "@/components/editor/ui/button";
-import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
+import { Switch } from "@/components/editor/ui/switch";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/editor/ui/tooltip";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
-import { cn } from "@/lib/utils";
 import {
-  Apple,
   BotMessageSquare,
-  Building2,
-  Fingerprint,
-  Github,
   HelpCircle,
-  KeyRound,
   Loader2,
-  Mail,
   Plus,
-  Shield,
-  ShieldCheck,
-  Smartphone,
-  Users,
-  UserX,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { SiGoogle, SiSupabase } from "react-icons/si";
+import { SiSupabase } from "react-icons/si";
 import {
   generateDatabaseSchemaPrompt,
   parseDatabaseSchemaFromResponse,
 } from "./DatabaseConfiguration.ai";
 import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
-import { BetterAuthIcon, technologies } from "./DatabaseConfiguration.icons";
 import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
@@ -70,8 +51,6 @@ export const DatabaseConfiguration = () => {
     initialConfiguration,
     setSectionInclude,
     updateInitialConfiguration,
-    updateAdminOption,
-    updateAuthenticationOption,
     appStructure,
     data,
     databaseGenerated,
@@ -142,16 +121,6 @@ export const DatabaseConfiguration = () => {
           },
         });
 
-        Object.entries(configuration.roles).forEach(([roleId, enabled]) => {
-          updateAdminOption(roleId, enabled as boolean);
-        });
-
-        Object.entries(configuration.authentication).forEach(
-          ([authId, enabled]) => {
-            updateAuthenticationOption(authId, enabled as boolean);
-          }
-        );
-
         setTablesFromAI(parsed.tables);
         setEnumsFromAI(parsed.enums);
         if (parsed.rlsPolicies && parsed.rlsPolicies.length > 0) {
@@ -163,8 +132,6 @@ export const DatabaseConfiguration = () => {
           {
             message: "Applied database configuration from AI",
             databaseProvider: configuration.databaseProvider,
-            roles: configuration.roles,
-            authentication: configuration.authentication,
             tableCount: parsed.tables.length,
             enumCount: parsed.enums.length,
             rlsPolicyCount: parsed.rlsPolicies?.length || 0,
@@ -281,80 +248,6 @@ export const DatabaseConfiguration = () => {
     return null;
   }
 
-  const authMethods = [
-    {
-      id: "magicLink",
-      label: "Magic Link",
-      description: "Passwordless authentication via email links",
-      icon: Mail,
-    },
-    {
-      id: "emailPassword",
-      label: "Email & Password",
-      description: "Traditional email and password authentication",
-      icon: Mail,
-    },
-    {
-      id: "otp",
-      label: "OTP (One-Time Password)",
-      description: "Email-based one-time password authentication",
-      icon: Smartphone,
-    },
-    {
-      id: "twoFactor",
-      label: "Two-Factor Authentication (2FA)",
-      description: "TOTP/OTP two-factor authentication for enhanced security",
-      icon: ShieldCheck,
-    },
-    {
-      id: "passkey",
-      label: "Passkey (WebAuthn)",
-      description:
-        "Passwordless authentication using biometrics or security keys",
-      icon: Fingerprint,
-    },
-    {
-      id: "anonymous",
-      label: "Anonymous Sessions",
-      description: "Allow users to use the app without authentication",
-      icon: UserX,
-    },
-    {
-      id: "googleAuth",
-      label: "Google OAuth",
-      description: "Sign in with Google accounts",
-      icon: SiGoogle,
-    },
-    {
-      id: "githubAuth",
-      label: "GitHub OAuth",
-      description: "Sign in with GitHub accounts",
-      icon: Github,
-    },
-    {
-      id: "appleAuth",
-      label: "Apple Sign In",
-      description: "Sign in with Apple ID",
-      icon: Apple,
-    },
-    {
-      id: "passwordOnly",
-      label: "Password only",
-      description: "Basic password authentication",
-      icon: KeyRound,
-    },
-  ];
-
-  const roleOptions = [
-    { id: "admin", label: "Admin", icon: Shield },
-    { id: "superAdmin", label: "Super Admin", icon: Users },
-  ];
-
-  const roleDescriptions = {
-    admin: "Regular admin users with elevated permissions",
-    superAdmin:
-      "Super admins have full access and can manage all users and content",
-  };
 
   const isGenerateDisabled = !isDevelopment && databaseGenerated;
   const hasReadme = readmeGenerated && readmeContent;
@@ -505,26 +398,30 @@ export const DatabaseConfiguration = () => {
         </PopoverContent>
       </Popover>
       <div className="flex flex-col theme-gap-4">
-        <div>
-          <h3 className="text-lg font-semibold theme-mb-2">
-            Do you need a database?
-          </h3>
-          <p className="text-sm theme-text-muted-foreground theme-mb-3 font-semibold">
-            Choose your database and authentication provider.
-          </p>
-          <div className="flex flex-col xs:flex-row theme-gap-3">
-            <div
-              onClick={() => {
-                const currentSupabase =
-                  initialConfiguration.technologies.supabase;
+        <div className="theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-6">
+          <div className="flex items-center justify-between theme-mb-4">
+            <div className="flex items-center theme-gap-3">
+              <SiSupabase className="w-10 h-10 theme-text-foreground" />
+              <div>
+                <h3 className="text-xl font-bold theme-text-foreground">
+                  Database
+                </h3>
+                <p className="text-sm theme-text-muted-foreground font-semibold">
+                  {initialConfiguration.technologies.supabase ? "Enabled" : "Disabled"}
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={initialConfiguration.technologies.supabase}
+              onCheckedChange={(checked) => {
                 const techUpdates: Partial<
                   InitialConfigurationType["technologies"]
                 > = {};
 
-                techUpdates.supabase = !currentSupabase;
-                techUpdates.postgresql = !currentSupabase;
+                techUpdates.supabase = checked;
+                techUpdates.postgresql = checked;
 
-                const newProvider = !currentSupabase ? "supabase" : "none";
+                const newProvider = checked ? "supabase" : "none";
 
                 updateInitialConfiguration({
                   questions: {
@@ -532,7 +429,7 @@ export const DatabaseConfiguration = () => {
                     databaseProvider: newProvider,
                   },
                   database: {
-                    hosting: !currentSupabase ? "supabase" : "postgresql",
+                    hosting: checked ? "supabase" : "postgresql",
                   },
                   technologies: {
                     ...initialConfiguration.technologies,
@@ -540,199 +437,53 @@ export const DatabaseConfiguration = () => {
                   },
                 });
               }}
-              className={cn(
-                "theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-4 cursor-pointer transition-all hover:theme-bg-accent flex-1 relative",
-                initialConfiguration.technologies.supabase && "border-white"
-              )}
-            >
-              <Checkbox
-                checked={initialConfiguration.technologies.supabase}
-                className="size-6 border-2 border-white/30 dark:border-black/30 data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none absolute top-2 right-2"
-              />
-              <div className="flex flex-col items-center theme-gap-2 text-center">
-                <SiSupabase className="w-12 h-12 theme-text-foreground" />
-                <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">
-                  Supabase
-                </h4>
-              </div>
-            </div>
+              size="lg"
+            />
           </div>
 
-          {initialConfiguration.questions.databaseProvider !== "none" && (
-            <div className="flex flex-col theme-gap-3 theme-mt-4">
-              <div className="flex flex-wrap theme-gap-1">
-                {["supabase", "postgresql"].map((techId) => {
-                  const tech = technologies.find((t) => t.id === techId);
-                  if (!tech) return null;
-                  const Icon = tech.icon;
-                  const isActive =
-                    initialConfiguration.technologies[
-                      techId as keyof InitialConfigurationType["technologies"]
-                    ];
-                  return (
-                    <div
-                      key={techId}
-                      className={cn(
-                        "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 text-xs font-medium border theme-font-sans theme-tracking",
-                        isActive
-                          ? "theme-bg-primary theme-text-primary-foreground theme-border-primary"
-                          : "theme-bg-secondary theme-text-secondary-foreground theme-border-border"
-                      )}
-                    >
-                      <Icon className="w-3 h-3" />
-                      <span>{tech.name}</span>
-                    </div>
-                  );
-                })}
-              </div>
-              <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                Supabase for all backend logic and database functionality. Excellent for enterprise audit compliance
+          {initialConfiguration.technologies.supabase ? (
+            <div className="theme-pt-4 border-t theme-border-border">
+              <p className="text-base theme-text-foreground font-semibold theme-mb-3">
+                Powered by Supabase
               </p>
+              <ul className="space-y-2 text-sm theme-text-muted-foreground">
+                <li className="flex items-start theme-gap-2">
+                  <span className="theme-text-primary font-bold mt-0.5">•</span>
+                  <span className="font-semibold">PostgreSQL database with real-time subscriptions</span>
+                </li>
+                <li className="flex items-start theme-gap-2">
+                  <span className="theme-text-primary font-bold mt-0.5">•</span>
+                  <span className="font-semibold">Built-in authentication and user management</span>
+                </li>
+                <li className="flex items-start theme-gap-2">
+                  <span className="theme-text-primary font-bold mt-0.5">•</span>
+                  <span className="font-semibold">Enterprise-ready authentication, verification and SOC2 compliance</span>
+                </li>
+              </ul>
             </div>
-          )}
-          {!initialConfiguration.technologies.supabase && (
+          ) : (
+            <div className="theme-pt-4 border-t theme-border-border">
               <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
                 No database required, this app is front-end only
               </p>
-            )}
+            </div>
+          )}
         </div>
 
-        {!isNoDatabaseSelected && (
-          <>
-            <div>
-              <h3 className="text-lg font-semibold theme-mb-2">
-                Does your app use role access?
-              </h3>
-              <p className="text-sm theme-text-muted-foreground theme-mb-3 font-semibold">
-                Select the user roles you need for your application.
-              </p>
-              <div className="flex flex-col md:flex-row theme-gap-3">
-                {roleOptions.map((option) => {
-                  const isChecked =
-                    initialConfiguration.features.admin[
-                      option.id as keyof typeof initialConfiguration.features.admin
-                    ] || false;
-                  const Icon = option.icon;
-
-                  return (
-                    <div
-                      key={option.id}
-                      onClick={() => {
-                        updateAdminOption(option.id, !isChecked);
-                      }}
-                      className={cn(
-                        "theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-4 transition-all hover:theme-bg-accent flex-1",
-                        isChecked && "border-white"
-                      )}
-                    >
-                      <div className="flex md:flex-col items-center md:items-center theme-gap-3 md:theme-gap-2 md:text-center">
-                        <Icon className="w-8 h-8 md:w-12 md:h-12 theme-text-foreground shrink-0" />
-                        <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking flex-1">
-                          {option.label}
-                        </h4>
-                        <Checkbox
-                          checked={isChecked}
-                          className="size-6 border-2 border-white/30 dark:border-black/30 data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none shrink-0"
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              {(initialConfiguration.features.admin.admin ||
-                initialConfiguration.features.admin.superAdmin) && (
-                <div className="flex flex-col theme-gap-2 theme-mt-4">
-                  {initialConfiguration.features.admin.admin && (
-                    <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                      <span className="font-bold">Admin:</span>{" "}
-                      {roleDescriptions.admin}
-                    </p>
-                  )}
-                  {initialConfiguration.features.admin.superAdmin && (
-                    <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                      <span className="font-bold">Super Admin:</span>{" "}
-                      {roleDescriptions.superAdmin}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold theme-mb-2">
-                Can users sign in to your app?
-              </h3>
-              <p className="text-sm theme-text-muted-foreground theme-mb-3 font-semibold">
-                Enable user authentication and session management.
-              </p>
-              <TooltipProvider>
-                <div className="flex flex-wrap theme-gap-2 justify-center">
-                  {authMethods.map((method) => {
-                    const isChecked =
-                      initialConfiguration.features.authentication[
-                        method.id as keyof typeof initialConfiguration.features.authentication
-                      ] || false;
-                    const Icon = method.icon;
-
-                    return (
-                      <Tooltip key={method.id}>
-                        <TooltipTrigger asChild>
-                          <div
-                            onClick={() => {
-                              updateAuthenticationOption(method.id, !isChecked);
-                            }}
-                            className={cn(
-                              "theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-2 transition-all hover:theme-bg-accent cursor-pointer",
-                              isChecked && "border-white"
-                            )}
-                          >
-                            <div className="flex items-center theme-gap-2">
-                              <Icon className="w-5 h-5 theme-text-foreground shrink-0" />
-                              <span className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">
-                                {method.label}
-                              </span>
-                              <Checkbox
-                                checked={isChecked}
-                                className="size-4 border-2 border-white/30 dark:border-black/30 data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none shrink-0"
-                              />
-                            </div>
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{method.description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              </TooltipProvider>
-            </div>
-          </>
-        )}
       </div>
 
-      {isNoDatabaseSelected ? (
-        <div className="theme-bg-muted theme-radius theme-shadow overflow-auto theme-p-4 border theme-border-border">
-          <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-            No database selected
-          </p>
-        </div>
-      ) : (
+      {!isNoDatabaseSelected && (
         <div className="theme-bg-card theme-radius theme-shadow overflow-auto border theme-border-border theme-p-4">
           <div className="flex flex-col theme-gap-2">
             <EnumsCollapsible
               isExpanded={expandedEnums}
               onToggle={() => setExpandedEnums(!expandedEnums)}
             />
-            {getAvailableSchemasWithConfig(initialConfiguration).map(
-              (schema) => {
+            {getAvailableSchemasWithConfig(initialConfiguration)
+              .filter((schema) => schema !== "auth" && schema !== "better_auth")
+              .map((schema) => {
                 const schemaTables = tables.filter((t) => t.schema === schema);
-                const isSystemSchema =
-                  schema === "auth" || schema === "better_auth";
-                const isEditable =
-                  schema !== "auth" &&
-                  schema !== "better_auth" &&
-                  schema !== "public";
+                const isEditable = schema !== "public";
 
                 return (
                   <SchemaCollapsible
@@ -753,11 +504,10 @@ export const DatabaseConfiguration = () => {
                     }
                     onDeleteSchema={() => handleDeleteSchema(schema)}
                     isEditable={isEditable}
-                    isSystemSchema={isSystemSchema}
+                    isSystemSchema={false}
                   />
                 );
-              }
-            )}
+              })}
             {isAddingSchema ? (
               <div className="theme-bg-muted theme-radius theme-p-2">
                 <Input

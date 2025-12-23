@@ -33,16 +33,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import type { PrismaColumn, PrismaTable } from "./DatabaseConfiguration.types";
 
-const PRISMA_TYPE_OPTIONS = [
-  "String",
-  "Int",
-  "Float",
-  "Boolean",
-  "DateTime",
-  "Json",
-  "BigInt",
-  "Decimal",
-  "Bytes",
+const POSTGRES_TYPE_OPTIONS = [
+  "TEXT",
+  "INTEGER",
+  "BIGINT",
+  "BOOLEAN",
+  "TIMESTAMP WITH TIME ZONE",
+  "JSONB",
+  "DECIMAL",
+  "DOUBLE PRECISION",
+  "BYTEA",
 ] as const;
 
 interface ColumnRowProps {
@@ -168,7 +168,7 @@ const ColumnRow = ({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {PRISMA_TYPE_OPTIONS.map((type) => (
+                      {POSTGRES_TYPE_OPTIONS.map((type) => (
                         <SelectItem key={type} value={type}>
                           {type}
                         </SelectItem>

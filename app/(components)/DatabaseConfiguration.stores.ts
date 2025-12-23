@@ -42,20 +42,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "user-email",
         name: "email",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -67,7 +67,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-name",
         name: "name",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -79,7 +79,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-role",
         name: "role",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -92,7 +92,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-banned",
         name: "banned",
-        type: "Boolean",
+        type: "BOOLEAN",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -105,7 +105,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-banReason",
         name: "banReason",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -117,7 +117,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-banExpires",
         name: "banExpires",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -129,7 +129,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-emailVerified",
         name: "emailVerified",
-        type: "Boolean",
+        type: "BOOLEAN",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -141,20 +141,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "user-updatedAt",
         name: "updatedAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -166,7 +166,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-image",
         name: "image",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -249,20 +249,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "session-userId",
         name: "userId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -274,7 +274,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-expiresAt",
         name: "expiresAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -286,7 +286,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-token",
         name: "token",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -298,20 +298,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "session-updatedAt",
         name: "updatedAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -323,7 +323,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-ipAddress",
         name: "ipAddress",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -335,7 +335,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-userAgent",
         name: "userAgent",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -347,7 +347,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-impersonatedBy",
         name: "impersonatedBy",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -359,7 +359,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-activeOrganizationId",
         name: "activeOrganizationId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -401,20 +401,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "account-userId",
         name: "userId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -426,7 +426,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-accountId",
         name: "accountId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -438,7 +438,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-providerId",
         name: "providerId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -450,7 +450,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-accessToken",
         name: "accessToken",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -462,7 +462,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-refreshToken",
         name: "refreshToken",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -474,7 +474,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-idToken",
         name: "idToken",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -486,7 +486,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-accessTokenExpiresAt",
         name: "accessTokenExpiresAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -498,7 +498,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-refreshTokenExpiresAt",
         name: "refreshTokenExpiresAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -510,7 +510,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-scope",
         name: "scope",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -522,7 +522,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-password",
         name: "password",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -534,20 +534,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "account-updatedAt",
         name: "updatedAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -589,20 +589,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "verification-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "verification-identifier",
         name: "identifier",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -614,7 +614,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "verification-value",
         name: "value",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -626,7 +626,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "verification-expiresAt",
         name: "expiresAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -638,20 +638,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "verification-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "verification-updatedAt",
         name: "updatedAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -674,20 +674,20 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "magiclink-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "magiclink-userId",
         name: "userId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -699,7 +699,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "magiclink-token",
         name: "token",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -711,7 +711,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "magiclink-email",
         name: "email",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -723,7 +723,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "magiclink-expiresAt",
         name: "expiresAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -735,15 +735,15 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "magiclink-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "magiclink-user",
@@ -781,20 +781,20 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "organization-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "organization-name",
         name: "name",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -806,7 +806,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "organization-slug",
         name: "slug",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -818,7 +818,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "organization-logo",
         name: "logo",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -842,20 +842,20 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "organization-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "organization-updatedAt",
         name: "updatedAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -902,20 +902,20 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "member-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "member-userId",
         name: "userId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -927,7 +927,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "member-organizationId",
         name: "organizationId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -939,7 +939,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "member-role",
         name: "role",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -952,20 +952,20 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "member-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "member-updatedAt",
         name: "updatedAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1026,20 +1026,20 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-id",
         name: "id",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: true,
         isArray: false,
-        defaultValue: "cuid()",
-        attributes: ["@id", "@default(cuid())"],
+        defaultValue: "gen_random_uuid()",
+        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "invitation-organizationId",
         name: "organizationId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1051,7 +1051,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-email",
         name: "email",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1063,7 +1063,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-role",
         name: "role",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1076,7 +1076,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-inviterId",
         name: "inviterId",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1088,7 +1088,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-token",
         name: "token",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: true,
@@ -1100,7 +1100,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-status",
         name: "status",
-        type: "String",
+        type: "TEXT",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1113,7 +1113,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-expiresAt",
         name: "expiresAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1125,20 +1125,20 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-createdAt",
         name: "createdAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        defaultValue: "now()",
-        attributes: ["@default(now())"],
+        defaultValue: "NOW()",
+        attributes: ["@default(NOW())"],
       },
       {
         id: "invitation-updatedAt",
         name: "updatedAt",
-        type: "DateTime",
+        type: "TIMESTAMP WITH TIME ZONE",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1372,7 +1372,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             const fkColumn: PrismaColumn = {
               id: fkColumnId,
               name: fkColumnName,
-              type: "String",
+              type: "TEXT",
               isDefault: false,
               isEditable: true,
               isOptional: column.isOptional,
@@ -1614,44 +1614,196 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         return plugins.filter((p) => p.file === file && p.enabled);
       },
 
+      generateSupabaseMigration: () => {
+        const { tables, enums, rlsPolicies } = get();
+        const lines: string[] = [];
+
+        const userTables = tables.filter(
+          (t) => t.schema !== "auth" && t.schema !== "better_auth"
+        );
+
+        if (enums.length > 0) {
+          lines.push("-- Create enum types");
+          enums.forEach((enumDef) => {
+            const values = enumDef.values.map((v) => `'${v.value}'`).join(", ");
+            lines.push(`CREATE TYPE ${enumDef.name} AS ENUM (${values});`);
+          });
+          lines.push("");
+        }
+
+        if (userTables.length > 0) {
+          lines.push("-- Create tables");
+          userTables.forEach((table) => {
+            const columns: string[] = [];
+
+            table.columns.forEach((col) => {
+              const pgType = col.isArray ? `${col.type}[]` : col.type;
+              const nullable = col.isOptional ? "" : " NOT NULL";
+              const defaultVal = col.defaultValue ? ` DEFAULT ${col.defaultValue}` : "";
+              const unique = col.isUnique ? " UNIQUE" : "";
+              const primaryKey = col.isId ? " PRIMARY KEY" : "";
+
+              columns.push(`  ${col.name} ${pgType}${nullable}${defaultVal}${unique}${primaryKey}`);
+            });
+
+            table.columns.forEach((col) => {
+              if (col.relation) {
+                const onDelete = col.relation.onDelete ? ` ON DELETE ${col.relation.onDelete.toUpperCase()}` : "";
+                columns.push(
+                  `  CONSTRAINT fk_${table.name}_${col.name} FOREIGN KEY (${col.name}) REFERENCES ${col.relation.table}(${col.relation.field})${onDelete}`
+                );
+              }
+            });
+
+            table.uniqueConstraints.forEach((constraint) => {
+              columns.push(`  UNIQUE (${constraint.join(", ")})`);
+            });
+
+            lines.push(`CREATE TABLE ${table.schema}.${table.name} (`);
+            lines.push(columns.join(",\n"));
+            lines.push(");");
+            lines.push("");
+          });
+        }
+
+        const hasIndexes = userTables.some((t) =>
+          t.columns.some((c) => c.relation)
+        );
+        if (hasIndexes) {
+          lines.push("-- Create indexes for foreign keys");
+          userTables.forEach((table) => {
+            table.columns.forEach((col) => {
+              if (col.relation) {
+                lines.push(
+                  `CREATE INDEX idx_${table.name}_${col.name} ON ${table.schema}.${table.name}(${col.name});`
+                );
+              }
+            });
+          });
+          lines.push("");
+        }
+
+        if (userTables.length > 0) {
+          lines.push("-- Enable Row Level Security");
+          userTables.forEach((table) => {
+            lines.push(`ALTER TABLE ${table.schema}.${table.name} ENABLE ROW LEVEL SECURITY;`);
+          });
+          lines.push("");
+        }
+
+        if (rlsPolicies.length > 0) {
+          lines.push("-- Create RLS Policies");
+
+          rlsPolicies.forEach((policy) => {
+            const table = tables.find((t) => t.id === policy.tableId);
+            if (!table || table.schema === "auth" || table.schema === "better_auth") return;
+
+            policy.rolePolicies.forEach((rolePolicy) => {
+              if (rolePolicy.accessType === "none") return;
+
+              const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role.replace("-", "_")}`;
+
+              let usingClause = "";
+              switch (rolePolicy.accessType) {
+                case "global":
+                  usingClause = "true";
+                  break;
+                case "own":
+                  const userIdColumn = table.columns.find(
+                    (c) => c.name === "userId" || c.name === "user_id"
+                  )?.name || "user_id";
+                  usingClause = `auth.uid() = ${userIdColumn}`;
+                  break;
+                case "organization":
+                  const orgIdColumn = table.columns.find(
+                    (c) => c.name === "organizationId" || c.name === "organization_id"
+                  )?.name || "organization_id";
+                  usingClause = `${orgIdColumn} IN (SELECT organization_id FROM public.user_organizations WHERE user_id = auth.uid())`;
+                  break;
+                case "related":
+                  if (rolePolicy.relatedTable) {
+                    const relatedColumn = table.columns.find(
+                      (c) => c.relation?.table === rolePolicy.relatedTable
+                    );
+                    if (relatedColumn) {
+                      usingClause = `${relatedColumn.name} IN (SELECT id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+                    }
+                  }
+                  break;
+              }
+
+              if (!usingClause) {
+                usingClause = "false";
+              }
+
+              lines.push(`CREATE POLICY "${policyName}"`);
+              lines.push(`  ON ${table.schema}.${table.name}`);
+              lines.push(`  FOR ${policy.operation}`);
+              lines.push(`  TO ${rolePolicy.role.replace("-", "_")}`);
+              lines.push(`  USING (${usingClause});`);
+              lines.push("");
+            });
+          });
+        }
+
+        return lines.join("\n").trim();
+      },
+
       generatePrismaSchema: () => {
         const { tables, enums } = get();
-        let schema = `datasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n  schemas  = ["auth", "public"]\n}\n\ngenerator client {\n  provider = "prisma-client-js"\n}\n\n`;
+        const lines: string[] = [];
 
-        enums.forEach((enumDef) => {
-          schema += `enum ${enumDef.name} {\n`;
-          enumDef.values.forEach((val) => {
-            schema += `  ${val.value}\n`;
+        lines.push('datasource db {');
+        lines.push('  provider = "postgresql"');
+        lines.push('  url      = env("DATABASE_URL")');
+        lines.push('}');
+        lines.push('');
+        lines.push('generator client {');
+        lines.push('  provider = "prisma-client-js"');
+        lines.push('}');
+        lines.push('');
+
+        if (enums.length > 0) {
+          enums.forEach((enumDef) => {
+            lines.push(`enum ${enumDef.name} {`);
+            enumDef.values.forEach((v) => {
+              lines.push(`  ${v.value}`);
+            });
+            lines.push('}');
+            lines.push('');
           });
-          schema += `}\n\n`;
-        });
+        }
 
         tables.forEach((table) => {
-          schema += `model ${table.name} {\n`;
+          lines.push(`model ${table.name} {`);
           table.columns.forEach((col) => {
-            const typeStr = col.isArray ? `${col.type}[]` : col.type;
-            const optionalStr = col.isOptional ? "?" : "";
-            const padding = " ".repeat(
-              Math.max(2, 20 - col.name.length - typeStr.length)
-            );
-            const attrs = col.attributes.join(" ");
-            schema += `  ${col.name}${" ".repeat(Math.max(1, 20 - col.name.length))}${typeStr}${optionalStr}${padding}${attrs}\n`;
+            const optional = col.isOptional ? '?' : '';
+            const array = col.isArray ? '[]' : '';
+            const attributes: string[] = [];
+
+            if (col.isId) attributes.push('@id');
+            if (col.isUnique) attributes.push('@unique');
+            if (col.defaultValue) attributes.push(`@default(${col.defaultValue})`);
+            if (col.attributes && col.attributes.length > 0) {
+              attributes.push(...col.attributes);
+            }
+
+            const attrsStr = attributes.length > 0 ? ' ' + attributes.join(' ') : '';
+            lines.push(`  ${col.name} ${col.type}${array}${optional}${attrsStr}`);
           });
 
           if (table.uniqueConstraints.length > 0) {
-            schema += "\n";
             table.uniqueConstraints.forEach((constraint) => {
-              schema += `  @@unique([${constraint.join(", ")}])\n`;
+              lines.push(`  @@unique([${constraint.join(', ')}])`);
             });
           }
 
-          schema += `\n  @@schema("${table.schema}")\n`;
-          schema += `}\n\n`;
+          lines.push('}');
+          lines.push('');
         });
 
-        return schema;
+        return lines.join('\n').trim();
       },
-
 
       generateRLSPolicies: () => {
         const { rlsPolicies, tables } = get();
@@ -1725,20 +1877,26 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
 
       setRLSPoliciesFromAI: (policies, tables) => {
         const rlsPolicies: RLSPolicy[] = [];
+        const requiredRoles: Array<"user" | "admin" | "super-admin"> = ["user", "admin", "super-admin"];
+        const operations: Array<RLSPolicy["operation"]> = ["SELECT", "INSERT", "UPDATE", "DELETE"];
 
-        policies.forEach((policy) => {
-          const table = tables.find((t) => t.name === policy.tableName);
-          if (!table) return;
+        tables.forEach((table) => {
+          operations.forEach((operation) => {
+            const aiPolicy = policies.find(
+              (p) => p.tableName === table.name && p.operation === operation
+            );
 
-          rlsPolicies.push({
-            id: generateId(),
-            tableId: table.id,
-            operation: policy.operation,
-            rolePolicies: policy.rolePolicies.map((rp) => ({
-              role: rp.role,
-              accessType: rp.accessType,
-              relatedTable: rp.relatedTable,
-            })),
+            const normalizedRolePolicies = requiredRoles.map((role) => {
+              const existingRolePolicy = aiPolicy?.rolePolicies.find((rp) => rp.role === role);
+              return existingRolePolicy || { role, accessType: "none" as const };
+            });
+
+            rlsPolicies.push({
+              id: generateId(),
+              tableId: table.id,
+              operation,
+              rolePolicies: normalizedRolePolicies,
+            });
           });
         });
 

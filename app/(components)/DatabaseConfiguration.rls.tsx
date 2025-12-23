@@ -1,6 +1,5 @@
 "use client";
 
-import { useEditorStore } from "@/app/(editor)/layout.stores";
 import {
   Select,
   SelectContent,
@@ -15,17 +14,11 @@ import type { PrismaTable, RLSPolicy, UserRole, RLSAccessType } from "./Database
 export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
   const { addOrUpdateRLSPolicy, getRLSPolicyForOperation, tables } =
     useDatabaseStore();
-  const { initialConfiguration } = useEditorStore();
 
   const authProvider = "Supabase";
   const isAuthSchema = table.schema === "auth";
 
-  const enabledRoles: UserRole[] = [
-    "user",
-  ];
-  if (initialConfiguration.features.admin.admin) enabledRoles.push("admin");
-  if (initialConfiguration.features.admin.superAdmin)
-    enabledRoles.push("super-admin");
+  const enabledRoles: UserRole[] = ["user", "admin", "super-admin"];
 
   const operations: RLSPolicy["operation"][] =
     ["INSERT", "SELECT", "UPDATE", "DELETE"];

@@ -19,21 +19,21 @@ import { Ellipsis, Link2, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import type {
-  PRISMA_TYPES,
+  POSTGRES_TYPES,
   PrismaColumn,
   PrismaTable,
 } from "./DatabaseConfiguration.types";
 
-export const PRISMA_TYPE_OPTIONS: (typeof PRISMA_TYPES)[number][] = [
-  "String",
-  "Int",
-  "Float",
-  "Boolean",
-  "DateTime",
-  "Json",
-  "BigInt",
-  "Decimal",
-  "Bytes",
+export const POSTGRES_TYPE_OPTIONS: (typeof POSTGRES_TYPES)[number][] = [
+  "TEXT",
+  "INTEGER",
+  "BIGINT",
+  "BOOLEAN",
+  "TIMESTAMP WITH TIME ZONE",
+  "JSONB",
+  "DECIMAL",
+  "DOUBLE PRECISION",
+  "BYTEA",
 ];
 
 export const ColumnLine = ({
@@ -175,7 +175,7 @@ export const ColumnLine = ({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {PRISMA_TYPE_OPTIONS.map((type) => (
+                    {POSTGRES_TYPE_OPTIONS.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
                       </SelectItem>
@@ -350,8 +350,8 @@ export const AddColumnPopover = ({
   const [open, setOpen] = useState(false);
   const [columnName, setColumnName] = useState("");
   const [columnType, setColumnType] = useState<
-    (typeof PRISMA_TYPES)[number] | "Relation"
-  >("String");
+    (typeof POSTGRES_TYPES)[number] | "Relation"
+  >("TEXT");
   const [relatedTable, setRelatedTable] = useState<string>("");
   const [relationType, setRelationType] =
     useState<import("./DatabaseConfiguration.types").RelationType>(
@@ -425,7 +425,7 @@ export const AddColumnPopover = ({
     }
 
     setColumnName("");
-    setColumnType("String");
+    setColumnType("TEXT");
     setRelatedTable("");
     setRelationType("many-to-one");
     setCreateInverse(true);
@@ -471,7 +471,7 @@ export const AddColumnPopover = ({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {PRISMA_TYPE_OPTIONS.map((type) => (
+              {POSTGRES_TYPE_OPTIONS.map((type) => (
                 <SelectItem key={type} value={type}>
                   {type}
                 </SelectItem>

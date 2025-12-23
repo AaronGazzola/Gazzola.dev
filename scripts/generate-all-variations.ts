@@ -120,13 +120,9 @@ const createBaseConfig = (): InitialConfigurationType => ({
       magicLink: false,
       emailPassword: false,
       otp: false,
-      twoFactor: false,
-      passkey: false,
-      anonymous: false,
       googleAuth: false,
       githubAuth: false,
       appleAuth: false,
-      passwordOnly: false,
     },
     admin: {
       enabled: false,
@@ -172,17 +168,12 @@ const AUTH_METHOD_COMBINATIONS: Array<{
   { name: "emailPassword", methods: { emailPassword: true, enabled: true } },
   { name: "magicLink", methods: { magicLink: true, enabled: true } },
   { name: "otp", methods: { otp: true, enabled: true } },
-  { name: "passkey", methods: { passkey: true, enabled: true } },
-  { name: "twoFactor", methods: { emailPassword: true, twoFactor: true, enabled: true } },
-  { name: "anonymous", methods: { anonymous: true, enabled: true } },
   { name: "googleAuth", methods: { googleAuth: true, enabled: true } },
   { name: "githubAuth", methods: { githubAuth: true, enabled: true } },
   { name: "appleAuth", methods: { appleAuth: true, enabled: true } },
   { name: "allOAuth", methods: { googleAuth: true, githubAuth: true, appleAuth: true, enabled: true } },
-  { name: "emailPassword+2FA", methods: { emailPassword: true, twoFactor: true, enabled: true } },
   { name: "emailPassword+OAuth", methods: { emailPassword: true, googleAuth: true, githubAuth: true, enabled: true } },
-  { name: "magicLink+passkey", methods: { magicLink: true, passkey: true, enabled: true } },
-  { name: "full", methods: { emailPassword: true, magicLink: true, otp: true, twoFactor: true, passkey: true, googleAuth: true, githubAuth: true, appleAuth: true, enabled: true } },
+  { name: "full", methods: { emailPassword: true, magicLink: true, otp: true, googleAuth: true, githubAuth: true, appleAuth: true, enabled: true } },
 ];
 
 const ROLE_COMBINATIONS: Array<{

@@ -33,13 +33,9 @@ export interface ConfigSnapshot {
     magicLink: boolean;
     emailPassword: boolean;
     otp: boolean;
-    twoFactor: boolean;
-    passkey: boolean;
-    anonymous: boolean;
     googleAuth: boolean;
     githubAuth: boolean;
     appleAuth: boolean;
-    passwordOnly: boolean;
   };
 
   adminEnabled: boolean;
@@ -111,13 +107,9 @@ export const createConfigSnapshot = (
       magicLink: initialConfig.features.authentication.magicLink,
       emailPassword: initialConfig.features.authentication.emailPassword,
       otp: initialConfig.features.authentication.otp,
-      twoFactor: initialConfig.features.authentication.twoFactor,
-      passkey: initialConfig.features.authentication.passkey,
-      anonymous: initialConfig.features.authentication.anonymous,
       googleAuth: initialConfig.features.authentication.googleAuth,
       githubAuth: initialConfig.features.authentication.githubAuth,
       appleAuth: initialConfig.features.authentication.appleAuth,
-      passwordOnly: initialConfig.features.authentication.passwordOnly,
     },
 
     adminEnabled: initialConfig.features.admin.enabled,

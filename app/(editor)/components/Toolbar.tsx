@@ -131,6 +131,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [sectionsPopoverOpen, setSectionsPopoverOpen] = useState(false);
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [resetPopoverOpen, setResetPopoverOpen] = useState(false);
   const [nextTooltipOpen, setNextTooltipOpen] = useState(false);
   const [nextTooltipLocked, setNextTooltipLocked] = useState(false);
   const nextTooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -763,19 +764,55 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
               </div>
 
-              <IconButton
-                onClick={() => setResetPageDialogOpen(true)}
-                tooltip="Reset current page"
+              <EditorPopover
+                open={resetPopoverOpen}
+                onOpenChange={setResetPopoverOpen}
               >
-                <ListRestart className="h-4 w-4" />
-              </IconButton>
-
-              <IconButton
-                onClick={() => setResetAllDialogOpen(true)}
-                tooltip="Reset all pages"
-              >
-                <RotateCcw className="h-4 w-4" />
-              </IconButton>
+                <EditorPopoverTrigger asChild>
+                  <div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="rounded-[3px] h-8 w-8"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Reset options</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </EditorPopoverTrigger>
+                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+                  <div className="flex flex-col theme-gap-1">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start theme-gap-2 h-9"
+                      onClick={() => {
+                        setResetPageDialogOpen(true);
+                        setResetPopoverOpen(false);
+                      }}
+                    >
+                      <ListRestart className="h-4 w-4" />
+                      Reset current page
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start theme-gap-2 h-9"
+                      onClick={() => {
+                        setResetAllDialogOpen(true);
+                        setResetPopoverOpen(false);
+                      }}
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Reset all pages
+                    </Button>
+                  </div>
+                </EditorPopoverContent>
+              </EditorPopover>
             </div>
           </div>
 

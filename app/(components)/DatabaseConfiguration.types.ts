@@ -123,6 +123,7 @@ export interface DatabaseConfigurationState {
   getPluginsByFile: (file: "auth" | "auth-client") => Plugin[];
 
   generatePrismaSchema: () => string;
+  generateSupabaseMigration: () => string;
   generateRLSPolicies: () => string;
 
   initializeFromConfig: (
@@ -141,19 +142,19 @@ export interface DatabaseConfigurationState {
   reset: () => void;
 }
 
-export const PRISMA_TYPES = [
-  "String",
-  "Int",
-  "Float",
-  "Boolean",
-  "DateTime",
-  "Json",
-  "BigInt",
-  "Decimal",
-  "Bytes",
+export const POSTGRES_TYPES = [
+  "TEXT",
+  "INTEGER",
+  "BIGINT",
+  "BOOLEAN",
+  "TIMESTAMP WITH TIME ZONE",
+  "JSONB",
+  "DECIMAL",
+  "DOUBLE PRECISION",
+  "BYTEA",
 ] as const;
 
-export type PrismaType = (typeof PRISMA_TYPES)[number];
+export type PostgresType = (typeof POSTGRES_TYPES)[number];
 
 export interface ColumnTemplate {
   name: string;

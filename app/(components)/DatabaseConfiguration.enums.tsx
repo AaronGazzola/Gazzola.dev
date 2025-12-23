@@ -73,17 +73,6 @@ export const EnumsCollapsible = ({
           <span className="text-sm theme-text-muted-foreground">
             {enums.length} {enums.length === 1 ? "enum" : "enums"}
           </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 shrink-0 opacity-60 hover:opacity-100"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsAddingEnum(true);
-            }}
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
         </div>
       </div>
       <CollapsibleContent>

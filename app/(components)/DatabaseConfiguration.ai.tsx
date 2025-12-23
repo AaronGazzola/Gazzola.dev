@@ -26,23 +26,6 @@ export interface AIRLSPolicy {
 export interface DatabaseSchemaResponse {
   configuration: {
     databaseProvider: "supabase" | "none";
-    roles: {
-      admin: boolean;
-      superAdmin: boolean;
-      organizations: boolean;
-    };
-    authentication: {
-      magicLink: boolean;
-      emailPassword: boolean;
-      otp: boolean;
-      twoFactor: boolean;
-      passkey: boolean;
-      anonymous: boolean;
-      googleAuth: boolean;
-      githubAuth: boolean;
-      appleAuth: boolean;
-      passwordOnly: boolean;
-    };
   };
   tables: PrismaTable[];
   enums: PrismaEnum[];
@@ -64,23 +47,21 @@ ${JSON.stringify(appStructure)}
 
 Options:
 - databaseProvider: supabase | none
-- roles: admin, superAdmin, organizations
-- authentication: magicLink, emailPassword, otp, twoFactor, passkey, anonymous, googleAuth, githubAuth, appleAuth, passwordOnly
 
 Rules:
 - Create enums for status/type/priority/category fields, use enum name as column type
-- Include id (String @id @default(cuid())), createdAt, updatedAt for each table
+- Include id (TEXT PRIMARY KEY DEFAULT gen_random_uuid()), createdAt, updatedAt for each table
 - No auth/user tables - managed by auth system
-- Prisma types: String, Int, Float, Boolean, DateTime, Json, Decimal
-- Foreign keys: String type named userId, postId, etc.
+- PostgreSQL types: TEXT, INTEGER, BIGINT, DOUBLE PRECISION, BOOLEAN, TIMESTAMP WITH TIME ZONE, JSONB, DECIMAL, BYTEA
+- Foreign keys: TEXT type named userId, postId, etc.
+- Default values: gen_random_uuid(), NOW(), 'string', true/false
 
 RLS Policy Rules:
 - Generate rlsPolicies for EVERY table with ALL operations: SELECT, INSERT, UPDATE, DELETE
-- Access types: none (no access - default), global (all rows), own (user's own data via userId), organization (org members), related (via related table)
-- Roles: user (always), admin (if roles.admin), super-admin (if roles.superAdmin), org-admin/org-member (if roles.organizations)
+- Access types: none (no access - default), global (all rows), own (user's own data via userId), related (via related table)
+- Roles available: user (always), admin (always), super-admin (always)
 - IMPORTANT: Every role must have an explicit policy for every operation on every table. Default to "none" if no access should be granted
 - Tables with userId/authorId/ownerId column: user role gets "own" for SELECT/UPDATE/DELETE, "own" for INSERT
-- Tables with organizationId: org-admin/org-member get "organization" access
 - super-admin gets "global" access to all tables for all operations
 - admin gets "global" access only to tables they should manage (user data tables, not system tables)
 - user role: "own" for their data, "none" for admin-only tables
@@ -89,20 +70,18 @@ RLS Policy Rules:
 JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
 {
   "configuration": {
-    "databaseProvider": "supabase",
-    "roles": { "admin": true, "superAdmin": false, "organizations": false },
-    "authentication": { "emailPassword": true, "googleAuth": true }
+    "databaseProvider": "supabase"
   },
   "enums": [{ "name": "Status", "values": [{ "value": "ACTIVE" }, { "value": "INACTIVE" }] }],
   "tables": [{
     "name": "Task",
     "columns": [
-      { "name": "id", "type": "String", "isId": true, "defaultValue": "cuid()", "attributes": ["@id", "@default(cuid())"] },
-      { "name": "userId", "type": "String" },
+      { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"] },
+      { "name": "userId", "type": "TEXT" },
       { "name": "status", "type": "Status", "defaultValue": "ACTIVE", "attributes": ["@default(ACTIVE)"] },
-      { "name": "title", "type": "String" },
-      { "name": "createdAt", "type": "DateTime", "defaultValue": "now()", "attributes": ["@default(now())"] },
-      { "name": "updatedAt", "type": "DateTime", "attributes": ["@updatedAt"] }
+      { "name": "title", "type": "TEXT" },
+      { "name": "createdAt", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()", "attributes": ["@default(NOW())"] },
+      { "name": "updatedAt", "type": "TIMESTAMP WITH TIME ZONE", "attributes": ["@updatedAt"] }
     ]
   }],
   "rlsPolicies": [
@@ -160,23 +139,6 @@ export const parseDatabaseSchemaFromResponse = (
 
     const configuration = parsed.configuration || {
       databaseProvider: "none" as const,
-      roles: {
-        admin: false,
-        superAdmin: false,
-        organizations: false,
-      },
-      authentication: {
-        magicLink: false,
-        emailPassword: false,
-        otp: false,
-        twoFactor: false,
-        passkey: false,
-        anonymous: false,
-        googleAuth: false,
-        githubAuth: false,
-        appleAuth: false,
-        passwordOnly: false,
-      },
     };
 
     const tables = (parsed.tables || []).map((table: PrismaTable) => ({

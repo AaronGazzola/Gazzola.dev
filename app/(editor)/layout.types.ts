@@ -109,13 +109,9 @@ export interface InitialConfigurationType {
       magicLink: boolean;
       emailPassword: boolean;
       otp: boolean;
-      twoFactor: boolean;
-      passkey: boolean;
-      anonymous: boolean;
       googleAuth: boolean;
       githubAuth: boolean;
       appleAuth: boolean;
-      passwordOnly: boolean;
     };
     admin: {
       enabled: boolean;

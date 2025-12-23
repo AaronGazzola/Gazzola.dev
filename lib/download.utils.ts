@@ -961,11 +961,13 @@ export const processContent = (
       const databaseState = useDatabaseStore.getState();
       const initialConfig = getInitialConfiguration();
 
-      return generateDatabaseConfigurationDoc(
-        initialConfig,
-        databaseState.tables,
-        databaseState.rlsPolicies
-      );
+      if (initialConfig.questions.databaseProvider === "none") {
+        return "No database configuration selected.";
+      }
+
+      const migrationSQL = databaseState.generateSupabaseMigration();
+
+      return "```sql\n" + migrationSQL + "\n```";
     }
   );
 
@@ -1014,13 +1016,9 @@ const createConfigSnapshotFromInitialConfig = (
       magicLink: initialConfig.features.authentication.magicLink,
       emailPassword: initialConfig.features.authentication.emailPassword,
       otp: initialConfig.features.authentication.otp,
-      twoFactor: initialConfig.features.authentication.twoFactor,
-      passkey: initialConfig.features.authentication.passkey,
-      anonymous: initialConfig.features.authentication.anonymous,
       googleAuth: initialConfig.features.authentication.googleAuth,
       githubAuth: initialConfig.features.authentication.githubAuth,
       appleAuth: initialConfig.features.authentication.appleAuth,
-      passwordOnly: initialConfig.features.authentication.passwordOnly,
     },
     adminEnabled: initialConfig.features.admin.enabled,
     adminRoles: {
@@ -1125,71 +1123,6 @@ const generateDatabaseConfigurationDoc = (
   return lines.join("\n").trim();
 };
 
-export const generatePrismaSchema = (
-  tables: PrismaTable[],
-  initialConfiguration: InitialConfigurationType
-): string => {
-  const shouldExcludeAuthSchema =
-    initialConfiguration.questions.databaseProvider === "supabase";
-
-  const filteredTables = tables.filter((table) => {
-    if (shouldExcludeAuthSchema && table.schema === "auth") {
-      return false;
-    }
-    return true;
-  });
-
-  const schemas = Array.from(new Set(filteredTables.map((t) => t.schema)));
-  const schemasStr = schemas.map((s) => `"${s}"`).join(", ");
-
-  let schema = `datasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n  schemas  = [${schemasStr}]\n}\n\n`;
-
-  schema += `generator client {\n  provider = "prisma-client-js"\n  previewFeatures = ["multiSchema"]\n}\n\n`;
-
-  filteredTables.forEach((table) => {
-    schema += `model ${table.name} {\n`;
-
-    table.columns.forEach((col) => {
-      const typeStr = col.isArray ? `${col.type}[]` : col.type;
-      const optionalStr = col.isOptional ? "?" : "";
-      const namePadding = " ".repeat(Math.max(1, 20 - col.name.length));
-
-      let line = `  ${col.name}${namePadding}${typeStr}${optionalStr}`;
-
-      if (col.attributes.length > 0) {
-        const typePadding = " ".repeat(
-          Math.max(2, 25 - typeStr.length - optionalStr.length)
-        );
-        line += `${typePadding}${col.attributes.join(" ")}`;
-      }
-
-      if (col.relation) {
-        const relationName = `${table.name}To${col.relation.table}`;
-        const fields = `fields: [${col.name}]`;
-        const references = `references: [${col.relation.field}]`;
-        const onDelete = col.relation.onDelete
-          ? `, onDelete: ${col.relation.onDelete}`
-          : "";
-        line += ` @relation("${relationName}", ${fields}, ${references}${onDelete})`;
-      }
-
-      schema += `${line}\n`;
-    });
-
-    if (table.uniqueConstraints.length > 0) {
-      schema += "\n";
-      table.uniqueConstraints.forEach((constraint) => {
-        const fields = constraint.map((f) => `${f}`).join(", ");
-        schema += `  @@unique([${fields}])\n`;
-      });
-    }
-
-    schema += `\n  @@schema("${table.schema}")\n`;
-    schema += `}\n\n`;
-  });
-
-  return schema.trim();
-};
 
 export const generateRLSMigrationSQL = (
   rlsPolicies: RLSPolicy[],
@@ -1481,6 +1414,20 @@ export const generateAndDownloadZip = async (
         currentFolder.file(codeFile.name, fileContent);
       }
     });
+
+    const initialConfig = getInitialConfiguration();
+    if (initialConfig.questions.databaseProvider === "supabase") {
+      const databaseState = useDatabaseStore.getState();
+      const migrationSQL = databaseState.generateSupabaseMigration();
+
+      const supabaseFolder = roadmapFolder.folder("supabase");
+      if (supabaseFolder) {
+        const migrationsFolder = supabaseFolder.folder("migrations");
+        if (migrationsFolder) {
+          migrationsFolder.file("00000000000000_init.sql", migrationSQL);
+        }
+      }
+    }
   }
 
   const blob = await zip.generateAsync({ type: "blob" });

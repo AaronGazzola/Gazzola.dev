@@ -135,19 +135,6 @@ export const SchemaCollapsible = ({
           <span className="text-sm theme-text-muted-foreground">
             {tables.length} {tables.length === 1 ? "table" : "tables"}
           </span>
-          {!isSystemSchema && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 shrink-0 opacity-60 hover:opacity-100"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsAddingTable(true);
-              }}
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          )}
           {isEditable && (
             <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
               <PopoverTrigger asChild>
