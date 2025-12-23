@@ -8,11 +8,11 @@ import { Input } from "@/components/editor/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/editor/ui/radio-group";
 import { Textarea } from "@/components/editor/ui/textarea";
 import { extractJsonArrayFromResponse } from "@/lib/ai-response.utils";
-import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
+import { LOG_LABELS } from "@/lib/log.util";
 import {
+  CheckCircle2,
   Loader2,
   MessageCircleQuestion,
-  RotateCcw,
   Sparkles,
   X,
 } from "lucide-react";
@@ -213,9 +213,6 @@ export const READMEComponent = () => {
 
   const [state, setState] = useState<READMEState>(initialState);
 
-  const isDev =
-    typeof window !== "undefined" && window.location.hostname === "localhost";
-
   const { mutate: generateQuestions, isPending: isGeneratingQuestions } =
     useCodeGeneration((response) => {
       const questions = parseQuestionsFromResponse(response.content);
@@ -236,11 +233,6 @@ export const READMEComponent = () => {
       setReadmeGenerated(true);
       forceRefresh();
     });
-
-  const handleReset = useCallback(() => {
-    setState(initialState);
-    setReadmeGenerated(false);
-  }, [setReadmeGenerated]);
 
   const handleSubmitInitial = useCallback(() => {
     const prompt = `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with [ end with ]
@@ -355,43 +347,24 @@ Requirements:
     []
   );
 
-  conditionalLog(
-    {
-      readmeGenerated,
-      isDev,
-      hostname:
-        typeof window !== "undefined" ? window.location.hostname : "ssr",
-    },
-    { label: LOG_LABELS.README }
-  );
-
-  if (readmeGenerated && !isDev) {
-    conditionalLog(
-      { action: "returning null - not dev mode" },
-      { label: LOG_LABELS.README }
-    );
-    return null;
-  }
-
-  if (readmeGenerated && isDev) {
-    conditionalLog(
-      { action: "showing reset button" },
-      { label: LOG_LABELS.README }
-    );
+  if (readmeGenerated) {
     return (
       <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
-        <div className="flex flex-col theme-gap-2 items-center">
-          <p className="text-sm theme-text-muted-foreground font-semibold">
-            README generated successfully
-          </p>
-          <Button
-            onClick={handleReset}
-            variant="outline"
-            className="theme-gap-2"
-          >
-            <RotateCcw className="h-4 w-4" />
-            Reset (Dev Mode)
-          </Button>
+        <div className="flex flex-col theme-gap-3 items-center text-center">
+          <CheckCircle2 className="h-12 w-12 theme-text-primary" />
+          <div className="flex flex-col theme-gap-2">
+            <h3 className="text-lg font-bold theme-text-foreground">
+              README Generated Successfully
+            </h3>
+            <p className="text-sm theme-text-muted-foreground">
+              Your README file has been created and is now available for editing.
+              You can modify it directly to better describe your application.
+            </p>
+            <p className="text-sm theme-text-foreground font-semibold mt-2">
+              This README will be used in the next step to generate your app
+              directory structure and initial database configuration.
+            </p>
+          </div>
         </div>
       </div>
     );

@@ -5,8 +5,6 @@ import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useHeaderStore } from "./Header.store";
-import { useQueryState } from "nuqs";
 import {
   Collapsible,
   CollapsibleContent,
@@ -63,7 +61,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
+import { useHeaderStore } from "./Header.store";
 
 const nextSteps = [
   { icon: ListTodo, title: "Design" },
@@ -410,7 +410,10 @@ const TreeItem: React.FC<TreeItemProps> = ({
         <Button
           variant="ghost"
           className={cn(
-            "w-full justify-start text-white hover:bg-gray-800 h-8 px-2 relative gap-2"
+            "w-full justify-start hover:bg-gray-800 h-8 px-2 relative gap-2",
+            isActive
+              ? "text-white font-bold text-base"
+              : "text-white font-medium"
           )}
           style={{
             paddingLeft: `${(level + 1) * 12 + 8}px`,
@@ -420,7 +423,9 @@ const TreeItem: React.FC<TreeItemProps> = ({
             className="absolute opacity-30 inset-0 rounded"
             style={isActive ? getBackgroundStyle() : undefined}
           ></div>
-          <FileIcon className="h-4 w-4 flex-shrink-0 opacity-70" />
+          <FileIcon
+            className={cn("flex-shrink-0", isActive ? "h-5 w-5" : "h-4 w-4")}
+          />
           <div className="flex items-center">
             {getDisplayName(item.name, item.path || "")}
           </div>
@@ -501,14 +506,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full justify-between text-white hover:bg-gray-800 h-8 px-2 gap-2"
+          className="w-full justify-between !text-white !font-medium hover:bg-gray-800 h-8 px-2 gap-2"
           style={{ paddingLeft: `${level * 12 + 8}px` }}
         >
           <div className="flex items-center gap-2">
             {isOpen ? (
-              <FolderOpen className="h-4 w-4 flex-shrink-0 opacity-70" />
+              <FolderOpen className="h-4 w-4 flex-shrink-0" />
             ) : (
-              <Folder className="h-4 w-4 flex-shrink-0 opacity-70" />
+              <Folder className="h-4 w-4 flex-shrink-0" />
             )}
             {getDisplayName(item.name, itemPath)}
           </div>
@@ -659,9 +664,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
                 <FileIcon
                   className={cn(
                     "h-5 w-5",
-                    isActive
-                      ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-                      : "opacity-70"
+                    isActive && "drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
                   )}
                 />
               </Button>
@@ -780,7 +783,7 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
             {isOpen ? (
               <FolderOpen className="h-5 w-5" />
             ) : (
-              <Folder className="h-5 w-5 opacity-70" />
+              <Folder className="h-5 w-5" />
             )}
           </Button>
         </TooltipTrigger>
@@ -1103,10 +1106,12 @@ const Sidebar = () => {
                   <div className="space-y-2">
                     <h4 className="font-semibold">Work in Progress</h4>
                     <p className="text-sm text-gray-300">
-                      This app is a work in progress and will likely change often.
+                      This app is a work in progress and will likely change
+                      often.
                     </p>
                     <p className="text-sm text-gray-300 font-medium">
-                      Some of the functionality may be incomplete or error prone.
+                      Some of the functionality may be incomplete or error
+                      prone.
                     </p>
                   </div>
                 </PopoverContent>
