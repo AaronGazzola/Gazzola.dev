@@ -152,7 +152,7 @@ export const CodeReviewDialog = ({
           <div className="text-base text-foreground space-y-2">
             <ul className="list-disc list-inside">
               <li>Code Analysis and Refactoring</li>
-              <li>Security Auditing and Vulnerability Remediation</li>
+              <li>Security Auditing and Remediation</li>
               <li>End-to-End Automated Testing</li>
               <li>Complex Feature Implementation</li>
             </ul>
