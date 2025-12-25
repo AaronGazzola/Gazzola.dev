@@ -150,9 +150,9 @@ export const CodeReviewDialog = ({
             AI-Generated Web App Quality Assurance
           </DialogTitle>
           <div className="text-base text-foreground space-y-2">
-            <p>Comprehensive Quality Assurance services:</p>
             <ul className="list-disc list-inside">
               <li>Code Analysis and Refactoring</li>
+              <li>Security Auditing and Vulnerability Remediation</li>
               <li>End-to-End Automated Testing</li>
               <li>Complex Feature Implementation</li>
             </ul>
