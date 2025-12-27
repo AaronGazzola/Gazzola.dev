@@ -1,6 +1,6 @@
 import { SiGithub, SiNodedotjs, SiVercel } from "react-icons/si";
 
-export const ClaudeCodeLogo = ({ className }: { className?: string }) => (
+export const ClaudeCodeLogo = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     shapeRendering="geometricPrecision"
@@ -10,6 +10,7 @@ export const ClaudeCodeLogo = ({ className }: { className?: string }) => (
     clipRule="evenodd"
     viewBox="0 0 512 509.64"
     className={className}
+    style={style}
   >
     <path
       fill="#D77655"
@@ -38,11 +39,12 @@ export const GitHubSmallLogo = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const VSCodeLogo = ({ className }: { className?: string }) => (
+export const VSCodeLogo = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg
     viewBox="0 0 32 32"
     xmlns="http://www.w3.org/2000/svg"
     className={className}
+    style={style}
   >
     <path
       d="M29.01 5.03L23.244 2.254C22.764 2.008 22.228 1.888 21.691 1.904L21.244 1.914L10.309 12.672L4.486 8.291C4.149 8.019 3.721 7.88 3.284 7.9C2.847 7.92 2.433 8.099 2.12 8.404L0.67 9.746C0.237 10.181 0.237 10.892 0.67 11.327L5.68 16.167L0.67 21.007C0.237 21.442 0.237 22.153 0.67 22.588L2.12 23.93C2.433 24.235 2.847 24.414 3.284 24.434C3.721 24.454 4.149 24.315 4.486 24.043L10.309 19.662L21.244 30.42L21.691 30.43C22.228 30.446 22.764 30.326 23.244 30.08L29.01 27.304C29.626 26.992 30 26.351 30 25.657V6.677C30 5.983 29.626 5.342 29.01 5.03ZM23.244 24.657L13.45 16.167L23.244 7.677V24.657Z"

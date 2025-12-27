@@ -31,6 +31,7 @@ import {
   BookText,
   Bot,
   Box,
+  Bug,
   ChevronDown,
   ChevronRight,
   Code2,
@@ -40,7 +41,7 @@ import {
   Folder,
   FolderOpen,
   FolderTree,
-  Footprints,
+  LaptopMinimalCheck,
   ListTodo,
   Menu,
   Palette,
@@ -55,6 +56,8 @@ import { useParams } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
 import { useHeaderStore } from "./Header.store";
+import { FeedbackDialog } from "./FeedbackDialog";
+import { SidebarDataAttributes } from "./Sidebar.types";
 
 const nextSteps = [
   { icon: ListTodo, title: "Design" },
@@ -69,7 +72,7 @@ const FILE_ICON_MAP: Record<string, LucideIcon> = {
   theme: Palette,
   "app-directory": FolderTree,
   database: Database,
-  "next-steps": Footprints,
+  environment: LaptopMinimalCheck,
   "docs.deployment-instructions": Rocket,
   "docs.util": Code2,
   "app.globals": Palette,
@@ -826,6 +829,7 @@ const Sidebar = () => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { setIsExpanded } = useHeaderStore();
   const [_dialogOpen, setDialogOpen] = useQueryState("codeReview");
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [mounted, setMounted] = useState(false);
   const params = useParams();
@@ -990,7 +994,17 @@ const Sidebar = () => {
             />
           ))}
       </div>
-      <div className="border-t border-gray-700 p-3"></div>
+      <div className="border-t border-gray-700 p-3">
+        <Button
+          variant="ghost"
+          className="w-full justify-start hover:bg-gray-800 h-8 px-2 gap-2 text-white font-medium"
+          onClick={() => setFeedbackDialogOpen(true)}
+          data-cy={SidebarDataAttributes.FEEDBACK_BUTTON_EXPANDED}
+        >
+          <Bug className="h-4 w-4 flex-shrink-0" />
+          Feedback
+        </Button>
+      </div>
     </SidebarContent>
   );
 
@@ -1047,7 +1061,27 @@ const Sidebar = () => {
             />
           ))}
       </div>
-      <div className="border-t border-gray-700 p-2"></div>
+      <div className="border-t border-gray-700 p-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-full h-10 text-white hover:bg-gray-800"
+              onClick={() => setFeedbackDialogOpen(true)}
+              data-cy={SidebarDataAttributes.FEEDBACK_BUTTON_COLLAPSED}
+            >
+              <Bug className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            className="bg-gray-900 text-white border-gray-700"
+          >
+            Feedback
+          </TooltipContent>
+        </Tooltip>
+      </div>
     </SidebarContent>
   );
 
@@ -1058,6 +1092,10 @@ const Sidebar = () => {
         className="border-r-gray-800 h-full"
         expandedContent={expandedContent}
         collapsedContent={collapsedContent}
+      />
+      <FeedbackDialog
+        open={feedbackDialogOpen}
+        onOpenChange={setFeedbackDialogOpen}
       />
     </TooltipProvider>
   );

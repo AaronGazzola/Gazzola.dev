@@ -2,26 +2,38 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { Button } from "@/components/editor/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { generateAndDownloadZip } from "@/lib/download.utils";
 import {
+  ArrowRight,
   CheckCircle2,
-  ChevronLeft,
   ChevronRight,
-  Copy,
-  Download,
+  Database,
   ExternalLink,
+  FolderDown,
+  MessagesSquare,
+  PackageOpen,
+  Plus,
+  ScrollText,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import type { StepData } from "./NextStepsComponent.types";
 import {
   ClaudeCodeLogo,
   FINAL_PROMPT,
   GitHubSmallLogo,
-  NextJsLogo,
-  NodeJsLogo,
   SETUP_PROMPT,
   SupabaseLogo,
   VercelLogo,
@@ -29,9 +41,11 @@ import {
 } from "./NextStepsComponent.utils";
 
 export const NextStepsComponent = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [openStep, setOpenStep] = useState<string>("step-1");
+  const [unlockedSteps, setUnlockedSteps] = useState<Set<number>>(new Set([1]));
   const [copied, setCopied] = useState<string | null>(null);
   const [downloaded, setDownloaded] = useState(false);
+  const [promptPopoverOpen, setPromptPopoverOpen] = useState(false);
 
   const {
     data,
@@ -43,6 +57,10 @@ export const NextStepsComponent = () => {
     getPlaceholderValue,
     getInitialConfiguration,
   } = useEditorStore();
+
+  const initialConfiguration = getInitialConfiguration();
+  const isNoDatabaseSelected =
+    initialConfiguration.questions.databaseProvider === "none";
 
   const handleCopy = async (text: string, id: string) => {
     try {
@@ -67,98 +85,32 @@ export const NextStepsComponent = () => {
         getInitialConfiguration
       );
       setDownloaded(true);
+      setTimeout(() => setDownloaded(false), 2000);
     } catch (error) {
       console.error("Download error:", error);
     }
   };
 
+  const handleNext = (currentStepId: number) => {
+    const nextStepId = currentStepId + 1;
+    setUnlockedSteps((prev) => new Set([...prev, nextStepId]));
+    setOpenStep(`step-${nextStepId}`);
+  };
+
   const steps: StepData[] = [
-    {
-      id: 0,
-      title: "Welcome to Your Next.js Journey",
-      description:
-        "Let's set up your development environment step by step",
-      content: (
-        <div className="flex flex-col theme-gap-4">
-          <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground font-semibold mb-4">
-              This wizard will guide you through:
-            </p>
-            <ul className="text-sm theme-text-foreground space-y-2">
-              <li className="flex items-start theme-gap-2">
-                <span className="theme-text-primary font-bold">1.</span>
-                <span>Creating necessary accounts (GitHub, Claude, Supabase)</span>
-              </li>
-              <li className="flex items-start theme-gap-2">
-                <span className="theme-text-primary font-bold">2.</span>
-                <span>Installing development tools (VSCode, Claude Code)</span>
-              </li>
-              <li className="flex items-start theme-gap-2">
-                <span className="theme-text-primary font-bold">3.</span>
-                <span>Setting up your project environment</span>
-              </li>
-              <li className="flex items-start theme-gap-2">
-                <span className="theme-text-primary font-bold">4.</span>
-                <span>Downloading your custom starter kit</span>
-              </li>
-            </ul>
-          </div>
-          <div className="grid grid-cols-3 gap-4 theme-p-4 theme-bg-muted theme-radius">
-            <div className="flex flex-col items-center theme-gap-2">
-              <GitHubSmallLogo className="h-12 w-12" />
-              <span className="text-xs theme-text-muted-foreground text-center">
-                GitHub
-              </span>
-            </div>
-            <div className="flex flex-col items-center theme-gap-2">
-              <VSCodeLogo className="h-12 w-12" />
-              <span className="text-xs theme-text-muted-foreground text-center">
-                VS Code
-              </span>
-            </div>
-            <div className="flex flex-col items-center theme-gap-2">
-              <ClaudeCodeLogo className="h-12 w-12" />
-              <span className="text-xs theme-text-muted-foreground text-center">
-                Claude
-              </span>
-            </div>
-            <div className="flex flex-col items-center theme-gap-2">
-              <SupabaseLogo className="h-12 w-12" />
-              <span className="text-xs theme-text-muted-foreground text-center">
-                Supabase
-              </span>
-            </div>
-            <div className="flex flex-col items-center theme-gap-2">
-              <NodeJsLogo className="h-12 w-12" />
-              <span className="text-xs theme-text-muted-foreground text-center">
-                Node.js
-              </span>
-            </div>
-            <div className="flex flex-col items-center theme-gap-2">
-              <NextJsLogo className="h-12 w-12" />
-              <span className="text-xs theme-text-muted-foreground text-center">
-                Next.js
-              </span>
-            </div>
-          </div>
-        </div>
-      ),
-    },
     {
       id: 1,
       title: "Create GitHub Account & Repository",
       description: "Set up version control for your project",
       content: (
         <div className="flex flex-col theme-gap-4">
-          <div className="flex justify-center theme-mb-4">
-            <GitHubSmallLogo className="h-16 w-16" />
-          </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
-              Step 1: Create GitHub Account
+              Create GitHub Account
             </h4>
             <p className="text-sm theme-text-foreground mb-3">
-              If you don&apos;t already have one, sign up for a free GitHub account.
+              If you don&apos;t already have one, sign up for a free GitHub
+              account.
             </p>
             <Button
               variant="outline"
@@ -171,21 +123,18 @@ export const NextStepsComponent = () => {
           </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
-              Step 2: Create a New Private Repository
+              Create a New Private Repository
             </h4>
             <ol className="text-sm theme-text-foreground space-y-2 list-decimal list-inside">
-              <li>Click the &quot;+&quot; icon in the top right → New repository</li>
-              <li>Choose a repository name for your project</li>
+              <li>Name your project</li>
               <li>Select &quot;Private&quot; for repository visibility</li>
-              <li>Do NOT initialize with README (we&apos;ll add files later)</li>
+              <li>Do NOT initialize with README</li>
               <li>Click &quot;Create repository&quot;</li>
             </ol>
             <Button
               variant="outline"
               className="theme-gap-2 mt-3"
-              onClick={() =>
-                window.open("https://github.com/new", "_blank")
-              }
+              onClick={() => window.open("https://github.com/new", "_blank")}
             >
               <ExternalLink className="h-4 w-4" />
               Create New Repository
@@ -200,21 +149,21 @@ export const NextStepsComponent = () => {
       description: "Get the code editor for development",
       content: (
         <div className="flex flex-col theme-gap-4">
-          <div className="flex justify-center theme-mb-4">
-            <VSCodeLogo className="h-16 w-16" />
-          </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
               Download VS Code
             </h4>
             <p className="text-sm theme-text-foreground mb-3">
-              Visual Studio Code is a free, open-source code editor with
-              excellent support for JavaScript, TypeScript, and Next.js
-              development.
+              Visual Studio Code is a free, open-source code editor.
             </p>
+            <ul className="text-sm theme-text-foreground space-y-2 list-disc list-inside">
+              <li>Download the installer for your operating system</li>
+              <li>Run the installer and follow the setup wizard</li>
+              <li>Launch VS Code after installation completes</li>
+            </ul>
             <Button
               variant="outline"
-              className="theme-gap-2"
+              className="theme-gap-2 mt-4"
               onClick={() =>
                 window.open("https://code.visualstudio.com/download", "_blank")
               }
@@ -222,16 +171,6 @@ export const NextStepsComponent = () => {
               <ExternalLink className="h-4 w-4" />
               Download VS Code
             </Button>
-          </div>
-          <div className="theme-bg-muted theme-radius theme-p-4">
-            <h4 className="font-semibold theme-text-foreground mb-2">
-              Installation Steps
-            </h4>
-            <ul className="text-sm theme-text-foreground space-y-2 list-disc list-inside">
-              <li>Download the installer for your operating system</li>
-              <li>Run the installer and follow the setup wizard</li>
-              <li>Launch VS Code after installation completes</li>
-            </ul>
           </div>
         </div>
       ),
@@ -242,9 +181,6 @@ export const NextStepsComponent = () => {
       description: "Set up AI assistance for development",
       content: (
         <div className="flex flex-col theme-gap-4">
-          <div className="flex justify-center theme-mb-4">
-            <ClaudeCodeLogo className="h-16 w-16" />
-          </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
               Create Claude Account
@@ -256,9 +192,7 @@ export const NextStepsComponent = () => {
             <Button
               variant="outline"
               className="theme-gap-2"
-              onClick={() =>
-                window.open("https://claude.ai/signup", "_blank")
-              }
+              onClick={() => window.open("https://claude.ai/signup", "_blank")}
             >
               <ExternalLink className="h-4 w-4" />
               Sign Up for Claude
@@ -275,9 +209,7 @@ export const NextStepsComponent = () => {
             <Button
               variant="outline"
               className="theme-gap-2"
-              onClick={() =>
-                window.open("https://claude.ai/upgrade", "_blank")
-              }
+              onClick={() => window.open("https://claude.ai/upgrade", "_blank")}
             >
               <ExternalLink className="h-4 w-4" />
               View Pricing
@@ -292,19 +224,14 @@ export const NextStepsComponent = () => {
       description: "Add Claude to your VS Code editor",
       content: (
         <div className="flex flex-col theme-gap-4">
-          <div className="flex justify-center theme-gap-4 theme-mb-4">
-            <VSCodeLogo className="h-16 w-16" />
-            <ClaudeCodeLogo className="h-16 w-16" />
-          </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
               Install from VS Code Marketplace
             </h4>
             <ol className="text-sm theme-text-foreground space-y-2 list-decimal list-inside mb-3">
-              <li>Open Visual Studio Code</li>
-              <li>Click the Extensions icon in the sidebar (or press Ctrl+Shift+X)</li>
-              <li>Search for &quot;Claude Code&quot;</li>
-              <li>Click &quot;Install&quot; on the official Claude Code extension</li>
+              <li>Click the &quot;View in Marketplace&quot; button below</li>
+              <li>Click &quot;Install&quot; on the marketplace page</li>
+              <li>VS Code will automatically open and install the extension</li>
               <li>Sign in with your Claude account when prompted</li>
             </ol>
             <Button
@@ -328,14 +255,30 @@ export const NextStepsComponent = () => {
       id: 5,
       title: "Create Supabase Account & Project",
       description: "Set up your database and backend services",
-      content: (
+      content: isNoDatabaseSelected ? (
         <div className="flex flex-col theme-gap-4">
-          <div className="flex justify-center theme-mb-4">
-            <SupabaseLogo className="h-16 w-16" />
-          </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
-              Step 1: Create Supabase Account
+              No Database Configured
+            </h4>
+            <p className="text-sm theme-text-foreground mb-3">
+              This app is configured as a front-end only application without a
+              database. If you need database functionality, you can configure it
+              on the database page.
+            </p>
+            <Link href="/database">
+              <Button variant="outline" className="theme-gap-2">
+                <Database className="h-4 w-4" />
+                Configure Database
+              </Button>
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col theme-gap-4">
+          <div className="theme-bg-muted theme-radius theme-p-4">
+            <h4 className="font-semibold theme-text-foreground mb-2">
+              Create Supabase Account
             </h4>
             <p className="text-sm theme-text-foreground mb-3">
               Supabase provides your database and authentication services.
@@ -353,7 +296,7 @@ export const NextStepsComponent = () => {
           </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
-              Step 2: Create a New Project
+              Create a New Project
             </h4>
             <ol className="text-sm theme-text-foreground space-y-2 list-decimal list-inside mb-3">
               <li>Click &quot;New Project&quot; in your dashboard</li>
@@ -362,47 +305,72 @@ export const NextStepsComponent = () => {
               <li>Select a region close to your users</li>
               <li>Click &quot;Create new project&quot;</li>
             </ol>
-            <p className="text-xs theme-text-muted-foreground font-semibold">
-              Note: You&apos;ll need your Project URL, Anon Key, and Service Role Key
-              in the next step. Find these in Project Settings → API.
-            </p>
+            <Button
+              variant="outline"
+              className="theme-gap-2"
+              onClick={() =>
+                window.open("https://supabase.com/dashboard/new", "_blank")
+              }
+            >
+              <ExternalLink className="h-4 w-4" />
+              Create New Project
+            </Button>
           </div>
         </div>
       ),
     },
     {
       id: 6,
-      title: "Setup Your Development Environment",
+      title: "Chat with Claude to set up your project",
       description: "Use Claude to configure everything",
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
-              Copy this prompt to Claude Code
+              Copy and paste your first prompt
             </h4>
             <p className="text-sm theme-text-foreground mb-3">
-              Paste this prompt into Claude Code in VS Code. Claude will help you
-              install Git, Node.js, Next.js, configure Supabase, set up your
-              GitHub SSH keys, and push your initial commit.
+              Copy the prompt below, paste it into your Claude chat in VSCode
+              and follow the instructions.
             </p>
-            <div className="theme-bg-card theme-radius theme-p-4 max-h-96 overflow-y-auto mb-3 border theme-border-border">
-              <pre className="text-xs theme-text-foreground whitespace-pre-wrap font-mono">
-                {SETUP_PROMPT}
-              </pre>
-            </div>
+            <Popover
+              open={promptPopoverOpen}
+              onOpenChange={setPromptPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button variant="link" className="theme-gap-2 w-full mb-4">
+                  View prompt
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[500px] max-h-[400px] overflow-y-auto">
+                <pre className="text-xs theme-text-foreground whitespace-pre-wrap font-mono">
+                  {SETUP_PROMPT}
+                </pre>
+              </PopoverContent>
+            </Popover>
             <Button
+              variant="outline"
               onClick={() => handleCopy(SETUP_PROMPT, "setup")}
-              className="theme-gap-2 w-full"
+              className="w-full flex flex-col items-center py-6 h-auto"
             >
               {copied === "setup" ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4" />
-                  Copied!
+                  <CheckCircle2
+                    className="h-5 w-5 mr-2 flex-shrink-0"
+                    style={{ width: "1.25rem", height: "1.25rem" }}
+                  />
+                  <span className="text-lg">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="h-4 w-4" />
-                  Copy Prompt
+                  <div className="flex items-center justify-center theme-gap-3 mb-3">
+                    <ScrollText className="flex-shrink-0" style={{ width: "2rem", height: "2rem" }} />
+                    <ArrowRight className="flex-shrink-0" style={{ width: "1.5rem", height: "1.5rem" }} />
+                    <ClaudeCodeLogo className="flex-shrink-0" style={{ width: "2rem", height: "2rem" }} />
+                  </div>
+                  <span className="text-lg sm:inline hidden mt-3">
+                    Click here to copy the prompt
+                  </span>
                 </>
               )}
             </Button>
@@ -414,12 +382,8 @@ export const NextStepsComponent = () => {
       id: 7,
       title: "Deploy with Vercel (Optional)",
       description: "Set up automatic deployments",
-      isOptional: true,
       content: (
         <div className="flex flex-col theme-gap-4">
-          <div className="flex justify-center theme-mb-4">
-            <VercelLogo className="h-16 w-16" />
-          </div>
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
               Create Vercel Account
@@ -431,9 +395,7 @@ export const NextStepsComponent = () => {
             <Button
               variant="outline"
               className="theme-gap-2"
-              onClick={() =>
-                window.open("https://vercel.com/signup", "_blank")
-              }
+              onClick={() => window.open("https://vercel.com/signup", "_blank")}
             >
               <ExternalLink className="h-4 w-4" />
               Sign Up for Vercel
@@ -444,149 +406,210 @@ export const NextStepsComponent = () => {
               Connect Your Repository
             </h4>
             <ol className="text-sm theme-text-foreground space-y-2 list-decimal list-inside mb-3">
-              <li>Click &quot;Add New Project&quot;</li>
               <li>Import your GitHub repository</li>
-              <li>Configure your build settings (Next.js auto-detected)</li>
-              <li>Add environment variables:
-                <ul className="list-disc list-inside ml-4 mt-1">
-                  <li>NEXT_PUBLIC_SUPABASE_URL</li>
-                  <li>NEXT_PUBLIC_SUPABASE_ANON_KEY</li>
-                  <li>SUPABASE_SERVICE_ROLE_KEY</li>
-                </ul>
+              <li>
+                Add environment variables (from the process in the previous
+                step)
               </li>
               <li>Click &quot;Deploy&quot;</li>
             </ol>
+            <p className="text-sm theme-text-foreground mb-3">
+              Your app will automatically deploy to a preview URL when you push
+              a git commit to the main branch.
+            </p>
+            <Button
+              variant="outline"
+              className="theme-gap-2"
+              onClick={() => window.open("https://vercel.com/new", "_blank")}
+            >
+              <ExternalLink className="h-4 w-4" />
+              Import Project to Vercel
+            </Button>
           </div>
         </div>
       ),
     },
     {
       id: 8,
-      title: "Download Your Starter Kit",
+      title: "Download and unpack your starter kit",
       description: "Get your custom-configured project files",
       content: (
         <div className="flex flex-col theme-gap-4">
-          {!downloaded ? (
-            <>
-              <div className="theme-bg-muted theme-radius theme-p-4">
-                <h4 className="font-semibold theme-text-foreground mb-2">
-                  Download Your Starter Kit
-                </h4>
-                <p className="text-sm theme-text-foreground mb-3">
-                  Your starter kit includes all the configured files, components,
-                  and setup instructions based on your selections throughout this
-                  process.
-                </p>
-                <Button
-                  onClick={handleDownload}
-                  className="theme-gap-2 w-full"
-                  size="lg"
-                >
-                  <Download className="h-5 w-5" />
-                  Download Starter Kit
+          <div className="theme-bg-muted theme-radius theme-p-4">
+            <ol className="text-sm theme-text-foreground space-y-2 list-decimal list-inside mb-3">
+              <li>Download your starter kit</li>
+              <li>Move your starter kit into your project directory</li>
+              <li>
+                Copy the prompt below and paste it into your Claude chat in
+                VSCode
+              </li>
+            </ol>
+            <Popover
+              open={promptPopoverOpen}
+              onOpenChange={setPromptPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button variant="link" className="theme-gap-2 w-full mb-4">
+                  View prompt
                 </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex flex-col theme-gap-4 items-center text-center">
-                <CheckCircle2 className="h-16 w-16 theme-text-primary" />
-                <h4 className="font-semibold text-lg theme-text-foreground">
-                  Starter Kit Downloaded!
-                </h4>
-                <p className="text-sm theme-text-foreground">
-                  Extract the ZIP file and follow the instructions below.
-                </p>
-              </div>
-              <div className="theme-bg-muted theme-radius theme-p-4">
-                <h4 className="font-semibold theme-text-foreground mb-2">
-                  Next Steps with Claude
-                </h4>
-                <p className="text-sm theme-text-foreground mb-3">
-                  Copy this prompt and paste it into Claude Code to help you set
-                  up the starter kit:
-                </p>
-                <div className="theme-bg-card theme-radius theme-p-4 mb-3 border theme-border-border">
-                  <pre className="text-xs theme-text-foreground whitespace-pre-wrap font-mono">
-                    {FINAL_PROMPT}
-                  </pre>
-                </div>
-                <Button
-                  onClick={() => handleCopy(FINAL_PROMPT, "final")}
-                  className="theme-gap-2 w-full"
-                >
-                  {copied === "final" ? (
-                    <>
-                      <CheckCircle2 className="h-4 w-4" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy Prompt
-                    </>
-                  )}
-                </Button>
-              </div>
-              <div className="flex flex-col theme-gap-3 items-center text-center theme-p-4 theme-bg-primary theme-radius">
-                <Sparkles className="h-8 w-8 theme-text-primary-foreground" />
-                <p className="text-sm font-semibold theme-text-primary-foreground">
-                  You&apos;re all set! Happy coding! 🎉
-                </p>
-              </div>
-            </>
-          )}
+              </PopoverTrigger>
+              <PopoverContent className="w-[500px] max-h-[400px] overflow-y-auto">
+                <pre className="text-xs theme-text-foreground whitespace-pre-wrap font-mono">
+                  {FINAL_PROMPT}
+                </pre>
+              </PopoverContent>
+            </Popover>
+            <Button
+              variant="outline"
+              onClick={() => handleCopy(FINAL_PROMPT, "final")}
+              className="w-full flex flex-col items-center py-6 h-auto mb-4"
+            >
+              {copied === "final" ? (
+                <>
+                  <CheckCircle2
+                    className="h-5 w-5 mr-2 flex-shrink-0"
+                    style={{ width: "1.25rem", height: "1.25rem" }}
+                  />
+                  <span className="text-lg">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-center theme-gap-3">
+                    <ScrollText className="flex-shrink-0" style={{ width: "2rem", height: "2rem" }} />
+                    <ArrowRight className="flex-shrink-0" style={{ width: "1.5rem", height: "1.5rem" }} />
+                    <ClaudeCodeLogo className="flex-shrink-0" style={{ width: "2rem", height: "2rem" }} />
+                  </div>
+                  <span className="text-lg sm:inline hidden mt-3">
+                    Click here to copy the prompt
+                  </span>
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={handleDownload}
+              className="w-full flex flex-col items-center py-6 h-auto"
+              size="lg"
+            >
+              {downloaded ? (
+                <>
+                  <CheckCircle2
+                    className="h-5 w-5 mr-2 flex-shrink-0"
+                    style={{ width: "1.25rem", height: "1.25rem" }}
+                  />
+                  <span className="text-lg sm:inline hidden">
+                    Starter kit downloaded!
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-center theme-gap-3">
+                    <FolderDown className="flex-shrink-0" style={{ width: "2rem", height: "2rem" }} />
+                    <ArrowRight className="flex-shrink-0" style={{ width: "1.5rem", height: "1.5rem" }} />
+                    <VSCodeLogo className="flex-shrink-0" style={{ width: "2rem", height: "2rem" }} />
+                  </div>
+                  <span className="text-lg sm:inline hidden mt-3">
+                    Download your Starter Kit
+                  </span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       ),
     },
   ];
 
-  const currentStepData = steps[currentStep];
-  const totalSteps = steps.length;
+  const getStepIcon = (stepId: number) => {
+    switch (stepId) {
+      case 1:
+        return <GitHubSmallLogo className="h-5 w-5 flex-shrink-0" />;
+      case 2:
+        return <VSCodeLogo className="h-5 w-5 flex-shrink-0" />;
+      case 3:
+        return <ClaudeCodeLogo className="h-5 w-5 flex-shrink-0" />;
+      case 4:
+        return (
+          <div className="flex flex-col sm:flex-row items-center gap-1 flex-shrink-0">
+            <VSCodeLogo className="h-5 w-5 flex-shrink-0" />
+            <Plus className="h-4 w-4 flex-shrink-0" />
+            <ClaudeCodeLogo className="h-5 w-5 flex-shrink-0" />
+          </div>
+        );
+      case 5:
+        return <SupabaseLogo className="h-5 w-5 flex-shrink-0" />;
+      case 6:
+        return (
+          <MessagesSquare className="h-5 w-5 flex-shrink-0 theme-text-primary" />
+        );
+      case 7:
+        return <VercelLogo className="h-5 w-5 flex-shrink-0" />;
+      case 8:
+        return <PackageOpen className="h-5 w-5 flex-shrink-0" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
-      <Progress value={(currentStep / (totalSteps - 1)) * 100} className="mb-2" />
-      <p className="text-sm theme-text-muted-foreground text-center font-semibold">
-        Step {currentStep + 1} of {totalSteps}
-        {currentStepData.isOptional && (
-          <Badge variant="outline" className="ml-2 text-xs">
-            Optional
-          </Badge>
-        )}
-      </p>
-
       <div className="flex flex-col theme-gap-2 mb-4">
-        <h2 className="text-xl font-bold theme-text-foreground">
-          {currentStepData.title}
+        <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
+          <Sparkles className="h-5 w-5 flex-shrink-0 theme-text-primary" />
+          Set Up Your Development Environment
         </h2>
-        <p className="theme-text-muted-foreground font-semibold">
-          {currentStepData.description}
+        <p className="theme-text-foreground">
+          Follow these steps start building your web app with AI.
         </p>
       </div>
 
-      <div className="theme-gap-4">{currentStepData.content}</div>
+      <Accordion
+        type="single"
+        collapsible
+        value={openStep}
+        onValueChange={setOpenStep}
+        className="w-full"
+      >
+        {steps.map((step, index) => {
+          const isUnlocked = unlockedSteps.has(step.id);
+          const isLastStep = index === steps.length - 1;
 
-      <div className="flex justify-between items-center mt-6">
-        <Button
-          variant="outline"
-          onClick={() => setCurrentStep((prev) => prev - 1)}
-          disabled={currentStep === 0}
-          className="theme-gap-2"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Back
-        </Button>
-
-        <Button
-          onClick={() => setCurrentStep((prev) => prev + 1)}
-          disabled={currentStep === totalSteps - 1}
-          className="theme-gap-2"
-        >
-          Next
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+          return (
+            <AccordionItem
+              key={step.id}
+              value={`step-${step.id}`}
+              disabled={!isUnlocked}
+              className="theme-border-border"
+            >
+              <AccordionTrigger
+                className={`${
+                  !isUnlocked
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:theme-text-primary"
+                }`}
+              >
+                <div className="flex items-center theme-gap-2">
+                  {getStepIcon(step.id)}
+                  <span className="font-semibold">{step.title}</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="flex flex-col theme-gap-4 pt-4">
+                  {step.content}
+                  {!isLastStep && (
+                    <Button
+                      onClick={() => handleNext(step.id)}
+                      className="theme-gap-2 w-full"
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
     </div>
   );
 };

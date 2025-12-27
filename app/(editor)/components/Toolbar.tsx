@@ -132,10 +132,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resetPopoverOpen, setResetPopoverOpen] = useState(false);
-  const [nextTooltipOpen, setNextTooltipOpen] = useState(false);
-  const [nextTooltipLocked, setNextTooltipLocked] = useState(false);
-  const nextTooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const nextTooltipHoveringRef = useRef(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -259,25 +255,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     return currentNode?.type === "file" && currentNode.previewOnly === true;
   }, [data, currentContentPath]);
 
-  const isReadmeNotGenerated = useMemo(() => {
-    return currentContentPath === "readme" && !readmeGenerated;
-  }, [currentContentPath, readmeGenerated]);
-
   const isReadmePage = useMemo(() => {
     return currentContentPath === "readme";
   }, [currentContentPath]);
-
-  const isThemeNotInteracted = useMemo(() => {
-    return currentContentPath === "theme" && !themeHasInteracted;
-  }, [currentContentPath, themeHasInteracted]);
-
-  const isAppStructureNotGenerated = useMemo(() => {
-    return currentContentPath === "app-directory" && !appStructureGenerated;
-  }, [currentContentPath, appStructureGenerated]);
-
-  const isDatabaseNotGenerated = useMemo(() => {
-    return currentContentPath === "database" && !databaseGenerated;
-  }, [currentContentPath, databaseGenerated]);
 
   const nextPage =
     currentPageIndex >= 0 && currentPageIndex < numberedPages.length - 1
@@ -349,42 +329,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       router.push(nextPage.url);
     }
   };
-
-  const handleNextWrapperClick = () => {
-    if (!isDevelopment && (isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated)) {
-      if (nextTooltipTimeoutRef.current) {
-        clearTimeout(nextTooltipTimeoutRef.current);
-      }
-
-      setNextTooltipLocked(true);
-      setNextTooltipOpen(true);
-
-      nextTooltipTimeoutRef.current = setTimeout(() => {
-        setNextTooltipLocked(false);
-        if (!nextTooltipHoveringRef.current) {
-          setNextTooltipOpen(false);
-        }
-        nextTooltipTimeoutRef.current = null;
-      }, 3000);
-    }
-  };
-
-  const handleNextTooltipOpenChange = (open: boolean) => {
-    if (!nextTooltipLocked) {
-      setNextTooltipOpen(open);
-    } else if (open) {
-      setNextTooltipOpen(true);
-    }
-  };
-
-  const handleNextTooltipPointerEnter = () => {
-    nextTooltipHoveringRef.current = true;
-  };
-
-  const handleNextTooltipPointerLeave = () => {
-    nextTooltipHoveringRef.current = false;
-  };
-
   const handleResetPage = async () => {
     const { data: freshData } = await getMarkdownDataAction();
 
@@ -926,39 +870,20 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               disabled={isViewingComponentFile || isReadmePage}
             />
             {canGoNext && (
-              <Tooltip open={nextTooltipOpen} onOpenChange={handleNextTooltipOpenChange}>
+              <Tooltip>
                 <TooltipTrigger asChild>
-                  <span
-                    onClick={handleNextWrapperClick}
-                    onPointerEnter={handleNextTooltipPointerEnter}
-                    onPointerLeave={handleNextTooltipPointerLeave}
+                  <Button
+                    onClick={handleNext}
+                    size={currentPageIndex <= 4 ? "sm" : "default"}
+                    variant={currentPageIndex <= 4 ? "default" : "outline"}
+                    className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
                   >
-                    <Button
-                      onClick={handleNext}
-                      size={currentPageIndex <= 4 ? "sm" : "default"}
-                      variant={currentPageIndex <= 4 ? "default" : "outline"}
-                      className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
-                      disabled={!isDevelopment && (isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated)}
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </span>
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
-                  <p>
-                    {isReadmeNotGenerated
-                      ? "Generate your README file to continue"
-                      : isThemeNotInteracted
-                        ? "Select your theme to continue"
-                        : isAppStructureNotGenerated
-                          ? "Generate your app directory to continue"
-                          : isDatabaseNotGenerated
-                            ? "Generate your database configuration to continue"
-                            : canGoNext
-                              ? `Next: ${nextPageTitle}`
-                              : "No next page"}
-                  </p>
+                  <p>Next: {nextPageTitle}</p>
                 </TooltipContent>
               </Tooltip>
             )}

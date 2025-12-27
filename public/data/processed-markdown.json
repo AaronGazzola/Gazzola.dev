@@ -113,21 +113,21 @@
         "isDynamicRobotsFile": false
       },
       {
-        "id": "next-steps",
-        "name": "next-steps",
-        "displayName": "Next Steps",
+        "id": "environment",
+        "name": "environment",
+        "displayName": "Environment",
         "type": "file",
         "order": 5,
-        "path": "next-steps",
-        "urlPath": "/next-steps",
-        "content": "# Next Steps\n\n<!-- component-NextStepsComponent -->\n",
+        "path": "environment",
+        "urlPath": "/environment",
+        "content": "# Environment\n\n<!-- component-NextStepsComponent -->\n",
         "components": [
           {
             "id": "component-NextStepsComponent",
             "name": "NextStepsComponent",
             "displayName": "NextStepsComponent",
             "type": "component",
-            "path": "next-steps.component.NextStepsComponent",
+            "path": "environment.component.NextStepsComponent",
             "urlPath": "",
             "componentId": "NextStepsComponent",
             "include": true
@@ -536,21 +536,21 @@
           "isDynamicRobotsFile": false
         },
         {
-          "id": "next-steps",
-          "name": "next-steps",
-          "displayName": "Next Steps",
+          "id": "environment",
+          "name": "environment",
+          "displayName": "Environment",
           "type": "file",
           "order": 5,
-          "path": "next-steps",
-          "urlPath": "/next-steps",
-          "content": "# Next Steps\n\n<!-- component-NextStepsComponent -->\n",
+          "path": "environment",
+          "urlPath": "/environment",
+          "content": "# Environment\n\n<!-- component-NextStepsComponent -->\n",
           "components": [
             {
               "id": "component-NextStepsComponent",
               "name": "NextStepsComponent",
               "displayName": "NextStepsComponent",
               "type": "component",
-              "path": "next-steps.component.NextStepsComponent",
+              "path": "environment.component.NextStepsComponent",
               "urlPath": "",
               "componentId": "NextStepsComponent",
               "include": true
@@ -988,22 +988,22 @@
       "componentId": "DatabaseConfiguration",
       "include": true
     },
-    "next-steps": {
-      "id": "next-steps",
-      "name": "next-steps",
-      "displayName": "Next Steps",
+    "environment": {
+      "id": "environment",
+      "name": "environment",
+      "displayName": "Environment",
       "type": "file",
       "order": 5,
-      "path": "next-steps",
-      "urlPath": "/next-steps",
-      "content": "# Next Steps\n\n<!-- component-NextStepsComponent -->\n",
+      "path": "environment",
+      "urlPath": "/environment",
+      "content": "# Environment\n\n<!-- component-NextStepsComponent -->\n",
       "components": [
         {
           "id": "component-NextStepsComponent",
           "name": "NextStepsComponent",
           "displayName": "NextStepsComponent",
           "type": "component",
-          "path": "next-steps.component.NextStepsComponent",
+          "path": "environment.component.NextStepsComponent",
           "urlPath": "",
           "componentId": "NextStepsComponent",
           "include": true
@@ -1014,12 +1014,12 @@
       "includeInSidebar": true,
       "isDynamicRobotsFile": false
     },
-    "next-steps.component.NextStepsComponent": {
+    "environment.component.NextStepsComponent": {
       "id": "component-NextStepsComponent",
       "name": "NextStepsComponent",
       "displayName": "NextStepsComponent",
       "type": "component",
-      "path": "next-steps.component.NextStepsComponent",
+      "path": "environment.component.NextStepsComponent",
       "urlPath": "",
       "componentId": "NextStepsComponent",
       "include": true
