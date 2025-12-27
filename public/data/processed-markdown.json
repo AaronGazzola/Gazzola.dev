@@ -113,42 +113,27 @@
         "isDynamicRobotsFile": false
       },
       {
-        "id": "ai-integration",
-        "name": "ai-integration",
-        "displayName": "AI Integration",
+        "id": "next-steps",
+        "name": "next-steps",
+        "displayName": "Next Steps",
         "type": "file",
         "order": 5,
-        "path": "ai-integration",
-        "urlPath": "/ai-integration",
-        "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
+        "path": "next-steps",
+        "urlPath": "/next-steps",
+        "content": "# Next Steps\n\n<!-- component-NextStepsComponent -->\n",
         "components": [
           {
-            "id": "component-IDESelection",
-            "name": "IDESelection",
-            "displayName": "IDESelection",
+            "id": "component-NextStepsComponent",
+            "name": "NextStepsComponent",
+            "displayName": "NextStepsComponent",
             "type": "component",
-            "path": "ai-integration.component.IDESelection",
+            "path": "next-steps.component.NextStepsComponent",
             "urlPath": "",
-            "componentId": "IDESelection",
+            "componentId": "NextStepsComponent",
             "include": true
           }
         ],
-        "sections": {
-          "section1": {
-            "option1": {
-              "content": "## Setup Instructions for Windsurf\n\n### Step 1: Install and Setup\n\n1. Download and install [Windsurf](https://codeium.com/windsurf)\n2. Install [Git](https://git-scm.com/) if not already installed\n3. Open Windsurf and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In Windsurf, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk the AI to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk the AI to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect the AI to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-              "include": false
-            },
-            "option2": {
-              "content": "## Setup Instructions for Claude Code + VS Code\n\n### Step 1: Install and Setup\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Claude Code](https://claude.ai/code) (Anthropic's official CLI for VS Code)\n3. Install [Git](https://git-scm.com/) if not already installed\n4. Open VS Code and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In VS Code, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk Claude Code to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk Claude Code to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect Claude Code to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-              "include": true
-            },
-            "option3": {
-              "content": "## Setup Instructions for Cursor\n\n### Step 1: Install and Setup\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) if not already installed\n3. Open Cursor and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In Cursor, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk the AI to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk the AI to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect the AI to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-              "include": false
-            }
-          }
-        },
+        "sections": {},
         "include": true,
         "includeInSidebar": true,
         "isDynamicRobotsFile": false
@@ -551,42 +536,27 @@
           "isDynamicRobotsFile": false
         },
         {
-          "id": "ai-integration",
-          "name": "ai-integration",
-          "displayName": "AI Integration",
+          "id": "next-steps",
+          "name": "next-steps",
+          "displayName": "Next Steps",
           "type": "file",
           "order": 5,
-          "path": "ai-integration",
-          "urlPath": "/ai-integration",
-          "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
+          "path": "next-steps",
+          "urlPath": "/next-steps",
+          "content": "# Next Steps\n\n<!-- component-NextStepsComponent -->\n",
           "components": [
             {
-              "id": "component-IDESelection",
-              "name": "IDESelection",
-              "displayName": "IDESelection",
+              "id": "component-NextStepsComponent",
+              "name": "NextStepsComponent",
+              "displayName": "NextStepsComponent",
               "type": "component",
-              "path": "ai-integration.component.IDESelection",
+              "path": "next-steps.component.NextStepsComponent",
               "urlPath": "",
-              "componentId": "IDESelection",
+              "componentId": "NextStepsComponent",
               "include": true
             }
           ],
-          "sections": {
-            "section1": {
-              "option1": {
-                "content": "## Setup Instructions for Windsurf\n\n### Step 1: Install and Setup\n\n1. Download and install [Windsurf](https://codeium.com/windsurf)\n2. Install [Git](https://git-scm.com/) if not already installed\n3. Open Windsurf and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In Windsurf, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk the AI to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk the AI to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect the AI to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-                "include": false
-              },
-              "option2": {
-                "content": "## Setup Instructions for Claude Code + VS Code\n\n### Step 1: Install and Setup\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Claude Code](https://claude.ai/code) (Anthropic's official CLI for VS Code)\n3. Install [Git](https://git-scm.com/) if not already installed\n4. Open VS Code and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In VS Code, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk Claude Code to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk Claude Code to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect Claude Code to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-                "include": true
-              },
-              "option3": {
-                "content": "## Setup Instructions for Cursor\n\n### Step 1: Install and Setup\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) if not already installed\n3. Open Cursor and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In Cursor, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk the AI to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk the AI to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect the AI to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-                "include": false
-              }
-            }
-          },
+          "sections": {},
           "include": true,
           "includeInSidebar": true,
           "isDynamicRobotsFile": false
@@ -1018,55 +988,40 @@
       "componentId": "DatabaseConfiguration",
       "include": true
     },
-    "ai-integration": {
-      "id": "ai-integration",
-      "name": "ai-integration",
-      "displayName": "AI Integration",
+    "next-steps": {
+      "id": "next-steps",
+      "name": "next-steps",
+      "displayName": "Next Steps",
       "type": "file",
       "order": 5,
-      "path": "ai-integration",
-      "urlPath": "/ai-integration",
-      "content": "# AI Integration\n\n<!-- component-IDESelection -->\n\n<!-- section-1 -->\n",
+      "path": "next-steps",
+      "urlPath": "/next-steps",
+      "content": "# Next Steps\n\n<!-- component-NextStepsComponent -->\n",
       "components": [
         {
-          "id": "component-IDESelection",
-          "name": "IDESelection",
-          "displayName": "IDESelection",
+          "id": "component-NextStepsComponent",
+          "name": "NextStepsComponent",
+          "displayName": "NextStepsComponent",
           "type": "component",
-          "path": "ai-integration.component.IDESelection",
+          "path": "next-steps.component.NextStepsComponent",
           "urlPath": "",
-          "componentId": "IDESelection",
+          "componentId": "NextStepsComponent",
           "include": true
         }
       ],
-      "sections": {
-        "section1": {
-          "option1": {
-            "content": "## Setup Instructions for Windsurf\n\n### Step 1: Install and Setup\n\n1. Download and install [Windsurf](https://codeium.com/windsurf)\n2. Install [Git](https://git-scm.com/) if not already installed\n3. Open Windsurf and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In Windsurf, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk the AI to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk the AI to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect the AI to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-            "include": false
-          },
-          "option2": {
-            "content": "## Setup Instructions for Claude Code + VS Code\n\n### Step 1: Install and Setup\n\n1. Download and install [VS Code](https://code.visualstudio.com/)\n2. Install [Claude Code](https://claude.ai/code) (Anthropic's official CLI for VS Code)\n3. Install [Git](https://git-scm.com/) if not already installed\n4. Open VS Code and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In VS Code, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk Claude Code to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk Claude Code to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect Claude Code to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-            "include": true
-          },
-          "option3": {
-            "content": "## Setup Instructions for Cursor\n\n### Step 1: Install and Setup\n\n1. Download and install [Cursor](https://cursor.sh/)\n2. Install [Git](https://git-scm.com/) if not already installed\n3. Open Cursor and sign into your GitHub account when prompted\n\n### Step 2: Create and Clone Repository\n\n1. Create a new repository on [GitHub](https://github.com)\n2. In Cursor, press `Ctrl+Shift+P` (Windows/Linux) or `⇧⌘P` (Mac) to open the Command Palette\n3. Type `Git: Clone` and select it\n4. Choose **Clone from GitHub** and sign in if prompted\n5. Select your repository from the dropdown\n6. Choose a local folder for the project and click **Open**\n\n**For Private Repositories (SSH):**\n- First, generate an SSH key: Open a terminal and run `ssh-keygen -t rsa -b 4096 -C \"your_email@example.com\"`\n- Add the public key to GitHub: Go to GitHub Settings → SSH and GPG keys → New SSH key\n- When cloning, use the SSH URL format: `git@github.com:username/repo.git`\n\n### Step 3: Initialize Your Next.js Application\n\nAsk the AI to set up your project:\n```\nPlease initialize a Next.js web app in the root of this repository\nwith all latest defaults accepted.\n```\n\n### Step 4: Add Your Roadmap Files\n\n1. Download your roadmap directory from the sidebar in Gazzola.dev\n2. Drag and drop your downloaded roadmap files into the project root\n\n### Step 5: Commit and Push to GitHub\n\nAsk the AI to commit and push your changes:\n```\nPlease commit all changes with the message \"Add project roadmap\"\nand push to GitHub\n```\n\n### Step 6: Start Building with AI\n\nDirect the AI to your roadmap:\n```\nPlease read the roadmap/README.md file and help me implement\nthe features and requirements described there.\n```",
-            "include": false
-          }
-        }
-      },
+      "sections": {},
       "include": true,
       "includeInSidebar": true,
       "isDynamicRobotsFile": false
     },
-    "ai-integration.component.IDESelection": {
-      "id": "component-IDESelection",
-      "name": "IDESelection",
-      "displayName": "IDESelection",
+    "next-steps.component.NextStepsComponent": {
+      "id": "component-NextStepsComponent",
+      "name": "NextStepsComponent",
+      "displayName": "NextStepsComponent",
       "type": "component",
-      "path": "ai-integration.component.IDESelection",
+      "path": "next-steps.component.NextStepsComponent",
       "urlPath": "",
-      "componentId": "IDESelection",
+      "componentId": "NextStepsComponent",
       "include": true
     },
     "10-util": {
@@ -1351,5 +1306,5 @@
       "children": []
     }
   },
-  "contentVersion": 56
+  "contentVersion": 58
 }

@@ -3,18 +3,12 @@ import { useEditorStore } from "@/app/(editor)/layout.stores";
 import type { CodeFileNode } from "@/app/(editor)/layout.types";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -27,7 +21,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { generateAndDownloadZip } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
 import { getDynamicRobotsFileName } from "@/lib/robots-file.utils";
 import { cn } from "@/lib/utils";
@@ -42,16 +35,14 @@ import {
   ChevronRight,
   Code2,
   Database,
-  Download,
   FileCode,
   FileText,
   Folder,
   FolderOpen,
   FolderTree,
-  Info,
+  Footprints,
   ListTodo,
   Menu,
-  MessagesSquare,
   Palette,
   Rocket,
   Shield,
@@ -78,7 +69,7 @@ const FILE_ICON_MAP: Record<string, LucideIcon> = {
   theme: Palette,
   "app-directory": FolderTree,
   database: Database,
-  "ai-integration": MessagesSquare,
+  "next-steps": Footprints,
   "docs.deployment-instructions": Rocket,
   "docs.util": Code2,
   "app.globals": Palette,
@@ -934,23 +925,6 @@ const Sidebar = () => {
     });
   };
 
-  const handleDownload = async () => {
-    try {
-      await generateAndDownloadZip(
-        data,
-        codeFiles,
-        getSectionInclude,
-        getSectionContent,
-        getSectionOptions,
-        appStructure,
-        getPlaceholderValue,
-        getInitialConfiguration
-      );
-    } catch (error) {
-      console.error("Error generating download:", error);
-    }
-  };
-
   const expandedContent = (
     <SidebarContent className="flex-grow bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
       <SidebarHeader className="pl-6 pr-2 pt-6 pb-2">
@@ -1016,48 +990,13 @@ const Sidebar = () => {
             />
           ))}
       </div>
-      <div className="border-t border-gray-700 p-3 space-y-3">
-        {mounted && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Badge
-                variant="outline"
-                className="w-full justify-center cursor-pointer text-white border-gray-600 hover:bg-gray-800 hover:border-orange-500 rounded-full relative py-1.5"
-              >
-                <Info className="h-4 w-4 text-orange-500 absolute left-3" />
-                Work in Progress
-              </Badge>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 bg-black border-orange-500 text-white rounded-xl">
-              <div className="space-y-2">
-                <h4 className="font-semibold">Work in Progress</h4>
-                <p className="text-sm text-gray-300">
-                  This app is a work in progress and will likely change often.
-                </p>
-                <p className="text-sm text-gray-300 font-medium">
-                  Some of the functionality may be incomplete or error prone.
-                </p>
-              </div>
-            </PopoverContent>
-          </Popover>
-        )}
-        <div className="relative w-full">
-          <Button
-            variant="outline"
-            className=" text-white border-gray-600 hover:bg-gray-800 hover:border-gray-500 z-10"
-            onClick={handleDownload}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Download
-          </Button>
-        </div>
-      </div>
+      <div className="border-t border-gray-700 p-3"></div>
     </SidebarContent>
   );
 
   const collapsedContent = (
     <SidebarContent className="h-full bg-black md:bg-transparent border-gray-700 overflow-x-hidden gap-0 flex flex-col">
-      <SidebarHeader className="border-b border-gray-700 flex items-center justify-center p-2">
+      <SidebarHeader className="border-b border-gray-700 flex flex-col items-center gap-2 p-2">
         <Button
           variant="ghost"
           size="icon"
@@ -1068,6 +1007,28 @@ const Sidebar = () => {
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="highlight"
+              size="icon"
+              className="border border-transparent text-white px-2 !py-0"
+              onClick={() => {
+                setDialogOpen("yesPlease");
+                setIsExpanded(true);
+              }}
+            >
+              <Rocket className="w-5 h-5" />
+              <span className="sr-only">Design, Build, Review</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            className="bg-gray-900 text-white border-gray-700"
+          >
+            Design, Build, Review
+          </TooltipContent>
+        </Tooltip>
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {navigationData
@@ -1086,69 +1047,7 @@ const Sidebar = () => {
             />
           ))}
       </div>
-      <div className="border-t border-gray-700 p-2 space-y-2">
-        {mounted && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-full text-orange-500 hover:text-orange-400 hover:bg-gray-800"
-                  >
-                    <Info className="h-5 w-5" />
-                    <span className="sr-only">Work in Progress Info</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  side="right"
-                  className="w-80 bg-black border-orange-500 text-white rounded-xl"
-                >
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Work in Progress</h4>
-                    <p className="text-sm text-gray-300">
-                      This app is a work in progress and will likely change
-                      often.
-                    </p>
-                    <p className="text-sm text-gray-300 font-medium">
-                      Some of the functionality may be incomplete or error
-                      prone.
-                    </p>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="bg-gray-900 text-white border-gray-700"
-            >
-              Work in Progress
-            </TooltipContent>
-          </Tooltip>
-        )}
-        <div className="relative">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-full text-white hover:bg-gray-800"
-                onClick={handleDownload}
-              >
-                <Download className="h-5 w-5" />
-                <span className="sr-only">Download Roadmap</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="bg-gray-900 text-white border-gray-700"
-            >
-              Download Roadmap
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      </div>
+      <div className="border-t border-gray-700 p-2"></div>
     </SidebarContent>
   );
 

@@ -351,7 +351,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   };
 
   const handleNextWrapperClick = () => {
-    if (isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated) {
+    if (!isDevelopment && (isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated)) {
       if (nextTooltipTimeoutRef.current) {
         clearTimeout(nextTooltipTimeoutRef.current);
       }
@@ -938,7 +938,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       size={currentPageIndex <= 4 ? "sm" : "default"}
                       variant={currentPageIndex <= 4 ? "default" : "outline"}
                       className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
-                      disabled={isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated}
+                      disabled={!isDevelopment && (isReadmeNotGenerated || isThemeNotInteracted || isAppStructureNotGenerated || isDatabaseNotGenerated)}
                     >
                       Next
                       <ChevronRight className="h-4 w-4" />

@@ -1,4 +1,4 @@
-import type { IDEType } from "@/app/(components)/IDESelection.types";
+import type { IDEType } from "@/app/(editor)/layout.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
 import type { PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
 import type {

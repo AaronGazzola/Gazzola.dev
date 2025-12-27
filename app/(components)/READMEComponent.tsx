@@ -356,13 +356,10 @@ Requirements:
             <h3 className="text-lg font-bold theme-text-foreground">
               README Generated Successfully
             </h3>
-            <p className="text-sm theme-text-muted-foreground">
-              Your README file has been created and is now available for editing.
-              You can modify it directly to better describe your application.
-            </p>
             <p className="text-sm theme-text-foreground font-semibold mt-2">
               This README will be used in the next step to generate your app
-              directory structure and initial database configuration.
+              directory structure and initial database configuration. You can
+              edit it directly in the editor below.
             </p>
           </div>
         </div>

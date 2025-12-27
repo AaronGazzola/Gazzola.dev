@@ -1,6 +1,6 @@
-import type { IDEType } from "@/app/(components)/IDESelection.types";
-
 export type NodeType = "directory" | "file" | "segment" | "component" | "code-file";
+
+export type IDEType = "windsurf" | "claudecode" | "cursor";
 
 export const IDE_ROBOTS_DISPLAY_NAMES: Record<IDEType, string> = {
   claudecode: "CLAUDE",

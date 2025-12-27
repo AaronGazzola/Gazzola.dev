@@ -1,7 +1,7 @@
 import type { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import type { Plugin, PrismaEnum, PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
-import type { IDEType } from "@/app/(components)/IDESelection.types";
+import type { IDEType } from "@/app/(editor)/layout.types";
 
 export interface ConfigSnapshot {
   supabase: boolean;
