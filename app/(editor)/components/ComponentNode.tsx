@@ -80,6 +80,11 @@ const componentMap: Record<string, any> = {
       default: m.READMEComponent,
     }))
   ),
+  ExtensionsComponent: lazy(() =>
+    import("@/app/(components)/ExtensionsComponent").then((m) => ({
+      default: m.ExtensionsComponent,
+    }))
+  ),
 };
 
 export class ComponentNode extends DecoratorNode<ReactNode> {

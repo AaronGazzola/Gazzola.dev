@@ -870,6 +870,29 @@ const generateDatabasePreviewContent = (
     return lines.join("\n");
   }
 
+  lines.push("## Authentication Methods");
+  lines.push("");
+
+  const authMethods: string[] = [];
+  if (initialConfig.features.authentication.emailPassword) authMethods.push("Email & Password");
+  if (initialConfig.features.authentication.magicLink) authMethods.push("Magic Link");
+  if (initialConfig.features.authentication.phoneAuth) authMethods.push("Phone Authentication");
+  if (initialConfig.features.authentication.otp) authMethods.push("One-Time Password (OTP)");
+  if (initialConfig.features.authentication.googleAuth) authMethods.push("Google OAuth");
+  if (initialConfig.features.authentication.githubAuth) authMethods.push("GitHub OAuth");
+  if (initialConfig.features.authentication.appleAuth) authMethods.push("Apple OAuth");
+  if (initialConfig.features.authentication.emailVerification) authMethods.push("Email Verification Required");
+  if (initialConfig.features.authentication.mfa) authMethods.push("Multi-Factor Authentication (MFA)");
+
+  if (authMethods.length > 0) {
+    authMethods.forEach(method => {
+      lines.push(`- ${method}`);
+    });
+  } else {
+    lines.push("*No authentication methods configured*");
+  }
+  lines.push("");
+
   lines.push("## Database Schema");
   lines.push("");
 
@@ -1230,9 +1253,12 @@ const createConfigSnapshotFromInitialConfig = (
       magicLink: initialConfig.features.authentication.magicLink,
       emailPassword: initialConfig.features.authentication.emailPassword,
       otp: initialConfig.features.authentication.otp,
+      phoneAuth: initialConfig.features.authentication.phoneAuth,
       googleAuth: initialConfig.features.authentication.googleAuth,
       githubAuth: initialConfig.features.authentication.githubAuth,
       appleAuth: initialConfig.features.authentication.appleAuth,
+      emailVerification: initialConfig.features.authentication.emailVerification,
+      mfa: initialConfig.features.authentication.mfa,
     },
     adminEnabled: initialConfig.features.admin.enabled,
     adminRoles: {

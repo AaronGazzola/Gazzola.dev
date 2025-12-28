@@ -39,9 +39,12 @@ const createMinimalConfig = (): ConfigSnapshot => {
         magicLink: false,
         emailPassword: false,
         otp: false,
+        phoneAuth: false,
         googleAuth: false,
         githubAuth: false,
         appleAuth: false,
+        emailVerification: false,
+        mfa: false,
       },
       admin: {
         enabled: false,

@@ -3,6 +3,7 @@
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
+import { Badge } from "@/components/editor/ui/badge";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
 import { Switch } from "@/components/editor/ui/switch";
@@ -22,7 +23,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { SiSupabase } from "react-icons/si";
+import { SiApple, SiGithub, SiGoogle, SiSupabase } from "react-icons/si";
 import {
   generateDatabaseSchemaPrompt,
   parseDatabaseSchemaFromResponse,
@@ -52,6 +53,7 @@ export const DatabaseConfiguration = () => {
     initialConfiguration,
     setSectionInclude,
     updateInitialConfiguration,
+    toggleAuthMethod,
     appStructure,
     data,
     databaseGenerated,
@@ -464,12 +466,95 @@ export const DatabaseConfiguration = () => {
       </div>
 
       {!isNoDatabaseSelected && (
-        <div className="theme-bg-card theme-radius theme-shadow overflow-auto border theme-border-border theme-p-4">
-          <div className="flex flex-col theme-gap-2">
-            <EnumsCollapsible
-              isExpanded={expandedEnums}
-              onToggle={() => setExpandedEnums(!expandedEnums)}
-            />
+        <>
+          <div className="theme-bg-card theme-radius theme-shadow border theme-border-border theme-p-4">
+            <h3 className="text-lg font-bold theme-text-foreground theme-mb-3">
+              Authentication Methods
+            </h3>
+            <div className="flex flex-wrap theme-gap-2">
+              <Badge
+                variant={initialConfiguration.features.authentication.emailPassword ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => toggleAuthMethod('emailPassword')}
+              >
+                Email & Password
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.magicLink ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => toggleAuthMethod('magicLink')}
+              >
+                Magic Link
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.phoneAuth ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => toggleAuthMethod('phoneAuth')}
+              >
+                Phone
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.otp ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => toggleAuthMethod('otp')}
+              >
+                OTP
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.googleAuth ? "default" : "outline"}
+                className="cursor-pointer flex theme-gap-1"
+                onClick={() => toggleAuthMethod('googleAuth')}
+              >
+                <SiGoogle className="h-3 w-3" />
+                Google
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.githubAuth ? "default" : "outline"}
+                className="cursor-pointer flex theme-gap-1"
+                onClick={() => toggleAuthMethod('githubAuth')}
+              >
+                <SiGithub className="h-3 w-3" />
+                GitHub
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.appleAuth ? "default" : "outline"}
+                className="cursor-pointer flex theme-gap-1"
+                onClick={() => toggleAuthMethod('appleAuth')}
+              >
+                <SiApple className="h-3 w-3" />
+                Apple
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.emailVerification ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => toggleAuthMethod('emailVerification')}
+              >
+                Email Verification
+              </Badge>
+
+              <Badge
+                variant={initialConfiguration.features.authentication.mfa ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => toggleAuthMethod('mfa')}
+              >
+                MFA
+              </Badge>
+            </div>
+          </div>
+
+          <div className="theme-bg-card theme-radius theme-shadow overflow-auto border theme-border-border theme-p-4">
+            <div className="flex flex-col theme-gap-2">
+              <EnumsCollapsible
+                isExpanded={expandedEnums}
+                onToggle={() => setExpandedEnums(!expandedEnums)}
+              />
             {getAvailableSchemasWithConfig(initialConfiguration)
               .filter((schema) => schema !== "auth" && schema !== "better_auth")
               .map((schema) => {
@@ -540,6 +625,7 @@ export const DatabaseConfiguration = () => {
             )}
           </div>
         </div>
+        </>
       )}
     </div>
   );

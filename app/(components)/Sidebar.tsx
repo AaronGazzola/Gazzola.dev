@@ -28,6 +28,7 @@ import { DataCyAttributes } from "@/types/cypress.types";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
+  Blocks,
   BookText,
   Bot,
   Box,
@@ -41,9 +42,10 @@ import {
   Folder,
   FolderOpen,
   FolderTree,
-  LaptopMinimalCheck,
+  Laptop,
   ListTodo,
   Menu,
+  Paintbrush,
   Palette,
   Rocket,
   Shield,
@@ -55,8 +57,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
-import { useHeaderStore } from "./Header.store";
 import { FeedbackDialog } from "./FeedbackDialog";
+import { useHeaderStore } from "./Header.store";
 import { SidebarDataAttributes } from "./Sidebar.types";
 
 const nextSteps = [
@@ -69,10 +71,11 @@ const FILE_ICON_MAP: Record<string, LucideIcon> = {
   readme: BookText,
   robots: Bot,
   claude: Sparkles,
-  theme: Palette,
+  theme: Paintbrush,
   "app-directory": FolderTree,
   database: Database,
-  environment: LaptopMinimalCheck,
+  environment: Laptop,
+  extensions: Blocks,
   "docs.deployment-instructions": Rocket,
   "docs.util": Code2,
   "app.globals": Palette,
@@ -830,7 +833,7 @@ const Sidebar = () => {
         {navigationData
           .filter((item) => {
             if (item.includeInSidebar === false) return false;
-            return item.order && item.order >= 1 && item.order <= 5;
+            return item.order && item.order >= 1 && item.order <= 6;
           })
           .map((item, index) => (
             <TreeItem
@@ -900,7 +903,7 @@ const Sidebar = () => {
         {navigationData
           .filter((item) => {
             if (item.includeInSidebar === false) return false;
-            return item.order && item.order >= 1 && item.order <= 5;
+            return item.order && item.order >= 1 && item.order <= 6;
           })
           .map((item, index) => (
             <IconTreeItem

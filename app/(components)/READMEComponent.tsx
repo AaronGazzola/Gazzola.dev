@@ -22,6 +22,7 @@ type Stage = "initial" | "questions";
 
 const MIN_TITLE_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 50;
+const MIN_PASTED_README_LENGTH = 50;
 
 interface QuestionOption {
   id: string;
@@ -42,6 +43,8 @@ interface READMEState {
   description: string;
   questions: Question[];
   stage: Stage;
+  showPasteSection: boolean;
+  pastedReadme: string;
 }
 
 interface QuestionAIResponse {
@@ -205,10 +208,12 @@ const initialState: READMEState = {
   description: "",
   questions: [],
   stage: "initial",
+  showPasteSection: false,
+  pastedReadme: "",
 };
 
 export const READMEComponent = () => {
-  const { setContent, readmeGenerated, setReadmeGenerated, forceRefresh } =
+  const { setContent, readmeGenerated, setReadmeGenerated, readmeWasPasted, setReadmeWasPasted, forceRefresh } =
     useEditorStore();
 
   const [state, setState] = useState<READMEState>(initialState);
@@ -235,6 +240,17 @@ export const READMEComponent = () => {
     });
 
   const handleSubmitInitial = useCallback(() => {
+    if (state.pastedReadme.trim()) {
+      setContent(
+        "readme",
+        `<!-- component-READMEComponent -->\n\n${state.pastedReadme.trim()}`
+      );
+      setReadmeGenerated(true);
+      setReadmeWasPasted(true);
+      forceRefresh();
+      return;
+    }
+
     const prompt = `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with [ end with ]
 
 App Title: ${state.title}
@@ -262,7 +278,16 @@ Rules:
 - Options should be concise (1-4 words each)`;
 
     generateQuestions({ prompt, maxTokens: 1000 });
-  }, [state.title, state.description, generateQuestions]);
+  }, [
+    state.title,
+    state.description,
+    state.pastedReadme,
+    generateQuestions,
+    setContent,
+    setReadmeGenerated,
+    setReadmeWasPasted,
+    forceRefresh,
+  ]);
 
   const handleSubmitAnswers = useCallback(() => {
     const qaPairs = state.questions
@@ -354,7 +379,7 @@ Requirements:
           <CheckCircle2 className="h-12 w-12 theme-text-primary" />
           <div className="flex flex-col theme-gap-2">
             <h3 className="text-lg font-bold theme-text-foreground">
-              README Generated Successfully
+              {readmeWasPasted ? "README Added Successfully" : "README Generated Successfully"}
             </h3>
             <p className="text-sm theme-text-foreground font-semibold mt-2">
               This README will be used in the next step to generate your app
@@ -371,7 +396,10 @@ Requirements:
   const isTitleValid = state.title.trim().length >= MIN_TITLE_LENGTH;
   const isDescriptionValid =
     state.description.trim().length >= MIN_DESCRIPTION_LENGTH;
-  const canSubmitInitial = isTitleValid && isDescriptionValid;
+  const isPastedReadmeValid =
+    state.pastedReadme.trim().length >= MIN_PASTED_README_LENGTH;
+  const canSubmitInitial =
+    isPastedReadmeValid || (isTitleValid && isDescriptionValid);
   const canSubmitAnswers = state.questions.length > 0;
 
   return (
@@ -384,8 +412,7 @@ Requirements:
               Generate your custom Next.js web app!
             </h2>
             <p className="theme-text-foreground">
-              Enter a title and description to generate your README file, then
-              click &quot;Next&quot; to continue.
+              Enter a title and description to generate your README file.
               <br />
               This is the first step in a process that will generate a starter
               kit for your custom Next.js web app.
@@ -427,6 +454,47 @@ Requirements:
                 ` (${state.description.trim().length}/${MIN_DESCRIPTION_LENGTH})`}
             </p>
           </div>
+
+          <Button
+            variant="link"
+            onClick={() =>
+              setState((prev) => ({
+                ...prev,
+                showPasteSection: !prev.showPasteSection,
+              }))
+            }
+            disabled={isPending}
+            className="w-fit px-0 theme-text-primary"
+          >
+            Already have a README?
+          </Button>
+
+          {state.showPasteSection && (
+            <div className="flex flex-col theme-gap-2 theme-p-3 theme-bg-muted theme-radius">
+              <h3 className="font-semibold">Paste your README file</h3>
+              <p className="text-sm theme-text-muted-foreground font-semibold">
+                Paste the contents of your README file in Markdown formatting
+                and click continue to bypass the AI generation process.
+              </p>
+              <Textarea
+                value={state.pastedReadme}
+                onChange={(e) =>
+                  setState((prev) => ({
+                    ...prev,
+                    pastedReadme: e.target.value,
+                  }))
+                }
+                placeholder="# My App\n\nPaste your README content here..."
+                className="theme-shadow min-h-[200px] font-mono text-xs"
+                disabled={isPending}
+              />
+              <p className="text-xs theme-text-muted-foreground font-semibold">
+                Minimum {MIN_PASTED_README_LENGTH} characters
+                {state.pastedReadme.length > 0 &&
+                  ` (${state.pastedReadme.trim().length}/${MIN_PASTED_README_LENGTH})`}
+              </p>
+            </div>
+          )}
 
           <Button
             onClick={handleSubmitInitial}

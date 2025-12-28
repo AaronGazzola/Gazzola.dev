@@ -64,9 +64,12 @@ const defaultInitialConfiguration: InitialConfigurationType = {
       magicLink: false,
       emailPassword: false,
       otp: false,
+      phoneAuth: false,
       googleAuth: false,
       githubAuth: false,
       appleAuth: false,
+      emailVerification: false,
+      mfa: false,
     },
     admin: {
       enabled: false,
@@ -303,6 +306,7 @@ const createInitialState = (data: MarkdownData) => ({
   testSuites: [],
   isResetting: false,
   readmeGenerated: false,
+  readmeWasPasted: false,
   appStructureGenerated: false,
   databaseGenerated: false,
   helpPopoverOpened: false,
@@ -730,6 +734,20 @@ export const useEditorStore = create<EditorState>()(
           };
         });
         get().generateCodeFiles();
+      },
+      toggleAuthMethod: (method: keyof InitialConfigurationType['features']['authentication']) => {
+        set((state) => ({
+          initialConfiguration: {
+            ...state.initialConfiguration,
+            features: {
+              ...state.initialConfiguration.features,
+              authentication: {
+                ...state.initialConfiguration.features.authentication,
+                [method]: !state.initialConfiguration.features.authentication[method],
+              },
+            },
+          },
+        }));
       },
       updateAuthenticationOption: (optionId: string, enabled: boolean) => {
         set((state) => {
@@ -1490,6 +1508,7 @@ export const useEditorStore = create<EditorState>()(
         });
       },
       setReadmeGenerated: (generated: boolean) => set({ readmeGenerated: generated }),
+      setReadmeWasPasted: (wasPasted: boolean) => set({ readmeWasPasted: wasPasted }),
       setAppStructureGenerated: (generated: boolean) => set({ appStructureGenerated: generated }),
       setDatabaseGenerated: (generated: boolean) => set({ databaseGenerated: generated }),
       setHelpPopoverOpened: (opened: boolean) => set({ helpPopoverOpened: opened }),
@@ -1517,6 +1536,7 @@ export const useEditorStore = create<EditorState>()(
         featureFileSelection: state.featureFileSelection,
         testSuites: state.testSuites,
         readmeGenerated: state.readmeGenerated,
+        readmeWasPasted: state.readmeWasPasted,
         appStructureGenerated: state.appStructureGenerated,
         databaseGenerated: state.databaseGenerated,
         helpPopoverOpened: state.helpPopoverOpened,

@@ -139,6 +139,32 @@
         "isDynamicRobotsFile": false
       },
       {
+        "id": "extensions",
+        "name": "extensions",
+        "displayName": "Extensions",
+        "type": "file",
+        "order": 6,
+        "path": "extensions",
+        "urlPath": "/extensions",
+        "content": "# Extensions\n\n<!-- component-ExtensionsComponent -->\n",
+        "components": [
+          {
+            "id": "component-ExtensionsComponent",
+            "name": "ExtensionsComponent",
+            "displayName": "ExtensionsComponent",
+            "type": "component",
+            "path": "extensions.component.ExtensionsComponent",
+            "urlPath": "",
+            "componentId": "ExtensionsComponent",
+            "include": true
+          }
+        ],
+        "sections": {},
+        "include": true,
+        "includeInSidebar": true,
+        "isDynamicRobotsFile": false
+      },
+      {
         "id": "10-util",
         "name": "10-util",
         "displayName": " 10-util",
@@ -553,6 +579,32 @@
               "path": "environment.component.NextStepsComponent",
               "urlPath": "",
               "componentId": "NextStepsComponent",
+              "include": true
+            }
+          ],
+          "sections": {},
+          "include": true,
+          "includeInSidebar": true,
+          "isDynamicRobotsFile": false
+        },
+        {
+          "id": "extensions",
+          "name": "extensions",
+          "displayName": "Extensions",
+          "type": "file",
+          "order": 6,
+          "path": "extensions",
+          "urlPath": "/extensions",
+          "content": "# Extensions\n\n<!-- component-ExtensionsComponent -->\n",
+          "components": [
+            {
+              "id": "component-ExtensionsComponent",
+              "name": "ExtensionsComponent",
+              "displayName": "ExtensionsComponent",
+              "type": "component",
+              "path": "extensions.component.ExtensionsComponent",
+              "urlPath": "",
+              "componentId": "ExtensionsComponent",
               "include": true
             }
           ],
@@ -1022,6 +1074,42 @@
       "path": "environment.component.NextStepsComponent",
       "urlPath": "",
       "componentId": "NextStepsComponent",
+      "include": true
+    },
+    "extensions": {
+      "id": "extensions",
+      "name": "extensions",
+      "displayName": "Extensions",
+      "type": "file",
+      "order": 6,
+      "path": "extensions",
+      "urlPath": "/extensions",
+      "content": "# Extensions\n\n<!-- component-ExtensionsComponent -->\n",
+      "components": [
+        {
+          "id": "component-ExtensionsComponent",
+          "name": "ExtensionsComponent",
+          "displayName": "ExtensionsComponent",
+          "type": "component",
+          "path": "extensions.component.ExtensionsComponent",
+          "urlPath": "",
+          "componentId": "ExtensionsComponent",
+          "include": true
+        }
+      ],
+      "sections": {},
+      "include": true,
+      "includeInSidebar": true,
+      "isDynamicRobotsFile": false
+    },
+    "extensions.component.ExtensionsComponent": {
+      "id": "component-ExtensionsComponent",
+      "name": "ExtensionsComponent",
+      "displayName": "ExtensionsComponent",
+      "type": "component",
+      "path": "extensions.component.ExtensionsComponent",
+      "urlPath": "",
+      "componentId": "ExtensionsComponent",
       "include": true
     },
     "10-util": {

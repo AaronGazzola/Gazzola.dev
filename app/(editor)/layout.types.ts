@@ -109,9 +109,12 @@ export interface InitialConfigurationType {
       magicLink: boolean;
       emailPassword: boolean;
       otp: boolean;
+      phoneAuth: boolean;
       googleAuth: boolean;
       githubAuth: boolean;
       appleAuth: boolean;
+      emailVerification: boolean;
+      mfa: boolean;
     };
     admin: {
       enabled: boolean;
@@ -208,6 +211,7 @@ export interface EditorState {
   updateInitialConfiguration: (
     updates: Partial<InitialConfigurationType>
   ) => void;
+  toggleAuthMethod: (method: keyof InitialConfigurationType['features']['authentication']) => void;
   updateAuthenticationOption: (optionId: string, enabled: boolean) => void;
   updateAdminOption: (optionId: string, enabled: boolean) => void;
   updatePaymentOption: (optionId: string, enabled: boolean) => void;
@@ -279,6 +283,8 @@ export interface EditorState {
   reorderTestSuites: (fromIndex: number, toIndex: number) => void;
   readmeGenerated: boolean;
   setReadmeGenerated: (generated: boolean) => void;
+  readmeWasPasted: boolean;
+  setReadmeWasPasted: (wasPasted: boolean) => void;
   appStructureGenerated: boolean;
   setAppStructureGenerated: (generated: boolean) => void;
   databaseGenerated: boolean;
