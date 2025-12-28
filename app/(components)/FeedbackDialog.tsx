@@ -104,7 +104,7 @@ export const FeedbackDialog = ({
           </DialogTitle>
           <div className="text-base text-foreground space-y-2">
             <p>
-              Found a bug or have suggestions for improvement? I'd love to hear from you!
+              Found a bug or have suggestions for improvement? I&apos;d love to hear from you!
             </p>
             <p>
               Your feedback helps make this app better for everyone.

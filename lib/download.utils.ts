@@ -885,9 +885,9 @@ const generateDatabasePreviewContent = (
       if (table.columns.length > 0) {
         lines.push("**Columns:**");
         table.columns.forEach((column) => {
-          const nullable = column.nullable ? " (nullable)" : "";
-          const defaultVal = column.default ? ` [default: ${column.default}]` : "";
-          const unique = column.unique ? " (unique)" : "";
+          const nullable = column.isOptional ? " (nullable)" : "";
+          const defaultVal = column.defaultValue ? ` [default: ${column.defaultValue}]` : "";
+          const unique = column.isUnique ? " (unique)" : "";
           lines.push(`- **${column.name}**: ${column.type}${nullable}${unique}${defaultVal}`);
         });
         lines.push("");

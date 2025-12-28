@@ -186,7 +186,7 @@ function SectionNodeComponent({ node }: SectionNodeComponentProps) {
     });
 
     return included;
-  }, [getSectionOptions, getSectionInclude, filePath, sectionKey, data]);
+  }, [getSectionOptions, getSectionInclude, filePath, sectionKey]);
 
   useEffect(() => {
     setMounted(true);
