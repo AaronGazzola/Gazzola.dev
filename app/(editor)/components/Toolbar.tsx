@@ -24,6 +24,7 @@ import {
 } from "@/components/editor/ui/tooltip";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { conditionalLog } from "@/lib/log.util";
+import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
@@ -41,6 +42,7 @@ import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useMemo, useRef, useState } from "react";
 import { useDatabaseStore } from "../../(components)/DatabaseConfiguration.stores";
+import { useNextStepsStore } from "../../(components)/NextStepsComponent.stores";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { useThemeStore } from "../../layout.stores";
 import { getMarkdownDataAction } from "../layout.actions";
@@ -125,6 +127,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
   const { reset: resetDatabase } = useDatabaseStore();
+  const { reset: resetNextSteps } = useNextStepsStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
   const [resetAllLoading, setResetAllLoading] = useState(false);
@@ -254,10 +257,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     const currentNode = data.flatIndex[currentContentPath];
     return currentNode?.type === "file" && currentNode.previewOnly === true;
   }, [data, currentContentPath]);
-
-  const isReadmePage = useMemo(() => {
-    return currentContentPath === "readme";
-  }, [currentContentPath]);
 
   const nextPage =
     currentPageIndex >= 0 && currentPageIndex < numberedPages.length - 1
@@ -425,6 +424,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       setReadmeGenerated(false);
     }
 
+    if (currentContentPath === "environment") {
+      resetNextSteps();
+    }
+
     forceRefresh();
     setResetPageDialogOpen(false);
   };
@@ -497,6 +500,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         reset();
         resetTheme();
         resetDatabase();
+        resetNextSteps();
         setAppStructureGenerated(false);
         setReadmeGenerated(false);
         setRefreshKey(resetKey);
@@ -833,42 +837,47 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </div>
 
           <div className="flex items-center theme-gap-4">
-            {previewMode && (
-              <EditorPopover>
-                <EditorPopoverTrigger asChild>
-                  <button className=" rounded-full flex items-center justify-center theme-bg-card  cursor-pointer hover:opacity-80 transition-opacity">
-                    <AlertCircle className="h-6 w-6 theme-text-primary" />
-                  </button>
-                </EditorPopoverTrigger>
-                <EditorPopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
-                  <div className="flex flex-col theme-gap-2">
-                    <h4 className="font-semibold text-sm theme-font-sans theme-tracking">
-                      Preview Mode (Read Only)
-                    </h4>
-                    <p className="text-sm theme-font-sans theme-tracking">
-                      You are currently in preview mode.
-                    </p>
-                    <p className="text-sm theme-font-sans theme-tracking">
-                      This shows exactly how your content will look when
-                      downloaded.
-                    </p>
-                    <p className="text-sm theme-font-sans theme-tracking">
-                      Switch back to Edit mode to continue making changes.
-                    </p>
-                  </div>
-                </EditorPopoverContent>
-              </EditorPopover>
-            )}
+            <div className={cn(
+              "flex items-center theme-gap-3 transition-all",
+              previewMode && "theme-border-primary border-2 rounded-full theme-px-2 theme-py-1"
+            )}>
+              {previewMode && (
+                <EditorPopover>
+                  <EditorPopoverTrigger asChild>
+                    <button className=" rounded-full flex items-center justify-center theme-bg-card  cursor-pointer hover:opacity-80 transition-opacity">
+                      <AlertCircle className="h-6 w-6 theme-text-primary" />
+                    </button>
+                  </EditorPopoverTrigger>
+                  <EditorPopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
+                    <div className="flex flex-col theme-gap-2">
+                      <h4 className="font-semibold text-sm theme-font-sans theme-tracking">
+                        Preview Mode (Read Only)
+                      </h4>
+                      <p className="text-sm theme-font-sans theme-tracking">
+                        You are currently in preview mode.
+                      </p>
+                      <p className="text-sm theme-font-sans theme-tracking">
+                        This shows exactly how your content will look when
+                        downloaded.
+                      </p>
+                      <p className="text-sm theme-font-sans theme-tracking">
+                        Switch back to Edit mode to continue making changes.
+                      </p>
+                    </div>
+                  </EditorPopoverContent>
+                </EditorPopover>
+              )}
 
-            <EditModeSwitch
-              previewMode={isViewingComponentFile ? true : isReadmePage ? false : previewMode}
-              onToggle={(checked) => {
-                if (!isViewingComponentFile && !isReadmePage) {
-                  setPreviewMode(checked);
-                }
-              }}
-              disabled={isViewingComponentFile || isReadmePage}
-            />
+              <EditModeSwitch
+                previewMode={isViewingComponentFile ? true : previewMode}
+                onToggle={(checked) => {
+                  if (!isViewingComponentFile) {
+                    setPreviewMode(checked);
+                  }
+                }}
+                disabled={isViewingComponentFile}
+              />
+            </div>
             {canGoNext && (
               <Tooltip>
                 <TooltipTrigger asChild>

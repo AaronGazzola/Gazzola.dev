@@ -856,6 +856,200 @@ const generateThemeCss = (): string => {
   }
 };
 
+const generateDatabasePreviewContent = (
+  initialConfig: InitialConfigurationType
+): string => {
+  const databaseState = useDatabaseStore.getState();
+  const lines: string[] = [];
+
+  lines.push("# Database Configuration");
+  lines.push("");
+
+  if (initialConfig.questions.databaseProvider === "none") {
+    lines.push("No database configuration selected.");
+    return lines.join("\n");
+  }
+
+  lines.push("## Database Schema");
+  lines.push("");
+
+  const tables = databaseState.tables;
+  if (tables.length === 0) {
+    lines.push("*No tables defined*");
+    lines.push("");
+  } else {
+    tables.forEach((table) => {
+      lines.push(`### ${table.schema}.${table.name}`);
+      lines.push("");
+
+      if (table.columns.length > 0) {
+        lines.push("**Columns:**");
+        table.columns.forEach((column) => {
+          const nullable = column.nullable ? " (nullable)" : "";
+          const defaultVal = column.default ? ` [default: ${column.default}]` : "";
+          const unique = column.unique ? " (unique)" : "";
+          lines.push(`- **${column.name}**: ${column.type}${nullable}${unique}${defaultVal}`);
+        });
+        lines.push("");
+      }
+    });
+  }
+
+  lines.push("## Row Level Security Policies");
+  lines.push("");
+
+  const rlsPolicies = databaseState.rlsPolicies;
+  if (rlsPolicies.length === 0) {
+    lines.push("*No RLS policies defined*");
+    lines.push("");
+  } else {
+    const groupedPolicies: Record<string, typeof rlsPolicies> = {};
+    rlsPolicies.forEach((policy) => {
+      if (!groupedPolicies[policy.tableId]) {
+        groupedPolicies[policy.tableId] = [];
+      }
+      groupedPolicies[policy.tableId].push(policy);
+    });
+
+    Object.entries(groupedPolicies).forEach(([tableId, policies]) => {
+      const table = tables.find((t) => t.id === tableId);
+      if (!table) return;
+
+      lines.push(`### ${table.schema}.${table.name}`);
+      lines.push("");
+
+      policies.forEach((policy) => {
+        lines.push(`**${policy.operation}**`);
+        policy.rolePolicies?.forEach((rolePolicy) => {
+          lines.push(`- Role: ${rolePolicy.role}`);
+          lines.push(`- Access Type: ${rolePolicy.accessType}`);
+          if (rolePolicy.relatedTable) {
+            lines.push(`- Related Table: ${rolePolicy.relatedTable}`);
+          }
+        });
+        lines.push("");
+      });
+    });
+  }
+
+  lines.push("## SQL Migration");
+  lines.push("");
+  const migrationSQL = databaseState.generateSupabaseMigration();
+  lines.push("```sql");
+  lines.push(migrationSQL);
+  lines.push("```");
+
+  return lines.join("\n");
+};
+
+const generateEnvironmentPreviewContent = (): string => {
+  const lines: string[] = [];
+
+  lines.push("# Development Environment Setup Guide");
+  lines.push("");
+  lines.push("Follow these steps to set up your development environment and start building your web app with AI.");
+  lines.push("");
+
+  lines.push("## 1. Create GitHub Account & Repository");
+  lines.push("");
+  lines.push("### Create GitHub Account");
+  lines.push("If you don't already have one, sign up for a free GitHub account at [github.com/signup](https://github.com/signup).");
+  lines.push("");
+  lines.push("### Create a New Private Repository");
+  lines.push("1. Name your project");
+  lines.push("2. Select \"Private\" for repository visibility");
+  lines.push("3. Do NOT initialize with README");
+  lines.push("4. Click \"Create repository\"");
+  lines.push("");
+  lines.push("Visit [github.com/new](https://github.com/new) to create your repository.");
+  lines.push("");
+
+  lines.push("## 2. Install Visual Studio Code");
+  lines.push("");
+  lines.push("### Download VS Code");
+  lines.push("Visual Studio Code is a free, open-source code editor.");
+  lines.push("");
+  lines.push("- Download the installer for your operating system");
+  lines.push("- Run the installer and follow the setup wizard");
+  lines.push("- Launch VS Code after installation completes");
+  lines.push("");
+  lines.push("Download from [code.visualstudio.com/download](https://code.visualstudio.com/download).");
+  lines.push("");
+
+  lines.push("## 3. Create Claude Account & Subscription");
+  lines.push("");
+  lines.push("### Create Claude Account");
+  lines.push("Claude is an AI assistant that will help you build your application.");
+  lines.push("");
+  lines.push("Sign up at [claude.ai/signup](https://claude.ai/signup).");
+  lines.push("");
+  lines.push("### Choose a Subscription");
+  lines.push("Select a subscription tier that fits your needs. The Pro tier is recommended for active development.");
+  lines.push("");
+  lines.push("View pricing at [claude.ai/upgrade](https://claude.ai/upgrade).");
+  lines.push("");
+
+  lines.push("## 4. Install Claude Code Extension");
+  lines.push("");
+  lines.push("### Install from VS Code Marketplace");
+  lines.push("1. Visit the marketplace page");
+  lines.push("2. Click \"Install\" on the marketplace page");
+  lines.push("3. VS Code will automatically open and install the extension");
+  lines.push("4. Sign in with your Claude account when prompted");
+  lines.push("");
+  lines.push("Install from [marketplace.visualstudio.com](https://marketplace.visualstudio.com/items?itemName=Anthropic.claude-code).");
+  lines.push("");
+
+  lines.push("## 5. Create Supabase Account & Project");
+  lines.push("");
+  lines.push("### Create Supabase Account");
+  lines.push("Supabase provides your database and authentication services.");
+  lines.push("");
+  lines.push("Sign up at [supabase.com/dashboard/sign-up](https://supabase.com/dashboard/sign-up).");
+  lines.push("");
+  lines.push("### Create a New Project");
+  lines.push("1. Click \"New Project\" in your dashboard");
+  lines.push("2. Choose a project name");
+  lines.push("3. Create a strong database password (save this!)");
+  lines.push("4. Select a region close to your users");
+  lines.push("5. Click \"Create new project\"");
+  lines.push("");
+  lines.push("Create at [supabase.com/dashboard/new](https://supabase.com/dashboard/new).");
+  lines.push("");
+
+  lines.push("## 6. Set Up Your Project with Claude");
+  lines.push("");
+  lines.push("### Copy and Paste Your First Prompt");
+  lines.push("Copy the setup prompt from your starter kit, paste it into your Claude chat in VS Code, and follow the instructions.");
+  lines.push("");
+
+  lines.push("## 7. Deploy with Vercel (Optional)");
+  lines.push("");
+  lines.push("### Create Vercel Account");
+  lines.push("Vercel provides free hosting and automatic deployments for your Next.js application.");
+  lines.push("");
+  lines.push("Sign up at [vercel.com/signup](https://vercel.com/signup).");
+  lines.push("");
+  lines.push("### Connect Your Repository");
+  lines.push("1. Import your GitHub repository");
+  lines.push("2. Add environment variables (from the process in the previous step)");
+  lines.push("3. Click \"Deploy\"");
+  lines.push("");
+  lines.push("Your app will automatically deploy to a preview URL when you push a git commit to the main branch.");
+  lines.push("");
+  lines.push("Import at [vercel.com/new](https://vercel.com/new).");
+  lines.push("");
+
+  lines.push("## 8. Download and Unpack Your Starter Kit");
+  lines.push("");
+  lines.push("### Steps");
+  lines.push("1. Download your starter kit");
+  lines.push("2. Move your starter kit into your project directory");
+  lines.push("3. Copy the final prompt and paste it into your Claude chat in VS Code");
+
+  return lines.join("\n");
+};
+
 export const processContent = (
   content: string,
   filePath: string,
@@ -875,7 +1069,8 @@ export const processContent = (
   ) => Record<string, { content: string; include: boolean }>,
   appStructure: FileSystemEntry[],
   getPlaceholderValue: (key: string) => string | null,
-  getInitialConfiguration: () => InitialConfigurationType
+  getInitialConfiguration: () => InitialConfigurationType,
+  previewMode: boolean = false
 ): string => {
   let processedContent = content;
 
@@ -971,15 +1166,34 @@ export const processContent = (
     }
   );
 
+  let hasREADMEComponent = false;
   processedContent = processedContent.replace(
     /<!-- component-(\w+) -->/g,
     (match, componentId) => {
       if (componentId === "FullStackOrFrontEnd") {
         return "";
       }
+
+      if (previewMode) {
+        if (componentId === "READMEComponent") {
+          hasREADMEComponent = true;
+          return "";
+        }
+        if (componentId === "DatabaseConfiguration") {
+          return generateDatabasePreviewContent(getInitialConfiguration());
+        }
+        if (componentId === "NextStepsComponent") {
+          return generateEnvironmentPreviewContent();
+        }
+      }
+
       return `[${componentId} Component]`;
     }
   );
+
+  if (previewMode && hasREADMEComponent && processedContent.trim() === "") {
+    return "Generate your README file to get started";
+  }
 
   return processedContent;
 };

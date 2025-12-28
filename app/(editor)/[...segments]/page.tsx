@@ -311,7 +311,8 @@ const Page = () => {
       getSectionOptions,
       appStructure,
       getPlaceholderValue,
-      getInitialConfiguration
+      getInitialConfiguration,
+      true
     );
   }, [
     previewMode,

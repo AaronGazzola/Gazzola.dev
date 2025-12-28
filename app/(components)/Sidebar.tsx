@@ -278,31 +278,6 @@ const generateNavigationFromMarkdownData = (
   return items;
 };
 
-const hasPreviewOnlyDescendants = (
-  item: NavigationItem,
-  flatIndex: Record<string, MarkdownNode>,
-  codeFiles: CodeFileNode[]
-): boolean => {
-  if (!item.children) return false;
-
-  for (const child of item.children.filter((c) => c.include !== false)) {
-    const childNode =
-      flatIndex[child.path || ""] ||
-      codeFiles.find((cf) => cf.path === (child.path || ""));
-    if (childNode && (childNode as any).previewOnly === true) {
-      return true;
-    }
-    if (
-      child.type === "segment" &&
-      hasPreviewOnlyDescendants(child, flatIndex, codeFiles)
-    ) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
 interface TreeItemProps {
   item: NavigationItem;
   level: number;
@@ -371,27 +346,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
       return null;
     }
 
+    if (node?.type === "code-file") {
+      return null;
+    }
+
     if (node?.type === "file") {
       const isPageIncluded = node.include === true;
-      const hasVisitedThisPage = isPageVisited(item.path);
-      const hasVisitedRobots = isPageVisited("robots");
-      const isReadme = item.path === "readme";
 
       if (!isPageIncluded || node.includeInSidebar === false) {
-        return null;
-      }
-
-      if (node.visibleAfterPage) {
-        if (!hasVisitedThisPage && !hasVisitedRobots) {
-          return null;
-        }
-      } else if (!isReadme && !hasVisitedThisPage) {
-        return null;
-      }
-    } else if (node?.type === "code-file" && node.visibleAfterPage) {
-      const hasVisitedThisPage = isPageVisited(item.path);
-      const hasVisitedRobots = isPageVisited("robots");
-      if (!hasVisitedThisPage && !hasVisitedRobots) {
         return null;
       }
     }
@@ -417,6 +379,12 @@ const TreeItem: React.FC<TreeItemProps> = ({
             className="absolute opacity-30 inset-0 rounded"
             style={isActive ? getBackgroundStyle() : undefined}
           ></div>
+          {isActive && (
+            <div
+              className="absolute left-0 top-0 bottom-0 w-1"
+              style={getBackgroundStyle()}
+            ></div>
+          )}
           <FileIcon
             className={cn("flex-shrink-0", isActive ? "h-5 w-5" : "h-4 w-4")}
           />
@@ -428,70 +396,14 @@ const TreeItem: React.FC<TreeItemProps> = ({
     );
   }
 
-  const itemNode = getNode(itemPath);
+  const hasNonCodeFileChildren = item.children?.some((child) => {
+    if (child.include === false) return false;
+    if (!child.path) return false;
+    const childNode = getNode(child.path);
+    return childNode?.type !== "code-file";
+  });
 
-  const hasRequiredPageVisit =
-    itemNode?.type === "directory" && itemNode.visibleAfterPage
-      ? isPageVisited(itemNode.visibleAfterPage)
-      : false;
-
-  if (
-    itemNode?.type === "directory" &&
-    itemNode.visibleAfterPage &&
-    !hasRequiredPageVisit
-  ) {
-    return null;
-  }
-
-  const hasVisitedRobots = isPageVisited("robots");
-
-  const childCodeFiles =
-    item.children
-      ?.filter((child) => child.include !== false && child.path)
-      .map((child) => codeFiles.find((cf) => cf.path === child.path))
-      .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
-
-  const hasCodeFilesWithVisibilityRequirement =
-    childCodeFiles.length > 0 &&
-    childCodeFiles.every((cf) => cf.visibleAfterPage);
-
-  if (hasCodeFilesWithVisibilityRequirement && !hasVisitedRobots) {
-    const hasAnyVisitedCodeFile = childCodeFiles.some((cf) =>
-      isPageVisited(cf.path)
-    );
-    if (!hasAnyVisitedCodeFile) {
-      return null;
-    }
-  }
-
-  const hasVisibleChildren = item.children
-    ?.filter((child) => child.include !== false)
-    .some((child) => {
-      if (child.type === "page" && child.path) {
-        const childNode = getNode(child.path || "");
-
-        if (isPageVisited(child.path)) {
-          return true;
-        }
-
-        if (hasVisitedRobots && childNode?.visibleAfterPage) {
-          return true;
-        }
-      }
-      return false;
-    });
-
-  const hasPreviewDescendants = hasPreviewOnlyDescendants(
-    item,
-    data.flatIndex,
-    codeFiles
-  );
-
-  if (
-    !hasVisibleChildren &&
-    !hasRequiredPageVisit &&
-    !(hasPreviewDescendants && hasVisitedRobots)
-  ) {
+  if (!hasNonCodeFileChildren) {
     return null;
   }
 
@@ -607,27 +519,14 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
       return null;
     }
 
+    if (node?.type === "code-file") {
+      return null;
+    }
+
     if (node?.type === "file") {
       const isPageIncluded = node.include === true;
-      const hasVisitedThisPage = isPageVisited(item.path);
-      const hasVisitedRobots = isPageVisited("robots");
-      const isReadme = item.path === "readme";
 
       if (!isPageIncluded || node.includeInSidebar === false) {
-        return null;
-      }
-
-      if (node.visibleAfterPage) {
-        if (!hasVisitedThisPage && !hasVisitedRobots) {
-          return null;
-        }
-      } else if (!isReadme && !hasVisitedThisPage) {
-        return null;
-      }
-    } else if (node?.type === "code-file" && node.visibleAfterPage) {
-      const hasVisitedThisPage = isPageVisited(item.path);
-      const hasVisitedRobots = isPageVisited("robots");
-      if (!hasVisitedThisPage && !hasVisitedRobots) {
         return null;
       }
     }
@@ -655,6 +554,12 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
                   className="absolute opacity-30 inset-0 rounded"
                   style={isActive ? getBackgroundStyle() : undefined}
                 ></div>
+                {isActive && (
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-1"
+                    style={getBackgroundStyle()}
+                  ></div>
+                )}
                 <FileIcon
                   className={cn(
                     "h-5 w-5",
@@ -694,70 +599,14 @@ const IconTreeItem: React.FC<IconTreeItemProps> = ({
     );
   }
 
-  const itemNode = getNode(itemPath);
+  const hasNonCodeFileChildren = item.children?.some((child) => {
+    if (child.include === false) return false;
+    if (!child.path) return false;
+    const childNode = getNode(child.path);
+    return childNode?.type !== "code-file";
+  });
 
-  const hasRequiredPageVisit =
-    itemNode?.type === "directory" && itemNode.visibleAfterPage
-      ? isPageVisited(itemNode.visibleAfterPage)
-      : false;
-
-  if (
-    itemNode?.type === "directory" &&
-    itemNode.visibleAfterPage &&
-    !hasRequiredPageVisit
-  ) {
-    return null;
-  }
-
-  const hasVisitedRobots = isPageVisited("robots");
-
-  const childCodeFiles =
-    item.children
-      ?.filter((child) => child.include !== false && child.path)
-      .map((child) => codeFiles.find((cf) => cf.path === child.path))
-      .filter((cf): cf is CodeFileNode => cf !== undefined) || [];
-
-  const hasCodeFilesWithVisibilityRequirement =
-    childCodeFiles.length > 0 &&
-    childCodeFiles.every((cf) => cf.visibleAfterPage);
-
-  if (hasCodeFilesWithVisibilityRequirement && !hasVisitedRobots) {
-    const hasAnyVisitedCodeFile = childCodeFiles.some((cf) =>
-      isPageVisited(cf.path)
-    );
-    if (!hasAnyVisitedCodeFile) {
-      return null;
-    }
-  }
-
-  const hasVisibleChildren = item.children
-    ?.filter((child) => child.include !== false)
-    .some((child) => {
-      if (child.type === "page" && child.path) {
-        const childNode = getNode(child.path || "");
-
-        if (isPageVisited(child.path)) {
-          return true;
-        }
-
-        if (hasVisitedRobots && childNode?.visibleAfterPage) {
-          return true;
-        }
-      }
-      return false;
-    });
-
-  const hasPreviewDescendants = hasPreviewOnlyDescendants(
-    item,
-    data.flatIndex,
-    codeFiles
-  );
-
-  if (
-    !hasVisibleChildren &&
-    !hasRequiredPageVisit &&
-    !(hasPreviewDescendants && hasVisitedRobots)
-  ) {
+  if (!hasNonCodeFileChildren) {
     return null;
   }
 
@@ -979,7 +828,10 @@ const Sidebar = () => {
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden px-3 py-2">
         {navigationData
-          .filter((item) => item.includeInSidebar !== false)
+          .filter((item) => {
+            if (item.includeInSidebar === false) return false;
+            return item.order && item.order >= 1 && item.order <= 5;
+          })
           .map((item, index) => (
             <TreeItem
               key={index}
@@ -1046,7 +898,10 @@ const Sidebar = () => {
       </SidebarHeader>
       <div className="flex-grow overflow-y-auto overflow-x-hidden py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {navigationData
-          .filter((item) => item.includeInSidebar !== false)
+          .filter((item) => {
+            if (item.includeInSidebar === false) return false;
+            return item.order && item.order >= 1 && item.order <= 5;
+          })
           .map((item, index) => (
             <IconTreeItem
               key={index}

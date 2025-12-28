@@ -18,6 +18,7 @@ import {
   HelpCircle,
   Loader2,
   Plus,
+  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -377,22 +378,12 @@ export const DatabaseConfiguration = () => {
             </h4>
             <div className="flex flex-col theme-gap-2 text-sm">
               <p className="theme-font-sans theme-tracking">
-                Select your <strong>provider</strong>, <strong>roles</strong>,
-                and <strong>authentication</strong> methods above.
+                Choose whether to use a <strong>Supabase database</strong> for your application using the toggle.
               </p>
               <p className="theme-font-sans theme-tracking">
                 Add and edit <strong>enums</strong>, <strong>schemas</strong>,{" "}
-                <strong>tables</strong>, and <strong>columns</strong> below.
+                <strong>tables</strong>, and <strong>columns</strong> to define your database structure.
               </p>
-
-              <a
-                href="https://www.prisma.io/docs/orm/prisma-schema"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm theme-text-primary hover:underline theme-font-sans theme-tracking theme-pt-2"
-              >
-                Prisma Schema docs →
-              </a>
             </div>
           </div>
         </PopoverContent>

@@ -16,11 +16,13 @@ import {
 import { generateAndDownloadZip } from "@/lib/download.utils";
 import {
   ArrowRight,
+  BookText,
   CheckCircle2,
   ChevronRight,
   Database,
   ExternalLink,
   FolderDown,
+  FolderTree,
   MessagesSquare,
   PackageOpen,
   Plus,
@@ -29,6 +31,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useNextStepsStore } from "./NextStepsComponent.stores";
 import type { StepData } from "./NextStepsComponent.types";
 import {
   ClaudeCodeLogo,
@@ -41,8 +44,8 @@ import {
 } from "./NextStepsComponent.utils";
 
 export const NextStepsComponent = () => {
-  const [openStep, setOpenStep] = useState<string>("step-1");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<number>>(new Set([1]));
+  const { openStep, setOpenStep, unlockedSteps, unlockStep } =
+    useNextStepsStore();
   const [copied, setCopied] = useState<string | null>(null);
   const [downloaded, setDownloaded] = useState(false);
   const [promptPopoverOpen, setPromptPopoverOpen] = useState(false);
@@ -56,6 +59,8 @@ export const NextStepsComponent = () => {
     appStructure,
     getPlaceholderValue,
     getInitialConfiguration,
+    readmeGenerated,
+    appStructureGenerated,
   } = useEditorStore();
 
   const initialConfiguration = getInitialConfiguration();
@@ -93,8 +98,24 @@ export const NextStepsComponent = () => {
 
   const handleNext = (currentStepId: number) => {
     const nextStepId = currentStepId + 1;
-    setUnlockedSteps((prev) => new Set([...prev, nextStepId]));
+    unlockStep(nextStepId);
     setOpenStep(`step-${nextStepId}`);
+
+    const stepAfterNext = nextStepId + 1;
+    if (stepAfterNext <= 8 && !unlockedSteps.has(stepAfterNext)) {
+      unlockStep(stepAfterNext);
+    }
+  };
+
+  const handleStepChange = (value: string) => {
+    setOpenStep(value);
+    if (value) {
+      const stepId = parseInt(value.replace("step-", ""));
+      const nextStepId = stepId + 1;
+      if (nextStepId <= 8 && !unlockedSteps.has(nextStepId)) {
+        unlockStep(nextStepId);
+      }
+    }
   };
 
   const steps: StepData[] = [
@@ -433,7 +454,37 @@ export const NextStepsComponent = () => {
       id: 8,
       title: "Download and unpack your starter kit",
       description: "Get your custom-configured project files",
-      content: (
+      content: !readmeGenerated || !appStructureGenerated ? (
+        <div className="flex flex-col theme-gap-4">
+          <div className="theme-bg-muted theme-radius theme-p-4">
+            <h4 className="font-semibold theme-text-foreground mb-2">
+              Complete Configuration First
+            </h4>
+            <p className="text-sm theme-text-foreground mb-3">
+              Before downloading your starter kit, you need to complete the
+              following configuration steps:
+            </p>
+            <div className="flex flex-col theme-gap-2">
+              {!readmeGenerated && (
+                <Link href="/readme">
+                  <Button variant="outline" className="theme-gap-2 w-full py-3 h-auto">
+                    <BookText className="h-4 w-4" />
+                    Generate README
+                  </Button>
+                </Link>
+              )}
+              {!appStructureGenerated && (
+                <Link href="/app-structure">
+                  <Button variant="outline" className="theme-gap-2 w-full py-3 h-auto">
+                    <FolderTree className="h-4 w-4" />
+                    Generate App Structure
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
             <ol className="text-sm theme-text-foreground space-y-2 list-decimal list-inside mb-3">
@@ -529,7 +580,7 @@ export const NextStepsComponent = () => {
         return <ClaudeCodeLogo className="h-5 w-5 flex-shrink-0" />;
       case 4:
         return (
-          <div className="flex flex-col sm:flex-row items-center gap-1 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row items-center gap-0.5 flex-shrink-0 mr-1 lg:mr-2">
             <VSCodeLogo className="h-5 w-5 flex-shrink-0" />
             <Plus className="h-4 w-4 flex-shrink-0" />
             <ClaudeCodeLogo className="h-5 w-5 flex-shrink-0" />
@@ -566,7 +617,7 @@ export const NextStepsComponent = () => {
         type="single"
         collapsible
         value={openStep}
-        onValueChange={setOpenStep}
+        onValueChange={handleStepChange}
         className="w-full"
       >
         {steps.map((step, index) => {
@@ -585,11 +636,18 @@ export const NextStepsComponent = () => {
                   !isUnlocked
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:theme-text-primary"
-                }`}
+                } group`}
               >
-                <div className="flex items-center theme-gap-2">
-                  {getStepIcon(step.id)}
-                  <span className="font-semibold">{step.title}</span>
+                <div className="flex items-center">
+                  <span className="font-bold text-base lg:text-lg min-w-[1.5rem] lg:min-w-[1.75rem] mr-px">
+                    {step.id}
+                  </span>
+                  <div className="scale-100 lg:scale-125 origin-left mr-3 lg:mr-5">
+                    {getStepIcon(step.id)}
+                  </div>
+                  <span className="font-semibold text-base lg:text-lg group-hover:underline">
+                    {step.title}
+                  </span>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
