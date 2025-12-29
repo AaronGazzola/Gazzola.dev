@@ -32,7 +32,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               This extension provides comprehensive documentation and setup
               guides for implementing custom email delivery using Resend as your
               SMTP provider. Includes configuration for Supabase Auth emails,
@@ -41,7 +41,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -56,7 +59,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Step-by-step guide with Claude prompts to configure custom
               subdomains for your application. Includes middleware setup, DNS
               configuration, and routing patterns for user-specific or
@@ -65,7 +68,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -80,7 +86,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Complete implementation guide for one-time payments using Stripe
               Checkout. Includes webhook handling, payment confirmation flows,
               order tracking, and security best practices for handling customer
@@ -88,7 +94,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -103,7 +112,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Documentation for implementing recurring subscription payments
               with Stripe. Covers multiple pricing tiers, billing cycles,
               customer portal integration, trial periods, and subscription
@@ -111,7 +120,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -126,7 +138,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Comprehensive guide for peer-to-peer payments using Stripe
               Connect. Includes seller onboarding, platform fee configuration,
               payout management, and compliance requirements for marketplace
@@ -134,7 +146,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -150,7 +165,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Documentation for implementing real-time features using Supabase
               Realtime. Covers database change listeners, presence tracking,
               custom event broadcasting, and example implementations for chat
@@ -158,7 +173,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -173,7 +191,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Complete guide for implementing image storage with Supabase
               Storage. Includes upload components, image optimization,
               public/private bucket configuration, signed URLs, and CDN delivery
@@ -181,7 +199,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -196,7 +217,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Implementation guide for video streaming using Cloudflare Stream.
               Covers direct uploads, adaptive bitrate streaming, video player
               integration, analytics, and best practices for video content
@@ -204,7 +225,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -219,7 +243,7 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="text-sm theme-text-foreground">
+            <p className="theme-text-foreground">
               Comprehensive testing setup documentation for both end-to-end
               tests (Playwright) and unit tests (Vitest). Includes
               configuration, test patterns, coverage reporting, CI/CD
@@ -227,7 +251,10 @@ export const ExtensionsComponent = () => {
             </p>
           </div>
           <div className="flex items-center justify-center theme-p-8">
-            <Badge variant="secondary" className="theme-gap-2 px-4 py-2 text-base">
+            <Badge
+              variant="secondary"
+              className="theme-gap-2 px-4 py-2 text-base"
+            >
               <Construction className="h-5 w-5" />
               Coming Soon
             </Badge>
@@ -241,7 +268,7 @@ export const ExtensionsComponent = () => {
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-2 mb-4">
         <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
-          Available Extensions
+          Documentation Extensions (Coming soon)
         </h2>
         <p className="theme-text-foreground">
           Extend your application with these powerful integrations and features.
@@ -271,7 +298,7 @@ export const ExtensionsComponent = () => {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="flex flex-col theme-gap-4 pt-4">
+                <div className="text-base flex flex-col theme-gap-4 pt-4">
                   {extension.content}
                 </div>
               </AccordionContent>
