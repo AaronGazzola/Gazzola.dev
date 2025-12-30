@@ -1,310 +1,49 @@
-# beep.buzz - Project Description
+# beep.buzz
 
-## Overview
+beep.buzz is a playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, and embedded YouTube videos. Users interact by placing decorative "beep" and "buzz" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. The platform emphasizes creative expression, simple interactions, and organic discovery through sticker-based navigation.
 
-beep.buzz is a playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, and embedded YouTube videos. Authenticated users can place decorative "beep" and "buzz" stickers on other users' pages, with each sticker serving as a link back to that visitor's own page. The platform emphasizes creative expression, simple interactions, and organic discovery through sticker-based navigation.
+## Pages
 
-## Core Functionality
+### Homepage (/)
 
-### User Authentication & Onboarding
+The main discovery and navigation hub at beep.buzz. Users can search for pages by title or @username with real-time results, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories (Art, Music, Personal, Tech, Fun, Memes, Other), or discover random pages. Each page card displays the title, username, visual preview, beep/buzz counts, and category tag. A prominent random page button encourages serendipitous discovery.
 
-Users sign in via email magic link. Upon first authentication, users:
+### User Page (username.beep.buzz)
 
-- Choose a unique username that becomes their subdomain (username.beep.buzz)
-- Select their personal beep icon and buzz icon from available icon libraries
-- Customize each icon's appearance (background color, icon color, background shape)
-- Can immediately start exploring pages and placing stickers
+Each user's personal subdomain displays their customizable page. The static header shows the page title, username, creator's personal beep and buzz stickers, and total sticker counts. A sticky header appears on scroll with toggle visibility for all stickers and "Add Beep"/"Add Buzz" buttons. The main content area contains the creator's vertically-scrolling elements (text blocks, shapes, YouTube embeds) with visitor stickers layered on top. Visitors can click stickers to see who placed them and navigate to that person's page, creating organic discovery trails.
 
-Username requirements:
+### Page Editor (/edit)
 
-- URL-friendly characters only
-- Reasonable length limit (3-20 characters)
-- AI-scanned for inappropriate content before acceptance
-- Must be unique across the platform
+Authenticated page owners access this builder interface to create and customize their personal page. Users can add and configure three element types: text blocks (with rich text editing, font sizing, color picking, alignment), shapes and dividers (rectangles, circles, lines with customizable colors and transparency), and YouTube embeds (with aspect ratio and autoplay options). Elements can be dragged to reorder, resized (25%, 50%, 75%, 100% width), aligned, edited, and deleted. The editor includes responsive preview toggles for desktop, tablet, and mobile. Page limits include maximum 20 elements, 3 YouTube embeds, 3000px height, and 50 of each sticker type.
 
-### Personal Sticker Identity
+### Page Settings (/settings/page)
 
-Each user maintains one beep sticker and one buzz sticker as their persistent identity across the platform.
+Users configure their page metadata including title (displayed in header and search results), category selection, optional description for discovery, and privacy settings (Public or Username Whitelist for restricted access). When publishing, all content is AI-scanned for harmful material and YouTube videos are checked via API. Pages go live immediately if moderation passes, otherwise creators receive explanations and the page reverts to the previous version.
 
-Sticker customization options:
+### User Settings (/settings)
 
-- Icon selection from three MIT-licensed libraries (Lucide, Phosphor, and one additional library)
-- Icon color (color picker)
-- Background color (color picker)
-- Background shape options: circle, square, diamond, heart, and additional preset shapes
-- Changes to personal stickers update retroactively across all pages where the user has placed them
+Authenticated users manage their personal sticker identity and account. They can change their beep and buzz icons (selected from Lucide, Phosphor, and one additional MIT-licensed library), customize icon colors, background colors, and background shapes (circle, square, diamond, heart, and additional preset shapes). Changes update retroactively across all pages where stickers were placed. Users can preview changes before saving. The activity overview shows all pages where they've placed stickers with quick navigation and removal options. Analytics display total stickers received with breakdowns by beeps and buzzes.
 
-The user's selected beep and buzz stickers are displayed in the header of their own page, serving as their visual identity.
+### Onboarding (/welcome)
 
-## Page Creation & Editing
+First-time authenticated users (via email magic link) complete their profile setup. They choose a unique username (3-20 URL-friendly characters, AI-scanned for inappropriate content) that becomes their subdomain. Then they select and customize their personal beep and buzz icons, choosing icons from available libraries, icon colors, background colors, and background shapes. After setup, users can immediately start exploring pages and placing stickers.
 
-### Page Builder Interface
+### Admin Dashboard (/admin)
 
-Page owners access an editor mode to build their pages using a component-based layout system. The builder provides:
+Admin-only interface for content moderation. The dashboard displays a queue of reported pages requiring review, a list of automatically hidden pages (pages receiving 3+ reports are auto-hidden), and the ability to view full page content and sticker activity. Available actions include approving pages (unhide and dismiss reports), removing pages permanently, warning users with notifications, and banning users (preventing access and removing all pages). An audit log tracks all moderation actions.
 
-**Element Types:**
+## User Experience
 
-1. Text Blocks
-   - Rich text editing (headings, bold, italic, links)
-   - Font size options
-   - Text color picker
-   - Optional background color
-   - Alignment controls (left, center, right)
+New users arrive at the homepage, sign in via email magic link, and complete onboarding by choosing their username and customizing their beep/buzz stickers. They can immediately browse the homepage to discover pages through search, category filters, or the random page button. When visiting another user's page, they scroll through the creative content and can place their beep or buzz sticker by clicking the add button and selecting a position on any element. Clicking any sticker reveals who placed it and provides navigation to that user's page, creating discovery trails through the community.
 
-2. Shapes & Dividers
-   - Preset shapes (rectangle, circle, line dividers)
-   - Size controls
-   - Color picker for fill and border
-   - Transparency options
+Users create their own page by accessing the page editor, where they build a vertical canvas using text blocks, shapes, and YouTube embeds. They customize their page settings (title, category, description, privacy) and publish when ready, with AI moderation ensuring content safety. Users manage their sticker identity through user settings, knowing that any changes to their beep or buzz stickers update everywhere they've been placed. They can view their activity overview to revisit pages where they've left stickers and track engagement on their own page through analytics.
 
-3. YouTube Embeds
-   - URL input for any YouTube video
-   - Aspect ratio options (16:9, 4:3, 1:1)
-   - Autoplay toggle
+The platform encourages organic discovery as users follow sticker trails from page to page, finding new creators through the visual breadcrumbs left by the community. The simple interaction model (placing one beep and one buzz per page) keeps engagement focused while allowing pages to accumulate rich layers of stickers over time. The subdomain structure (username.beep.buzz) gives each creator their own identity and shareable space within the platform ecosystem.
 
-**Layout Controls:**
+## Getting Started
 
-Each element can be:
+Visit beep.buzz and sign in using the email magic link authentication. After receiving and clicking your magic link, complete the onboarding flow by selecting a unique username that will become your subdomain (username.beep.buzz). Customize your personal beep and buzz stickers by choosing icons, colors, and background shapes that represent your identity across the platform.
 
-- Dragged to reorder vertically in the page flow
-- Resized (width options: 25%, 50%, 75%, 100% of container)
-- Aligned (left, center, right within its container)
-- Edited for content and styling
-- Deleted
+Start exploring by browsing the homepage featured sections, using the search bar to find specific users or topics, or clicking the random page button to discover something unexpected. When you visit a page you enjoy, place your beep or buzz sticker to leave your mark and create a link back to your future page. Click on other visitors' stickers to discover their pages and navigate the community.
 
-**Responsive Preview:**
-
-The editor includes a preview toggle showing how the page will render on:
-
-- Desktop
-- Tablet
-- Mobile
-
-All elements are responsive by default, reflowing naturally for different screen sizes.
-
-**Page Limits:**
-
-Conservative limits to maintain performance and encourage curation:
-
-- Maximum 20 elements per page
-- Maximum 3 YouTube embeds per page
-- Maximum page height: 3000 pixels
-- Maximum 50 beep stickers per page
-- Maximum 50 buzz stickers per page
-
-**Page Settings:**
-
-- Page title (displayed in header and search results)
-- Category selection from standard options (Art, Music, Personal, Tech, Fun, Memes, Other)
-- Optional description for discovery
-- Privacy settings: Public or Username Whitelist (page only accessible to specific users by username)
-
-**Publishing:**
-
-When the user saves/publishes their page:
-
-- All text content is AI-scanned for harmful or offensive material
-- YouTube video titles and thumbnails are checked via YouTube API
-- If moderation passes, the page goes live immediately
-- If violations are detected, the creator receives an explanation and the page doesn't publish or reverts to the previous version
-
-## Page Viewing Experience
-
-### Page Structure
-
-Every user page (username.beep.buzz) displays:
-
-**Static Header:**
-
-- Page title
-- Username (also the subdomain)
-- Creator's personal beep and buzz stickers (showing their visual identity)
-- Total sticker count badge (e.g., "42 beeps, 38 buzzes")
-
-**Sticky Header (appears on scroll):**
-
-- Toggle button to show/hide all stickers on the page
-- "Add Beep" button
-- "Add Buzz" button
-
-**Main Content Area:**
-
-- Vertically scrolling page containing all creator's elements
-- Responsive layout that adapts to screen size
-- Visitor stickers attached to elements (when toggle is on)
-
-### Sticker Placement System
-
-Each page element maintains a map of sticker placement positions. When a user places a sticker:
-
-1. User clicks "Add Beep" or "Add Buzz" in the sticky header
-2. User clicks anywhere on the page
-3. The sticker magnets to the closest available position on the closest element
-4. User can click the add button again and click elsewhere to reposition the sticker
-5. Each sticker is placed at a discrete position on its parent element
-6. Multiple stickers on the same element create a layered, partially-overlapping effect where each sticker remains partially visible
-7. Elements can become fully covered with stickers over time, creating a visual history of engagement
-
-Sticker placement is relative to the element, ensuring stickers remain contextually positioned across different screen sizes. As the page reflows responsively, stickers maintain their relationship to their parent elements.
-
-### Sticker Interaction
-
-When viewers interact with stickers:
-
-**Hover State:**
-
-- Tooltip appears showing the username of the person who placed the sticker
-
-**Click Action:**
-
-- A popover appears containing:
-  - The username of the sticker placer
-  - A button to navigate to that user's beep.buzz page
-- This creates organic discovery as users can explore the community by following sticker trails
-
-**Personal Stickers:**
-
-- Users' own stickers have a subtle highlight or border to distinguish them
-- Users can reposition or remove only their own stickers
-
-**Limits Per User Per Page:**
-
-- Each user can place exactly one beep sticker per page
-- Each user can place exactly one buzz sticker per page
-- Users can move or remove their placements but cannot place multiple of the same type
-
-### Toggle Visibility
-
-The show/hide toggle in the sticky header allows viewers to:
-
-- See the page with all stickers (default for first-time visitors)
-- See the clean page without any stickers (to view creator's original content)
-- Preference persists during the session
-
-## Homepage & Discovery
-
-The main homepage at beep.buzz serves as the discovery and navigation hub.
-
-### Homepage Features
-
-**Search Functionality:**
-
-- Search bar accepts page titles or @username queries
-- Real-time search results
-- Direct navigation to matching pages
-
-**Featured Sections:**
-
-1. Popular Pages
-   - Sorted by total sticker count (beeps + buzzes)
-   - Displays page cards with preview information
-
-2. Recently Active
-   - Pages that have received recent stickers
-   - Sorted by most recent sticker placement
-
-3. New Pages
-   - Recently created pages
-   - Helps new creators get initial visibility
-
-4. Category Filters
-   - Standard categories: Art, Music, Personal, Tech, Fun, Memes, Other
-   - Click to filter page listings by category
-
-**Random Page Button:**
-
-- Prominent button to discover a random page
-- Crucial for small community growth and serendipitous discovery
-
-**Page Card Display:**
-
-Each page card in listings shows:
-
-- Page title
-- Username (@username)
-- Visual preview (thumbnail or first few elements)
-- Total beep count and buzz count
-- Category tag
-- "Visit" button
-
-### Navigation Between Pages
-
-Users navigate the platform through:
-
-- Homepage search and browsing
-- Clicking stickers to visit other users' pages (sticker trail navigation)
-- Direct subdomain URLs
-- Random page discovery
-- Back/forward browser navigation
-
-## User Profile & Settings
-
-Authenticated users access a settings area to:
-
-**Manage Personal Stickers:**
-
-- Change their beep icon (updates everywhere retroactively)
-- Change their buzz icon (updates everywhere retroactively)
-- Customize icon colors and background shapes
-- Preview changes before saving
-
-**Page Management:**
-
-- Edit their page (enters editor mode)
-- View their page as others see it
-- Access page settings (title, category, privacy)
-- View analytics: total stickers received, breakdown by beeps/buzzes
-
-**Activity Overview:**
-
-- List of pages where they've placed stickers
-- Quick navigation to revisit those pages
-- Remove stickers from this interface
-
-## Content Moderation
-
-### AI Moderation
-
-**Automated Scanning:**
-
-- Text content in all elements is scanned before page publish
-- YouTube video titles and thumbnails are checked via YouTube API
-- Usernames are scanned before account creation
-- Re-scans occur when pages are edited
-
-**Violations:**
-
-- Page doesn't publish or reverts to previous version
-- Creator receives clear explanation of the issue
-- Repeated violations trigger account review
-
-### User Reporting
-
-Any authenticated user can report a page for inappropriate content.
-
-**Reporting Flow:**
-
-- Report button accessible on every page
-- User selects reason (inappropriate content, spam, harassment, other)
-- Optional text explanation
-- Report submitted to admin queue
-
-**Automatic Actions:**
-
-- Pages receiving 3 reports (configurable threshold) are automatically hidden
-- Hidden pages are inaccessible until admin review
-- Page creator is notified of the suspension
-
-### Admin Management
-
-**Admin Dashboard:**
-
-- Queue of reported pages requiring review
-- List of automatically hidden pages (by report threshold)
-- Ability to view full page content and sticker activity
-- Actions available:
-  - Approve (unhide page, dismiss reports)
-  - Remove page (delete permanently)
-  - Warn user (send notification)
-  - Ban user (prevent access, remove all pages)
-- Audit log of all moderation actions
+Create your own page by accessing the page editor and building your vertical canvas with text, shapes, and YouTube videos. Customize your page settings with a title, category, and description to help others discover your content. Publish when ready and your page goes live at your personal subdomain. Update your sticker identity anytime through user settings, knowing your visual signature updates everywhere you've placed stickers.

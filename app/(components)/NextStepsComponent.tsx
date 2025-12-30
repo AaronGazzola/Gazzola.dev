@@ -23,11 +23,11 @@ import {
   ExternalLink,
   FolderDown,
   FolderTree,
+  Laptop,
   MessagesSquare,
   PackageOpen,
   Plus,
   ScrollText,
-  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -639,7 +639,7 @@ export const NextStepsComponent = () => {
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-2 mb-4">
         <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
-          <Sparkles className="h-5 w-5 flex-shrink-0 theme-text-primary" />
+          <Laptop className="h-5 w-5 flex-shrink-0 theme-text-primary" />
           Set Up Your Development Environment
         </h2>
         <p className="theme-text-foreground">

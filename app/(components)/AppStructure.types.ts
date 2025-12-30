@@ -19,6 +19,41 @@ export interface AppStructureAIResponse {
   features?: Record<string, Feature[]>;
 }
 
+export interface PatternDetectionResult {
+  hasAdmin: boolean;
+  hasSettings: boolean;
+  hasModeration: boolean;
+  hasSearch: boolean;
+  hasAnalytics: boolean;
+  hasDashboard: boolean;
+  hasNotifications: boolean;
+  hasUserProfiles: boolean;
+  hasMultiTenant: boolean;
+}
+
+export interface RoutePattern {
+  name: string;
+  description: string;
+  routeStructure: string;
+  typicalFeatures: string[];
+}
+
+export interface ValidationWarning {
+  severity: "warning" | "error";
+  category: string;
+  message: string;
+  suggestion: string;
+  expectedRoute?: string;
+  readmeKeyword?: string;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  warnings: ValidationWarning[];
+  hasErrors: boolean;
+  hasWarnings: boolean;
+}
+
 export const PAGE_FILE_ICON = "theme-text-chart-4";
 
 export const LAYOUT_COLORS = [

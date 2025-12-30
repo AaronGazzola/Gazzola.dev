@@ -43,6 +43,7 @@ import { useQueryState } from "nuqs";
 import { useMemo, useRef, useState } from "react";
 import { useDatabaseStore } from "../../(components)/DatabaseConfiguration.stores";
 import { useNextStepsStore } from "../../(components)/NextStepsComponent.stores";
+import { useREADMEStore } from "../../(components)/READMEComponent.stores";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
 import { useThemeStore } from "../../layout.stores";
 import { getMarkdownDataAction } from "../layout.actions";
@@ -128,6 +129,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
   const { reset: resetDatabase } = useDatabaseStore();
   const { reset: resetNextSteps } = useNextStepsStore();
+  const { reset: resetReadme } = useREADMEStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
   const [resetAllDialogOpen, setResetAllDialogOpen] = useState(false);
   const [resetAllLoading, setResetAllLoading] = useState(false);
@@ -421,6 +423,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
     if (currentContentPath === "readme") {
       setReadmeGenerated(false);
+      resetReadme();
     }
 
     if (currentContentPath === "environment") {
@@ -500,6 +503,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         resetTheme();
         resetDatabase();
         resetNextSteps();
+        resetReadme();
         setAppStructureGenerated(false);
         setReadmeGenerated(false);
         setRefreshKey(resetKey);
