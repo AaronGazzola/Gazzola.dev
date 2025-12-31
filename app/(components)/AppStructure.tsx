@@ -10,23 +10,48 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
-import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
-import { BotMessageSquare, HelpCircle, Loader2 } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  ArrowRight,
+  CheckCircle2,
+  FolderTree,
+  HelpCircle,
+  Loader2,
+  RotateCcw,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { APP_STRUCTURE_TEMPLATES } from "./AppStructure.types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import {
+  convertInferredFeaturesToFeatures,
+  createPageIdToPathMap,
+  getUtilityFileTypesNeeded,
+} from "./AppStructure.feature-linker";
+import {
+  addUtilityFilesToStructure,
+  parseRoutesToStructure,
+} from "./AppStructure.parser";
+import { buildStructureGenerationPrompt } from "./AppStructure.prompts";
+import { InferredFeature } from "./AppStructure.types";
 import {
   addRouteSegment,
   createRouteFromPath,
   deleteRouteFromFileSystem,
-  generateAppStructurePrompt,
   generateId,
   generateRoutesFromFileSystem,
   generateUniqueSegmentName,
   getQualifyingFiles,
-  parseAppStructureFromResponse,
   validateRoutePath,
 } from "./AppStructure.utils";
+import { PageFeaturesAccordionItem } from "./AppStructure/PageFeaturesAccordionItem";
+import { useAppStructureStore } from "./AppStructure.stores";
+import { useREADMEStore } from "./READMEComponent.stores";
 import { SiteMapNode } from "./SiteMapNode";
 import { TreeNode } from "./TreeNode";
 
@@ -52,6 +77,8 @@ export const LayoutAndStructure = () => {
     setAppStructureHelpPopoverOpened,
   } = useEditorStore();
 
+  const readmeStore = useREADMEStore();
+
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
@@ -72,55 +99,235 @@ export const LayoutAndStructure = () => {
   const readmeNode = data.flatIndex["readme"];
   const readmeContent = readmeNode?.type === "file" ? readmeNode.content : "";
 
-  const { mutate: generateStructure, isPending: isGenerating } =
+  const {
+    inferredFeatures,
+    parsedPages,
+    featuresGenerated,
+    accordionValue,
+    expandedPageId,
+    setInferredFeatures,
+    setParsedPages,
+    setFeaturesGenerated,
+    setAccordionValue,
+    setExpandedPageId,
+    updateFeature,
+    reset,
+  } = useAppStructureStore();
+
+  useEffect(() => {
+    console.log("AppStructure state on load:", {
+      inferredFeatures,
+      parsedPages,
+      featuresGenerated,
+      accordionValue,
+      expandedPageId,
+    });
+  }, []);
+
+  const { mutate: generateFeatures, isPending: isGeneratingFeatures } =
     useCodeGeneration((response) => {
-      conditionalLog(
-        {
-          message: "AI response received for app structure generation",
-          responseContent: response.content,
-        },
-        { label: LOG_LABELS.APP_STRUCTURE, maxStringLength: 50000 }
-      );
+      try {
+        const cleanResponse = response.content
+          .replace(/```json\n?/g, "")
+          .replace(/```\n?/g, "")
+          .trim();
+        const parsed = JSON.parse(cleanResponse);
 
-      const parsed = parseAppStructureFromResponse(response.content);
+        const allFeatures: Record<string, InferredFeature[]> = {};
+        const pages: Array<{
+          id: string;
+          name: string;
+          route: string;
+          description: string;
+        }> = [];
 
-      conditionalLog(
-        {
-          message: "Parsed app structure response",
-          parsed,
-          parseSuccess: !!parsed,
-        },
-        { label: LOG_LABELS.APP_STRUCTURE, maxStringLength: 50000 }
-      );
-
-      if (parsed) {
-        setAppStructure(parsed.structure);
-        if (parsed.features) {
-          setFeatures(parsed.features);
+        if (!parsed.pages || !Array.isArray(parsed.pages)) {
+          toast.error("Invalid response format from AI");
+          return;
         }
-        setAppStructureGenerated(true);
+
+        parsed.pages.forEach((page: any) => {
+          const pageId = generateId();
+          const pageInput = {
+            id: pageId,
+            name: page.name || "Unknown",
+            route: page.route || "/",
+            description: page.description || "",
+          };
+
+          pages.push(pageInput);
+
+          if (page.features && Array.isArray(page.features)) {
+            const inferredFeatures: InferredFeature[] = page.features.map(
+              (f: any) => ({
+                id: generateId(),
+                pageId: pageId,
+                title: f.title || "Untitled Feature",
+                description: f.description || "",
+                category: f.category || "ui-interaction",
+                complexity: f.complexity || "simple",
+                actionVerbs: f.actionVerbs || [],
+                dataEntities: f.dataEntities || [],
+                requiresRealtimeUpdates: f.requiresRealtimeUpdates || false,
+                requiresFileUpload: f.requiresFileUpload || false,
+                requiresExternalApi: f.requiresExternalApi || false,
+                databaseTables: f.databaseTables || [],
+                utilityFileNeeds: f.utilityFileNeeds || {
+                  hooks: true,
+                  actions: false,
+                  stores: false,
+                  types: true,
+                },
+              })
+            );
+
+            allFeatures[pageId] = inferredFeatures;
+          }
+        });
+
+        setParsedPages(pages);
+        setInferredFeatures(allFeatures);
+        setFeaturesGenerated(true);
+        setAccordionValue("step-features");
+
+        const pageIds = Object.keys(allFeatures);
+        if (pageIds.length > 0) {
+          setExpandedPageId(pageIds[0]);
+        }
+
+        toast.success(
+          `Generated features for ${Object.keys(allFeatures).length} pages`
+        );
+      } catch (error) {
+        console.error("Failed to parse AI response:", error);
+        toast.error("Failed to parse AI response. Please try again.");
       }
     });
 
-  const handleGenerateFromReadme = () => {
-    if (!readmeContent) return;
+  const { mutate: generateStructure, isPending: isGeneratingStructure } =
+    useCodeGeneration((response) => {
+      try {
+        const cleanResponse = response.content
+          .replace(/```json\n?/g, "")
+          .replace(/```\n?/g, "")
+          .trim();
+        const parsed = JSON.parse(cleanResponse);
 
-    const prompt = generateAppStructurePrompt(
-      readmeContent,
-      APP_STRUCTURE_TEMPLATES
-    );
+        if (!parsed.structure || !parsed.features) {
+          toast.error("Invalid AI response format");
+          return;
+        }
 
-    conditionalLog(
-      {
-        message: "Sending prompt for app structure generation",
-        prompt,
-        readmeContentLength: readmeContent.length,
-      },
-      { label: LOG_LABELS.APP_STRUCTURE, maxStringLength: 50000 }
-    );
+        setAppStructure(parsed.structure);
+        setFeatures(parsed.features);
+        setAppStructureGenerated(true);
 
-    generateStructure({ prompt, maxTokens: 4000 });
-  };
+        toast.success(`App structure generated with ${parsedPages.length} pages`);
+      } catch (error) {
+        console.error("Failed to parse AI response:", error);
+        toast.error("Failed to generate structure. Please try again.");
+      }
+    });
+
+  const handleGenerateFeatures = useCallback(() => {
+    if (!readmeContent || readmeContent.trim().length === 0) {
+      toast.error("No README content found. Please generate README first.");
+      return;
+    }
+
+    const cleanContent = readmeContent
+      .replace("<!-- component-READMEComponent -->\n\n", "")
+      .trim();
+
+    const combinedPrompt = `You are analyzing a README for a Next.js web application to infer features for each page.
+
+README CONTENT:
+${cleanContent}
+
+INSTRUCTIONS:
+1. Parse the README to identify all pages and their routes
+2. For each page, infer 2-5 features based on the page description
+3. Determine which utility files each feature needs (hooks, actions, stores, types)
+4. Identify relevant database tables for each feature
+5. Categorize each feature appropriately
+6. Determine complexity level (simple, moderate, complex)
+
+Return a JSON object with this structure:
+{
+  "pages": [
+    {
+      "route": "/",
+      "name": "Homepage",
+      "features": [
+        {
+          "title": "Feature title",
+          "description": "What this feature does",
+          "category": "data-management|ui-interaction|authentication|authorization|real-time|file-upload|search-filter|analytics|notification|payment|content-management|external-api",
+          "complexity": "simple|moderate|complex",
+          "actionVerbs": ["create", "update", "delete"],
+          "dataEntities": ["users", "posts"],
+          "requiresRealtimeUpdates": false,
+          "requiresFileUpload": false,
+          "requiresExternalApi": false,
+          "databaseTables": ["users"],
+          "utilityFileNeeds": {
+            "hooks": true,
+            "actions": true,
+            "stores": false,
+            "types": true
+          }
+        }
+      ]
+    }
+  ]
+}
+
+FEATURE CATEGORIES:
+- data-management: CRUD operations, form submissions
+- ui-interaction: Toggles, modals, tabs, dropdowns
+- authentication: Login, signup, password reset
+- authorization: Role checks, permissions
+- real-time: Live updates, websockets
+- file-upload: Image/file uploads
+- search-filter: Search bars, filters, sorting
+- analytics: Tracking, metrics, charts
+- notification: Alerts, toasts, emails
+- payment: Checkout, subscriptions
+- content-management: CMS features
+- external-api: Third-party integrations
+
+UTILITY FILE RULES:
+- hooks: true if feature involves data fetching, state management, or effects
+- actions: true if feature has server-side logic or mutations
+- stores: true if feature needs global state (complexity moderate/complex)
+- types: always true
+
+Return only the JSON object, no additional text.`;
+
+    generateFeatures({ prompt: combinedPrompt, maxTokens: 4000 });
+  }, [readmeContent, generateFeatures]);
+
+  const handleRegenerateFeatures = useCallback(() => {
+    reset();
+    handleGenerateFeatures();
+  }, [reset, handleGenerateFeatures]);
+
+  const handleGenerateStructure = useCallback(() => {
+    if (!parsedPages || parsedPages.length === 0) {
+      toast.error("No pages found. Please generate features first.");
+      return;
+    }
+
+    if (!inferredFeatures || Object.keys(inferredFeatures).length === 0) {
+      toast.error("No features found. Please generate features first.");
+      return;
+    }
+
+    const prompt = buildStructureGenerationPrompt(parsedPages, inferredFeatures);
+
+    generateStructure({ prompt, maxTokens: 6000 });
+  }, [parsedPages, inferredFeatures, generateStructure]);
+
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -212,54 +419,152 @@ export const LayoutAndStructure = () => {
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
-  const isGenerateDisabled = !isDevelopment && appStructureGenerated;
   const hasReadme = readmeGenerated && readmeContent;
+  const isPending = isGeneratingFeatures;
+
+  const totalFeatures = Object.values(inferredFeatures).reduce(
+    (sum, features) => sum + features.length,
+    0
+  );
 
   if (appStructure.length === 0 || !appStructureGenerated) {
-    return (
-      <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
-        <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
-          <p className="text-base font-semibold theme-text-muted-foreground text-center">
-            {hasReadme ? (
-              "Generate your app structure from the README"
-            ) : (
-              <>
-                Generate your{" "}
-                <Link
-                  href="/readme"
-                  className="theme-text-primary hover:underline"
-                >
-                  README
-                </Link>{" "}
-                first
-              </>
-            )}
-          </p>
-          <Button
-            onClick={handleGenerateFromReadme}
-            disabled={isGenerateDisabled || isGenerating || !hasReadme}
-            className="theme-gap-2"
-            title={
-              isGenerateDisabled
-                ? "Structure already generated"
-                : !hasReadme
-                  ? "Generate README first"
-                  : "Generate App Structure"
-            }
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <BotMessageSquare className="h-4 w-4" />
-                Generate App Structure
-              </>
-            )}
-          </Button>
+    if (!hasReadme) {
+      return (
+        <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+          <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
+            <p className="text-base font-semibold theme-text-muted-foreground text-center">
+              Generate your{" "}
+              <Link
+                href="/readme"
+                className="theme-text-primary hover:underline"
+              >
+                README
+              </Link>{" "}
+              first
+            </p>
+          </div>
         </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+        <div className="flex flex-col theme-gap-3">
+          <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
+            <FolderTree className="h-5 w-5 theme-text-primary" />
+            Generate App Structure
+          </h2>
+          <p className="theme-text-foreground">
+            Follow the steps below to define the files and folders for your app.
+            <br />
+            Start by defining the features for each page based on your README.
+          </p>
+
+          {!featuresGenerated ? (
+            <Button
+              onClick={handleGenerateFeatures}
+              disabled={isPending}
+              className="w-full theme-gap-2"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating features...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  Generate Features
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              variant="link"
+              onClick={handleRegenerateFeatures}
+              disabled={isPending}
+              className="theme-gap-2 self-start"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Regenerate features from README
+            </Button>
+          )}
+        </div>
+
+        <Accordion
+          type="single"
+          collapsible
+          value={accordionValue}
+          onValueChange={setAccordionValue}
+          className="w-full"
+        >
+          <AccordionItem
+            value="step-features"
+            className={`theme-border-border ${!featuresGenerated ? "opacity-50 pointer-events-none" : ""}`}
+          >
+            <AccordionTrigger
+              className={`hover:theme-text-primary group ${!featuresGenerated ? "cursor-not-allowed" : ""}`}
+            >
+              <div className="flex items-center theme-gap-2">
+                <Sparkles className="h-5 w-5 theme-text-primary" />
+                <span className="font-semibold text-base lg:text-lg group-hover:underline">
+                  Features
+                </span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col theme-gap-4 pt-4">
+                <div className="flex items-center justify-between theme-py-2 theme-px-4 theme-bg-muted theme-radius">
+                  <span className="   font-semibold theme-font-sans theme-tracking">
+                    {totalFeatures} {totalFeatures === 1 ? 'feature' : 'features'} across {parsedPages.length} {parsedPages.length === 1 ? 'page' : 'pages'}
+                  </span>
+                </div>
+
+                <div className="flex flex-col theme-gap-2">
+                  {parsedPages.map((page) => {
+                    const features = inferredFeatures[page.id] || [];
+                    if (features.length === 0) return null;
+
+                    return (
+                      <PageFeaturesAccordionItem
+                        key={page.id}
+                        pageName={page.name}
+                        pageRoute={page.route}
+                        features={features}
+                        isExpanded={expandedPageId === page.id}
+                        onToggle={() =>
+                          setExpandedPageId(
+                            expandedPageId === page.id ? null : page.id
+                          )
+                        }
+                        onUpdateFeature={updateFeature}
+                        disabled={isPending}
+                      />
+                    );
+                  })}
+                </div>
+
+                <Button
+                  onClick={handleGenerateStructure}
+                  disabled={isGeneratingStructure || !featuresGenerated}
+                  className="w-full theme-gap-2"
+                >
+                  {isGeneratingStructure ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating structure...
+                    </>
+                  ) : (
+                    <>
+                      <ArrowRight className="h-4 w-4" />
+                      Generate App Structure
+                    </>
+                  )}
+                </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     );
   }

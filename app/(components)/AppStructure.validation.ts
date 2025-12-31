@@ -8,20 +8,10 @@ export const validateAppStructure = (
   features: Record<string, Feature[]>,
   readmeContent: string
 ): ValidationResult => {
-  console.log("✅ [VALIDATION] Starting app structure validation...");
-  console.log("  - Structure entries:", structure.length);
-  console.log("  - Feature groups:", Object.keys(features).length);
-  console.log("  - Total features:", Object.values(features).flat().length);
-  console.log("  - README length:", readmeContent.length);
-
   const warnings: ValidationWarning[] = [];
 
   const routes = generateRoutesFromFileSystem(structure, "", true);
   const routePaths = routes.map((r) => r.path.toLowerCase());
-
-  console.log("🛣️  [VALIDATION] Generated routes:");
-  console.log("  - Total routes:", routes.length);
-  console.log("  - Route paths:", routePaths);
 
   const readmeLower = readmeContent.toLowerCase();
 
@@ -31,33 +21,23 @@ export const validateAppStructure = (
       entry.children?.some((child) => child.name === "layout.tsx")
   );
 
-  console.log("🏗️  [VALIDATION] Checking root layout...");
   if (!hasRootLayout) {
-    console.log("  ❌ Missing root layout");
     warnings.push({
       severity: "error",
       category: "incomplete-structure",
       message: "Missing required root layout (app/layout.tsx)",
       suggestion: "Add layout.tsx file to app directory",
     });
-  } else {
-    console.log("  ✅ Root layout exists");
   }
 
-  console.log("🏗️  [VALIDATION] Checking routes...");
   if (routes.length === 0) {
-    console.log("  ❌ No routes found");
     warnings.push({
       severity: "error",
       category: "incomplete-structure",
       message: "No routes generated - structure has no page.tsx files",
       suggestion: "Add at least one page.tsx file to create a route",
     });
-  } else {
-    console.log("  ✅", routes.length, "routes found");
   }
-
-  console.log("🎯 [VALIDATION] Validating features...");
   let featureWarningCount = 0;
   let genericKeywordCount = 0;
   let missingActionCount = 0;
@@ -121,11 +101,6 @@ export const validateAppStructure = (
     });
   });
 
-  console.log("  - Features with warnings:", featureWarningCount);
-  console.log("  - Features with generic keywords:", genericKeywordCount);
-  console.log("  - Features missing action files:", missingActionCount);
-
-  console.log("📝 [VALIDATION] Checking for missing types files...");
   let missingTypesCount = 0;
 
   const referencedTypeFiles = new Set<string>();
@@ -162,10 +137,6 @@ export const validateAppStructure = (
       });
     }
   });
-
-  console.log("  - Missing types files:", missingTypesCount);
-
-  console.log("📖 [VALIDATION] Validating README-mentioned routes...");
 
   const validateReadmeRoutes = (
     readme: string,
@@ -223,38 +194,10 @@ export const validateAppStructure = (
   };
 
   const readmeRouteWarnings = validateReadmeRoutes(readmeContent, routes);
-  console.log("  - Missing routes from README:", readmeRouteWarnings.length);
-  if (readmeRouteWarnings.length > 0) {
-    console.log("  - Missing route details:", readmeRouteWarnings.map(w => w.expectedRoute));
-  }
   warnings.push(...readmeRouteWarnings);
 
   const errors = warnings.filter((w) => w.severity === "error");
   const warningsOnly = warnings.filter((w) => w.severity === "warning");
-
-  console.log("📊 [VALIDATION] Validation summary:");
-  console.log("  - Total warnings:", warnings.length);
-  console.log("  - Errors:", errors.length);
-  console.log("  - Warnings:", warningsOnly.length);
-  console.log("  - Is valid:", errors.length === 0);
-  console.log("  - Has errors:", errors.length > 0);
-  console.log("  - Has warnings:", warningsOnly.length > 0);
-
-  if (errors.length > 0) {
-    console.log("❌ [VALIDATION] Errors found:");
-    errors.forEach((error, i) => {
-      console.log(`  ${i + 1}. [${error.category}] ${error.message}`);
-      if (error.suggestion) console.log(`     Suggestion: ${error.suggestion}`);
-    });
-  }
-
-  if (warningsOnly.length > 0) {
-    console.log("⚠️  [VALIDATION] Warnings found:");
-    warningsOnly.forEach((warning, i) => {
-      console.log(`  ${i + 1}. [${warning.category}] ${warning.message}`);
-      if (warning.suggestion) console.log(`     Suggestion: ${warning.suggestion}`);
-    });
-  }
 
   const result: ValidationResult = {
     isValid: errors.length === 0,

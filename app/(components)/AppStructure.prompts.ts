@@ -1,9 +1,16 @@
-import { PatternDetectionResult, RoutePattern } from "./AppStructure.types";
+import { PatternDetectionResult, RoutePattern, InferredFeature } from "./AppStructure.types";
 
 export interface PromptGenerationConfig {
   readmeContent: string;
   detectedPatterns: PatternDetectionResult;
   relevantPatterns: RoutePattern[];
+}
+
+interface ParsedPage {
+  id: string;
+  name: string;
+  route: string;
+  description: string;
 }
 
 const PHASE_1_INSTRUCTIONS = `
@@ -668,4 +675,189 @@ ${VALIDATION_CHECKLIST}
 
 ${JSON_STRUCTURE_DEFINITION}
 `;
+};
+
+export const buildStructureGenerationPrompt = (
+  parsedPages: ParsedPage[],
+  inferredFeatures: Record<string, InferredFeature[]>
+): string => {
+  const pagesJson = JSON.stringify(parsedPages, null, 2);
+  const featuresJson = JSON.stringify(inferredFeatures, null, 2);
+
+  return `You are generating a Next.js App Router directory structure and feature assignments.
+
+RULES:
+1. Feature Locations:
+   - page.tsx: Features specific to that page only
+   - layout.tsx: Features shared across all child routes
+
+2. Utility File Requirements:
+   - ALL features need: page.hooks.tsx + page.types.ts
+   - Features with database queries need: page.actions.ts
+   - Complex features need: page.stores.ts (plural)
+
+3. Utility File Placement (CRITICAL):
+   - Can link to files in SAME directory or PARENT directories ONLY
+   - NEVER link to sibling directories
+   - Example: /app/dashboard/page.tsx can use:
+     ✅ /app/dashboard/page.hooks.tsx (same)
+     ✅ /app/layout.hooks.tsx (parent)
+     ❌ /app/settings/page.hooks.tsx (sibling - INVALID)
+
+4. Shared Utilities:
+   - When multiple pages use same feature → place at common ancestor
+   - Use layout.hooks.tsx, layout.actions.ts for shared files
+   - Example: Auth on login + register → /app/(auth)/layout.hooks.tsx
+
+5. Route Groups:
+   - Syntax: (groupName) with parentheses
+   - NOT in URL: /app/(auth)/login → URL is /login
+   - Should have layout.tsx for shared UI
+   - Create for 2+ related pages: (auth), (admin), (dashboard)
+
+6. Function Naming:
+   - Hooks: useFeatureName (e.g., useUserAuth) → in page.hooks.tsx
+   - Actions: featureNameAction (e.g., userAuthAction) → in page.actions.ts
+   - Stores: useFeatureNameStore (e.g., useUserAuthStore) → in page.stores.ts (PLURAL)
+   - Types: FeatureNameData (e.g., UserAuthData) → in page.types.ts
+
+7. Page ID to File ID Mapping (CRITICAL):
+   - Input features are keyed by pageId (e.g., "4cssxmqws")
+   - Each pageId has a corresponding route (e.g., "/" or "/settings")
+   - When you create a page.tsx file in the structure, assign it a unique file ID
+   - Map ALL features from that pageId to that file ID in the features object
+
+   Example:
+   Input page: { id: "abc123", route: "/settings" }
+   Input features["abc123"]: [feature1, feature2, feature3]
+
+   Generated structure:
+   { id: "settings-page-xyz", name: "page.tsx", type: "file" }
+
+   Output features:
+   features["settings-page-xyz"]: [feature1, feature2, feature3]
+
+INPUT DATA:
+
+Pages:
+${pagesJson}
+
+Features (by page ID):
+${featuresJson}
+
+EXPECTED OUTPUT (JSON only, no markdown):
+{
+  "structure": [
+    {
+      "id": "app-root",
+      "name": "app",
+      "type": "directory",
+      "isExpanded": true,
+      "children": [
+        {
+          "id": "layout-xyz",
+          "name": "layout.tsx",
+          "type": "file"
+        },
+        {
+          "id": "page-abc",
+          "name": "page.tsx",
+          "type": "file"
+        },
+        {
+          "id": "page-hooks-def",
+          "name": "page.hooks.tsx",
+          "type": "file"
+        },
+        {
+          "id": "page-stores-jkl",
+          "name": "page.stores.ts",
+          "type": "file"
+        },
+        {
+          "id": "page-types-ghi",
+          "name": "page.types.ts",
+          "type": "file"
+        }
+      ]
+    }
+  ],
+  "features": {
+    "page-abc": [
+      {
+        "id": "feature-id-from-input",
+        "title": "Feature Title",
+        "description": "Feature description",
+        "linkedFiles": {
+          "hooks": "/app/page.hooks.tsx",
+          "stores": "/app/page.stores.ts",
+          "types": "/app/page.types.ts"
+        },
+        "functionNames": {
+          "hooks": "useFeatureName",
+          "stores": "useFeatureNameStore",
+          "types": "FeatureNameData"
+        },
+        "isEditing": false
+      }
+    ]
+  }
+}
+
+CRITICAL - Feature Mapping:
+- Features object keys must be FILE IDs from the structure (e.g., "page-abc"), NOT paths
+- Map each input page to its corresponding page.tsx file ID in your generated structure
+- Example: Input page with route "/" → structure file "page-abc" with name "page.tsx" → features["page-abc"]
+- Each page.tsx or layout.tsx file that has features needs an entry in the features object
+- Preserve ALL input features separately - do NOT merge or consolidate features
+- If input has 2 features for a page, output must have 2 features for that page
+
+COMPLETE MAPPING EXAMPLE:
+
+Input:
+pages: [
+  { id: "page-id-1", route: "/", name: "Homepage" },
+  { id: "page-id-2", route: "/settings", name: "Settings" }
+]
+features: {
+  "page-id-1": [{ id: "feat-1", title: "Search Bar", ... }],
+  "page-id-2": [{ id: "feat-2", title: "Profile Form", ... }]
+}
+
+Output structure:
+{
+  id: "app-root",
+  name: "app",
+  children: [
+    { id: "home-page-file", name: "page.tsx", type: "file" },      ← Route "/"
+    { id: "home-hooks-file", name: "page.hooks.tsx", type: "file" },
+    {
+      id: "settings-dir",
+      name: "settings",
+      type: "directory",
+      children: [
+        { id: "settings-page-file", name: "page.tsx", type: "file" },  ← Route "/settings"
+        { id: "settings-hooks-file", name: "page.hooks.tsx", type: "file" }
+      ]
+    }
+  ]
+}
+
+Output features:
+{
+  "home-page-file": [{ id: "feat-1", title: "Search Bar", ... }],     ← Mapped from page-id-1
+  "settings-page-file": [{ id: "feat-2", title: "Profile Form", ... }] ← Mapped from page-id-2
+}
+
+IMPORTANT:
+- Use IDs from input features (preserve feature.id)
+- Generate new unique IDs for all FileSystemEntry items
+- Include ALL pages from input
+- Assign ALL features to appropriate files - preserve each feature separately
+- Do NOT merge or consolidate multiple features into one
+- If input page has 3 features, output must have exactly 3 features for that page
+- Follow parent directory rule strictly
+- File naming: page.stores.ts (PLURAL), not page.store.ts (singular)
+- When features need stores, CREATE page.stores.ts file in structure
+- Return ONLY valid JSON`;
 };

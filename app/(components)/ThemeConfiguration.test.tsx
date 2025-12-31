@@ -20,11 +20,6 @@ export const ThemeVerificationTest = () => {
     if (themes.length > 0 && themes[theme.selectedTheme]) {
       const verification = verifyThemeApplication(theme, themes[theme.selectedTheme], theme.selectedTheme);
       setResult(verification);
-      console.log(JSON.stringify({
-        action: "manual_verification",
-        themeName: themes[theme.selectedTheme].name,
-        result: verification
-      }));
     }
   };
 

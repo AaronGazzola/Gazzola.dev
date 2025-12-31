@@ -1,49 +1,104 @@
-# beep.buzz
+# Beep.Buzz
 
-beep.buzz is a playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, and embedded YouTube videos. Users interact by placing decorative "beep" and "buzz" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. The platform emphasizes creative expression, simple interactions, and organic discovery through sticker-based navigation.
+## Overview
+
+Beep.Buzz is a creative social media platform that gives everyone their own customizable corner of the internet at username.beep.buzz. Think of it as your personal digital canvas where you can express yourself through text, shapes, and YouTube videos, all arranged exactly how you want them.
+
+What makes Beep.Buzz unique is its playful interaction system - instead of traditional likes or comments, users connect through colorful "beep" and "buzz" stickers they place on each other's pages. Each sticker serves as both decoration and a portal, creating an organic web of discovery as users follow sticker trails to find new pages.
+
+The platform emphasizes creative freedom while maintaining simplicity. Whether you're crafting your own digital space or exploring others' creations, Beep.Buzz offers a fresh take on social connection through visual expression and playful interaction.
 
 ## Pages
 
-### Homepage (/)
+### Home (/) (Public)
 
-The main discovery and navigation hub at beep.buzz. Users can search for pages by title or @username with real-time results, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories (Art, Music, Personal, Tech, Fun, Memes, Other), or discover random pages. Each page card displays the title, username, visual preview, beep/buzz counts, and category tag. A prominent random page button encourages serendipitous discovery.
+The Home page serves as your gateway to the Beep.Buzz community. Here you'll find a dynamic feed of pages to explore, with multiple ways to discover content that interests you. Browse featured sections like Popular Pages, Recently Active, and New Pages, or use the search bar to find specific creators by username or page title.
 
-### User Page (username.beep.buzz)
+Content can be filtered by categories to match your interests, and there's always a "Random Page" option for spontaneous discovery. Each page preview card shows you essential details: the page title, creator's username, a visual preview, sticker counts, and category.
 
-Each user's personal subdomain displays their customizable page. The static header shows the page title, username, creator's personal beep and buzz stickers, and total sticker counts. A sticky header appears on scroll with toggle visibility for all stickers and "Add Beep"/"Add Buzz" buttons. The main content area contains the creator's vertically-scrolling elements (text blocks, shapes, YouTube embeds) with visitor stickers layered on top. Visitors can click stickers to see who placed them and navigate to that person's page, creating organic discovery trails.
+### User Page (/[username]) (Public)
 
-### Page Editor (/edit)
+Every user's personal canvas lives at their unique subdomain (username.beep.buzz). At the top, you'll see a static header displaying the page title, creator's username, and their personal sticker collection with counts. A sticky navigation bar follows as you scroll, featuring controls to toggle sticker visibility and buttons to place your own beeps and buzzes.
 
-Authenticated page owners access this builder interface to create and customize their personal page. Users can add and configure three element types: text blocks (with rich text editing, font sizing, color picking, alignment), shapes and dividers (rectangles, circles, lines with customizable colors and transparency), and YouTube embeds (with aspect ratio and autoplay options). Elements can be dragged to reorder, resized (25%, 50%, 75%, 100% width), aligned, edited, and deleted. The editor includes responsive preview toggles for desktop, tablet, and mobile. Page limits include maximum 20 elements, 3 YouTube embeds, 3000px height, and 50 of each sticker type.
+The main content area showcases the creator's carefully arranged elements, with visitor stickers floating above like a collaborative art piece. Clicking any sticker reveals who placed it and takes you to their page, creating an interconnected network of personal spaces.
 
-### Page Settings (/settings/page)
+### Page Editor (/edit) (User)
 
-Users configure their page metadata including title (displayed in header and search results), category selection, optional description for discovery, and privacy settings (Public or Username Whitelist for restricted access). When publishing, all content is AI-scanned for harmful material and YouTube videos are checked via API. Pages go live immediately if moderation passes, otherwise creators receive explanations and the page reverts to the previous version.
+This is where the magic happens - your personal page building workshop. Add up to 20 elements including text blocks, shapes, dividers, and up to 3 YouTube embeds. Every element can be dragged, resized, and precisely positioned to match your vision.
 
-### User Settings (/settings)
+The editor includes responsive preview modes for desktop, tablet, and mobile views, ensuring your page looks great on any device. Your canvas can extend up to 3000px in height, giving you plenty of room to express yourself while maintaining reasonable loading times.
 
-Authenticated users manage their personal sticker identity and account. They can change their beep and buzz icons (selected from Lucide, Phosphor, and one additional MIT-licensed library), customize icon colors, background colors, and background shapes (circle, square, diamond, heart, and additional preset shapes). Changes update retroactively across all pages where stickers were placed. Users can preview changes before saving. The activity overview shows all pages where they've placed stickers with quick navigation and removal options. Analytics display total stickers received with breakdowns by beeps and buzzes.
+### Settings (/settings) (User)
 
-### Onboarding (/welcome)
+Manage your personal sticker identity and account preferences here. Choose your signature beep and buzz icons from extensive libraries, then customize their colors and background shapes. Any changes you make update everywhere your stickers appear, maintaining consistency across the platform.
 
-First-time authenticated users (via email magic link) complete their profile setup. They choose a unique username (3-20 URL-friendly characters, AI-scanned for inappropriate content) that becomes their subdomain. Then they select and customize their personal beep and buzz icons, choosing icons from available libraries, icon colors, background colors, and background shapes. After setup, users can immediately start exploring pages and placing stickers.
+Track your social footprint with an activity overview showing all pages where you've placed stickers, with quick navigation and sticker removal options. Analytics provide insights into stickers you've received, broken down by type and time periods.
 
-### Admin Dashboard (/admin)
+### Onboarding (/welcome) (User)
 
-Admin-only interface for content moderation. The dashboard displays a queue of reported pages requiring review, a list of automatically hidden pages (pages receiving 3+ reports are auto-hidden), and the ability to view full page content and sticker activity. Available actions include approving pages (unhide and dismiss reports), removing pages permanently, warning users with notifications, and banning users (preventing access and removing all pages). An audit log tracks all moderation actions.
+Your first stop after authentication, this guided setup helps you establish your identity on Beep.Buzz. Choose a unique username (3-20 characters) that will become your personal subdomain. Then, design your signature stickers by selecting icons, colors, and shapes - these will be your calling card across the platform.
+
+### Admin Dashboard (/admin) (Admin)
+
+A comprehensive moderation interface for platform administrators. Review reported pages, manage content that's been automatically hidden due to multiple reports, and take appropriate action to maintain community standards. Admins can approve content, remove violations, issue warnings, or ban users when necessary, with all actions logged for accountability.
+
+## Authentication & Access Control
+
+Beep.Buzz uses a streamlined authentication system centered around email magic links - no passwords to remember! When you sign in, we'll send a secure link to your email that grants access to your account. Email verification ensures account security and helps maintain a trusted community.
+
+### Access Levels
+
+**Public Access** (no authentication required):
+
+- Home (/)
+- User Page (/[username])
+
+**Authenticated Users**:
+
+- Page Editor (/edit)
+- Settings (/settings)
+- Onboarding (/welcome)
+
+**Admin Only**:
+
+- Admin Dashboard (/admin)
+
+## Data & Storage
+
+### users
+
+This is where your personal identity on Beep.Buzz lives. Beyond basic account details like email and username, it stores your unique sticker designs - the personalized beeps and buzzes that represent you across the platform. Your account status, join date, and role (user or admin) are tracked here to ensure proper access and platform safety.
+
+### pages
+
+Think of this as the master directory of all Beep.Buzz pages. Each entry contains a page's title, category, and creator information, plus important metrics like view counts and when it was last updated. This information powers the discovery features on the home page and helps users find content that interests them.
+
+### page_elements
+
+Every piece of content you add to your page - whether it's text, shapes, dividers, or YouTube videos - is carefully tracked here. This ensures your page layout stays exactly as you designed it and helps enforce platform limits like the maximum of 20 elements and 3 YouTube embeds per page.
+
+### stickers
+
+The heart of Beep.Buzz's interaction system, this tracks every beep and buzz placed across the platform. Each sticker record includes who placed it, where it's located, and when it was added, enabling the unique navigation system that lets users follow sticker trails to discover new pages.
+
+### moderation_logs
+
+A comprehensive record of all administrative actions taken to keep the platform safe and friendly. This maintains accountability by tracking which moderators took what actions, when they occurred, and why decisions were made.
+
+### reports
+
+Community safety relies on users helping identify inappropriate content. This tracks user-submitted reports, automatically hiding pages that receive multiple reports until an admin can review them. It's essential for maintaining platform standards and ensuring quick response to potential violations.
 
 ## User Experience
 
-New users arrive at the homepage, sign in via email magic link, and complete onboarding by choosing their username and customizing their beep/buzz stickers. They can immediately browse the homepage to discover pages through search, category filters, or the random page button. When visiting another user's page, they scroll through the creative content and can place their beep or buzz sticker by clicking the add button and selecting a position on any element. Clicking any sticker reveals who placed it and provides navigation to that user's page, creating discovery trails through the community.
+New users typically discover Beep.Buzz through shared page links or word of mouth. After signing up with email verification, the onboarding process guides them through creating their username and designing their signature stickers. From there, they can immediately start exploring other pages and placing stickers, or jump into the page editor to create their own space.
 
-Users create their own page by accessing the page editor, where they build a vertical canvas using text blocks, shapes, and YouTube embeds. They customize their page settings (title, category, description, privacy) and publish when ready, with AI moderation ensuring content safety. Users manage their sticker identity through user settings, knowing that any changes to their beep or buzz stickers update everywhere they've been placed. They can view their activity overview to revisit pages where they've left stickers and track engagement on their own page through analytics.
-
-The platform encourages organic discovery as users follow sticker trails from page to page, finding new creators through the visual breadcrumbs left by the community. The simple interaction model (placing one beep and one buzz per page) keeps engagement focused while allowing pages to accumulate rich layers of stickers over time. The subdomain structure (username.beep.buzz) gives each creator their own identity and shareable space within the platform ecosystem.
+Regular users often start their sessions on the home page, discovering new content through featured sections or following sticker trails from page to page. Content creators frequently return to the page editor to update their space and check their sticker analytics in settings.
 
 ## Getting Started
 
-Visit beep.buzz and sign in using the email magic link authentication. After receiving and clicking your magic link, complete the onboarding flow by selecting a unique username that will become your subdomain (username.beep.buzz). Customize your personal beep and buzz stickers by choosing icons, colors, and background shapes that represent your identity across the platform.
-
-Start exploring by browsing the homepage featured sections, using the search bar to find specific users or topics, or clicking the random page button to discover something unexpected. When you visit a page you enjoy, place your beep or buzz sticker to leave your mark and create a link back to your future page. Click on other visitors' stickers to discover their pages and navigate the community.
-
-Create your own page by accessing the page editor and building your vertical canvas with text, shapes, and YouTube videos. Customize your page settings with a title, category, and description to help others discover your content. Publish when ready and your page goes live at your personal subdomain. Update your sticker identity anytime through user settings, knowing your visual signature updates everywhere you've placed stickers.
+1. Visit beep.buzz and click "Sign In" to receive a magic link via email
+2. Complete the onboarding process to choose your username and design your stickers
+3. Explore the home page to discover interesting pages and place your first stickers
+4. Create your own page using the page editor
+5. Share your page link (username.beep.buzz) with friends to start building connections

@@ -41,6 +41,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useMemo, useRef, useState } from "react";
+import { useAppStructureStore } from "../../(components)/AppStructure.stores";
 import { useDatabaseStore } from "../../(components)/DatabaseConfiguration.stores";
 import { useNextStepsStore } from "../../(components)/NextStepsComponent.stores";
 import { useREADMEStore } from "../../(components)/READMEComponent.stores";
@@ -127,6 +128,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
+  const { reset: resetAppStructure } = useAppStructureStore();
   const { reset: resetDatabase } = useDatabaseStore();
   const { reset: resetNextSteps } = useNextStepsStore();
   const { reset: resetReadme } = useREADMEStore();
@@ -419,6 +421,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     if (currentContentPath === "app-directory") {
       setAppStructure([]);
       setAppStructureGenerated(false);
+      resetAppStructure();
     }
 
     if (currentContentPath === "readme") {
@@ -504,6 +507,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         resetDatabase();
         resetNextSteps();
         resetReadme();
+        resetAppStructure();
         setAppStructureGenerated(false);
         setReadmeGenerated(false);
         setRefreshKey(resetKey);

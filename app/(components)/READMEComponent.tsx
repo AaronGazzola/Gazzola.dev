@@ -17,33 +17,35 @@ import {
   ArrowRight,
   BookText,
   CheckCircle2,
+  Copy,
   Database,
+  Download,
   Loader2,
   Plus,
   Shield,
   Sparkles,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import { SiApple, SiGithub, SiGoogle } from "react-icons/si";
+import { toast } from "sonner";
 import { useREADMEStore } from "./READMEComponent.stores";
 import {
+  DatabaseTable,
   generateId,
   PageInput,
-  DatabaseTable,
   Stage,
 } from "./READMEComponent.types";
 import {
-  generateFinalReadmePrompt,
-  generatePagesPrompt,
   generateAuthPrompt,
   generateDatabasePrompt,
-  parsePagesFromResponse,
+  generateFinalReadmePrompt,
+  generatePagesPrompt,
   parseAuthFromResponse,
   parseDatabaseFromResponse,
+  parsePagesFromResponse,
 } from "./READMEComponent.utils";
-import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
 import { DatabaseTableAccordionItem } from "./READMEComponent/DatabaseTableAccordionItem";
+import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
 
 const MIN_TITLE_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 50;
@@ -61,6 +63,7 @@ export const READMEComponent = () => {
     readmeWasPasted,
     setReadmeWasPasted,
     forceRefresh,
+    getNode,
   } = useEditorStore();
 
   const {
@@ -92,7 +95,6 @@ export const READMEComponent = () => {
     deleteDatabaseTable,
   } = useREADMEStore();
 
-
   const [accordionValue, setAccordionValue] =
     useState<string>("step-1-description");
   const [expandedPageId, setExpandedPageId] = useState<string | null>(null);
@@ -115,37 +117,6 @@ export const READMEComponent = () => {
       hasAutoExpandedRef.current = true;
     }
   }, [pages]);
-
-  useEffect(() => {
-    console.log("📋 [README] Component Load - Initial State Snapshot:", {
-      title,
-      description,
-      pastedReadme,
-      showPasteSection,
-      stage,
-      pages: pages.map((p) => ({
-        name: p.name,
-        route: p.route,
-        description: p.description,
-      })),
-      authMethods,
-      pageAccess: pageAccess.map((pa) => {
-        const page = pages.find((p) => p.id === pa.pageId);
-        return {
-          page: page?.name,
-          route: page?.route,
-          public: pa.public,
-          user: pa.user,
-          admin: pa.admin,
-        };
-      }),
-      databaseTables: databaseTables.map((t) => ({
-        name: t.name,
-        description: t.description,
-      })),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleAccordionChange = useCallback(
     (value: string) => {
@@ -189,19 +160,6 @@ export const READMEComponent = () => {
         setAuthMethods(parsed.authMethods);
         setPageAccess(parsed.pageAccess);
         setStage("auth");
-        console.log("🔐 [README] Step 3 Complete - Authentication & Access:", {
-          authMethods: parsed.authMethods,
-          pageAccess: parsed.pageAccess.map((pa) => {
-            const page = pages.find((p) => p.id === pa.pageId);
-            return {
-              page: page?.name || "Unknown",
-              route: page?.route,
-              public: pa.public,
-              user: pa.user,
-              admin: pa.admin,
-            };
-          }),
-        });
       }
     });
 
@@ -211,12 +169,6 @@ export const READMEComponent = () => {
       if (parsed && parsed.length > 0) {
         setDatabaseTables(parsed);
         setStage("database");
-        console.log("💾 [README] Step 4 Complete - Database Tables:", {
-          tables: parsed.map((t) => ({
-            name: t.name,
-            description: t.description,
-          })),
-        });
       } else {
         const fallbackTables: DatabaseTable[] = [
           { id: generateId(), name: "users", description: "" },
@@ -249,15 +201,6 @@ export const READMEComponent = () => {
       if (parsedPages && parsedPages.length > 0) {
         setPages(parsedPages);
         setStage("pages");
-        console.log("📄 [README] Step 2 Complete - Pages:", {
-          title,
-          description,
-          pages: parsedPages.map((p) => ({
-            name: p.name,
-            route: p.route,
-            description: p.description,
-          })),
-        });
       } else {
         const fallbackPages: PageInput[] = [
           { id: generateId(), name: "Home", route: "/", description: "" },
@@ -315,31 +258,6 @@ export const READMEComponent = () => {
   }, [title, description, pages, generateDatabase]);
 
   const handleSubmitDatabase = useCallback(() => {
-    console.log("📊 [README] FINAL INPUT DATA - Complete State Snapshot:", {
-      title,
-      description,
-      pages: pages.map((p) => ({
-        name: p.name,
-        route: p.route,
-        description: p.description,
-      })),
-      authMethods,
-      pageAccess: pageAccess.map((pa) => {
-        const page = pages.find((p) => p.id === pa.pageId);
-        return {
-          page: page?.name,
-          route: page?.route,
-          public: pa.public,
-          user: pa.user,
-          admin: pa.admin,
-        };
-      }),
-      databaseTables: databaseTables.map((t) => ({
-        name: t.name,
-        description: t.description,
-      })),
-    });
-
     const prompt = generateFinalReadmePrompt(
       title,
       description,
@@ -349,7 +267,15 @@ export const READMEComponent = () => {
       databaseTables
     );
     generateReadme({ prompt, maxTokens: 3000 });
-  }, [title, description, pages, authMethods, pageAccess, databaseTables, generateReadme]);
+  }, [
+    title,
+    description,
+    pages,
+    authMethods,
+    pageAccess,
+    databaseTables,
+    generateReadme,
+  ]);
 
   const handleAddPage = () => {
     const newPage: PageInput = {
@@ -399,6 +325,53 @@ export const READMEComponent = () => {
     }
   };
 
+  const getRawReadmeContent = useCallback(() => {
+    const readmeNode = getNode("readme");
+    if (readmeNode && readmeNode.type === "file" && readmeNode.content) {
+      const content = readmeNode.content;
+      const prefix = "<!-- component-READMEComponent -->\n\n";
+      if (content.startsWith(prefix)) {
+        return content.slice(prefix.length);
+      }
+      return content;
+    }
+    return "";
+  }, [getNode]);
+
+  const handleCopyReadme = useCallback(() => {
+    const content = getRawReadmeContent();
+    if (!content) {
+      toast.error("No README content to copy");
+      return;
+    }
+    navigator.clipboard.writeText(content).then(
+      () => {
+        toast.success("README copied to clipboard!");
+      },
+      () => {
+        toast.error("Failed to copy README to clipboard");
+      }
+    );
+  }, [getRawReadmeContent]);
+
+  const handleDownloadReadme = useCallback(() => {
+    const content = getRawReadmeContent();
+    if (!content) {
+      toast.error("No README content to download");
+      return;
+    }
+    const blob = new Blob([content], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "README.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("README downloaded!");
+  }, [getRawReadmeContent]);
+
   if (readmeGenerated) {
     return (
       <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
@@ -416,6 +389,24 @@ export const READMEComponent = () => {
               edit it directly in the editor below.
             </p>
           </div>
+        </div>
+        <div className="flex theme-gap-2 w-full">
+          <Button
+            onClick={handleCopyReadme}
+            variant="outline"
+            className="flex-1 theme-gap-2"
+          >
+            <Copy className="h-4 w-4" />
+            Copy README
+          </Button>
+          <Button
+            onClick={handleDownloadReadme}
+            variant="outline"
+            className="flex-1 theme-gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Download README
+          </Button>
         </div>
       </div>
     );
@@ -486,7 +477,7 @@ export const READMEComponent = () => {
         <div className="flex flex-col theme-gap-4">
           <div className="flex flex-col theme-gap-2">
             <h3 className="font-semibold text-lg">Paste your README file</h3>
-            <p className="   theme-text-foreground font-semibold">
+            <p className="theme-text-foreground font-semibold">
               Paste the contents of your README file in Markdown formatting.
               This will be used in the next step to generate your app.
             </p>
@@ -770,7 +761,9 @@ export const READMEComponent = () => {
                   </Badge>
 
                   <Badge
-                    variant={authMethods.emailVerification ? "default" : "outline"}
+                    variant={
+                      authMethods.emailVerification ? "default" : "outline"
+                    }
                     className="cursor-pointer"
                     onClick={() => toggleAuthMethod("emailVerification")}
                   >
@@ -793,7 +786,9 @@ export const READMEComponent = () => {
                   </p>
                   <div className="flex flex-col theme-gap-2">
                     {pages.map((page) => {
-                      const access = pageAccess.find((pa) => pa.pageId === page.id);
+                      const access = pageAccess.find(
+                        (pa) => pa.pageId === page.id
+                      );
                       return (
                         <div
                           key={page.id}
@@ -812,7 +807,11 @@ export const READMEComponent = () => {
                               variant={access?.public ? "default" : "outline"}
                               className="cursor-pointer"
                               onClick={() =>
-                                updatePageAccess(page.id, "public", !access?.public)
+                                updatePageAccess(
+                                  page.id,
+                                  "public",
+                                  !access?.public
+                                )
                               }
                             >
                               Public
@@ -830,7 +829,11 @@ export const READMEComponent = () => {
                               variant={access?.admin ? "default" : "outline"}
                               className="cursor-pointer"
                               onClick={() =>
-                                updatePageAccess(page.id, "admin", !access?.admin)
+                                updatePageAccess(
+                                  page.id,
+                                  "admin",
+                                  !access?.admin
+                                )
                               }
                             >
                               Admin
@@ -886,8 +889,8 @@ export const READMEComponent = () => {
                 <div className="flex flex-col theme-gap-1">
                   <h3 className="font-semibold text-lg">Define Your Tables</h3>
                   <p className="   theme-text-foreground font-semibold">
-                    Add, edit or remove database tables. Include a description of
-                    what each table stores.
+                    Add, edit or remove database tables. Include a description
+                    of what each table stores.
                   </p>
                 </div>
 

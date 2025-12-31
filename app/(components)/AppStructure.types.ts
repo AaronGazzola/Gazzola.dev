@@ -1,9 +1,80 @@
 import { Feature, FileSystemEntry, UserExperienceFileType } from "@/app/(editor)/layout.types";
+import { PageInput, DatabaseTable, PageAccess } from "./READMEComponent.types";
 
 export type RouteEntry = {
   path: string;
   children?: RouteEntry[];
 };
+
+export enum FeatureCategory {
+  DATA_MANAGEMENT = "data-management",
+  UI_INTERACTION = "ui-interaction",
+  AUTHENTICATION = "authentication",
+  AUTHORIZATION = "authorization",
+  CONTENT_CREATION = "content-creation",
+  CONTENT_DISPLAY = "content-display",
+  NAVIGATION = "navigation",
+  SEARCH_FILTER = "search-filter",
+  COMMUNICATION = "communication",
+  MEDIA_HANDLING = "media-handling",
+  REAL_TIME = "real-time",
+  ADMIN = "admin",
+}
+
+export enum FeatureComplexity {
+  SIMPLE = "simple",
+  MODERATE = "moderate",
+  COMPLEX = "complex",
+}
+
+export interface InferredFeature {
+  id: string;
+  pageId: string;
+  title: string;
+  description: string;
+  category: FeatureCategory;
+  complexity: FeatureComplexity;
+  utilityFileNeeds: {
+    hooks: boolean;
+    actions: boolean;
+    stores: boolean;
+    types: boolean;
+  };
+  databaseTables: string[];
+  actionVerbs: string[];
+  dataEntities: string[];
+  requiresRealtimeUpdates: boolean;
+  requiresFileUpload: boolean;
+  requiresExternalApi: boolean;
+  confidence?: number;
+}
+
+export interface FeatureInferenceAIResponse {
+  features: Array<{
+    title: string;
+    description: string;
+    category: FeatureCategory;
+    complexity: FeatureComplexity;
+    actionVerbs: string[];
+    dataEntities: string[];
+    requiresRealtimeUpdates: boolean;
+    requiresFileUpload: boolean;
+    requiresExternalApi: boolean;
+  }>;
+}
+
+export interface RouteGrouping {
+  name: string;
+  routes: PageInput[];
+  semanticTheme: string;
+}
+
+export interface ApprovalState {
+  pendingStructure: FileSystemEntry[];
+  pendingFeatures: Record<string, InferredFeature[]>;
+  approvalStatus: Record<string, boolean>;
+  isReviewing: boolean;
+}
 
 export type ScreenSize = "xs" | "sm" | "md" | "lg";
 
@@ -17,6 +88,11 @@ export type AppStructureTemplate = {
 export interface AppStructureAIResponse {
   structure: FileSystemEntry[];
   features?: Record<string, Feature[]>;
+}
+
+export interface StructureGenerationAIResponse {
+  structure: FileSystemEntry[];
+  features: Record<string, Feature[]>;
 }
 
 export interface PatternDetectionResult {
