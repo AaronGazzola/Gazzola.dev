@@ -31,6 +31,8 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
+  Copy,
+  Download,
   Ellipsis,
   Home,
   ListRestart,
@@ -51,6 +53,8 @@ import { getMarkdownDataAction } from "../layout.actions";
 import { useContentVersionCheck } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 import type { InitialConfigurationType } from "../layout.types";
+import { processContent } from "@/lib/download.utils";
+import { toast } from "sonner";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -125,6 +129,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     databaseGenerated,
     setAppStructure,
     updateInitialConfiguration,
+    getNode,
+    appStructure,
+    getPlaceholderValue,
+    getInitialConfiguration,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
@@ -545,6 +553,92 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     }
   };
 
+  const getProcessedContent = () => {
+    const currentNode = data.flatIndex[currentContentPath];
+    if (!currentNode || currentNode.type !== "file") {
+      return null;
+    }
+
+    const getSectionContent = (
+      filePath: string,
+      sectionId: string,
+      optionId: string
+    ): string => {
+      const node = data.flatIndex[filePath];
+      if (node?.type === "file" && node.sections?.[sectionId]?.[optionId]) {
+        return node.sections[sectionId][optionId].content || "";
+      }
+      return "";
+    };
+
+    const getSectionOptions = (
+      filePath: string,
+      sectionId: string
+    ): Record<string, { content: string; include: boolean }> => {
+      const node = data.flatIndex[filePath];
+      if (node?.type === "file" && node.sections?.[sectionId]) {
+        return node.sections[sectionId];
+      }
+      return {};
+    };
+
+    const content = currentNode.content
+      .replace(/\\n/g, "\n")
+      .replace(/\\`/g, "`")
+      .replace(/\\\$/g, "$")
+      .replace(/\\\\/g, "\\");
+
+    return processContent(
+      content,
+      currentContentPath,
+      getSectionInclude,
+      getSectionContent,
+      getSectionOptions,
+      appStructure,
+      getPlaceholderValue,
+      getInitialConfiguration,
+      true
+    );
+  };
+
+  const handleCopyContent = () => {
+    const content = getProcessedContent();
+    if (!content) {
+      toast.error("No content to copy");
+      return;
+    }
+    navigator.clipboard.writeText(content).then(
+      () => {
+        toast.success("Content copied to clipboard!");
+      },
+      () => {
+        toast.error("Failed to copy content to clipboard");
+      }
+    );
+  };
+
+  const handleDownloadContent = () => {
+    const content = getProcessedContent();
+    if (!content) {
+      toast.error("No content to download");
+      return;
+    }
+    const currentNode = data.flatIndex[currentContentPath];
+    const fileName = currentNode?.name || "document";
+    const fileExtension = (currentNode as any)?.fileExtension || "md";
+
+    const blob = new Blob([content], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${fileName}.${fileExtension}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("Content downloaded!");
+  };
+
   const progressInfo = useMemo(() => {
     conditionalLog(
       {
@@ -672,6 +766,28 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <span className="text-sm">Dark mode</span>
                     <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
                   </div>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      handleCopyContent();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Copy className="h-4 w-4" />
+                    Copy page
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      handleDownloadContent();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Download className="h-4 w-4" />
+                    Download page
+                  </Button>
                   <Button
                     variant="ghost"
                     className="w-full justify-start theme-gap-2 h-9"
@@ -844,6 +960,24 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           </div>
 
           <div className="flex items-center theme-gap-4">
+            <div className="hidden md:flex theme-gap-2">
+              <IconButton
+                onClick={handleCopyContent}
+                disabled={false}
+                tooltip="Copy page content"
+              >
+                <Copy className="h-4 w-4" />
+              </IconButton>
+
+              <IconButton
+                onClick={handleDownloadContent}
+                disabled={false}
+                tooltip="Download page content"
+              >
+                <Download className="h-4 w-4" />
+              </IconButton>
+            </div>
+
             <div className={cn(
               "flex items-center theme-gap-3 transition-all",
               previewMode && "theme-border-primary border-2 rounded-full theme-px-2 theme-py-1"

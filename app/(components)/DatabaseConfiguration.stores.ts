@@ -1622,6 +1622,20 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           (t) => t.schema !== "auth" && t.schema !== "better_auth"
         );
 
+        const userSchemas = new Set(
+          userTables
+            .filter(t => t.schema !== 'public')
+            .map(t => t.schema)
+        );
+
+        if (userSchemas.size > 0) {
+          lines.push("-- Create schemas");
+          userSchemas.forEach(schema => {
+            lines.push(`CREATE SCHEMA IF NOT EXISTS ${schema};`);
+          });
+          lines.push("");
+        }
+
         if (enums.length > 0) {
           lines.push("-- Create enum types");
           enums.forEach((enumDef) => {
@@ -1657,6 +1671,10 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
 
             table.uniqueConstraints.forEach((constraint) => {
               columns.push(`  UNIQUE (${constraint.join(", ")})`);
+            });
+
+            table.checkConstraints.forEach((constraint) => {
+              columns.push(`  CONSTRAINT ${constraint.name} CHECK (${constraint.expression})`);
             });
 
             lines.push(`CREATE TABLE ${table.schema}.${table.name} (`);
@@ -1710,24 +1728,92 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
                   break;
                 case "own":
                   const userIdColumn = table.columns.find(
-                    (c) => c.name === "userId" || c.name === "user_id"
-                  )?.name || "user_id";
-                  usingClause = `auth.uid() = ${userIdColumn}`;
+                    (c) => c.name === "user_id" || c.name === "userId" || c.name === "reporter_id" || c.name === "reporterId" || (table.name === "users" && c.name === "id")
+                  );
+
+                  if (!userIdColumn) {
+                    conditionalLog(
+                      { message: `RLS Error: Table ${table.name} has "own" policy but no user column`, table: table.name },
+                      { label: LOG_LABELS.DATABASE }
+                    );
+                    usingClause = "false";
+                  } else {
+                    usingClause = `auth.uid() = ${userIdColumn.name}`;
+                  }
                   break;
                 case "organization":
                   const orgIdColumn = table.columns.find(
                     (c) => c.name === "organizationId" || c.name === "organization_id"
-                  )?.name || "organization_id";
-                  usingClause = `${orgIdColumn} IN (SELECT organization_id FROM public.user_organizations WHERE user_id = auth.uid())`;
+                  );
+
+                  if (!orgIdColumn) {
+                    conditionalLog(
+                      { message: `RLS Error: Table ${table.name} has "organization" policy but no organization column`, table: table.name },
+                      { label: LOG_LABELS.DATABASE }
+                    );
+                    usingClause = "false";
+                    break;
+                  }
+
+                  const userOrgsTable = tables.find(t => t.name === 'user_organizations');
+                  if (!userOrgsTable) {
+                    conditionalLog(
+                      { message: `RLS Error: user_organizations table not found for organization policy`, table: table.name },
+                      { label: LOG_LABELS.DATABASE }
+                    );
+                    usingClause = "false";
+                    break;
+                  }
+
+                  const userOrgsSchema = userOrgsTable.schema || 'public';
+                  usingClause = `${orgIdColumn.name} IN (SELECT organization_id FROM ${userOrgsSchema}.user_organizations WHERE user_id = auth.uid())`;
                   break;
                 case "related":
                   if (rolePolicy.relatedTable) {
+                    const relatedTableObj = tables.find(t => t.name === rolePolicy.relatedTable);
+                    if (!relatedTableObj) {
+                      conditionalLog(
+                        { message: `RLS Error: Related table ${rolePolicy.relatedTable} not found`, table: table.name, relatedTable: rolePolicy.relatedTable },
+                        { label: LOG_LABELS.DATABASE }
+                      );
+                      usingClause = "false";
+                      break;
+                    }
+
+                    const relatedSchema = relatedTableObj.schema || 'public';
                     const relatedColumn = table.columns.find(
                       (c) => c.relation?.table === rolePolicy.relatedTable
                     );
-                    if (relatedColumn) {
-                      usingClause = `${relatedColumn.name} IN (SELECT id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+
+                    if (!relatedColumn) {
+                      conditionalLog(
+                        { message: `RLS Error: No foreign key to ${rolePolicy.relatedTable} in ${table.name}`, table: table.name, relatedTable: rolePolicy.relatedTable },
+                        { label: LOG_LABELS.DATABASE }
+                      );
+                      usingClause = "false";
+                      break;
                     }
+
+                    const userIdCol = relatedTableObj.columns.find(
+                      c => c.name === 'user_id' || c.name === 'userId' || c.name === 'reporter_id' || c.name === 'reporterId' || (relatedTableObj.name === 'users' && c.name === 'id')
+                    );
+
+                    if (!userIdCol) {
+                      conditionalLog(
+                        { message: `RLS Error: Related table ${rolePolicy.relatedTable} has no user column`, table: table.name, relatedTable: rolePolicy.relatedTable },
+                        { label: LOG_LABELS.DATABASE }
+                      );
+                      usingClause = "false";
+                      break;
+                    }
+
+                    usingClause = `${relatedColumn.name} IN (SELECT id FROM ${relatedSchema}.${rolePolicy.relatedTable} WHERE ${userIdCol.name} = auth.uid())`;
+                  } else {
+                    conditionalLog(
+                      { message: `RLS Error: "related" access type requires relatedTable`, table: table.name },
+                      { label: LOG_LABELS.DATABASE }
+                    );
+                    usingClause = "false";
                   }
                   break;
               }

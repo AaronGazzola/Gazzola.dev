@@ -1,14 +1,14 @@
 import { extractJsonFromResponse } from "@/lib/ai-response.utils";
 import { LOG_LABELS } from "@/lib/log.util";
 import {
+  AuthGenerationAIResponse,
+  AuthMethods,
+  DatabaseGenerationAIResponse,
+  DatabaseTable,
   generateId,
+  PageAccess,
   PageGenerationAIResponse,
   PageInput,
-  AuthGenerationAIResponse,
-  DatabaseGenerationAIResponse,
-  AuthMethods,
-  PageAccess,
-  DatabaseTable,
 } from "./READMEComponent.types";
 
 export const generatePagesPrompt = (
@@ -58,7 +58,9 @@ Rules:
 - Descriptions should be specific to this app, not generic`;
 };
 
-export const parsePagesFromResponse = (response: string): PageInput[] | null => {
+export const parsePagesFromResponse = (
+  response: string
+): PageInput[] | null => {
   const parsed = extractJsonFromResponse<PageGenerationAIResponse>(
     response,
     LOG_LABELS.README
@@ -69,8 +71,8 @@ export const parsePagesFromResponse = (response: string): PageInput[] | null => 
   }
 
   return parsed.pages
-    .filter(p => p.name && p.route)
-    .map(p => ({
+    .filter((p) => p.name && p.route)
+    .map((p) => ({
       id: generateId(),
       name: p.name,
       route: p.route,
@@ -84,7 +86,10 @@ export const generateAuthPrompt = (
   pages: PageInput[]
 ): string => {
   const pagesInfo = pages
-    .map((p) => `- ID: ${p.id}, Name: ${p.name}, Route: ${p.route}, Description: ${p.description}`)
+    .map(
+      (p) =>
+        `- ID: ${p.id}, Name: ${p.name}, Route: ${p.route}, Description: ${p.description}`
+    )
     .join("\\n");
 
   return `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with { end with }
@@ -244,7 +249,8 @@ export const generateFinalReadmePrompt = (
       if (access?.public) accessLevels.push("Public");
       if (access?.user) accessLevels.push("User");
       if (access?.admin) accessLevels.push("Admin");
-      const accessText = accessLevels.length > 0 ? ` (${accessLevels.join(", ")})` : "";
+      const accessText =
+        accessLevels.length > 0 ? ` (${accessLevels.join(", ")})` : "";
 
       return `### ${p.name} (\`${p.route}\`)${accessText}\\n\\n${p.description}`;
     })
@@ -282,8 +288,9 @@ export const generateFinalReadmePrompt = (
     return access?.admin;
   });
 
-  const authSection = enabledAuthMethods.length > 0
-    ? `## Authentication & Access Control
+  const authSection =
+    enabledAuthMethods.length > 0
+      ? `## Authentication & Access Control
 
 ${title} implements secure authentication with the following methods:
 
@@ -293,26 +300,43 @@ ${enabledAuthMethods.map((method) => `- ${method}`).join("\\n")}
 
 The application enforces role-based access control across different pages:
 
-${publicPages.length > 0 ? `**Public Access** (no authentication required):
+${
+  publicPages.length > 0
+    ? `**Public Access** (no authentication required):
 ${publicPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
-` : ""}
-${userPages.length > 0 ? `**Authenticated Users**:
+`
+    : ""
+}
+${
+  userPages.length > 0
+    ? `**Authenticated Users**:
 ${userPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
-` : ""}
-${adminPages.length > 0 ? `**Admin Only**:
+`
+    : ""
+}
+${
+  adminPages.length > 0
+    ? `**Admin Only**:
 ${adminPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
-` : ""}`
-    : "";
+`
+    : ""
+}`
+      : "";
 
-  const dbSection = databaseTables.length > 0
-    ? `## Data & Storage
+  const dbSection =
+    databaseTables.length > 0
+      ? `## Database tables
 
 The application stores and manages the following data:
 
-${databaseTables.map((t) => `### ${t.name}
+${databaseTables
+  .map(
+    (t) => `### ${t.name}
 
-${t.description}`).join("\\n\\n")}`
-    : "";
+${t.description}`
+  )
+  .join("\\n\\n")}`
+      : "";
 
   return `Generate a detailed, professional README.md for this web application based on the following information:
 
@@ -321,14 +345,25 @@ APP TITLE: ${title}
 APP DESCRIPTION: ${description}
 
 PAGES:
-${pages.map((p) => {
-  const access = pageAccess.find((pa) => pa.pageId === p.id);
-  const accessLevels = [];
-  if (access?.public) accessLevels.push("Public");
-  if (access?.user) accessLevels.push("User");
-  if (access?.admin) accessLevels.push("Admin");
-  return "- " + p.name + " (" + p.route + ") [" + accessLevels.join(", ") + "]: " + p.description;
-}).join("\\n")}
+${pages
+  .map((p) => {
+    const access = pageAccess.find((pa) => pa.pageId === p.id);
+    const accessLevels = [];
+    if (access?.public) accessLevels.push("Public");
+    if (access?.user) accessLevels.push("User");
+    if (access?.admin) accessLevels.push("Admin");
+    return (
+      "- " +
+      p.name +
+      " (" +
+      p.route +
+      ") [" +
+      accessLevels.join(", ") +
+      "]: " +
+      p.description
+    );
+  })
+  .join("\\n")}
 
 AUTHENTICATION METHODS:
 ${enabledAuthMethods.length > 0 ? enabledAuthMethods.join(", ") : "None - public app"}

@@ -35,6 +35,12 @@ export interface PrismaColumn {
   attributes: string[];
 }
 
+export interface PrismaCheckConstraint {
+  id: string;
+  name: string;
+  expression: string;
+}
+
 export interface PrismaTable {
   id: string;
   name: string;
@@ -43,6 +49,7 @@ export interface PrismaTable {
   isEditable: boolean;
   columns: PrismaColumn[];
   uniqueConstraints: string[][];
+  checkConstraints: PrismaCheckConstraint[];
   questionId?: string;
 }
 

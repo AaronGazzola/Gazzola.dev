@@ -17,9 +17,7 @@ import {
   ArrowRight,
   BookText,
   CheckCircle2,
-  Copy,
   Database,
-  Download,
   Loader2,
   Plus,
   Shield,
@@ -63,7 +61,6 @@ export const READMEComponent = () => {
     readmeWasPasted,
     setReadmeWasPasted,
     forceRefresh,
-    getNode,
   } = useEditorStore();
 
   const {
@@ -325,53 +322,6 @@ export const READMEComponent = () => {
     }
   };
 
-  const getRawReadmeContent = useCallback(() => {
-    const readmeNode = getNode("readme");
-    if (readmeNode && readmeNode.type === "file" && readmeNode.content) {
-      const content = readmeNode.content;
-      const prefix = "<!-- component-READMEComponent -->\n\n";
-      if (content.startsWith(prefix)) {
-        return content.slice(prefix.length);
-      }
-      return content;
-    }
-    return "";
-  }, [getNode]);
-
-  const handleCopyReadme = useCallback(() => {
-    const content = getRawReadmeContent();
-    if (!content) {
-      toast.error("No README content to copy");
-      return;
-    }
-    navigator.clipboard.writeText(content).then(
-      () => {
-        toast.success("README copied to clipboard!");
-      },
-      () => {
-        toast.error("Failed to copy README to clipboard");
-      }
-    );
-  }, [getRawReadmeContent]);
-
-  const handleDownloadReadme = useCallback(() => {
-    const content = getRawReadmeContent();
-    if (!content) {
-      toast.error("No README content to download");
-      return;
-    }
-    const blob = new Blob([content], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "README.md";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast.success("README downloaded!");
-  }, [getRawReadmeContent]);
-
   if (readmeGenerated) {
     return (
       <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
@@ -389,24 +339,6 @@ export const READMEComponent = () => {
               edit it directly in the editor below.
             </p>
           </div>
-        </div>
-        <div className="flex theme-gap-2 w-full">
-          <Button
-            onClick={handleCopyReadme}
-            variant="outline"
-            className="flex-1 theme-gap-2"
-          >
-            <Copy className="h-4 w-4" />
-            Copy README
-          </Button>
-          <Button
-            onClick={handleDownloadReadme}
-            variant="outline"
-            className="flex-1 theme-gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Download README
-          </Button>
         </div>
       </div>
     );

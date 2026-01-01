@@ -63,7 +63,7 @@ Beep.Buzz uses a streamlined authentication system centered around email magic l
 
 - Admin Dashboard (/admin)
 
-## Data & Storage
+## Database tables
 
 ### users
 

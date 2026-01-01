@@ -1,29 +1,28 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { InitialConfigurationType } from "@/app/(editor)/layout.types";
+import { FileSystemEntry, InitialConfigurationType } from "@/app/(editor)/layout.types";
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
-import { Badge } from "@/components/editor/ui/badge";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
-import { Switch } from "@/components/editor/ui/switch";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
+import { Switch } from "@/components/editor/ui/switch";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import {
   BotMessageSquare,
+  Database,
   HelpCircle,
   Loader2,
   Plus,
-  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { SiApple, SiGithub, SiGoogle, SiSupabase } from "react-icons/si";
+import { SiSupabase } from "react-icons/si";
 import {
   generateDatabaseSchemaPrompt,
   parseDatabaseSchemaFromResponse,
@@ -53,16 +52,16 @@ export const DatabaseConfiguration = () => {
     initialConfiguration,
     setSectionInclude,
     updateInitialConfiguration,
-    toggleAuthMethod,
     appStructure,
     data,
     databaseGenerated,
     setDatabaseGenerated,
     readmeGenerated,
+    appStructureGenerated,
     databaseHelpPopoverOpened,
     setDatabaseHelpPopoverOpened,
   } = useEditorStore();
-  const [expandedSchema, setExpandedSchema] = useState<string | null>(null);
+  const [expandedSchema, setExpandedSchema] = useState<string | null>("public");
   const [expandedTableId, setExpandedTableId] = useState<string | null>(null);
   const [expandedEnums, setExpandedEnums] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -72,6 +71,24 @@ export const DatabaseConfiguration = () => {
 
   const readmeNode = data.flatIndex["readme"];
   const readmeContent = readmeNode?.type === "file" ? readmeNode.content : "";
+
+  const appStructureNode = data.flatIndex["app-structure"];
+  const appStructureContent =
+    appStructureNode?.type === "file" ? appStructureNode.content : "";
+
+  let parsedAppStructure: FileSystemEntry[] = [];
+  try {
+    if (appStructureContent) {
+      parsedAppStructure = JSON.parse(appStructureContent);
+    } else if (appStructure.length > 0) {
+      parsedAppStructure = appStructure;
+    }
+  } catch (error) {
+    console.error("Failed to parse app structure:", error);
+    if (appStructure.length > 0) {
+      parsedAppStructure = appStructure;
+    }
+  }
 
   const { mutate: generateSchema, isPending: isGenerating } = useCodeGeneration(
     (response) => {
@@ -150,7 +167,7 @@ export const DatabaseConfiguration = () => {
 
     const prompt = generateDatabaseSchemaPrompt(
       readmeContent,
-      appStructure,
+      parsedAppStructure,
       DATABASE_TEMPLATES
     );
 
@@ -159,7 +176,7 @@ export const DatabaseConfiguration = () => {
         message: "Sending prompt for database schema generation",
         prompt,
         readmeContentLength: readmeContent.length,
-        appStructureLength: appStructure.length,
+        appStructureLength: parsedAppStructure.length,
       },
       { label: LOG_LABELS.DATABASE, maxStringLength: 50000 }
     );
@@ -251,10 +268,10 @@ export const DatabaseConfiguration = () => {
     return null;
   }
 
-
   const isGenerateDisabled = !isDevelopment && databaseGenerated;
   const hasReadme = readmeGenerated && readmeContent;
-  const hasAppStructure = appStructure.length > 0;
+  const hasAppStructure =
+    appStructureGenerated && parsedAppStructure.length > 0;
   const canGenerate = hasReadme && hasAppStructure;
 
   if (!databaseGenerated) {
@@ -284,13 +301,6 @@ export const DatabaseConfiguration = () => {
             <Link href="/readme" className="theme-text-primary hover:underline">
               README
             </Link>{" "}
-            and{" "}
-            <Link
-              href="/app-structure"
-              className="theme-text-primary hover:underline"
-            >
-              App Structure
-            </Link>{" "}
             first
           </>
         );
@@ -309,42 +319,58 @@ export const DatabaseConfiguration = () => {
           </>
         );
       }
-      return "Generate your database configuration";
+      return null;
     };
+
+    const message = renderMessage();
 
     return (
       <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
-        <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
-          <p className="text-base font-semibold theme-text-muted-foreground text-center">
-            {renderMessage()}
-          </p>
-          <Button
-            onClick={handleGenerateFromReadme}
-            disabled={isGenerateDisabled || isGenerating || !canGenerate}
-            className="theme-gap-2"
-            title={
-              isGenerateDisabled
-                ? "Schema already generated"
-                : !hasReadme
-                  ? "Generate README first"
-                  : !hasAppStructure
-                    ? "Generate App Structure first"
-                    : "Generate Database"
-            }
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Generating...
-              </>
+        <div className="flex flex-col theme-gap-2">
+          <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
+            <Database className="h-5 w-5 theme-text-primary" />
+            Generate Database Configuration
+          </h2>
+          <p className="theme-text-foreground">
+            {message ? (
+              message
             ) : (
               <>
-                <BotMessageSquare className="h-4 w-4" />
-                Generate Database
+                Define your database schema, tables, and authentication methods.
+                <br />
+                This configuration will be used to generate your database
+                structure and Supabase integration.
               </>
             )}
-          </Button>
+          </p>
         </div>
+
+        <Button
+          onClick={handleGenerateFromReadme}
+          disabled={isGenerateDisabled || isGenerating || !canGenerate}
+          className="w-full theme-gap-2"
+          title={
+            isGenerateDisabled
+              ? "Schema already generated"
+              : !hasReadme
+                ? "Generate README first"
+                : !hasAppStructure
+                  ? "Generate App Structure first"
+                  : "Generate Database"
+          }
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <BotMessageSquare className="h-4 w-4" />
+              Generate Database
+            </>
+          )}
+        </Button>
       </div>
     );
   }
@@ -380,27 +406,31 @@ export const DatabaseConfiguration = () => {
             </h4>
             <div className="flex flex-col theme-gap-2 text-sm">
               <p className="theme-font-sans theme-tracking">
-                Choose whether to use a <strong>Supabase database</strong> for your application using the toggle.
+                Choose whether to use a <strong>Supabase database</strong> for
+                your application using the toggle.
               </p>
               <p className="theme-font-sans theme-tracking">
                 Add and edit <strong>enums</strong>, <strong>schemas</strong>,{" "}
-                <strong>tables</strong>, and <strong>columns</strong> to define your database structure.
+                <strong>tables</strong>, and <strong>columns</strong> to define
+                your database structure.
               </p>
             </div>
           </div>
         </PopoverContent>
       </Popover>
       <div className="flex flex-col theme-gap-4">
-        <div className="theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-6">
-          <div className="flex items-center justify-between theme-mb-4">
+        <div className="theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-6 pb-0">
+          <div className="flex items-center justify-between">
             <div className="flex items-center theme-gap-3">
               <SiSupabase className="w-10 h-10 theme-text-foreground" />
               <div>
                 <h3 className="text-xl font-bold theme-text-foreground">
-                  Database
+                  Supabase
                 </h3>
                 <p className="text-sm theme-text-muted-foreground font-semibold">
-                  {initialConfiguration.technologies.supabase ? "Enabled" : "Disabled"}
+                  {initialConfiguration.technologies.supabase
+                    ? "Enabled"
+                    : "Disabled"}
                 </p>
               </div>
             </div>
@@ -433,198 +463,134 @@ export const DatabaseConfiguration = () => {
               size="lg"
             />
           </div>
-
-          {initialConfiguration.technologies.supabase ? (
-            <div className="theme-pt-4 border-t theme-border-border">
-              <p className="text-base theme-text-foreground font-semibold theme-mb-3">
-                Powered by Supabase
-              </p>
-              <ul className="space-y-2 text-sm theme-text-muted-foreground">
-                <li className="flex items-start theme-gap-2">
-                  <span className="theme-text-primary font-bold mt-0.5">•</span>
-                  <span className="font-semibold">PostgreSQL database with real-time subscriptions</span>
-                </li>
-                <li className="flex items-start theme-gap-2">
-                  <span className="theme-text-primary font-bold mt-0.5">•</span>
-                  <span className="font-semibold">Built-in authentication and user management</span>
-                </li>
-                <li className="flex items-start theme-gap-2">
-                  <span className="theme-text-primary font-bold mt-0.5">•</span>
-                  <span className="font-semibold">Enterprise-ready authentication, verification and SOC2 compliance</span>
-                </li>
-              </ul>
-            </div>
-          ) : (
-            <div className="theme-pt-4 border-t theme-border-border">
-              <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
-                No database required, this app is front-end only
-              </p>
-            </div>
-          )}
         </div>
-
       </div>
 
       {!isNoDatabaseSelected && (
         <>
-          <div className="theme-bg-card theme-radius theme-shadow border theme-border-border theme-p-4">
-            <h3 className="text-lg font-bold theme-text-foreground theme-mb-3">
-              Authentication Methods
-            </h3>
-            <div className="flex flex-wrap theme-gap-2">
-              <Badge
-                variant={initialConfiguration.features.authentication.emailPassword ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => toggleAuthMethod('emailPassword')}
-              >
-                Email & Password
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.magicLink ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => toggleAuthMethod('magicLink')}
-              >
-                Magic Link
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.phoneAuth ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => toggleAuthMethod('phoneAuth')}
-              >
-                Phone
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.otp ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => toggleAuthMethod('otp')}
-              >
-                OTP
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.googleAuth ? "default" : "outline"}
-                className="cursor-pointer flex theme-gap-1"
-                onClick={() => toggleAuthMethod('googleAuth')}
-              >
-                <SiGoogle className="h-3 w-3" />
-                Google
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.githubAuth ? "default" : "outline"}
-                className="cursor-pointer flex theme-gap-1"
-                onClick={() => toggleAuthMethod('githubAuth')}
-              >
-                <SiGithub className="h-3 w-3" />
-                GitHub
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.appleAuth ? "default" : "outline"}
-                className="cursor-pointer flex theme-gap-1"
-                onClick={() => toggleAuthMethod('appleAuth')}
-              >
-                <SiApple className="h-3 w-3" />
-                Apple
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.emailVerification ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => toggleAuthMethod('emailVerification')}
-              >
-                Email Verification
-              </Badge>
-
-              <Badge
-                variant={initialConfiguration.features.authentication.mfa ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => toggleAuthMethod('mfa')}
-              >
-                MFA
-              </Badge>
-            </div>
-          </div>
-
           <div className="theme-bg-card theme-radius theme-shadow overflow-auto border theme-border-border theme-p-4">
             <div className="flex flex-col theme-gap-2">
               <EnumsCollapsible
                 isExpanded={expandedEnums}
                 onToggle={() => setExpandedEnums(!expandedEnums)}
               />
-            {getAvailableSchemasWithConfig(initialConfiguration)
-              .filter((schema) => schema !== "auth" && schema !== "better_auth")
-              .map((schema) => {
-                const schemaTables = tables.filter((t) => t.schema === schema);
-                const isEditable = schema !== "public";
+              {getAvailableSchemasWithConfig(initialConfiguration)
+                .filter(
+                  (schema) => schema !== "auth" && schema !== "better_auth"
+                )
+                .map((schema) => {
+                  const schemaTables = tables.filter(
+                    (t) => t.schema === schema
+                  );
+                  const isEditable = schema !== "public";
 
-                return (
-                  <SchemaCollapsible
-                    key={schema}
-                    schema={schema}
-                    tables={schemaTables}
-                    isExpanded={expandedSchema === schema}
-                    onToggle={() => handleSchemaToggle(schema)}
-                    expandedTableId={expandedTableId}
-                    onTableToggle={handleTableToggle}
-                    onAddTable={(tableName) =>
-                      handleAddTableToSchema(schema, tableName)
-                    }
-                    onUpdateTableName={updateTableName}
-                    onDeleteTable={handleDeleteTable}
-                    onUpdateSchemaName={(name) =>
-                      handleUpdateSchemaName(schema, name)
-                    }
-                    onDeleteSchema={() => handleDeleteSchema(schema)}
-                    isEditable={isEditable}
-                    isSystemSchema={false}
+                  return (
+                    <SchemaCollapsible
+                      key={schema}
+                      schema={schema}
+                      tables={schemaTables}
+                      isExpanded={expandedSchema === schema}
+                      onToggle={() => handleSchemaToggle(schema)}
+                      expandedTableId={expandedTableId}
+                      onTableToggle={handleTableToggle}
+                      onAddTable={(tableName) =>
+                        handleAddTableToSchema(schema, tableName)
+                      }
+                      onUpdateTableName={updateTableName}
+                      onDeleteTable={handleDeleteTable}
+                      onUpdateSchemaName={(name) =>
+                        handleUpdateSchemaName(schema, name)
+                      }
+                      onDeleteSchema={() => handleDeleteSchema(schema)}
+                      isEditable={isEditable}
+                      isSystemSchema={false}
+                    />
+                  );
+                })}
+              {isAddingSchema ? (
+                <div className="theme-bg-muted theme-radius theme-p-2">
+                  <Input
+                    autoFocus
+                    value={newSchemaName}
+                    onChange={(e) => setNewSchemaName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleAddSchema(newSchemaName);
+                        setIsAddingSchema(false);
+                        setNewSchemaName("");
+                      }
+                      if (e.key === "Escape") {
+                        setIsAddingSchema(false);
+                        setNewSchemaName("");
+                      }
+                    }}
+                    onBlur={() => {
+                      if (newSchemaName.trim()) {
+                        handleAddSchema(newSchemaName);
+                      }
+                      setIsAddingSchema(false);
+                      setNewSchemaName("");
+                    }}
+                    placeholder="Schema name"
+                    className="h-7 theme-px-2 text-base theme-shadow theme-font-mono"
                   />
-                );
-              })}
-            {isAddingSchema ? (
-              <div className="theme-bg-muted theme-radius theme-p-2">
-                <Input
-                  autoFocus
-                  value={newSchemaName}
-                  onChange={(e) => setNewSchemaName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleAddSchema(newSchemaName);
-                      setIsAddingSchema(false);
-                      setNewSchemaName("");
-                    }
-                    if (e.key === "Escape") {
-                      setIsAddingSchema(false);
-                      setNewSchemaName("");
-                    }
-                  }}
-                  onBlur={() => {
-                    if (newSchemaName.trim()) {
-                      handleAddSchema(newSchemaName);
-                    }
-                    setIsAddingSchema(false);
-                    setNewSchemaName("");
-                  }}
-                  placeholder="Schema name"
-                  className="h-7 theme-px-2 text-base theme-shadow theme-font-mono"
-                />
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsAddingSchema(true)}
+                  className="h-7 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add schema
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-6">
+            {initialConfiguration.technologies.supabase ? (
+              <div>
+                <p className="text-base theme-text-foreground font-semibold theme-mb-3">
+                  Why Supabase?
+                </p>
+                <ul className="space-y-2 theme-text-muted-foreground">
+                  <li className="flex items-start theme-gap-2">
+                    <span className="theme-text-primary font-bold mt-0.5">
+                      •
+                    </span>
+                    <span className="font-semibold">
+                      PostgreSQL database with real-time subscriptions
+                    </span>
+                  </li>
+                  <li className="flex items-start theme-gap-2">
+                    <span className="theme-text-primary font-bold mt-0.5">
+                      •
+                    </span>
+                    <span className="font-semibold">
+                      Built-in authentication and user management
+                    </span>
+                  </li>
+                  <li className="flex items-start theme-gap-2">
+                    <span className="theme-text-primary font-bold mt-0.5">
+                      •
+                    </span>
+                    <span className="font-semibold">
+                      Enterprise-ready authentication, verification and SOC2
+                      compliance
+                    </span>
+                  </li>
+                </ul>
               </div>
             ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsAddingSchema(true)}
-                className="h-7 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
-              >
-                <Plus className="h-3 w-3" />
-                Add schema
-              </Button>
+              <div>
+                <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
+                  No database required, this app is front-end only
+                </p>
+              </div>
             )}
           </div>
-        </div>
         </>
       )}
     </div>
