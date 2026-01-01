@@ -12,6 +12,7 @@ import type {
   DatabaseTemplate,
   ColumnTemplate,
 } from "./DatabaseConfiguration.types";
+import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 
 const generateId = () => Math.random().toString(36).substring(2, 11);
 
@@ -37,6 +38,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -244,6 +246,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -396,6 +399,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["providerId", "accountId"]],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -584,6 +588,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["identifier", "value"]],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -669,6 +674,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -776,6 +782,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -897,6 +904,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["userId", "organizationId"]],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -1021,6 +1029,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
     isDefault: true,
     isEditable: false,
     uniqueConstraints: [["email", "organizationId"]],
+    checkConstraints: [],
     questionId: "authentication",
     columns: [
       {
@@ -1208,6 +1217,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           isDefault: false,
           isEditable: true,
           uniqueConstraints: [],
+          checkConstraints: [],
           columns: [],
         };
         set((state) => ({ tables: [...state.tables, newTable] }));

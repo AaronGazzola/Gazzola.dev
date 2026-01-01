@@ -208,6 +208,7 @@ const SAMPLE_TABLE: PrismaTable = {
     { id: "col-5", name: "createdAt", type: "DateTime", isOptional: false, isArray: false, attributes: ["default(now())"] },
   ] as PrismaColumn[],
   uniqueConstraints: [],
+  checkConstraints: [],
 };
 
 const SAMPLE_RLS_POLICY: RLSPolicy = {
