@@ -5,7 +5,7 @@ export interface PageInput {
   description: string;
 }
 
-export type Stage = "description" | "pages" | "auth" | "database";
+export type Stage = "description" | "auth" | "pages";
 
 export type PageAccessLevel = "public" | "user" | "admin";
 
@@ -19,19 +19,6 @@ export interface PageAccess {
 export interface AuthMethods {
   emailPassword: boolean;
   magicLink: boolean;
-  phoneAuth: boolean;
-  otp: boolean;
-  googleAuth: boolean;
-  githubAuth: boolean;
-  appleAuth: boolean;
-  emailVerification: boolean;
-  mfa: boolean;
-}
-
-export interface DatabaseTable {
-  id: string;
-  name: string;
-  description: string;
 }
 
 export interface READMEState {
@@ -40,10 +27,10 @@ export interface READMEState {
   pages: PageInput[];
   authMethods: AuthMethods;
   pageAccess: PageAccess[];
-  databaseTables: DatabaseTable[];
   stage: Stage;
-  showPasteSection: boolean;
-  pastedReadme: string;
+  lastGeneratedForAuth: { title: string; description: string } | null;
+  lastGeneratedForPages: AuthMethods | null;
+  lastGeneratedForReadme: string | null;
 }
 
 export interface PageGenerationAIResponse {
@@ -51,38 +38,19 @@ export interface PageGenerationAIResponse {
     name: string;
     route: string;
     description: string;
-  }>;
-}
-
-export interface AuthGenerationAIResponse {
-  authMethods: AuthMethods;
-  pageAccess: Array<{
-    pageId: string;
-    public: boolean;
-    user: boolean;
-    admin: boolean;
-  }>;
-}
-
-export interface DatabaseGenerationAIResponse {
-  tables: Array<{
-    name: string;
-    description: string;
+    access: {
+      public: boolean;
+      user: boolean;
+      admin: boolean;
+    };
   }>;
 }
 
 export const generateId = () => Math.random().toString(36).substring(2, 11);
 
 export const initialAuthMethods: AuthMethods = {
-  emailPassword: false,
+  emailPassword: true,
   magicLink: false,
-  phoneAuth: false,
-  otp: false,
-  googleAuth: false,
-  githubAuth: false,
-  appleAuth: false,
-  emailVerification: false,
-  mfa: false,
 };
 
 export const initialState: READMEState = {
@@ -91,8 +59,8 @@ export const initialState: READMEState = {
   pages: [],
   authMethods: initialAuthMethods,
   pageAccess: [],
-  databaseTables: [],
   stage: "description",
-  showPasteSection: false,
-  pastedReadme: "",
+  lastGeneratedForAuth: null,
+  lastGeneratedForPages: null,
+  lastGeneratedForReadme: null,
 };

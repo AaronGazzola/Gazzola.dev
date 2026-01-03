@@ -1,6 +1,6 @@
 import { extractJsonFromResponse } from "@/lib/ai-response.utils";
 import { LOG_LABELS } from "@/lib/log.util";
-import { PageInput, DatabaseTable, PageAccess } from "./READMEComponent.types";
+import { PageInput, PageAccess } from "./READMEComponent.types";
 import {
   InferredFeature,
   FeatureInferenceAIResponse,
@@ -11,13 +11,8 @@ import { generateId } from "./READMEComponent.types";
 
 export const generateFeatureInferencePrompt = (
   page: PageInput,
-  databaseTables: DatabaseTable[],
   pageAccess: PageAccess | undefined
 ): string => {
-  const tablesInfo = databaseTables.length > 0
-    ? databaseTables.map((t) => `- ${t.name}: ${t.description}`).join("\n")
-    : "None specified";
-
   const accessLevel = pageAccess
     ? pageAccess.public
       ? "Public"
@@ -33,9 +28,6 @@ Name: ${page.name}
 Route: ${page.route}
 Description: ${page.description}
 Access Level: ${accessLevel}
-
-AVAILABLE DATABASE TABLES:
-${tablesInfo}
 
 Your task is to analyze this page description and extract DISTINCT, NON-OVERLAPPING features.
 
@@ -133,7 +125,6 @@ Extract 2-6 features based on page complexity. Be precise and avoid overlapping 
 export const parseFeatureInferenceResponse = (
   response: string,
   pageId: string,
-  databaseTables: DatabaseTable[],
   pageAccess: PageAccess | undefined
 ): InferredFeature[] | null => {
   const parsed = extractJsonFromResponse<FeatureInferenceAIResponse>(
@@ -159,45 +150,22 @@ export const parseFeatureInferenceResponse = (
       requiresRealtimeUpdates: f.requiresRealtimeUpdates || false,
       requiresFileUpload: f.requiresFileUpload || false,
       requiresExternalApi: f.requiresExternalApi || false,
-      databaseTables: inferDatabaseTables(f, databaseTables),
+      databaseTables: inferDatabaseTables(f),
       utilityFileNeeds: determineUtilityFileNeeds(f, pageAccess),
     }));
 };
 
 export const inferDatabaseTables = (
-  feature: FeatureInferenceAIResponse["features"][0],
-  availableTables: DatabaseTable[]
+  feature: FeatureInferenceAIResponse["features"][0]
 ): string[] => {
   const matchedTables: Set<string> = new Set();
 
-  feature.dataEntities.forEach((entity) => {
-    const singularEntity = entity.replace(/s$/, "");
-    const pluralEntity = entity.endsWith("s") ? entity : entity + "s";
-
-    availableTables.forEach((table) => {
-      const tableName = table.name.toLowerCase();
-      const entityLower = entity.toLowerCase();
-
-      if (
-        tableName === entityLower ||
-        tableName === singularEntity ||
-        tableName === pluralEntity
-      ) {
-        matchedTables.add(table.name);
-      }
-
-      if (tableName.includes(singularEntity) || tableName.includes(entityLower)) {
-        matchedTables.add(table.name);
-      }
-    });
-  });
-
   const categoryTableMap: Record<FeatureCategory, string[]> = {
-    [FeatureCategory.AUTHENTICATION]: ["users", "auth_sessions"],
-    [FeatureCategory.AUTHORIZATION]: ["users", "roles", "permissions"],
+    [FeatureCategory.AUTHENTICATION]: ["profiles", "auth_sessions"],
+    [FeatureCategory.AUTHORIZATION]: ["profiles", "roles", "permissions"],
     [FeatureCategory.COMMUNICATION]: ["messages", "conversations", "notifications"],
     [FeatureCategory.MEDIA_HANDLING]: ["media", "uploads", "files"],
-    [FeatureCategory.ADMIN]: ["users", "audit_logs", "moderation_logs"],
+    [FeatureCategory.ADMIN]: ["profiles", "audit_logs", "moderation_logs"],
     [FeatureCategory.DATA_MANAGEMENT]: [],
     [FeatureCategory.UI_INTERACTION]: [],
     [FeatureCategory.CONTENT_CREATION]: [],
@@ -209,22 +177,21 @@ export const inferDatabaseTables = (
 
   const categoryTables = categoryTableMap[feature.category] || [];
   categoryTables.forEach((expectedTable) => {
-    const match = availableTables.find((t) =>
-      t.name.toLowerCase().includes(expectedTable.toLowerCase())
-    );
-    if (match) {
-      matchedTables.add(match.name);
-    }
+    matchedTables.add(expectedTable);
+  });
+
+  feature.dataEntities.forEach((entity) => {
+    const singularEntity = entity.replace(/s$/, "");
+    const pluralEntity = entity.endsWith("s") ? entity : entity + "s";
+
+    matchedTables.add(pluralEntity.toLowerCase());
   });
 
   if (
     feature.category === FeatureCategory.AUTHENTICATION ||
     feature.category === FeatureCategory.AUTHORIZATION
   ) {
-    const usersTable = availableTables.find((t) => t.name.toLowerCase() === "users");
-    if (usersTable) {
-      matchedTables.add(usersTable.name);
-    }
+    matchedTables.add("profiles");
   }
 
   return Array.from(matchedTables);

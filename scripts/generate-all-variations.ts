@@ -117,15 +117,8 @@ const createBaseConfig = (): InitialConfigurationType => ({
   features: {
     authentication: {
       enabled: false,
-      magicLink: false,
       emailPassword: false,
-      otp: false,
-      phoneAuth: false,
-      googleAuth: false,
-      githubAuth: false,
-      appleAuth: false,
-      emailVerification: false,
-      mfa: false,
+      magicLink: false,
     },
     admin: {
       enabled: false,
@@ -170,13 +163,7 @@ const AUTH_METHOD_COMBINATIONS: Array<{
   { name: "none", methods: {} },
   { name: "emailPassword", methods: { emailPassword: true, enabled: true } },
   { name: "magicLink", methods: { magicLink: true, enabled: true } },
-  { name: "otp", methods: { otp: true, enabled: true } },
-  { name: "googleAuth", methods: { googleAuth: true, enabled: true } },
-  { name: "githubAuth", methods: { githubAuth: true, enabled: true } },
-  { name: "appleAuth", methods: { appleAuth: true, enabled: true } },
-  { name: "allOAuth", methods: { googleAuth: true, githubAuth: true, appleAuth: true, enabled: true } },
-  { name: "emailPassword+OAuth", methods: { emailPassword: true, googleAuth: true, githubAuth: true, enabled: true } },
-  { name: "full", methods: { emailPassword: true, magicLink: true, otp: true, googleAuth: true, githubAuth: true, appleAuth: true, enabled: true } },
+  { name: "full", methods: { emailPassword: true, magicLink: true, enabled: true } },
 ];
 
 const ROLE_COMBINATIONS: Array<{

@@ -61,15 +61,8 @@ const defaultInitialConfiguration: InitialConfigurationType = {
   features: {
     authentication: {
       enabled: false,
-      magicLink: false,
       emailPassword: false,
-      otp: false,
-      phoneAuth: false,
-      googleAuth: false,
-      githubAuth: false,
-      appleAuth: false,
-      emailVerification: false,
-      mfa: false,
+      magicLink: false,
     },
     admin: {
       enabled: false,
@@ -763,9 +756,9 @@ export const useEditorStore = create<EditorState>()(
             [optionId]: enabled,
           };
 
-          const hasEmailAuth = newAuthConfig.magicLink ||
+          const hasEmailAuth =
             newAuthConfig.emailPassword ||
-            newAuthConfig.otp;
+            newAuthConfig.magicLink;
 
           const hasEmailNotifications = state.initialConfiguration.features.realTimeNotifications.enabled &&
             state.initialConfiguration.features.realTimeNotifications.emailNotifications;
@@ -935,9 +928,9 @@ export const useEditorStore = create<EditorState>()(
             techUpdates.supabase = true;
           }
 
-          const hasEmailAuth = state.initialConfiguration.features.authentication.magicLink ||
+          const hasEmailAuth =
             state.initialConfiguration.features.authentication.emailPassword ||
-            state.initialConfiguration.features.authentication.otp;
+            state.initialConfiguration.features.authentication.magicLink;
 
           const hasEmailNotifications = newRealTimeConfig.emailNotifications;
 

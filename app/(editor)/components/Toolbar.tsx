@@ -45,6 +45,7 @@ import { useQueryState } from "nuqs";
 import { useMemo, useRef, useState } from "react";
 import { useAppStructureStore } from "../../(components)/AppStructure.stores";
 import { useDatabaseStore } from "../../(components)/DatabaseConfiguration.stores";
+import { useDatabaseTablesStore } from "../../(components)/DatabaseConfiguration.tables.stores";
 import { useNextStepsStore } from "../../(components)/NextStepsComponent.stores";
 import { useREADMEStore } from "../../(components)/READMEComponent.stores";
 import { useThemeStore as useThemeConfigStore } from "../../(components)/ThemeConfiguration.stores";
@@ -138,6 +139,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
   const { reset: resetAppStructure } = useAppStructureStore();
   const { reset: resetDatabase } = useDatabaseStore();
+  const { reset: resetDatabaseTables } = useDatabaseTablesStore();
   const { reset: resetNextSteps } = useNextStepsStore();
   const { reset: resetReadme } = useREADMEStore();
   const [resetPageDialogOpen, setResetPageDialogOpen] = useState(false);
@@ -374,6 +376,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
     if (currentContentPath === "database") {
       resetDatabase();
+      resetDatabaseTables();
       updateInitialConfiguration({
         questions: {
           databaseProvider: "none",
@@ -386,15 +389,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         features: {
           authentication: {
             enabled: false,
-            magicLink: false,
             emailPassword: false,
-            otp: false,
-            phoneAuth: false,
-            googleAuth: false,
-            githubAuth: false,
-            appleAuth: false,
             emailVerification: false,
-            mfa: false,
+            forgotPassword: false,
+            magicLink: false,
           },
           admin: {
             enabled: false,
@@ -513,6 +511,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         reset();
         resetTheme();
         resetDatabase();
+        resetDatabaseTables();
         resetNextSteps();
         resetReadme();
         resetAppStructure();
@@ -815,6 +814,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             </EditorPopover>
 
             <div className="hidden md:flex items-center theme-gap-2">
+              <div className="px-1">
+                <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
+              </div>
+
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -830,10 +833,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <p>Go to first page</p>
                 </TooltipContent>
               </Tooltip>
-
-              <div className="px-1">
-                <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
-              </div>
 
               <EditorPopover
                 open={resetPopoverOpen}

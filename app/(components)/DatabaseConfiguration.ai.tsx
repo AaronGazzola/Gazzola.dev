@@ -11,6 +11,16 @@ import type {
 
 export const generateId = () => Math.random().toString(36).substring(2, 11);
 
+export interface TableDescription {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export interface TableDescriptionsResponse {
+  tables: TableDescription[];
+}
+
 export interface AIRLSRolePolicy {
   role: UserRole;
   accessType: RLSAccessType;
@@ -33,37 +43,48 @@ export interface DatabaseSchemaResponse {
 }
 
 export const generateDatabaseSchemaPrompt = (
-  readmeContent: string,
+  structuredAppData: string,
   appStructure: FileSystemEntry[],
   _templates: DatabaseTemplate[]
 ): string => {
   return `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with { end with }
 
-README:
-${readmeContent}
+APP DATA (Structured JSON with title, description, auth methods, pages, features, and access levels):
+${structuredAppData}
 
-App Structure:
+FILE SYSTEM STRUCTURE:
 ${JSON.stringify(appStructure)}
 
 Options:
 - databaseProvider: supabase | none
 
+IMPORTANT - Supabase Authentication:
+- Supabase automatically provides authentication tables in the "auth" schema
+- DO NOT create tables for: users, sessions, accounts, verification_tokens, magic_links, or any auth-related infrastructure
+- The auth.users table handles authentication, email verification, and sessions
+- DO NOT create a "users" table - this conflicts with auth.users
+- Use a "profiles" table in the "public" schema for application-specific profile data
+
 Rules:
 - Create enums for status/type/priority/category fields, use enum name as column type
-- Include id (TEXT PRIMARY KEY DEFAULT gen_random_uuid()), createdAt, updatedAt for each table
+- Include id (TEXT PRIMARY KEY DEFAULT gen_random_uuid()), created_at, updated_at for each table
 - PostgreSQL types: TEXT, INTEGER, BIGINT, DOUBLE PRECISION, BOOLEAN, TIMESTAMP WITH TIME ZONE, JSONB, DECIMAL, BYTEA
 - Default values: gen_random_uuid(), NOW(), 'string', true/false
+- Use snake_case for all column names
 
-Users Table:
-- ALWAYS create a 'users' table in the 'public' schema for application-specific user data
-- Include at minimum: id (references auth.users.id), createdAt, updatedAt
-- Add additional user profile columns mentioned in README (username, displayName, bio, avatarUrl, etc.)
+Public Profiles Table:
+- ALWAYS create a 'profiles' table in the 'public' schema for application-specific user data
+- Never use "users" as a table name - always use "profiles" instead
+- Include at minimum: id (references auth.users.id), created_at, updated_at
+- Add additional user profile columns mentioned in README (username, display_name, bio, avatar_url, etc.)
 - Use snake_case for column names (user_id, display_name, avatar_url)
+- The id column should reference auth.users.id with a one-to-one relation
 
 Foreign Keys:
 - Columns ending in _id (user_id, post_id, author_id) should have relation objects
-- Relation format: { "table": "users", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" }
+- Relation format: { "table": "profiles", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" }
 - Use snake_case consistently (user_id not userId)
+- When referencing user data, use "profiles" table (not "users")
 
 Check Constraints:
 - Add checkConstraints array to tables for business rules mentioned in README
@@ -83,7 +104,7 @@ Column Verification Requirements:
 - For "related" access, you MUST specify the relatedTable name (e.g., "pages", "users", "posts")
 
 Access Type Examples:
-- users table (has "id" column that references auth.users.id):
+- profiles table (has "id" column that references auth.users.id):
   * INSERT: "own" (users create their own record where auth.uid() = id)
   * UPDATE: "own" (auth.uid() = id)
   * DELETE: "own" (auth.uid() = id)
@@ -115,7 +136,7 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
   "enums": [{ "name": "Status", "values": [{ "value": "ACTIVE" }, { "value": "INACTIVE" }] }],
   "tables": [
     {
-      "name": "users",
+      "name": "profiles",
       "schema": "public",
       "columns": [
         { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"], "relation": { "table": "auth.users", "field": "id", "onDelete": "Cascade", "relationType": "one-to-one" } },
@@ -133,7 +154,7 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
       "schema": "public",
       "columns": [
         { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"] },
-        { "name": "user_id", "type": "TEXT", "relation": { "table": "users", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" } },
+        { "name": "user_id", "type": "TEXT", "relation": { "table": "profiles", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" } },
         { "name": "title", "type": "TEXT" },
         { "name": "created_at", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()", "attributes": ["@default(NOW())"] },
         { "name": "updated_at", "type": "TIMESTAMP WITH TIME ZONE", "attributes": ["@updatedAt"] }
@@ -144,10 +165,10 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
     }
   ],
   "rlsPolicies": [
-    { "tableName": "users", "operation": "SELECT", "rolePolicies": [{ "role": "user", "accessType": "global" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "users", "operation": "INSERT", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "users", "operation": "UPDATE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "users", "operation": "DELETE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
+    { "tableName": "profiles", "operation": "SELECT", "rolePolicies": [{ "role": "user", "accessType": "global" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
+    { "tableName": "profiles", "operation": "INSERT", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
+    { "tableName": "profiles", "operation": "UPDATE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
+    { "tableName": "profiles", "operation": "DELETE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
     { "tableName": "posts", "operation": "SELECT", "rolePolicies": [{ "role": "user", "accessType": "global" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
     { "tableName": "posts", "operation": "INSERT", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
     { "tableName": "posts", "operation": "UPDATE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
@@ -225,14 +246,14 @@ export const parseDatabaseSchemaFromResponse = (
       })),
     }));
 
-    const hasUsersTable = tables.some(
-      (t: PrismaTable) => t.name.toLowerCase() === 'users' && t.schema === 'public'
+    const hasProfilesTable = tables.some(
+      (t: PrismaTable) => t.name.toLowerCase() === 'profiles' && t.schema === 'public'
     );
 
-    if (!hasUsersTable) {
-      const usersTable: PrismaTable = {
+    if (!hasProfilesTable) {
+      const profilesTable: PrismaTable = {
         id: generateId(),
-        name: 'users',
+        name: 'profiles',
         schema: 'public',
         isDefault: false,
         isEditable: true,
@@ -286,7 +307,7 @@ export const parseDatabaseSchemaFromResponse = (
         checkConstraints: []
       };
 
-      tables.unshift(usersTable);
+      tables.unshift(profilesTable);
     }
 
     const enums = (parsed.enums || []).map((enumItem: PrismaEnum) => ({
@@ -321,6 +342,106 @@ export const parseDatabaseSchemaFromResponse = (
   } catch (error) {
     conditionalLog(
       { message: "Failed to parse database schema response", error, response: response.substring(0, 500) },
+      { label: LOG_LABELS.DATABASE }
+    );
+    return null;
+  }
+};
+
+export const generateTableDescriptionsPrompt = (
+  structuredAppData: string,
+  appStructure: FileSystemEntry[]
+): string => {
+  return `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with { end with }
+
+APP DATA (Structured JSON with title, description, auth methods, pages, features, and access levels):
+${structuredAppData}
+
+FILE SYSTEM STRUCTURE:
+${JSON.stringify(appStructure)}
+
+Based on the app data and features, generate a list of database tables with names and descriptions.
+
+IMPORTANT - Supabase Auth Tables:
+- DO NOT include auth-related tables (users, sessions, accounts, verification_tokens, magic_links, etc.)
+- Supabase automatically provides authentication tables in the "auth" schema
+- The auth.users table handles authentication, email verification, and session management
+- DO NOT create a "users" table - this conflicts with auth.users
+- Use a "profiles" table in the "public" schema for application-specific user profile data (bio, avatar, preferences, etc.)
+
+Rules:
+- Table names should be in snake_case (e.g., "profiles", "user_posts", "page_elements")
+- Always include a "profiles" table in the "public" schema for application-specific user data that extends auth.users
+- Never use "users" as a table name - use "profiles" instead
+- Create tables for each main entity mentioned in the features
+- Description should explain what data the table stores and its purpose
+- Keep descriptions concise (1-2 sentences)
+- Focus on application-specific data, not authentication infrastructure
+
+JSON Structure:
+{
+  "tables": [
+    { "name": "profiles", "description": "Stores application-specific user profile data (username, bio, avatar, preferences) that extends the Supabase auth.users table" },
+    { "name": "posts", "description": "Contains user-created posts with titles, content, and metadata" }
+  ]
+}
+
+Return only the JSON object, no additional text.`;
+};
+
+export const parseTableDescriptionsFromResponse = (
+  response: string
+): TableDescriptionsResponse | null => {
+  try {
+    let jsonContent = response;
+
+    const jsonBlockMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
+    if (jsonBlockMatch) {
+      jsonContent = jsonBlockMatch[1];
+    } else {
+      const codeBlockMatch = response.match(/```\s*([\s\S]*?)\s*```/);
+      if (codeBlockMatch) {
+        jsonContent = codeBlockMatch[1];
+      } else {
+        const jsonStartIndex = response.indexOf("{");
+        const jsonEndIndex = response.lastIndexOf("}");
+        if (
+          jsonStartIndex !== -1 &&
+          jsonEndIndex !== -1 &&
+          jsonEndIndex > jsonStartIndex
+        ) {
+          jsonContent = response.substring(jsonStartIndex, jsonEndIndex + 1);
+        }
+      }
+    }
+
+    const parsed = JSON.parse(jsonContent.trim());
+
+    if (!parsed.tables || !Array.isArray(parsed.tables)) {
+      conditionalLog(
+        {
+          message: "Invalid table descriptions response - no tables array",
+          parsed,
+        },
+        { label: LOG_LABELS.DATABASE }
+      );
+      return null;
+    }
+
+    const tables: TableDescription[] = parsed.tables.map((table: any) => ({
+      id: generateId(),
+      name: table.name || "",
+      description: table.description || "",
+    }));
+
+    return { tables };
+  } catch (error) {
+    conditionalLog(
+      {
+        message: "Failed to parse table descriptions response",
+        error,
+        response: response.substring(0, 500),
+      },
       { label: LOG_LABELS.DATABASE }
     );
     return null;

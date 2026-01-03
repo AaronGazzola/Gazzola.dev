@@ -1,5 +1,5 @@
 import { Feature, FileSystemEntry, UserExperienceFileType } from "@/app/(editor)/layout.types";
-import { PageInput, DatabaseTable, PageAccess } from "./READMEComponent.types";
+import { PageInput, PageAccess } from "./READMEComponent.types";
 
 export type RouteEntry = {
   path: string;

@@ -1,10 +1,7 @@
 import { extractJsonFromResponse } from "@/lib/ai-response.utils";
 import { LOG_LABELS } from "@/lib/log.util";
 import {
-  AuthGenerationAIResponse,
   AuthMethods,
-  DatabaseGenerationAIResponse,
-  DatabaseTable,
   generateId,
   PageAccess,
   PageGenerationAIResponse,
@@ -13,64 +10,102 @@ import {
 
 export const generatePagesPrompt = (
   title: string,
-  description: string
+  description: string,
+  authMethods: AuthMethods
 ): string => {
-  return `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with { end with }
+  const authPagesNeeded: string[] = [];
+
+  if (authMethods.emailPassword) {
+    authPagesNeeded.push("- Sign Up page (/sign-up) - Public access - Where new users create an account with email and password");
+    authPagesNeeded.push("- Sign In page (/sign-in) - Public access - Where existing users sign in with email and password");
+    authPagesNeeded.push("- Forgot Password page (/forgot-password) - Public access - Where users request a password reset link");
+    authPagesNeeded.push("- Reset Password page (/reset-password) - Public access - Where users set a new password after clicking the reset link");
+  } else if (authMethods.magicLink) {
+    authPagesNeeded.push("- Welcome page (/welcome) - Public access - Where users enter their email to receive a magic link for passwordless sign-in");
+  }
+
+  const authPagesSection = authPagesNeeded.length > 0
+    ? `\n\nAuthentication pages required based on selected auth methods:\n${authPagesNeeded.join("\n")}\nINCLUDE ALL these authentication pages in your response.`
+    : "";
+
+  return `You must return ONLY a valid JSON object. Do not include any explanations, markdown formatting, or code blocks. Your response must start with { and end with }.
 
 App Title: ${title}
-App Description: ${description}
+App Description: ${description}${authPagesSection}
 
-Analyze the app description and generate 3-6 relevant pages for this web application.
+Generate 3-8 relevant pages for this web application based on the description above.
 
 Consider:
 - What pages would users need to accomplish the app's goals?
 - What are the main user flows described?
 - Common web app patterns (home, dashboard, profile, settings, etc.)
+- Authentication pages needed based on the auth methods above
 - Next.js routing conventions (/, /about, /[id], /[slug], etc.)
+- Which pages should be public, user-only, or admin-only
 
 For each page, provide:
 - name: User-friendly page name (e.g., "Home", "Dashboard", "User Profile")
 - route: Next.js route path (e.g., "/", "/dashboard", "/profile/[id]")
 - description: Brief description of what users do on this page (30-80 words)
+- access: Who can access this page
 
-JSON Format:
+REQUIRED JSON FORMAT (return exactly this structure):
 {
   "pages": [
     {
       "name": "Home",
       "route": "/",
-      "description": "Landing page where users first arrive..."
-    },
-    {
-      "name": "Dashboard",
-      "route": "/dashboard",
-      "description": "Main application interface where users..."
+      "description": "Landing page where users first arrive...",
+      "access": {
+        "public": true,
+        "user": false,
+        "admin": false
+      }
     }
   ]
 }
 
-Rules:
-- Generate 3-6 pages based on app complexity
-- Simple apps (blogs, landing pages) = 3-4 pages
-- Complex apps (SaaS, platforms) = 5-6 pages
+CRITICAL RULES:
+- Generate 3-8 pages total (app pages + auth pages)
+- Simple apps (blogs, landing pages) = 3-4 non-auth pages
+- Complex apps (SaaS, platforms) = 5-6 non-auth pages
 - Include at least a home page (/)
+- Include ALL authentication pages listed above if any
+- All authentication pages should have public access
 - Routes must follow Next.js conventions
-- Descriptions should be specific to this app, not generic`;
+- Descriptions should be specific to this app, not generic
+- For access levels:
+  - public=true means anyone can access (no login required)
+  - user=true means authenticated users can access
+  - admin=true means only admins can access
+  - If public=true, user and admin should be false
+  - user and admin can both be true if both groups can access
+
+IMPORTANT: Return ONLY the JSON object. No additional text before or after.`;
 };
 
 export const parsePagesFromResponse = (
   response: string
-): PageInput[] | null => {
+): { pages: PageInput[]; pageAccess: PageAccess[] } | null => {
+  console.log("📄 parsePagesFromResponse - Starting to parse response");
+  console.log("📄 Raw response:", response);
+
   const parsed = extractJsonFromResponse<PageGenerationAIResponse>(
     response,
     LOG_LABELS.README
   );
 
+  console.log("📄 Parsed result:", parsed);
+
   if (!parsed || !parsed.pages || !Array.isArray(parsed.pages)) {
+    console.error("❌ Invalid parsed result - missing pages array");
+    console.error("❌ Parsed:", parsed);
     return null;
   }
 
-  return parsed.pages
+  console.log("✅ Found pages array with", parsed.pages.length, "pages");
+
+  const pages = parsed.pages
     .filter((p) => p.name && p.route)
     .map((p) => ({
       id: generateId(),
@@ -78,160 +113,21 @@ export const parsePagesFromResponse = (
       route: p.route,
       description: p.description || "",
     }));
-};
 
-export const generateAuthPrompt = (
-  title: string,
-  description: string,
-  pages: PageInput[]
-): string => {
-  const pagesInfo = pages
-    .map(
-      (p) =>
-        `- ID: ${p.id}, Name: ${p.name}, Route: ${p.route}, Description: ${p.description}`
-    )
-    .join("\\n");
+  console.log("📄 Processed pages:", pages);
 
-  return `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with { end with }
-
-App Title: ${title}
-App Description: ${description}
-
-Pages (with IDs):
-${pagesInfo}
-
-Based on the app description and pages, determine:
-1. Which authentication methods would be appropriate for this app
-2. What access level each page should have (public, user-authenticated, or admin-only)
-
-Consider:
-- Does the app need user accounts?
-- Which pages should be accessible without login?
-- Are there admin-only features?
-- What auth methods fit the use case? (email/password, magic link, OAuth, etc.)
-
-JSON Format:
-{
-  "authMethods": {
-    "emailPassword": boolean,
-    "magicLink": boolean,
-    "phoneAuth": boolean,
-    "otp": boolean,
-    "googleAuth": boolean,
-    "githubAuth": boolean,
-    "appleAuth": boolean,
-    "emailVerification": boolean,
-    "mfa": boolean
-  },
-  "pageAccess": [
-    {
-      "pageId": "use-the-exact-ID-from-pages-above",
-      "public": boolean,
-      "user": boolean,
-      "admin": boolean
-    }
-  ]
-}
-
-Rules:
-- Set authMethods to true only if the app clearly needs that auth type
-- For pageAccess, use the EXACT page IDs provided above
-- Include a pageAccess entry for EVERY page
-- public=true means anyone can access (no login required)
-- user=true means authenticated users can access
-- admin=true means only admins can access
-- user and admin can both be true if both groups can access
-- If public=true, user and admin should be false`;
-};
-
-export const parseAuthFromResponse = (
-  response: string,
-  pages: PageInput[]
-): { authMethods: AuthMethods; pageAccess: PageAccess[] } | null => {
-  const parsed = extractJsonFromResponse<AuthGenerationAIResponse>(
-    response,
-    LOG_LABELS.README
-  );
-
-  if (!parsed) return null;
-
-  return {
-    authMethods: parsed.authMethods,
-    pageAccess: parsed.pageAccess.map((pa) => ({
-      pageId: pa.pageId,
-      public: pa.public,
-      user: pa.user,
-      admin: pa.admin,
-    })),
-  };
-};
-
-export const generateDatabasePrompt = (
-  title: string,
-  description: string,
-  pages: PageInput[]
-): string => {
-  const pagesInfo = pages
-    .map((p) => `- ${p.name} (${p.route}): ${p.description}`)
-    .join("\\n");
-
-  return `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with { end with }
-
-App Title: ${title}
-App Description: ${description}
-
-Pages:
-${pagesInfo}
-
-Based on the app description and pages, determine what database tables are needed.
-
-Consider:
-- What data needs to be stored?
-- What are the main entities (users, posts, comments, etc.)?
-- What relationships exist between entities?
-
-For each table, provide a brief description of what it stores and its purpose.
-
-JSON Format:
-{
-  "tables": [
-    {
-      "name": "users",
-      "description": "Stores user account information including profile data, authentication credentials, and preferences"
-    },
-    {
-      "name": "posts",
-      "description": "Contains all user-created posts with content, metadata, and author references"
-    }
-  ]
-}
-
-Rules:
-- Table names should be lowercase, plural, snake_case
-- Provide 3-8 tables based on app complexity
-- Descriptions should explain what data the table holds and its purpose (30-80 words)
-- Consider core entities, relationships, and features described in pages`;
-};
-
-export const parseDatabaseFromResponse = (
-  response: string
-): DatabaseTable[] | null => {
-  const parsed = extractJsonFromResponse<DatabaseGenerationAIResponse>(
-    response,
-    LOG_LABELS.README
-  );
-
-  if (!parsed || !parsed.tables || !Array.isArray(parsed.tables)) {
-    return null;
-  }
-
-  return parsed.tables
-    .filter((t) => t.name)
-    .map((t) => ({
-      id: generateId(),
-      name: t.name,
-      description: t.description || "",
+  const pageAccess = parsed.pages
+    .filter((p) => p.name && p.route && p.access)
+    .map((p, index) => ({
+      pageId: pages[index].id,
+      public: p.access.public,
+      user: p.access.user,
+      admin: p.access.admin,
     }));
+
+  console.log("📄 Processed pageAccess:", pageAccess);
+
+  return { pages, pageAccess };
 };
 
 export const generateFinalReadmePrompt = (
@@ -239,8 +135,7 @@ export const generateFinalReadmePrompt = (
   description: string,
   pages: PageInput[],
   authMethods: AuthMethods,
-  pageAccess: PageAccess[],
-  databaseTables: DatabaseTable[]
+  pageAccess: PageAccess[]
 ): string => {
   const pagesSection = pages
     .map((p) => {
@@ -261,14 +156,9 @@ export const generateFinalReadmePrompt = (
     .map(([method]) => {
       const methodNames: Record<string, string> = {
         emailPassword: "Email & Password",
-        magicLink: "Magic Link",
-        phoneAuth: "Phone/SMS",
-        otp: "One-Time Password (OTP)",
-        googleAuth: "Google OAuth",
-        githubAuth: "GitHub OAuth",
-        appleAuth: "Apple Sign In",
         emailVerification: "Email Verification",
-        mfa: "Multi-Factor Authentication (MFA)",
+        forgotPassword: "Forgot Password",
+        magicLink: "Magic Link",
       };
       return methodNames[method] || method;
     });
@@ -323,21 +213,6 @@ ${adminPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
 }`
       : "";
 
-  const dbSection =
-    databaseTables.length > 0
-      ? `## Database tables
-
-The application stores and manages the following data:
-
-${databaseTables
-  .map(
-    (t) => `### ${t.name}
-
-${t.description}`
-  )
-  .join("\\n\\n")}`
-      : "";
-
   return `Generate a detailed, professional README.md for this web application based on the following information:
 
 APP TITLE: ${title}
@@ -377,9 +252,6 @@ ${userPages.map((p) => "- " + p.name + " (" + p.route + ")").join("\\n") || "Non
 ADMIN-ONLY PAGES:
 ${adminPages.map((p) => "- " + p.name + " (" + p.route + ")").join("\\n") || "None"}
 
-DATABASE TABLES:
-${databaseTables.map((t) => "- " + t.name + ": " + t.description).join("\\n") || "None"}
-
 ---
 
 Generate a comprehensive README with the following structure:
@@ -405,8 +277,6 @@ Generate a comprehensive README with the following structure:
 
 ${authSection ? "## Authentication & Access Control\n\n[Describe the authentication system with the following structure:]\n\n[Write 1-2 paragraphs introducing the authentication system and listing ALL authentication methods from AUTHENTICATION METHODS above. Explain each method briefly in user-friendly terms.]\n\n### Access Levels\n\n[Explain the access control model in 1 paragraph, then list pages grouped by access level:]\n\n**Public Access** (no authentication required):\n[List all pages from PUBLIC PAGES section above with format: - Page Name (route)]\n\n**Authenticated Users**:\n[List all pages from AUTHENTICATED USER PAGES section above with format: - Page Name (route)]\n\n**Admin Only**:\n[List all pages from ADMIN-ONLY PAGES section above with format: - Page Name (route)]\n\nIMPORTANT: Include ALL authentication methods listed above. Include ALL pages in their correct access level groups.\n" : ""}
 
-${dbSection ? "## Data & Storage\n\n[For EACH database table listed above, create a detailed section with:]\n- EXACT table name from DATABASE TABLES list as H3 header (### table_name)\n- 2-3 paragraphs explaining:\n  - What specific data this table stores (expand on the description provided)\n  - Why this data is needed for the application\n  - How users interact with or benefit from this data\n  - Keep it user-focused, not technical (no schema details, just what data means to users)\n\nIMPORTANT: Use the EXACT table names provided in DATABASE TABLES above. Create a separate ### subsection for each table.\n" : ""}
-
 ## User Experience
 
 [Describe the typical user journey through the app:]
@@ -431,9 +301,7 @@ IMPORTANT REQUIREMENTS:
 - Use clear, descriptive markdown formatting
 - Include ALL pages with their access levels clearly marked in the header (Public, User, Admin)
 - Include ALL authentication methods listed above - explain each one in user-friendly terms
-- Include ALL database tables listed above - create a ### subsection for each with the exact table name
 - Make authentication and access control easy to understand
-- Explain data storage from a user perspective (what data is tracked, why it matters)
 - DO NOT include technical implementation details (no Next.js, React, API endpoints, database schemas)
 - DO NOT include developer installation or deployment instructions
 - Write 600-900 words total

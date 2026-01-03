@@ -10,31 +10,37 @@ Page 1:
 Name: Homepage
 Route: /
 Description: The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category.
+Access: public
 
 Page 2:
 Name: User Page
 Route: /[username]
 Description: Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and "Add Beep/Buzz" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page.
+Access: public
 
 Page 3:
 Name: Page Editor
 Route: /edit
 Description: Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile. Enforces limits: 20 elements max, 3 YouTube embeds, 3000px height, 50 stickers per type.
+Access: user, admin
 
 Page 4:
 Name: User Settings
 Route: /settings
 Description: Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns.
+Access: user
 
 Page 5:
 Name: Onboarding
 Route: /welcome
 Description: First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.
+Access: public
 
 Page 6:
 Name: Admin Dashboard
 Route: /admin
 Description: Admin-only moderation interface. Displays queue of reported pages, list of auto-hidden pages (3+ reports), and full content viewing. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.
+Access: admin
 
 Database tables:
 

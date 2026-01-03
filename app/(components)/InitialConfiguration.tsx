@@ -455,12 +455,8 @@ const hasAnyChildrenSelected = (
     );
   } else if (questionId === "authentication") {
     return (
-      initialConfiguration.features.authentication.magicLink ||
       initialConfiguration.features.authentication.emailPassword ||
-      initialConfiguration.features.authentication.otp ||
-      initialConfiguration.features.authentication.googleAuth ||
-      initialConfiguration.features.authentication.githubAuth ||
-      initialConfiguration.features.authentication.appleAuth
+      initialConfiguration.features.authentication.magicLink
     );
   } else if (questionId === "realTimeNotifications") {
     return (
@@ -614,9 +610,8 @@ export const InitialConfiguration = () => {
     if (techId === "resend") {
       if (initialConfiguration.features.authentication.enabled) {
         const hasEmailAuth =
-          initialConfiguration.features.authentication.magicLink ||
           initialConfiguration.features.authentication.emailPassword ||
-          initialConfiguration.features.authentication.otp;
+          initialConfiguration.features.authentication.magicLink;
         if (hasEmailAuth) {
           requiredBy.push("Email-based authentication methods");
         }

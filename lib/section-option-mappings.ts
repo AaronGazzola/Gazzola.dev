@@ -102,9 +102,9 @@ export const SECTION_OPTION_MAPPINGS: SectionOptionMapping[] = [
   { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option5", configPath: "technologies.stripe" },
   { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option6", configPath: "technologies.paypal" },
   { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option7", configPath: "technologies.openrouter" },
-  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option8", configPath: "features.authentication.googleAuth" },
-  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option9", configPath: "features.authentication.githubAuth" },
-  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option10", configPath: "features.authentication.appleAuth" },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option8", configPath: null },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option9", configPath: null },
+  { filePath: "docs.deployment-instructions", sectionId: "section3", optionId: "option10", configPath: null },
 
   { filePath: "docs.deployment-instructions", sectionId: "section4", optionId: "option1", configPath: "questions.databaseProvider", matchValue: "supabase" },
   { filePath: "docs.deployment-instructions", sectionId: "section4", optionId: "option3", configPath: "features.admin.enabled" },

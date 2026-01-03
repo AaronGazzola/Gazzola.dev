@@ -2,8 +2,8 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
-import { Badge } from "@/components/editor/ui/badge";
 import { Button } from "@/components/editor/ui/button";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
 import { Textarea } from "@/components/editor/ui/textarea";
 import {
@@ -13,45 +13,30 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
-  ArrowLeft,
   ArrowRight,
   BookText,
+  Bot,
   CheckCircle2,
-  Database,
   Loader2,
   Plus,
   Shield,
   Sparkles,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SiApple, SiGithub, SiGoogle } from "react-icons/si";
 import { toast } from "sonner";
 import { useREADMEStore } from "./READMEComponent.stores";
+import { generateId, PageInput, Stage } from "./READMEComponent.types";
 import {
-  DatabaseTable,
-  generateId,
-  PageInput,
-  Stage,
-} from "./READMEComponent.types";
-import {
-  generateAuthPrompt,
-  generateDatabasePrompt,
   generateFinalReadmePrompt,
   generatePagesPrompt,
-  parseAuthFromResponse,
-  parseDatabaseFromResponse,
   parsePagesFromResponse,
 } from "./READMEComponent.utils";
-import { DatabaseTableAccordionItem } from "./READMEComponent/DatabaseTableAccordionItem";
 import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
 
 const MIN_TITLE_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 50;
-const MIN_PASTED_README_LENGTH = 50;
 const MIN_PAGE_NAME_LENGTH = 2;
 const MIN_PAGE_DESCRIPTION_LENGTH = 20;
-const MIN_TABLE_NAME_LENGTH = 2;
-const MIN_TABLE_DESCRIPTION_LENGTH = 20;
 
 export const READMEComponent = () => {
   const {
@@ -66,17 +51,15 @@ export const READMEComponent = () => {
   const {
     title,
     description,
-    pastedReadme,
-    showPasteSection,
     stage,
     pages,
     authMethods,
     pageAccess,
-    databaseTables,
+    lastGeneratedForAuth,
+    lastGeneratedForPages,
+    lastGeneratedForReadme,
     setTitle,
     setDescription,
-    setPastedReadme,
-    setShowPasteSection,
     setStage,
     setPages,
     addPage,
@@ -86,24 +69,21 @@ export const READMEComponent = () => {
     toggleAuthMethod,
     setPageAccess,
     updatePageAccess,
-    setDatabaseTables,
-    addDatabaseTable,
-    updateDatabaseTable,
-    deleteDatabaseTable,
+    setLastGeneratedForAuth,
+    setLastGeneratedForPages,
+    setLastGeneratedForReadme,
   } = useREADMEStore();
 
   const [accordionValue, setAccordionValue] =
     useState<string>("step-1-description");
   const [expandedPageId, setExpandedPageId] = useState<string | null>(null);
-  const [expandedTableId, setExpandedTableId] = useState<string | null>(null);
   const hasAutoExpandedRef = useRef(false);
 
   useEffect(() => {
     const accordionMap: Record<Stage, string> = {
       description: "step-1-description",
-      pages: "step-2-pages",
-      auth: "step-3-auth",
-      database: "step-4-database",
+      auth: "step-2-auth",
+      pages: "step-3-pages",
     };
     setAccordionValue(accordionMap[stage]);
   }, [stage]);
@@ -115,13 +95,30 @@ export const READMEComponent = () => {
     }
   }, [pages]);
 
+  const hasAuthInputChanged = useCallback(() => {
+    if (!lastGeneratedForAuth) return true;
+    return (
+      lastGeneratedForAuth.title !== title ||
+      lastGeneratedForAuth.description !== description
+    );
+  }, [lastGeneratedForAuth, title, description]);
+
+  const hasPagesInputChanged = useCallback(() => {
+    if (!lastGeneratedForPages) return true;
+    return JSON.stringify(lastGeneratedForPages) !== JSON.stringify(authMethods);
+  }, [lastGeneratedForPages, authMethods]);
+
+  const hasReadmeInputChanged = useCallback(() => {
+    if (!lastGeneratedForReadme) return true;
+    return lastGeneratedForReadme !== JSON.stringify(pages);
+  }, [lastGeneratedForReadme, pages]);
+
   const handleAccordionChange = useCallback(
     (value: string) => {
       const accordionMap: Record<string, Stage> = {
         "step-1-description": "description",
-        "step-2-pages": "pages",
-        "step-3-auth": "auth",
-        "step-4-database": "database",
+        "step-2-auth": "auth",
+        "step-3-pages": "pages",
       };
 
       const targetStage = accordionMap[value];
@@ -133,9 +130,8 @@ export const READMEComponent = () => {
 
       const stageIndexMap: Record<Stage, number> = {
         description: 0,
-        pages: 1,
-        auth: 2,
-        database: 3,
+        auth: 1,
+        pages: 2,
       };
 
       const currentStageIndex = stageIndexMap[stage];
@@ -150,39 +146,13 @@ export const READMEComponent = () => {
     [stage]
   );
 
-  const { mutate: generateAuth, isPending: isGeneratingAuth } =
-    useCodeGeneration((response) => {
-      const parsed = parseAuthFromResponse(response.content, pages);
-      if (parsed) {
-        setAuthMethods(parsed.authMethods);
-        setPageAccess(parsed.pageAccess);
-        setStage("auth");
-      }
-    });
-
-  const { mutate: generateDatabase, isPending: isGeneratingDatabase } =
-    useCodeGeneration((response) => {
-      const parsed = parseDatabaseFromResponse(response.content);
-      if (parsed && parsed.length > 0) {
-        setDatabaseTables(parsed);
-        setStage("database");
-      } else {
-        const fallbackTables: DatabaseTable[] = [
-          { id: generateId(), name: "users", description: "" },
-        ];
-        setDatabaseTables(fallbackTables);
-        setStage("database");
-        toast.warning(
-          "Could not generate tables automatically. Default table added.",
-          {
-            duration: 5000,
-          }
-        );
-      }
-    });
-
   const { mutate: generateReadme, isPending: isGeneratingReadme } =
     useCodeGeneration((response) => {
+      console.log("README GENERATION OUTPUT:", JSON.stringify({
+        responseContent: response.content,
+        fullContent: `<!-- component-READMEComponent -->\n\n${response.content}`
+      }, null, 2));
+
       setContent(
         "readme",
         `<!-- component-READMEComponent -->\n\n${response.content}`
@@ -193,10 +163,11 @@ export const READMEComponent = () => {
 
   const { mutate: generatePages, isPending: isGeneratingPages } =
     useCodeGeneration((response) => {
-      const parsedPages = parsePagesFromResponse(response.content);
+      const parsed = parsePagesFromResponse(response.content);
 
-      if (parsedPages && parsedPages.length > 0) {
-        setPages(parsedPages);
+      if (parsed && parsed.pages.length > 0) {
+        setPages(parsed.pages);
+        setPageAccess(parsed.pageAccess);
         setStage("pages");
       } else {
         const fallbackPages: PageInput[] = [
@@ -220,49 +191,37 @@ export const READMEComponent = () => {
     });
 
   const handleSubmitInitial = useCallback(() => {
-    if (pastedReadme.trim()) {
-      setContent(
-        "readme",
-        `<!-- component-READMEComponent -->\n\n${pastedReadme.trim()}`
-      );
-      setReadmeGenerated(true);
-      setReadmeWasPasted(true);
-      forceRefresh();
-      return;
-    }
-
-    const prompt = generatePagesPrompt(title, description);
-    generatePages({ prompt, maxTokens: 800 });
-  }, [
-    pastedReadme,
-    title,
-    description,
-    setContent,
-    setReadmeGenerated,
-    setReadmeWasPasted,
-    forceRefresh,
-    generatePages,
-  ]);
-
-  const handleSubmitPages = useCallback(() => {
-    const prompt = generateAuthPrompt(title, description, pages);
-    generateAuth({ prompt, maxTokens: 1000 });
-  }, [title, description, pages, generateAuth]);
+    setLastGeneratedForAuth({ title, description });
+    setStage("auth");
+  }, [setStage, setLastGeneratedForAuth, title, description]);
 
   const handleSubmitAuth = useCallback(() => {
-    const prompt = generateDatabasePrompt(title, description, pages);
-    generateDatabase({ prompt, maxTokens: 1500 });
-  }, [title, description, pages, generateDatabase]);
+    setLastGeneratedForPages(authMethods);
+    const prompt = generatePagesPrompt(title, description, authMethods);
+    generatePages({ prompt, maxTokens: 1200 });
+  }, [title, description, authMethods, generatePages, setLastGeneratedForPages]);
 
-  const handleSubmitDatabase = useCallback(() => {
+  const handleSubmitPages = useCallback(() => {
+    setLastGeneratedForReadme(JSON.stringify(pages));
     const prompt = generateFinalReadmePrompt(
       title,
       description,
       pages,
       authMethods,
-      pageAccess,
-      databaseTables
+      pageAccess
     );
+
+    console.log("README GENERATION INPUT:", JSON.stringify({
+      prompt,
+      inputData: {
+        title,
+        description,
+        pages,
+        authMethods,
+        pageAccess
+      }
+    }, null, 2));
+
     generateReadme({ prompt, maxTokens: 3000 });
   }, [
     title,
@@ -270,8 +229,8 @@ export const READMEComponent = () => {
     pages,
     authMethods,
     pageAccess,
-    databaseTables,
     generateReadme,
+    setLastGeneratedForReadme,
   ]);
 
   const handleAddPage = () => {
@@ -297,31 +256,6 @@ export const READMEComponent = () => {
     }
   };
 
-  const handleAddDatabaseTable = () => {
-    const newTable: DatabaseTable = {
-      id: generateId(),
-      name: "",
-      description: "",
-    };
-    addDatabaseTable(newTable);
-    setExpandedTableId(newTable.id);
-  };
-
-  const handleUpdateDatabaseTableLocal = (
-    id: string,
-    updates: Partial<DatabaseTable>
-  ) => {
-    updateDatabaseTable(id, updates);
-  };
-
-  const handleDeleteDatabaseTableLocal = (id: string) => {
-    if (databaseTables.length === 1) return;
-    deleteDatabaseTable(id);
-    if (expandedTableId === id) {
-      setExpandedTableId(null);
-    }
-  };
-
   if (readmeGenerated) {
     return (
       <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
@@ -344,18 +278,11 @@ export const READMEComponent = () => {
     );
   }
 
-  const isPending =
-    isGeneratingAuth ||
-    isGeneratingDatabase ||
-    isGeneratingReadme ||
-    isGeneratingPages;
+  const isPending = isGeneratingReadme || isGeneratingPages;
   const isTitleValid = title.trim().length >= MIN_TITLE_LENGTH;
   const isDescriptionValid =
     description.trim().length >= MIN_DESCRIPTION_LENGTH;
-  const isPastedReadmeValid =
-    pastedReadme.trim().length >= MIN_PASTED_README_LENGTH;
-  const canSubmitInitial =
-    isPastedReadmeValid || (isTitleValid && isDescriptionValid);
+  const canSubmitInitial = isTitleValid && isDescriptionValid;
 
   const canSubmitPages = pages.every(
     (p) =>
@@ -365,12 +292,6 @@ export const READMEComponent = () => {
   );
 
   const canSubmitAuth = true;
-
-  const canSubmitDatabase = databaseTables.every(
-    (t) =>
-      t.name.trim().length >= MIN_TABLE_NAME_LENGTH &&
-      t.description.trim().length >= MIN_TABLE_DESCRIPTION_LENGTH
-  );
 
   return (
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
@@ -386,122 +307,212 @@ export const READMEComponent = () => {
         </p>
       </div>
 
-      <Button
-        variant="link"
-        onClick={() => setShowPasteSection(!showPasteSection)}
-        disabled={isPending}
-        className="w-fit px-0 theme-text-primary -mt-1 text-base"
+      <Accordion
+        type="single"
+        collapsible
+        value={accordionValue}
+        onValueChange={handleAccordionChange}
+        className="w-full"
       >
-        {showPasteSection ? (
-          <>
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Generate a README instead
-          </>
-        ) : (
-          <>
-            Already have a README?
-            <ArrowRight className="h-4 w-4 ml-1" />
-          </>
-        )}
-      </Button>
-
-      {showPasteSection ? (
-        <div className="flex flex-col theme-gap-4">
-          <div className="flex flex-col theme-gap-2">
-            <h3 className="font-semibold text-lg">Paste your README file</h3>
-            <p className="theme-text-foreground font-semibold">
-              Paste the contents of your README file in Markdown formatting.
-              This will be used in the next step to generate your app.
-            </p>
-            <Textarea
-              value={pastedReadme}
-              onChange={(e) => setPastedReadme(e.target.value)}
-              placeholder="# My App&#10;&#10;Paste your README content here..."
-              className="theme-shadow min-h-[180px] font-mono   "
-              disabled={isPending}
-            />
-            <p className="text-xs theme-text-foreground font-semibold">
-              Minimum {MIN_PASTED_README_LENGTH} characters
-              {pastedReadme.length > 0 &&
-                ` (${pastedReadme.trim().length}/${MIN_PASTED_README_LENGTH})`}
-            </p>
-          </div>
-
-          <Button
-            onClick={handleSubmitInitial}
-            disabled={isPending || !isPastedReadmeValid}
-            className="w-full theme-gap-2"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Adding README...
-              </>
-            ) : (
-              <>
-                <CheckCircle2 className="h-4 w-4" />
-                Add README
-              </>
-            )}
-          </Button>
-        </div>
-      ) : (
-        <Accordion
-          type="single"
-          collapsible
-          value={accordionValue}
-          onValueChange={handleAccordionChange}
-          className="w-full"
+        <AccordionItem
+          value="step-1-description"
+          className="theme-border-border"
         >
-          <AccordionItem
-            value="step-1-description"
-            className="theme-border-border"
-          >
-            <AccordionTrigger className="hover:theme-text-primary group">
-              <div className="flex items-center theme-gap-2">
-                <Sparkles className="h-5 w-5 theme-text-primary" />
-                <span className="font-semibold text-base lg:text-lg group-hover:underline">
-                  1. App Information
-                </span>
+          <AccordionTrigger className="hover:theme-text-primary group">
+            <div className="flex items-center theme-gap-2">
+              <Sparkles className="h-5 w-5 theme-text-primary" />
+              <span className="font-semibold text-base lg:text-lg group-hover:underline">
+                1. App Information
+              </span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col theme-gap-4 pt-4">
+              <div className="flex flex-col theme-gap-2">
+                <label className="font-semibold">App Title</label>
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="My Awesome App"
+                  className="theme-shadow"
+                  disabled={isPending}
+                />
+                <p className="text-xs theme-text-foreground font-semibold">
+                  Minimum {MIN_TITLE_LENGTH} characters
+                  {title.length > 0 &&
+                    ` (${title.trim().length}/${MIN_TITLE_LENGTH})`}
+                </p>
               </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col theme-gap-4 pt-4">
-                <div className="flex flex-col theme-gap-2">
-                  <label className="font-semibold">App Title</label>
-                  <Input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="My Awesome App"
-                    className="theme-shadow"
-                    disabled={isPending}
-                  />
-                  <p className="text-xs theme-text-foreground font-semibold">
-                    Minimum {MIN_TITLE_LENGTH} characters
-                    {title.length > 0 &&
-                      ` (${title.trim().length}/${MIN_TITLE_LENGTH})`}
-                  </p>
-                </div>
 
-                <div className="flex flex-col theme-gap-2">
-                  <label className="font-semibold">App Description</label>
-                  <Textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Describe what your app does, who it's for, and the main features users will interact with..."
-                    className="theme-shadow min-h-[120px]"
-                    disabled={isPending}
-                  />
-                  <p className="text-xs theme-text-foreground font-semibold">
-                    Minimum {MIN_DESCRIPTION_LENGTH} characters
-                    {description.length > 0 &&
-                      ` (${description.trim().length}/${MIN_DESCRIPTION_LENGTH})`}
-                  </p>
-                </div>
+              <div className="flex flex-col theme-gap-2">
+                <label className="font-semibold">App Description</label>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe what your app does, who it's for, and the main features users will interact with..."
+                  className="theme-shadow min-h-[120px]"
+                  disabled={isPending}
+                />
+                <p className="text-xs theme-text-foreground font-semibold">
+                  Minimum {MIN_DESCRIPTION_LENGTH} characters
+                  {description.length > 0 &&
+                    ` (${description.trim().length}/${MIN_DESCRIPTION_LENGTH})`}
+                </p>
+              </div>
 
+              {stage !== "description" ? (
+                <div className="flex flex-col sm:flex-row theme-gap-2">
+                  <Button
+                    onClick={handleSubmitInitial}
+                    disabled={isPending || !canSubmitInitial || !hasAuthInputChanged()}
+                    className="flex-1 theme-gap-2"
+                  >
+                    <Bot className="h-4 w-4" />
+                    Regenerate Authentication
+                  </Button>
+                  <Button
+                    onClick={() => setAccordionValue("step-2-auth")}
+                    disabled={isPending}
+                    variant="outline"
+                    className="flex-1 theme-gap-2"
+                  >
+                    Next Step
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
                 <Button
                   onClick={handleSubmitInitial}
                   disabled={isPending || !canSubmitInitial}
+                  className="w-full theme-gap-2"
+                >
+                  <Bot className="h-4 w-4" />
+                  Continue to Authentication
+                </Button>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem
+          value="step-2-auth"
+          className={`theme-border-border ${
+            stage === "description" ? "opacity-50 pointer-events-none" : ""
+          }`}
+        >
+          <AccordionTrigger
+            className={`hover:theme-text-primary group ${
+              stage === "description" ? "cursor-not-allowed" : ""
+            }`}
+          >
+            <div className="flex items-center theme-gap-2">
+              <Shield className="h-5 w-5 theme-text-primary" />
+              <span className="font-semibold text-base lg:text-lg group-hover:underline">
+                2. Authentication
+              </span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col theme-gap-4 pt-4">
+              <div className="flex flex-col theme-gap-1">
+                <h3 className="font-semibold text-lg">
+                  Authentication Methods
+                </h3>
+                <p className="   theme-text-foreground font-semibold">
+                  Select which authentication methods your app will support
+                </p>
+              </div>
+
+              <div className="flex flex-col theme-gap-3">
+                <div className="flex items-start theme-gap-3">
+                  <Checkbox
+                    id="emailPassword"
+                    checked={authMethods.emailPassword}
+                    onCheckedChange={() => toggleAuthMethod("emailPassword")}
+                    disabled={isPending}
+                  />
+                  <div className="flex flex-col theme-gap-1 flex-1">
+                    <div
+                      className="text-sm font-semibold cursor-pointer"
+                      onClick={() =>
+                        !isPending && toggleAuthMethod("emailPassword")
+                      }
+                    >
+                      Email & Password
+                    </div>
+                    <p
+                      className="text-xs theme-text-foreground cursor-pointer"
+                      onClick={() =>
+                        !isPending && toggleAuthMethod("emailPassword")
+                      }
+                    >
+                      Traditional authentication with email and password
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start theme-gap-3">
+                  <Checkbox
+                    id="magicLink"
+                    checked={authMethods.magicLink}
+                    onCheckedChange={() => toggleAuthMethod("magicLink")}
+                    disabled={isPending}
+                  />
+                  <div className="flex flex-col theme-gap-1 flex-1">
+                    <div
+                      className="text-sm font-semibold cursor-pointer"
+                      onClick={() =>
+                        !isPending && toggleAuthMethod("magicLink")
+                      }
+                    >
+                      Magic Link
+                    </div>
+                    <p
+                      className="text-xs theme-text-foreground cursor-pointer"
+                      onClick={() =>
+                        !isPending && toggleAuthMethod("magicLink")
+                      }
+                    >
+                      Passwordless sign-in via a link sent to the user&apos;s
+                      email
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="italic">More options coming soon</p>
+              {stage === "pages" ? (
+                <div className="flex flex-col sm:flex-row theme-gap-2">
+                  <Button
+                    onClick={handleSubmitAuth}
+                    disabled={isPending || !canSubmitAuth || !hasPagesInputChanged()}
+                    className="flex-1 theme-gap-2"
+                  >
+                    {isGeneratingPages ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Regenerating pages...
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="h-4 w-4" />
+                        Regenerate Pages
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => setAccordionValue("step-3-pages")}
+                    disabled={isPending}
+                    variant="outline"
+                    className="flex-1 theme-gap-2"
+                  >
+                    Next Step
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleSubmitAuth}
+                  disabled={isPending || !canSubmitAuth}
                   className="w-full theme-gap-2"
                 >
                   {isGeneratingPages ? (
@@ -511,45 +522,52 @@ export const READMEComponent = () => {
                     </>
                   ) : (
                     <>
-                      <ArrowRight className="h-4 w-4" />
+                      <Bot className="h-4 w-4" />
                       Continue to Pages
                     </>
                   )}
                 </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-          <AccordionItem
-            value="step-2-pages"
-            className={`theme-border-border ${
-              stage === "description" ? "opacity-50 pointer-events-none" : ""
+        <AccordionItem
+          value="step-3-pages"
+          className={`theme-border-border ${
+            stage === "description" || stage === "auth"
+              ? "opacity-50 pointer-events-none"
+              : ""
+          }`}
+        >
+          <AccordionTrigger
+            className={`hover:theme-text-primary group ${
+              stage === "description" || stage === "auth"
+                ? "cursor-not-allowed"
+                : ""
             }`}
           >
-            <AccordionTrigger
-              className={`hover:theme-text-primary group ${
-                stage === "description" ? "cursor-not-allowed" : ""
-              }`}
-            >
-              <div className="flex items-center theme-gap-2">
-                <BookText className="h-5 w-5 theme-text-primary" />
-                <span className="font-semibold text-base lg:text-lg group-hover:underline">
-                  2. Pages
-                </span>
+            <div className="flex items-center theme-gap-2">
+              <BookText className="h-5 w-5 theme-text-primary" />
+              <span className="font-semibold text-base lg:text-lg group-hover:underline">
+                3. Pages
+              </span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col theme-gap-4 pt-4">
+              <div className="flex flex-col theme-gap-1">
+                <h3 className="font-semibold text-lg">Define Your Pages</h3>
+                <p className="   theme-text-foreground font-semibold">
+                  Add, edit or remove pages. Include a description of the
+                  purpose and function of each page.
+                </p>
               </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col theme-gap-4 pt-4">
-                <div className="flex flex-col theme-gap-1">
-                  <h3 className="font-semibold text-lg">Define Your Pages</h3>
-                  <p className="   theme-text-foreground font-semibold">
-                    Add, edit or remove pages. Include a description of the
-                    purpose and function of each page.
-                  </p>
-                </div>
 
-                <div className="flex flex-col theme-gap-2">
-                  {pages.map((page, index) => (
+              <div className="flex flex-col theme-gap-2">
+                {pages.map((page, index) => {
+                  const access = pageAccess.find((pa) => pa.pageId === page.id);
+                  return (
                     <PageAccordionItem
                       key={page.id}
                       page={page}
@@ -564,320 +582,44 @@ export const READMEComponent = () => {
                       onUpdate={handleUpdatePageLocal}
                       onDelete={handleDeletePageLocal}
                       disabled={isPending}
+                      pageAccess={access}
+                      onUpdateAccess={updatePageAccess}
                     />
-                  ))}
-                </div>
-
-                <Button
-                  variant="outline"
-                  onClick={handleAddPage}
-                  disabled={isPending}
-                  className="w-full theme-gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Page
-                </Button>
-
-                <Button
-                  onClick={handleSubmitPages}
-                  disabled={isPending || !canSubmitPages}
-                  className="w-full theme-gap-2"
-                >
-                  {isGeneratingAuth ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating auth & access...
-                    </>
-                  ) : (
-                    <>
-                      <ArrowRight className="h-4 w-4" />
-                      Continue to Authentication
-                    </>
-                  )}
-                </Button>
+                  );
+                })}
               </div>
-            </AccordionContent>
-          </AccordionItem>
 
-          <AccordionItem
-            value="step-3-auth"
-            className={`theme-border-border ${
-              stage !== "auth" && stage !== "database"
-                ? "opacity-50 pointer-events-none"
-                : ""
-            }`}
-          >
-            <AccordionTrigger
-              className={`hover:theme-text-primary group ${
-                stage !== "auth" && stage !== "database"
-                  ? "cursor-not-allowed"
-                  : ""
-              }`}
-            >
-              <div className="flex items-center theme-gap-2">
-                <Shield className="h-5 w-5 theme-text-primary" />
-                <span className="font-semibold text-base lg:text-lg group-hover:underline">
-                  3. Authentication & Role Access
-                </span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col theme-gap-4 pt-4">
-                <div className="flex flex-col theme-gap-1">
-                  <h3 className="font-semibold text-lg">
-                    Authentication Methods
-                  </h3>
-                  <p className="   theme-text-foreground font-semibold">
-                    Select which authentication methods your app will support
-                  </p>
-                </div>
+              <Button
+                variant="outline"
+                onClick={handleAddPage}
+                disabled={isPending}
+                className="w-full theme-gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Page
+              </Button>
 
-                <div className="flex flex-wrap theme-gap-2">
-                  <Badge
-                    variant={authMethods.emailPassword ? "default" : "outline"}
-                    className="cursor-pointer"
-                    onClick={() => toggleAuthMethod("emailPassword")}
-                  >
-                    Email & Password
-                  </Badge>
-
-                  <Badge
-                    variant={authMethods.magicLink ? "default" : "outline"}
-                    className="cursor-pointer"
-                    onClick={() => toggleAuthMethod("magicLink")}
-                  >
-                    Magic Link
-                  </Badge>
-
-                  <Badge
-                    variant={authMethods.phoneAuth ? "default" : "outline"}
-                    className="cursor-pointer"
-                    onClick={() => toggleAuthMethod("phoneAuth")}
-                  >
-                    Phone
-                  </Badge>
-
-                  <Badge
-                    variant={authMethods.otp ? "default" : "outline"}
-                    className="cursor-pointer"
-                    onClick={() => toggleAuthMethod("otp")}
-                  >
-                    OTP
-                  </Badge>
-
-                  <Badge
-                    variant={authMethods.googleAuth ? "default" : "outline"}
-                    className="cursor-pointer flex theme-gap-1"
-                    onClick={() => toggleAuthMethod("googleAuth")}
-                  >
-                    <SiGoogle className="h-3 w-3" />
-                    Google
-                  </Badge>
-
-                  <Badge
-                    variant={authMethods.githubAuth ? "default" : "outline"}
-                    className="cursor-pointer flex theme-gap-1"
-                    onClick={() => toggleAuthMethod("githubAuth")}
-                  >
-                    <SiGithub className="h-3 w-3" />
-                    GitHub
-                  </Badge>
-
-                  <Badge
-                    variant={authMethods.appleAuth ? "default" : "outline"}
-                    className="cursor-pointer flex theme-gap-1"
-                    onClick={() => toggleAuthMethod("appleAuth")}
-                  >
-                    <SiApple className="h-3 w-3" />
-                    Apple
-                  </Badge>
-
-                  <Badge
-                    variant={
-                      authMethods.emailVerification ? "default" : "outline"
-                    }
-                    className="cursor-pointer"
-                    onClick={() => toggleAuthMethod("emailVerification")}
-                  >
-                    Email Verification
-                  </Badge>
-
-                  <Badge
-                    variant={authMethods.mfa ? "default" : "outline"}
-                    className="cursor-pointer"
-                    onClick={() => toggleAuthMethod("mfa")}
-                  >
-                    MFA
-                  </Badge>
-                </div>
-
-                <div className="flex flex-col theme-gap-2 theme-mt-2">
-                  <h3 className="font-semibold text-lg">Page Access Levels</h3>
-                  <p className="   theme-text-foreground font-semibold">
-                    Define who can access each page
-                  </p>
-                  <div className="flex flex-col theme-gap-2">
-                    {pages.map((page) => {
-                      const access = pageAccess.find(
-                        (pa) => pa.pageId === page.id
-                      );
-                      return (
-                        <div
-                          key={page.id}
-                          className="flex items-center justify-between theme-p-2 theme-bg-muted theme-radius"
-                        >
-                          <div className="flex items-center theme-gap-2 flex-1">
-                            <span className="text-sm font-semibold theme-text-foreground">
-                              {page.name}
-                            </span>
-                            <span className="text-xs theme-font-mono theme-bg-secondary theme-text-secondary-foreground px-1.5 py-0.5 theme-radius">
-                              {page.route}
-                            </span>
-                          </div>
-                          <div className="flex theme-gap-1">
-                            <Badge
-                              variant={access?.public ? "default" : "outline"}
-                              className="cursor-pointer"
-                              onClick={() =>
-                                updatePageAccess(
-                                  page.id,
-                                  "public",
-                                  !access?.public
-                                )
-                              }
-                            >
-                              Public
-                            </Badge>
-                            <Badge
-                              variant={access?.user ? "default" : "outline"}
-                              className="cursor-pointer"
-                              onClick={() =>
-                                updatePageAccess(page.id, "user", !access?.user)
-                              }
-                            >
-                              User
-                            </Badge>
-                            <Badge
-                              variant={access?.admin ? "default" : "outline"}
-                              className="cursor-pointer"
-                              onClick={() =>
-                                updatePageAccess(
-                                  page.id,
-                                  "admin",
-                                  !access?.admin
-                                )
-                              }
-                            >
-                              Admin
-                            </Badge>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <Button
-                  onClick={handleSubmitAuth}
-                  disabled={isPending || !canSubmitAuth}
-                  className="w-full theme-gap-2"
-                >
-                  {isGeneratingDatabase ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating database tables...
-                    </>
-                  ) : (
-                    <>
-                      <ArrowRight className="h-4 w-4" />
-                      Continue to Database
-                    </>
-                  )}
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem
-            value="step-4-database"
-            className={`theme-border-border ${
-              stage !== "database" ? "opacity-50 pointer-events-none" : ""
-            }`}
-          >
-            <AccordionTrigger
-              className={`hover:theme-text-primary group ${
-                stage !== "database" ? "cursor-not-allowed" : ""
-              }`}
-            >
-              <div className="flex items-center theme-gap-2">
-                <Database className="h-5 w-5 theme-text-primary" />
-                <span className="font-semibold text-base lg:text-lg group-hover:underline">
-                  4. Database Tables
-                </span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col theme-gap-4 pt-4">
-                <div className="flex flex-col theme-gap-1">
-                  <h3 className="font-semibold text-lg">Define Your Tables</h3>
-                  <p className="   theme-text-foreground font-semibold">
-                    Add, edit or remove database tables. Include a description
-                    of what each table stores.
-                  </p>
-                </div>
-
-                <div className="flex flex-col theme-gap-2">
-                  {databaseTables.map((table, index) => (
-                    <DatabaseTableAccordionItem
-                      key={table.id}
-                      table={table}
-                      index={index}
-                      totalTables={databaseTables.length}
-                      isExpanded={expandedTableId === table.id}
-                      onToggle={() =>
-                        setExpandedTableId(
-                          expandedTableId === table.id ? null : table.id
-                        )
-                      }
-                      onUpdate={handleUpdateDatabaseTableLocal}
-                      onDelete={handleDeleteDatabaseTableLocal}
-                      disabled={isPending}
-                    />
-                  ))}
-                </div>
-
-                <Button
-                  variant="outline"
-                  onClick={handleAddDatabaseTable}
-                  disabled={isPending}
-                  className="w-full theme-gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Table
-                </Button>
-
-                <Button
-                  onClick={handleSubmitDatabase}
-                  disabled={isPending || !canSubmitDatabase}
-                  className="w-full theme-gap-2"
-                >
-                  {isGeneratingReadme ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating README...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4" />
-                      Generate Final README
-                    </>
-                  )}
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      )}
+              <Button
+                onClick={handleSubmitPages}
+                disabled={isPending || !canSubmitPages}
+                className="w-full theme-gap-2"
+              >
+                {isGeneratingReadme ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating README...
+                  </>
+                ) : (
+                  <>
+                    <Bot className="h-4 w-4" />
+                    Generate README
+                  </>
+                )}
+              </Button>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };

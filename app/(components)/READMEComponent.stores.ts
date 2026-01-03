@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
   type AuthMethods,
-  type DatabaseTable,
   type PageAccess,
   type PageInput,
   type READMEState,
@@ -16,17 +15,15 @@ const getInitialState = (): READMEState => ({
   pages: [],
   authMethods: initialAuthMethods,
   pageAccess: [],
-  databaseTables: [],
   stage: "description",
-  showPasteSection: false,
-  pastedReadme: "",
+  lastGeneratedForAuth: null,
+  lastGeneratedForPages: null,
+  lastGeneratedForReadme: null,
 });
 
 interface READMEStore extends READMEState {
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
-  setPastedReadme: (pastedReadme: string) => void;
-  setShowPasteSection: (show: boolean) => void;
   setStage: (stage: Stage) => void;
   setPages: (pages: PageInput[]) => void;
   addPage: (page: PageInput) => void;
@@ -36,10 +33,9 @@ interface READMEStore extends READMEState {
   toggleAuthMethod: (method: keyof AuthMethods) => void;
   setPageAccess: (pageAccess: PageAccess[]) => void;
   updatePageAccess: (pageId: string, level: "public" | "user" | "admin", value: boolean) => void;
-  setDatabaseTables: (tables: DatabaseTable[]) => void;
-  addDatabaseTable: (table: DatabaseTable) => void;
-  updateDatabaseTable: (id: string, updates: Partial<DatabaseTable>) => void;
-  deleteDatabaseTable: (id: string) => void;
+  setLastGeneratedForAuth: (data: { title: string; description: string } | null) => void;
+  setLastGeneratedForPages: (authMethods: AuthMethods | null) => void;
+  setLastGeneratedForReadme: (pagesSnapshot: string | null) => void;
   reset: () => void;
 }
 
@@ -50,8 +46,6 @@ export const useREADMEStore = create<READMEStore>()(
 
       setTitle: (title) => set({ title }),
       setDescription: (description) => set({ description }),
-      setPastedReadme: (pastedReadme) => set({ pastedReadme }),
-      setShowPasteSection: (show) => set({ showPasteSection: show }),
       setStage: (stage) => set({ stage }),
 
       setPages: (pages) => set({ pages }),
@@ -107,21 +101,9 @@ export const useREADMEStore = create<READMEStore>()(
           };
         }),
 
-      setDatabaseTables: (databaseTables) => set({ databaseTables }),
-      addDatabaseTable: (table) =>
-        set((state) => ({
-          databaseTables: [...state.databaseTables, table],
-        })),
-      updateDatabaseTable: (id, updates) =>
-        set((state) => ({
-          databaseTables: state.databaseTables.map((t) =>
-            t.id === id ? { ...t, ...updates } : t
-          ),
-        })),
-      deleteDatabaseTable: (id) =>
-        set((state) => ({
-          databaseTables: state.databaseTables.filter((t) => t.id !== id),
-        })),
+      setLastGeneratedForAuth: (data) => set({ lastGeneratedForAuth: data }),
+      setLastGeneratedForPages: (authMethods) => set({ lastGeneratedForPages: authMethods }),
+      setLastGeneratedForReadme: (pagesSnapshot) => set({ lastGeneratedForReadme: pagesSnapshot }),
 
       reset: () => set(getInitialState()),
     }),

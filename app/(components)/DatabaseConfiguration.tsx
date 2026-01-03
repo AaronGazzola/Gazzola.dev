@@ -1,7 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
-import { FileSystemEntry, InitialConfigurationType } from "@/app/(editor)/layout.types";
+import { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
@@ -10,29 +10,45 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Switch } from "@/components/editor/ui/switch";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import {
-  BotMessageSquare,
+  Bot,
   Database,
   HelpCircle,
   Loader2,
   Plus,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SiSupabase } from "react-icons/si";
+import { toast } from "sonner";
+import { useAppStructureStore } from "./AppStructure.stores";
 import {
   generateDatabaseSchemaPrompt,
+  generateTableDescriptionsPrompt,
   parseDatabaseSchemaFromResponse,
+  parseTableDescriptionsFromResponse,
+  generateId,
 } from "./DatabaseConfiguration.ai";
 import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
 import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
+import {
+  DatabaseTableDescription,
+  useDatabaseTablesStore,
+} from "./DatabaseConfiguration.tables.stores";
+import { DatabaseTableDescriptionItem } from "./DatabaseConfiguration/DatabaseTableDescriptionItem";
 import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
-
-const isDevelopment = process.env.NODE_ENV === "development";
+import { useREADMEStore } from "./READMEComponent.stores";
 
 export const DatabaseConfiguration = () => {
   const {
@@ -53,7 +69,6 @@ export const DatabaseConfiguration = () => {
     setSectionInclude,
     updateInitialConfiguration,
     appStructure,
-    data,
     databaseGenerated,
     setDatabaseGenerated,
     readmeGenerated,
@@ -61,6 +76,23 @@ export const DatabaseConfiguration = () => {
     databaseHelpPopoverOpened,
     setDatabaseHelpPopoverOpened,
   } = useEditorStore();
+  const readmeStore = useREADMEStore();
+  const appStructureStore = useAppStructureStore();
+
+  const {
+    tableDescriptions,
+    tablesGenerated,
+    accordionValue,
+    expandedTableId: expandedTableDescId,
+    setTableDescriptions,
+    updateTableDescription,
+    addTableDescription,
+    deleteTableDescription,
+    setTablesGenerated,
+    setAccordionValue,
+    setExpandedTableId: setExpandedTableDescId,
+  } = useDatabaseTablesStore();
+
   const [expandedSchema, setExpandedSchema] = useState<string | null>("public");
   const [expandedTableId, setExpandedTableId] = useState<string | null>(null);
   const [expandedEnums, setExpandedEnums] = useState(false);
@@ -69,47 +101,64 @@ export const DatabaseConfiguration = () => {
   const [newSchemaName, setNewSchemaName] = useState("");
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
 
-  const readmeNode = data.flatIndex["readme"];
-  const readmeContent = readmeNode?.type === "file" ? readmeNode.content : "";
+  const readmeData = {
+    title: readmeStore.title,
+    description: readmeStore.description,
+    pages: readmeStore.pages,
+    authMethods: readmeStore.authMethods,
+    pageAccess: readmeStore.pageAccess,
+  };
 
-  const appStructureNode = data.flatIndex["app-structure"];
-  const appStructureContent =
-    appStructureNode?.type === "file" ? appStructureNode.content : "";
+  const appStructureData = {
+    inferredFeatures: appStructureStore.inferredFeatures,
+    parsedPages: appStructureStore.parsedPages,
+  };
 
-  let parsedAppStructure: FileSystemEntry[] = [];
-  try {
-    if (appStructureContent) {
-      parsedAppStructure = JSON.parse(appStructureContent);
-    } else if (appStructure.length > 0) {
-      parsedAppStructure = appStructure;
-    }
-  } catch (error) {
-    console.error("Failed to parse app structure:", error);
-    if (appStructure.length > 0) {
-      parsedAppStructure = appStructure;
-    }
-  }
-
-  const { mutate: generateSchema, isPending: isGenerating } = useCodeGeneration(
-    (response) => {
+  const { mutate: generateTableDescriptions, isPending: isGeneratingTables } =
+    useCodeGeneration((response) => {
       conditionalLog(
         {
-          message: "AI response received for database schema generation",
+          message: "AI response received for table descriptions",
           responseContent: response.content,
         },
         { label: LOG_LABELS.DATABASE, maxStringLength: 50000 }
       );
 
+      const parsed = parseTableDescriptionsFromResponse(response.content);
+
+      if (parsed && parsed.tables.length > 0) {
+        setTableDescriptions(parsed.tables);
+        setTablesGenerated(true);
+        setAccordionValue("step-tables");
+        toast.success(`Generated ${parsed.tables.length} table descriptions`);
+      } else {
+        const fallbackTables: DatabaseTableDescription[] = [
+          { id: generateId(), name: "users", description: "" },
+        ];
+        setTableDescriptions(fallbackTables);
+        setTablesGenerated(true);
+        setAccordionValue("step-tables");
+        toast.warning(
+          "Could not generate tables automatically. Default table added.",
+          {
+            duration: 5000,
+          }
+        );
+      }
+    });
+
+  const { mutate: generateSchema, isPending: isGeneratingSchema } =
+    useCodeGeneration((response) => {
       const parsed = parseDatabaseSchemaFromResponse(response.content);
 
-      conditionalLog(
-        {
-          message: "Parsed database schema response",
-          parsed,
-          parseSuccess: !!parsed,
-        },
-        { label: LOG_LABELS.DATABASE, maxStringLength: 50000 }
-      );
+      console.log("DATABASE SCHEMA GENERATION OUTPUT:", JSON.stringify({
+        responseContent: response.content,
+        parsedResult: parsed,
+        parseSuccess: !!parsed,
+        tableCount: parsed?.tables.length || 0,
+        enumCount: parsed?.enums.length || 0,
+        rlsPolicyCount: parsed?.rlsPolicies?.length || 0
+      }, null, 2));
 
       if (parsed) {
         const { configuration } = parsed;
@@ -147,42 +196,191 @@ export const DatabaseConfiguration = () => {
           setRLSPoliciesFromAI(parsed.rlsPolicies, parsed.tables);
         }
         setDatabaseGenerated(true);
-
-        conditionalLog(
-          {
-            message: "Applied database configuration from AI",
-            databaseProvider: configuration.databaseProvider,
-            tableCount: parsed.tables.length,
-            enumCount: parsed.enums.length,
-            rlsPolicyCount: parsed.rlsPolicies?.length || 0,
-          },
-          { label: LOG_LABELS.DATABASE }
-        );
       }
+    });
+
+  const handleGenerateTableDescriptions = useCallback(() => {
+    if (
+      !readmeData.title ||
+      !readmeData.description ||
+      readmeData.pages.length === 0
+    ) {
+      toast.error("No README data found. Please generate README first.");
+      return;
     }
-  );
 
-  const handleGenerateFromReadme = () => {
-    if (!readmeContent) return;
+    if (
+      !appStructureData.parsedPages ||
+      appStructureData.parsedPages.length === 0
+    ) {
+      toast.error("No app structure found. Please generate app structure first.");
+      return;
+    }
 
-    const prompt = generateDatabaseSchemaPrompt(
-      readmeContent,
-      parsedAppStructure,
-      DATABASE_TEMPLATES
+    const authMethodsList = Object.entries(readmeData.authMethods)
+      .filter(([_, enabled]) => enabled)
+      .map(([method]) => method)
+      .join(", ");
+
+    const pagesWithFeatures = appStructureData.parsedPages.map((page) => {
+      const features = appStructureData.inferredFeatures[page.id] || [];
+      const access = readmeData.pageAccess.find((pa) => pa.pageId === page.id);
+      const accessLevels = access
+        ? Object.entries(access)
+            .filter(([key, value]) => key !== "pageId" && value)
+            .map(([key]) => key)
+            .join(", ")
+        : "not specified";
+
+      return {
+        name: page.name,
+        route: page.route,
+        description: page.description,
+        accessLevels,
+        features: features.map((f) => ({
+          title: f.title,
+          description: f.description,
+          category: f.category,
+          databaseTables: f.databaseTables,
+          dataEntities: f.dataEntities,
+        })),
+      };
+    });
+
+    const structuredData = {
+      appTitle: readmeData.title,
+      appDescription: readmeData.description,
+      authMethods: authMethodsList || "none",
+      pages: pagesWithFeatures,
+    };
+
+    const structuredDataString = JSON.stringify(structuredData, null, 2);
+
+    const prompt = generateTableDescriptionsPrompt(
+      structuredDataString,
+      appStructure
     );
 
     conditionalLog(
       {
-        message: "Sending prompt for database schema generation",
+        message: "Sending prompt for table descriptions generation",
         prompt,
-        readmeContentLength: readmeContent.length,
-        appStructureLength: parsedAppStructure.length,
+        structuredDataLength: structuredDataString.length,
+        appStructureLength: appStructure.length,
       },
       { label: LOG_LABELS.DATABASE, maxStringLength: 50000 }
     );
 
+    generateTableDescriptions({ prompt, maxTokens: 1500 });
+  }, [
+    readmeData,
+    appStructureData,
+    appStructure,
+    generateTableDescriptions,
+  ]);
+
+  const handleGenerateFullSchema = useCallback(() => {
+    if (tableDescriptions.length === 0) {
+      toast.error("No table descriptions found. Please generate tables first.");
+      return;
+    }
+
+    const authMethodsList = Object.entries(readmeData.authMethods)
+      .filter(([_, enabled]) => enabled)
+      .map(([method]) => method)
+      .join(", ");
+
+    const pagesWithFeatures = appStructureData.parsedPages.map((page) => {
+      const features = appStructureData.inferredFeatures[page.id] || [];
+      const access = readmeData.pageAccess.find((pa) => pa.pageId === page.id);
+      const accessLevels = access
+        ? Object.entries(access)
+            .filter(([key, value]) => key !== "pageId" && value)
+            .map(([key]) => key)
+            .join(", ")
+        : "not specified";
+
+      return {
+        name: page.name,
+        route: page.route,
+        description: page.description,
+        accessLevels,
+        features: features.map((f) => ({
+          title: f.title,
+          description: f.description,
+          category: f.category,
+          databaseTables: f.databaseTables,
+          dataEntities: f.dataEntities,
+        })),
+      };
+    });
+
+    const structuredData = {
+      appTitle: readmeData.title,
+      appDescription: readmeData.description,
+      authMethods: authMethodsList || "none",
+      pages: pagesWithFeatures,
+    };
+
+    const structuredDataString = JSON.stringify(structuredData, null, 2);
+
+    const prompt = generateDatabaseSchemaPrompt(
+      structuredDataString,
+      appStructure,
+      DATABASE_TEMPLATES
+    );
+
+    console.log("DATABASE SCHEMA GENERATION INPUT:", JSON.stringify({
+      prompt,
+      inputData: {
+        tableDescriptions,
+        structuredData,
+        appStructure,
+        appStructureLength: appStructure.length
+      }
+    }, null, 2));
+
     generateSchema({ prompt, maxTokens: 4000 });
-  };
+  }, [
+    tableDescriptions,
+    readmeData,
+    appStructureData,
+    appStructure,
+    generateSchema,
+  ]);
+
+  const handleAddTable = useCallback(() => {
+    const newTable: DatabaseTableDescription = {
+      id: generateId(),
+      name: "",
+      description: "",
+    };
+    addTableDescription(newTable);
+    setExpandedTableDescId(newTable.id);
+  }, [addTableDescription, setExpandedTableDescId]);
+
+  const handleUpdateTable = useCallback(
+    (id: string, updates: Partial<DatabaseTableDescription>) => {
+      updateTableDescription(id, updates);
+    },
+    [updateTableDescription]
+  );
+
+  const handleDeleteTableDescription = useCallback(
+    (id: string) => {
+      if (tableDescriptions.length === 1) return;
+      deleteTableDescription(id);
+      if (expandedTableDescId === id) {
+        setExpandedTableDescId(null);
+      }
+    },
+    [
+      tableDescriptions.length,
+      deleteTableDescription,
+      expandedTableDescId,
+      setExpandedTableDescId,
+    ]
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -268,109 +466,193 @@ export const DatabaseConfiguration = () => {
     return null;
   }
 
-  const isGenerateDisabled = !isDevelopment && databaseGenerated;
-  const hasReadme = readmeGenerated && readmeContent;
+  const hasReadme =
+    readmeGenerated && readmeData.title && readmeData.pages.length > 0;
   const hasAppStructure =
-    appStructureGenerated && parsedAppStructure.length > 0;
-  const canGenerate = hasReadme && hasAppStructure;
+    appStructureGenerated && appStructureData.parsedPages.length > 0;
+  const isPending = isGeneratingTables || isGeneratingSchema;
+
+  const MIN_TABLE_NAME_LENGTH = 2;
+  const MIN_TABLE_DESCRIPTION_LENGTH = 20;
+
+  const canSubmitTables = tableDescriptions.every(
+    (t) =>
+      t.name.trim().length >= MIN_TABLE_NAME_LENGTH &&
+      t.description.trim().length >= MIN_TABLE_DESCRIPTION_LENGTH
+  );
 
   if (!databaseGenerated) {
-    const renderMessage = () => {
-      if (!hasReadme && !hasAppStructure) {
-        return (
-          <>
-            Generate a{" "}
-            <Link href="/readme" className="theme-text-primary hover:underline">
-              README
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/app-structure"
-              className="theme-text-primary hover:underline"
-            >
-              App Structure
-            </Link>{" "}
-            first
-          </>
-        );
-      }
-      if (!hasReadme) {
-        return (
-          <>
-            Generate your{" "}
-            <Link href="/readme" className="theme-text-primary hover:underline">
-              README
-            </Link>{" "}
-            first
-          </>
-        );
-      }
-      if (!hasAppStructure) {
-        return (
-          <>
-            Generate your{" "}
-            <Link
-              href="/app-structure"
-              className="theme-text-primary hover:underline"
-            >
-              App Structure
-            </Link>{" "}
-            first
-          </>
-        );
-      }
-      return null;
-    };
+    if (!hasReadme || !hasAppStructure) {
+      const renderMessage = () => {
+        if (!hasReadme && !hasAppStructure) {
+          return (
+            <>
+              Generate a{" "}
+              <Link href="/readme" className="theme-text-primary hover:underline">
+                README
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/app-structure"
+                className="theme-text-primary hover:underline"
+              >
+                App Structure
+              </Link>{" "}
+              first
+            </>
+          );
+        }
+        if (!hasReadme) {
+          return (
+            <>
+              Generate your{" "}
+              <Link href="/readme" className="theme-text-primary hover:underline">
+                README
+              </Link>{" "}
+              first
+            </>
+          );
+        }
+        if (!hasAppStructure) {
+          return (
+            <>
+              Generate your{" "}
+              <Link
+                href="/app-directory"
+                className="theme-text-primary hover:underline"
+              >
+                App Directory
+              </Link>{" "}
+              first
+            </>
+          );
+        }
+        return null;
+      };
 
-    const message = renderMessage();
+      const message = renderMessage();
+
+      return (
+        <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+          <div className="flex flex-col theme-gap-2">
+            <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
+              <Database className="h-5 w-5 theme-text-primary" />
+              Generate Database Configuration
+            </h2>
+            <p className="theme-text-foreground">{message}</p>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
-        <div className="flex flex-col theme-gap-2">
+        <div className="flex flex-col theme-gap-3">
           <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
             <Database className="h-5 w-5 theme-text-primary" />
             Generate Database Configuration
           </h2>
           <p className="theme-text-foreground">
-            {message ? (
-              message
-            ) : (
-              <>
-                Define your database schema, tables, and authentication methods.
-                <br />
-                This configuration will be used to generate your database
-                structure and Supabase integration.
-              </>
-            )}
+            Follow the steps below to define your database tables.
+            <br />
+            Start by generating table descriptions based on your app structure.
           </p>
+
+          {!tablesGenerated && (
+            <Button
+              onClick={handleGenerateTableDescriptions}
+              disabled={isPending}
+              className="w-full theme-gap-2"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating tables...
+                </>
+              ) : (
+                <>
+                  <Bot className="h-4 w-4" />
+                  Generate Tables
+                </>
+              )}
+            </Button>
+          )}
         </div>
 
-        <Button
-          onClick={handleGenerateFromReadme}
-          disabled={isGenerateDisabled || isGenerating || !canGenerate}
-          className="w-full theme-gap-2"
-          title={
-            isGenerateDisabled
-              ? "Schema already generated"
-              : !hasReadme
-                ? "Generate README first"
-                : !hasAppStructure
-                  ? "Generate App Structure first"
-                  : "Generate Database"
-          }
+        <Accordion
+          type="single"
+          collapsible
+          value={accordionValue}
+          onValueChange={setAccordionValue}
+          className="w-full"
         >
-          {isGenerating ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <BotMessageSquare className="h-4 w-4" />
-              Generate Database
-            </>
-          )}
-        </Button>
+          <AccordionItem
+            value="step-tables"
+            className={`theme-border-border ${!tablesGenerated ? "opacity-50 pointer-events-none" : ""}`}
+          >
+            <AccordionTrigger
+              className={`hover:theme-text-primary group ${!tablesGenerated ? "cursor-not-allowed" : ""}`}
+            >
+              <div className="flex items-center theme-gap-2">
+                <Sparkles className="h-5 w-5 theme-text-primary" />
+                <span className="font-semibold text-base lg:text-lg group-hover:underline">
+                  Database Tables
+                </span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col theme-gap-4 pt-4">
+                <div className="flex flex-col theme-gap-2">
+                  {tableDescriptions.map((table, index) => (
+                    <DatabaseTableDescriptionItem
+                      key={table.id}
+                      table={table}
+                      index={index}
+                      totalTables={tableDescriptions.length}
+                      isExpanded={expandedTableDescId === table.id}
+                      onToggle={() =>
+                        setExpandedTableDescId(
+                          expandedTableDescId === table.id ? null : table.id
+                        )
+                      }
+                      onUpdate={handleUpdateTable}
+                      onDelete={handleDeleteTableDescription}
+                      disabled={isPending}
+                    />
+                  ))}
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={handleAddTable}
+                  disabled={isPending}
+                  className="w-full theme-gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Table
+                </Button>
+
+                <Button
+                  onClick={handleGenerateFullSchema}
+                  disabled={isPending || !canSubmitTables}
+                  className="w-full theme-gap-2"
+                >
+                  {isGeneratingSchema ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating database...
+                    </>
+                  ) : (
+                    <>
+                      <Bot className="h-4 w-4" />
+                      Generate Database
+                    </>
+                  )}
+                </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     );
   }

@@ -106,15 +106,8 @@ export interface InitialConfigurationType {
   features: {
     authentication: {
       enabled: boolean;
-      magicLink: boolean;
       emailPassword: boolean;
-      otp: boolean;
-      phoneAuth: boolean;
-      googleAuth: boolean;
-      githubAuth: boolean;
-      appleAuth: boolean;
-      emailVerification: boolean;
-      mfa: boolean;
+      magicLink: boolean;
     };
     admin: {
       enabled: boolean;

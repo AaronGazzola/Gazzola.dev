@@ -17,7 +17,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
-  ArrowRight,
+  Bot,
   CheckCircle2,
   FolderTree,
   HelpCircle,
@@ -38,7 +38,7 @@ import {
   parseRoutesToStructure,
 } from "./AppStructure.parser";
 import { buildStructureGenerationPrompt } from "./AppStructure.prompts";
-import { InferredFeature } from "./AppStructure.types";
+import { InferredFeature, FeatureCategory, FeatureComplexity } from "./AppStructure.types";
 import {
   addRouteSegment,
   createRouteFromPath,
@@ -52,6 +52,7 @@ import {
 import { PageFeaturesAccordionItem } from "./AppStructure/PageFeaturesAccordionItem";
 import { useAppStructureStore } from "./AppStructure.stores";
 import { useREADMEStore } from "./READMEComponent.stores";
+import { PageInput, AuthMethods, PageAccess } from "./READMEComponent.types";
 import { SiteMapNode } from "./SiteMapNode";
 import { TreeNode } from "./TreeNode";
 
@@ -96,33 +97,85 @@ export const LayoutAndStructure = () => {
       )
     : [];
 
-  const readmeNode = data.flatIndex["readme"];
-  const readmeContent = readmeNode?.type === "file" ? readmeNode.content : "";
+  const readmeData = {
+    title: readmeStore.title,
+    description: readmeStore.description,
+    pages: readmeStore.pages,
+    authMethods: readmeStore.authMethods,
+    pageAccess: readmeStore.pageAccess,
+  };
 
   const {
     inferredFeatures,
     parsedPages,
     featuresGenerated,
     accordionValue,
-    expandedPageId,
+    lastGeneratedReadmeContent,
     setInferredFeatures,
     setParsedPages,
     setFeaturesGenerated,
     setAccordionValue,
-    setExpandedPageId,
+    setLastGeneratedReadmeContent,
     updateFeature,
-    reset,
   } = useAppStructureStore();
 
+  const [globalExpandedFeatureId, setGlobalExpandedFeatureId] = useState<string | null>(null);
+
   useEffect(() => {
-    console.log("AppStructure state on load:", {
-      inferredFeatures,
-      parsedPages,
-      featuresGenerated,
-      accordionValue,
-      expandedPageId,
+    if (globalExpandedFeatureId === null && featuresGenerated && Object.keys(inferredFeatures).length > 0) {
+      const firstPageFeatures = Object.values(inferredFeatures)[0];
+      if (firstPageFeatures && firstPageFeatures.length > 0) {
+        setGlobalExpandedFeatureId(firstPageFeatures[0].id);
+      }
+    }
+  }, [featuresGenerated, inferredFeatures, globalExpandedFeatureId]);
+
+  const handleAddFeature = useCallback((pageId: string) => {
+    const newFeature: InferredFeature = {
+      id: generateId(),
+      pageId: pageId,
+      title: "New Feature",
+      description: "",
+      category: FeatureCategory.UI_INTERACTION,
+      complexity: FeatureComplexity.SIMPLE,
+      actionVerbs: [],
+      dataEntities: [],
+      requiresRealtimeUpdates: false,
+      requiresFileUpload: false,
+      requiresExternalApi: false,
+      databaseTables: [],
+      utilityFileNeeds: {
+        hooks: true,
+        actions: false,
+        stores: false,
+        types: true,
+      },
+    };
+
+    setInferredFeatures({
+      ...inferredFeatures,
+      [pageId]: [...(inferredFeatures[pageId] || []), newFeature],
     });
-  }, []);
+    setGlobalExpandedFeatureId(newFeature.id);
+  }, [inferredFeatures, setInferredFeatures]);
+
+  const handleDeleteFeature = useCallback((featureId: string) => {
+    const updatedFeatures = { ...inferredFeatures };
+
+    for (const pageId in updatedFeatures) {
+      updatedFeatures[pageId] = updatedFeatures[pageId].filter(
+        (f) => f.id !== featureId
+      );
+    }
+
+    setInferredFeatures(updatedFeatures);
+
+    if (globalExpandedFeatureId === featureId) {
+      setGlobalExpandedFeatureId(null);
+    }
+  }, [inferredFeatures, setInferredFeatures, globalExpandedFeatureId]);
+
+  useEffect(() => {}, []);
 
   const { mutate: generateFeatures, isPending: isGeneratingFeatures } =
     useCodeGeneration((response) => {
@@ -190,9 +243,9 @@ export const LayoutAndStructure = () => {
         setFeaturesGenerated(true);
         setAccordionValue("step-features");
 
-        const pageIds = Object.keys(allFeatures);
-        if (pageIds.length > 0) {
-          setExpandedPageId(pageIds[0]);
+        const firstPageFeatures = Object.values(allFeatures)[0];
+        if (firstPageFeatures && firstPageFeatures.length > 0) {
+          setGlobalExpandedFeatureId(firstPageFeatures[0].id);
         }
 
         toast.success(
@@ -213,6 +266,14 @@ export const LayoutAndStructure = () => {
           .trim();
         const parsed = JSON.parse(cleanResponse);
 
+        console.log("APP STRUCTURE GENERATION OUTPUT:", JSON.stringify({
+          responseContent: response.content,
+          cleanedResponse: cleanResponse,
+          parsedResult: parsed,
+          structureCount: parsed.structure?.length || 0,
+          featuresCount: Object.keys(parsed.features || {}).length
+        }, null, 2));
+
         if (!parsed.structure || !parsed.features) {
           toast.error("Invalid AI response format");
           return;
@@ -224,33 +285,59 @@ export const LayoutAndStructure = () => {
 
         toast.success(`App structure generated with ${parsedPages.length} pages`);
       } catch (error) {
-        console.error("Failed to parse AI response:", error);
         toast.error("Failed to generate structure. Please try again.");
       }
     });
 
   const handleGenerateFeatures = useCallback(() => {
-    if (!readmeContent || readmeContent.trim().length === 0) {
-      toast.error("No README content found. Please generate README first.");
+    if (!readmeData.title || !readmeData.description || readmeData.pages.length === 0) {
+      toast.error("No README data found. Please generate README first.");
       return;
     }
 
-    const cleanContent = readmeContent
-      .replace("<!-- component-READMEComponent -->\n\n", "")
-      .trim();
+    const readmeSnapshot = JSON.stringify(readmeData);
+    setLastGeneratedReadmeContent(readmeSnapshot);
 
-    const combinedPrompt = `You are analyzing a README for a Next.js web application to infer features for each page.
+    const authMethodsList = Object.entries(readmeData.authMethods)
+      .filter(([_, enabled]) => enabled)
+      .map(([method]) => method)
+      .join(", ");
 
-README CONTENT:
-${cleanContent}
+    const pagesWithAccess = readmeData.pages.map(page => {
+      const access = readmeData.pageAccess.find(pa => pa.pageId === page.id);
+      const accessLevels = access
+        ? Object.entries(access)
+            .filter(([key, value]) => key !== 'pageId' && value)
+            .map(([key]) => key)
+            .join(", ")
+        : "not specified";
+
+      return {
+        name: page.name,
+        route: page.route,
+        description: page.description,
+        accessLevels,
+      };
+    });
+
+    const structuredData = {
+      appTitle: readmeData.title,
+      appDescription: readmeData.description,
+      authMethods: authMethodsList || "none",
+      pages: pagesWithAccess,
+    };
+
+    const combinedPrompt = `You are analyzing a Next.js web application to infer features for each page.
+
+APP DATA:
+${JSON.stringify(structuredData, null, 2)}
 
 INSTRUCTIONS:
-1. Parse the README to identify all pages and their routes
-2. For each page, infer 2-5 features based on the page description
-3. Determine which utility files each feature needs (hooks, actions, stores, types)
-4. Identify relevant database tables for each feature
-5. Categorize each feature appropriately
-6. Determine complexity level (simple, moderate, complex)
+1. For each page, infer 2-5 features based on the page description and access levels
+2. Determine which utility files each feature needs (hooks, actions, stores, types)
+3. Identify relevant database tables for each feature
+4. Categorize each feature appropriately
+5. Determine complexity level (simple, moderate, complex)
 
 Return a JSON object with this structure:
 {
@@ -305,12 +392,8 @@ UTILITY FILE RULES:
 Return only the JSON object, no additional text.`;
 
     generateFeatures({ prompt: combinedPrompt, maxTokens: 4000 });
-  }, [readmeContent, generateFeatures]);
+  }, [readmeData, generateFeatures, setLastGeneratedReadmeContent]);
 
-  const handleRegenerateFeatures = useCallback(() => {
-    reset();
-    handleGenerateFeatures();
-  }, [reset, handleGenerateFeatures]);
 
   const handleGenerateStructure = useCallback(() => {
     if (!parsedPages || parsedPages.length === 0) {
@@ -324,6 +407,16 @@ Return only the JSON object, no additional text.`;
     }
 
     const prompt = buildStructureGenerationPrompt(parsedPages, inferredFeatures);
+
+    console.log("APP STRUCTURE GENERATION INPUT:", JSON.stringify({
+      prompt,
+      inputData: {
+        parsedPages,
+        inferredFeatures,
+        pageCount: parsedPages.length,
+        totalFeatures: Object.values(inferredFeatures).reduce((sum, features) => sum + features.length, 0)
+      }
+    }, null, 2));
 
     generateStructure({ prompt, maxTokens: 6000 });
   }, [parsedPages, inferredFeatures, generateStructure]);
@@ -419,7 +512,7 @@ Return only the JSON object, no additional text.`;
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
-  const hasReadme = readmeGenerated && readmeContent;
+  const hasReadme = readmeGenerated && readmeData.title && readmeData.pages.length > 0;
   const isPending = isGeneratingFeatures;
 
   const totalFeatures = Object.values(inferredFeatures).reduce(
@@ -460,7 +553,7 @@ Return only the JSON object, no additional text.`;
             Start by defining the features for each page based on your README.
           </p>
 
-          {!featuresGenerated ? (
+          {!featuresGenerated && (
             <Button
               onClick={handleGenerateFeatures}
               disabled={isPending}
@@ -473,20 +566,10 @@ Return only the JSON object, no additional text.`;
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-4 w-4" />
+                  <Bot className="h-4 w-4" />
                   Generate Features
                 </>
               )}
-            </Button>
-          ) : (
-            <Button
-              variant="link"
-              onClick={handleRegenerateFeatures}
-              disabled={isPending}
-              className="theme-gap-2 self-start"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Regenerate features from README
             </Button>
           )}
         </div>
@@ -514,30 +597,22 @@ Return only the JSON object, no additional text.`;
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col theme-gap-4 pt-4">
-                <div className="flex items-center justify-between theme-py-2 theme-px-4 theme-bg-muted theme-radius">
-                  <span className="   font-semibold theme-font-sans theme-tracking">
-                    {totalFeatures} {totalFeatures === 1 ? 'feature' : 'features'} across {parsedPages.length} {parsedPages.length === 1 ? 'page' : 'pages'}
-                  </span>
-                </div>
-
                 <div className="flex flex-col theme-gap-2">
                   {parsedPages.map((page) => {
                     const features = inferredFeatures[page.id] || [];
-                    if (features.length === 0) return null;
 
                     return (
                       <PageFeaturesAccordionItem
                         key={page.id}
+                        pageId={page.id}
                         pageName={page.name}
                         pageRoute={page.route}
                         features={features}
-                        isExpanded={expandedPageId === page.id}
-                        onToggle={() =>
-                          setExpandedPageId(
-                            expandedPageId === page.id ? null : page.id
-                          )
-                        }
+                        expandedFeatureId={globalExpandedFeatureId}
+                        onToggleFeature={setGlobalExpandedFeatureId}
                         onUpdateFeature={updateFeature}
+                        onAddFeature={handleAddFeature}
+                        onDeleteFeature={handleDeleteFeature}
                         disabled={isPending}
                       />
                     );
@@ -556,7 +631,7 @@ Return only the JSON object, no additional text.`;
                     </>
                   ) : (
                     <>
-                      <ArrowRight className="h-4 w-4" />
+                      <Bot className="h-4 w-4" />
                       Generate App Structure
                     </>
                   )}
