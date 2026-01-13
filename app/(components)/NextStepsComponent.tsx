@@ -26,7 +26,6 @@ import {
   Laptop,
   MessagesSquare,
   PackageOpen,
-  Plus,
   ScrollText,
 } from "lucide-react";
 import Link from "next/link";
@@ -102,7 +101,7 @@ export const NextStepsComponent = () => {
     setOpenStep(`step-${nextStepId}`);
 
     const stepAfterNext = nextStepId + 1;
-    if (stepAfterNext <= 8 && !unlockedSteps.has(stepAfterNext)) {
+    if (stepAfterNext <= 9 && !unlockedSteps.has(stepAfterNext)) {
       unlockStep(stepAfterNext);
     }
   };
@@ -112,7 +111,7 @@ export const NextStepsComponent = () => {
     if (value) {
       const stepId = parseInt(value.replace("step-", ""));
       const nextStepId = stepId + 1;
-      if (nextStepId <= 8 && !unlockedSteps.has(nextStepId)) {
+      if (nextStepId <= 9 && !unlockedSteps.has(nextStepId)) {
         unlockStep(nextStepId);
       }
     }
@@ -342,17 +341,69 @@ export const NextStepsComponent = () => {
     },
     {
       id: 6,
-      title: "Chat with Claude to set up your project",
-      description: "Use Claude to configure everything",
+      title: "Clone your repository",
+      description: "Connect VS Code to your GitHub repository",
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
             <h4 className="font-semibold theme-text-foreground mb-2">
-              Copy and paste your first prompt
+              Get Your Repository URL
+            </h4>
+            <ol className="theme-text-foreground space-y-2 list-decimal list-inside mb-3">
+              <li>Navigate to your GitHub repository from step 1</li>
+              <li>
+                In the &quot;Quick setup&quot; section, click the
+                &quot;HTTPS&quot; button
+              </li>
+              <li>Click the copy icon to copy the repository URL</li>
+            </ol>
+            <Button
+              variant="outline"
+              className="theme-gap-2 text-base"
+              onClick={() => window.open("https://github.com", "_blank")}
+            >
+              <ExternalLink className="h-4 w-4" />
+              Go to GitHub
+            </Button>
+          </div>
+          <div className="theme-bg-muted theme-radius theme-p-4">
+            <h4 className="font-semibold theme-text-foreground mb-2">
+              Clone Repository in VS Code
+            </h4>
+            <ol className="theme-text-foreground space-y-2 list-decimal list-inside mb-3">
+              <li>Open VS Code</li>
+              <li>
+                Open Command Palette (Cmd+Shift+P on Mac, Ctrl+Shift+P on
+                Windows)
+              </li>
+              <li>Type &quot;Git: Clone&quot; and select it</li>
+              <li>Paste your HTTPS repository URL</li>
+              <li>Choose a folder location on your computer</li>
+              <li>When prompted, sign in to GitHub through your browser</li>
+              <li>Click &quot;Open&quot; to open the cloned folder</li>
+            </ol>
+            <p className="theme-text-foreground text-sm italic">
+              Note: VS Code will authenticate with GitHub through your browser.
+              This is normal and only needs to be done once.
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 7,
+      title: "Set up your project with Claude",
+      description: "Use Claude to scaffold your Next.js application",
+      content: (
+        <div className="flex flex-col theme-gap-4">
+          <div className="theme-bg-muted theme-radius theme-p-4">
+            <h4 className="font-semibold theme-text-foreground mb-2">
+              Chat with Claude to Set Up Your Project
             </h4>
             <p className="theme-text-foreground mb-3">
-              Copy the prompt below, paste it into your Claude chat in VSCode
-              and follow the instructions.
+              Copy the prompt below and paste it into your Claude chat in VS
+              Code. Claude will scaffold your Next.js project and set up all
+              configurations.
             </p>
             <Popover
               open={promptPopoverOpen}
@@ -409,7 +460,7 @@ export const NextStepsComponent = () => {
       ),
     },
     {
-      id: 7,
+      id: 8,
       title: "Deploy with Vercel (Optional)",
       description: "Set up automatic deployments",
       content: (
@@ -460,9 +511,9 @@ export const NextStepsComponent = () => {
       ),
     },
     {
-      id: 8,
-      title: "Download and unpack your starter kit",
-      description: "Get your custom-configured project files",
+      id: 9,
+      title: "Download your starter kit",
+      description: "Get your project documentation and templates",
       content:
         !readmeGenerated || !appStructureGenerated ? (
           <div className="flex flex-col theme-gap-4">
@@ -505,7 +556,10 @@ export const NextStepsComponent = () => {
             <div className="theme-bg-muted theme-radius theme-p-4">
               <ol className="theme-text-foreground space-y-2 list-decimal list-inside mb-3">
                 <li>Download your starter kit</li>
-                <li>Move your starter kit into your project directory</li>
+                <li>
+                  Move your starter kit into the top level of your project
+                  directory
+                </li>
                 <li>
                   Copy the prompt below and paste it into your Claude chat in
                   VSCode
@@ -615,20 +669,28 @@ export const NextStepsComponent = () => {
       case 4:
         return (
           <div className="flex flex-col sm:flex-row items-center gap-0.5 flex-shrink-0 mr-1 lg:mr-2">
-            <VSCodeLogo className="h-5 w-5 flex-shrink-0" />
-            <Plus className="h-4 w-4 flex-shrink-0" />
             <ClaudeCodeLogo className="h-5 w-5 flex-shrink-0" />
+            <ArrowRight className="h-4 w-4 flex-shrink-0" />
+            <VSCodeLogo className="h-5 w-5 flex-shrink-0" />
           </div>
         );
       case 5:
         return <SupabaseLogo className="h-5 w-5 flex-shrink-0" />;
       case 6:
         return (
-          <MessagesSquare className="h-5 w-5 flex-shrink-0 theme-text-primary" />
+          <div className="flex flex-col sm:flex-row items-center gap-0.5 flex-shrink-0 mr-1 lg:mr-2">
+            <GitHubSmallLogo className="h-5 w-5 flex-shrink-0" />
+            <ArrowRight className="h-4 w-4 flex-shrink-0" />
+            <VSCodeLogo className="h-5 w-5 flex-shrink-0" />
+          </div>
         );
       case 7:
-        return <VercelLogo className="h-5 w-5 flex-shrink-0" />;
+        return (
+          <MessagesSquare className="h-5 w-5 flex-shrink-0 theme-text-primary" />
+        );
       case 8:
+        return <VercelLogo className="h-5 w-5 flex-shrink-0" />;
+      case 9:
         return <PackageOpen className="h-5 w-5 flex-shrink-0" />;
       default:
         return null;

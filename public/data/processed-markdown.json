@@ -275,7 +275,7 @@
           },
           "section2": {
             "option1": {
-              "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.\n\n## Example of file patterns - [`util.md`](util.md)\n\nFollow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.",
+              "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/supabase/types`.\n\n## Example of file patterns - [`util.md`](util.md)\n\nFollow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.",
               "include": true
             },
             "option2": {
@@ -283,7 +283,7 @@
               "include": true
             },
             "option3": {
-              "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.",
+              "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/supabase/types` for Supabase.",
               "include": true
             },
             "option4": {
@@ -724,7 +724,7 @@
             },
             "section2": {
               "option1": {
-                "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.\n\n## Example of file patterns - [`util.md`](util.md)\n\nFollow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.",
+                "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/supabase/types`.\n\n## Example of file patterns - [`util.md`](util.md)\n\nFollow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.",
                 "include": true
               },
               "option2": {
@@ -732,7 +732,7 @@
                 "include": true
               },
               "option3": {
-                "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.",
+                "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/supabase/types` for Supabase.",
                 "include": true
               },
               "option4": {
@@ -1223,7 +1223,7 @@
         },
         "section2": {
           "option1": {
-            "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/integrations/supabase/types`.\n\n## Example of file patterns - [`util.md`](util.md)\n\nFollow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.",
+            "content": "DB <-> Supabase Client <-> hook <-> store\n\n- Supabase client queries are called directly in react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- All db types should be defined from `@/supabase/types`.\n\n## Example of file patterns - [`util.md`](util.md)\n\nFollow the examples outlined in [`util.md`](util.md) when working on hook, store or type files.",
             "include": true
           },
           "option2": {
@@ -1231,7 +1231,7 @@
             "include": true
           },
           "option3": {
-            "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/integrations/supabase/types` for Supabase.",
+            "content": "DB <-> Action/Supabase Client <-> hook <-> store\n\n- Better-auth client methods are called directly in react-query hooks.\n- Prisma client queries are called in actions via getAuthenticatedClient for NeonDB.\n- Supabase client queries are called directly in react-query hooks for real-time features.\n- Actions are called via react-query hooks.\n- Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store.\n- Loading and error state is managed via the react-query hooks, NOT the zustand store.\n- Database types should be defined from `\"@prisma/client\"` for NeonDB and `@/supabase/types` for Supabase.",
             "include": true
           },
           "option4": {

@@ -1581,6 +1581,45 @@ const processNode = (
   }
 };
 
+const loadFolderFromPublicData = async (
+  zip: JSZip,
+  targetFolder: JSZip,
+  folderName: string
+): Promise<void> => {
+  try {
+    const response = await fetch("/data-file-list.json");
+    if (!response.ok) return;
+
+    const fileList: string[] = await response.json();
+    const folderFiles = fileList.filter(
+      (path) => path.startsWith(`${folderName}/`) && !path.endsWith(".gitkeep")
+    );
+
+    for (const filePath of folderFiles) {
+      const fileResponse = await fetch(`/data/${filePath}`);
+      if (fileResponse.ok) {
+        const content = await fileResponse.text();
+        const relativePath = filePath.replace(`${folderName}/`, "");
+        const pathParts = relativePath.split("/");
+        const fileName = pathParts.pop();
+
+        let currentFolder: JSZip | null = targetFolder;
+        for (const part of pathParts) {
+          if (currentFolder) {
+            currentFolder = currentFolder.folder(part);
+          }
+        }
+
+        if (currentFolder && fileName) {
+          currentFolder.file(fileName, content);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn(`Could not load ${folderName} from public/data:`, error);
+  }
+};
+
 export const generateAndDownloadZip = async (
   markdownData: MarkdownData,
   codeFiles: CodeFileNode[],
@@ -1603,63 +1642,75 @@ export const generateAndDownloadZip = async (
   getInitialConfiguration: () => InitialConfigurationType
 ): Promise<void> => {
   const zip = new JSZip();
-  const roadmapFolder = zip.folder("Roadmap");
+  const projectName =
+    getPlaceholderValue("projectName") || "My_Project";
+  const folderName = `${projectName.replace(/\s+/g, "_")}_Starter_Kit`;
+  const starterKitFolder = zip.folder(folderName);
 
-  if (markdownData.root && markdownData.root.children && roadmapFolder) {
-    markdownData.root.children
-      .filter((child) => child.include !== false)
-      .forEach((child) => {
-        processNode(
-          child,
-          zip,
-          roadmapFolder,
+  if (!starterKitFolder) {
+    throw new Error("Failed to create starter kit folder");
+  }
+
+  const configurationFolder = starterKitFolder.folder("configuration");
+  if (!configurationFolder) {
+    throw new Error("Failed to create configuration folder");
+  }
+
+  const markdownFiles = [
+    { path: "/data/markdown/1-README.md", name: "README.md" },
+    { path: "/data/markdown/2-Theme.md", name: "Theme.md" },
+    { path: "/data/markdown/3-App_Directory.md", name: "App_Directory.md" },
+    { path: "/data/markdown/4-Database.md", name: "Database.md" },
+  ];
+
+  for (const file of markdownFiles) {
+    try {
+      const response = await fetch(file.path);
+      if (response.ok) {
+        const rawContent = await response.text();
+        const processedContent = processContent(
+          rawContent,
+          file.path,
           getSectionInclude,
           getSectionContent,
           getSectionOptions,
           appStructure,
           getPlaceholderValue,
-          getInitialConfiguration
+          getInitialConfiguration,
+          true
         );
-      });
-
-    codeFiles.forEach((codeFile) => {
-      if (!codeFile.includeCondition()) return;
-
-      const pathParts = codeFile.downloadPath?.split("/") || [];
-      let currentFolder: JSZip | null = roadmapFolder;
-
-      pathParts.forEach((part) => {
-        if (currentFolder) {
-          currentFolder = currentFolder.folder(part);
-        }
-      });
-
-      if (currentFolder) {
-        const fileContent = codeFile.content();
-        currentFolder.file(codeFile.name, fileContent);
+        configurationFolder.file(file.name, processedContent);
       }
-    });
-
-    const initialConfig = getInitialConfiguration();
-    if (initialConfig.questions.databaseProvider === "supabase") {
-      const databaseState = useDatabaseStore.getState();
-      const migrationSQL = databaseState.generateSupabaseMigration();
-
-      const supabaseFolder = roadmapFolder.folder("supabase");
-      if (supabaseFolder) {
-        const migrationsFolder = supabaseFolder.folder("migrations");
-        if (migrationsFolder) {
-          migrationsFolder.file("00000000000000_init.sql", migrationSQL);
-        }
-      }
+    } catch (error) {
+      console.error(`Failed to load ${file.name}:`, error);
     }
+  }
+
+  try {
+    const claudeResponse = await fetch("/data/CLAUDE.md");
+    if (claudeResponse.ok) {
+      const claudeContent = await claudeResponse.text();
+      starterKitFolder.file("CLAUDE.md", claudeContent);
+    }
+  } catch (error) {
+    console.error("Failed to load CLAUDE.md:", error);
+  }
+
+  const templatesFolder = starterKitFolder.folder("templates");
+  if (templatesFolder) {
+    await loadFolderFromPublicData(zip, templatesFolder, "templates");
+  }
+
+  const documentationFolder = starterKitFolder.folder("documentation");
+  if (documentationFolder) {
+    await loadFolderFromPublicData(zip, documentationFolder, "documentation");
   }
 
   const blob = await zip.generateAsync({ type: "blob" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "roadmap.zip";
+  link.download = `${folderName}.zip`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

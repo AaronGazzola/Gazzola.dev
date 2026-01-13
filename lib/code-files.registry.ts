@@ -1,8 +1,11 @@
-import type { IDEType } from "@/app/(editor)/layout.types";
+import type {
+  PrismaTable,
+  RLSPolicy,
+} from "@/app/(components)/DatabaseConfiguration.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
-import type { PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
 import type {
   CodeFileNode,
+  IDEType,
   InitialConfigurationType,
 } from "@/app/(editor)/layout.types";
 import { componentFileContents } from "./component-files.generated";
@@ -452,7 +455,7 @@ DB <-> Supabase Client <-> hook <-> store
 - Supabase client queries are called directly in react-query hooks.
 - Data returned in the onSuccess function of react-query hooks is used to update the corresponding zustand store (if applicable).
 - Loading and error state is managed via the react-query hooks, NOT the zustand store.
-- All db types should be defined from \\\`@/integrations/supabase/types\\\`.
+- All db types should be defined from \\\`@/supabase/types\\\`.
 
 ## Example of file patterns - [\\\`util.md\\\`](util.md)
 

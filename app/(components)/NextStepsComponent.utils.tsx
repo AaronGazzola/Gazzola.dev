@@ -1,6 +1,10 @@
-import { SiGithub, SiNodedotjs, SiVercel } from "react-icons/si";
-
-export const ClaudeCodeLogo = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+export const ClaudeCodeLogo = ({
+  className,
+  style,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     shapeRendering="geometricPrecision"
@@ -39,7 +43,13 @@ export const GitHubSmallLogo = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const VSCodeLogo = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+export const VSCodeLogo = ({
+  className,
+  style,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+}) => (
   <svg
     viewBox="0 0 32 32"
     xmlns="http://www.w3.org/2000/svg"
@@ -184,72 +194,60 @@ export const VercelLogo = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const SETUP_PROMPT = `Hello! I need help setting up a new Next.js development environment. Follow these steps:
+export const SETUP_PROMPT = `I need help setting up my Next.js project. Please work through these steps one at a time, pause to ask for my input only when needed:
 
-1. GIT INSTALLATION
-   - Check: git --version
-   - If not installed:
-     * macOS: Install Xcode Command Line Tools: xcode-select --install
-     * Windows: Download from git-scm.com
-     * Linux: sudo apt-get install git (Debian/Ubuntu) or sudo yum install git (Red Hat/Fedora)
-   - Verify: git --version
+1. CHECK PREREQUISITES
+   - Check if git and Node.js are installed by running: git --version && node --version
+   - If git is missing: guide me to install it for my operating system
+   - If Node.js is missing or version is below 18: direct me to download the LTS version from nodejs.org
 
-2. NODE.JS INSTALLATION
-   - Check: node --version
-   - If not installed or version < 18.17.0:
-     * Visit nodejs.org and download LTS version
-     * Platform-agnostic installer available
-   - Verify: node --version && npm --version
+2. INSTALL NEXT.JS
+   - Once prerequisites are confirmed, install Next.js in the current directory
+   - Use the command: npx create-next-app@latest . --yes
+   - Help me select the appropriate configuration options when prompted
 
-3. NEXT.JS PROJECT SETUP
-   - Initialize in current directory
-   - Install all dependencies from package.json
-   - Verify: npx next --version
+3. CLEAN UP BOILERPLATE
+   - After installation, help me delete unnecessary boilerplate files
+   - Set up a clean initial project structure
 
-4. SUPABASE CONFIGURATION
-   - Ask me for:
-     * SUPABASE_URL (Project URL)
-     * SUPABASE_ANON_KEY (Anon/Public Key)
-     * SUPABASE_SERVICE_ROLE_KEY (Service Role - secret!)
+4. CONFIGURE ENVIRONMENT (only when we reach this step)
+   - Guide me to find my Supabase credentials in the dashboard:
 
-   - Create .env.local:
-     NEXT_PUBLIC_SUPABASE_URL=<url>
-     NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
-     SUPABASE_SERVICE_ROLE_KEY=<service-key>
+     To get your keys:
+     1. Go to your Supabase project dashboard
+     2. Click "Project Settings" in the left sidebar
+     3. Click "API Keys" in the left settings menu
+     4. Scroll down to "Publishable key" and click the copy button next to the "default" key and paste it here (starts with "sb_publishable_")
+     5. Scroll down to "Secret keys" and click the copy button next to the "default" key and paste it here (starts with "sb_secret_")
+     6. Also copy the URL in your browser's URL/search bar (starts with: "https://supabase.com/dashboard/project/") and paste it here 
+
+   - After I provide these credentials, create a .env.local file (extract the supabase URL from the full url provided, eg: "https://supabase.com/dashboard/project/cqblezzhywdjerslhgho/settings/api-keys/legacy" -> "https://cqblezzhywdjerslhgho.supabase.co"):
+     NEXT_PUBLIC_SUPABASE_URL=<my-project-url>
+     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<my-anon-key>
+     SUPABASE_SECRET_KEY=<my-service-role-key>
 
    - Verify .gitignore includes .env.local
+   - Add a .env.example file with the supabase key variable names without the values
 
-5. GITHUB SSH SETUP
-   - Check existing: ls -la ~/.ssh
-   - Generate if needed:
-     * ssh-keygen -t ed25519 -C "your-email@example.com"
-     * Start agent, add key
-     * Get public key: cat ~/.ssh/id_ed25519.pub
+5. INITIAL COMMIT AND PUSH
+   - Commit and push the changes
+   - Note: I'm already authenticated with GitHub from when I cloned this repository
+   - Run git add . && git commit -m "Initial Next.js setup" && git push`;
 
-   - Add to GitHub:
-     * Settings → SSH and GPG keys → New SSH key
-     * Paste public key
+export const FINAL_PROMPT = `Starter kit downloaded! Extract the ZIP file and explore your project:
 
-   - Ask me for repository SSH URL
-   - Set remote: git remote add origin <ssh-url>
-   - Verify: git remote -v
+📁 Your starter kit contains:
+- docs/README.md - Project overview and getting started guide
+- docs/App_Directory.md - Application structure and feature map
+- docs/Theme.md - Theme configuration and styling
+- docs/Database.md - Database schema and migrations
+- CLAUDE.md - Guidance for Claude Code when working with your project
+- templates/ - Template files for your project
 
-6. INITIAL COMMIT
-   - Review files
-   - When ready:
-     * git add .
-     * git commit -m "Initial commit"
-     * git push -u origin main
+📋 Next steps:
+1. Extract the ZIP file
+2. Move the contents into your project directory in VS Code
+3. Ask Claude to help you set up your project using the documentation
 
-   - Confirm success on GitHub
-
-Ask for information step-by-step. Don't assume anything is already set up.`;
-
-export const FINAL_PROMPT = `Starter kit downloaded! Extract the ZIP and refer to the INSTALL.md file for:
-- Environment requirements
-- Database migrations
-- Development server
-- Testing guidelines
-- Deployment steps
-
-Ask Claude to help you follow INSTALL.md instructions.`;
+Paste this prompt in Claude Code to get started:
+"Help me set up this project using the documentation in the docs folder. Start by reading docs/README.md and guide me through the setup process step by step."`;

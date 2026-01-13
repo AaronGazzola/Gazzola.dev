@@ -1,0 +1,13 @@
+[
+  "templates/.gitkeep",
+  "templates/SUPABASE_CLIENT_GUIDE.md",
+  "templates/template.actions.ts",
+  "templates/template.hooks.tsx",
+  "templates/template.stores.ts",
+  "templates/template.supabase-admin-client.ts",
+  "templates/template.supabase-browser-client.ts",
+  "templates/template.supabase-middleware.ts",
+  "templates/template.supabase-server-client.ts",
+  "templates/template.types.ts",
+  "documentation/example-guide.md"
+]
