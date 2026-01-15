@@ -8,8 +8,6 @@ import {
   DialogDescription as EditorDialogDescription,
   DialogFooter as EditorDialogFooter,
   DialogHeader as EditorDialogHeader,
-  DialogOverlay as EditorDialogOverlay,
-  DialogPortal as EditorDialogPortal,
   DialogTitle as EditorDialogTitle,
 } from "@/components/editor/ui/dialog";
 import {
@@ -35,10 +33,7 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  Download,
   Ellipsis,
-  FileDown,
-  FolderDown,
   HardDriveUpload,
   ListRestart,
   MessagesSquare,
@@ -156,7 +151,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resetPopoverOpen, setResetPopoverOpen] = useState(false);
   const [savePopoverOpen, setSavePopoverOpen] = useState(false);
-  const [downloadPopoverOpen, setDownloadPopoverOpen] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -630,73 +624,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     );
   };
 
-  const handleDownloadContent = () => {
-    const content = getProcessedContent();
-    if (!content) {
-      toast.error("No content to download");
-      return;
-    }
-    const currentNode = data.flatIndex[currentContentPath];
-    const fileName = currentNode?.name || "document";
-    const fileExtension = (currentNode as any)?.fileExtension || "md";
-
-    const blob = new Blob([content], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${fileName}.${fileExtension}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast.success("Content downloaded!");
-    setDownloadPopoverOpen(false);
-  };
-
-  const handleDownloadAllPages = async () => {
-    try {
-      const { generateAndDownloadZip } = await import("@/lib/download.utils");
-      const {
-        data: markdownData,
-        codeFiles,
-        getSectionInclude,
-        getSectionContent,
-        getSectionOptions,
-        appStructure,
-        getPlaceholderValue,
-        getInitialConfiguration,
-      } = useEditorStore.getState();
-
-      await generateAndDownloadZip(
-        markdownData,
-        codeFiles,
-        getSectionInclude,
-        (filePath: string, sectionId: string, optionId: string) => {
-          const node = markdownData.flatIndex[filePath];
-          if (node?.type === "file" && node.sections?.[sectionId]?.[optionId]) {
-            return node.sections[sectionId][optionId].content || "";
-          }
-          return "";
-        },
-        (filePath: string, sectionId: string) => {
-          const node = markdownData.flatIndex[filePath];
-          if (node?.type === "file" && node.sections?.[sectionId]) {
-            return node.sections[sectionId];
-          }
-          return {};
-        },
-        appStructure,
-        getPlaceholderValue,
-        getInitialConfiguration
-      );
-      toast.success("All pages downloaded!");
-      setDownloadPopoverOpen(false);
-    } catch (error) {
-      console.error("Failed to download all pages:", error);
-      toast.error("Failed to download all pages");
-    }
-  };
-
   const handleSaveProgress = () => {
     try {
       const state = useEditorStore.getState();
@@ -749,8 +676,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           tablesGenerated: databaseTablesState.tablesGenerated,
           accordionValue: databaseTablesState.accordionValue,
           expandedTableId: databaseTablesState.expandedTableId,
-          lastGeneratedAppStructure: databaseTablesState.lastGeneratedAppStructure,
-          lastGeneratedTableDescriptions: databaseTablesState.lastGeneratedTableDescriptions,
+          lastGeneratedAppStructure:
+            databaseTablesState.lastGeneratedAppStructure,
+          lastGeneratedTableDescriptions:
+            databaseTablesState.lastGeneratedTableDescriptions,
         },
         nextStepsState: {
           openStep: nextStepsState.openStep,
@@ -777,199 +706,233 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     }
   };
 
-  const processUploadedFile = useCallback(async (file: File) => {
-    try {
-      const text = await file.text();
-      const progressData = JSON.parse(text);
+  const processUploadedFile = useCallback(
+    async (file: File) => {
+      try {
+        const text = await file.text();
+        const progressData = JSON.parse(text);
 
-      if (!progressData.version || !progressData.editorState) {
-        toast.error("Invalid progress file format");
-        return;
-      }
-
-      const editorStore = useEditorStore.getState();
-      const themeStore = useThemeConfigStore.getState();
-      const databaseStore = useDatabaseStore.getState();
-      const appStructureStore = useAppStructureStore.getState();
-      const readmeStore = useREADMEStore.getState();
-      const databaseTablesStore = useDatabaseTablesStore.getState();
-      const nextStepsStore = useNextStepsStore.getState();
-
-      if (progressData.themeState) {
-        themeStore.setTheme(progressData.themeState);
-      }
-
-      if (progressData.databaseState) {
-        databaseStore.reset();
-        const tableIdMap = new Map<string, string>();
-
-        if (progressData.databaseState.tables) {
-          progressData.databaseState.tables.forEach((table: any) => {
-            const newTableId = databaseStore.addTable(table.name, table.schema);
-            tableIdMap.set(table.id, newTableId);
-
-            if (table.columns) {
-              table.columns.forEach((col: any) => {
-                databaseStore.addColumn(newTableId, col);
-              });
-            }
-          });
+        if (!progressData.version || !progressData.editorState) {
+          toast.error("Invalid progress file format");
+          return;
         }
-        if (progressData.databaseState.enums) {
-          progressData.databaseState.enums.forEach((enumData: any) => {
-            const enumId = databaseStore.addEnum(enumData.name);
-            if (enumData.values) {
-              enumData.values.forEach((val: any) => {
-                databaseStore.addEnumValue(enumId, val.value);
-              });
-            }
-          });
-        }
-        if (progressData.databaseState.rlsPolicies) {
-          progressData.databaseState.rlsPolicies.forEach((policy: any) => {
-            const newTableId = tableIdMap.get(policy.tableId);
-            if (newTableId && policy.rolePolicies) {
-              policy.rolePolicies.forEach((rolePolicy: any) => {
-                databaseStore.addOrUpdateRLSPolicy(
-                  newTableId,
-                  policy.operation,
-                  rolePolicy.role,
-                  rolePolicy.accessType,
-                  rolePolicy.relatedTable
-                );
-              });
-            }
-          });
-        }
-        if (progressData.databaseState.plugins) {
-          progressData.databaseState.plugins.forEach((plugin: any) => {
-            databaseStore.addPlugin(plugin);
-          });
-        }
-      }
 
-      if (progressData.appStructureState) {
-        if (progressData.appStructureState.inferredFeatures) {
-          appStructureStore.setInferredFeatures(
-            progressData.appStructureState.inferredFeatures
+        const editorStore = useEditorStore.getState();
+        const themeStore = useThemeConfigStore.getState();
+        const databaseStore = useDatabaseStore.getState();
+        const appStructureStore = useAppStructureStore.getState();
+        const readmeStore = useREADMEStore.getState();
+        const databaseTablesStore = useDatabaseTablesStore.getState();
+        const nextStepsStore = useNextStepsStore.getState();
+
+        if (progressData.themeState) {
+          themeStore.setTheme(progressData.themeState);
+        }
+
+        if (progressData.databaseState) {
+          databaseStore.reset();
+          const tableIdMap = new Map<string, string>();
+
+          if (progressData.databaseState.tables) {
+            progressData.databaseState.tables.forEach((table: any) => {
+              const newTableId = databaseStore.addTable(
+                table.name,
+                table.schema
+              );
+              tableIdMap.set(table.id, newTableId);
+
+              if (table.columns) {
+                table.columns.forEach((col: any) => {
+                  databaseStore.addColumn(newTableId, col);
+                });
+              }
+            });
+          }
+          if (progressData.databaseState.enums) {
+            progressData.databaseState.enums.forEach((enumData: any) => {
+              const enumId = databaseStore.addEnum(enumData.name);
+              if (enumData.values) {
+                enumData.values.forEach((val: any) => {
+                  databaseStore.addEnumValue(enumId, val.value);
+                });
+              }
+            });
+          }
+          if (progressData.databaseState.rlsPolicies) {
+            progressData.databaseState.rlsPolicies.forEach((policy: any) => {
+              const newTableId = tableIdMap.get(policy.tableId);
+              if (newTableId && policy.rolePolicies) {
+                policy.rolePolicies.forEach((rolePolicy: any) => {
+                  databaseStore.addOrUpdateRLSPolicy(
+                    newTableId,
+                    policy.operation,
+                    rolePolicy.role,
+                    rolePolicy.accessType,
+                    rolePolicy.relatedTable
+                  );
+                });
+              }
+            });
+          }
+          if (progressData.databaseState.plugins) {
+            progressData.databaseState.plugins.forEach((plugin: any) => {
+              databaseStore.addPlugin(plugin);
+            });
+          }
+        }
+
+        if (progressData.appStructureState) {
+          if (progressData.appStructureState.inferredFeatures) {
+            appStructureStore.setInferredFeatures(
+              progressData.appStructureState.inferredFeatures
+            );
+          }
+          if (progressData.appStructureState.parsedPages) {
+            appStructureStore.setParsedPages(
+              progressData.appStructureState.parsedPages
+            );
+          }
+          if (progressData.appStructureState.featuresGenerated !== undefined) {
+            appStructureStore.setFeaturesGenerated(
+              progressData.appStructureState.featuresGenerated
+            );
+          }
+        }
+
+        if (progressData.readmeState) {
+          if (progressData.readmeState.title !== undefined) {
+            readmeStore.setTitle(progressData.readmeState.title);
+          }
+          if (progressData.readmeState.description !== undefined) {
+            readmeStore.setDescription(progressData.readmeState.description);
+          }
+          if (progressData.readmeState.pages) {
+            readmeStore.setPages(progressData.readmeState.pages);
+          }
+          if (progressData.readmeState.authMethods) {
+            readmeStore.setAuthMethods(progressData.readmeState.authMethods);
+          }
+          if (progressData.readmeState.pageAccess) {
+            readmeStore.setPageAccess(progressData.readmeState.pageAccess);
+          }
+          if (progressData.readmeState.stage) {
+            readmeStore.setStage(progressData.readmeState.stage);
+          }
+          if (progressData.readmeState.lastGeneratedForAuth !== undefined) {
+            readmeStore.setLastGeneratedForAuth(
+              progressData.readmeState.lastGeneratedForAuth
+            );
+          }
+          if (progressData.readmeState.lastGeneratedForPages !== undefined) {
+            readmeStore.setLastGeneratedForPages(
+              progressData.readmeState.lastGeneratedForPages
+            );
+          }
+          if (progressData.readmeState.lastGeneratedForReadme !== undefined) {
+            readmeStore.setLastGeneratedForReadme(
+              progressData.readmeState.lastGeneratedForReadme
+            );
+          }
+        }
+
+        if (progressData.databaseTablesState) {
+          if (progressData.databaseTablesState.tableDescriptions) {
+            databaseTablesStore.setTableDescriptions(
+              progressData.databaseTablesState.tableDescriptions
+            );
+          }
+          if (progressData.databaseTablesState.tablesGenerated !== undefined) {
+            databaseTablesStore.setTablesGenerated(
+              progressData.databaseTablesState.tablesGenerated
+            );
+          }
+          if (progressData.databaseTablesState.accordionValue !== undefined) {
+            databaseTablesStore.setAccordionValue(
+              progressData.databaseTablesState.accordionValue
+            );
+          }
+          if (progressData.databaseTablesState.expandedTableId !== undefined) {
+            databaseTablesStore.setExpandedTableId(
+              progressData.databaseTablesState.expandedTableId
+            );
+          }
+          if (
+            progressData.databaseTablesState.lastGeneratedAppStructure !==
+            undefined
+          ) {
+            databaseTablesStore.setLastGeneratedAppStructure(
+              progressData.databaseTablesState.lastGeneratedAppStructure
+            );
+          }
+          if (
+            progressData.databaseTablesState.lastGeneratedTableDescriptions !==
+            undefined
+          ) {
+            databaseTablesStore.setLastGeneratedTableDescriptions(
+              progressData.databaseTablesState.lastGeneratedTableDescriptions
+            );
+          }
+        }
+
+        if (progressData.nextStepsState) {
+          if (progressData.nextStepsState.openStep !== undefined) {
+            nextStepsStore.setOpenStep(progressData.nextStepsState.openStep);
+          }
+          if (progressData.nextStepsState.unlockedSteps) {
+            progressData.nextStepsState.unlockedSteps.forEach(
+              (stepId: number) => {
+                nextStepsStore.unlockStep(stepId);
+              }
+            );
+          }
+        }
+
+        if (progressData.editorState) {
+          editorStore.setMarkdownData(progressData.editorState.data);
+          editorStore.setPreviewMode(progressData.editorState.previewMode);
+          editorStore.setDarkMode(progressData.editorState.darkMode);
+          editorStore.setAppStructureGenerated(
+            progressData.editorState.appStructureGenerated
           );
-        }
-        if (progressData.appStructureState.parsedPages) {
-          appStructureStore.setParsedPages(
-            progressData.appStructureState.parsedPages
+          editorStore.setReadmeGenerated(
+            progressData.editorState.readmeGenerated
           );
-        }
-        if (progressData.appStructureState.featuresGenerated !== undefined) {
-          appStructureStore.setFeaturesGenerated(
-            progressData.appStructureState.featuresGenerated
+          editorStore.setDatabaseGenerated(
+            progressData.editorState.databaseGenerated
           );
+          editorStore.setAppStructure(progressData.editorState.appStructure);
+          if (progressData.editorState.features) {
+            editorStore.setFeatures(progressData.editorState.features);
+          }
+          if (progressData.editorState.initialConfiguration) {
+            editorStore.setInitialConfiguration(
+              progressData.editorState.initialConfiguration
+            );
+          }
         }
-      }
 
-      if (progressData.readmeState) {
-        if (progressData.readmeState.title !== undefined) {
-          readmeStore.setTitle(progressData.readmeState.title);
-        }
-        if (progressData.readmeState.description !== undefined) {
-          readmeStore.setDescription(progressData.readmeState.description);
-        }
-        if (progressData.readmeState.pages) {
-          readmeStore.setPages(progressData.readmeState.pages);
-        }
-        if (progressData.readmeState.authMethods) {
-          readmeStore.setAuthMethods(progressData.readmeState.authMethods);
-        }
-        if (progressData.readmeState.pageAccess) {
-          readmeStore.setPageAccess(progressData.readmeState.pageAccess);
-        }
-        if (progressData.readmeState.stage) {
-          readmeStore.setStage(progressData.readmeState.stage);
-        }
-        if (progressData.readmeState.lastGeneratedForAuth !== undefined) {
-          readmeStore.setLastGeneratedForAuth(progressData.readmeState.lastGeneratedForAuth);
-        }
-        if (progressData.readmeState.lastGeneratedForPages !== undefined) {
-          readmeStore.setLastGeneratedForPages(progressData.readmeState.lastGeneratedForPages);
-        }
-        if (progressData.readmeState.lastGeneratedForReadme !== undefined) {
-          readmeStore.setLastGeneratedForReadme(progressData.readmeState.lastGeneratedForReadme);
-        }
-      }
+        editorStore.forceRefresh();
 
-      if (progressData.databaseTablesState) {
-        if (progressData.databaseTablesState.tableDescriptions) {
-          databaseTablesStore.setTableDescriptions(progressData.databaseTablesState.tableDescriptions);
-        }
-        if (progressData.databaseTablesState.tablesGenerated !== undefined) {
-          databaseTablesStore.setTablesGenerated(progressData.databaseTablesState.tablesGenerated);
-        }
-        if (progressData.databaseTablesState.accordionValue !== undefined) {
-          databaseTablesStore.setAccordionValue(progressData.databaseTablesState.accordionValue);
-        }
-        if (progressData.databaseTablesState.expandedTableId !== undefined) {
-          databaseTablesStore.setExpandedTableId(progressData.databaseTablesState.expandedTableId);
-        }
-        if (progressData.databaseTablesState.lastGeneratedAppStructure !== undefined) {
-          databaseTablesStore.setLastGeneratedAppStructure(progressData.databaseTablesState.lastGeneratedAppStructure);
-        }
-        if (progressData.databaseTablesState.lastGeneratedTableDescriptions !== undefined) {
-          databaseTablesStore.setLastGeneratedTableDescriptions(progressData.databaseTablesState.lastGeneratedTableDescriptions);
-        }
-      }
+        toast.success("Progress restored successfully!");
+        setUploadDialogOpen(false);
+        setSavePopoverOpen(false);
+        setUploadedFile(null);
 
-      if (progressData.nextStepsState) {
-        if (progressData.nextStepsState.openStep !== undefined) {
-          nextStepsStore.setOpenStep(progressData.nextStepsState.openStep);
-        }
-        if (progressData.nextStepsState.unlockedSteps) {
-          progressData.nextStepsState.unlockedSteps.forEach((stepId: number) => {
-            nextStepsStore.unlockStep(stepId);
-          });
-        }
-      }
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
-      if (progressData.editorState) {
-        editorStore.setMarkdownData(progressData.editorState.data);
-        editorStore.setPreviewMode(progressData.editorState.previewMode);
-        editorStore.setDarkMode(progressData.editorState.darkMode);
-        editorStore.setAppStructureGenerated(
-          progressData.editorState.appStructureGenerated
+        const homePage = numberedPages.find((page) => page.order === 1);
+        if (homePage) {
+          router.push(homePage.url);
+        }
+      } catch (error) {
+        console.error("Failed to upload progress:", error);
+        toast.error(
+          "Failed to restore progress. Please check the file format."
         );
-        editorStore.setReadmeGenerated(
-          progressData.editorState.readmeGenerated
-        );
-        editorStore.setDatabaseGenerated(
-          progressData.editorState.databaseGenerated
-        );
-        editorStore.setAppStructure(progressData.editorState.appStructure);
-        if (progressData.editorState.features) {
-          editorStore.setFeatures(progressData.editorState.features);
-        }
-        if (progressData.editorState.initialConfiguration) {
-          editorStore.setInitialConfiguration(
-            progressData.editorState.initialConfiguration
-          );
-        }
       }
-
-      editorStore.forceRefresh();
-
-      toast.success("Progress restored successfully!");
-      setUploadDialogOpen(false);
-      setSavePopoverOpen(false);
-      setUploadedFile(null);
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const homePage = numberedPages.find((page) => page.order === 1);
-      if (homePage) {
-        router.push(homePage.url);
-      }
-    } catch (error) {
-      console.error("Failed to upload progress:", error);
-      toast.error("Failed to restore progress. Please check the file format.");
-    }
-  }, [numberedPages, router]);
+    },
+    [numberedPages, router]
+  );
 
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -1248,28 +1211,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     <HardDriveUpload className="h-4 w-4" />
                     Upload saved progress
                   </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start theme-gap-2 h-9"
-                    onClick={() => {
-                      handleDownloadContent();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <FileDown className="h-4 w-4" />
-                    Download current page
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start theme-gap-2 h-9"
-                    onClick={() => {
-                      handleDownloadAllPages();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <FolderDown className="h-4 w-4" />
-                    Download all pages
-                  </Button>
                 </div>
               </EditorPopoverContent>
             </EditorPopover>
@@ -1371,50 +1312,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     >
                       <HardDriveUpload className="h-4 w-4" />
                       Upload saved progress
-                    </Button>
-                  </div>
-                </EditorPopoverContent>
-              </EditorPopover>
-
-              <EditorPopover
-                open={downloadPopoverOpen}
-                onOpenChange={setDownloadPopoverOpen}
-              >
-                <EditorPopoverTrigger asChild>
-                  <div>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-[3px] h-8 w-8"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Download options</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                </EditorPopoverTrigger>
-                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
-                  <div className="flex flex-col theme-gap-1">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start theme-gap-2 h-9"
-                      onClick={handleDownloadContent}
-                    >
-                      <FileDown className="h-4 w-4" />
-                      Download current page
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start theme-gap-2 h-9"
-                      onClick={handleDownloadAllPages}
-                    >
-                      <FolderDown className="h-4 w-4" />
-                      Download all pages
                     </Button>
                   </div>
                 </EditorPopoverContent>
@@ -1617,7 +1514,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     variant={currentPageIndex <= 4 ? "default" : "outline"}
                     className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
                   >
-                    Next
+                    <span className="xs:block hidden">Next</span>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
