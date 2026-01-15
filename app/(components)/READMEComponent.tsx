@@ -5,6 +5,11 @@ import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
 import {
   Accordion,
@@ -17,6 +22,8 @@ import {
   BookText,
   Bot,
   CheckCircle2,
+  CornerLeftUp,
+  HelpCircle,
   Loader2,
   Plus,
   Shield,
@@ -78,6 +85,9 @@ export const READMEComponent = () => {
     useState<string>("step-1-description");
   const [expandedPageId, setExpandedPageId] = useState<string | null>(null);
   const hasAutoExpandedRef = useRef(false);
+  const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
+  const [helpPopoverWasOpened, setHelpPopoverWasOpened] = useState(false);
+  const [showSuccessView, setShowSuccessView] = useState(false);
 
   useEffect(() => {
     const accordionMap: Record<Stage, string> = {
@@ -87,6 +97,12 @@ export const READMEComponent = () => {
     };
     setAccordionValue(accordionMap[stage]);
   }, [stage]);
+
+  useEffect(() => {
+    if (readmeGenerated) {
+      setShowSuccessView(true);
+    }
+  }, [readmeGenerated]);
 
   useEffect(() => {
     if (pages.length > 0 && !hasAutoExpandedRef.current) {
@@ -112,6 +128,10 @@ export const READMEComponent = () => {
     if (!lastGeneratedForReadme) return true;
     return lastGeneratedForReadme !== JSON.stringify(pages);
   }, [lastGeneratedForReadme, pages]);
+
+  const hasAnyInputChanged = useCallback(() => {
+    return hasAuthInputChanged() || hasPagesInputChanged() || hasReadmeInputChanged();
+  }, [hasAuthInputChanged, hasPagesInputChanged, hasReadmeInputChanged]);
 
   const handleAccordionChange = useCallback(
     (value: string) => {
@@ -256,9 +276,61 @@ export const READMEComponent = () => {
     }
   };
 
-  if (readmeGenerated) {
+  if (readmeGenerated && showSuccessView) {
     return (
-      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
+        <div className="absolute top-2 right-2 flex items-center theme-gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full"
+            onClick={() => {
+              setShowSuccessView(false);
+              setAccordionValue("step-3-pages");
+            }}
+          >
+            <CornerLeftUp className="h-4 w-4" />
+          </Button>
+          <Popover
+            open={helpPopoverOpen}
+            onOpenChange={(open) => {
+              setHelpPopoverOpen(open);
+              if (open && !helpPopoverWasOpened) {
+                setHelpPopoverWasOpened(true);
+              }
+            }}
+          >
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-8 w-8 rounded-full ${!helpPopoverWasOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90" : ""}`}
+              >
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
+              style={{ borderColor: "var(--theme-primary)" }}
+              align="end"
+            >
+              <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
+                <h4 className="font-semibold text-base theme-font-sans theme-tracking">
+                  README
+                </h4>
+                <div className="flex flex-col theme-gap-2 text-sm">
+                  <p className="theme-font-sans theme-tracking">
+                    This README will be used in the next step to generate your app
+                    directory structure and initial database configuration.
+                  </p>
+                  <p className="theme-font-sans theme-tracking">
+                    You can edit it directly in the editor below.
+                  </p>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
         <div className="flex flex-col theme-gap-3 items-center text-center">
           <CheckCircle2 className="h-12 w-12 theme-text-primary" />
           <div className="flex flex-col theme-gap-2">
@@ -267,11 +339,6 @@ export const READMEComponent = () => {
                 ? "README Added Successfully"
                 : "README Generated Successfully"}
             </h3>
-            <p className="   theme-text-foreground font-semibold mt-2">
-              This README will be used in the next step to generate your app
-              directory structure and initial database configuration. You can
-              edit it directly in the editor below.
-            </p>
           </div>
         </div>
       </div>
@@ -564,29 +631,31 @@ export const READMEComponent = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col theme-gap-2">
-                {pages.map((page, index) => {
-                  const access = pageAccess.find((pa) => pa.pageId === page.id);
-                  return (
-                    <PageAccordionItem
-                      key={page.id}
-                      page={page}
-                      index={index}
-                      totalPages={pages.length}
-                      isExpanded={expandedPageId === page.id}
-                      onToggle={() =>
-                        setExpandedPageId(
-                          expandedPageId === page.id ? null : page.id
-                        )
-                      }
-                      onUpdate={handleUpdatePageLocal}
-                      onDelete={handleDeletePageLocal}
-                      disabled={isPending}
-                      pageAccess={access}
-                      onUpdateAccess={updatePageAccess}
-                    />
-                  );
-                })}
+              <div className="theme-bg-card theme-radius theme-shadow overflow-auto theme-p-4">
+                <div className="flex flex-col theme-gap-2">
+                  {pages.map((page, index) => {
+                    const access = pageAccess.find((pa) => pa.pageId === page.id);
+                    return (
+                      <PageAccordionItem
+                        key={page.id}
+                        page={page}
+                        index={index}
+                        totalPages={pages.length}
+                        isExpanded={expandedPageId === page.id}
+                        onToggle={() =>
+                          setExpandedPageId(
+                            expandedPageId === page.id ? null : page.id
+                          )
+                        }
+                        onUpdate={handleUpdatePageLocal}
+                        onDelete={handleDeletePageLocal}
+                        disabled={isPending}
+                        pageAccess={access}
+                        onUpdateAccess={updatePageAccess}
+                      />
+                    );
+                  })}
+                </div>
               </div>
 
               <Button
@@ -599,23 +668,56 @@ export const READMEComponent = () => {
                 Add Page
               </Button>
 
-              <Button
-                onClick={handleSubmitPages}
-                disabled={isPending || !canSubmitPages}
-                className="w-full theme-gap-2"
-              >
-                {isGeneratingReadme ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Generating README...
-                  </>
-                ) : (
-                  <>
-                    <Bot className="h-4 w-4" />
-                    Generate README
-                  </>
-                )}
-              </Button>
+              {readmeGenerated ? (
+                <div className="flex flex-col sm:flex-row theme-gap-2">
+                  <Button
+                    onClick={handleSubmitPages}
+                    disabled={isPending || !canSubmitPages || !hasAnyInputChanged()}
+                    className="flex-1 theme-gap-2"
+                  >
+                    {isGeneratingReadme ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Regenerating...
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="h-4 w-4" />
+                        Regenerate README
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowSuccessView(true);
+                    }}
+                    disabled={isPending}
+                    variant="outline"
+                    className="flex-1 theme-gap-2"
+                  >
+                    View README
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleSubmitPages}
+                  disabled={isPending || !canSubmitPages}
+                  className="w-full theme-gap-2"
+                >
+                  {isGeneratingReadme ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating README...
+                    </>
+                  ) : (
+                    <>
+                      <Bot className="h-4 w-4" />
+                      Generate README
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </AccordionContent>
         </AccordionItem>

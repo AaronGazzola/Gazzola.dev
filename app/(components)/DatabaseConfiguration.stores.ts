@@ -1374,10 +1374,16 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         );
 
         if (column.relation) {
-          const relatedTable = state.tables.find((t) => t.name === column.relation?.table);
+          const relationTableRef = column.relation.table;
+          const relatedTable = state.tables.find(
+            (t) => t.name === relationTableRef || `${t.schema}.${t.name}` === relationTableRef
+          );
           if (relatedTable && column.relation.relationType) {
             const fkColumnId = generateId();
-            const fkColumnName = getForeignKeyName(column.relation.table);
+            const tableName = relationTableRef.includes('.')
+              ? relationTableRef.split('.')[1]
+              : relationTableRef;
+            const fkColumnName = getForeignKeyName(tableName);
 
             const fkColumn: PrismaColumn = {
               id: fkColumnId,
@@ -1413,7 +1419,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
               }
             });
 
-            if (column.relation.relationType === "many-to-one" && column.relation.inverseFieldName) {
+            if (column.relation.relationType === "many-to-one" && column.relation.inverseFieldName && relatedTable.isEditable) {
               const inverseColumn: PrismaColumn = {
                 id: generateId(),
                 name: column.relation.inverseFieldName,
@@ -1952,8 +1958,49 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         const currentState = get();
         const userCreatedTables = currentState.tables.filter((t) => !t.isDefault);
 
+        let authTables: PrismaTable[] = [];
+        if (config.technologies.supabase) {
+          authTables = [{
+            id: "default-user",
+            name: "user",
+            schema: "auth",
+            isDefault: true,
+            isEditable: false,
+            uniqueConstraints: [],
+            checkConstraints: [],
+            questionId: "authentication",
+            columns: [
+              {
+                id: "user-id",
+                name: "id",
+                type: "TEXT",
+                isDefault: true,
+                isEditable: false,
+                isOptional: false,
+                isUnique: false,
+                isId: true,
+                isArray: false,
+                defaultValue: "gen_random_uuid()",
+                attributes: ["@id", "@default(gen_random_uuid())"],
+              },
+              {
+                id: "user-email",
+                name: "email",
+                type: "TEXT",
+                isDefault: true,
+                isEditable: false,
+                isOptional: false,
+                isUnique: true,
+                isId: false,
+                isArray: false,
+                attributes: ["@unique"],
+              },
+            ],
+          }];
+        }
+
         set((state) => ({
-          tables: userCreatedTables,
+          tables: [...authTables, ...userCreatedTables],
           enums: state.enums,
           rlsPolicies: state.rlsPolicies,
           plugins: [],

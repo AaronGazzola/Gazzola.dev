@@ -1,13 +1,11 @@
 [
-  "templates/.gitkeep",
-  "templates/SUPABASE_CLIENT_GUIDE.md",
-  "templates/template.actions.ts",
-  "templates/template.hooks.tsx",
-  "templates/template.stores.ts",
-  "templates/template.supabase-admin-client.ts",
-  "templates/template.supabase-browser-client.ts",
-  "templates/template.supabase-middleware.ts",
-  "templates/template.supabase-server-client.ts",
-  "templates/template.types.ts",
-  "documentation/example-guide.md"
+  "documentation/.gitkeep",
+  "documentation/template_files/.gitkeep",
+  "documentation/template_files/supabase-server-client.ts",
+  "documentation/template_files/template.actions.ts",
+  "documentation/template_files/template.hooks.tsx",
+  "documentation/template_files/template.stores.ts",
+  "documentation/template_files/template.supabase-admin-client.ts",
+  "documentation/template_files/template.supabase-browser-client.ts",
+  "documentation/template_files/template.types.ts"
 ]

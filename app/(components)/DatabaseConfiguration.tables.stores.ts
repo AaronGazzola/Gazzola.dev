@@ -13,6 +13,7 @@ interface DatabaseTablesState {
   accordionValue: string;
   expandedTableId: string | null;
   lastGeneratedAppStructure: string | null;
+  lastGeneratedTableDescriptions: DatabaseTableDescription[] | null;
 }
 
 const getInitialState = (): DatabaseTablesState => ({
@@ -21,6 +22,7 @@ const getInitialState = (): DatabaseTablesState => ({
   accordionValue: "",
   expandedTableId: null,
   lastGeneratedAppStructure: null,
+  lastGeneratedTableDescriptions: null,
 });
 
 interface DatabaseTablesStore extends DatabaseTablesState {
@@ -35,6 +37,7 @@ interface DatabaseTablesStore extends DatabaseTablesState {
   setAccordionValue: (value: string) => void;
   setExpandedTableId: (id: string | null) => void;
   setLastGeneratedAppStructure: (content: string | null) => void;
+  setLastGeneratedTableDescriptions: (tables: DatabaseTableDescription[] | null) => void;
   reset: () => void;
 }
 
@@ -72,6 +75,9 @@ export const useDatabaseTablesStore = create<DatabaseTablesStore>()(
 
       setLastGeneratedAppStructure: (lastGeneratedAppStructure) =>
         set({ lastGeneratedAppStructure }),
+
+      setLastGeneratedTableDescriptions: (lastGeneratedTableDescriptions) =>
+        set({ lastGeneratedTableDescriptions }),
 
       reset: () => set(getInitialState()),
     }),

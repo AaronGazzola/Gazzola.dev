@@ -1696,11 +1696,6 @@ export const generateAndDownloadZip = async (
     console.error("Failed to load CLAUDE.md:", error);
   }
 
-  const templatesFolder = starterKitFolder.folder("templates");
-  if (templatesFolder) {
-    await loadFolderFromPublicData(zip, templatesFolder, "templates");
-  }
-
   const documentationFolder = starterKitFolder.folder("documentation");
   if (documentationFolder) {
     await loadFolderFromPublicData(zip, documentationFolder, "documentation");

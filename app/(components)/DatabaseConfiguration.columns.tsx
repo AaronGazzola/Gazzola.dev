@@ -137,15 +137,18 @@ export const ColumnLine = ({
               {isRelation ? (
                 <Select
                   value={column.relation?.table || ""}
-                  onValueChange={(tableName) => {
+                  onValueChange={(tableRef) => {
                     const targetTable = relationTables.find(
-                      (t) => t.name === tableName
+                      (t) => `${t.schema}.${t.name}` === tableRef || t.name === tableRef
                     );
                     if (targetTable) {
+                      const tableReference = targetTable.schema !== "public"
+                        ? `${targetTable.schema}.${targetTable.name}`
+                        : targetTable.name;
                       onUpdate(table.id, column.id, {
-                        type: targetTable.name,
+                        type: tableReference,
                         relation: {
-                          table: targetTable.name,
+                          table: tableReference,
                           field: "id",
                           onDelete: column.relation?.onDelete || "Cascade",
                         },
@@ -157,11 +160,16 @@ export const ColumnLine = ({
                     <SelectValue placeholder="Select table" />
                   </SelectTrigger>
                   <SelectContent>
-                    {relationTables.map((t) => (
-                      <SelectItem key={t.id} value={t.name}>
-                        {t.schema}.{t.name}
-                      </SelectItem>
-                    ))}
+                    {relationTables.map((t) => {
+                      const tableRef = t.schema !== "public"
+                        ? `${t.schema}.${t.name}`
+                        : t.name;
+                      return (
+                        <SelectItem key={t.id} value={tableRef}>
+                          {t.schema}.{t.name}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               ) : (
@@ -365,6 +373,11 @@ export const AddColumnPopover = ({
   const allEnums = getAllEnums();
   const isRelationType = columnType === "Relation";
 
+  const selectedRelatedTable = availableTables.find(
+    (t) => `${t.schema}.${t.name}` === relatedTable || t.name === relatedTable
+  );
+  const isRelatedTableEditable = selectedRelatedTable?.isEditable ?? true;
+
   const pluralize = (word: string): string => {
     if (
       word.endsWith("y") &&
@@ -389,12 +402,18 @@ export const AddColumnPopover = ({
     if (isRelationType && !relatedTable) return;
 
     if (isRelationType) {
-      const targetTable = availableTables.find((t) => t.name === relatedTable);
+      const targetTable = availableTables.find(
+        (t) => `${t.schema}.${t.name}` === relatedTable || t.name === relatedTable
+      );
       if (!targetTable) return;
+
+      const tableReference = targetTable.schema !== "public"
+        ? `${targetTable.schema}.${targetTable.name}`
+        : targetTable.name;
 
       onAddColumn(table.id, {
         name: columnName.trim(),
-        type: targetTable.name,
+        type: tableReference,
         isDefault: false,
         isEditable: true,
         isOptional: false,
@@ -403,7 +422,7 @@ export const AddColumnPopover = ({
         isArray: false,
         attributes: [],
         relation: {
-          table: targetTable.name,
+          table: tableReference,
           field: "id",
           onDelete: "Cascade",
           relationType,
@@ -462,8 +481,15 @@ export const AddColumnPopover = ({
             onValueChange={(v) => {
               setColumnType(v as typeof columnType);
               if (v === "Relation" && availableTables.length > 0) {
-                setRelatedTable(availableTables[0].name);
+                const firstTable = availableTables[0];
+                const tableRef = firstTable.schema !== "public"
+                  ? `${firstTable.schema}.${firstTable.name}`
+                  : firstTable.name;
+                setRelatedTable(tableRef);
                 setInverseFieldName(pluralize(table.name));
+                if (!firstTable.isEditable) {
+                  setCreateInverse(false);
+                }
               }
             }}
           >
@@ -498,17 +524,32 @@ export const AddColumnPopover = ({
                 onValueChange={(v) => {
                   setRelatedTable(v);
                   setInverseFieldName(pluralize(table.name));
+                  const selectedTable = availableTables.find(
+                    (t) => `${t.schema}.${t.name}` === v || t.name === v
+                  );
+                  if (selectedTable) {
+                    if (!selectedTable.isEditable) {
+                      setCreateInverse(false);
+                    } else {
+                      setCreateInverse(true);
+                    }
+                  }
                 }}
               >
                 <SelectTrigger className="h-7">
                   <SelectValue placeholder="Select table" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableTables.map((t) => (
-                    <SelectItem key={t.id} value={t.name}>
-                      {t.schema}.{t.name}
-                    </SelectItem>
-                  ))}
+                  {availableTables.map((t) => {
+                    const tableRef = t.schema !== "public"
+                      ? `${t.schema}.${t.name}`
+                      : t.name;
+                    return (
+                      <SelectItem key={t.id} value={tableRef}>
+                        {t.schema}.{t.name}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
               <Select
@@ -529,18 +570,20 @@ export const AddColumnPopover = ({
                   <Checkbox
                     id="create-inverse"
                     checked={createInverse}
+                    disabled={!isRelatedTableEditable}
                     onCheckedChange={(checked) =>
                       setCreateInverse(checked === true)
                     }
                   />
                   <label
                     htmlFor="create-inverse"
-                    className="text-base font-semibold theme-text-foreground cursor-pointer"
+                    className={`text-base font-semibold ${isRelatedTableEditable ? "theme-text-foreground cursor-pointer" : "theme-text-muted-foreground cursor-not-allowed"}`}
                   >
                     Create inverse field on {relatedTable || "related table"}
+                    {!isRelatedTableEditable && " (read-only table)"}
                   </label>
                 </div>
-                {createInverse && (
+                {createInverse && isRelatedTableEditable && (
                   <Input
                     placeholder="Inverse field name"
                     value={inverseFieldName}
@@ -556,7 +599,7 @@ export const AddColumnPopover = ({
             size="sm"
             disabled={
               isRelationType &&
-              (!relatedTable || (createInverse && !inverseFieldName.trim()))
+              (!relatedTable || (createInverse && isRelatedTableEditable && !inverseFieldName.trim()))
             }
           >
             Add Column

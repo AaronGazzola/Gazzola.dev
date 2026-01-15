@@ -16,6 +16,7 @@ interface AppStructureState {
   accordionValue: string;
   expandedPageId: string | null;
   lastGeneratedReadmeContent: string | null;
+  lastGeneratedForStructure: string | null;
 }
 
 const getInitialState = (): AppStructureState => ({
@@ -25,6 +26,7 @@ const getInitialState = (): AppStructureState => ({
   accordionValue: "",
   expandedPageId: null,
   lastGeneratedReadmeContent: null,
+  lastGeneratedForStructure: null,
 });
 
 interface AppStructureStore extends AppStructureState {
@@ -35,6 +37,7 @@ interface AppStructureStore extends AppStructureState {
   setAccordionValue: (value: string) => void;
   setExpandedPageId: (id: string | null) => void;
   setLastGeneratedReadmeContent: (content: string | null) => void;
+  setLastGeneratedForStructure: (content: string | null) => void;
   reset: () => void;
 }
 
@@ -65,6 +68,8 @@ export const useAppStructureStore = create<AppStructureStore>()(
       setExpandedPageId: (expandedPageId) => set({ expandedPageId }),
 
       setLastGeneratedReadmeContent: (lastGeneratedReadmeContent) => set({ lastGeneratedReadmeContent }),
+
+      setLastGeneratedForStructure: (lastGeneratedForStructure) => set({ lastGeneratedForStructure }),
 
       reset: () => set(getInitialState()),
     }),

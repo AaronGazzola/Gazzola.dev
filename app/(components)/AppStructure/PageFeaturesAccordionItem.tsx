@@ -295,7 +295,9 @@ export const PageFeaturesAccordionItem = ({
           className="w-full flex items-center justify-start theme-gap-2 theme-px-2 theme-py-1.5 border border-dashed theme-border-accent theme-radius hover:theme-bg-muted/50 transition-colors disabled:opacity-50"
         >
           <Plus className="h-3 w-3 theme-text-muted-foreground" />
-          <span className="text-sm theme-text-muted-foreground">Add Feature</span>
+          <span className="text-sm theme-text-muted-foreground">
+            Add Feature
+          </span>
         </button>
       </div>
     </div>

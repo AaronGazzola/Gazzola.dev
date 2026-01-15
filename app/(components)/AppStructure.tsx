@@ -17,16 +17,16 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
+  ArrowRight,
   Bot,
-  CheckCircle2,
+  CornerLeftUp,
   FolderTree,
   HelpCircle,
   Loader2,
-  RotateCcw,
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   convertInferredFeaturesToFeatures,
@@ -97,13 +97,13 @@ export const LayoutAndStructure = () => {
       )
     : [];
 
-  const readmeData = {
+  const readmeData = useMemo(() => ({
     title: readmeStore.title,
     description: readmeStore.description,
     pages: readmeStore.pages,
     authMethods: readmeStore.authMethods,
     pageAccess: readmeStore.pageAccess,
-  };
+  }), [readmeStore.title, readmeStore.description, readmeStore.pages, readmeStore.authMethods, readmeStore.pageAccess]);
 
   const {
     inferredFeatures,
@@ -111,15 +111,18 @@ export const LayoutAndStructure = () => {
     featuresGenerated,
     accordionValue,
     lastGeneratedReadmeContent,
+    lastGeneratedForStructure,
     setInferredFeatures,
     setParsedPages,
     setFeaturesGenerated,
     setAccordionValue,
     setLastGeneratedReadmeContent,
+    setLastGeneratedForStructure,
     updateFeature,
   } = useAppStructureStore();
 
   const [globalExpandedFeatureId, setGlobalExpandedFeatureId] = useState<string | null>(null);
+  const [showSuccessView, setShowSuccessView] = useState(false);
 
   useEffect(() => {
     if (globalExpandedFeatureId === null && featuresGenerated && Object.keys(inferredFeatures).length > 0) {
@@ -129,6 +132,12 @@ export const LayoutAndStructure = () => {
       }
     }
   }, [featuresGenerated, inferredFeatures, globalExpandedFeatureId]);
+
+  useEffect(() => {
+    if (appStructureGenerated) {
+      setShowSuccessView(true);
+    }
+  }, [appStructureGenerated]);
 
   const handleAddFeature = useCallback((pageId: string) => {
     const newFeature: InferredFeature = {
@@ -282,6 +291,7 @@ export const LayoutAndStructure = () => {
         setAppStructure(parsed.structure);
         setFeatures(parsed.features);
         setAppStructureGenerated(true);
+        setShowSuccessView(true);
 
         toast.success(`App structure generated with ${parsedPages.length} pages`);
       } catch (error) {
@@ -395,6 +405,12 @@ Return only the JSON object, no additional text.`;
   }, [readmeData, generateFeatures, setLastGeneratedReadmeContent]);
 
 
+  const hasFeaturesChanged = useCallback(() => {
+    if (!lastGeneratedForStructure) return true;
+    const currentState = JSON.stringify({ parsedPages, inferredFeatures });
+    return lastGeneratedForStructure !== currentState;
+  }, [lastGeneratedForStructure, parsedPages, inferredFeatures]);
+
   const handleGenerateStructure = useCallback(() => {
     if (!parsedPages || parsedPages.length === 0) {
       toast.error("No pages found. Please generate features first.");
@@ -405,6 +421,8 @@ Return only the JSON object, no additional text.`;
       toast.error("No features found. Please generate features first.");
       return;
     }
+
+    setLastGeneratedForStructure(JSON.stringify({ parsedPages, inferredFeatures }));
 
     const prompt = buildStructureGenerationPrompt(parsedPages, inferredFeatures);
 
@@ -419,7 +437,7 @@ Return only the JSON object, no additional text.`;
     }, null, 2));
 
     generateStructure({ prompt, maxTokens: 6000 });
-  }, [parsedPages, inferredFeatures, generateStructure]);
+  }, [parsedPages, inferredFeatures, generateStructure, setLastGeneratedForStructure]);
 
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
@@ -520,7 +538,7 @@ Return only the JSON object, no additional text.`;
     0
   );
 
-  if (appStructure.length === 0 || !appStructureGenerated) {
+  if (appStructure.length === 0 || !appStructureGenerated || (appStructureGenerated && !showSuccessView)) {
     if (!hasReadme) {
       return (
         <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
@@ -619,23 +637,56 @@ Return only the JSON object, no additional text.`;
                   })}
                 </div>
 
-                <Button
-                  onClick={handleGenerateStructure}
-                  disabled={isGeneratingStructure || !featuresGenerated}
-                  className="w-full theme-gap-2"
-                >
-                  {isGeneratingStructure ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating structure...
-                    </>
-                  ) : (
-                    <>
-                      <Bot className="h-4 w-4" />
-                      Generate App Structure
-                    </>
-                  )}
-                </Button>
+                {appStructureGenerated ? (
+                  <div className="flex flex-col sm:flex-row theme-gap-2">
+                    <Button
+                      onClick={handleGenerateStructure}
+                      disabled={isGeneratingStructure || !hasFeaturesChanged()}
+                      className="flex-1 theme-gap-2"
+                    >
+                      {isGeneratingStructure ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Regenerating...
+                        </>
+                      ) : (
+                        <>
+                          <Bot className="h-4 w-4" />
+                          Regenerate App Structure
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowSuccessView(true);
+                      }}
+                      disabled={isGeneratingStructure}
+                      variant="outline"
+                      className="flex-1 theme-gap-2"
+                    >
+                      View App Directory
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={handleGenerateStructure}
+                    disabled={isGeneratingStructure || !featuresGenerated}
+                    className="w-full theme-gap-2"
+                  >
+                    {isGeneratingStructure ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Generating structure...
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="h-4 w-4" />
+                        Generate App Structure
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -646,24 +697,36 @@ Return only the JSON object, no additional text.`;
 
   return (
     <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
-      <Popover
-        open={helpPopoverOpen}
-        onOpenChange={(open) => {
-          setHelpPopoverOpen(open);
-          if (open && !appStructureHelpPopoverOpened) {
-            setAppStructureHelpPopoverOpened(true);
-          }
-        }}
-      >
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`absolute top-2 right-2 h-8 w-8 rounded-full ${!appStructureHelpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90" : ""}`}
-          >
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-        </PopoverTrigger>
+      <div className="absolute top-2 right-2 flex items-center theme-gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-full"
+          onClick={() => {
+            setShowSuccessView(false);
+            setAccordionValue("step-features");
+          }}
+        >
+          <CornerLeftUp className="h-4 w-4" />
+        </Button>
+        <Popover
+          open={helpPopoverOpen}
+          onOpenChange={(open) => {
+            setHelpPopoverOpen(open);
+            if (open && !appStructureHelpPopoverOpened) {
+              setAppStructureHelpPopoverOpened(true);
+            }
+          }}
+        >
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-8 w-8 rounded-full ${!appStructureHelpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90" : ""}`}
+            >
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
         <PopoverContent
           className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
           style={{ borderColor: "var(--theme-primary)" }}
@@ -706,6 +769,7 @@ Return only the JSON object, no additional text.`;
           </div>
         </PopoverContent>
       </Popover>
+      </div>
 
       <div className="flex flex-col theme-gap-2 md:theme-gap-4 min-h-[calc(100vh-800px)]">
         <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">

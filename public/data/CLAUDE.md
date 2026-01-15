@@ -106,6 +106,8 @@ app/
 
 # Hook, action, store and type patterns
 
+**Template files:** Refer to the template files in "documentation/template_files" for examples demonstrating each of the utility file types described below.
+
 **Flow**: Browser → Hook → Action → Database
 
 **Types** (`*.types.ts`)

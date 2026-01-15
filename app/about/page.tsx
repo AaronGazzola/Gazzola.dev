@@ -579,7 +579,7 @@ const Page = () => {
             viewport={{ once: true }}
             className="text-2xl sm:text-3xl font-medium text-center mb-16"
           >
-            Environment
+            Starter Kit
           </motion.h2>
 
           <div className="max-w-7xl mx-auto">

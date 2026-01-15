@@ -17,6 +17,7 @@
     "parse:v": "npx tsx scripts/increment-version.ts",
     "parse:theme": "npx tsx scripts/parse-components.ts",
     "parse:data-files": "node scripts/generate-data-file-list.js",
+    "refresh:starter-kit": "node scripts/generate-data-file-list.js",
     "components": "npx tsx scripts/update-theme-components.ts",
     "mcp:toggle": "npx tsx scripts/toggle-playwright-mcp.ts",
     "docs:generate": "npx tsx scripts/generate-config-docs.ts",

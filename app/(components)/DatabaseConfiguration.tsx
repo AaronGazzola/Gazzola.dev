@@ -10,17 +10,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
+import { Switch } from "@/components/editor/ui/switch";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Switch } from "@/components/editor/ui/switch";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { applyAutomaticSectionFiltering } from "@/lib/section-filter.utils";
 import {
+  ArrowRight,
   Bot,
+  CornerLeftUp,
   Database,
   HelpCircle,
   Loader2,
@@ -34,10 +36,10 @@ import { toast } from "sonner";
 import { useAppStructureStore } from "./AppStructure.stores";
 import {
   generateDatabaseSchemaPrompt,
+  generateId,
   generateTableDescriptionsPrompt,
   parseDatabaseSchemaFromResponse,
   parseTableDescriptionsFromResponse,
-  generateId,
 } from "./DatabaseConfiguration.ai";
 import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
 import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
@@ -46,8 +48,8 @@ import {
   DatabaseTableDescription,
   useDatabaseTablesStore,
 } from "./DatabaseConfiguration.tables.stores";
-import { DatabaseTableDescriptionItem } from "./DatabaseConfiguration/DatabaseTableDescriptionItem";
 import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
+import { DatabaseTableDescriptionItem } from "./DatabaseConfiguration/DatabaseTableDescriptionItem";
 import { useREADMEStore } from "./READMEComponent.stores";
 
 export const DatabaseConfiguration = () => {
@@ -84,6 +86,7 @@ export const DatabaseConfiguration = () => {
     tablesGenerated,
     accordionValue,
     expandedTableId: expandedTableDescId,
+    lastGeneratedTableDescriptions,
     setTableDescriptions,
     updateTableDescription,
     addTableDescription,
@@ -91,6 +94,7 @@ export const DatabaseConfiguration = () => {
     setTablesGenerated,
     setAccordionValue,
     setExpandedTableId: setExpandedTableDescId,
+    setLastGeneratedTableDescriptions,
   } = useDatabaseTablesStore();
 
   const [expandedSchema, setExpandedSchema] = useState<string | null>("public");
@@ -100,6 +104,7 @@ export const DatabaseConfiguration = () => {
   const [isAddingSchema, setIsAddingSchema] = useState(false);
   const [newSchemaName, setNewSchemaName] = useState("");
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
+  const [showSuccessView, setShowSuccessView] = useState(false);
 
   const readmeData = {
     title: readmeStore.title,
@@ -130,6 +135,7 @@ export const DatabaseConfiguration = () => {
         setTableDescriptions(parsed.tables);
         setTablesGenerated(true);
         setAccordionValue("step-tables");
+        setExpandedTableDescId(parsed.tables[0].id);
         toast.success(`Generated ${parsed.tables.length} table descriptions`);
       } else {
         const fallbackTables: DatabaseTableDescription[] = [
@@ -138,6 +144,7 @@ export const DatabaseConfiguration = () => {
         setTableDescriptions(fallbackTables);
         setTablesGenerated(true);
         setAccordionValue("step-tables");
+        setExpandedTableDescId(fallbackTables[0].id);
         toast.warning(
           "Could not generate tables automatically. Default table added.",
           {
@@ -151,14 +158,21 @@ export const DatabaseConfiguration = () => {
     useCodeGeneration((response) => {
       const parsed = parseDatabaseSchemaFromResponse(response.content);
 
-      console.log("DATABASE SCHEMA GENERATION OUTPUT:", JSON.stringify({
-        responseContent: response.content,
-        parsedResult: parsed,
-        parseSuccess: !!parsed,
-        tableCount: parsed?.tables.length || 0,
-        enumCount: parsed?.enums.length || 0,
-        rlsPolicyCount: parsed?.rlsPolicies?.length || 0
-      }, null, 2));
+      console.log(
+        "DATABASE SCHEMA GENERATION OUTPUT:",
+        JSON.stringify(
+          {
+            responseContent: response.content,
+            parsedResult: parsed,
+            parseSuccess: !!parsed,
+            tableCount: parsed?.tables.length || 0,
+            enumCount: parsed?.enums.length || 0,
+            rlsPolicyCount: parsed?.rlsPolicies?.length || 0,
+          },
+          null,
+          2
+        )
+      );
 
       if (parsed) {
         const { configuration } = parsed;
@@ -196,6 +210,7 @@ export const DatabaseConfiguration = () => {
           setRLSPoliciesFromAI(parsed.rlsPolicies, parsed.tables);
         }
         setDatabaseGenerated(true);
+        setShowSuccessView(true);
       }
     });
 
@@ -213,7 +228,9 @@ export const DatabaseConfiguration = () => {
       !appStructureData.parsedPages ||
       appStructureData.parsedPages.length === 0
     ) {
-      toast.error("No app structure found. Please generate app structure first.");
+      toast.error(
+        "No app structure found. Please generate app structure first."
+      );
       return;
     }
 
@@ -272,18 +289,20 @@ export const DatabaseConfiguration = () => {
     );
 
     generateTableDescriptions({ prompt, maxTokens: 1500 });
-  }, [
-    readmeData,
-    appStructureData,
-    appStructure,
-    generateTableDescriptions,
-  ]);
+  }, [readmeData, appStructureData, appStructure, generateTableDescriptions]);
+
+  const hasTableDescriptionsChanged = useCallback(() => {
+    if (!lastGeneratedTableDescriptions) return true;
+    return JSON.stringify(lastGeneratedTableDescriptions) !== JSON.stringify(tableDescriptions);
+  }, [lastGeneratedTableDescriptions, tableDescriptions]);
 
   const handleGenerateFullSchema = useCallback(() => {
     if (tableDescriptions.length === 0) {
       toast.error("No table descriptions found. Please generate tables first.");
       return;
     }
+
+    setLastGeneratedTableDescriptions(tableDescriptions);
 
     const authMethodsList = Object.entries(readmeData.authMethods)
       .filter(([_, enabled]) => enabled)
@@ -330,15 +349,22 @@ export const DatabaseConfiguration = () => {
       DATABASE_TEMPLATES
     );
 
-    console.log("DATABASE SCHEMA GENERATION INPUT:", JSON.stringify({
-      prompt,
-      inputData: {
-        tableDescriptions,
-        structuredData,
-        appStructure,
-        appStructureLength: appStructure.length
-      }
-    }, null, 2));
+    console.log(
+      "DATABASE SCHEMA GENERATION INPUT:",
+      JSON.stringify(
+        {
+          prompt,
+          inputData: {
+            tableDescriptions,
+            structuredData,
+            appStructure,
+            appStructureLength: appStructure.length,
+          },
+        },
+        null,
+        2
+      )
+    );
 
     generateSchema({ prompt, maxTokens: 4000 });
   }, [
@@ -347,6 +373,7 @@ export const DatabaseConfiguration = () => {
     appStructureData,
     appStructure,
     generateSchema,
+    setLastGeneratedTableDescriptions,
   ]);
 
   const handleAddTable = useCallback(() => {
@@ -385,6 +412,12 @@ export const DatabaseConfiguration = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (databaseGenerated) {
+      setShowSuccessView(true);
+    }
+  }, [databaseGenerated]);
 
   useEffect(() => {
     initializeFromConfig(initialConfiguration);
@@ -481,14 +514,17 @@ export const DatabaseConfiguration = () => {
       t.description.trim().length >= MIN_TABLE_DESCRIPTION_LENGTH
   );
 
-  if (!databaseGenerated) {
+  if (!databaseGenerated || (databaseGenerated && !showSuccessView)) {
     if (!hasReadme || !hasAppStructure) {
       const renderMessage = () => {
         if (!hasReadme && !hasAppStructure) {
           return (
             <>
               Generate a{" "}
-              <Link href="/readme" className="theme-text-primary hover:underline">
+              <Link
+                href="/readme"
+                className="theme-text-primary hover:underline"
+              >
                 README
               </Link>{" "}
               and{" "}
@@ -506,7 +542,10 @@ export const DatabaseConfiguration = () => {
           return (
             <>
               Generate your{" "}
-              <Link href="/readme" className="theme-text-primary hover:underline">
+              <Link
+                href="/readme"
+                className="theme-text-primary hover:underline"
+              >
                 README
               </Link>{" "}
               first
@@ -632,23 +671,56 @@ export const DatabaseConfiguration = () => {
                   Add Table
                 </Button>
 
-                <Button
-                  onClick={handleGenerateFullSchema}
-                  disabled={isPending || !canSubmitTables}
-                  className="w-full theme-gap-2"
-                >
-                  {isGeneratingSchema ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating database...
-                    </>
-                  ) : (
-                    <>
-                      <Bot className="h-4 w-4" />
-                      Generate Database
-                    </>
-                  )}
-                </Button>
+                {databaseGenerated ? (
+                  <div className="flex flex-col sm:flex-row theme-gap-2">
+                    <Button
+                      onClick={handleGenerateFullSchema}
+                      disabled={isPending || !hasTableDescriptionsChanged()}
+                      className="flex-1 theme-gap-2"
+                    >
+                      {isGeneratingSchema ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Regenerating...
+                        </>
+                      ) : (
+                        <>
+                          <Bot className="h-4 w-4" />
+                          Regenerate Database
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowSuccessView(true);
+                      }}
+                      disabled={isPending}
+                      variant="outline"
+                      className="flex-1 theme-gap-2"
+                    >
+                      View Database
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={handleGenerateFullSchema}
+                    disabled={isPending || !canSubmitTables}
+                    className="w-full theme-gap-2"
+                  >
+                    {isGeneratingSchema ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Generating database...
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="h-4 w-4" />
+                        Generate Database
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -659,24 +731,36 @@ export const DatabaseConfiguration = () => {
 
   return (
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
-      <Popover
-        open={helpPopoverOpen}
-        onOpenChange={(open) => {
-          setHelpPopoverOpen(open);
-          if (open && !databaseHelpPopoverOpened) {
-            setDatabaseHelpPopoverOpened(true);
-          }
-        }}
-      >
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`absolute top-2 right-2 h-8 w-8 z-10 rounded-full ${!databaseHelpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90" : ""}`}
-          >
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-        </PopoverTrigger>
+      <div className="absolute top-2 right-2 flex items-center theme-gap-2 z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-full"
+          onClick={() => {
+            setShowSuccessView(false);
+            setAccordionValue("step-tables");
+          }}
+        >
+          <CornerLeftUp className="h-4 w-4" />
+        </Button>
+        <Popover
+          open={helpPopoverOpen}
+          onOpenChange={(open) => {
+            setHelpPopoverOpen(open);
+            if (open && !databaseHelpPopoverOpened) {
+              setDatabaseHelpPopoverOpened(true);
+            }
+          }}
+        >
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-8 w-8 rounded-full ${!databaseHelpPopoverOpened ? "theme-bg-primary theme-text-primary-foreground hover:opacity-90" : ""}`}
+            >
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
         <PopoverContent
           className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
           style={{ borderColor: "var(--theme-primary)" }}
@@ -700,8 +784,9 @@ export const DatabaseConfiguration = () => {
           </div>
         </PopoverContent>
       </Popover>
+      </div>
       <div className="flex flex-col theme-gap-4">
-        <div className="theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-6 pb-0">
+        <div className="theme-bg-card border-2 theme-radius theme-shadow theme-p-6 pb-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center theme-gap-3">
               <SiSupabase className="w-10 h-10 theme-text-foreground" />

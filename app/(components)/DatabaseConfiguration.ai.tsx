@@ -61,9 +61,13 @@ Options:
 IMPORTANT - Supabase Authentication:
 - Supabase automatically provides authentication tables in the "auth" schema
 - DO NOT create tables for: users, sessions, accounts, verification_tokens, magic_links, or any auth-related infrastructure
-- The auth.users table handles authentication, email verification, and sessions
-- DO NOT create a "users" table - this conflicts with auth.users
+- The auth.user table (singular "user") handles authentication, email verification, and sessions
+- DO NOT create a "users" or "user" table - this conflicts with auth.user
 - Use a "profiles" table in the "public" schema for application-specific profile data
+
+Available Auth Schema Table for Relations:
+- auth.user - Main user authentication table with id, email, and other user fields
+- You CAN create foreign key relations to auth.user when you need to reference the authenticated user
 
 Rules:
 - Create enums for status/type/priority/category fields, use enum name as column type
@@ -74,17 +78,23 @@ Rules:
 
 Public Profiles Table:
 - ALWAYS create a 'profiles' table in the 'public' schema for application-specific user data
-- Never use "users" as a table name - always use "profiles" instead
-- Include at minimum: id (references auth.users.id), created_at, updated_at
+- Never use "users" or "user" as a table name - always use "profiles" instead
+- Structure: The profiles table MUST have BOTH:
+  * Its own primary key: id (TEXT, PRIMARY KEY, DEFAULT gen_random_uuid())
+  * A foreign key to auth: user_id (TEXT, UNIQUE, references auth.user.id, onDelete: Cascade)
+- The user_id column creates a one-to-one relationship with auth.user
 - Add additional user profile columns mentioned in README (username, display_name, bio, avatar_url, etc.)
-- Use snake_case for column names (user_id, display_name, avatar_url)
-- The id column should reference auth.users.id with a one-to-one relation
+- Use snake_case for all column names
 
-Foreign Keys:
-- Columns ending in _id (user_id, post_id, author_id) should have relation objects
-- Relation format: { "table": "profiles", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" }
-- Use snake_case consistently (user_id not userId)
-- When referencing user data, use "profiles" table (not "users")
+Foreign Key Naming Conventions:
+- Foreign key names MUST match the table they reference using pattern: {table_name}_id
+- Examples:
+  * Referencing profiles table → use "profile_id" (NOT "user_id")
+  * Referencing posts table → use "post_id"
+  * Referencing auth.user directly → use "user_id"
+- Format: { "table": "table_name", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" }
+- Use snake_case consistently (profile_id not profileId)
+- IMPORTANT: Only use "user_id" when directly referencing auth.user, use "profile_id" when referencing profiles table
 
 Check Constraints:
 - Add checkConstraints array to tables for business rules mentioned in README
@@ -139,7 +149,8 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
       "name": "profiles",
       "schema": "public",
       "columns": [
-        { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"], "relation": { "table": "auth.users", "field": "id", "onDelete": "Cascade", "relationType": "one-to-one" } },
+        { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"] },
+        { "name": "user_id", "type": "TEXT", "isUnique": true, "attributes": ["@unique"], "relation": { "table": "auth.user", "field": "id", "onDelete": "Cascade", "relationType": "one-to-one" } },
         { "name": "username", "type": "TEXT", "isUnique": true },
         { "name": "display_name", "type": "TEXT", "isOptional": true },
         { "name": "created_at", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()", "attributes": ["@default(NOW())"] },
@@ -154,7 +165,7 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
       "schema": "public",
       "columns": [
         { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"] },
-        { "name": "user_id", "type": "TEXT", "relation": { "table": "profiles", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" } },
+        { "name": "profile_id", "type": "TEXT", "relation": { "table": "profiles", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" } },
         { "name": "title", "type": "TEXT" },
         { "name": "created_at", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()", "attributes": ["@default(NOW())"] },
         { "name": "updated_at", "type": "TIMESTAMP WITH TIME ZONE", "attributes": ["@updatedAt"] }
@@ -269,9 +280,21 @@ export const parseDatabaseSchemaFromResponse = (
             isUnique: false,
             isArray: false,
             defaultValue: 'gen_random_uuid()',
-            attributes: ['@id', '@default(gen_random_uuid())'],
+            attributes: ['@id', '@default(gen_random_uuid())']
+          },
+          {
+            id: generateId(),
+            name: 'user_id',
+            type: 'TEXT',
+            isId: false,
+            isDefault: false,
+            isEditable: true,
+            isOptional: false,
+            isUnique: true,
+            isArray: false,
+            attributes: ['@unique'],
             relation: {
-              table: 'auth.users',
+              table: 'auth.user',
               field: 'id',
               onDelete: 'Cascade',
               relationType: 'one-to-one'
@@ -363,16 +386,16 @@ ${JSON.stringify(appStructure)}
 Based on the app data and features, generate a list of database tables with names and descriptions.
 
 IMPORTANT - Supabase Auth Tables:
-- DO NOT include auth-related tables (users, sessions, accounts, verification_tokens, magic_links, etc.)
+- DO NOT include auth-related tables (users, user, sessions, accounts, verification_tokens, magic_links, etc.)
 - Supabase automatically provides authentication tables in the "auth" schema
-- The auth.users table handles authentication, email verification, and session management
-- DO NOT create a "users" table - this conflicts with auth.users
+- The auth.user table (singular "user") handles authentication, email verification, and session management
+- DO NOT create a "users" or "user" table - this conflicts with auth.user
 - Use a "profiles" table in the "public" schema for application-specific user profile data (bio, avatar, preferences, etc.)
 
 Rules:
 - Table names should be in snake_case (e.g., "profiles", "user_posts", "page_elements")
-- Always include a "profiles" table in the "public" schema for application-specific user data that extends auth.users
-- Never use "users" as a table name - use "profiles" instead
+- Always include a "profiles" table in the "public" schema for application-specific user data that extends auth.user
+- Never use "users" or "user" as a table name - use "profiles" instead
 - Create tables for each main entity mentioned in the features
 - Description should explain what data the table stores and its purpose
 - Keep descriptions concise (1-2 sentences)
@@ -381,7 +404,7 @@ Rules:
 JSON Structure:
 {
   "tables": [
-    { "name": "profiles", "description": "Stores application-specific user profile data (username, bio, avatar, preferences) that extends the Supabase auth.users table" },
+    { "name": "profiles", "description": "Stores application-specific user profile data (username, bio, avatar, preferences) that extends the Supabase auth.user table" },
     { "name": "posts", "description": "Contains user-created posts with titles, content, and metadata" }
   ]
 }

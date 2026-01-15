@@ -31,7 +31,7 @@ Description: Manage personal sticker identity and account. Change beep and buzz 
 Access: user
 
 Page 5:
-Name: Onboarding
+Name: Weclome
 Route: /welcome
 Description: First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.
 Access: public

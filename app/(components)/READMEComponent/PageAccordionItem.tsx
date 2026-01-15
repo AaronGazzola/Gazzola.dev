@@ -51,7 +51,7 @@ export const PageAccordionItem = ({
 
   return (
     <div
-      className={`flex flex-col theme-gap-2 theme-p-2 theme-bg-muted theme-radius ${isExpanded ? "theme-border-primary" : ""}`}
+      className={`flex flex-col theme-gap-2 theme-p-2 theme-bg-muted theme-radius border theme-border-border`}
     >
       <div className="flex items-center justify-between">
         <button

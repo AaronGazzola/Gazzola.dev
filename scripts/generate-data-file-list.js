@@ -19,21 +19,15 @@ function getAllFiles(dirPath, arrayOfFiles = [], basePath = "") {
 }
 
 const publicDataPath = path.join(__dirname, "..", "public", "data");
-
-const foldersToInclude = ["templates", "documentation"];
+const documentationPath = path.join(publicDataPath, "documentation");
 
 let fileList = [];
 
-foldersToInclude.forEach((folderName) => {
-  const folderPath = path.join(publicDataPath, folderName);
-  if (fs.existsSync(folderPath)) {
-    const files = getAllFiles(folderPath, [], folderName);
-    fileList = fileList.concat(files);
-    console.log(`Found ${files.length} files in ${folderName}/`);
-  }
-});
+if (fs.existsSync(documentationPath)) {
+  fileList = getAllFiles(documentationPath, [], "documentation");
+}
 
 const outputPath = path.join(publicDataPath, "data-file-list.json");
 fs.writeFileSync(outputPath, JSON.stringify(fileList, null, 2));
 
-console.log(`Generated data-file-list.json with ${fileList.length} total files`);
+console.log(`Generated data-file-list.json with ${fileList.length} files`);

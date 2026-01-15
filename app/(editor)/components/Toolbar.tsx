@@ -8,6 +8,8 @@ import {
   DialogDescription as EditorDialogDescription,
   DialogFooter as EditorDialogFooter,
   DialogHeader as EditorDialogHeader,
+  DialogOverlay as EditorDialogOverlay,
+  DialogPortal as EditorDialogPortal,
   DialogTitle as EditorDialogTitle,
 } from "@/components/editor/ui/dialog";
 import {
@@ -23,26 +25,31 @@ import {
   TooltipTrigger,
 } from "@/components/editor/ui/tooltip";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
+import { processContent } from "@/lib/download.utils";
 import { conditionalLog } from "@/lib/log.util";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
+  ArrowBigDownDash,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  Copy,
   Download,
   Ellipsis,
-  Home,
+  FileDown,
+  FolderDown,
+  HardDriveUpload,
   ListRestart,
   MessagesSquare,
   Palette,
   RotateCcw,
+  Save,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { useAppStructureStore } from "../../(components)/AppStructure.stores";
 import { useDatabaseStore } from "../../(components)/DatabaseConfiguration.stores";
 import { useDatabaseTablesStore } from "../../(components)/DatabaseConfiguration.tables.stores";
@@ -54,8 +61,6 @@ import { getMarkdownDataAction } from "../layout.actions";
 import { useContentVersionCheck } from "../layout.hooks";
 import { useEditorStore } from "../layout.stores";
 import type { InitialConfigurationType } from "../layout.types";
-import { processContent } from "@/lib/download.utils";
-import { toast } from "sonner";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -136,7 +141,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     getInitialConfiguration,
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
-  const { resetTheme, hasInteracted: themeHasInteracted } = useThemeConfigStore();
+  const { resetTheme, hasInteracted: themeHasInteracted } =
+    useThemeConfigStore();
   const { reset: resetAppStructure } = useAppStructureStore();
   const { reset: resetDatabase } = useDatabaseStore();
   const { reset: resetDatabaseTables } = useDatabaseTablesStore();
@@ -149,6 +155,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [fileTreePopoverOpen, setFileTreePopoverOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resetPopoverOpen, setResetPopoverOpen] = useState(false);
+  const [savePopoverOpen, setSavePopoverOpen] = useState(false);
+  const [downloadPopoverOpen, setDownloadPopoverOpen] = useState(false);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -160,7 +171,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       }
 
       if (node.type === "file") {
-        if (node.includeInToolbar !== false && node.includeInSidebar !== false) {
+        if (
+          node.includeInToolbar !== false &&
+          node.includeInSidebar !== false
+        ) {
           pages.push({
             path: node.path,
             url: node.urlPath,
@@ -435,7 +449,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
       resetReadme();
     }
 
-    if (currentContentPath === "environment") {
+    if (currentContentPath === "starter-kit") {
       resetNextSteps();
     }
 
@@ -636,7 +650,437 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     toast.success("Content downloaded!");
+    setDownloadPopoverOpen(false);
   };
+
+  const handleDownloadAllPages = async () => {
+    try {
+      const { generateAndDownloadZip } = await import("@/lib/download.utils");
+      const {
+        data: markdownData,
+        codeFiles,
+        getSectionInclude,
+        getSectionContent,
+        getSectionOptions,
+        appStructure,
+        getPlaceholderValue,
+        getInitialConfiguration,
+      } = useEditorStore.getState();
+
+      await generateAndDownloadZip(
+        markdownData,
+        codeFiles,
+        getSectionInclude,
+        (filePath: string, sectionId: string, optionId: string) => {
+          const node = markdownData.flatIndex[filePath];
+          if (node?.type === "file" && node.sections?.[sectionId]?.[optionId]) {
+            return node.sections[sectionId][optionId].content || "";
+          }
+          return "";
+        },
+        (filePath: string, sectionId: string) => {
+          const node = markdownData.flatIndex[filePath];
+          if (node?.type === "file" && node.sections?.[sectionId]) {
+            return node.sections[sectionId];
+          }
+          return {};
+        },
+        appStructure,
+        getPlaceholderValue,
+        getInitialConfiguration
+      );
+      toast.success("All pages downloaded!");
+      setDownloadPopoverOpen(false);
+    } catch (error) {
+      console.error("Failed to download all pages:", error);
+      toast.error("Failed to download all pages");
+    }
+  };
+
+  const handleSaveProgress = () => {
+    try {
+      const state = useEditorStore.getState();
+      const themeState = useThemeConfigStore.getState();
+      const databaseState = useDatabaseStore.getState();
+      const appStructureState = useAppStructureStore.getState();
+      const readmeState = useREADMEStore.getState();
+      const databaseTablesState = useDatabaseTablesStore.getState();
+      const nextStepsState = useNextStepsStore.getState();
+
+      const progressData = {
+        version: 1,
+        timestamp: new Date().toISOString(),
+        editorState: {
+          data: state.data,
+          previewMode: state.previewMode,
+          darkMode: state.darkMode,
+          appStructureGenerated: state.appStructureGenerated,
+          readmeGenerated: state.readmeGenerated,
+          databaseGenerated: state.databaseGenerated,
+          appStructure: state.appStructure,
+          features: state.features,
+          initialConfiguration: state.getInitialConfiguration(),
+        },
+        themeState: themeState.theme,
+        databaseState: {
+          tables: databaseState.tables,
+          enums: databaseState.enums,
+          rlsPolicies: databaseState.rlsPolicies,
+          plugins: databaseState.plugins,
+        },
+        appStructureState: {
+          inferredFeatures: appStructureState.inferredFeatures,
+          parsedPages: appStructureState.parsedPages,
+          featuresGenerated: appStructureState.featuresGenerated,
+        },
+        readmeState: {
+          title: readmeState.title,
+          description: readmeState.description,
+          pages: readmeState.pages,
+          authMethods: readmeState.authMethods,
+          pageAccess: readmeState.pageAccess,
+          stage: readmeState.stage,
+          lastGeneratedForAuth: readmeState.lastGeneratedForAuth,
+          lastGeneratedForPages: readmeState.lastGeneratedForPages,
+          lastGeneratedForReadme: readmeState.lastGeneratedForReadme,
+        },
+        databaseTablesState: {
+          tableDescriptions: databaseTablesState.tableDescriptions,
+          tablesGenerated: databaseTablesState.tablesGenerated,
+          accordionValue: databaseTablesState.accordionValue,
+          expandedTableId: databaseTablesState.expandedTableId,
+          lastGeneratedAppStructure: databaseTablesState.lastGeneratedAppStructure,
+          lastGeneratedTableDescriptions: databaseTablesState.lastGeneratedTableDescriptions,
+        },
+        nextStepsState: {
+          openStep: nextStepsState.openStep,
+          unlockedSteps: Array.from(nextStepsState.unlockedSteps),
+        },
+      };
+
+      const blob = new Blob([JSON.stringify(progressData, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `starter-kit-progress-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success("Progress saved!");
+      setSavePopoverOpen(false);
+    } catch (error) {
+      console.error("Failed to save progress:", error);
+      toast.error("Failed to save progress");
+    }
+  };
+
+  const processUploadedFile = useCallback(async (file: File) => {
+    try {
+      const text = await file.text();
+      const progressData = JSON.parse(text);
+
+      if (!progressData.version || !progressData.editorState) {
+        toast.error("Invalid progress file format");
+        return;
+      }
+
+      const editorStore = useEditorStore.getState();
+      const themeStore = useThemeConfigStore.getState();
+      const databaseStore = useDatabaseStore.getState();
+      const appStructureStore = useAppStructureStore.getState();
+      const readmeStore = useREADMEStore.getState();
+      const databaseTablesStore = useDatabaseTablesStore.getState();
+      const nextStepsStore = useNextStepsStore.getState();
+
+      if (progressData.themeState) {
+        themeStore.setTheme(progressData.themeState);
+      }
+
+      if (progressData.databaseState) {
+        databaseStore.reset();
+        const tableIdMap = new Map<string, string>();
+
+        if (progressData.databaseState.tables) {
+          progressData.databaseState.tables.forEach((table: any) => {
+            const newTableId = databaseStore.addTable(table.name, table.schema);
+            tableIdMap.set(table.id, newTableId);
+
+            if (table.columns) {
+              table.columns.forEach((col: any) => {
+                databaseStore.addColumn(newTableId, col);
+              });
+            }
+          });
+        }
+        if (progressData.databaseState.enums) {
+          progressData.databaseState.enums.forEach((enumData: any) => {
+            const enumId = databaseStore.addEnum(enumData.name);
+            if (enumData.values) {
+              enumData.values.forEach((val: any) => {
+                databaseStore.addEnumValue(enumId, val.value);
+              });
+            }
+          });
+        }
+        if (progressData.databaseState.rlsPolicies) {
+          progressData.databaseState.rlsPolicies.forEach((policy: any) => {
+            const newTableId = tableIdMap.get(policy.tableId);
+            if (newTableId && policy.rolePolicies) {
+              policy.rolePolicies.forEach((rolePolicy: any) => {
+                databaseStore.addOrUpdateRLSPolicy(
+                  newTableId,
+                  policy.operation,
+                  rolePolicy.role,
+                  rolePolicy.accessType,
+                  rolePolicy.relatedTable
+                );
+              });
+            }
+          });
+        }
+        if (progressData.databaseState.plugins) {
+          progressData.databaseState.plugins.forEach((plugin: any) => {
+            databaseStore.addPlugin(plugin);
+          });
+        }
+      }
+
+      if (progressData.appStructureState) {
+        if (progressData.appStructureState.inferredFeatures) {
+          appStructureStore.setInferredFeatures(
+            progressData.appStructureState.inferredFeatures
+          );
+        }
+        if (progressData.appStructureState.parsedPages) {
+          appStructureStore.setParsedPages(
+            progressData.appStructureState.parsedPages
+          );
+        }
+        if (progressData.appStructureState.featuresGenerated !== undefined) {
+          appStructureStore.setFeaturesGenerated(
+            progressData.appStructureState.featuresGenerated
+          );
+        }
+      }
+
+      if (progressData.readmeState) {
+        if (progressData.readmeState.title !== undefined) {
+          readmeStore.setTitle(progressData.readmeState.title);
+        }
+        if (progressData.readmeState.description !== undefined) {
+          readmeStore.setDescription(progressData.readmeState.description);
+        }
+        if (progressData.readmeState.pages) {
+          readmeStore.setPages(progressData.readmeState.pages);
+        }
+        if (progressData.readmeState.authMethods) {
+          readmeStore.setAuthMethods(progressData.readmeState.authMethods);
+        }
+        if (progressData.readmeState.pageAccess) {
+          readmeStore.setPageAccess(progressData.readmeState.pageAccess);
+        }
+        if (progressData.readmeState.stage) {
+          readmeStore.setStage(progressData.readmeState.stage);
+        }
+        if (progressData.readmeState.lastGeneratedForAuth !== undefined) {
+          readmeStore.setLastGeneratedForAuth(progressData.readmeState.lastGeneratedForAuth);
+        }
+        if (progressData.readmeState.lastGeneratedForPages !== undefined) {
+          readmeStore.setLastGeneratedForPages(progressData.readmeState.lastGeneratedForPages);
+        }
+        if (progressData.readmeState.lastGeneratedForReadme !== undefined) {
+          readmeStore.setLastGeneratedForReadme(progressData.readmeState.lastGeneratedForReadme);
+        }
+      }
+
+      if (progressData.databaseTablesState) {
+        if (progressData.databaseTablesState.tableDescriptions) {
+          databaseTablesStore.setTableDescriptions(progressData.databaseTablesState.tableDescriptions);
+        }
+        if (progressData.databaseTablesState.tablesGenerated !== undefined) {
+          databaseTablesStore.setTablesGenerated(progressData.databaseTablesState.tablesGenerated);
+        }
+        if (progressData.databaseTablesState.accordionValue !== undefined) {
+          databaseTablesStore.setAccordionValue(progressData.databaseTablesState.accordionValue);
+        }
+        if (progressData.databaseTablesState.expandedTableId !== undefined) {
+          databaseTablesStore.setExpandedTableId(progressData.databaseTablesState.expandedTableId);
+        }
+        if (progressData.databaseTablesState.lastGeneratedAppStructure !== undefined) {
+          databaseTablesStore.setLastGeneratedAppStructure(progressData.databaseTablesState.lastGeneratedAppStructure);
+        }
+        if (progressData.databaseTablesState.lastGeneratedTableDescriptions !== undefined) {
+          databaseTablesStore.setLastGeneratedTableDescriptions(progressData.databaseTablesState.lastGeneratedTableDescriptions);
+        }
+      }
+
+      if (progressData.nextStepsState) {
+        if (progressData.nextStepsState.openStep !== undefined) {
+          nextStepsStore.setOpenStep(progressData.nextStepsState.openStep);
+        }
+        if (progressData.nextStepsState.unlockedSteps) {
+          progressData.nextStepsState.unlockedSteps.forEach((stepId: number) => {
+            nextStepsStore.unlockStep(stepId);
+          });
+        }
+      }
+
+      if (progressData.editorState) {
+        editorStore.setMarkdownData(progressData.editorState.data);
+        editorStore.setPreviewMode(progressData.editorState.previewMode);
+        editorStore.setDarkMode(progressData.editorState.darkMode);
+        editorStore.setAppStructureGenerated(
+          progressData.editorState.appStructureGenerated
+        );
+        editorStore.setReadmeGenerated(
+          progressData.editorState.readmeGenerated
+        );
+        editorStore.setDatabaseGenerated(
+          progressData.editorState.databaseGenerated
+        );
+        editorStore.setAppStructure(progressData.editorState.appStructure);
+        if (progressData.editorState.features) {
+          editorStore.setFeatures(progressData.editorState.features);
+        }
+        if (progressData.editorState.initialConfiguration) {
+          editorStore.setInitialConfiguration(
+            progressData.editorState.initialConfiguration
+          );
+        }
+      }
+
+      editorStore.forceRefresh();
+
+      toast.success("Progress restored successfully!");
+      setUploadDialogOpen(false);
+      setSavePopoverOpen(false);
+      setUploadedFile(null);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const homePage = numberedPages.find((page) => page.order === 1);
+      if (homePage) {
+        router.push(homePage.url);
+      }
+    } catch (error) {
+      console.error("Failed to upload progress:", error);
+      toast.error("Failed to restore progress. Please check the file format.");
+    }
+  }, [numberedPages, router]);
+
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await processUploadedFile(file);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (
+      uploadDialogOpen &&
+      e.dataTransfer.items &&
+      e.dataTransfer.items.length > 0
+    ) {
+      const item = e.dataTransfer.items[0];
+      if (item.type === "application/json") {
+        setIsDraggingOver(true);
+      }
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    if (x < rect.left || x >= rect.right || y < rect.top || y >= rect.bottom) {
+      setIsDraggingOver(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingOver(false);
+
+    if (!uploadDialogOpen) return;
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type === "application/json" || file.name.endsWith(".json")) {
+        await processUploadedFile(file);
+      } else {
+        toast.error("Please drop a JSON file");
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!uploadDialogOpen) return;
+
+    const preventDefaults = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleDocumentDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.dataTransfer?.types?.includes("Files")) {
+        setIsDraggingOver(true);
+      }
+    };
+
+    const handleDocumentDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.clientX === 0 && e.clientY === 0) {
+        setIsDraggingOver(false);
+      }
+    };
+
+    const handleDocumentDrop = async (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDraggingOver(false);
+
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        const file = files[0];
+        if (file.type === "application/json" || file.name.endsWith(".json")) {
+          await processUploadedFile(file);
+        } else {
+          toast.error("Please drop a JSON file");
+        }
+      }
+    };
+
+    document.addEventListener("dragenter", handleDocumentDragEnter);
+    document.addEventListener("dragleave", handleDocumentDragLeave);
+    document.addEventListener("dragover", preventDefaults);
+    document.addEventListener("drop", handleDocumentDrop);
+
+    return () => {
+      document.removeEventListener("dragenter", handleDocumentDragEnter);
+      document.removeEventListener("dragleave", handleDocumentDragLeave);
+      document.removeEventListener("dragover", preventDefaults);
+      document.removeEventListener("drop", handleDocumentDrop);
+    };
+  }, [uploadDialogOpen, processUploadedFile]);
 
   const progressInfo = useMemo(() => {
     conditionalLog(
@@ -692,6 +1136,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   return (
     <TooltipProvider>
+      {uploadDialogOpen && (
+        <div
+          className={cn(
+            "fixed inset-0 z-[60] transition-colors",
+            isDraggingOver ? "bg-primary/10" : "bg-transparent"
+          )}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        />
+      )}
       <div className="w-full max-w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow theme-font-sans theme-tracking overflow-hidden">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -725,26 +1181,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               </Button>
             )}
 
-            <div className="xs:flex hidden md:hidden items-center gap-1 pl-2 pr-1">
+            <div className="flex md:hidden items-center gap-1 pl-2 pr-1">
               <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
-              <Button
-                onClick={handleHome}
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-              >
-                <Home className="h-4 w-4" />
-              </Button>
             </div>
-
-            <Button
-              onClick={handleHome}
-              variant="outline"
-              size="icon"
-              className="xs:hidden h-8 w-8"
-            >
-              <Home className="h-4 w-4" />
-            </Button>
 
             <EditorPopover
               open={mobileMenuOpen}
@@ -756,37 +1195,15 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   size="icon"
                   className="md:hidden rounded-[3px] h-8 w-8"
                 >
-                  <Ellipsis className="h-4 w-4" />
+                  <Ellipsis style={{ width: 24, height: 24 }} />
                 </Button>
               </EditorPopoverTrigger>
-              <EditorPopoverContent className="w-48 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+              <EditorPopoverContent className="w-64 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
                 <div className="flex flex-col theme-gap-1">
-                  <div className="xs:hidden flex items-center justify-between px-2 py-1">
+                  <div className="flex items-center justify-between px-2 py-1 theme-border-border border-b mb-1">
                     <span className="text-sm">Dark mode</span>
                     <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
                   </div>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start theme-gap-2 h-9"
-                    onClick={() => {
-                      handleCopyContent();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <Copy className="h-4 w-4" />
-                    Copy page
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start theme-gap-2 h-9"
-                    onClick={() => {
-                      handleDownloadContent();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <Download className="h-4 w-4" />
-                    Download page
-                  </Button>
                   <Button
                     variant="ghost"
                     className="w-full justify-start theme-gap-2 h-9"
@@ -796,7 +1213,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     }}
                   >
                     <ListRestart className="h-4 w-4" />
-                    Reset page
+                    Reset current page
                   </Button>
                   <Button
                     variant="ghost"
@@ -807,7 +1224,51 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     }}
                   >
                     <RotateCcw className="h-4 w-4" />
-                    Reset all
+                    Reset all pages
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      handleSaveProgress();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Save className="h-4 w-4" />
+                    Save your progress
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      setUploadDialogOpen(true);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <HardDriveUpload className="h-4 w-4" />
+                    Upload saved progress
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      handleDownloadContent();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Download current page
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start theme-gap-2 h-9"
+                    onClick={() => {
+                      handleDownloadAllPages();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <FolderDown className="h-4 w-4" />
+                    Download all pages
                   </Button>
                 </div>
               </EditorPopoverContent>
@@ -817,22 +1278,6 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               <div className="px-1">
                 <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
               </div>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={handleHome}
-                    variant="outline"
-                    size="icon"
-                    className="h-9 w-9"
-                  >
-                    <Home className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Go to first page</p>
-                </TooltipContent>
-              </Tooltip>
 
               <EditorPopover
                 open={resetPopoverOpen}
@@ -879,6 +1324,97 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     >
                       <RotateCcw className="h-4 w-4" />
                       Reset all pages
+                    </Button>
+                  </div>
+                </EditorPopoverContent>
+              </EditorPopover>
+
+              <EditorPopover
+                open={savePopoverOpen}
+                onOpenChange={setSavePopoverOpen}
+              >
+                <EditorPopoverTrigger asChild>
+                  <div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="rounded-[3px] h-8 w-8"
+                        >
+                          <Save className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Save options</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </EditorPopoverTrigger>
+                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+                  <div className="flex flex-col theme-gap-1">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start theme-gap-2 h-9"
+                      onClick={handleSaveProgress}
+                    >
+                      <Save className="h-4 w-4" />
+                      Save your progress
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start theme-gap-2 h-9"
+                      onClick={() => {
+                        setUploadDialogOpen(true);
+                        setSavePopoverOpen(false);
+                      }}
+                    >
+                      <HardDriveUpload className="h-4 w-4" />
+                      Upload saved progress
+                    </Button>
+                  </div>
+                </EditorPopoverContent>
+              </EditorPopover>
+
+              <EditorPopover
+                open={downloadPopoverOpen}
+                onOpenChange={setDownloadPopoverOpen}
+              >
+                <EditorPopoverTrigger asChild>
+                  <div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="rounded-[3px] h-8 w-8"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Download options</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </EditorPopoverTrigger>
+                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+                  <div className="flex flex-col theme-gap-1">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start theme-gap-2 h-9"
+                      onClick={handleDownloadContent}
+                    >
+                      <FileDown className="h-4 w-4" />
+                      Download current page
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start theme-gap-2 h-9"
+                      onClick={handleDownloadAllPages}
+                    >
+                      <FolderDown className="h-4 w-4" />
+                      Download all pages
                     </Button>
                   </div>
                 </EditorPopoverContent>
@@ -956,31 +1492,85 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </EditorDialogFooter>
               </EditorDialogContent>
             </EditorDialog>
+
+            <EditorDialog
+              open={uploadDialogOpen}
+              onOpenChange={setUploadDialogOpen}
+            >
+              <EditorDialogContent
+                className="z-[70]"
+                onDragEnter={handleDragEnter}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
+                <EditorDialogHeader>
+                  <EditorDialogTitle>Upload Saved Progress</EditorDialogTitle>
+                  <EditorDialogDescription>
+                    Select a progress file to restore your previous work. This
+                    will replace your current configuration.
+                  </EditorDialogDescription>
+                </EditorDialogHeader>
+                <div className="theme-p-4">
+                  <div
+                    className={cn(
+                      "theme-border-2 border-dashed theme-radius theme-p-8 flex flex-col items-center justify-center cursor-pointer transition-colors",
+                      isDraggingOver
+                        ? "theme-border-primary theme-bg-primary/10"
+                        : "theme-border-border hover:theme-bg-accent"
+                    )}
+                    onClick={() => {
+                      if (!isDraggingOver) {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "application/json,.json";
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement)
+                            .files?.[0];
+                          if (file) {
+                            setUploadedFile(file);
+                          }
+                        };
+                        input.click();
+                      }
+                    }}
+                  >
+                    {isDraggingOver ? (
+                      <>
+                        <ArrowBigDownDash className="h-12 w-12 theme-text-primary mb-2 animate-bounce pointer-events-none" />
+                        <p className="text-sm theme-text-foreground font-medium mb-1 pointer-events-none">
+                          Drop to restore your progress
+                        </p>
+                        <p className="text-xs theme-text-muted-foreground pointer-events-none">
+                          Release to load the saved configuration
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <HardDriveUpload className="h-8 w-8 theme-text-muted-foreground mb-2 pointer-events-none" />
+                        <p className="text-sm theme-text-foreground mb-1 pointer-events-none">
+                          {uploadedFile
+                            ? uploadedFile.name
+                            : "Click to select a JSON file"}
+                        </p>
+                        <p className="text-xs theme-text-muted-foreground pointer-events-none">
+                          or drag and drop
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </EditorDialogContent>
+            </EditorDialog>
           </div>
 
           <div className="flex items-center theme-gap-4">
-            <div className="hidden md:flex theme-gap-2">
-              <IconButton
-                onClick={handleCopyContent}
-                disabled={false}
-                tooltip="Copy page content"
-              >
-                <Copy className="h-4 w-4" />
-              </IconButton>
-
-              <IconButton
-                onClick={handleDownloadContent}
-                disabled={false}
-                tooltip="Download page content"
-              >
-                <Download className="h-4 w-4" />
-              </IconButton>
-            </div>
-
-            <div className={cn(
-              "flex items-center theme-gap-3 transition-all",
-              previewMode && "theme-border-primary border-2 rounded-full theme-px-2 theme-py-1"
-            )}>
+            <div
+              className={cn(
+                "flex items-center theme-gap-3 transition-all",
+                previewMode &&
+                  "theme-border-primary border-2 rounded-full theme-px-2 theme-py-1"
+              )}
+            >
               {previewMode && (
                 <EditorPopover>
                   <EditorPopoverTrigger asChild>
