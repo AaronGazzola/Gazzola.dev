@@ -1587,7 +1587,7 @@ const loadFolderFromPublicData = async (
   folderName: string
 ): Promise<void> => {
   try {
-    const response = await fetch("/data-file-list.json");
+    const response = await fetch("/data/data-file-list.json");
     if (!response.ok) return;
 
     const fileList: string[] = await response.json();

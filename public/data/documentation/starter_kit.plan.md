@@ -139,13 +139,17 @@ Update ALL components in `components/ui/` to use the custom theme classes from `
 
 ## Phase 3: Setup Supabase
 
-### Step 3.1: Link Project
-
 Refer to `documentation/supabase.guide.md`:
+
+A Supabase project has already been created. The connection variables are located in the `.env.local` file at the root of the project.
+
+### Step 3.1: Link Project
 
 ```bash
 npx supabase link --project-ref <project-ref>
 ```
+
+The `<project-ref>` can be found in your `.env.local` file in the `NEXT_PUBLIC_SUPABASE_URL` (it's the subdomain before `.supabase.co`).
 
 ### Step 3.2: Create Migration
 

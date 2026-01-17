@@ -1,11 +1,13 @@
 [
   "documentation/.gitkeep",
+  "documentation/react-query.guide.md",
+  "documentation/shadcn.guide.md",
+  "documentation/starter_kit.plan.md",
+  "documentation/supabase.guide.md",
+  "documentation/tailwind.guide.md",
   "documentation/template_files/.gitkeep",
-  "documentation/template_files/supabase-server-client.ts",
   "documentation/template_files/template.actions.ts",
   "documentation/template_files/template.hooks.tsx",
   "documentation/template_files/template.stores.ts",
-  "documentation/template_files/template.supabase-admin-client.ts",
-  "documentation/template_files/template.supabase-browser-client.ts",
   "documentation/template_files/template.types.ts"
 ]

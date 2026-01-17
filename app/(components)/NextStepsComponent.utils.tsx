@@ -251,7 +251,7 @@ export const generateFinalPrompt = (
      * CLAUDE.md → root
      * README.md from documentation/initial_configuration/ → root (overwrite if exists)
    - Verify all files and folders are in place
-   - Delete the empty "${starterKitName}" directory
+   - IMPORTANT: Delete the "${starterKitName}" directory or zip file after extracting all contents
 
 3. CREATE IMPLEMENTATION PLAN
    - Read documentation/starter_kit.plan.md
