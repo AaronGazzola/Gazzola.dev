@@ -1651,9 +1651,26 @@ export const generateAndDownloadZip = async (
     throw new Error("Failed to create starter kit folder");
   }
 
-  const configurationFolder = starterKitFolder.folder("configuration");
-  if (!configurationFolder) {
-    throw new Error("Failed to create configuration folder");
+  try {
+    const claudeResponse = await fetch("/data/CLAUDE.md");
+    if (claudeResponse.ok) {
+      const claudeContent = await claudeResponse.text();
+      starterKitFolder.file("CLAUDE.md", claudeContent);
+    }
+  } catch (error) {
+    console.error("Failed to load CLAUDE.md:", error);
+  }
+
+  const documentationFolder = starterKitFolder.folder("documentation");
+  if (!documentationFolder) {
+    throw new Error("Failed to create documentation folder");
+  }
+
+  await loadFolderFromPublicData(zip, documentationFolder, "documentation");
+
+  const initialConfigurationFolder = documentationFolder.folder("initial_configuration");
+  if (!initialConfigurationFolder) {
+    throw new Error("Failed to create initial_configuration folder");
   }
 
   const markdownFiles = [
@@ -1679,26 +1696,11 @@ export const generateAndDownloadZip = async (
           getInitialConfiguration,
           true
         );
-        configurationFolder.file(file.name, processedContent);
+        initialConfigurationFolder.file(file.name, processedContent);
       }
     } catch (error) {
       console.error(`Failed to load ${file.name}:`, error);
     }
-  }
-
-  try {
-    const claudeResponse = await fetch("/data/CLAUDE.md");
-    if (claudeResponse.ok) {
-      const claudeContent = await claudeResponse.text();
-      starterKitFolder.file("CLAUDE.md", claudeContent);
-    }
-  } catch (error) {
-    console.error("Failed to load CLAUDE.md:", error);
-  }
-
-  const documentationFolder = starterKitFolder.folder("documentation");
-  if (documentationFolder) {
-    await loadFolderFromPublicData(zip, documentationFolder, "documentation");
   }
 
   const blob = await zip.generateAsync({ type: "blob" });

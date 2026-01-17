@@ -203,8 +203,8 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
 
 2. INSTALL NEXT.JS
    - Once prerequisites are confirmed, install Next.js in the current directory
-   - Use the command: npx create-next-app@latest . --yes
-   - Help me select the appropriate configuration options when prompted
+   - Use the command: npx create-next-app@latest . --no-tailwind --yes
+   - This accepts all defaults (TypeScript, ESLint, App Router) but skips Tailwind so we can install v4 manually later
 
 3. CLEAN UP BOILERPLATE
    - After installation, help me delete unnecessary boilerplate files
@@ -221,9 +221,10 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
      5. Scroll down to "Secret keys" and click the copy button next to the "default" key and paste it here (starts with "sb_secret_")
      6. Also copy the URL in your browser's URL/search bar (starts with: "https://supabase.com/dashboard/project/") and paste it here 
 
-   - After I provide these credentials, create a .env.local file (extract the supabase URL from the full url provided, eg: "https://supabase.com/dashboard/project/cqblezzhywdjerslhgho/settings/api-keys/legacy" -> "https://cqblezzhywdjerslhgho.supabase.co"):
+   - After I provide these credentials, create a .env.local file (extract the supabase URL and project ref from the full url provided, eg: "https://supabase.com/dashboard/project/cqblezzhywdjerslhgho/settings/api-keys/legacy" -> "https://cqblezzhywdjerslhgho.supabase.co" + "cqblezzhywdjerslhgho"):
      NEXT_PUBLIC_SUPABASE_URL=<my-project-url>
      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<my-anon-key>
+     NEXT_PUBLIC_SUPABASE_PROJECT_REF=<my-project-ref>
      SUPABASE_SECRET_KEY=<my-service-role-key>
 
    - Verify .gitignore includes .env.local
@@ -234,20 +235,26 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
    - Note: I'm already authenticated with GitHub from when I cloned this repository
    - Run git add . && git commit -m "Initial Next.js setup" && git push`;
 
-export const FINAL_PROMPT = `Starter kit downloaded! Extract the ZIP file and explore your project:
+export const generateFinalPrompt = (
+  starterKitName: string
+) => `I need help setting up my project using the starter kit. Please work through these steps:
 
-📁 Your starter kit contains:
-- docs/README.md - Project overview and getting started guide
-- docs/App_Directory.md - Application structure and feature map
-- docs/Theme.md - Theme configuration and styling
-- docs/Database.md - Database schema and migrations
-- CLAUDE.md - Guidance for Claude Code when working with your project
-- templates/ - Template files for your project
+1. LOCATE STARTER KIT
+   - Search the repository for a directory or ZIP file named "${starterKitName}"
+   - If not found, ask me: "I couldn't find the ${starterKitName}. Please download it from Gazzola.dev and add it to your project directory, then let me know when it's ready."
+   - Wait for my confirmation before proceeding
 
-📋 Next steps:
-1. Extract the ZIP file
-2. Move the contents into your project directory in VS Code
-3. Ask Claude to help you set up your project using the documentation
+2. EXTRACT AND ORGANIZE
+   - If it's a ZIP file, extract it
+   - Move all contents from the starter kit to the project root:
+     * documentation/ directory (and all contents) → root
+     * CLAUDE.md → root
+     * README.md from documentation/initial_configuration/ → root (overwrite if exists)
+   - Verify all files and folders are in place
+   - Delete the empty "${starterKitName}" directory
 
-Paste this prompt in Claude Code to get started:
-"Help me set up this project using the documentation in the docs folder. Start by reading docs/README.md and guide me through the setup process step by step."`;
+3. CREATE IMPLEMENTATION PLAN
+   - Read documentation/starter_kit.plan.md
+   - Switch to plan mode and create a step-by-step plan from the instructions in that document
+
+Important: Follow the starter_kit.plan.md document exactly. It contains all the detailed instructions for the setup process.`;

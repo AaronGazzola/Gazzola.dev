@@ -19,6 +19,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - All errors should be thrown - no "fallback" functionality
 - All errors should be logged with `console.error`
 - Import "cn" from "@/lib/utils" to concatenate classes.
+- Don't use middleware - route protection and feature gating should be handled by database queries implemented in react-query hooks.
+
+# Documentation
+
+Refer to the files ending in `.guide.md` in the `documents` directory in the project root for instructions on implementing supabase features/functions and cli commands, shadcn components and styling, enhanced react-query features, and other technology specific features.
+
+# Loading skeletons
+
+- Full page UI should be loaded initially, with data-dependent content replaced with loading skeletons while fetching
+- Loading skeletons should only replace the content that requires data and should match the sillhouette of the component
+  - Example: if a username is loading then only the username text content should be replaced with an inline loading skeleton.
+- If stale data is available from the zustand store then this should be displayed while fetching rather than showing the skeleton.
 
 # File Organization and Naming Conventions
 
@@ -147,8 +159,8 @@ Organization by scope:
 
 - Use React Query (`useQuery`, `useMutation`) to call actions
 - Use Supabase **browser client** (publishable key) for auth operations (`auth.signIn`, `auth.signOut`, etc.) and real-time subscriptions
-- Update zustand stores in `onSuccess` callbacks when applicable
-- Manage loading and error states (NOT the store)
+- Update zustand stores (if appropriate) in `onSuccess` callbacks of useMutation hooks, or in the queryFn of useQuery hooks.
+- Manage loading and error states via react-query hooks (NOT the store)
 - Function naming: `useFeatureName` (e.g., `useUserAuth`, `useProductList`)
 
 **Stores** (`*.stores.ts`)
@@ -157,26 +169,3 @@ Organization by scope:
 - Never use `persist` for sensitive user data (email, etc.)
 - Function naming: `useFeatureNameStore` (e.g., `useAuthStore`, `useSidebarStore`)
 - File naming: **plural** `page.stores.ts` (NOT singular `page.store.ts`)
-
-## Feature Organization Example
-
-Multiple features on a single page share the same utility files:
-
-```txt
-/app/page.tsx (Homepage with 6 features)
-  Features:
-    1. "Search bar with autocomplete"
-    2. "Popular pages grid sorted by sticker count"
-    3. "Recently active section showing pages with recent stickers"
-    4. "New pages section for fresh content"
-    5. "Category filter tabs (Art, Music, Tech, etc.)"
-    6. "Random page button for discovery"
-
-  ALL 6 features link to:
-    stores: /app/page.stores.ts (useCategoryFilterStore - selected category)
-    hooks: /app/page.hooks.tsx (usePopularPages, useRecentPages, useNewPages, useSearch)
-    actions: /app/page.actions.ts (getPopularPages, getRecentPages, searchPages)
-    types: /app/page.types.ts (PageCard, SearchResult)
-```
-
-Key principle: Multiple features on one page share utility files. Don't create separate stores/hooks per feature.

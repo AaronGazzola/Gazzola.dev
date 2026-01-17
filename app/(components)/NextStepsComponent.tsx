@@ -34,13 +34,14 @@ import { useNextStepsStore } from "./NextStepsComponent.stores";
 import type { StepData } from "./NextStepsComponent.types";
 import {
   ClaudeCodeLogo,
-  FINAL_PROMPT,
+  generateFinalPrompt,
   GitHubSmallLogo,
   SETUP_PROMPT,
   SupabaseLogo,
   VercelLogo,
   VSCodeLogo,
 } from "./NextStepsComponent.utils";
+import { useREADMEStore } from "./READMEComponent.stores";
 
 export const NextStepsComponent = () => {
   const { openStep, setOpenStep, unlockedSteps, unlockStep } =
@@ -57,14 +58,20 @@ export const NextStepsComponent = () => {
     getSectionOptions,
     appStructure,
     getPlaceholderValue,
+    setPlaceholderValue,
     getInitialConfiguration,
     readmeGenerated,
     appStructureGenerated,
   } = useEditorStore();
 
+  const { title: appTitle } = useREADMEStore();
+
   const initialConfiguration = getInitialConfiguration();
   const isNoDatabaseSelected =
     initialConfiguration.questions.databaseProvider === "none";
+
+  const starterKitName = `${(appTitle || "My_Project").replace(/\s+/g, "_")}_Starter_Kit`;
+  const finalPrompt = generateFinalPrompt(starterKitName);
 
   const handleCopy = async (text: string, id: string) => {
     try {
@@ -78,6 +85,9 @@ export const NextStepsComponent = () => {
 
   const handleDownload = async () => {
     try {
+      const projectName = appTitle || "My_Project";
+      setPlaceholderValue("projectName", projectName);
+
       await generateAndDownloadZip(
         data,
         codeFiles,
@@ -576,13 +586,13 @@ export const NextStepsComponent = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-[500px] max-h-[400px] overflow-y-auto">
                   <pre className="text-xs theme-text-foreground whitespace-pre-wrap font-mono">
-                    {FINAL_PROMPT}
+                    {finalPrompt}
                   </pre>
                 </PopoverContent>
               </Popover>
               <Button
                 variant="outline"
-                onClick={() => handleCopy(FINAL_PROMPT, "final")}
+                onClick={() => handleCopy(finalPrompt, "final")}
                 className="w-full flex flex-col items-center py-6 h-auto mb-4"
               >
                 {copied === "final" ? (
