@@ -257,4 +257,4 @@ export const generateFinalPrompt = (
    - Read documentation/starter_kit.plan.md
    - Switch to plan mode and create a step-by-step plan from the instructions in that document
 
-Important: Follow the starter_kit.plan.md document exactly. It contains all the detailed instructions for the setup process.`;
+IMPORTANT: Follow the starter_kit.plan.md document exactly. It contains all the detailed instructions for the setup process. DO NOT CHANGE THE IMPLEMENTATION ORDER - FOLLOW THE PLAN EXACTLY`;
