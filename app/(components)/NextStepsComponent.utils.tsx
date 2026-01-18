@@ -240,7 +240,7 @@ export const generateFinalPrompt = (
 ) => `I need help setting up my project using the starter kit. Please work through these steps:
 
 1. LOCATE STARTER KIT
-   - Search the repository for a directory or ZIP file named "${starterKitName}"
+   - Search the repository for a directory or ZIP file name containing "${starterKitName}" (it may have "(3)" or something similar appended)
    - If not found, ask me: "I couldn't find the ${starterKitName}. Please download it from Gazzola.dev and add it to your project directory, then let me know when it's ready."
    - Wait for my confirmation before proceeding
 

@@ -121,7 +121,9 @@ export const READMEComponent = () => {
 
   const hasPagesInputChanged = useCallback(() => {
     if (!lastGeneratedForPages) return true;
-    return JSON.stringify(lastGeneratedForPages) !== JSON.stringify(authMethods);
+    return (
+      JSON.stringify(lastGeneratedForPages) !== JSON.stringify(authMethods)
+    );
   }, [lastGeneratedForPages, authMethods]);
 
   const hasReadmeInputChanged = useCallback(() => {
@@ -130,7 +132,9 @@ export const READMEComponent = () => {
   }, [lastGeneratedForReadme, pages]);
 
   const hasAnyInputChanged = useCallback(() => {
-    return hasAuthInputChanged() || hasPagesInputChanged() || hasReadmeInputChanged();
+    return (
+      hasAuthInputChanged() || hasPagesInputChanged() || hasReadmeInputChanged()
+    );
   }, [hasAuthInputChanged, hasPagesInputChanged, hasReadmeInputChanged]);
 
   const handleAccordionChange = useCallback(
@@ -168,10 +172,17 @@ export const READMEComponent = () => {
 
   const { mutate: generateReadme, isPending: isGeneratingReadme } =
     useCodeGeneration((response) => {
-      console.log("README GENERATION OUTPUT:", JSON.stringify({
-        responseContent: response.content,
-        fullContent: `<!-- component-READMEComponent -->\n\n${response.content}`
-      }, null, 2));
+      console.log(
+        "README GENERATION OUTPUT:",
+        JSON.stringify(
+          {
+            responseContent: response.content,
+            fullContent: `<!-- component-READMEComponent -->\n\n${response.content}`,
+          },
+          null,
+          2
+        )
+      );
 
       setContent(
         "readme",
@@ -219,7 +230,13 @@ export const READMEComponent = () => {
     setLastGeneratedForPages(authMethods);
     const prompt = generatePagesPrompt(title, description, authMethods);
     generatePages({ prompt, maxTokens: 1200 });
-  }, [title, description, authMethods, generatePages, setLastGeneratedForPages]);
+  }, [
+    title,
+    description,
+    authMethods,
+    generatePages,
+    setLastGeneratedForPages,
+  ]);
 
   const handleSubmitPages = useCallback(() => {
     setLastGeneratedForReadme(JSON.stringify(pages));
@@ -231,16 +248,23 @@ export const READMEComponent = () => {
       pageAccess
     );
 
-    console.log("README GENERATION INPUT:", JSON.stringify({
-      prompt,
-      inputData: {
-        title,
-        description,
-        pages,
-        authMethods,
-        pageAccess
-      }
-    }, null, 2));
+    console.log(
+      "README GENERATION INPUT:",
+      JSON.stringify(
+        {
+          prompt,
+          inputData: {
+            title,
+            description,
+            pages,
+            authMethods,
+            pageAccess,
+          },
+        },
+        null,
+        2
+      )
+    );
 
     generateReadme({ prompt, maxTokens: 3000 });
   }, [
@@ -320,8 +344,8 @@ export const READMEComponent = () => {
                 </h4>
                 <div className="flex flex-col theme-gap-2 text-sm">
                   <p className="theme-font-sans theme-tracking">
-                    This README will be used in the next step to generate your app
-                    directory structure and initial database configuration.
+                    This README will be used in the next step to generate your
+                    app directory structure and initial database configuration.
                   </p>
                   <p className="theme-font-sans theme-tracking">
                     You can edit it directly in the editor below.
@@ -365,12 +389,13 @@ export const READMEComponent = () => {
       <div className="flex flex-col theme-gap-2">
         <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
           <BookText className="h-5 w-5 theme-text-primary" />
-          Generate your custom Next.js web app!
+          Generate your web app starter kit!
         </h2>
         <p className="theme-text-foreground">
           Follow the steps below to create a detailed README for your app.
           <br />
-          This is the first step in generating your app&apos;s codebase.
+          This is the first step in generating a custom starter kit for your
+          app&apos;s codebase.
         </p>
       </div>
 
@@ -431,7 +456,9 @@ export const READMEComponent = () => {
                 <div className="flex flex-col sm:flex-row theme-gap-2">
                   <Button
                     onClick={handleSubmitInitial}
-                    disabled={isPending || !canSubmitInitial || !hasAuthInputChanged()}
+                    disabled={
+                      isPending || !canSubmitInitial || !hasAuthInputChanged()
+                    }
                     className="flex-1 theme-gap-2"
                   >
                     <Bot className="h-4 w-4" />
@@ -551,7 +578,9 @@ export const READMEComponent = () => {
                 <div className="flex flex-col sm:flex-row theme-gap-2">
                   <Button
                     onClick={handleSubmitAuth}
-                    disabled={isPending || !canSubmitAuth || !hasPagesInputChanged()}
+                    disabled={
+                      isPending || !canSubmitAuth || !hasPagesInputChanged()
+                    }
                     className="flex-1 theme-gap-2"
                   >
                     {isGeneratingPages ? (
@@ -634,7 +663,9 @@ export const READMEComponent = () => {
               <div className="theme-bg-card theme-radius theme-shadow overflow-auto theme-p-4">
                 <div className="flex flex-col theme-gap-2">
                   {pages.map((page, index) => {
-                    const access = pageAccess.find((pa) => pa.pageId === page.id);
+                    const access = pageAccess.find(
+                      (pa) => pa.pageId === page.id
+                    );
                     return (
                       <PageAccordionItem
                         key={page.id}
@@ -672,7 +703,9 @@ export const READMEComponent = () => {
                 <div className="flex flex-col sm:flex-row theme-gap-2">
                   <Button
                     onClick={handleSubmitPages}
-                    disabled={isPending || !canSubmitPages || !hasAnyInputChanged()}
+                    disabled={
+                      isPending || !canSubmitPages || !hasAnyInputChanged()
+                    }
                     className="flex-1 theme-gap-2"
                   >
                     {isGeneratingReadme ? (
