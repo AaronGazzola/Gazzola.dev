@@ -77,7 +77,11 @@ Replace the entire contents of `app/globals.css` with the complete CSS from `doc
 2. Paste into `app/globals.css`, replacing all existing content
 3. This CSS includes all theme variables for colors, typography, border radius, shadows, and spacing
 
-### Step 2.3: Install Shadcn
+### Step 2.3: Configure Custom Fonts
+
+Update `app/layout.tsx` to import and configure the fonts as shown in `documentation/initial_configuration/Theme.md`
+
+### Step 2.4: Install Shadcn
 
 Follow `documentation/shadcn.guide.md`:
 
@@ -87,7 +91,7 @@ npx shadcn@latest init -d
 
 The `-d` flag accepts all default configuration.
 
-### Step 2.4: Install All Components
+### Step 2.5: Install All Components
 
 ```bash
 npx shadcn@latest add --all
@@ -95,7 +99,7 @@ npx shadcn@latest add --all
 
 For npm with React 19, add `--legacy-peer-deps` if prompted.
 
-### Step 2.5: Apply Custom Theme Classes to Components
+### Step 2.6: Apply Custom Theme Classes to Components
 
 Update ALL components in `components/ui/` to use the custom theme classes from `documentation/initial_configuration/Theme.md`. Work through each component file systematically:
 
@@ -207,6 +211,32 @@ Check:
 - Client files created
 - Environment variables set in `.env.local`
 
+### Step 3.9: Database Seeding (Optional)
+
+Ask the user if they want to populate the database with test users and data for development and testing.
+
+If yes, ask for the admin user email address (must be a valid email they have access to for verification).
+
+Then follow the seeding guide in `documentation/supabase.guide.md`:
+
+1. Install tsx: `npm install -D tsx`
+2. Create `supabase/seed.ts` using the template from supabase.guide.md
+3. Replace `admin@example.com` with the user's provided email
+4. Create `scripts/reset-seed.sh` using the bash script from supabase.guide.md
+5. Make the script executable: `chmod +x scripts/reset-seed.sh`
+6. Add scripts to `package.json`:
+   - `"db:seed": "tsx supabase/seed.ts"`
+   - `"db:reset-seed": "bash scripts/reset-seed.sh"`
+7. Run: `npm run db:seed`
+
+The seed script will create:
+
+- Admin user with the provided email
+- Two test users (user1@example.com, user2@example.com)
+- All users will be auto-verified and ready to sign in
+
+Use `npm run db:reset-seed` to reset the database and reseed with confirmation prompt.
+
 ---
 
 ## Phase 4: Build Application Page by Page
@@ -252,6 +282,19 @@ app/
 5. Second-level: `(dashboard)/analytics/` and `[username]/edit/`
 
 When building each page, ensure its parent layouts are already built.
+
+### Responsive Design Requirements
+
+All pages and components must be fully responsive down to 320px screen width. This ensures the application works on all mobile devices, including smaller smartphones.
+
+**Implementation considerations:**
+
+- Layouts may need to rearrange at lower screen widths (e.g., switching from horizontal to vertical layouts)
+- Component scaling should adjust appropriately (e.g., reducing padding, font sizes, or element dimensions)
+- Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`, etc.) to handle breakpoints
+- Test all pages at various widths, particularly at 320px, 375px, 768px, and 1024px
+- Ensure interactive elements remain accessible and usable at all screen sizes
+- Horizontal scrolling should only occur when intentional (e.g., image carousels)
 
 ### Step 4.1: Read Page Specification
 

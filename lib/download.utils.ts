@@ -603,6 +603,56 @@ const generateThemeCss = (): string => {
       return `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${shadow.color} / ${shadow.opacity}`;
     };
 
+    const extractFontName = (fontValue: string): string => {
+      if (!fontValue) return "Inter";
+
+      const fontMap: Record<string, string> = {
+        'inter': 'Inter',
+        'fira-code': 'Fira Code',
+        'fira code': 'Fira Code',
+        'jetbrains': 'JetBrains Mono',
+        'jetbrains-mono': 'JetBrains Mono',
+        'roboto': 'Roboto',
+        'open-sans': 'Open Sans',
+        'lato': 'Lato',
+        'montserrat': 'Montserrat',
+        'poppins': 'Poppins',
+        'source-code-pro': 'Source Code Pro',
+        'merriweather': 'Merriweather',
+        'playfair-display': 'Playfair Display',
+      };
+
+      if (fontValue.includes('var(--font-')) {
+        const match = fontValue.match(/var\(--font-([^)]+)\)/);
+        if (match && match[1]) {
+          const varName = match[1].toLowerCase();
+          if (fontMap[varName]) {
+            return fontMap[varName];
+          }
+          return match[1]
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        }
+      }
+
+      const firstFont = fontValue.split(',')[0].trim();
+      const cleaned = firstFont.replace(/['"]/g, '');
+      return cleaned || "Inter";
+    };
+
+    const getFontVariableName = (fontName: string): string => {
+      return fontName.toLowerCase().replace(/\s+/g, '-');
+    };
+
+    const getFontCssVariable = (fontName: string): string => {
+      return `var(--font-${getFontVariableName(fontName)})`;
+    };
+
+    const getFontImportName = (fontName: string): string => {
+      return fontName.replace(/\s+/g, '_');
+    };
+
     const colorKeys = [
       { key: "background", css: "--background" },
       { key: "foreground", css: "--foreground" },
@@ -644,7 +694,81 @@ const generateThemeCss = (): string => {
       { key: "sidebarRing", css: "--sidebar-ring" },
     ];
 
-    const lines: string[] = ["```css", "", "@import \"tailwindcss\";", "@import \"tw-animate-css\";", "", ":root {"];
+    const fontSans = extractFontName(lightTypography.fontSans || "Inter");
+    const fontSerif = extractFontName(lightTypography.fontSerif || "Merriweather");
+    const fontMono = extractFontName(lightTypography.fontMono || "JetBrains Mono");
+    const fontSansDark = extractFontName(darkTypography.fontSans || lightTypography.fontSans || "Inter");
+    const fontSerifDark = extractFontName(darkTypography.fontSerif || lightTypography.fontSerif || "Merriweather");
+    const fontMonoDark = extractFontName(darkTypography.fontMono || lightTypography.fontMono || "JetBrains Mono");
+
+    const allFonts = new Set([fontSans, fontSerif, fontMono, fontSansDark, fontSerifDark, fontMonoDark]);
+    const fontImports = Array.from(allFonts).map(font => getFontImportName(font)).join(', ');
+
+    const fontConfigs: string[] = [];
+    const fontVariables: string[] = [];
+    const processedFonts = new Set<string>();
+
+    allFonts.forEach((font) => {
+      const importName = getFontImportName(font);
+      const constName = `font${importName}`;
+      const cssVarName = getFontVariableName(font);
+
+      if (processedFonts.has(importName)) {
+        return;
+      }
+      processedFonts.add(importName);
+
+      if (font === fontSans || font === fontSansDark) {
+        fontConfigs.push(
+          ` * const ${constName} = ${importName}({`,
+          " *   subsets: ['latin'],",
+          ` *   variable: '--font-${cssVarName}',`,
+          " * })",
+          " * "
+        );
+        fontVariables.push(`${constName}.variable`);
+      } else if (font === fontSerif || font === fontSerifDark) {
+        fontConfigs.push(
+          ` * const ${constName} = ${importName}({`,
+          " *   weight: ['300', '400', '700'],",
+          " *   subsets: ['latin'],",
+          ` *   variable: '--font-${cssVarName}',`,
+          " * })",
+          " * "
+        );
+        fontVariables.push(`${constName}.variable`);
+      } else {
+        fontConfigs.push(
+          ` * const ${constName} = ${importName}({`,
+          " *   subsets: ['latin'],",
+          ` *   variable: '--font-${cssVarName}',`,
+          " * })",
+          " * "
+        );
+        fontVariables.push(`${constName}.variable`);
+      }
+    });
+
+    const lines: string[] = [
+      "```css",
+      "",
+      "/**",
+      " * FONT INSTALLATION INSTRUCTIONS:",
+      " * ",
+      " * Add the following imports to your app/layout.tsx:",
+      " * ",
+      ` * import { ${fontImports} } from 'next/font/google'`,
+      " * ",
+      ...fontConfigs,
+      " * Then add to your html element:",
+      ` * <html className={\`\${${fontVariables.join('} ${')}}\`}>`,
+      " */",
+      "",
+      "@import \"tailwindcss\";",
+      "@import \"tw-animate-css\";",
+      "",
+      ":root {"
+    ];
 
     colorKeys.forEach(({ key, css }) => {
       const color = (lightColors as any)[key];
@@ -654,9 +778,9 @@ const generateThemeCss = (): string => {
     });
 
     lines.push(``);
-    lines.push(`  --font-sans: ${lightTypography.fontSans};`);
-    lines.push(`  --font-serif: ${lightTypography.fontSerif};`);
-    lines.push(`  --font-mono: ${lightTypography.fontMono};`);
+    lines.push(`  --font-sans: ${getFontCssVariable(fontSans)}, sans-serif;`);
+    lines.push(`  --font-serif: ${getFontCssVariable(fontSerif)}, serif;`);
+    lines.push(`  --font-mono: ${getFontCssVariable(fontMono)}, monospace;`);
     lines.push(`  --letter-spacing: ${lightTypography.letterSpacing}px;`);
     lines.push(``);
     lines.push(`  --radius: ${lightOther.radius}rem;`);
@@ -681,9 +805,9 @@ const generateThemeCss = (): string => {
     });
 
     lines.push(``);
-    lines.push(`  --font-sans: ${darkTypography.fontSans};`);
-    lines.push(`  --font-serif: ${darkTypography.fontSerif};`);
-    lines.push(`  --font-mono: ${darkTypography.fontMono};`);
+    lines.push(`  --font-sans: ${getFontCssVariable(fontSansDark)}, sans-serif;`);
+    lines.push(`  --font-serif: ${getFontCssVariable(fontSerifDark)}, serif;`);
+    lines.push(`  --font-mono: ${getFontCssVariable(fontMonoDark)}, monospace;`);
     lines.push(`  --letter-spacing: ${darkTypography.letterSpacing}px;`);
     lines.push(``);
     lines.push(`  --radius: ${darkOther.radius}rem;`);

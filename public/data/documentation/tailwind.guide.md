@@ -93,14 +93,102 @@ Access theme variables through Tailwind utilities:
 </div>
 ```
 
+## Custom Font Configuration
+
+Tailwind v4 works seamlessly with Next.js font optimization.
+
+### Step 1: Install Fonts in Layout
+
+In `app/layout.tsx`, import and configure Google Fonts:
+
+```typescript
+import { Inter, Merriweather, JetBrains_Mono } from 'next/font/google'
+
+const fontSans = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const fontSerif = Merriweather({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  variable: '--font-merriweather',
+})
+
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+})
+```
+
+### Step 2: Apply Font Variables to HTML
+
+Add font CSS variables to the `html` element:
+
+```typescript
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable}`}>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+### Step 3: Reference in CSS
+
+In `app/globals.css`, map font variables to theme tokens:
+
+```css
+:root {
+  --font-sans: var(--font-inter), sans-serif;
+  --font-serif: var(--font-merriweather), serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+}
+
+@theme {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+}
+```
+
+### Step 4: Use in Components
+
+```typescript
+<div className="font-sans">
+  <h1 className="font-serif">Heading</h1>
+  <code className="font-mono">Code</code>
+</div>
+```
+
+### Local Fonts
+
+For local fonts, use `next/font/local`:
+
+```typescript
+import localFont from 'next/font/local'
+
+const customFont = localFont({
+  src: './fonts/CustomFont.woff2',
+  variable: '--font-custom',
+})
+```
+
 ## Applying Theme Configuration
 
 When setting up from Theme.md:
 
-1. Copy CSS variables from Theme.md to `app/globals.css`
-2. Ensure both `:root` and `.dark` selectors are included
-3. Add `@theme` directive to map variables to Tailwind tokens
-4. Import in root layout: `import "./globals.css"`
+1. Check font installation instructions at the top of Theme.md
+2. Install fonts in `app/layout.tsx` using next/font
+3. Copy CSS variables from Theme.md to `app/globals.css`
+4. Ensure both `:root` and `.dark` selectors are included
+5. Add `@theme` directive to map variables to Tailwind tokens
+6. Import in root layout: `import "./globals.css"`
 
 ## Browser Support
 
