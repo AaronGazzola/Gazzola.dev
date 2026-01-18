@@ -171,7 +171,7 @@ The schema includes:
 ### Step 3.4: Push Migration
 
 ```bash
-npx supabase db push
+ echo "Y" | npx supabase db push
 ```
 
 Verify success message. If errors occur, check schema syntax.
@@ -281,30 +281,7 @@ In the corresponding `page.hooks.ts` and/or `layout.hooks.ts` file, define React
 
 In `page.tsx` and/or `layout.tsx`, implement the UI
 
-### Step 4.7: Test Page
-
-After completing the page:
-
-Instruct user:
-
-> "I've completed the [page name] page. Please test it:
->
-> 1. Open terminal in VS Code (`Ctrl+` or `Cmd+`)
-> 2. Run: npm run dev
-> 3. Open http://localhost:3000/[page route] in your browser
-> 4. Test all functionality on the page
->
-> Please report any errors or issues you see. When everything works correctly, reply 'continue' to build the next page."
-
-**Wait for user feedback**. If errors reported:
-
-1. Read error messages
-2. Check browser console
-3. Fix issues
-4. Ask user to retest
-5. Only proceed when user confirms page works
-
-### Step 4.8: Repeat for Each Page
+### Step 4.7: Repeat for Each Page
 
 Continue this process for all pages in App_Directory.md, maintaining order.
 
@@ -312,48 +289,43 @@ Continue this process for all pages in App_Directory.md, maintaining order.
 
 ## Phase 5: Final Steps
 
-### Step 5.1: End-to-End Testing
-
-Prompt user to test complete application.
-
-1. Navigate between all pages
-2. Test data creation, updates, deletes
-3. Verify auth flows work
-4. Check responsive design
-5. Test dark mode (if implemented)
-
-### Step 5.2: Fix Remaining Issues
-
-Address any final bugs or issues reported by user.
-
-### Step 5.3: Create Commit
+### Step 5.1: Create Commit
 
 ```bash
 git add .
-git commit -m "Complete application setup with starter kit
+git commit -m "Initialize application with starter kit
 
 - Set up Next.js 15 with Tailwind v4 and Shadcn
 - Configure Supabase with migrations and type generation
-- Implement all pages and features from App_Directory.md
+- Add all pages and features from App_Directory.md
 - Apply theme configuration
 - Test all functionality"
 ```
 
-### Step 5.4: Push to Repository
+### Step 5.2: Push to Repository
 
 ```bash
 git push
 ```
 
-### Step 5.5: Inform User
+### Step 5.3: Inform User
 
-> "Setup complete! Your application is fully built and working. You can now ask me to:
+> "Setup complete! Your application is initialized and ready to start development. The foundation is ready, including: database integration, authentication, application architecture, programming patterns, and themed components.
+>
+> Follow the steps below to test it out!
+>
+> 1. Open terminal in VS Code (`Ctrl+` or `Cmd+`)
+> 2. Run: npm run dev
+> 3. Open http://localhost:3000/[page route] in your browser
+> 4. Test all functionality on the page
+>
+> Explore your app and test the functionality - keep in mind that there will likely be many bugs and some missing features. You can now chat with me to shape your app towards your vision.
+>
+> You can now ask me to:
 >
 > - Add new features or pages
 > - Modify existing functionality
 > - Fix bugs or improve performance
-> - Add tests or documentation
-> - Deploy to production
 >
 > What would you like to work on next?"
 
