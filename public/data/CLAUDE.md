@@ -21,16 +21,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Import "cn" from "@/lib/utils" to concatenate classes.
 - Don't use middleware - route protection and feature gating should be handled by database queries implemented in react-query hooks.
 
-# Documentation
-
-Refer to the files ending in `.guide.md` in the `documents` directory in the project root for instructions on implementing supabase features/functions and cli commands, shadcn components and styling, enhanced react-query features, and other technology specific features.
-
 # Loading skeletons
 
-- Full page UI should be loaded initially, with data-dependent content replaced with loading skeletons while fetching
-- Loading skeletons should only replace the content that requires data and should match the sillhouette of the component
+- Full page UI should be loaded initially, with loading skeletons data-dependent content
+- Loading skeletons should only replace the content that requires data
   - Example: if a username is loading then only the username text content should be replaced with an inline loading skeleton.
-- If stale data is available from the zustand store then this should be displayed while fetching rather than showing the skeleton.
+-
 
 # File Organization and Naming Conventions
 
@@ -118,52 +114,35 @@ app/
 
 # Hook, action, store and type patterns
 
-**Template files:** Refer to the template files in "documentation/template_files" for examples demonstrating each of the utility file types described below.
+**Template files:** Refer to the following template files for examples demonstrating each of the utility file types:
 
-**Flow**: Browser → Hook → Action → Database
+- `documentation/template_files/template.types.ts`
+- `documentation/template_files/template.actions.ts`
+- `documentation/template_files/template.hooks.ts`
+- `documentation/template_files/template.stores.ts`
 
-**Types** (`*.types.ts`)
+## Types (`*.types.ts`)
 
 - Export all types, constructed from generated Supabase types (`@/supabase/types`)
 - **Shared types** → `layout.types.ts` (User, AuthState, global entities)
 - **Page-specific types** → `page.types.ts` (form inputs, page-specific entities)
 
-Organization examples:
-
-- `/app/layout.types.ts` - User, AuthState, UserRole, Sticker (global)
-- `/app/(auth)/login/page.types.ts` - LoginFormData (only login page)
-- `/app/[username]/page.types.ts` - PageElement (shared within [username] section)
-
-**Actions** (`*.actions.ts`)
+## Actions (`*.actions.ts`)
 
 - Use Supabase **server client** (publishable key) for database table queries (INSERT, DELETE, UPDATE, SELECT)
 - Always validate auth with `auth.getUser()` before queries
-- Called exclusively from React Query hooks
+- Called actions exclusively from React Query hooks
 - Function naming: `featureNameAction` (e.g., `loginAction`, `getUserProfileAction`)
 
-Create actions files when features include:
+## Hooks (`*.hooks.tsx`)
 
-1. Database operations (fetch/query, insert, update, delete)
-2. Authentication & authorization (login, logout, signup, password reset)
-3. File operations (upload images, process files)
-4. External API calls (third-party services)
-5. Secure operations (payment processing, user bans, content moderation)
-
-Organization by scope:
-
-- **Shared actions** (multiple pages) → `app/layout.actions.ts` (loginAction, updateUserProfileAction)
-- **Section actions** (multiple pages in section) → `section/layout.actions.ts` (banUserAction, moderateContentAction)
-- **Page-specific actions** → `page.actions.ts` (processPaymentAction only for checkout)
-
-**Hooks** (`*.hooks.tsx`)
-
-- Use React Query (`useQuery`, `useMutation`) to call actions
+- Use React Query (`useQuery`, `useMutation`) to call actions (refer to `documentation/react-query.guide.md` for implementation details)
 - Use Supabase **browser client** (publishable key) for auth operations (`auth.signIn`, `auth.signOut`, etc.) and real-time subscriptions
-- Update zustand stores (if appropriate) in `onSuccess` callbacks of useMutation hooks, or in the queryFn of useQuery hooks.
+- Update zustand stores (if appropriate) in `onSuccess` callbacks of useMutation hooks, or in the `queryFn` of useQuery hooks.
 - Manage loading and error states via react-query hooks (NOT the store)
 - Function naming: `useFeatureName` (e.g., `useUserAuth`, `useProductList`)
 
-**Stores** (`*.stores.ts`)
+## Stores (`*.stores.ts`)
 
 - Use Zustand for data requiring direct client management beyond React Query
 - Never use `persist` for sensitive user data (email, etc.)

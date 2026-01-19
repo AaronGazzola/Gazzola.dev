@@ -1,57 +1,14 @@
 # Starter Kit Implementation Plan
 
-Complete step-by-step guide for building a Next.js application using the starter kit configuration files.
+IMPORTANT: Implement this complete plan. Do not skip, alter or simplify any steps. Do not change the implementation order.
 
-## Overview
-
-1. Setting up the app directory structure
-2. Configuring Tailwind v4 and Shadcn/ui
-3. Setting up Supabase CLI and database
-4. Building the application page by page
-5. Testing and deployment
-
-**Approach**: Work systematically through each phase. Pause at testing checkpoints for user feedback. Fix any issues before proceeding.
+This is a complete step-by-step guide for building a Next.js application using the starter kit configuration files.
 
 ---
 
-## Phase 1: Setup App Structure
+## Phase 1: Configure Tailwind and Shadcn
 
-### Step 1.1: Read Configuration
-
-Read `documentation/initial_configuration/App_Directory.md` to understand:
-
-- Required routes and pages
-- Features for each page
-- Utility files (types, actions, hooks, stores)
-
-### Step 1.2: Create Directory Structure
-
-Create all directories and files specified in `documentation/initial_configuration/App_Directory.md`.
-
-Example structure:
-
-```
-app/
-├── layout.tsx
-├── page.tsx
-├── page.hooks.tsx
-├── page.actions.ts
-├── page.types.ts
-├── [dynamic-route]/
-│   ├── page.tsx
-│   ├── page.hooks.tsx
-│   ├── page.actions.ts
-│   ├── page.stores.ts
-│   └── page.types.ts
-└── settings/
-    └── page.tsx
-```
-
----
-
-## Phase 2: Configure Tailwind and Shadcn
-
-### Step 2.1: Install Tailwind v4
+### Step 1.1: Install Tailwind v4
 
 Refer to `documentation/tailwind.guide.md`:
 
@@ -69,7 +26,7 @@ export default {
 };
 ```
 
-### Step 2.2: Setup Global CSS
+### Step 1.2: Setup Global CSS
 
 Replace the entire contents of `app/globals.css` with the complete CSS from `documentation/initial_configuration/Theme.md`:
 
@@ -77,13 +34,11 @@ Replace the entire contents of `app/globals.css` with the complete CSS from `doc
 2. Paste into `app/globals.css`, replacing all existing content
 3. This CSS includes all theme variables for colors, typography, border radius, shadows, and spacing
 
-### Step 2.3: Configure Custom Fonts
+### Step 1.3: Configure Custom Fonts
 
 Update `app/layout.tsx` to import and configure the fonts as shown in `documentation/initial_configuration/Theme.md`
 
-### Step 2.4: Install Shadcn
-
-Follow `documentation/shadcn.guide.md`:
+### Step 1.4: Install Shadcn
 
 ```bash
 npx shadcn@latest init -d
@@ -91,15 +46,15 @@ npx shadcn@latest init -d
 
 The `-d` flag accepts all default configuration.
 
-### Step 2.5: Install All Components
+### Step 1.5: Install All Components
 
 ```bash
-npx shadcn@latest add --all
+npx shadcn@latest add --all --yes
 ```
 
-For npm with React 19, add `--legacy-peer-deps` if prompted.
+### Step 1.6: Apply Custom Theme Classes to Components
 
-### Step 2.6: Apply Custom Theme Classes to Components
+**Note:** This step is important and not optional. Complete the process for ALL of the shadcn components.
 
 Update ALL components in `components/ui/` to use the custom theme classes from `documentation/initial_configuration/Theme.md`. Work through each component file systematically:
 
@@ -141,27 +96,23 @@ Update ALL components in `components/ui/` to use the custom theme classes from `
    - Elements that should use serif: add `font-serif`
    - Elements that should use monospace (code): add `font-mono`
 
-## Phase 3: Setup Supabase
-
-Refer to `documentation/supabase.guide.md`:
+## Phase 2: Setup Supabase
 
 A Supabase project has already been created. The connection variables are located in the `.env.local` file at the root of the project.
 
-### Step 3.1: Link Project
+### Step 2.1: Link Project
 
 ```bash
 npx supabase link --project-ref <project-ref>
 ```
 
-The `<project-ref>` can be found in your `.env.local` file in the `NEXT_PUBLIC_SUPABASE_URL` (it's the subdomain before `.supabase.co`).
-
-### Step 3.2: Create Migration
+### Step 2.2: Create Migration
 
 ```bash
 npx supabase migration new initial_schema
 ```
 
-### Step 3.3: Add Database Schema
+### Step 2.3: Add Database Schema
 
 Copy complete schema from `documentation/initial_configuration/Database.md` into the migration file at `supabase/migrations/<timestamp>_initial_schema.sql`.
 
@@ -172,7 +123,7 @@ The schema includes:
 - RLS policies
 - Enum types
 
-### Step 3.4: Push Migration
+### Step 2.4: Push Migration
 
 ```bash
  echo "Y" | npx supabase db push
@@ -180,7 +131,7 @@ The schema includes:
 
 Verify success message. If errors occur, check schema syntax.
 
-### Step 3.5: Generate Types
+### Step 2.5: Generate Types
 
 ```bash
 npx supabase gen types typescript --project-id <project-ref> > supabase/types.ts
@@ -188,58 +139,41 @@ npx supabase gen types typescript --project-id <project-ref> > supabase/types.ts
 
 Verify `supabase/types.ts` file is created and contains type definitions.
 
-### Step 3.6: Create Client Files
+### Step 2.6: Create Client Files
 
-Create three client files using patterns from `documentation/supabase.guide.md`:
+Copy and rename the template client files into their corresponding locations:
 
-- **supabase/server-client.ts**
-- **supabase/browser-client.ts**
-- **supabase/admin-client.ts**:
+- `documentation/template_files/server-client.ts` → `supabase/server-client.ts`
+- `documentation/template_files/browser-client.ts` → `supabase/browser-client.ts`
+- `documentation/template_files/admin-client.ts` → `supabase/admin-client.ts`
 
-### Step 3.7: Install Dependencies
+### Step 2.7: Install Dependencies
 
 ```bash
 npm install @supabase/supabase-js @supabase/ssr
 ```
 
-### Step 3.8: Verify Setup
-
-Check:
-
-- Migration pushed successfully
-- Types file generated
-- Client files created
-- Environment variables set in `.env.local`
-
-### Step 3.9: Database Seeding (Optional)
+### Step 2.8: Database Seeding
 
 Ask the user if they want to populate the database with test users and data for development and testing.
 
-If yes, ask for the admin user email address (must be a valid email they have access to for verification).
-
-Then follow the seeding guide in `documentation/supabase.guide.md`:
+If yes, ask for the admin user email address (must be a valid email address that they have access to for verification). Then complete the following steps:
 
 1. Install tsx: `npm install -D tsx`
-2. Create `supabase/seed.ts` using the template from supabase.guide.md
-3. Replace `admin@example.com` with the user's provided email
-4. Create `scripts/reset-seed.sh` using the bash script from supabase.guide.md
-5. Make the script executable: `chmod +x scripts/reset-seed.sh`
-6. Add scripts to `package.json`:
+2. Copy and rename the template seed files into their corresponding locations:
+
+- `documentation/template_files/seed.template.ts` → `supabase/seed.ts`
+- `documentation/template_files/reset-seed.ts` → `scipts/reset-seed.ts`
+
+3. Replace `admin@example.com` in `scripts/seed.ts` file with the user's provided email
+4. Add scripts to `package.json`:
    - `"db:seed": "tsx supabase/seed.ts"`
    - `"db:reset-seed": "bash scripts/reset-seed.sh"`
-7. Run: `npm run db:seed`
-
-The seed script will create:
-
-- Admin user with the provided email
-- Two test users (user1@example.com, user2@example.com)
-- All users will be auto-verified and ready to sign in
-
-Use `npm run db:reset-seed` to reset the database and reseed with confirmation prompt.
+5. Run: `npm run db:seed`
 
 ---
 
-## Phase 4: Build Application Page by Page
+## Phase 3: Build Application
 
 Complete each of the steps in this phase for each page in each directory of `documentation/initial_configuration/App_Directory.md`.
 
@@ -283,7 +217,33 @@ app/
 
 When building each page, ensure its parent layouts are already built.
 
-### Responsive Design Requirements
+### Step 3.1: Read Page Specification
+
+From `documentation/initial_configuration/App_Directory.md`, identify:
+
+- Page or layout path and route
+- Required features
+- Hooks, actions, stores, types needed
+
+### Step 3.2: Create Types
+
+In the corresponding `page.types.ts` or `layout.types.ts` file, define types using the types in `supabase/types.ts`, following the approach demonstrated in `documentation/template_files/template.types.ts`
+
+### Step 3.3: Create Actions (if needed)
+
+In the corresponding `page.actions.ts` or `layout.actions.ts` file, define server action(s) following the approach demonstrated in `documentation/template_files/template.actions.ts`
+
+### Step 3.4: Create Stores
+
+In the corresponding `page.stores.ts` or `layout.stores.ts` file, define Zustand store(s) following the approach demonstrated in `documentation/template_files/template.stores.ts`
+
+### Step 3.5: Create Hooks
+
+In the corresponding `page.hooks.ts` or `layout.hooks.ts` file, define React-Query hook(s) following the approach demonstrated in `documentation/template_files/template.hooks.ts`
+
+### Step 3.6: Build Page Component
+
+In `page.tsx` or `layout.tsx`, implement the UI.
 
 All pages and components must be fully responsive down to 320px screen width. This ensures the application works on all mobile devices, including smaller smartphones.
 
@@ -292,47 +252,14 @@ All pages and components must be fully responsive down to 320px screen width. Th
 - Layouts may need to rearrange at lower screen widths (e.g., switching from horizontal to vertical layouts)
 - Component scaling should adjust appropriately (e.g., reducing padding, font sizes, or element dimensions)
 - Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`, etc.) to handle breakpoints
-- Test all pages at various widths, particularly at 320px, 375px, 768px, and 1024px
 - Ensure interactive elements remain accessible and usable at all screen sizes
 - Horizontal scrolling should only occur when intentional (e.g., image carousels)
 
-### Step 4.1: Read Page Specification
-
-From App_Directory.md, identify:
-
-- Page and/or layout path and route
-- Required features
-- Hooks, actions, stores, types needed
-
-### Step 4.2: Create Types
-
-In the corresponding `page.types.ts` and/or `layout.types.ts` file, define types using generated Supabase types following the approach demonstrated in `documentation/template_files/template.types.ts`
-
-### Step 4.3: Create Actions (if needed)
-
-In the corresponding `page.actions.ts` and/or `layout.actions.ts` file, define server action(s) following the approach demonstrated in `documentation/template_files/template.actions.ts`
-
-### Step 4.4: Create Stores (if needed)
-
-In the corresponding `page.stores.ts` and/or `layout.stores.ts` file, define Zustand store(s) following the approach demonstrated in `documentation/template_files/template.stores.ts`
-
-### Step 4.5: Create Hooks
-
-In the corresponding `page.hooks.ts` and/or `layout.hooks.ts` file, define React-Query hook(s) following the approach demonstrated in `documentation/template_files/template.hooks.ts`
-
-### Step 4.6: Build Page Component
-
-In `page.tsx` and/or `layout.tsx`, implement the UI
-
-### Step 4.7: Repeat for Each Page
-
-Continue this process for all pages in App_Directory.md, maintaining order.
-
 ---
 
-## Phase 5: Final Steps
+## Phase 4: Final Steps
 
-### Step 5.1: Create Commit
+### Step 4.1: Create Commit
 
 ```bash
 git add .
@@ -345,51 +272,31 @@ git commit -m "Initialize application with starter kit
 - Test all functionality"
 ```
 
-### Step 5.2: Push to Repository
+### Step 4.2: Push to Repository
 
 ```bash
 git push
 ```
 
-### Step 5.3: Inform User
+### Step 4.3: Inform User
 
 > "Setup complete! Your application is initialized and ready to start development. The foundation is ready, including: database integration, authentication, application architecture, programming patterns, and themed components.
 >
 > Follow the steps below to test it out!
 >
 > 1. Open terminal in VS Code (`Ctrl+` or `Cmd+`)
-> 2. Run: npm run dev
-> 3. Open http://localhost:3000/[page route] in your browser
-> 4. Test all functionality on the page
+> 2. Type: `npm run dev` and hit `Enter`
+> 3. Type `http://localhost:3000` into your browser's URL bar
+> 4. Explore your app, and try signing in - if you seeded your database then you can sign in with the email you provided and the password: `Password123!`
 >
-> Explore your app and test the functionality - keep in mind that there will likely be many bugs and some missing features. You can now chat with me to shape your app towards your vision.
+> Keep in mind that there will likely be many bugs and some missing features. You can now chat with me to shape your app towards your vision.
 >
-> You can now ask me to:
+> You can ask me to:
 >
 > - Add new features or pages
 > - Modify existing functionality
 > - Fix bugs or improve performance
 >
-> What would you like to work on next?"
+> Where would you like to begin?"
 
 ---
-
-## Reference Documents
-
-**Initial Configuration:**
-
-- **documentation/initial_configuration/App_Directory.md** - Application structure, pages, and features
-- **documentation/initial_configuration/Theme.md** - Complete theme configuration and CSS variables
-- **documentation/initial_configuration/Database.md** - Complete database schema with RLS policies
-
-**Setup Guides:**
-
-- **documentation/shadcn.guide.md** - Shadcn component installation and usage
-- **documentation/tailwind.guide.md** - Tailwind v4 setup and configuration
-- **documentation/supabase.guide.md** - Supabase CLI commands and patterns
-- **documentation/react-query.guide.md** - TanStack Query patterns and usage
-
-**Code Patterns:**
-
-- **documentation/template_files/** - Code patterns and examples for all file types
-- **CLAUDE.md** - General development guidelines and patterns
