@@ -6,7 +6,7 @@ import {
   MarkdownNode,
 } from "@/app/(editor)/layout.types";
 import type {
-  PrismaTable,
+  DatabaseTable,
   RLSPolicy,
   RLSAccessType,
   UserRole,
@@ -1062,9 +1062,6 @@ const generateDatabasePreviewContent = (
         policy.rolePolicies?.forEach((rolePolicy) => {
           lines.push(`- Role: ${rolePolicy.role}`);
           lines.push(`- Access Type: ${rolePolicy.accessType}`);
-          if (rolePolicy.relatedTable) {
-            lines.push(`- Related Table: ${rolePolicy.relatedTable}`);
-          }
         });
         lines.push("");
       });
@@ -1339,7 +1336,7 @@ export const processContent = (
 
 const createConfigSnapshotFromInitialConfig = (
   initialConfig: InitialConfigurationType,
-  tables: PrismaTable[],
+  tables: DatabaseTable[],
   rlsPolicies: RLSPolicy[]
 ): ConfigSnapshot => {
   return {
@@ -1412,7 +1409,7 @@ const createConfigSnapshotFromInitialConfig = (
 
 const generateDatabaseConfigurationDoc = (
   initialConfig: InitialConfigurationType,
-  tables: PrismaTable[],
+  tables: DatabaseTable[],
   rlsPolicies: RLSPolicy[]
 ): string => {
   if (initialConfig.questions.databaseProvider === "none") {
@@ -1475,7 +1472,7 @@ const generateDatabaseConfigurationDoc = (
 
 export const generateRLSMigrationSQL = (
   rlsPolicies: RLSPolicy[],
-  tables: PrismaTable[],
+  tables: DatabaseTable[],
   initialConfiguration: InitialConfigurationType
 ): string => {
   const lines: string[] = [];
@@ -1503,83 +1500,20 @@ export const generateRLSMigrationSQL = (
   });
 
   lines.push(``);
-  lines.push(`-- Create RLS Policies`);
+  lines.push(`-- Create RLS helper function for admin role checks`);
+  lines.push(`CREATE OR REPLACE FUNCTION is_admin()`);
+  lines.push(`RETURNS boolean`);
+  lines.push(`LANGUAGE sql`);
+  lines.push(`SECURITY DEFINER`);
+  lines.push(`STABLE`);
+  lines.push(`AS $$`);
+  lines.push(`  SELECT (SELECT role FROM public.profiles WHERE user_id = auth.uid()) IN ('admin', 'super-admin');`);
+  lines.push(`$$;`);
   lines.push(``);
-
-  const getUSINGClause = (
-    accessType: RLSAccessType,
-    role: UserRole,
-    table: PrismaTable,
-    relatedTable?: string
-  ): string => {
-    if (accessType === "global") {
-      return "true";
-    }
-
-    const userIdColumn =
-      table.columns.find((c) => c.name === "userId" || c.name === "user_id")
-        ?.name || "user_id";
-
-    if (accessType === "own") {
-      if (authProvider === "supabase") {
-        return `auth.uid() = ${userIdColumn}`;
-      } else {
-        return `(SELECT id FROM better_auth.user WHERE id = ${userIdColumn}) IS NOT NULL`;
-      }
-    }
-
-    if (accessType === "organization") {
-      const orgIdColumn =
-        table.columns.find(
-          (c) => c.name === "organizationId" || c.name === "organization_id"
-        )?.name || "organization_id";
-
-      if (authProvider === "supabase") {
-        return `${orgIdColumn} IN (
-      SELECT organization_id
-      FROM public.user_organizations
-      WHERE user_id = auth.uid()
-    )`;
-      } else {
-        return `${orgIdColumn} IN (
-      SELECT organization_id
-      FROM public.user_organizations
-      WHERE user_id = (SELECT id FROM better_auth.user LIMIT 1)
-    )`;
-      }
-    }
-
-    if (accessType === "related" && relatedTable) {
-      const relatedColumn = table.columns.find(
-        (c) => c.type === relatedTable || c.relation?.table === relatedTable
-      );
-
-      if (relatedColumn) {
-        const columnName = relatedColumn.name;
-        const relatedTableObj = tables.find((t) => t.name === relatedTable);
-        const relatedUserColumn =
-          relatedTableObj?.columns.find(
-            (c) => c.name === "userId" || c.name === "user_id"
-          )?.name || "user_id";
-
-        if (authProvider === "supabase") {
-          return `${columnName} IN (
-      SELECT id
-      FROM ${relatedTableObj?.schema || "public"}.${relatedTable}
-      WHERE ${relatedUserColumn} = auth.uid()
-    )`;
-        } else {
-          return `${columnName} IN (
-      SELECT id
-      FROM ${relatedTableObj?.schema || "public"}.${relatedTable}
-      WHERE ${relatedUserColumn} = (SELECT id FROM better_auth.user LIMIT 1)
-    )`;
-        }
-      }
-    }
-
-    return "false";
-  };
+  lines.push(`-- Create RLS Policies`);
+  lines.push(`-- Using native PostgreSQL roles: anon, authenticated`);
+  lines.push(`-- Admin policies use authenticated role with is_admin() function check`);
+  lines.push(``);
 
   const groupedPolicies: Record<string, RLSPolicy[]> = {};
   rlsPolicies.forEach((policy) => {
@@ -1605,19 +1539,85 @@ export const generateRLSMigrationSQL = (
 
     policies.forEach((policy) => {
       policy.rolePolicies?.forEach((rolePolicy) => {
-        const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role.replace("-", "_")}`;
-        const usingClause = getUSINGClause(
-          rolePolicy.accessType,
-          rolePolicy.role,
-          table,
-          rolePolicy.relatedTable
-        );
+        if (rolePolicy.accessType === "none") return;
+
+        const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
+        const postgresRole = rolePolicy.role === "admin" ? "authenticated" : rolePolicy.role;
+
+        let usingClause = "";
+        switch (rolePolicy.accessType) {
+          case "public":
+          case "global":
+            if (rolePolicy.role === "admin") {
+              usingClause = "(SELECT is_admin())";
+            } else {
+              usingClause = "true";
+            }
+            break;
+          case "own":
+            let userIdColumn = table.columns.find(
+              (c) => c.name === "user_id" || c.name === "userId"
+            )?.name;
+
+            if (!userIdColumn) {
+              const profileIdColumn = table.columns.find(
+                (c) => c.name === "profile_id" && c.relation?.table === "profiles"
+              );
+
+              if (profileIdColumn) {
+                if (rolePolicy.role === "authenticated") {
+                  usingClause = `profile_id IN (SELECT id FROM profiles WHERE user_id = auth.uid())`;
+                } else if (rolePolicy.role === "admin") {
+                  usingClause = `((SELECT is_admin()) OR profile_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))`;
+                } else {
+                  usingClause = "false";
+                }
+                break;
+              }
+
+              const reporterIdColumn = table.columns.find(
+                (c) => c.name === "reporter_id" && c.relation?.table === "profiles"
+              );
+
+              if (reporterIdColumn) {
+                if (rolePolicy.role === "authenticated") {
+                  usingClause = `reporter_id IN (SELECT id FROM profiles WHERE user_id = auth.uid())`;
+                } else if (rolePolicy.role === "admin") {
+                  usingClause = `((SELECT is_admin()) OR reporter_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))`;
+                } else {
+                  usingClause = "false";
+                }
+                break;
+              }
+
+              usingClause = "false";
+              break;
+            }
+
+            if (rolePolicy.role === "authenticated") {
+              usingClause = `auth.uid() = ${userIdColumn}`;
+            } else if (rolePolicy.role === "admin") {
+              usingClause = `((SELECT is_admin()) OR auth.uid() = ${userIdColumn})`;
+            } else {
+              usingClause = "false";
+            }
+            break;
+          default:
+            usingClause = "false";
+        }
 
         lines.push(`CREATE POLICY "${policyName}"`);
         lines.push(`  ON ${table.schema}.${table.name}`);
         lines.push(`  FOR ${policy.operation}`);
-        lines.push(`  TO ${rolePolicy.role.replace("-", "_")}`);
-        lines.push(`  USING (${usingClause});`);
+        lines.push(`  TO ${postgresRole}`);
+        if (policy.operation === "INSERT") {
+          lines.push(`  WITH CHECK (${usingClause});`);
+        } else if (policy.operation === "UPDATE") {
+          lines.push(`  USING (${usingClause})`);
+          lines.push(`  WITH CHECK (${usingClause});`);
+        } else {
+          lines.push(`  USING (${usingClause});`);
+        }
         lines.push(``);
       });
     });

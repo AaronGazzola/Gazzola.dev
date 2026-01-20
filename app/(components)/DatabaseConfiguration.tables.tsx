@@ -22,11 +22,11 @@ import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight, Lock, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
-import type { PrismaTable } from "./DatabaseConfiguration.types";
+import type { DatabaseTable } from "./DatabaseConfiguration.types";
 import { ColumnLine, AddColumnPopover } from "./DatabaseConfiguration.columns";
 import { TableRLSContent } from "./DatabaseConfiguration.rls";
 
-export const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
+export const TableColumnsContent = ({ table }: { table: DatabaseTable }) => {
   const { addColumn, deleteColumn, updateColumn } = useDatabaseStore();
   const { initialConfiguration } = useEditorStore();
 
@@ -61,7 +61,7 @@ export const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
                   column={column}
                   onUpdate={updateColumn}
                   onDelete={deleteColumn}
-                  columnType="name"
+                  viewMode="name"
                 />
               </div>
               <div className="flex-grow flex-shrink-0">
@@ -70,7 +70,7 @@ export const TableColumnsContent = ({ table }: { table: PrismaTable }) => {
                   column={column}
                   onUpdate={updateColumn}
                   onDelete={deleteColumn}
-                  columnType="attributes"
+                  viewMode="full"
                 />
               </div>
             </div>
@@ -90,7 +90,7 @@ export const TableCollapsible = ({
   onUpdateName,
   onDelete,
 }: {
-  table: PrismaTable;
+  table: DatabaseTable;
   schema: string;
   isExpanded: boolean;
   onToggle: () => void;

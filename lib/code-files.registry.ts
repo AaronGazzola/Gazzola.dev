@@ -1,5 +1,5 @@
 import type {
-  PrismaTable,
+  DatabaseTable,
   RLSPolicy,
 } from "@/app/(components)/DatabaseConfiguration.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
@@ -533,7 +533,7 @@ const createComponentFileNodes = (
 export const createCodeFileNodes = (
   initialConfig: InitialConfigurationType,
   theme: ThemeConfiguration,
-  tables: PrismaTable[],
+  tables: DatabaseTable[],
   rlsPolicies: RLSPolicy[],
   isPageVisited?: (path: string) => boolean
 ): CodeFileNode[] => {

@@ -2,9 +2,9 @@ import { FileSystemEntry } from "@/app/(editor)/layout.types";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import type {
   DatabaseTemplate,
-  PrismaColumn,
-  PrismaEnum,
-  PrismaTable,
+  DatabaseColumn,
+  DatabaseEnum,
+  DatabaseTable,
   RLSAccessType,
   UserRole,
 } from "./DatabaseConfiguration.types";
@@ -37,8 +37,8 @@ export interface DatabaseSchemaResponse {
   configuration: {
     databaseProvider: "supabase" | "none";
   };
-  tables: PrismaTable[];
-  enums: PrismaEnum[];
+  tables: DatabaseTable[];
+  enums: DatabaseEnum[];
   rlsPolicies: AIRLSPolicy[];
 }
 
@@ -61,40 +61,49 @@ Options:
 IMPORTANT - Supabase Authentication:
 - Supabase automatically provides authentication tables in the "auth" schema
 - DO NOT create tables for: users, sessions, accounts, verification_tokens, magic_links, or any auth-related infrastructure
-- The auth.user table (singular "user") handles authentication, email verification, and sessions
-- DO NOT create a "users" or "user" table - this conflicts with auth.user
+- The auth.users table (plural "users") handles authentication, email verification, and sessions
+- DO NOT create a "users" or "user" table - this conflicts with auth.users
 - Use a "profiles" table in the "public" schema for application-specific profile data
 
 Available Auth Schema Table for Relations:
-- auth.user - Main user authentication table with id, email, and other user fields
-- You CAN create foreign key relations to auth.user when you need to reference the authenticated user
+- auth.users - Main user authentication table with id, email, and other user fields
+- You CAN create foreign key relations to auth.users when you need to reference the authenticated user
 
 Rules:
 - Create enums for status/type/priority/category fields, use enum name as column type
-- Include id (TEXT PRIMARY KEY DEFAULT gen_random_uuid()), created_at, updated_at for each table
-- PostgreSQL types: TEXT, INTEGER, BIGINT, DOUBLE PRECISION, BOOLEAN, TIMESTAMP WITH TIME ZONE, JSONB, DECIMAL, BYTEA
+- Include id (UUID PRIMARY KEY DEFAULT gen_random_uuid()), created_at, updated_at for each table
+- PostgreSQL types: UUID, TEXT, INTEGER, BIGINT, DOUBLE PRECISION, BOOLEAN, TIMESTAMP WITH TIME ZONE, JSONB, DECIMAL, BYTEA
 - Default values: gen_random_uuid(), NOW(), 'string', true/false
 - Use snake_case for all column names
+- IMPORTANT: ALL id columns and foreign key columns referencing ids MUST use UUID type (not TEXT)
+- CRITICAL: User ID Denormalization for RLS - ANY table that references profiles (via profile_id) or other user-owned tables MUST include a denormalized user_id UUID column. This is REQUIRED for Row Level Security policies to work correctly. NO EXCEPTIONS.
 
 Public Profiles Table:
 - ALWAYS create a 'profiles' table in the 'public' schema for application-specific user data
 - Never use "users" or "user" as a table name - always use "profiles" instead
-- Structure: The profiles table MUST have BOTH:
-  * Its own primary key: id (TEXT, PRIMARY KEY, DEFAULT gen_random_uuid())
-  * A foreign key to auth: user_id (TEXT, UNIQUE, references auth.user.id, onDelete: Cascade)
-- The user_id column creates a one-to-one relationship with auth.user
+- Structure: The profiles table MUST have:
+  * Its own primary key: id (UUID, PRIMARY KEY, DEFAULT gen_random_uuid())
+  * A foreign key to auth: user_id (UUID, UNIQUE, references auth.users.id, onDelete: Cascade)
+  * A role column: role (user_role enum type, DEFAULT 'user', NOT NULL) - automatically added by the system
+- The user_id column creates a one-to-one relationship with auth.users
 - Add additional user profile columns mentioned in README (username, display_name, bio, avatar_url, etc.)
 - Use snake_case for all column names
+
+IMPORTANT - User Role Enum:
+- A user_role enum is automatically generated with values: 'user', 'admin', 'super-admin'
+- DO NOT include user_role in your enums array - it's handled automatically
+- The profiles table automatically gets a 'role' column of type 'user_role' with default 'user'
 
 Foreign Key Naming Conventions:
 - Foreign key names MUST match the table they reference using pattern: {table_name}_id
 - Examples:
   * Referencing profiles table → use "profile_id" (NOT "user_id")
   * Referencing posts table → use "post_id"
-  * Referencing auth.user directly → use "user_id"
+  * Referencing auth.users directly → use "user_id"
 - Format: { "table": "table_name", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" }
 - Use snake_case consistently (profile_id not profileId)
-- IMPORTANT: Only use "user_id" when directly referencing auth.user, use "profile_id" when referencing profiles table
+- IMPORTANT: Only use "user_id" when directly referencing auth.users, use "profile_id" when referencing profiles table
+- ALL foreign key columns MUST use UUID type (not TEXT)
 
 Check Constraints:
 - Add checkConstraints array to tables for business rules mentioned in README
@@ -103,40 +112,65 @@ Check Constraints:
 
 RLS Policy Rules:
 - Generate rlsPolicies for EVERY table with ALL operations: SELECT, INSERT, UPDATE, DELETE
-- Access types: none (no access - default), global (all rows), own (user's own data via userId), related (via related table)
-- Roles available: user (always), admin (always), super-admin (always)
+- Access types: none (no access), public (everyone), own (user's own data via user_id), global (all users of role)
+- Roles: anon (unauthenticated), authenticated (logged-in users), admin (administrators)
+- IMPORTANT: These are PostgreSQL roles - they map directly to database role grants
+- IMPORTANT: Use security definer function is_admin() for admin role checks
 - IMPORTANT: Every role must have an explicit policy for every operation on every table. Default to "none" if no access should be granted
 
-Column Verification Requirements:
-- BEFORE assigning "own" access, verify the table has a user_id, userId, OR id column (for users table)
-- If table has user_id/userId/id column: use "own" access type
-- If table has NO user column but has foreign key to another table with user column: use "related" access with relatedTable specified
-- For "related" access, you MUST specify the relatedTable name (e.g., "pages", "users", "posts")
+CRITICAL - User ID Denormalization (REQUIRED for RLS):
+- EVERY table that has profile_id MUST also have user_id (UUID, references auth.users.id)
+- EVERY table that references a user-owned table MUST have user_id denormalized
+- Examples:
+  * pages table: has profile_id → MUST also have user_id
+  * comments table: has post_id → MUST also have user_id (even though 2 levels from profiles)
+  * stickers table: has profile_id → MUST also have user_id
+  * reports table: has reporter_id (FK to profiles) → MUST also have user_id
+- The user_id column enables efficient RLS policies with "own" access type
+- Without user_id, RLS will fail with USING (false) and users cannot manage their data
+- Add user_id column immediately after the primary ownership FK (profile_id, etc.)
+- Format: { "name": "user_id", "type": "UUID", "relation": { "table": "auth.users", "field": "id", "onDelete": "Cascade" } }
 
 Access Type Examples:
-- profiles table (has "id" column that references auth.users.id):
-  * INSERT: "own" (users create their own record where auth.uid() = id)
-  * UPDATE: "own" (auth.uid() = id)
-  * DELETE: "own" (auth.uid() = id)
-  * SELECT: "global" (everyone can see user profiles)
 
-- page_elements table (has page_id → pages, pages table has user_id):
-  * INSERT: "related" with relatedTable = "pages" (user must own the page)
-  * UPDATE: "related" with relatedTable = "pages"
-  * DELETE: "related" with relatedTable = "pages"
-  * SELECT: "global" (everyone can see page elements)
+1. User-owned tables (profiles, posts, comments with user_id):
+   - anon: SELECT=public, others=none
+   - authenticated: SELECT=public, INSERT/UPDATE/DELETE=own
+   - admin: all operations=global
 
-- stickers table (users can place stickers on any page, has user_id for sticker owner):
-  * INSERT: "global" (anyone authenticated can place stickers)
-  * UPDATE: "own" (auth.uid() = user_id, can only update your own stickers)
-  * DELETE: "own" (auth.uid() = user_id, can only delete your own stickers)
-  * SELECT: "global" (everyone can see stickers)
+2. Reference tables (categories, tags - no user_id):
+   - anon: SELECT=public, others=none
+   - authenticated: SELECT=public, others=none
+   - admin: all operations=global
 
-General Rules:
-- super-admin gets "global" access to all tables for all operations
-- admin gets "global" access only to tables they should manage (user data tables, not system tables)
-- user role: "own" for their data, "related" for data they own through foreign keys, "none" for admin-only tables
-- Public reference tables (categories, tags, products): "global" SELECT for all roles, "none" for INSERT/UPDATE/DELETE except admins
+3. Admin-only tables (system config):
+   - anon: all=none
+   - authenticated: all=none
+   - admin: all=global
+
+4. User-owned nested tables (comments, page_elements, stickers):
+   - MUST include user_id column for RLS to work
+   - Example - comments: id, content, post_id (FK to posts), user_id (FK to auth.users)
+   - Example - stickers: id, page_id, profile_id, user_id (FK to auth.users), position, style
+   - anon: SELECT=public, others=none
+   - authenticated: SELECT=public, INSERT/UPDATE/DELETE=own
+   - admin: all operations=global
+
+NOTE on user_id maintenance:
+- The user_id column MUST be defined as a regular UUID column with FK to auth.users
+- Applications can set user_id directly using auth.uid() in their INSERT statements
+- Triggers are OPTIONAL and only needed for automatic maintenance
+- Example trigger (optional, for reference only - do not include in JSON):
+
+CREATE OR REPLACE FUNCTION set_comment_user_id()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.user_id IS NULL THEN
+    NEW.user_id := (SELECT user_id FROM posts WHERE id = NEW.post_id);
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
 {
@@ -149,12 +183,12 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
       "name": "profiles",
       "schema": "public",
       "columns": [
-        { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"] },
-        { "name": "user_id", "type": "TEXT", "isUnique": true, "attributes": ["@unique"], "relation": { "table": "auth.user", "field": "id", "onDelete": "Cascade", "relationType": "one-to-one" } },
+        { "name": "id", "type": "UUID", "isId": true, "defaultValue": "gen_random_uuid()" },
+        { "name": "user_id", "type": "UUID", "isUnique": true, "relation": { "table": "auth.users", "field": "id", "onDelete": "Cascade", "relationType": "one-to-one" } },
         { "name": "username", "type": "TEXT", "isUnique": true },
         { "name": "display_name", "type": "TEXT", "isOptional": true },
-        { "name": "created_at", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()", "attributes": ["@default(NOW())"] },
-        { "name": "updated_at", "type": "TIMESTAMP WITH TIME ZONE", "attributes": ["@updatedAt"] }
+        { "name": "created_at", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()" },
+        { "name": "updated_at", "type": "TIMESTAMP WITH TIME ZONE" }
       ],
       "checkConstraints": [
         { "name": "check_username_length", "expression": "LENGTH(username) >= 3 AND LENGTH(username) <= 20" }
@@ -164,11 +198,12 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
       "name": "posts",
       "schema": "public",
       "columns": [
-        { "name": "id", "type": "TEXT", "isId": true, "defaultValue": "gen_random_uuid()", "attributes": ["@id", "@default(gen_random_uuid())"] },
-        { "name": "profile_id", "type": "TEXT", "relation": { "table": "profiles", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" } },
+        { "name": "id", "type": "UUID", "isId": true, "defaultValue": "gen_random_uuid()" },
+        { "name": "profile_id", "type": "UUID", "relation": { "table": "profiles", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" } },
+        { "name": "user_id", "type": "UUID", "relation": { "table": "auth.users", "field": "id", "onDelete": "Cascade", "relationType": "many-to-one" } },
         { "name": "title", "type": "TEXT" },
-        { "name": "created_at", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()", "attributes": ["@default(NOW())"] },
-        { "name": "updated_at", "type": "TIMESTAMP WITH TIME ZONE", "attributes": ["@updatedAt"] }
+        { "name": "created_at", "type": "TIMESTAMP WITH TIME ZONE", "defaultValue": "NOW()" },
+        { "name": "updated_at", "type": "TIMESTAMP WITH TIME ZONE" }
       ],
       "checkConstraints": [
         { "name": "check_title_length", "expression": "LENGTH(title) > 0 AND LENGTH(title) <= 200" }
@@ -176,14 +211,14 @@ JSON Structure (IDs auto-generated if omitted, defaults applied by parser):
     }
   ],
   "rlsPolicies": [
-    { "tableName": "profiles", "operation": "SELECT", "rolePolicies": [{ "role": "user", "accessType": "global" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "profiles", "operation": "INSERT", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "profiles", "operation": "UPDATE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "profiles", "operation": "DELETE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "posts", "operation": "SELECT", "rolePolicies": [{ "role": "user", "accessType": "global" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "posts", "operation": "INSERT", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "posts", "operation": "UPDATE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "global" }, { "role": "super-admin", "accessType": "global" }] },
-    { "tableName": "posts", "operation": "DELETE", "rolePolicies": [{ "role": "user", "accessType": "own" }, { "role": "admin", "accessType": "none" }, { "role": "super-admin", "accessType": "global" }] }
+    { "tableName": "profiles", "operation": "SELECT", "rolePolicies": [{ "role": "anon", "accessType": "public" }, { "role": "authenticated", "accessType": "public" }, { "role": "admin", "accessType": "global" }] },
+    { "tableName": "profiles", "operation": "INSERT", "rolePolicies": [{ "role": "anon", "accessType": "none" }, { "role": "authenticated", "accessType": "own" }, { "role": "admin", "accessType": "global" }] },
+    { "tableName": "profiles", "operation": "UPDATE", "rolePolicies": [{ "role": "anon", "accessType": "none" }, { "role": "authenticated", "accessType": "own" }, { "role": "admin", "accessType": "global" }] },
+    { "tableName": "profiles", "operation": "DELETE", "rolePolicies": [{ "role": "anon", "accessType": "none" }, { "role": "authenticated", "accessType": "own" }, { "role": "admin", "accessType": "global" }] },
+    { "tableName": "posts", "operation": "SELECT", "rolePolicies": [{ "role": "anon", "accessType": "public" }, { "role": "authenticated", "accessType": "public" }, { "role": "admin", "accessType": "global" }] },
+    { "tableName": "posts", "operation": "INSERT", "rolePolicies": [{ "role": "anon", "accessType": "none" }, { "role": "authenticated", "accessType": "own" }, { "role": "admin", "accessType": "global" }] },
+    { "tableName": "posts", "operation": "UPDATE", "rolePolicies": [{ "role": "anon", "accessType": "none" }, { "role": "authenticated", "accessType": "own" }, { "role": "admin", "accessType": "global" }] },
+    { "tableName": "posts", "operation": "DELETE", "rolePolicies": [{ "role": "anon", "accessType": "none" }, { "role": "authenticated", "accessType": "own" }, { "role": "admin", "accessType": "global" }] }
   ]
 }`;
 };
@@ -253,16 +288,15 @@ export const parseDatabaseSchemaFromResponse = (
         id: col.id || generateId(),
         isDefault: false,
         isEditable: true,
-        attributes: col.attributes || [],
       })),
     }));
 
     const hasProfilesTable = tables.some(
-      (t: PrismaTable) => t.name.toLowerCase() === 'profiles' && t.schema === 'public'
+      (t: DatabaseTable) => t.name.toLowerCase() === 'profiles' && t.schema === 'public'
     );
 
     if (!hasProfilesTable) {
-      const profilesTable: PrismaTable = {
+      const profilesTable: DatabaseTable = {
         id: generateId(),
         name: 'profiles',
         schema: 'public',
@@ -272,7 +306,7 @@ export const parseDatabaseSchemaFromResponse = (
           {
             id: generateId(),
             name: 'id',
-            type: 'TEXT',
+            type: 'UUID',
             isId: true,
             isDefault: false,
             isEditable: true,
@@ -280,25 +314,35 @@ export const parseDatabaseSchemaFromResponse = (
             isUnique: false,
             isArray: false,
             defaultValue: 'gen_random_uuid()',
-            attributes: ['@id', '@default(gen_random_uuid())']
           },
           {
             id: generateId(),
             name: 'user_id',
-            type: 'TEXT',
+            type: 'UUID',
             isId: false,
             isDefault: false,
             isEditable: true,
             isOptional: false,
             isUnique: true,
             isArray: false,
-            attributes: ['@unique'],
             relation: {
-              table: 'auth.user',
+              table: 'auth.users',
               field: 'id',
               onDelete: 'Cascade',
               relationType: 'one-to-one'
             }
+          },
+          {
+            id: generateId(),
+            name: 'role',
+            type: 'user_role',
+            isDefault: false,
+            isEditable: true,
+            isOptional: false,
+            isUnique: false,
+            isId: false,
+            isArray: false,
+            defaultValue: "'user'",
           },
           {
             id: generateId(),
@@ -311,7 +355,6 @@ export const parseDatabaseSchemaFromResponse = (
             isId: false,
             isArray: false,
             defaultValue: 'NOW()',
-            attributes: ['@default(NOW())']
           },
           {
             id: generateId(),
@@ -323,7 +366,6 @@ export const parseDatabaseSchemaFromResponse = (
             isUnique: false,
             isId: false,
             isArray: false,
-            attributes: ['@updatedAt']
           }
         ],
         uniqueConstraints: [],
@@ -333,7 +375,28 @@ export const parseDatabaseSchemaFromResponse = (
       tables.unshift(profilesTable);
     }
 
-    const enums = (parsed.enums || []).map((enumItem: PrismaEnum) => ({
+    const profilesTable = tables.find((t: DatabaseTable) => t.name === 'profiles' && t.schema === 'public');
+    if (profilesTable) {
+      const hasRoleColumn = profilesTable.columns.some((c: DatabaseColumn) => c.name === 'role');
+      if (!hasRoleColumn) {
+        const updatedAtIndex = profilesTable.columns.findIndex((c: DatabaseColumn) => c.name === 'updated_at');
+        const insertIndex = updatedAtIndex >= 0 ? updatedAtIndex : profilesTable.columns.length;
+        profilesTable.columns.splice(insertIndex, 0, {
+          id: generateId(),
+          name: 'role',
+          type: 'user_role',
+          isDefault: false,
+          isEditable: true,
+          isOptional: false,
+          isUnique: false,
+          isId: false,
+          isArray: false,
+          defaultValue: "'user'",
+        });
+      }
+    }
+
+    const enums = (parsed.enums || []).map((enumItem: DatabaseEnum) => ({
       ...enumItem,
       id: enumItem.id || generateId(),
       isDefault: false,
@@ -388,13 +451,13 @@ Based on the app data and features, generate a list of database tables with name
 IMPORTANT - Supabase Auth Tables:
 - DO NOT include auth-related tables (users, user, sessions, accounts, verification_tokens, magic_links, etc.)
 - Supabase automatically provides authentication tables in the "auth" schema
-- The auth.user table (singular "user") handles authentication, email verification, and session management
-- DO NOT create a "users" or "user" table - this conflicts with auth.user
+- The auth.users table (plural "users") handles authentication, email verification, and session management
+- DO NOT create a "users" or "user" table - this conflicts with auth.users
 - Use a "profiles" table in the "public" schema for application-specific user profile data (bio, avatar, preferences, etc.)
 
 Rules:
 - Table names should be in snake_case (e.g., "profiles", "user_posts", "page_elements")
-- Always include a "profiles" table in the "public" schema for application-specific user data that extends auth.user
+- Always include a "profiles" table in the "public" schema for application-specific user data that extends auth.users
 - Never use "users" or "user" as a table name - use "profiles" instead
 - Create tables for each main entity mentioned in the features
 - Description should explain what data the table stores and its purpose
@@ -404,7 +467,7 @@ Rules:
 JSON Structure:
 {
   "tables": [
-    { "name": "profiles", "description": "Stores application-specific user profile data (username, bio, avatar, preferences) that extends the Supabase auth.user table" },
+    { "name": "profiles", "description": "Stores application-specific user profile data (username, bio, avatar, preferences) that extends the Supabase auth.users table" },
     { "name": "posts", "description": "Contains user-created posts with titles, content, and metadata" }
   ]
 }

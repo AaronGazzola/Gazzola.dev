@@ -4,7 +4,7 @@ import { CODE_FILE_CONFIGS, type FileConfig } from "../lib/code-file-config";
 import { createConfigSnapshot, type ConfigSnapshot } from "../lib/config-snapshot";
 import type { InitialConfigurationType } from "../app/(editor)/layout.types";
 import type { ThemeConfiguration } from "../app/(components)/ThemeConfiguration.types";
-import type { Plugin, PrismaTable, RLSPolicy } from "../app/(components)/DatabaseConfiguration.types";
+import type { Plugin, DatabaseTable, RLSPolicy } from "../app/(components)/DatabaseConfiguration.types";
 import type { IDEType } from "../app/(editor)/layout.types";
 
 const DOCS_DIR = path.join(process.cwd(), "docs", "code-files");

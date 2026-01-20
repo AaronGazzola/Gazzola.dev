@@ -1,19 +1,19 @@
 export type RelationType = "one-to-many" | "many-to-one" | "one-to-one";
 
-export interface PrismaEnum {
+export interface DatabaseEnum {
   id: string;
   name: string;
-  values: PrismaEnumValue[];
+  values: DatabaseEnumValue[];
   isDefault: boolean;
   isEditable: boolean;
 }
 
-export interface PrismaEnumValue {
+export interface DatabaseEnumValue {
   id: string;
   value: string;
 }
 
-export interface PrismaColumn {
+export interface DatabaseColumn {
   id: string;
   name: string;
   type: string;
@@ -32,35 +32,33 @@ export interface PrismaColumn {
     inverseFieldName?: string;
     foreignKeyFieldId?: string;
   };
-  attributes: string[];
 }
 
-export interface PrismaCheckConstraint {
+export interface CheckConstraint {
   id: string;
   name: string;
   expression: string;
 }
 
-export interface PrismaTable {
+export interface DatabaseTable {
   id: string;
   name: string;
   schema: string;
   isDefault: boolean;
   isEditable: boolean;
-  columns: PrismaColumn[];
+  columns: DatabaseColumn[];
   uniqueConstraints: string[][];
-  checkConstraints: PrismaCheckConstraint[];
+  checkConstraints: CheckConstraint[];
   questionId?: string;
 }
 
-export type UserRole = "user" | "admin" | "super-admin" | "org-admin" | "org-member";
+export type UserRole = "anon" | "authenticated" | "admin";
 
-export type RLSAccessType = "none" | "global" | "own" | "organization" | "related";
+export type RLSAccessType = "none" | "public" | "own" | "global";
 
 export interface RLSRolePolicy {
   role: UserRole;
   accessType: RLSAccessType;
-  relatedTable?: string;
 }
 
 export interface RLSPolicy {
@@ -87,8 +85,8 @@ export interface Plugin {
 
 export interface DatabaseConfigurationState {
   activeTab: "network" | "schema" | "plugins" | "rls";
-  tables: PrismaTable[];
-  enums: PrismaEnum[];
+  tables: DatabaseTable[];
+  enums: DatabaseEnum[];
   rlsPolicies: RLSPolicy[];
   plugins: Plugin[];
 
@@ -108,14 +106,14 @@ export interface DatabaseConfigurationState {
   addEnumValue: (enumId: string, value: string) => void;
   deleteEnumValue: (enumId: string, valueId: string) => void;
   updateEnumValue: (enumId: string, valueId: string, value: string) => void;
-  getAllEnums: () => PrismaEnum[];
+  getAllEnums: () => DatabaseEnum[];
 
-  addColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
+  addColumn: (tableId: string, column: Omit<DatabaseColumn, "id">) => void;
   deleteColumn: (tableId: string, columnId: string) => void;
   updateColumn: (
     tableId: string,
     columnId: string,
-    updates: Partial<PrismaColumn>
+    updates: Partial<DatabaseColumn>
   ) => void;
   applyTemplate: (template: DatabaseTemplate, schema: string) => string;
 
@@ -129,22 +127,21 @@ export interface DatabaseConfigurationState {
   updatePlugin: (pluginId: string, updates: Partial<Plugin>) => void;
   getPluginsByFile: (file: "auth" | "auth-client") => Plugin[];
 
-  generatePrismaSchema: () => string;
   generateSupabaseMigration: () => string;
   generateRLSPolicies: () => string;
 
   initializeFromConfig: (
     config: import("@/app/(editor)/layout.types").InitialConfigurationType
   ) => void;
-  setTablesFromAI: (tables: PrismaTable[]) => void;
-  setEnumsFromAI: (enums: PrismaEnum[]) => void;
+  setTablesFromAI: (tables: DatabaseTable[]) => void;
+  setEnumsFromAI: (enums: DatabaseEnum[]) => void;
   setRLSPoliciesFromAI: (
     policies: {
       tableName: string;
       operation: RLSPolicy["operation"];
       rolePolicies: { role: UserRole; accessType: RLSAccessType; relatedTable?: string }[];
     }[],
-    tables: PrismaTable[]
+    tables: DatabaseTable[]
   ) => void;
   reset: () => void;
 }
@@ -171,7 +168,6 @@ export interface ColumnTemplate {
   isId?: boolean;
   isArray?: boolean;
   defaultValue?: string;
-  attributes?: string[];
 }
 
 export interface TableTemplate {
@@ -202,7 +198,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "avatar", type: "String", isOptional: true },
           { name: "website", type: "String", isOptional: true },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -216,7 +212,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "published", type: "Boolean", defaultValue: "false" },
           { name: "authorId", type: "String" },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -227,7 +223,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "postId", type: "String" },
           { name: "authorId", type: "String" },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -257,7 +253,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "stock", type: "Int", defaultValue: "0" },
           { name: "imageUrl", type: "String", isOptional: true },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -268,7 +264,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "total", type: "Decimal" },
           { name: "status", type: "String", defaultValue: '"pending"' },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -287,7 +283,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "id", type: "String", isId: true, defaultValue: "cuid()" },
           { name: "userId", type: "String", isUnique: true },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -326,7 +322,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "authorId", type: "String" },
           { name: "imageUrl", type: "String", isOptional: true },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -364,7 +360,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "description", type: "String", isOptional: true },
           { name: "ownerId", type: "String" },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {
@@ -379,7 +375,7 @@ export const DATABASE_TEMPLATES: DatabaseTemplate[] = [
           { name: "assigneeId", type: "String", isOptional: true },
           { name: "dueDate", type: "DateTime", isOptional: true },
           { name: "createdAt", type: "DateTime", defaultValue: "now()" },
-          { name: "updatedAt", type: "DateTime", attributes: ["@updatedAt"] }
+          { name: "updatedAt", type: "DateTime" }
         ]
       },
       {

@@ -31,7 +31,7 @@ import "@xyflow/react/dist/style.css";
 import { ChevronDown, ChevronRight, Settings } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
-import type { PrismaColumn, PrismaTable } from "./DatabaseConfiguration.types";
+import type { DatabaseColumn, DatabaseTable } from "./DatabaseConfiguration.types";
 
 const POSTGRES_TYPE_OPTIONS = [
   "TEXT",
@@ -46,13 +46,13 @@ const POSTGRES_TYPE_OPTIONS = [
 ] as const;
 
 interface ColumnRowProps {
-  column: PrismaColumn;
-  table: PrismaTable;
-  allTables: PrismaTable[];
+  column: DatabaseColumn;
+  table: DatabaseTable;
+  allTables: DatabaseTable[];
   onUpdateColumn: (
     tableId: string,
     columnId: string,
-    updates: Partial<PrismaColumn>
+    updates: Partial<DatabaseColumn>
   ) => void;
 }
 
@@ -202,12 +202,12 @@ const ColumnRow = ({
 };
 
 interface TableNodeData extends Record<string, unknown> {
-  table: PrismaTable;
-  allTables: PrismaTable[];
+  table: DatabaseTable;
+  allTables: DatabaseTable[];
   onUpdateColumn: (
     tableId: string,
     columnId: string,
-    updates: Partial<PrismaColumn>
+    updates: Partial<DatabaseColumn>
   ) => void;
 }
 

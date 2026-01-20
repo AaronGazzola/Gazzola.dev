@@ -20,8 +20,8 @@ import { useEffect, useRef, useState } from "react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import type {
   POSTGRES_TYPES,
-  PrismaColumn,
-  PrismaTable,
+  DatabaseColumn,
+  DatabaseTable,
 } from "./DatabaseConfiguration.types";
 
 export const POSTGRES_TYPE_OPTIONS: (typeof POSTGRES_TYPES)[number][] = [
@@ -41,17 +41,17 @@ export const ColumnLine = ({
   column,
   onUpdate,
   onDelete,
-  columnType,
+  viewMode,
 }: {
-  table: PrismaTable;
-  column: PrismaColumn;
+  table: DatabaseTable;
+  column: DatabaseColumn;
   onUpdate: (
     tableId: string,
     columnId: string,
-    updates: Partial<PrismaColumn>
+    updates: Partial<DatabaseColumn>
   ) => void;
   onDelete: (tableId: string, columnId: string) => void;
-  columnType: "name" | "attributes";
+  viewMode: "name" | "full";
 }) => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(column.name);
@@ -85,9 +85,17 @@ export const ColumnLine = ({
   };
 
   const isRelation = column.relation !== undefined;
-  const relationTables = tables.filter((t) => t.id !== table.id);
+  const relationTables = tables
+    .filter((t) => t.id !== table.id)
+    .reduce((acc, t) => {
+      const key = `${t.schema}.${t.name}`;
+      if (!acc.some((existing) => `${existing.schema}.${existing.name}` === key)) {
+        acc.push(t);
+      }
+      return acc;
+    }, [] as DatabaseTable[]);
 
-  if (columnType === "name") {
+  if (viewMode === "name") {
     return (
       <div className="group flex items-center theme-gap-1 theme-px-1 hover:theme-bg-accent theme-radius">
         {isEditingName ? (
@@ -134,7 +142,63 @@ export const ColumnLine = ({
               <label className="text-base font-semibold theme-text-muted-foreground theme-mb-1 block">
                 Type
               </label>
-              {isRelation ? (
+              <Select
+                value={isRelation ? "Relation" : column.type}
+                onValueChange={(type) => {
+                  if (type === "Relation") {
+                    const firstTable = relationTables[0];
+                    if (firstTable) {
+                      const tableReference = firstTable.schema !== "public"
+                        ? `${firstTable.schema}.${firstTable.name}`
+                        : firstTable.name;
+                      onUpdate(table.id, column.id, {
+                        type: tableReference,
+                        relation: {
+                          table: tableReference,
+                          field: "id",
+                          onDelete: "Cascade",
+                        },
+                      });
+                    }
+                  } else {
+                    onUpdate(table.id, column.id, {
+                      type,
+                      relation: undefined,
+                    });
+                  }
+                }}
+              >
+                <SelectTrigger className="h-7 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {POSTGRES_TYPE_OPTIONS.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                  {allEnums.length > 0 && (
+                    <>
+                      <div className="theme-px-2 theme-py-1 text-sm theme-text-muted-foreground font-semibold">
+                        Enums
+                      </div>
+                      {allEnums.map((enumItem) => (
+                        <SelectItem key={enumItem.name} value={enumItem.name}>
+                          {enumItem.name}
+                        </SelectItem>
+                      ))}
+                    </>
+                  )}
+                  <SelectItem value="Relation">Relation</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {isRelation && (
+              <div>
+                <label className="text-base font-semibold theme-text-muted-foreground theme-mb-1 block">
+                  Related Table
+                </label>
                 <Select
                   value={column.relation?.table || ""}
                   onValueChange={(tableRef) => {
@@ -172,38 +236,8 @@ export const ColumnLine = ({
                     })}
                   </SelectContent>
                 </Select>
-              ) : (
-                <Select
-                  value={column.type}
-                  onValueChange={(type) =>
-                    onUpdate(table.id, column.id, { type })
-                  }
-                >
-                  <SelectTrigger className="h-7 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {POSTGRES_TYPE_OPTIONS.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                    {allEnums.length > 0 && (
-                      <>
-                        <div className="theme-px-2 theme-py-1 text-sm theme-text-muted-foreground font-semibold">
-                          Enums
-                        </div>
-                        {allEnums.map((enumItem) => (
-                          <SelectItem key={enumItem.name} value={enumItem.name}>
-                            {enumItem.name}
-                          </SelectItem>
-                        ))}
-                      </>
-                    )}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="flex items-center theme-gap-2">
               <Checkbox
@@ -241,19 +275,6 @@ export const ColumnLine = ({
           </div>
         </PopoverContent>
       </Popover>
-
-      {column.attributes.length > 0 && (
-        <div className="flex items-center theme-gap-1 flex-wrap">
-          {column.attributes.map((attr, i) => (
-            <span
-              key={i}
-              className="text-sm theme-font-mono theme-text-muted-foreground whitespace-nowrap"
-            >
-              {attr}
-            </span>
-          ))}
-        </div>
-      )}
 
       <div className="flex items-center theme-gap-1">
         <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
@@ -299,9 +320,9 @@ export const ColumnLine = ({
                     />
                     <label
                       htmlFor={`${column.id}-id`}
-                      className="text-base font-semibold theme-text-foreground cursor-pointer theme-font-mono"
+                      className="text-base font-semibold theme-text-foreground cursor-pointer"
                     >
-                      @id
+                      Primary Key
                     </label>
                   </div>
 
@@ -317,9 +338,9 @@ export const ColumnLine = ({
                     />
                     <label
                       htmlFor={`${column.id}-unique`}
-                      className="text-base font-semibold theme-text-foreground cursor-pointer theme-font-mono"
+                      className="text-base font-semibold theme-text-foreground cursor-pointer"
                     >
-                      @unique
+                      Unique
                     </label>
                   </div>
                 </div>
@@ -352,8 +373,8 @@ export const AddColumnPopover = ({
   table,
   onAddColumn,
 }: {
-  table: PrismaTable;
-  onAddColumn: (tableId: string, column: Omit<PrismaColumn, "id">) => void;
+  table: DatabaseTable;
+  onAddColumn: (tableId: string, column: Omit<DatabaseColumn, "id">) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const [columnName, setColumnName] = useState("");
@@ -369,7 +390,15 @@ export const AddColumnPopover = ({
   const [inverseFieldName, setInverseFieldName] = useState("");
   const { tables, getAllEnums } = useDatabaseStore();
 
-  const availableTables = tables.filter((t) => t.id !== table.id);
+  const availableTables = tables
+    .filter((t) => t.id !== table.id)
+    .reduce((acc, t) => {
+      const key = `${t.schema}.${t.name}`;
+      if (!acc.some((existing) => `${existing.schema}.${existing.name}` === key)) {
+        acc.push(t);
+      }
+      return acc;
+    }, [] as DatabaseTable[]);
   const allEnums = getAllEnums();
   const isRelationType = columnType === "Relation";
 
@@ -420,7 +449,6 @@ export const AddColumnPopover = ({
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
         relation: {
           table: tableReference,
           field: "id",
@@ -439,7 +467,6 @@ export const AddColumnPopover = ({
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       });
     }
 

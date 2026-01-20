@@ -14,7 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight, Lock, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { PrismaTable } from "./DatabaseConfiguration.types";
+import type { DatabaseTable } from "./DatabaseConfiguration.types";
 import { TableCollapsible } from "./DatabaseConfiguration.tables";
 
 export const SchemaCollapsible = ({
@@ -33,7 +33,7 @@ export const SchemaCollapsible = ({
   isSystemSchema,
 }: {
   schema: string;
-  tables: PrismaTable[];
+  tables: DatabaseTable[];
   isExpanded: boolean;
   onToggle: () => void;
   expandedTableId: string | null;

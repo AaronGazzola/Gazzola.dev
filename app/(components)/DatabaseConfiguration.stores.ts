@@ -3,14 +3,15 @@ import { persist } from "zustand/middleware";
 import type { InitialConfigurationType } from "@/app/(editor)/layout.types";
 import type {
   DatabaseConfigurationState,
-  PrismaColumn,
-  PrismaTable,
-  PrismaEnum,
-  PrismaEnumValue,
+  DatabaseColumn,
+  DatabaseTable,
+  DatabaseEnum,
+  DatabaseEnumValue,
   RLSPolicy,
   Plugin,
   DatabaseTemplate,
   ColumnTemplate,
+  UserRole,
 } from "./DatabaseConfiguration.types";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 
@@ -30,7 +31,7 @@ const getForeignKeyName = (tableName: string): string => {
   return `${tableName}Id`;
 };
 
-const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
+const getDefaultBetterAuthTables = (isBetterAuth: boolean = false): DatabaseTable[] => [
   {
     id: "default-user",
     name: "user",
@@ -44,7 +45,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "user-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -52,7 +53,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "user-email",
@@ -64,7 +64,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: true,
         isId: false,
         isArray: false,
-        attributes: ["@unique"],
       },
       {
         id: "user-name",
@@ -76,7 +75,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "user-role",
@@ -89,7 +87,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: false,
         isArray: false,
         defaultValue: '"user"',
-        attributes: ['@default("user")'],
       },
       {
         id: "user-banned",
@@ -102,7 +99,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: false,
         isArray: false,
         defaultValue: "false",
-        attributes: ["@default(false)"],
       },
       {
         id: "user-banReason",
@@ -114,7 +110,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "user-banExpires",
@@ -126,7 +121,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "user-emailVerified",
@@ -138,7 +132,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "user-createdAt",
@@ -151,7 +144,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "user-updatedAt",
@@ -163,7 +155,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: ["@updatedAt"],
       },
       {
         id: "user-image",
@@ -175,7 +166,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "user-MagicLink",
@@ -187,7 +177,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: true,
-        attributes: [],
       },
       {
         id: "user-account",
@@ -199,7 +188,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: true,
-        attributes: [],
       },
       {
         id: "user-invitation",
@@ -211,7 +199,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: true,
-        attributes: [],
       },
       {
         id: "user-member",
@@ -223,7 +210,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: true,
-        attributes: [],
       },
       {
         id: "user-session",
@@ -235,7 +221,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: true,
-        attributes: [],
       },
     ],
   },
@@ -252,7 +237,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "session-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -260,19 +245,17 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "session-userId",
         name: "userId",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "session-expiresAt",
@@ -284,7 +267,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "session-token",
@@ -296,7 +278,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: true,
         isId: false,
         isArray: false,
-        attributes: ["@unique"],
       },
       {
         id: "session-createdAt",
@@ -309,7 +290,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "session-updatedAt",
@@ -321,7 +301,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: ["@updatedAt"],
       },
       {
         id: "session-ipAddress",
@@ -333,7 +312,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "session-userAgent",
@@ -345,7 +323,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "session-impersonatedBy",
@@ -357,7 +334,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "session-activeOrganizationId",
@@ -369,7 +345,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "session-user",
@@ -386,9 +361,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
           field: "id",
           onDelete: "Cascade",
         },
-        attributes: [
-          "@relation(fields: [userId], references: [id], onDelete: Cascade)",
-        ],
       },
     ],
   },
@@ -405,7 +377,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "account-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -413,19 +385,17 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "account-userId",
         name: "userId",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-accountId",
@@ -437,7 +407,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-providerId",
@@ -449,7 +418,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-accessToken",
@@ -461,7 +429,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-refreshToken",
@@ -473,7 +440,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-idToken",
@@ -485,7 +451,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-accessTokenExpiresAt",
@@ -497,7 +462,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-refreshTokenExpiresAt",
@@ -509,7 +473,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-scope",
@@ -521,7 +484,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-password",
@@ -533,7 +495,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "account-createdAt",
@@ -546,7 +507,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "account-updatedAt",
@@ -558,7 +518,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: ["@updatedAt"],
       },
       {
         id: "account-user",
@@ -575,9 +534,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
           field: "id",
           onDelete: "Cascade",
         },
-        attributes: [
-          "@relation(fields: [userId], references: [id], onDelete: Cascade)",
-        ],
       },
     ],
   },
@@ -594,7 +550,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "verification-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -602,7 +558,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "verification-identifier",
@@ -614,7 +569,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "verification-value",
@@ -626,7 +580,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "verification-expiresAt",
@@ -638,7 +591,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "verification-createdAt",
@@ -651,7 +603,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "verification-updatedAt",
@@ -663,7 +614,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: ["@updatedAt"],
       },
     ],
   },
@@ -680,7 +630,7 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
       {
         id: "magiclink-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -688,19 +638,17 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "magiclink-userId",
         name: "userId",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "magiclink-token",
@@ -712,7 +660,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: true,
         isId: false,
         isArray: false,
-        attributes: ["@unique"],
       },
       {
         id: "magiclink-email",
@@ -724,7 +671,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "magiclink-expiresAt",
@@ -736,7 +682,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "magiclink-createdAt",
@@ -749,7 +694,6 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "magiclink-user",
@@ -766,15 +710,12 @@ const getDefaultAuthTables = (isBetterAuth: boolean = false): PrismaTable[] => [
           field: "id",
           onDelete: "Cascade",
         },
-        attributes: [
-          "@relation(fields: [userId], references: [id], onDelete: Cascade)",
-        ],
       },
     ],
   },
 ];
 
-const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => [
+const getOrganizationTables = (isBetterAuth: boolean = false): DatabaseTable[] => [
   {
     id: "default-organization",
     name: "organization",
@@ -788,7 +729,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "organization-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -796,7 +737,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "organization-name",
@@ -808,7 +748,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "organization-slug",
@@ -820,7 +759,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: true,
         isId: false,
         isArray: false,
-        attributes: ["@unique"],
       },
       {
         id: "organization-logo",
@@ -832,7 +770,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "organization-metadata",
@@ -844,7 +781,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "organization-createdAt",
@@ -857,7 +793,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "organization-updatedAt",
@@ -869,7 +804,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: ["@updatedAt"],
       },
       {
         id: "organization-invitation",
@@ -881,7 +815,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: true,
-        attributes: [],
       },
       {
         id: "organization-member",
@@ -893,7 +826,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: true,
-        attributes: [],
       },
     ],
   },
@@ -910,7 +842,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "member-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -918,31 +850,28 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "member-userId",
         name: "userId",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "member-organizationId",
         name: "organizationId",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "member-role",
@@ -955,7 +884,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: false,
         isArray: false,
         defaultValue: '"member"',
-        attributes: ['@default("member")'],
       },
       {
         id: "member-createdAt",
@@ -968,7 +896,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "member-updatedAt",
@@ -980,7 +907,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: ["@updatedAt"],
       },
       {
         id: "member-organization",
@@ -997,9 +923,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
           field: "id",
           onDelete: "Cascade",
         },
-        attributes: [
-          "@relation(fields: [organizationId], references: [id], onDelete: Cascade)",
-        ],
       },
       {
         id: "member-user",
@@ -1016,9 +939,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
           field: "id",
           onDelete: "Cascade",
         },
-        attributes: [
-          "@relation(fields: [userId], references: [id], onDelete: Cascade)",
-        ],
       },
     ],
   },
@@ -1035,7 +955,7 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
       {
         id: "invitation-id",
         name: "id",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
@@ -1043,19 +963,17 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: true,
         isArray: false,
         defaultValue: "gen_random_uuid()",
-        attributes: ["@id", "@default(gen_random_uuid())"],
       },
       {
         id: "invitation-organizationId",
         name: "organizationId",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "invitation-email",
@@ -1067,7 +985,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "invitation-role",
@@ -1080,19 +997,17 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: false,
         isArray: false,
         defaultValue: '"member"',
-        attributes: ['@default("member")'],
       },
       {
         id: "invitation-inviterId",
         name: "inviterId",
-        type: "TEXT",
+        type: "UUID",
         isDefault: true,
         isEditable: false,
         isOptional: false,
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "invitation-token",
@@ -1104,7 +1019,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: true,
         isId: false,
         isArray: false,
-        attributes: ["@unique"],
       },
       {
         id: "invitation-status",
@@ -1117,7 +1031,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: false,
         isArray: false,
         defaultValue: '"pending"',
-        attributes: ['@default("pending")'],
       },
       {
         id: "invitation-expiresAt",
@@ -1129,7 +1042,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: [],
       },
       {
         id: "invitation-createdAt",
@@ -1142,7 +1054,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isId: false,
         isArray: false,
         defaultValue: "NOW()",
-        attributes: ["@default(NOW())"],
       },
       {
         id: "invitation-updatedAt",
@@ -1154,7 +1065,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
         isUnique: false,
         isId: false,
         isArray: false,
-        attributes: ["@updatedAt"],
       },
       {
         id: "invitation-user",
@@ -1171,9 +1081,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
           field: "id",
           onDelete: "Cascade",
         },
-        attributes: [
-          "@relation(fields: [inviterId], references: [id], onDelete: Cascade)",
-        ],
       },
       {
         id: "invitation-organization",
@@ -1190,9 +1097,6 @@ const getOrganizationTables = (isBetterAuth: boolean = false): PrismaTable[] => 
           field: "id",
           onDelete: "Cascade",
         },
-        attributes: [
-          "@relation(fields: [organizationId], references: [id], onDelete: Cascade)",
-        ],
       },
     ],
   },
@@ -1210,7 +1114,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
 
       addTable: (name, schema) => {
-        const newTable: PrismaTable = {
+        const newTable: DatabaseTable = {
           id: generateId(),
           name,
           schema,
@@ -1284,7 +1188,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
       },
 
       addEnum: (name) => {
-        const newEnum: PrismaEnum = {
+        const newEnum: DatabaseEnum = {
           id: generateId(),
           name,
           values: [],
@@ -1362,7 +1266,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         const currentTable = state.tables.find((t) => t.id === tableId);
         if (!currentTable) return;
 
-        const newColumn: PrismaColumn = {
+        const newColumn: DatabaseColumn = {
           ...column,
           id: generateId(),
         };
@@ -1385,28 +1289,24 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
               : relationTableRef;
             const fkColumnName = getForeignKeyName(tableName);
 
-            const fkColumn: PrismaColumn = {
+            const fkColumn: DatabaseColumn = {
               id: fkColumnId,
               name: fkColumnName,
-              type: "TEXT",
+              type: "UUID",
               isDefault: false,
               isEditable: true,
               isOptional: column.isOptional,
               isUnique: false,
               isId: false,
               isArray: false,
-              attributes: [],
-            };
+                  };
 
-            const relationColumn: PrismaColumn = {
+            const relationColumn: DatabaseColumn = {
               ...newColumn,
               relation: {
                 ...column.relation,
                 foreignKeyFieldId: fkColumnId,
               },
-              attributes: [
-                `@relation(fields: [${fkColumnName}], references: [${column.relation.field}]${column.relation.onDelete ? `, onDelete: ${column.relation.onDelete}` : ""})`,
-              ],
             };
 
             updatedTables.forEach((t) => {
@@ -1420,7 +1320,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             });
 
             if (column.relation.relationType === "many-to-one" && column.relation.inverseFieldName && relatedTable.isEditable) {
-              const inverseColumn: PrismaColumn = {
+              const inverseColumn: DatabaseColumn = {
                 id: generateId(),
                 name: column.relation.inverseFieldName,
                 type: currentTable.name,
@@ -1430,8 +1330,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
                 isUnique: false,
                 isId: false,
                 isArray: true,
-                attributes: [],
-              };
+                      };
 
               updatedTables.forEach((t) => {
                 if (t.id === relatedTable.id) {
@@ -1464,36 +1363,106 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
       },
 
       updateColumn: (tableId, columnId, updates) => {
+        const state = get();
+        const currentTable = state.tables.find((t) => t.id === tableId);
+        if (!currentTable) return;
+
+        const currentColumn = currentTable.columns.find((c) => c.id === columnId);
+        if (!currentColumn) return;
+
+        const wasRelation = currentColumn.relation !== undefined;
+        const willBeRelation = updates.relation !== undefined;
+
         set((state) => ({
-          tables: state.tables.map((t) =>
-            t.id === tableId
-              ? {
-                  ...t,
-                  columns: t.columns.map((c) => {
-                    if (c.id !== columnId) return c;
+          tables: state.tables.map((t) => {
+            if (t.id !== tableId) return t;
 
-                    const updated = { ...c, ...updates };
-                    const attrs: string[] = [];
+            let updatedColumns = t.columns.map((c) => {
+              if (c.id !== columnId) return c;
 
-                    if (updated.isId) attrs.push("@id");
-                    if (updated.isUnique) attrs.push("@unique");
-                    if (updated.defaultValue) {
-                      attrs.push(`@default(${updated.defaultValue})`);
+              const updated = { ...c, ...updates };
+
+              if (updated.relation) {
+                const relationTableRef = updated.relation.table;
+                const relatedTable = state.tables.find(
+                  (rt) => rt.name === relationTableRef || `${rt.schema}.${rt.name}` === relationTableRef
+                );
+
+                if (relatedTable) {
+                  const tableName = relationTableRef.includes('.')
+                    ? relationTableRef.split('.')[1]
+                    : relationTableRef;
+                  const fkColumnName = getForeignKeyName(tableName);
+
+                  if (!updated.relation.foreignKeyFieldId) {
+                    const existingFk = t.columns.find((col) => col.name === fkColumnName);
+                    if (existingFk) {
+                      updated.relation = {
+                        ...updated.relation,
+                        foreignKeyFieldId: existingFk.id,
+                      };
                     }
-                    if (c.attributes.includes("@updatedAt")) attrs.push("@updatedAt");
-                    if (updated.relation) {
-                      const rel = updated.relation;
-                      attrs.push(
-                        `@relation(fields: [${c.name}Id], references: [${rel.field}]${rel.onDelete ? `, onDelete: ${rel.onDelete}` : ""})`
-                      );
-                    }
-
-                    updated.attributes = attrs;
-                    return updated;
-                  }),
+                  }
                 }
-              : t
-          ),
+              }
+
+              return updated;
+            });
+
+            if (wasRelation && !willBeRelation && currentColumn.relation?.foreignKeyFieldId) {
+              updatedColumns = updatedColumns.filter(
+                (c) => c.id !== currentColumn.relation?.foreignKeyFieldId
+              );
+            }
+
+            if (!wasRelation && willBeRelation && updates.relation) {
+              const relationTableRef = updates.relation.table;
+              const relatedTable = state.tables.find(
+                (rt) => rt.name === relationTableRef || `${rt.schema}.${rt.name}` === relationTableRef
+              );
+
+              if (relatedTable) {
+                const tableName = relationTableRef.includes('.')
+                  ? relationTableRef.split('.')[1]
+                  : relationTableRef;
+                const fkColumnName = getForeignKeyName(tableName);
+
+                const existingFk = updatedColumns.find((c) => c.name === fkColumnName);
+                const fkColumnId = existingFk ? existingFk.id : generateId();
+
+                if (!existingFk) {
+                  const fkColumn: DatabaseColumn = {
+                    id: fkColumnId,
+                    name: fkColumnName,
+                    type: "UUID",
+                    isDefault: false,
+                    isEditable: true,
+                    isOptional: currentColumn.isOptional,
+                    isUnique: false,
+                    isId: false,
+                    isArray: false,
+                              };
+
+                  updatedColumns.push(fkColumn);
+                }
+
+                updatedColumns = updatedColumns.map((c) => {
+                  if (c.id === columnId && c.relation) {
+                    return {
+                      ...c,
+                      relation: {
+                        ...c.relation,
+                        foreignKeyFieldId: fkColumnId,
+                      },
+                    };
+                  }
+                  return c;
+                });
+              }
+            }
+
+            return { ...t, columns: updatedColumns };
+          }),
         }));
       },
 
@@ -1503,15 +1472,6 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           (t) => t.schema === schema && !t.isDefault
         );
         tablesToDelete.forEach((t) => get().deleteTable(t.id));
-
-        const buildAttributes = (col: ColumnTemplate): string[] => {
-          const attrs: string[] = [];
-          if (col.isId) attrs.push("@id");
-          if (col.isUnique) attrs.push("@unique");
-          if (col.defaultValue) attrs.push(`@default(${col.defaultValue})`);
-          if (col.attributes?.includes("@updatedAt")) attrs.push("@updatedAt");
-          return attrs;
-        };
 
         let firstTableId = "";
         template.tables.forEach((tableTemplate) => {
@@ -1529,7 +1489,6 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
               isId: colTemplate.isId || false,
               isArray: colTemplate.isArray || false,
               defaultValue: colTemplate.defaultValue,
-              attributes: buildAttributes(colTemplate),
             });
           });
         });
@@ -1537,7 +1496,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         return firstTableId;
       },
 
-      addOrUpdateRLSPolicy: (tableId, operation, role, accessType, relatedTable) => {
+      addOrUpdateRLSPolicy: (tableId, operation, role, accessType) => {
         set((state) => {
           const existingPolicyIndex = state.rlsPolicies.findIndex(
             (p) => p.tableId === tableId && p.operation === operation
@@ -1554,10 +1513,9 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
               policy.rolePolicies[existingRoleIndex] = {
                 role,
                 accessType,
-                relatedTable,
               };
             } else {
-              policy.rolePolicies.push({ role, accessType, relatedTable });
+              policy.rolePolicies.push({ role, accessType });
             }
 
             return { rlsPolicies: updatedPolicies };
@@ -1566,7 +1524,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
               id: generateId(),
               tableId,
               operation,
-              rolePolicies: [{ role, accessType, relatedTable }],
+              rolePolicies: [{ role, accessType }],
             };
             return { rlsPolicies: [...state.rlsPolicies, newPolicy] };
           }
@@ -1652,6 +1610,14 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           lines.push("");
         }
 
+        if (userTables.length > 0) {
+          lines.push("-- Create user_role enum type");
+          lines.push("-- Defines application-level roles stored in profiles.role column");
+          lines.push("-- These are NOT Postgres roles - they are checked in RLS policies using helper functions");
+          lines.push("CREATE TYPE user_role AS ENUM ('user', 'admin', 'super-admin');");
+          lines.push("");
+        }
+
         if (enums.length > 0) {
           lines.push("-- Create enum types");
           enums.forEach((enumDef) => {
@@ -1663,26 +1629,55 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
 
         if (userTables.length > 0) {
           lines.push("-- Create tables");
+          const enumNames = enums.map(e => e.name);
+
           userTables.forEach((table) => {
             const columns: string[] = [];
+            const foreignKeys: string[] = [];
 
             table.columns.forEach((col) => {
-              const pgType = col.isArray ? `${col.type}[]` : col.type;
+              let pgType: string;
+
+              if (col.relation) {
+                pgType = "UUID";
+              } else {
+                pgType = col.type;
+              }
+
+              if (col.isArray) {
+                pgType = `${pgType}[]`;
+              }
+
               const nullable = col.isOptional ? "" : " NOT NULL";
-              const defaultVal = col.defaultValue ? ` DEFAULT ${col.defaultValue}` : "";
+
+              let defaultVal = "";
+              if (col.defaultValue) {
+                const isEnumType = enumNames.includes(col.type);
+                const needsQuotes = isEnumType &&
+                  !col.defaultValue.startsWith("'") &&
+                  !col.defaultValue.startsWith('"') &&
+                  !col.defaultValue.includes("(");
+
+                defaultVal = needsQuotes
+                  ? ` DEFAULT '${col.defaultValue}'`
+                  : ` DEFAULT ${col.defaultValue}`;
+              }
+
               const unique = col.isUnique ? " UNIQUE" : "";
               const primaryKey = col.isId ? " PRIMARY KEY" : "";
 
               columns.push(`  ${col.name} ${pgType}${nullable}${defaultVal}${unique}${primaryKey}`);
-            });
 
-            table.columns.forEach((col) => {
               if (col.relation) {
-                const onDelete = col.relation.onDelete ? ` ON DELETE ${col.relation.onDelete.toUpperCase()}` : "";
-                columns.push(
+                const onDelete = col.relation.onDelete ? ` ON DELETE ${col.relation.onDelete === "Cascade" ? "CASCADE" : col.relation.onDelete.toUpperCase()}` : "";
+                foreignKeys.push(
                   `  CONSTRAINT fk_${table.name}_${col.name} FOREIGN KEY (${col.name}) REFERENCES ${col.relation.table}(${col.relation.field})${onDelete}`
                 );
               }
+            });
+
+            foreignKeys.forEach((fk) => {
+              columns.push(fk);
             });
 
             table.uniqueConstraints.forEach((constraint) => {
@@ -1725,8 +1720,29 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           lines.push("");
         }
 
+        if (userTables.length > 0) {
+          lines.push("-- Create RLS helper function for admin role checks");
+          lines.push("-- SECURITY DEFINER: Runs with creator's permissions to read profiles");
+          lines.push("-- STABLE: Enables query-level caching for performance");
+          lines.push("-- Wrap calls in (SELECT ...) for proper caching: USING ((SELECT is_admin()))");
+          lines.push("");
+
+          lines.push("CREATE OR REPLACE FUNCTION is_admin()");
+          lines.push("RETURNS boolean");
+          lines.push("LANGUAGE sql");
+          lines.push("SECURITY DEFINER");
+          lines.push("STABLE");
+          lines.push("AS $$");
+          lines.push("  SELECT (SELECT role FROM public.profiles WHERE user_id = auth.uid()) IN ('admin', 'super-admin');");
+          lines.push("$$;");
+          lines.push("");
+        }
+
         if (rlsPolicies.length > 0) {
           lines.push("-- Create RLS Policies");
+          lines.push("-- Using native PostgreSQL roles: anon, authenticated");
+          lines.push("-- Admin policies use authenticated role with is_admin() function check");
+          lines.push("");
 
           rlsPolicies.forEach((policy) => {
             const table = tables.find((t) => t.id === policy.tableId);
@@ -1735,101 +1751,68 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             policy.rolePolicies.forEach((rolePolicy) => {
               if (rolePolicy.accessType === "none") return;
 
-              const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role.replace("-", "_")}`;
+              const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
+              const postgresRole = rolePolicy.role === "admin" ? "authenticated" : rolePolicy.role;
 
               let usingClause = "";
               switch (rolePolicy.accessType) {
+                case "public":
                 case "global":
-                  usingClause = "true";
+                  if (rolePolicy.role === "admin") {
+                    usingClause = "(SELECT is_admin())";
+                  } else {
+                    usingClause = "true";
+                  }
                   break;
                 case "own":
-                  const userIdColumn = table.columns.find(
-                    (c) => c.name === "user_id" || c.name === "userId" || c.name === "reporter_id" || c.name === "reporterId" || (table.name === "users" && c.name === "id")
+                  let userIdColumn = table.columns.find(
+                    (c) => c.name === "user_id" || c.name === "userId"
                   );
 
                   if (!userIdColumn) {
+                    const profileIdColumn = table.columns.find(
+                      (c) => c.name === "profile_id" && c.relation?.table === "profiles"
+                    );
+
+                    if (profileIdColumn) {
+                      if (rolePolicy.role === "authenticated") {
+                        usingClause = `profile_id IN (SELECT id FROM profiles WHERE user_id = auth.uid())`;
+                      } else if (rolePolicy.role === "admin") {
+                        usingClause = `((SELECT is_admin()) OR profile_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))`;
+                      } else {
+                        usingClause = "false";
+                      }
+                      break;
+                    }
+
+                    const reporterIdColumn = table.columns.find(
+                      (c) => c.name === "reporter_id" && c.relation?.table === "profiles"
+                    );
+
+                    if (reporterIdColumn) {
+                      if (rolePolicy.role === "authenticated") {
+                        usingClause = `reporter_id IN (SELECT id FROM profiles WHERE user_id = auth.uid())`;
+                      } else if (rolePolicy.role === "admin") {
+                        usingClause = `((SELECT is_admin()) OR reporter_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))`;
+                      } else {
+                        usingClause = "false";
+                      }
+                      break;
+                    }
+
                     conditionalLog(
-                      { message: `RLS Error: Table ${table.name} has "own" policy but no user column`, table: table.name },
+                      { message: `RLS Warning: Table ${table.name} has "own" policy but no user_id or profile_id column. Using fallback: false`, table: table.name },
                       { label: LOG_LABELS.DATABASE }
                     );
                     usingClause = "false";
                   } else {
-                    usingClause = `auth.uid() = ${userIdColumn.name}`;
-                  }
-                  break;
-                case "organization":
-                  const orgIdColumn = table.columns.find(
-                    (c) => c.name === "organizationId" || c.name === "organization_id"
-                  );
-
-                  if (!orgIdColumn) {
-                    conditionalLog(
-                      { message: `RLS Error: Table ${table.name} has "organization" policy but no organization column`, table: table.name },
-                      { label: LOG_LABELS.DATABASE }
-                    );
-                    usingClause = "false";
-                    break;
-                  }
-
-                  const userOrgsTable = tables.find(t => t.name === 'user_organizations');
-                  if (!userOrgsTable) {
-                    conditionalLog(
-                      { message: `RLS Error: user_organizations table not found for organization policy`, table: table.name },
-                      { label: LOG_LABELS.DATABASE }
-                    );
-                    usingClause = "false";
-                    break;
-                  }
-
-                  const userOrgsSchema = userOrgsTable.schema || 'public';
-                  usingClause = `${orgIdColumn.name} IN (SELECT organization_id FROM ${userOrgsSchema}.user_organizations WHERE user_id = auth.uid())`;
-                  break;
-                case "related":
-                  if (rolePolicy.relatedTable) {
-                    const relatedTableObj = tables.find(t => t.name === rolePolicy.relatedTable);
-                    if (!relatedTableObj) {
-                      conditionalLog(
-                        { message: `RLS Error: Related table ${rolePolicy.relatedTable} not found`, table: table.name, relatedTable: rolePolicy.relatedTable },
-                        { label: LOG_LABELS.DATABASE }
-                      );
+                    if (rolePolicy.role === "authenticated") {
+                      usingClause = `auth.uid() = ${userIdColumn.name}`;
+                    } else if (rolePolicy.role === "admin") {
+                      usingClause = `((SELECT is_admin()) OR auth.uid() = ${userIdColumn.name})`;
+                    } else {
                       usingClause = "false";
-                      break;
                     }
-
-                    const relatedSchema = relatedTableObj.schema || 'public';
-                    const relatedColumn = table.columns.find(
-                      (c) => c.relation?.table === rolePolicy.relatedTable
-                    );
-
-                    if (!relatedColumn) {
-                      conditionalLog(
-                        { message: `RLS Error: No foreign key to ${rolePolicy.relatedTable} in ${table.name}`, table: table.name, relatedTable: rolePolicy.relatedTable },
-                        { label: LOG_LABELS.DATABASE }
-                      );
-                      usingClause = "false";
-                      break;
-                    }
-
-                    const userIdCol = relatedTableObj.columns.find(
-                      c => c.name === 'user_id' || c.name === 'userId' || c.name === 'reporter_id' || c.name === 'reporterId' || (relatedTableObj.name === 'users' && c.name === 'id')
-                    );
-
-                    if (!userIdCol) {
-                      conditionalLog(
-                        { message: `RLS Error: Related table ${rolePolicy.relatedTable} has no user column`, table: table.name, relatedTable: rolePolicy.relatedTable },
-                        { label: LOG_LABELS.DATABASE }
-                      );
-                      usingClause = "false";
-                      break;
-                    }
-
-                    usingClause = `${relatedColumn.name} IN (SELECT id FROM ${relatedSchema}.${rolePolicy.relatedTable} WHERE ${userIdCol.name} = auth.uid())`;
-                  } else {
-                    conditionalLog(
-                      { message: `RLS Error: "related" access type requires relatedTable`, table: table.name },
-                      { label: LOG_LABELS.DATABASE }
-                    );
-                    usingClause = "false";
                   }
                   break;
               }
@@ -1841,70 +1824,23 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
               lines.push(`CREATE POLICY "${policyName}"`);
               lines.push(`  ON ${table.schema}.${table.name}`);
               lines.push(`  FOR ${policy.operation}`);
-              lines.push(`  TO ${rolePolicy.role.replace("-", "_")}`);
-              lines.push(`  USING (${usingClause});`);
+              lines.push(`  TO ${postgresRole}`);
+
+              if (policy.operation === "INSERT") {
+                lines.push(`  WITH CHECK (${usingClause});`);
+              } else if (policy.operation === "UPDATE") {
+                lines.push(`  USING (${usingClause})`);
+                lines.push(`  WITH CHECK (${usingClause});`);
+              } else {
+                lines.push(`  USING (${usingClause});`);
+              }
+
               lines.push("");
             });
           });
         }
 
         return lines.join("\n").trim();
-      },
-
-      generatePrismaSchema: () => {
-        const { tables, enums } = get();
-        const lines: string[] = [];
-
-        lines.push('datasource db {');
-        lines.push('  provider = "postgresql"');
-        lines.push('  url      = env("DATABASE_URL")');
-        lines.push('}');
-        lines.push('');
-        lines.push('generator client {');
-        lines.push('  provider = "prisma-client-js"');
-        lines.push('}');
-        lines.push('');
-
-        if (enums.length > 0) {
-          enums.forEach((enumDef) => {
-            lines.push(`enum ${enumDef.name} {`);
-            enumDef.values.forEach((v) => {
-              lines.push(`  ${v.value}`);
-            });
-            lines.push('}');
-            lines.push('');
-          });
-        }
-
-        tables.forEach((table) => {
-          lines.push(`model ${table.name} {`);
-          table.columns.forEach((col) => {
-            const optional = col.isOptional ? '?' : '';
-            const array = col.isArray ? '[]' : '';
-            const attributes: string[] = [];
-
-            if (col.isId) attributes.push('@id');
-            if (col.isUnique) attributes.push('@unique');
-            if (col.defaultValue) attributes.push(`@default(${col.defaultValue})`);
-            if (col.attributes && col.attributes.length > 0) {
-              attributes.push(...col.attributes);
-            }
-
-            const attrsStr = attributes.length > 0 ? ' ' + attributes.join(' ') : '';
-            lines.push(`  ${col.name} ${col.type}${array}${optional}${attrsStr}`);
-          });
-
-          if (table.uniqueConstraints.length > 0) {
-            table.uniqueConstraints.forEach((constraint) => {
-              lines.push(`  @@unique([${constraint.join(', ')}])`);
-            });
-          }
-
-          lines.push('}');
-          lines.push('');
-        });
-
-        return lines.join('\n').trim();
       },
 
       generateRLSPolicies: () => {
@@ -1919,35 +1855,85 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             if (rolePolicy.accessType === "none") return;
 
             const policyName = `${table.name}_${policy.operation.toLowerCase()}_${rolePolicy.role}`;
+            const postgresRole = rolePolicy.role === "admin" ? "authenticated" : rolePolicy.role;
 
             sql += `CREATE POLICY "${policyName}"\n`;
             sql += `  ON ${table.schema}.${table.name}\n`;
             sql += `  FOR ${policy.operation}\n`;
-            sql += `  TO ${rolePolicy.role}\n`;
+            sql += `  TO ${postgresRole}\n`;
 
             let usingClause = "";
             switch (rolePolicy.accessType) {
+              case "public":
               case "global":
-                usingClause = "true";
+                if (rolePolicy.role === "admin") {
+                  usingClause = "(SELECT is_admin())";
+                } else {
+                  usingClause = "true";
+                }
                 break;
               case "own":
-                usingClause = "auth.uid() = user_id";
-                break;
-              case "organization":
-                usingClause = "organization_id IN (SELECT organization_id FROM user_organizations WHERE user_id = auth.uid())";
-                break;
-              case "related":
-                if (rolePolicy.relatedTable) {
-                  usingClause = `id IN (SELECT ${table.name}_id FROM ${rolePolicy.relatedTable} WHERE user_id = auth.uid())`;
+                let userIdColumnName = table.columns.find(
+                  (c) => c.name === "user_id" || c.name === "userId"
+                )?.name;
+
+                if (!userIdColumnName) {
+                  const profileIdColumn = table.columns.find(
+                    (c) => c.name === "profile_id" && c.relation?.table === "profiles"
+                  );
+
+                  if (profileIdColumn) {
+                    if (rolePolicy.role === "authenticated") {
+                      usingClause = `profile_id IN (SELECT id FROM profiles WHERE user_id = auth.uid())`;
+                    } else if (rolePolicy.role === "admin") {
+                      usingClause = `((SELECT is_admin()) OR profile_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))`;
+                    } else {
+                      usingClause = "false";
+                    }
+                    break;
+                  }
+
+                  const reporterIdColumn = table.columns.find(
+                    (c) => c.name === "reporter_id" && c.relation?.table === "profiles"
+                  );
+
+                  if (reporterIdColumn) {
+                    if (rolePolicy.role === "authenticated") {
+                      usingClause = `reporter_id IN (SELECT id FROM profiles WHERE user_id = auth.uid())`;
+                    } else if (rolePolicy.role === "admin") {
+                      usingClause = `((SELECT is_admin()) OR reporter_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))`;
+                    } else {
+                      usingClause = "false";
+                    }
+                    break;
+                  }
+
+                  usingClause = "false";
+                  break;
+                }
+
+                if (rolePolicy.role === "authenticated") {
+                  usingClause = `auth.uid() = ${userIdColumnName}`;
+                } else if (rolePolicy.role === "admin") {
+                  usingClause = `((SELECT is_admin()) OR auth.uid() = ${userIdColumnName})`;
+                } else {
+                  usingClause = "false";
                 }
                 break;
             }
 
             if (usingClause) {
-              sql += `  USING (${usingClause})`;
+              if (policy.operation === "INSERT") {
+                sql += `  WITH CHECK (${usingClause});\n\n`;
+              } else if (policy.operation === "UPDATE") {
+                sql += `  USING (${usingClause})\n`;
+                sql += `  WITH CHECK (${usingClause});\n\n`;
+              } else {
+                sql += `  USING (${usingClause});\n\n`;
+              }
+            } else {
+              sql += `;\n\n`;
             }
-
-            sql += `;\n\n`;
           });
         });
 
@@ -1958,11 +1944,19 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         const currentState = get();
         const userCreatedTables = currentState.tables.filter((t) => !t.isDefault);
 
-        let authTables: PrismaTable[] = [];
+        const deduplicatedUserTables = userCreatedTables.reduce((acc, t) => {
+          const key = `${t.schema}.${t.name}`;
+          if (!acc.some((existing) => `${existing.schema}.${existing.name}` === key)) {
+            acc.push(t);
+          }
+          return acc;
+        }, [] as DatabaseTable[]);
+
+        let authTables: DatabaseTable[] = [];
         if (config.technologies.supabase) {
           authTables = [{
-            id: "default-user",
-            name: "user",
+            id: "default-users",
+            name: "users",
             schema: "auth",
             isDefault: true,
             isEditable: false,
@@ -1971,9 +1965,9 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             questionId: "authentication",
             columns: [
               {
-                id: "user-id",
+                id: "users-id",
                 name: "id",
-                type: "TEXT",
+                type: "UUID",
                 isDefault: true,
                 isEditable: false,
                 isOptional: false,
@@ -1981,10 +1975,9 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
                 isId: true,
                 isArray: false,
                 defaultValue: "gen_random_uuid()",
-                attributes: ["@id", "@default(gen_random_uuid())"],
-              },
+                      },
               {
-                id: "user-email",
+                id: "users-email",
                 name: "email",
                 type: "TEXT",
                 isDefault: true,
@@ -1993,14 +1986,13 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
                 isUnique: true,
                 isId: false,
                 isArray: false,
-                attributes: ["@unique"],
-              },
+                      },
             ],
           }];
         }
 
         set((state) => ({
-          tables: [...authTables, ...userCreatedTables],
+          tables: [...authTables, ...deduplicatedUserTables],
           enums: state.enums,
           rlsPolicies: state.rlsPolicies,
           plugins: [],
@@ -2020,7 +2012,7 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
 
       setRLSPoliciesFromAI: (policies, tables) => {
         const rlsPolicies: RLSPolicy[] = [];
-        const requiredRoles: Array<"user" | "admin" | "super-admin"> = ["user", "admin", "super-admin"];
+        const requiredRoles: UserRole[] = ["anon", "authenticated", "admin"];
         const operations: Array<RLSPolicy["operation"]> = ["SELECT", "INSERT", "UPDATE", "DELETE"];
 
         tables.forEach((table) => {
@@ -2050,6 +2042,78 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
     }),
     {
       name: "database-configuration-storage",
+      version: 4,
+      migrate: (persistedState: any, version: number) => {
+        if (persistedState.tables) {
+          const seenTables = new Set<string>();
+          persistedState.tables = persistedState.tables
+            .map((table: DatabaseTable) => {
+              if (table.schema === "auth" && table.name === "user") {
+                return {
+                  ...table,
+                  id: "default-users",
+                  name: "users",
+                };
+              }
+              return table;
+            })
+            .filter((table: DatabaseTable) => {
+              const key = `${table.schema}.${table.name}`;
+              if (seenTables.has(key)) {
+                conditionalLog(
+                  { message: `Removing duplicate table: ${key}`, table },
+                  { label: LOG_LABELS.DATABASE }
+                );
+                return false;
+              }
+              seenTables.add(key);
+              return true;
+            })
+            .map((table: DatabaseTable) => ({
+              ...table,
+              columns: table.columns.map((col: any) => {
+                const { attributes, ...rest } = col;
+                return rest;
+              }),
+            }));
+        }
+
+        if (persistedState.rlsPolicies && version < 4) {
+          persistedState.rlsPolicies = persistedState.rlsPolicies.map((policy: any) => ({
+            ...policy,
+            rolePolicies: policy.rolePolicies
+              .map((rp: any) => {
+                let newRole: UserRole;
+                if (rp.role === "user") {
+                  newRole = "authenticated";
+                } else if (rp.role === "admin" || rp.role === "super-admin") {
+                  newRole = "admin";
+                } else {
+                  newRole = rp.role as UserRole;
+                }
+
+                if (rp.accessType === "organization" || rp.accessType === "related") {
+                  conditionalLog(
+                    { message: `Converting ${rp.accessType} access to "none" - manual reconfiguration needed`, role: rp.role },
+                    { label: LOG_LABELS.DATABASE }
+                  );
+                  return {
+                    role: newRole,
+                    accessType: "none",
+                  };
+                }
+
+                return {
+                  role: newRole,
+                  accessType: rp.accessType,
+                };
+              })
+              .filter(Boolean),
+          }));
+        }
+
+        return persistedState;
+      },
     }
   )
 );

@@ -158,22 +158,6 @@ export const DatabaseConfiguration = () => {
     useCodeGeneration((response) => {
       const parsed = parseDatabaseSchemaFromResponse(response.content);
 
-      console.log(
-        "DATABASE SCHEMA GENERATION OUTPUT:",
-        JSON.stringify(
-          {
-            responseContent: response.content,
-            parsedResult: parsed,
-            parseSuccess: !!parsed,
-            tableCount: parsed?.tables.length || 0,
-            enumCount: parsed?.enums.length || 0,
-            rlsPolicyCount: parsed?.rlsPolicies?.length || 0,
-          },
-          null,
-          2
-        )
-      );
-
       if (parsed) {
         const { configuration } = parsed;
 
@@ -349,23 +333,6 @@ export const DatabaseConfiguration = () => {
       DATABASE_TEMPLATES
     );
 
-    console.log(
-      "DATABASE SCHEMA GENERATION INPUT:",
-      JSON.stringify(
-        {
-          prompt,
-          inputData: {
-            tableDescriptions,
-            structuredData,
-            appStructure,
-            appStructureLength: appStructure.length,
-          },
-        },
-        null,
-        2
-      )
-    );
-
     generateSchema({ prompt, maxTokens: 4000 });
   }, [
     tableDescriptions,
@@ -433,6 +400,53 @@ export const DatabaseConfiguration = () => {
   useEffect(() => {
     applyAutomaticSectionFiltering(initialConfiguration, setSectionInclude);
   }, [initialConfiguration, setSectionInclude]);
+
+  useEffect(() => {
+    const {
+      tables: dbTables,
+      enums,
+      rlsPolicies,
+      generateSupabaseMigration
+    } = useDatabaseStore.getState();
+
+    console.log("DATABASE CONFIGURATION STATE:", JSON.stringify({
+      databaseStore: {
+        tables: dbTables,
+        enums,
+        rlsPolicies,
+      },
+      editorStore: {
+        initialConfiguration,
+        databaseGenerated,
+        readmeGenerated,
+        appStructureGenerated,
+      },
+      tablesStore: {
+        tableDescriptions,
+        tablesGenerated,
+        accordionValue,
+        expandedTableId: expandedTableDescId,
+        lastGeneratedTableDescriptions,
+      },
+      localState: {
+        expandedSchema,
+        expandedTableId,
+        expandedEnums,
+        isAddingSchema,
+        newSchemaName,
+        showSuccessView,
+      },
+      generatedSQL: generateSupabaseMigration(),
+    }, null, 2));
+  }, [
+    tables,
+    initialConfiguration,
+    databaseGenerated,
+    tableDescriptions,
+    tablesGenerated,
+    expandedSchema,
+    expandedTableId,
+  ]);
 
   const isNoDatabaseSelected =
     initialConfiguration.questions.databaseProvider === "none";

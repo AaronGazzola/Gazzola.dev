@@ -4,7 +4,7 @@ import { CODE_FILE_CONFIGS, type FileConfig } from "../lib/code-file-config";
 import { createConfigSnapshot, type ConfigSnapshot } from "../lib/config-snapshot";
 import type { InitialConfigurationType } from "../app/(editor)/layout.types";
 import type { ThemeConfiguration } from "../app/(components)/ThemeConfiguration.types";
-import type { Plugin, PrismaTable, RLSPolicy, PrismaColumn } from "../app/(components)/DatabaseConfiguration.types";
+import type { Plugin, DatabaseTable, RLSPolicy, DatabaseColumn } from "../app/(components)/DatabaseConfiguration.types";
 import type { IDEType } from "../app/(editor)/layout.types";
 
 const OUTPUT_DIR = path.join(process.cwd(), "docs", "generated-variations");
@@ -151,7 +151,7 @@ interface ConfigVariation {
   name: string;
   description: string;
   config: InitialConfigurationType;
-  tables: PrismaTable[];
+  tables: DatabaseTable[];
   rlsPolicies: RLSPolicy[];
   plugins: Plugin[];
 }
@@ -181,19 +181,19 @@ const DATABASE_PROVIDERS: Array<"none" | "supabase"> = [
   "supabase",
 ];
 
-const SAMPLE_TABLE: PrismaTable = {
+const SAMPLE_TABLE: DatabaseTable = {
   id: "table-1",
   name: "Post",
   schema: "public",
   isDefault: false,
   isEditable: true,
   columns: [
-    { id: "col-1", name: "id", type: "String", isOptional: false, isArray: false, attributes: ["id", "default(cuid())"] },
-    { id: "col-2", name: "title", type: "String", isOptional: false, isArray: false, attributes: [] },
-    { id: "col-3", name: "content", type: "String", isOptional: true, isArray: false, attributes: [] },
-    { id: "col-4", name: "userId", type: "String", isOptional: false, isArray: false, attributes: [] },
-    { id: "col-5", name: "createdAt", type: "DateTime", isOptional: false, isArray: false, attributes: ["default(now())"] },
-  ] as PrismaColumn[],
+    { id: "col-1", name: "id", type: "String", isDefault: false, isEditable: true, isOptional: false, isUnique: false, isId: true, isArray: false, defaultValue: "cuid()" },
+    { id: "col-2", name: "title", type: "String", isDefault: false, isEditable: true, isOptional: false, isUnique: false, isId: false, isArray: false },
+    { id: "col-3", name: "content", type: "String", isDefault: false, isEditable: true, isOptional: true, isUnique: false, isId: false, isArray: false },
+    { id: "col-4", name: "userId", type: "String", isDefault: false, isEditable: true, isOptional: false, isUnique: false, isId: false, isArray: false },
+    { id: "col-5", name: "createdAt", type: "DateTime", isDefault: false, isEditable: true, isOptional: false, isUnique: false, isId: false, isArray: false, defaultValue: "now()" },
+  ] as DatabaseColumn[],
   uniqueConstraints: [],
   checkConstraints: [],
 };
@@ -203,7 +203,8 @@ const SAMPLE_RLS_POLICY: RLSPolicy = {
   tableId: "table-1",
   operation: "SELECT",
   rolePolicies: [
-    { role: "user", accessType: "own" },
+    { role: "anon", accessType: "none" },
+    { role: "authenticated", accessType: "own" },
     { role: "admin", accessType: "global" },
   ],
 };

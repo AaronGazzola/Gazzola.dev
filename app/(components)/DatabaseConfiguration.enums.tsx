@@ -133,7 +133,7 @@ const EnumItem = ({
   isExpanded,
   onToggle,
 }: {
-  enumItem: import("./DatabaseConfiguration.types").PrismaEnum;
+  enumItem: import("./DatabaseConfiguration.types").DatabaseEnum;
   isExpanded: boolean;
   onToggle: () => void;
 }) => {
@@ -307,7 +307,7 @@ const EnumValueItem = ({
   value,
 }: {
   enumId: string;
-  value: import("./DatabaseConfiguration.types").PrismaEnumValue;
+  value: import("./DatabaseConfiguration.types").DatabaseEnumValue;
 }) => {
   const { deleteEnumValue, updateEnumValue } = useDatabaseStore();
   const [isEditing, setIsEditing] = useState(false);

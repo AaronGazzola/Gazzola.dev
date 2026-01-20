@@ -1,5 +1,5 @@
 import type { InitialConfigurationType } from "@/app/(editor)/layout.types";
-import type { Plugin, PrismaEnum, PrismaTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
+import type { Plugin, DatabaseEnum, DatabaseTable, RLSPolicy } from "@/app/(components)/DatabaseConfiguration.types";
 import type { ThemeConfiguration } from "@/app/(components)/ThemeConfiguration.types";
 import type { IDEType } from "@/app/(editor)/layout.types";
 
@@ -24,8 +24,8 @@ export interface ConfigSnapshot {
   databaseProvider: 'none' | 'supabase';
   alwaysOnServer: boolean;
 
-  tables: PrismaTable[];
-  enums: PrismaEnum[];
+  tables: DatabaseTable[];
+  enums: DatabaseEnum[];
   rlsPolicies: RLSPolicy[];
 
   authEnabled: boolean;
@@ -68,8 +68,8 @@ export interface ConfigSnapshot {
 export const createConfigSnapshot = (
   initialConfig: InitialConfigurationType,
   theme: ThemeConfiguration,
-  tables: PrismaTable[],
-  enums: PrismaEnum[],
+  tables: DatabaseTable[],
+  enums: DatabaseEnum[],
   rlsPolicies: RLSPolicy[],
   selectedIDE: IDEType
 ): ConfigSnapshot => {

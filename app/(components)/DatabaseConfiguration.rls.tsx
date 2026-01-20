@@ -9,21 +9,25 @@ import {
 } from "@/components/editor/ui/select";
 import { Lock } from "lucide-react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
-import type { PrismaTable, RLSPolicy, UserRole, RLSAccessType } from "./DatabaseConfiguration.types";
+import type { DatabaseTable, RLSPolicy, UserRole, RLSAccessType } from "./DatabaseConfiguration.types";
 
-export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
+export const TableRLSContent = ({ table }: { table: DatabaseTable }) => {
   const { addOrUpdateRLSPolicy, getRLSPolicyForOperation, tables } =
     useDatabaseStore();
 
   const authProvider = "Supabase";
   const isAuthSchema = table.schema === "auth";
 
-  const enabledRoles: UserRole[] = ["user", "admin", "super-admin"];
+  const enabledRoles: UserRole[] = ["anon", "authenticated", "admin"];
 
   const operations: RLSPolicy["operation"][] =
     ["INSERT", "SELECT", "UPDATE", "DELETE"];
 
   const availableTables = tables.filter((t) => t.id !== table.id);
+
+  const getRoleLabel = (role: UserRole): string => {
+    return role === "authenticated" ? "auth" : role;
+  };
 
   if (isAuthSchema) {
     return (
@@ -57,38 +61,22 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                   (rp) => rp.role === role
                 );
                 const accessType = rolePolicy?.accessType || "none";
-                const relatedTable = rolePolicy?.relatedTable;
 
                 return (
                   <div key={role} className="flex flex-col theme-gap-2">
                     <div className="flex items-center theme-gap-2">
                       <span className="text-sm theme-text-foreground theme-font-mono min-w-[6rem]">
-                        {role}
+                        {getRoleLabel(role)}
                       </span>
                       <Select
                         value={accessType}
                         onValueChange={(value) => {
-                          if (
-                            value === "none" ||
-                            value === "global" ||
-                            value === "own" ||
-                            value === "organization"
-                          ) {
-                            addOrUpdateRLSPolicy(
-                              table.id,
-                              operation,
-                              role,
-                              value as RLSAccessType
-                            );
-                          } else if (value === "related") {
-                            addOrUpdateRLSPolicy(
-                              table.id,
-                              operation,
-                              role,
-                              "related",
-                              availableTables[0]?.name
-                            );
-                          }
+                          addOrUpdateRLSPolicy(
+                            table.id,
+                            operation,
+                            role,
+                            value as RLSAccessType
+                          );
                         }}
                       >
                         <SelectTrigger className="h-7 text-sm flex-1">
@@ -96,42 +84,12 @@ export const TableRLSContent = ({ table }: { table: PrismaTable }) => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">No access</SelectItem>
+                          <SelectItem value="public">Public</SelectItem>
                           <SelectItem value="global">Global</SelectItem>
                           <SelectItem value="own">Own data</SelectItem>
-                          <SelectItem value="related">Related</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    {accessType === "related" && (
-                      <div className="flex items-center theme-gap-2">
-                        <span className="text-sm theme-text-muted-foreground theme-font-mono min-w-[6rem]">
-                          Related to:
-                        </span>
-                        <Select
-                          value={relatedTable || ""}
-                          onValueChange={(tableName) => {
-                            addOrUpdateRLSPolicy(
-                              table.id,
-                              operation,
-                              role,
-                              "related",
-                              tableName
-                            );
-                          }}
-                        >
-                          <SelectTrigger className="h-7 text-sm flex-1">
-                            <SelectValue placeholder="Select table" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {availableTables.map((t) => (
-                              <SelectItem key={t.id} value={t.name}>
-                                {t.schema}.{t.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
                   </div>
                 );
               })}
