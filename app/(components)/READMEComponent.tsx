@@ -25,6 +25,7 @@ import {
   CornerLeftUp,
   HelpCircle,
   Loader2,
+  PackageOpen,
   Plus,
   Shield,
   Sparkles,
@@ -87,6 +88,7 @@ export const READMEComponent = () => {
   const hasAutoExpandedRef = useRef(false);
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
   const [helpPopoverWasOpened, setHelpPopoverWasOpened] = useState(false);
+  const [starterKitPopoverOpen, setStarterKitPopoverOpen] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
 
   useEffect(() => {
@@ -397,6 +399,50 @@ export const READMEComponent = () => {
           This is the first step in generating a custom starter kit for your
           app&apos;s codebase.
         </p>
+        <Popover
+          open={starterKitPopoverOpen}
+          onOpenChange={setStarterKitPopoverOpen}
+        >
+          <PopoverTrigger asChild>
+            <Button variant="link" className="theme-gap-2 w-fit px-0">
+              What&apos;s a starter kit?
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[500px] max-h-[500px] overflow-y-auto">
+            <div className="flex flex-col theme-gap-4">
+              <div className="flex items-center theme-gap-2">
+                <PackageOpen className="h-5 w-5 theme-text-primary" />
+                <h4 className="font-semibold text-base">Starter Kit</h4>
+              </div>
+              <div className="flex flex-col theme-gap-3 text-sm theme-text-foreground">
+                <p>
+                  A starter kit is a downloadable package containing all the
+                  configuration files and documentation needed to initialize
+                  your custom web application with AI assistance.
+                </p>
+                <p className="font-semibold">What&apos;s included:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Database schema and configuration</li>
+                  <li>App directory structure with page specifications</li>
+                  <li>Theme configuration (colors, fonts, components)</li>
+                  <li>Step-by-step implementation plan</li>
+                  <li>Code templates and patterns</li>
+                  <li>Setup prompts for Claude Code</li>
+                </ul>
+                <p className="font-semibold">How it works:</p>
+                <ol className="list-decimal list-inside space-y-1 ml-2">
+                  <li>Download your customized starter kit</li>
+                  <li>Place it in your project directory</li>
+                  <li>Copy and paste the provided prompt into Claude Code</li>
+                  <li>
+                    Claude reads your starter kit and scaffolds your entire
+                    application
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <Accordion

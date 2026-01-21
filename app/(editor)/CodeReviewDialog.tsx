@@ -1,6 +1,10 @@
 "use client";
 
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
+import { getBrowserAPI } from "@/lib/env.utils";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -30,11 +34,17 @@ export const CodeReviewDialog = ({
   open,
   onOpenChange,
 }: CodeReviewDialogProps) => {
+  const { isAzVariant } = useSubdomainStore();
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<CodeReviewFormData>({
     name: "",
     email: "",
     message: "",
   });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [touched, setTouched] = useState({
     name: false,
@@ -145,27 +155,77 @@ export const CodeReviewDialog = ({
         className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto"
         data-cy={FooterDataAttributes.CODE_REVIEW_DIALOG}
       >
-        <DialogHeader>
-          <DialogTitle className="text-2xl flex items-center gap-2">
-            AI-Generated Web App Quality Assurance
-          </DialogTitle>
-          <div className="text-base text-foreground space-y-2">
-            <ul className="list-disc list-inside">
-              <li>Code Analysis and Refactoring</li>
-              <li>Security Auditing and Remediation</li>
-              <li>End-to-End Automated Testing</li>
-              <li>Complex Feature Implementation</li>
-            </ul>
-            <p>
-              Lift the veil on the inner workings of your AI-generated web app
-              with in-depth analysis and detailed progress reports.
-            </p>
-            <p>
-              Launch your web app with confidence, backed by expert refactoring
-              and rigorous testing.
-            </p>
-          </div>
-        </DialogHeader>
+        {mounted && isAzVariant ? (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl text-center mb-4">
+                Quality Assurance for AI&#8209;Generated Web Apps
+              </DialogTitle>
+              <div className="text-base text-foreground space-y-2">
+                <div className="flex justify-center mb-4">
+                  <ul className="list-disc text-left">
+                    <li>Code Analysis and Refactoring</li>
+                    <li>Security Auditing and Remediation</li>
+                    <li>End-to-End Automated Testing</li>
+                    <li>Complex Feature Implementation</li>
+                  </ul>
+                </div>
+                <p>
+                  Lift the veil on the inner workings of your AI-generated web
+                  app with in-depth analysis and detailed progress reports.
+                </p>
+                <p>
+                  Launch your web app with confidence, backed by expert
+                  refactoring and rigorous testing.
+                </p>
+              </div>
+            </DialogHeader>
+            <div className="space-y-6 py-6 flex flex-col items-center">
+              <Button
+                variant="highlight"
+                size="lg"
+                className="px-6 py-5 flex items-center gap-3"
+                onClick={() =>
+                  getBrowserAPI(() => window)?.open(
+                    "https://www.upwork.com/freelancers/~017424c1cc6bed64e2",
+                    "_blank"
+                  )
+                }
+              >
+                <Image
+                  src="https://www.vectorlogo.zone/logos/upwork/upwork-ar21.svg"
+                  alt="Upwork"
+                  width={240}
+                  height={100}
+                  className="h-12 w-auto brightness-0 invert"
+                />
+                <ExternalLink className="w-5 h-5 text-white" />
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl flex items-center gap-2">
+                Quality Assurance for AI&#8209;Generated Web Apps
+              </DialogTitle>
+              <div className="text-base text-foreground space-y-2">
+                <ul className="list-disc list-inside">
+                  <li>Code Analysis and Refactoring</li>
+                  <li>Security Auditing and Remediation</li>
+                  <li>End-to-End Automated Testing</li>
+                  <li>Complex Feature Implementation</li>
+                </ul>
+                <p>
+                  Lift the veil on the inner workings of your AI-generated web
+                  app with in-depth analysis and detailed progress reports.
+                </p>
+                <p>
+                  Launch your web app with confidence, backed by expert
+                  refactoring and rigorous testing.
+                </p>
+              </div>
+            </DialogHeader>
 
         <div className="space-y-4 py-4">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -334,6 +394,8 @@ export const CodeReviewDialog = ({
             </TooltipProvider>
           </form>
         </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

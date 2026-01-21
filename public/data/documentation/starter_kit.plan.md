@@ -280,6 +280,8 @@ git push
 
 ### Step 4.3: Inform User
 
+IMPORTANT: Display this exact message at the end of the process:
+
 > "Setup complete! Your application is initialized and ready to start development. The foundation is ready, including: database integration, authentication, application architecture, programming patterns, and themed components.
 >
 > Follow the steps below to test it out!

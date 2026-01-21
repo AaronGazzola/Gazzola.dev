@@ -33,26 +33,36 @@ import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 
-export const metadata: Metadata = {
-  title: "Gazzola Web App Roadmap Maker",
-  description:
-    "A platform for designing full-stack web apps. Design and download comprehensive step-by-step instructions for you and your AI to build your custom web app.",
-  metadataBase: new URL("https://gazzola.dev"),
-  openGraph: {
-    title: "Gazzola Web App Roadmap Maker",
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const host = headersList.get("host") || "gazzola.dev";
+  const subdomain = host.split(".")[0];
+  const isAz = subdomain === "az";
+
+  return {
+    title: "Gazzola.dev | Web App Starter Kit Generator",
     description:
-      "A platform for generating full-stack web app roadmaps. Design and download comprehensive and detailed step-by-step instructions for you and your AI to vibe code your custom web app.",
-    images: [
-      {
-        url: "/GazzolaLogo.png",
-        width: 2048,
-        height: 2048,
-        alt: "Gazzola development logo",
-      },
-    ],
-  },
-};
+      "Generate customized starter kits for building full-stack web apps with AI assistance. Download complete configuration files including database schema, app structure, theme settings, and step-by-step implementation plans for Claude Code.",
+    metadataBase: new URL(
+      isAz ? "https://az.gazzola.dev" : "https://gazzola.dev"
+    ),
+    openGraph: {
+      title: "Gazzola.dev | Web App Starter Kit Generator",
+      description:
+        "Generate customized starter kits for building full-stack web apps with AI assistance. Download complete configuration files including database schema, app structure, theme settings, and step-by-step implementation plans for Claude Code.",
+      images: [
+        {
+          url: "/GazzolaLogo.png",
+          width: 2048,
+          height: 2048,
+          alt: "Gazzola development logo",
+        },
+      ],
+    },
+  };
+}
 
 export default function RootLayout({
   children,

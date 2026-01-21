@@ -45,12 +45,14 @@ import {
 import { useHeaderStore } from "./Header.store";
 import { testimonials } from "./Header.types";
 import { LovableLogo } from "./LovableLogo";
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
 import { TestimonialCard } from "./TestimonialCard";
 import ThemeControlPanel from "./ThemeControlPanel";
 
 const Header = () => {
   const { data: subscriberData, isLoading } = useYouTubeSubscriberCount();
   const { isExpanded, setIsExpanded } = useHeaderStore();
+  const { isAzVariant } = useSubdomainStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   useAutoScroll(scrollContainerRef, 1, isExpanded);
   const [dialogOpen, setDialogOpen] = useQueryState("codeReview");
@@ -66,6 +68,8 @@ const Header = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const shouldDisableYouTube = mounted && isAzVariant;
 
   useEffect(() => {
     if (dialogOpen) {
@@ -213,13 +217,17 @@ const Header = () => {
           <Button
             variant="outline"
             className={cn(
-              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group"
+              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group",
+              shouldDisableYouTube && "cursor-default opacity-70"
             )}
-            onClick={() =>
-              getBrowserAPI(() => window)?.open(
-                "https://www.youtube.com/@AzAnything/streams",
-                "_blank"
-              )
+            onClick={
+              !shouldDisableYouTube
+                ? () =>
+                    getBrowserAPI(() => window)?.open(
+                      "https://www.youtube.com/@AzAnything/streams",
+                      "_blank"
+                    )
+                : undefined
             }
           >
             <div className="relative h-3 w-8 mt-2 ">

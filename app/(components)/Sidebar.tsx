@@ -60,6 +60,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { useHeaderStore } from "./Header.store";
 import { SidebarDataAttributes } from "./Sidebar.types";
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
 
 const nextSteps = [
   { icon: ListTodo, title: "Design" },
@@ -680,6 +681,7 @@ const Sidebar = () => {
   } = useEditorStore();
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
   const { setIsExpanded } = useHeaderStore();
+  const { isAzVariant } = useSubdomainStore();
   const [_dialogOpen, setDialogOpen] = useQueryState("codeReview");
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -689,6 +691,8 @@ const Sidebar = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const shouldHideFeedback = mounted && isAzVariant;
 
   const navigationData = useMemo(() => {
     return generateNavigationFromMarkdownData(data.root.children, codeFiles);
@@ -849,17 +853,19 @@ const Sidebar = () => {
             />
           ))}
       </div>
-      <div className="border-t border-gray-700 p-3">
-        <Button
-          variant="ghost"
-          className="w-full justify-start hover:bg-gray-800 h-8 px-2 gap-2 text-white font-medium"
-          onClick={() => setFeedbackDialogOpen(true)}
-          data-cy={SidebarDataAttributes.FEEDBACK_BUTTON_EXPANDED}
-        >
-          <Bug className="h-4 w-4 flex-shrink-0" />
-          Feedback
-        </Button>
-      </div>
+      {!shouldHideFeedback && (
+        <div className="border-t border-gray-700 p-3">
+          <Button
+            variant="ghost"
+            className="w-full justify-start hover:bg-gray-800 h-8 px-2 gap-2 text-white font-medium"
+            onClick={() => setFeedbackDialogOpen(true)}
+            data-cy={SidebarDataAttributes.FEEDBACK_BUTTON_EXPANDED}
+          >
+            <Bug className="h-4 w-4 flex-shrink-0" />
+            Feedback
+          </Button>
+        </div>
+      )}
     </SidebarContent>
   );
 
@@ -919,27 +925,29 @@ const Sidebar = () => {
             />
           ))}
       </div>
-      <div className="border-t border-gray-700 p-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="w-full h-10 text-white hover:bg-gray-800"
-              onClick={() => setFeedbackDialogOpen(true)}
-              data-cy={SidebarDataAttributes.FEEDBACK_BUTTON_COLLAPSED}
+      {!shouldHideFeedback && (
+        <div className="border-t border-gray-700 p-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full h-10 text-white hover:bg-gray-800"
+                onClick={() => setFeedbackDialogOpen(true)}
+                data-cy={SidebarDataAttributes.FEEDBACK_BUTTON_COLLAPSED}
+              >
+                <Bug className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="bg-gray-900 text-white border-gray-700"
             >
-              <Bug className="h-5 w-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent
-            side="right"
-            className="bg-gray-900 text-white border-gray-700"
-          >
-            Feedback
-          </TooltipContent>
-        </Tooltip>
-      </div>
+              Feedback
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      )}
     </SidebarContent>
   );
 
