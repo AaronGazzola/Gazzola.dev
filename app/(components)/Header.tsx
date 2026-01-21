@@ -218,7 +218,7 @@ const Header = () => {
             variant="outline"
             className={cn(
               "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group",
-              shouldDisableYouTube && "cursor-default opacity-70"
+              shouldDisableYouTube && "cursor-default"
             )}
             onClick={
               !shouldDisableYouTube
