@@ -215,12 +215,14 @@ const Header = () => {
           <Button
             variant="outline"
             className="text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group"
-            onClick={() =>
-              getBrowserAPI(() => window)?.open(
-                "https://www.youtube.com/@AzAnything/streams",
-                "_blank"
-              )
-            }
+            onClick={() => {
+              if (!isAzVariant) {
+                getBrowserAPI(() => window)?.open(
+                  "https://www.youtube.com/@AzAnything/streams",
+                  "_blank"
+                );
+              }
+            }}
           >
             <div className="relative h-3 w-8 mt-2 ">
               <SiYoutube className=" stroke-1 stroke-white fill-none group-hover:fill-orange-600 group-hover:stroke-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8" />
