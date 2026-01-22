@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
   type AuthMethods,
+  type LayoutInput,
   type PageAccess,
   type PageInput,
   type READMEState,
@@ -12,6 +13,7 @@ import {
 const getInitialState = (): READMEState => ({
   title: "",
   description: "",
+  layouts: [],
   pages: [],
   authMethods: initialAuthMethods,
   pageAccess: [],
@@ -25,6 +27,10 @@ interface READMEStore extends READMEState {
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
   setStage: (stage: Stage) => void;
+  setLayouts: (layouts: LayoutInput[]) => void;
+  addLayout: (layout: LayoutInput) => void;
+  updateLayout: (id: string, updates: Partial<LayoutInput>) => void;
+  deleteLayout: (id: string) => void;
   setPages: (pages: PageInput[]) => void;
   addPage: (page: PageInput) => void;
   updatePage: (id: string, updates: Partial<PageInput>) => void;
@@ -32,7 +38,7 @@ interface READMEStore extends READMEState {
   setAuthMethods: (authMethods: AuthMethods) => void;
   toggleAuthMethod: (method: keyof AuthMethods) => void;
   setPageAccess: (pageAccess: PageAccess[]) => void;
-  updatePageAccess: (pageId: string, level: "public" | "user" | "admin", value: boolean) => void;
+  updatePageAccess: (pageId: string, level: "anon" | "auth" | "admin", value: boolean) => void;
   setLastGeneratedForAuth: (data: { title: string; description: string } | null) => void;
   setLastGeneratedForPages: (authMethods: AuthMethods | null) => void;
   setLastGeneratedForReadme: (pagesSnapshot: string | null) => void;
@@ -47,6 +53,21 @@ export const useREADMEStore = create<READMEStore>()(
       setTitle: (title) => set({ title }),
       setDescription: (description) => set({ description }),
       setStage: (stage) => set({ stage }),
+
+      setLayouts: (layouts) => set({ layouts }),
+      addLayout: (layout) => set((state) => ({ layouts: [...state.layouts, layout] })),
+      updateLayout: (id, updates) =>
+        set((state) => ({
+          layouts: state.layouts.map((l) => (l.id === id ? { ...l, ...updates } : l)),
+        })),
+      deleteLayout: (id) =>
+        set((state) => ({
+          layouts: state.layouts.filter((l) => l.id !== id),
+          pages: state.pages.map((p) => ({
+            ...p,
+            layoutIds: p.layoutIds.filter((layoutId) => layoutId !== id),
+          })),
+        })),
 
       setPages: (pages) => set({ pages }),
       addPage: (page) => set((state) => ({ pages: [...state.pages, page] })),
@@ -79,8 +100,8 @@ export const useREADMEStore = create<READMEStore>()(
                 ...state.pageAccess,
                 {
                   pageId,
-                  public: level === "public" ? value : false,
-                  user: level === "user" ? value : false,
+                  anon: level === "anon" ? value : false,
+                  auth: level === "auth" ? value : false,
                   admin: level === "admin" ? value : false,
                 },
               ],
@@ -92,9 +113,7 @@ export const useREADMEStore = create<READMEStore>()(
               pa.pageId === pageId
                 ? {
                     ...pa,
-                    public: level === "public" ? value : (value ? false : pa.public),
-                    user: level === "user" ? value : pa.user,
-                    admin: level === "admin" ? value : pa.admin,
+                    [level]: value,
                   }
                 : pa
             ),
@@ -109,6 +128,36 @@ export const useREADMEStore = create<READMEStore>()(
     }),
     {
       name: "readme-store",
+      version: 2,
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2) {
+          if (!persistedState.layouts) {
+            persistedState.layouts = [];
+          }
+          if (persistedState.pages) {
+            persistedState.pages = persistedState.pages.map((page: any) => ({
+              ...page,
+              layoutIds: page.layoutIds || [],
+            }));
+          }
+          if (persistedState.pageAccess) {
+            persistedState.pageAccess = persistedState.pageAccess.map((access: any) => {
+              const newAccess: any = { pageId: access.pageId };
+              if (access.public !== undefined) {
+                newAccess.anon = access.public;
+              }
+              if (access.user !== undefined) {
+                newAccess.auth = access.user;
+              }
+              if (access.admin !== undefined) {
+                newAccess.admin = access.admin;
+              }
+              return newAccess;
+            });
+          }
+        }
+        return persistedState as READMEState;
+      },
     }
   )
 );

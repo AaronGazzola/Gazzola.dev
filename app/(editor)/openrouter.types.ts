@@ -7,6 +7,7 @@ export interface CodeGenerationInput {
 export interface CodeGenerationError {
   message: string;
   retryAfter?: number;
+  isInsufficientCredits?: boolean;
 }
 
 export enum OpenRouterDataAttributes {

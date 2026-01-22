@@ -93,6 +93,7 @@ export const DatabaseTableDescriptionItem = ({
               onChange={(e) =>
                 onUpdate(table.id, { description: e.target.value })
               }
+              onKeyDown={(e) => e.stopPropagation()}
               placeholder="Describe what data this table stores..."
               disabled={disabled}
               className={`theme-shadow min-h-[80px] ${!isDescriptionValid ? "border-destructive" : ""}`}

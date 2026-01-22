@@ -288,6 +288,10 @@ export interface EditorState {
   setAppStructureHelpPopoverOpened: (opened: boolean) => void;
   databaseHelpPopoverOpened: boolean;
   setDatabaseHelpPopoverOpened: (opened: boolean) => void;
+  creditDepletionDialogOpen: boolean;
+  setCreditDepletionDialogOpen: (open: boolean) => void;
+  notificationSent: boolean;
+  setNotificationSent: (sent: boolean) => void;
 }
 
 export interface NavigationItem {

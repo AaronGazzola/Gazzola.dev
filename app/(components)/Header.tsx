@@ -69,8 +69,6 @@ const Header = () => {
     setMounted(true);
   }, []);
 
-  const shouldDisableYouTube = mounted && isAzVariant;
-
   useEffect(() => {
     if (dialogOpen) {
       setIsExpanded(true);
@@ -216,18 +214,12 @@ const Header = () => {
         <div className="absolute top-2.5 left-2.5 z-30">
           <Button
             variant="outline"
-            className={cn(
-              "text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group",
-              shouldDisableYouTube && "cursor-default"
-            )}
-            onClick={
-              !shouldDisableYouTube
-                ? () =>
-                    getBrowserAPI(() => window)?.open(
-                      "https://www.youtube.com/@AzAnything/streams",
-                      "_blank"
-                    )
-                : undefined
+            className="text-gray-300 flex flex-col items-center  min-w-[100px] h-auto font-bold group"
+            onClick={() =>
+              getBrowserAPI(() => window)?.open(
+                "https://www.youtube.com/@AzAnything/streams",
+                "_blank"
+              )
             }
           >
             <div className="relative h-3 w-8 mt-2 ">
@@ -235,7 +227,11 @@ const Header = () => {
             </div>
 
             <div className={cn("items-center gap-1 pb-1 -mt-2 hidden xs:flex")}>
-              <span className="">@AzAnything</span>
+              {!mounted ? (
+                <div className="h-4 w-20 bg-gray-700 rounded animate-pulse my-0.5" />
+              ) : (
+                <span className="">{isAzVariant ? "Youtube" : "@AzAnything"}</span>
+              )}
             </div>
 
             <div className={cn("items-center gap-1 -mt-6 hidden xs:flex")}>

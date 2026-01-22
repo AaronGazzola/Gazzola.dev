@@ -33,12 +33,18 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useREADMEStore } from "./READMEComponent.stores";
-import { generateId, PageInput, Stage } from "./READMEComponent.types";
+import {
+  generateId,
+  LayoutInput,
+  PageInput,
+  Stage,
+} from "./READMEComponent.types";
 import {
   generateFinalReadmePrompt,
   generatePagesPrompt,
   parsePagesFromResponse,
 } from "./READMEComponent.utils";
+import { LayoutAccordionItem } from "./READMEComponent/LayoutAccordionItem";
 import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
 
 const MIN_TITLE_LENGTH = 3;
@@ -60,6 +66,7 @@ export const READMEComponent = () => {
     title,
     description,
     stage,
+    layouts,
     pages,
     authMethods,
     pageAccess,
@@ -69,6 +76,10 @@ export const READMEComponent = () => {
     setTitle,
     setDescription,
     setStage,
+    setLayouts,
+    addLayout,
+    updateLayout,
+    deleteLayout,
     setPages,
     addPage,
     updatePage,
@@ -84,6 +95,7 @@ export const READMEComponent = () => {
 
   const [accordionValue, setAccordionValue] =
     useState<string>("step-1-description");
+  const [expandedLayoutId, setExpandedLayoutId] = useState<string | null>(null);
   const [expandedPageId, setExpandedPageId] = useState<string | null>(null);
   const hasAutoExpandedRef = useRef(false);
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
@@ -130,8 +142,8 @@ export const READMEComponent = () => {
 
   const hasReadmeInputChanged = useCallback(() => {
     if (!lastGeneratedForReadme) return true;
-    return lastGeneratedForReadme !== JSON.stringify(pages);
-  }, [lastGeneratedForReadme, pages]);
+    return lastGeneratedForReadme !== JSON.stringify({ layouts, pages });
+  }, [lastGeneratedForReadme, layouts, pages]);
 
   const hasAnyInputChanged = useCallback(() => {
     return (
@@ -199,17 +211,30 @@ export const READMEComponent = () => {
       const parsed = parsePagesFromResponse(response.content);
 
       if (parsed && parsed.pages.length > 0) {
+        if (parsed.layouts && parsed.layouts.length > 0) {
+          setLayouts(parsed.layouts);
+          if (parsed.layouts.length > 0) {
+            setExpandedLayoutId(parsed.layouts[0].id);
+          }
+        }
         setPages(parsed.pages);
         setPageAccess(parsed.pageAccess);
         setStage("pages");
       } else {
         const fallbackPages: PageInput[] = [
-          { id: generateId(), name: "Home", route: "/", description: "" },
+          {
+            id: generateId(),
+            name: "Home",
+            route: "/",
+            description: "",
+            layoutIds: [],
+          },
           {
             id: generateId(),
             name: "Dashboard",
             route: "/dashboard",
             description: "",
+            layoutIds: [],
           },
         ];
         setPages(fallbackPages);
@@ -241,10 +266,11 @@ export const READMEComponent = () => {
   ]);
 
   const handleSubmitPages = useCallback(() => {
-    setLastGeneratedForReadme(JSON.stringify(pages));
+    setLastGeneratedForReadme(JSON.stringify({ layouts, pages }));
     const prompt = generateFinalReadmePrompt(
       title,
       description,
+      layouts,
       pages,
       authMethods,
       pageAccess
@@ -258,6 +284,7 @@ export const READMEComponent = () => {
           inputData: {
             title,
             description,
+            layouts,
             pages,
             authMethods,
             pageAccess,
@@ -272,6 +299,7 @@ export const READMEComponent = () => {
   }, [
     title,
     description,
+    layouts,
     pages,
     authMethods,
     pageAccess,
@@ -279,12 +307,38 @@ export const READMEComponent = () => {
     setLastGeneratedForReadme,
   ]);
 
+  const handleAddLayout = () => {
+    const newLayout: LayoutInput = {
+      id: generateId(),
+      name: "",
+      description: "",
+    };
+    addLayout(newLayout);
+    setExpandedLayoutId(newLayout.id);
+  };
+
+  const handleUpdateLayoutLocal = (
+    id: string,
+    updates: Partial<LayoutInput>
+  ) => {
+    updateLayout(id, updates);
+  };
+
+  const handleDeleteLayoutLocal = (id: string) => {
+    if (layouts.length === 1) return;
+    deleteLayout(id);
+    if (expandedLayoutId === id) {
+      setExpandedLayoutId(null);
+    }
+  };
+
   const handleAddPage = () => {
     const newPage: PageInput = {
       id: generateId(),
       name: "",
       route: "",
       description: "",
+      layoutIds: [],
     };
     addPage(newPage);
     setExpandedPageId(newPage.id);
@@ -365,6 +419,7 @@ export const READMEComponent = () => {
                 ? "README Added Successfully"
                 : "README Generated Successfully"}
             </h3>
+            <p>You can edit your readme directly below</p>
           </div>
         </div>
       </div>
@@ -377,12 +432,23 @@ export const READMEComponent = () => {
     description.trim().length >= MIN_DESCRIPTION_LENGTH;
   const canSubmitInitial = isTitleValid && isDescriptionValid;
 
-  const canSubmitPages = pages.every(
-    (p) =>
-      p.name.trim().length >= MIN_PAGE_NAME_LENGTH &&
-      p.description.trim().length >= MIN_PAGE_DESCRIPTION_LENGTH &&
-      (!p.route.trim() || /^\/[a-z0-9\-/\[\]]*$/.test(p.route))
+  const MIN_LAYOUT_NAME_LENGTH = 2;
+  const MIN_LAYOUT_DESCRIPTION_LENGTH = 20;
+
+  const areLayoutsValid = layouts.every(
+    (l) =>
+      l.name.trim().length >= MIN_LAYOUT_NAME_LENGTH &&
+      l.description.trim().length >= MIN_LAYOUT_DESCRIPTION_LENGTH
   );
+
+  const canSubmitPages =
+    (layouts.length === 0 || areLayoutsValid) &&
+    pages.every(
+      (p) =>
+        p.name.trim().length >= MIN_PAGE_NAME_LENGTH &&
+        p.description.trim().length >= MIN_PAGE_DESCRIPTION_LENGTH &&
+        (!p.route.trim() || /^\/[a-z0-9\-/\[\]]*$/.test(p.route))
+    );
 
   const canSubmitAuth = true;
 
@@ -487,6 +553,7 @@ export const READMEComponent = () => {
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  onKeyDown={(e) => e.stopPropagation()}
                   placeholder="Describe what your app does, who it's for, and the main features users will interact with..."
                   className="theme-shadow min-h-[120px]"
                   disabled={isPending}
@@ -692,13 +759,56 @@ export const READMEComponent = () => {
             <div className="flex items-center theme-gap-2">
               <BookText className="h-5 w-5 theme-text-primary" />
               <span className="font-semibold text-base lg:text-lg group-hover:underline">
-                3. Pages
+                3. Layouts and Pages
               </span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-col theme-gap-4 pt-4">
               <div className="flex flex-col theme-gap-1">
+                <h3 className="font-semibold text-lg">Define Your Layouts</h3>
+                <p className="   theme-text-foreground font-semibold">
+                  Layouts wrap your pages with shared UI elements like headers,
+                  sidebars, and footers. You can apply multiple layouts to any
+                  page.
+                </p>
+              </div>
+
+              {layouts.length > 0 && (
+                <div className="theme-bg-card theme-radius theme-shadow overflow-auto theme-p-4">
+                  <div className="flex flex-col theme-gap-2">
+                    {layouts.map((layout, index) => (
+                      <LayoutAccordionItem
+                        key={layout.id}
+                        layout={layout}
+                        index={index}
+                        totalLayouts={layouts.length}
+                        isExpanded={expandedLayoutId === layout.id}
+                        onToggle={() =>
+                          setExpandedLayoutId(
+                            expandedLayoutId === layout.id ? null : layout.id
+                          )
+                        }
+                        onUpdate={handleUpdateLayoutLocal}
+                        onDelete={handleDeleteLayoutLocal}
+                        disabled={isPending}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                onClick={handleAddLayout}
+                disabled={isPending}
+                className="w-full theme-gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Layout
+              </Button>
+
+              <div className="flex flex-col theme-gap-1 theme-pt-4">
                 <h3 className="font-semibold text-lg">Define Your Pages</h3>
                 <p className="   theme-text-foreground font-semibold">
                   Add, edit or remove pages. Include a description of the
@@ -729,6 +839,7 @@ export const READMEComponent = () => {
                         disabled={isPending}
                         pageAccess={access}
                         onUpdateAccess={updatePageAccess}
+                        layouts={layouts}
                       />
                     );
                   })}

@@ -14,11 +14,11 @@ export const generateFeatureInferencePrompt = (
   pageAccess: PageAccess | undefined
 ): string => {
   const accessLevel = pageAccess
-    ? pageAccess.public
-      ? "Public"
+    ? pageAccess.anon
+      ? "Anon"
       : pageAccess.admin
       ? "Admin"
-      : "User"
+      : "Auth"
     : "Unknown";
 
   return `Return ONLY valid JSON. No explanations, no markdown, no code blocks. Start with { end with }

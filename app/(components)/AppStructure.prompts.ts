@@ -679,12 +679,41 @@ ${JSON_STRUCTURE_DEFINITION}
 
 export const buildStructureGenerationPrompt = (
   parsedPages: ParsedPage[],
-  inferredFeatures: Record<string, InferredFeature[]>
+  inferredFeatures: Record<string, InferredFeature[]>,
+  layouts?: Array<{ id: string; name: string; description: string }>,
+  pages?: Array<{ id: string; name: string; route: string; layoutIds: string[] }>
 ): string => {
   const pagesJson = JSON.stringify(parsedPages, null, 2);
   const featuresJson = JSON.stringify(inferredFeatures, null, 2);
 
+  const layoutsSection = layouts && layouts.length > 0
+    ? `
+LAYOUT INFORMATION:
+${layouts.map(l => {
+  const layoutPageId = `layout-${l.id}`;
+  const layoutFeatures = inferredFeatures[layoutPageId] || [];
+  return `
+**${l.name}** (ID: layout-${l.id}):
+${l.description}
+Features: ${layoutFeatures.map(f => f.title).join(', ')}`;
+}).join('\n')}
+
+PAGE-TO-LAYOUT RELATIONSHIPS:
+${pages?.map(p => {
+  const pageLayouts = p.layoutIds
+    .map(layoutId => {
+      const layout = layouts.find(l => l.id === layoutId);
+      return layout ? layout.name : null;
+    })
+    .filter(Boolean);
+  return `- ${p.name} (${p.route}) uses: ${pageLayouts.join(', ') || 'None'}`;
+}).join('\n') || 'No layout relationships'}
+`
+    : '';
+
   return `You are generating a Next.js App Router directory structure and feature assignments.
+
+${layoutsSection}
 
 RULES:
 1. Feature Locations:
@@ -692,9 +721,9 @@ RULES:
    - layout.tsx: Features shared across all child routes
 
 2. Utility File Requirements:
-   - ALL features need: page.hooks.tsx + page.types.ts
-   - Features with database queries need: page.actions.ts
-   - Complex features need: page.stores.ts (plural)
+   - ALL features need: page.hooks.tsx + page.types.ts (or layout.hooks.tsx + layout.types.ts)
+   - Features with database queries need: page.actions.ts (or layout.actions.ts)
+   - Complex features need: page.stores.ts (or layout.stores.ts) (plural)
 
 3. Utility File Placement (CRITICAL):
    - Can link to files in SAME directory or PARENT directories ONLY
@@ -704,24 +733,37 @@ RULES:
      ✅ /app/layout.hooks.tsx (parent)
      ❌ /app/settings/page.hooks.tsx (sibling - INVALID)
 
-4. Shared Utilities:
+4. Layout File Organization (NEW):
+   - Layout features create utility files with 'layout' prefix in SAME directory
+   - Example: Main Layout features → /app/layout.tsx, /app/layout.stores.ts, /app/layout.hooks.tsx, /app/layout.types.ts
+   - Page features can link to parent layout utility files
+   - Example: /app/dashboard/page.tsx can link to /app/layout.stores.ts for auth state
+
+5. Shared Utilities:
    - When multiple pages use same feature → place at common ancestor
    - Use layout.hooks.tsx, layout.actions.ts for shared files
    - Example: Auth on login + register → /app/(auth)/layout.hooks.tsx
+   - Auth across entire app → /app/layout.hooks.tsx
 
-5. Route Groups:
+6. Route Groups:
    - Syntax: (groupName) with parentheses
    - NOT in URL: /app/(auth)/login → URL is /login
    - Should have layout.tsx for shared UI
    - Create for 2+ related pages: (auth), (admin), (dashboard)
 
-6. Function Naming:
-   - Hooks: useFeatureName (e.g., useUserAuth) → in page.hooks.tsx
-   - Actions: featureNameAction (e.g., userAuthAction) → in page.actions.ts
-   - Stores: useFeatureNameStore (e.g., useUserAuthStore) → in page.stores.ts (PLURAL)
-   - Types: FeatureNameData (e.g., UserAuthData) → in page.types.ts
+7. Function Naming:
+   - Hooks: useFeatureName (e.g., useUserAuth) → in page.hooks.tsx or layout.hooks.tsx
+   - Actions: featureNameAction (e.g., userAuthAction) → in page.actions.ts or layout.actions.ts
+   - Stores: useFeatureNameStore (e.g., useUserAuthStore) → in page.stores.ts or layout.stores.ts (PLURAL)
+   - Types: FeatureNameData (e.g., UserAuthData) → in page.types.ts or layout.types.ts
 
-7. Page ID to File ID Mapping (CRITICAL):
+8. Layout Feature Mapping (CRITICAL):
+   - Input features with pageId starting with "layout-" are LAYOUT features
+   - Create layout.tsx file in the appropriate directory
+   - Map layout features to layout.tsx file ID in the features object
+   - Example: Input pageId "layout-abc123" → structure file "layout-xyz" with name "layout.tsx" → features["layout-xyz"]
+
+9. Page ID to File ID Mapping (CRITICAL):
    - Input features are keyed by pageId (e.g., "4cssxmqws")
    - Each pageId has a corresponding route (e.g., "/" or "/settings")
    - When you create a page.tsx file in the structure, assign it a unique file ID

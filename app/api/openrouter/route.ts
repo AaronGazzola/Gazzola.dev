@@ -8,7 +8,7 @@ import {
   OpenRouterResponse,
 } from "@/lib/openrouter.types";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 export async function POST(request: NextRequest) {
   const body: OpenRouterRequest = await request.json();
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 55000);
+  const timeoutId = setTimeout(() => controller.abort(), 90000);
 
   let openRouterResponse: Response;
   try {
@@ -91,6 +91,17 @@ export async function POST(request: NextRequest) {
   if (!openRouterResponse.ok) {
     const errorData = await openRouterResponse.json();
     conditionalLog({ error: errorData }, { label: LOG_LABELS.OPENROUTER });
+
+    if (openRouterResponse.status === 402) {
+      return NextResponse.json(
+        {
+          error: errorData.error?.message || "Insufficient OpenRouter credits",
+          insufficientCredits: true,
+        },
+        { status: 402 }
+      );
+    }
+
     throw new Error(errorData.error?.message || "OpenRouter request failed");
   }
 

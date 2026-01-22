@@ -176,6 +176,7 @@ If yes, ask for the admin user email address (must be a valid email address that
 ## Phase 3: Build Application
 
 Complete each of the steps in this phase for each page in each directory of `documentation/initial_configuration/App_Directory.md`.
+Construct each page using the information provided in the `README.md` file.
 
 ### Build Order Strategy
 
@@ -224,6 +225,10 @@ From `documentation/initial_configuration/App_Directory.md`, identify:
 - Page or layout path and route
 - Required features
 - Hooks, actions, stores, types needed
+
+From `README.md`, identify:
+
+- The purpose, structure and overall functionality of each page and related layout(s)
 
 ### Step 3.2: Create Types
 

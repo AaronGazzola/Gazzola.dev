@@ -4,6 +4,7 @@ import Header from "@/app/(components)/Header";
 import { useHeaderStore } from "@/app/(components)/Header.store";
 import Sidebar from "@/app/(components)/Sidebar";
 import Stars from "@/app/(components)/Stars";
+import { CreditDepletionDialog } from "@/app/(components)/CreditDepletionDialog";
 import { conditionalLog } from "@/lib/log.util";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "./layout.stores";
@@ -12,7 +13,11 @@ import { ReactNode, Suspense, useEffect } from "react";
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
   const { isExpanded } = useHeaderStore();
-  const { generateCodeFiles } = useEditorStore();
+  const {
+    generateCodeFiles,
+    creditDepletionDialogOpen,
+    setCreditDepletionDialogOpen,
+  } = useEditorStore();
 
   useEffect(() => {
     conditionalLog(
@@ -43,6 +48,10 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         </div>
       </div>
       <Stars />
+      <CreditDepletionDialog
+        open={creditDepletionDialogOpen}
+        onOpenChange={setCreditDepletionDialogOpen}
+      />
     </div>
   );
 };

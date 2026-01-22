@@ -154,6 +154,7 @@ export const FeedbackDialog = ({
                   onChange={(e) => {
                     setFormData({ ...formData, message: e.target.value });
                   }}
+                  onKeyDown={(e) => e.stopPropagation()}
                   onBlur={() => {
                     setTouched((prev) => ({ ...prev, message: true }));
                     setBlurCount((prev) => ({

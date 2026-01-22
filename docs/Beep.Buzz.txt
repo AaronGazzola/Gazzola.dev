@@ -2,45 +2,58 @@
 
 Title: Beep.Buzz
 
-Description: beep.buzz is a playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, and embedded YouTube videos. Users interact by placing decorative "beep" and "buzz" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. The platform emphasizes creative expression, simple interactions, and organic discovery through sticker-based navigation.
+Description: beep.buzz is a simple and playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, patterns, digital illustrations, and embedded YouTube videos. Users viewing the pages interact by placing decorative "beep" and "buzz" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. Each user can design their own beep and buzz stickers, which are retroactively updated across the app. AI analysis at publish time ensures that pages and sticker content is safe. Content can be flagged as inappropriate, which is then reviewed by an admin.
 
-=== STEP 2: PAGES ===
+=== STEP 2: LAYOUTS AND PAGES ===
 
-Page 1:
+Layouts:
+
+Name: Main Layout
+Description: Primary layout featuring a header with Beep.Buzz logo and authentication button/menu. Minimal footer with essential links.
+
+Name: Admin Layout
+Description: Admin-specific layout with header containing moderation tools navigation. Includes sidebar with content flagging queue, user management, and sticker approval tools.
+
 Name: Homepage
 Route: /
-Description: The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category.
-Access: public
+Description: The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action.
+Access: All
 
-Page 2:
 Name: User Page
 Route: /[username]
 Description: Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and "Add Beep/Buzz" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page.
-Access: public
+Access: anon, auth, admin
 
-Page 3:
 Name: Page Editor
 Route: /edit
-Description: Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile. Enforces limits: 20 elements max, 3 YouTube embeds, 3000px height, 50 stickers per type.
-Access: user, admin
+Description: Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile.
+Access: auth, admin
 
-Page 4:
-Name: User Settings
+Name: Settings
 Route: /settings
 Description: Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns.
-Access: user
+Access: auth, admin
 
-Page 5:
+Name: Sign in
+Route: /sign-in
+Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers.
+Access: anon
+
 Name: Weclome
 Route: /welcome
 Description: First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.
-Access: public
+Access: auth, admin
 
-Page 6:
-Name: Admin Dashboard
+Name: Content moderation
 Route: /admin
-Description: Admin-only moderation interface. Displays queue of reported pages, list of auto-hidden pages (3+ reports), and full content viewing. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.
+Description: Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.
 Access: admin
+
+
+Features:
+
+
+
 
 Database tables:
 

@@ -1,18 +1,25 @@
+export interface LayoutInput {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export interface PageInput {
   id: string;
   name: string;
   route: string;
   description: string;
+  layoutIds: string[];
 }
 
 export type Stage = "description" | "auth" | "pages";
 
-export type PageAccessLevel = "public" | "user" | "admin";
+export type PageAccessLevel = "anon" | "auth" | "admin";
 
 export interface PageAccess {
   pageId: string;
-  public: boolean;
-  user: boolean;
+  anon: boolean;
+  auth: boolean;
   admin: boolean;
 }
 
@@ -24,6 +31,7 @@ export interface AuthMethods {
 export interface READMEState {
   title: string;
   description: string;
+  layouts: LayoutInput[];
   pages: PageInput[];
   authMethods: AuthMethods;
   pageAccess: PageAccess[];
@@ -34,15 +42,20 @@ export interface READMEState {
 }
 
 export interface PageGenerationAIResponse {
+  layouts?: Array<{
+    name: string;
+    description: string;
+  }>;
   pages: Array<{
     name: string;
     route: string;
     description: string;
     access: {
-      public: boolean;
-      user: boolean;
+      anon: boolean;
+      auth: boolean;
       admin: boolean;
     };
+    layoutNames?: string[];
   }>;
 }
 
@@ -56,6 +69,7 @@ export const initialAuthMethods: AuthMethods = {
 export const initialState: READMEState = {
   title: "",
   description: "",
+  layouts: [],
   pages: [],
   authMethods: initialAuthMethods,
   pageAccess: [],

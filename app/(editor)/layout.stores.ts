@@ -305,6 +305,8 @@ const createInitialState = (data: MarkdownData) => ({
   helpPopoverOpened: false,
   appStructureHelpPopoverOpened: false,
   databaseHelpPopoverOpened: false,
+  creditDepletionDialogOpen: false,
+  notificationSent: false,
 });
 
 const defaultMarkdownData: MarkdownData = {
@@ -1507,6 +1509,8 @@ export const useEditorStore = create<EditorState>()(
       setHelpPopoverOpened: (opened: boolean) => set({ helpPopoverOpened: opened }),
       setAppStructureHelpPopoverOpened: (opened: boolean) => set({ appStructureHelpPopoverOpened: opened }),
       setDatabaseHelpPopoverOpened: (opened: boolean) => set({ databaseHelpPopoverOpened: opened }),
+      setCreditDepletionDialogOpen: (open: boolean) => set({ creditDepletionDialogOpen: open }),
+      setNotificationSent: (sent: boolean) => set({ notificationSent: sent }),
     }),
     {
       name: "editor-storage",

@@ -14,7 +14,7 @@ export const isAdminPage = (page: PageInput, pageAccess?: PageAccess): boolean =
   const route = page.route.toLowerCase();
   const name = page.name.toLowerCase();
 
-  const isAdminOnlyAccess = pageAccess ? (pageAccess.admin && !pageAccess.user && !pageAccess.public) : false;
+  const isAdminOnlyAccess = pageAccess ? (pageAccess.admin && !pageAccess.auth && !pageAccess.anon) : false;
 
   return route.includes("/admin") || name.includes("admin") || isAdminOnlyAccess;
 };

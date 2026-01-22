@@ -3,6 +3,7 @@ import { LOG_LABELS } from "@/lib/log.util";
 import {
   AuthMethods,
   generateId,
+  LayoutInput,
   PageAccess,
   PageGenerationAIResponse,
   PageInput,
@@ -16,77 +17,131 @@ export const generatePagesPrompt = (
   const authPagesNeeded: string[] = [];
 
   if (authMethods.emailPassword) {
-    authPagesNeeded.push("- Sign Up page (/sign-up) - Public access - Where new users create an account with email and password");
-    authPagesNeeded.push("- Sign In page (/sign-in) - Public access - Where existing users sign in with email and password");
-    authPagesNeeded.push("- Forgot Password page (/forgot-password) - Public access - Where users request a password reset link");
-    authPagesNeeded.push("- Reset Password page (/reset-password) - Public access - Where users set a new password after clicking the reset link");
+    authPagesNeeded.push(
+      "- Sign Up page (/sign-up) - Anon access - Where new users create an account with email and password"
+    );
+    authPagesNeeded.push(
+      "- Sign In page (/sign-in) - Anon access - Where existing users sign in with email and password"
+    );
+    authPagesNeeded.push(
+      "- Forgot Password page (/forgot-password) - Anon access - Where users request a password reset link"
+    );
+    authPagesNeeded.push(
+      "- Reset Password page (/reset-password) - Anon access - Where users set a new password after clicking the reset link"
+    );
   } else if (authMethods.magicLink) {
-    authPagesNeeded.push("- Welcome page (/welcome) - Public access - Where users enter their email to receive a magic link for passwordless sign-in");
+    authPagesNeeded.push(
+      "- Sign in page (/sign-in) - Anon access - Where users enter their email to receive a magic link for passwordless sign-in"
+    );
+  }
+  if (authMethods.emailPassword || authMethods.magicLink) {
+    authPagesNeeded.push(
+      "- Welcome page (/welcome) - Auth and admin access - First-time user profile setup after initial sign in. All relevant profile data is collected"
+    );
   }
 
-  const authPagesSection = authPagesNeeded.length > 0
-    ? `\n\nAuthentication pages required based on selected auth methods:\n${authPagesNeeded.join("\n")}\nINCLUDE ALL these authentication pages in your response.`
-    : "";
+  const authPagesSection =
+    authPagesNeeded.length > 0
+      ? `\n\nAuthentication pages required based on selected auth methods:\n${authPagesNeeded.join("\n")}\nINCLUDE ALL these authentication pages in your response.`
+      : "";
 
   return `You must return ONLY a valid JSON object. Do not include any explanations, markdown formatting, or code blocks. Your response must start with { and end with }.
 
 App Title: ${title}
 App Description: ${description}${authPagesSection}
 
-Generate 3-8 relevant pages for this web application based on the description above.
+Generate >=3 relevant pages AND appropriate layouts for this web application based on the description above.
 
+LAYOUTS:
+Layouts are reusable UI wrappers that provide shared elements (headers, sidebars, footers, navigation) for groups of pages.
+
+Generate >=1 layouts based on these guidelines:
+- ALWAYS include a "Main Layout" with:
+  * Header containing the site name (${title})
+  * A "Sign in" nav button for anon users, replaced with an authentication popover menu for auth and admin users, which contains a sign out button and other relevant buttons such as settings and/or profile nav buttons if appropriate  
+  * Only include a sidebar if it makes sense for the app's UI (e.g., dashboards, content management apps benefit from sidebars; simple sites/blogs do not)
+  * Footer (optional)
+- Include an "Admin Layout" only if the app description mentions admin features, admin panel, or content moderation:
+  * Admin-specific header with admin navigation
+  * Admin sidebar with management tools
+  * Should wrap any admin pages
+
+For each layout, provide:
+- name: Layout name (must be exactly "Main Layout" or "Admin Layout")
+- description: What shared UI elements this layout provides (20-100 words), be specific about whether it includes a sidebar
+
+PAGES:
 Consider:
 - What pages would users need to accomplish the app's goals?
 - What are the main user flows described?
 - Common web app patterns (home, dashboard, profile, settings, etc.)
 - Authentication pages needed based on the auth methods above
 - Next.js routing conventions (/, /about, /[id], /[slug], etc.)
-- Which pages should be public, user-only, or admin-only
+- Which pages should be anon (anonymous), auth (authenticated), or admin-only
+- Include an Admin page (/admin) only if admin features are mentioned in the description
+- Which layout(s) should wrap each page
 
 For each page, provide:
 - name: User-friendly page name (e.g., "Home", "Dashboard", "User Profile")
 - route: Next.js route path (e.g., "/", "/dashboard", "/profile/[id]")
-- description: Brief description of what users do on this page (30-80 words)
+- description: Brief description of what users do on this page (30-100 words)
 - access: Who can access this page
+- layoutNames: Array of layout names that should wrap this page (e.g., ["Main Layout"])
 
 REQUIRED JSON FORMAT (return exactly this structure):
 {
+  "layouts": [
+    {
+      "name": "Main Layout",
+      "description": "Primary layout with header (site name + auth button), optional sidebar for navigation, and footer for all pages"
+    }
+  ],
   "pages": [
     {
       "name": "Home",
       "route": "/",
       "description": "Landing page where users first arrive...",
       "access": {
-        "public": true,
-        "user": false,
+        "anon": true,
+        "auth": false,
         "admin": false
-      }
+      },
+      "layoutNames": ["Main Layout"]
     }
   ]
 }
 
 CRITICAL RULES:
-- Generate 3-8 pages total (app pages + auth pages)
-- Simple apps (blogs, landing pages) = 3-4 non-auth pages
-- Complex apps (SaaS, platforms) = 5-6 non-auth pages
+- Generate >=3 pages (app pages + auth pages)
+- Generate >=1 layouts (Main Layout always required, Admin Layout only if admin features exist)
+- Main Layout must mention header with site name and auth button
+- Main Layout should only include sidebar if it makes sense for the app type
 - Include at least a home page (/)
-- Include ALL authentication pages listed above if any
-- All authentication pages should have public access
+- Include ALL authentication pages listed above
+- Include an Admin page (/admin) ONLY if admin features are mentioned
+- All authentication pages should have anon access
+- Admin pages should have admin access and use "Admin Layout"
 - Routes must follow Next.js conventions
 - Descriptions should be specific to this app, not generic
 - For access levels:
-  - public=true means anyone can access (no login required)
-  - user=true means authenticated users can access
+  - anon=true means anyone can access (no login required)
+  - auth=true means authenticated users can access
   - admin=true means only admins can access
-  - If public=true, user and admin should be false
-  - user and admin can both be true if both groups can access
+  - Multiple access levels can be true simultaneously (e.g., both anon and auth)
+- Layout assignment guidelines:
+  - All public/auth/user pages → "Main Layout"
+  - Admin pages → "Admin Layout" (admin layout must exist if you create admin pages)
 
 IMPORTANT: Return ONLY the JSON object. No additional text before or after.`;
 };
 
 export const parsePagesFromResponse = (
   response: string
-): { pages: PageInput[]; pageAccess: PageAccess[] } | null => {
+): {
+  layouts: LayoutInput[];
+  pages: PageInput[];
+  pageAccess: PageAccess[];
+} | null => {
   console.log("📄 parsePagesFromResponse - Starting to parse response");
   console.log("📄 Raw response:", response);
 
@@ -105,14 +160,39 @@ export const parsePagesFromResponse = (
 
   console.log("✅ Found pages array with", parsed.pages.length, "pages");
 
+  const layouts: LayoutInput[] = (parsed.layouts || [])
+    .filter((l) => l.name && l.description)
+    .map((l) => ({
+      id: generateId(),
+      name: l.name,
+      description: l.description,
+    }));
+
+  console.log("📄 Processed layouts:", layouts);
+
+  const layoutNameToIdMap = layouts.reduce(
+    (map, layout) => {
+      map[layout.name] = layout.id;
+      return map;
+    },
+    {} as Record<string, string>
+  );
+
   const pages = parsed.pages
     .filter((p) => p.name && p.route)
-    .map((p) => ({
-      id: generateId(),
-      name: p.name,
-      route: p.route,
-      description: p.description || "",
-    }));
+    .map((p) => {
+      const layoutIds = (p.layoutNames || [])
+        .map((layoutName) => layoutNameToIdMap[layoutName])
+        .filter(Boolean);
+
+      return {
+        id: generateId(),
+        name: p.name,
+        route: p.route,
+        description: p.description || "",
+        layoutIds,
+      };
+    });
 
   console.log("📄 Processed pages:", pages);
 
@@ -120,19 +200,20 @@ export const parsePagesFromResponse = (
     .filter((p) => p.name && p.route && p.access)
     .map((p, index) => ({
       pageId: pages[index].id,
-      public: p.access.public,
-      user: p.access.user,
+      anon: p.access.anon,
+      auth: p.access.auth,
       admin: p.access.admin,
     }));
 
   console.log("📄 Processed pageAccess:", pageAccess);
 
-  return { pages, pageAccess };
+  return { layouts, pages, pageAccess };
 };
 
 export const generateFinalReadmePrompt = (
   title: string,
   description: string,
+  layouts: LayoutInput[],
   pages: PageInput[],
   authMethods: AuthMethods,
   pageAccess: PageAccess[]
@@ -141,8 +222,8 @@ export const generateFinalReadmePrompt = (
     .map((p) => {
       const access = pageAccess.find((pa) => pa.pageId === p.id);
       const accessLevels = [];
-      if (access?.public) accessLevels.push("Public");
-      if (access?.user) accessLevels.push("User");
+      if (access?.anon) accessLevels.push("Anon");
+      if (access?.auth) accessLevels.push("Auth");
       if (access?.admin) accessLevels.push("Admin");
       const accessText =
         accessLevels.length > 0 ? ` (${accessLevels.join(", ")})` : "";
@@ -163,14 +244,14 @@ export const generateFinalReadmePrompt = (
       return methodNames[method] || method;
     });
 
-  const publicPages = pages.filter((p) => {
+  const anonPages = pages.filter((p) => {
     const access = pageAccess.find((pa) => pa.pageId === p.id);
-    return access?.public;
+    return access?.anon;
   });
 
-  const userPages = pages.filter((p) => {
+  const authPages = pages.filter((p) => {
     const access = pageAccess.find((pa) => pa.pageId === p.id);
-    return access?.user && !access?.public;
+    return access?.auth && !access?.anon;
   });
 
   const adminPages = pages.filter((p) => {
@@ -191,16 +272,16 @@ ${enabledAuthMethods.map((method) => `- ${method}`).join("\\n")}
 The application enforces role-based access control across different pages:
 
 ${
-  publicPages.length > 0
-    ? `**Public Access** (no authentication required):
-${publicPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
+  anonPages.length > 0
+    ? `**Anonymous Access** (no authentication required):
+${anonPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
 `
     : ""
 }
 ${
-  userPages.length > 0
+  authPages.length > 0
     ? `**Authenticated Users**:
-${userPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
+${authPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
 `
     : ""
 }
@@ -213,20 +294,56 @@ ${adminPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
 }`
       : "";
 
+  const layoutsSection =
+    layouts.length > 0
+      ? `
+
+LAYOUTS:
+${layouts.map((l) => `- ${l.name}: ${l.description}`).join("\\n")}
+
+PAGE-TO-LAYOUT MAPPINGS:
+${
+  pages
+    .filter((p) => p.layoutIds.length > 0)
+    .map((p) => {
+      const pageLayouts = p.layoutIds
+        .map((layoutId) => {
+          const layout = layouts.find((l) => l.id === layoutId);
+          return layout ? layout.name : null;
+        })
+        .filter(Boolean);
+      return pageLayouts.length > 0
+        ? `- ${p.name} (${p.route}): ${pageLayouts.join(", ")}`
+        : null;
+    })
+    .filter(Boolean)
+    .join("\\n") || "None"
+}
+`
+      : "";
+
   return `Generate a detailed, professional README.md for this web application based on the following information:
 
 APP TITLE: ${title}
 
-APP DESCRIPTION: ${description}
+APP DESCRIPTION: ${description}${layoutsSection}
 
 PAGES:
 ${pages
   .map((p) => {
     const access = pageAccess.find((pa) => pa.pageId === p.id);
     const accessLevels = [];
-    if (access?.public) accessLevels.push("Public");
-    if (access?.user) accessLevels.push("User");
+    if (access?.anon) accessLevels.push("Anon");
+    if (access?.auth) accessLevels.push("Auth");
     if (access?.admin) accessLevels.push("Admin");
+    const pageLayouts = p.layoutIds
+      .map((layoutId) => {
+        const layout = layouts.find((l) => l.id === layoutId);
+        return layout ? layout.name : null;
+      })
+      .filter(Boolean);
+    const layoutText =
+      pageLayouts.length > 0 ? ` {Layouts: ${pageLayouts.join(", ")}}` : "";
     return (
       "- " +
       p.name +
@@ -234,7 +351,9 @@ ${pages
       p.route +
       ") [" +
       accessLevels.join(", ") +
-      "]: " +
+      "]" +
+      layoutText +
+      ": " +
       p.description
     );
   })
@@ -243,11 +362,11 @@ ${pages
 AUTHENTICATION METHODS:
 ${enabledAuthMethods.length > 0 ? enabledAuthMethods.join(", ") : "None - public app"}
 
-PUBLIC PAGES (no login required):
-${publicPages.map((p) => "- " + p.name + " (" + p.route + ")").join("\\n") || "None"}
+ANONYMOUS PAGES (no login required):
+${anonPages.map((p) => "- " + p.name + " (" + p.route + ")").join("\\n") || "None"}
 
 AUTHENTICATED USER PAGES:
-${userPages.map((p) => "- " + p.name + " (" + p.route + ")").join("\\n") || "None"}
+${authPages.map((p) => "- " + p.name + " (" + p.route + ")").join("\\n") || "None"}
 
 ADMIN-ONLY PAGES:
 ${adminPages.map((p) => "- " + p.name + " (" + p.route + ")").join("\\n") || "None"}
@@ -262,20 +381,20 @@ Generate a comprehensive README with the following structure:
 
 ## Overview
 
-[2-3 paragraphs describing what the app does, who it's for, and key value proposition. Include the main description provided above and expand on it.]
+[2-3 paragraphs describing what the app does, who it's for, and key value proposition. Include the main description provided above and expand on it.]${layouts.length > 0 ? "\n\n## Layouts\n\n[For EACH layout listed in LAYOUTS above, create a section describing:]\n- The layout's name and purpose\n- What shared UI elements it provides (header, sidebar, footer, etc.)\n- Which pages use this layout (reference PAGE-TO-LAYOUT MAPPINGS above)\n- How it enhances the user experience" : ""}
 
 ## Pages
 
 [For EACH page listed above, create a detailed section with:]
 - Page name and route as H3 header
-- Access level in parentheses (Public, User, Admin, or combinations)
+- Access level in parentheses (Anon, Auth, Admin, or combinations)${layouts.length > 0 ? "\n- Layouts applied to this page (if any)" : ""}
 - 2-3 paragraphs describing:
   - What users see on this page
   - What actions they can take
   - Key features and functionality
   - How it fits into the overall user flow
 
-${authSection ? "## Authentication & Access Control\n\n[Describe the authentication system with the following structure:]\n\n[Write 1-2 paragraphs introducing the authentication system and listing ALL authentication methods from AUTHENTICATION METHODS above. Explain each method briefly in user-friendly terms.]\n\n### Access Levels\n\n[Explain the access control model in 1 paragraph, then list pages grouped by access level:]\n\n**Public Access** (no authentication required):\n[List all pages from PUBLIC PAGES section above with format: - Page Name (route)]\n\n**Authenticated Users**:\n[List all pages from AUTHENTICATED USER PAGES section above with format: - Page Name (route)]\n\n**Admin Only**:\n[List all pages from ADMIN-ONLY PAGES section above with format: - Page Name (route)]\n\nIMPORTANT: Include ALL authentication methods listed above. Include ALL pages in their correct access level groups.\n" : ""}
+${authSection ? "## Authentication & Access Control\n\n[Describe the authentication system with the following structure:]\n\n[Write 1-2 paragraphs introducing the authentication system and listing ALL authentication methods from AUTHENTICATION METHODS above. Explain each method briefly in user-friendly terms.]\n\n### Access Levels\n\n[Explain the access control model in 1 paragraph, then list pages grouped by access level:]\n\n**Anonymous Access** (no authentication required):\n[List all pages from ANONYMOUS PAGES section above with format: - Page Name (route)]\n\n**Authenticated Users**:\n[List all pages from AUTHENTICATED USER PAGES section above with format: - Page Name (route)]\n\n**Admin Only**:\n[List all pages from ADMIN-ONLY PAGES section above with format: - Page Name (route)]\n\nIMPORTANT: Include ALL authentication methods listed above. Include ALL pages in their correct access level groups.\n" : ""}
 
 ## User Experience
 
@@ -299,7 +418,7 @@ IMPORTANT REQUIREMENTS:
 - Write in a friendly, professional tone for END USERS (not developers)
 - Focus on WHAT users can DO, not HOW it's technically implemented
 - Use clear, descriptive markdown formatting
-- Include ALL pages with their access levels clearly marked in the header (Public, User, Admin)
+- Include ALL pages with their access levels clearly marked in the header (Anon, Auth, Admin)${layouts.length > 0 ? "\n- Include ALL layouts with their descriptions and which pages use them" : ""}
 - Include ALL authentication methods listed above - explain each one in user-friendly terms
 - Make authentication and access control easy to understand
 - DO NOT include technical implementation details (no Next.js, React, API endpoints, database schemas)

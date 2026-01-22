@@ -155,6 +155,7 @@ export const PageFeaturesAccordionItem = ({
                           description: e.target.value,
                         })
                       }
+                      onKeyDown={(e) => e.stopPropagation()}
                       disabled={disabled}
                       className="theme-font-sans theme-tracking "
                       rows={3}

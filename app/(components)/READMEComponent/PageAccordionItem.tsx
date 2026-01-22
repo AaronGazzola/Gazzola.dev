@@ -2,8 +2,15 @@ import { Badge } from "@/components/editor/ui/badge";
 import { Button } from "@/components/editor/ui/button";
 import { Input } from "@/components/editor/ui/input";
 import { Textarea } from "@/components/editor/ui/textarea";
-import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
-import { PageAccess, PageInput } from "../READMEComponent.types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/editor/ui/select";
+import { ChevronDown, ChevronRight, Trash2, X } from "lucide-react";
+import { LayoutInput, PageAccess, PageInput } from "../READMEComponent.types";
 
 interface PageAccordionItemProps {
   page: PageInput;
@@ -17,9 +24,10 @@ interface PageAccordionItemProps {
   pageAccess?: PageAccess;
   onUpdateAccess?: (
     pageId: string,
-    level: "public" | "user" | "admin",
+    level: "anon" | "auth" | "admin",
     value: boolean
   ) => void;
+  layouts?: LayoutInput[];
 }
 
 const MIN_PAGE_NAME_LENGTH = 2;
@@ -36,6 +44,7 @@ export const PageAccordionItem = ({
   disabled = false,
   pageAccess,
   onUpdateAccess,
+  layouts = [],
 }: PageAccordionItemProps) => {
   const validateRoute = (route: string): boolean => {
     if (!route.trim()) return true;
@@ -136,6 +145,7 @@ export const PageAccordionItem = ({
               onChange={(e) =>
                 onUpdate(page.id, { description: e.target.value })
               }
+              onKeyDown={(e) => e.stopPropagation()}
               placeholder="Describe what users see and do on this page..."
               disabled={disabled}
               className={`theme-shadow min-h-[80px] ${!isDescriptionValid ? "border-destructive" : ""}`}
@@ -149,6 +159,68 @@ export const PageAccordionItem = ({
             </p>
           </div>
 
+          {layouts.length > 0 && (
+            <div className="flex flex-col theme-gap-2">
+              <label className="text-xs font-semibold theme-text-foreground">
+                Layouts (optional)
+              </label>
+              {page.layoutIds.length > 0 && (
+                <div className="flex flex-wrap theme-gap-2">
+                  {page.layoutIds.map((layoutId) => {
+                    const layout = layouts.find((l) => l.id === layoutId);
+                    if (!layout) return null;
+                    return (
+                      <Badge
+                        key={layoutId}
+                        variant="secondary"
+                        className="cursor-pointer theme-gap-1"
+                      >
+                        {layout.name}
+                        <X
+                          className="h-3 w-3"
+                          onClick={() =>
+                            !disabled &&
+                            onUpdate(page.id, {
+                              layoutIds: page.layoutIds.filter(
+                                (id) => id !== layoutId
+                              ),
+                            })
+                          }
+                        />
+                      </Badge>
+                    );
+                  })}
+                </div>
+              )}
+              {layouts.filter((l) => !page.layoutIds.includes(l.id)).length >
+                0 && (
+                <Select
+                  disabled={disabled}
+                  onValueChange={(layoutId) => {
+                    if (!page.layoutIds.includes(layoutId)) {
+                      onUpdate(page.id, {
+                        layoutIds: [...page.layoutIds, layoutId],
+                      });
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-full theme-shadow">
+                    <SelectValue placeholder="Add layout..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {layouts
+                      .filter((l) => !page.layoutIds.includes(l.id))
+                      .map((layout) => (
+                        <SelectItem key={layout.id} value={layout.id}>
+                          {layout.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          )}
+
           {onUpdateAccess && (
             <div className="flex flex-col theme-gap-2">
               <label className="text-xs font-semibold theme-text-foreground">
@@ -156,24 +228,24 @@ export const PageAccordionItem = ({
               </label>
               <div className="flex theme-gap-2 mb-2">
                 <Badge
-                  variant={pageAccess?.public ? "default" : "outline"}
+                  variant={pageAccess?.anon ? "default" : "outline"}
                   className="cursor-pointer"
                   onClick={() =>
                     !disabled &&
-                    onUpdateAccess(page.id, "public", !pageAccess?.public)
+                    onUpdateAccess(page.id, "anon", !pageAccess?.anon)
                   }
                 >
-                  Public
+                  Anon
                 </Badge>
                 <Badge
-                  variant={pageAccess?.user ? "default" : "outline"}
+                  variant={pageAccess?.auth ? "default" : "outline"}
                   className="cursor-pointer"
                   onClick={() =>
                     !disabled &&
-                    onUpdateAccess(page.id, "user", !pageAccess?.user)
+                    onUpdateAccess(page.id, "auth", !pageAccess?.auth)
                   }
                 >
-                  User
+                  Auth
                 </Badge>
                 <Badge
                   variant={pageAccess?.admin ? "default" : "outline"}

@@ -229,6 +229,7 @@ export const FeatureApprovalModal = ({
                                             },
                                           }))
                                         }
+                                        onKeyDown={(e) => e.stopPropagation()}
                                         className="theme-font-sans theme-tracking"
                                         rows={2}
                                       />

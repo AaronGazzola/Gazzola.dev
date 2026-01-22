@@ -1,13 +1,42 @@
 import { Feature, UserExperienceFileType, FunctionNameData } from "@/app/(editor)/layout.types";
-import { InferredFeature } from "./AppStructure.types";
+import { InferredFeature, FeatureCategory } from "./AppStructure.types";
 import { generateDefaultFunctionName } from "@/lib/feature.utils";
 import { findEntryByPath } from "./AppStructure.parser";
 import { FileSystemEntry } from "@/app/(editor)/layout.types";
+import { LayoutInput, PageInput } from "./READMEComponent.types";
+
+const shouldUseParentFile = (
+  feature: InferredFeature,
+  fileType: UserExperienceFileType
+): boolean => {
+  if (feature.category === FeatureCategory.AUTHENTICATION) {
+    return fileType === 'hooks' || fileType === 'stores' || fileType === 'types';
+  }
+
+  if (feature.category === FeatureCategory.NAVIGATION) {
+    return fileType === 'stores' || fileType === 'types';
+  }
+
+  if (fileType === 'types' && feature.dataEntities.length > 0) {
+    return true;
+  }
+
+  return false;
+};
+
+const getParentPath = (path: string): string | null => {
+  const segments = path.split('/').filter(Boolean);
+  if (segments.length <= 1) return null;
+  segments.pop();
+  return '/' + segments.join('/');
+};
 
 export const linkFeatureToUtilityFiles = (
   feature: InferredFeature,
   structure: FileSystemEntry[],
-  pagePath: string
+  pagePath: string,
+  allPages?: PageInput[],
+  layouts?: LayoutInput[]
 ): Feature => {
   const linkedFiles: Feature["linkedFiles"] = {};
   const functionNames: Feature["functionNames"] = {};
@@ -16,15 +45,44 @@ export const linkFeatureToUtilityFiles = (
 
   utilityFileTypes.forEach((fileType) => {
     if (feature.utilityFileNeeds[fileType]) {
-      const filePath = determineUtilityFilePath(pagePath, fileType);
-      linkedFiles[fileType] = filePath;
+      if (feature.pageId.startsWith('layout-')) {
+        const filePath = determineUtilityFilePath(pagePath, fileType, 'layout');
+        linkedFiles[fileType] = filePath;
 
-      const functionName = generateDefaultFunctionName(feature.title, fileType);
-      const functionData: FunctionNameData = {
-        name: functionName,
-        utilFile: filePath,
-      };
-      functionNames[fileType] = functionData;
+        const functionName = generateDefaultFunctionName(feature.title, fileType);
+        const functionData: FunctionNameData = {
+          name: functionName,
+          utilFile: filePath,
+        };
+        functionNames[fileType] = functionData;
+      } else {
+        const page = allPages?.find(p => p.route === pagePath.replace('/app', ''));
+        if (page && page.layoutIds && page.layoutIds.length > 0) {
+          const parentPath = getParentPath(pagePath);
+          if (parentPath && shouldUseParentFile(feature, fileType)) {
+            const parentFilePath = determineUtilityFilePath(parentPath, fileType, 'layout');
+            linkedFiles[fileType] = parentFilePath;
+
+            const functionName = generateDefaultFunctionName(feature.title, fileType);
+            const functionData: FunctionNameData = {
+              name: functionName,
+              utilFile: parentFilePath,
+            };
+            functionNames[fileType] = functionData;
+            return;
+          }
+        }
+
+        const filePath = determineUtilityFilePath(pagePath, fileType, 'page');
+        linkedFiles[fileType] = filePath;
+
+        const functionName = generateDefaultFunctionName(feature.title, fileType);
+        const functionData: FunctionNameData = {
+          name: functionName,
+          utilFile: filePath,
+        };
+        functionNames[fileType] = functionData;
+      }
     }
   });
 
@@ -40,10 +98,11 @@ export const linkFeatureToUtilityFiles = (
 
 const determineUtilityFilePath = (
   pagePath: string,
-  fileType: UserExperienceFileType
+  fileType: UserExperienceFileType,
+  prefix: "page" | "layout" = "page"
 ): string => {
   const extension = getExtensionForFileType(fileType);
-  const fileName = `page.${fileType}.${extension}`;
+  const fileName = `${prefix}.${fileType}.${extension}`;
   return `${pagePath}/${fileName}`;
 };
 
@@ -65,7 +124,9 @@ const getExtensionForFileType = (fileType: UserExperienceFileType): string => {
 export const convertInferredFeaturesToFeatures = (
   inferredFeatures: Record<string, InferredFeature[]>,
   structure: FileSystemEntry[],
-  pageIdToPath: Record<string, string>
+  pageIdToPath: Record<string, string>,
+  allPages?: PageInput[],
+  layouts?: LayoutInput[]
 ): Record<string, Feature[]> => {
   const features: Record<string, Feature[]> = {};
 
@@ -74,7 +135,7 @@ export const convertInferredFeaturesToFeatures = (
     if (!pagePath) return;
 
     features[pageId] = pageFeatures.map((inferredFeature) =>
-      linkFeatureToUtilityFiles(inferredFeature, structure, pagePath)
+      linkFeatureToUtilityFiles(inferredFeature, structure, pagePath, allPages, layouts)
     );
   });
 

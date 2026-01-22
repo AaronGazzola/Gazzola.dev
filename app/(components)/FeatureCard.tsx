@@ -201,6 +201,7 @@ export const InlineFeatureCard = ({
   }, [isCollapsed]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       (e.target as HTMLInputElement).blur();
@@ -382,6 +383,7 @@ export const InlineFeatureCard = ({
             onChange={(e) =>
               updateFeature(fileId, feature.id, { description: e.target.value })
             }
+            onKeyDown={(e) => e.stopPropagation()}
             className="text-xs theme-shadow min-h-[40px] resize-none theme-mb-2"
             placeholder="Feature description"
             rows={2}
@@ -524,6 +526,7 @@ export const FeatureCard = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
     if (e.key === "Enter" && !e.shiftKey && canSave) {
       e.preventDefault();
       handleSave();

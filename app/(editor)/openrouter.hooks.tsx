@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { OpenRouterRequest, OpenRouterResponse } from "@/lib/openrouter.types";
 import { getDeviceFingerprint } from "@/lib/fingerprint.utils";
 import { CodeGenerationInput, CodeGenerationError } from "./openrouter.types";
+import { useEditorStore } from "./layout.stores";
 
 export const useCodeGeneration = (
   onSuccess?: (data: OpenRouterResponse) => void
@@ -28,7 +29,7 @@ export const useCodeGeneration = (
             ...input,
             fingerprint,
           } as OpenRouterRequest),
-          signal: AbortSignal.timeout(58000),
+          signal: AbortSignal.timeout(95000),
         });
       } catch (error) {
         if (error instanceof Error && error.name === "TimeoutError") {
@@ -46,6 +47,15 @@ export const useCodeGeneration = (
         };
       }
 
+      if (response.status === 402) {
+        const data = await response.json();
+        throw {
+          message:
+            data.error || "Service temporarily unavailable due to high demand",
+          isInsufficientCredits: true,
+        };
+      }
+
       if (!response.ok) {
         const data = await response.json();
         throw { message: data.error || "Code generation failed" };
@@ -58,6 +68,12 @@ export const useCodeGeneration = (
       onSuccess?.(data);
     },
     onError: (error: CodeGenerationError) => {
+      if (error.isInsufficientCredits) {
+        const { setCreditDepletionDialogOpen } = useEditorStore.getState();
+        setCreditDepletionDialogOpen(true);
+        return;
+      }
+
       toast.error(error.message, {
         duration: error.retryAfter ? error.retryAfter * 1000 : 5000,
       });
