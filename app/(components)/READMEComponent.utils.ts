@@ -18,20 +18,31 @@ export const generatePagesPrompt = (
 
   if (authMethods.emailPassword) {
     authPagesNeeded.push(
-      "- Sign Up page (/sign-up) - Anon access - Where new users create an account with email and password"
-    );
-    authPagesNeeded.push(
-      "- Sign In page (/sign-in) - Anon access - Where existing users sign in with email and password"
-    );
-    authPagesNeeded.push(
       "- Forgot Password page (/forgot-password) - Anon access - Where users request a password reset link"
     );
     authPagesNeeded.push(
       "- Reset Password page (/reset-password) - Anon access - Where users set a new password after clicking the reset link"
     );
-  } else if (authMethods.magicLink) {
+  }
+  if (authMethods.emailPassword && !authMethods.magicLink) {
+    authPagesNeeded.push(
+      "- Sign Up page (/sign-up) - Anon access - Where new users create an account with email and password"
+    );
+    authPagesNeeded.push(
+      "- Sign In page (/sign-in) - Anon access - Where existing users sign in with email and password"
+    );
+  }
+  if (authMethods.magicLink && !authMethods.emailPassword) {
     authPagesNeeded.push(
       "- Sign in page (/sign-in) - Anon access - Where users enter their email to receive a magic link for passwordless sign-in"
+    );
+  }
+  if (authMethods.magicLink && authMethods.emailPassword) {
+    authPagesNeeded.push(
+      "- Sign in page (/sign-in) - Anon access - Users can select between email only sign in to receive a magic link for passwordless sign-in, or email and password sign in"
+    );
+    authPagesNeeded.push(
+      "- Sign Up page (/sign-up) - Anon access - Users can select between creating an account with email only via magic link sign up, or email and password sign up"
     );
   }
   if (authMethods.emailPassword || authMethods.magicLink) {

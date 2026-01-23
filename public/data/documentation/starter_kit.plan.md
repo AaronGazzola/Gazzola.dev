@@ -155,9 +155,7 @@ npm install @supabase/supabase-js @supabase/ssr
 
 ### Step 2.8: Database Seeding
 
-Ask the user if they want to populate the database with test users and data for development and testing.
-
-If yes, ask for the admin user email address (must be a valid email address that they have access to for verification). Then complete the following steps:
+Ask the user for an email address that will be used to seed the admin user, this should be a valid email address that the user has access to so they can verify their account if required. If not email is provided then fallback to a generic placeholder admin email address.
 
 1. Install tsx: `npm install -D tsx`
 2. Copy and rename the template seed files into their corresponding locations:
