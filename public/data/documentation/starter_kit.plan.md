@@ -290,11 +290,11 @@ IMPORTANT: Display this exact message at the end of the process:
 > Follow the steps below to test it out!
 >
 > 1. Open terminal in VS Code (`Ctrl+` or `Cmd+`)
-> 2. Type: `npm run dev` and hit `Enter`
+> 2. Type `npm run dev` into the terminal and hit the `Enter` key
 > 3. Type `http://localhost:3000` into your browser's URL bar
-> 4. Explore your app, and try signing in - if you seeded your database then you can sign in with the email you provided and the password: `Password123!`
+> 4. Explore your app! You can sign in with the admin email you provided and the password: `Password123!`
 >
-> Keep in mind that there will likely be many bugs and some missing features. You can now chat with me to shape your app towards your vision.
+> Keep in mind that this is a first version - there will likely be bugs and some missing features. You can now chat with me to shape your app towards your vision.
 >
 > You can ask me to:
 >
