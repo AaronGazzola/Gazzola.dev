@@ -7,6 +7,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactNode, useEffect } from "react";
 import { Toaster } from "sonner";
 import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { useThemeStore } from "@/app/layout.stores";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     useEditorStore.persist.rehydrate();
+    useThemeStore.persist.rehydrate();
   }, []);
 
   return (
