@@ -48,35 +48,3 @@ Name: Content moderation
 Route: /admin
 Description: Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.
 Access: admin
-
-
-Features:
-
-
-
-
-Database tables:
-
-Table 1:
-Name: users
-Description: Stores user account information including email, username (subdomain), join date, account status (active/banned), and role (user/admin). Contains sticker customization settings for both beep and buzz styles including selected icons, colors, and background shapes. Used for authentication, profile management, and applying user's signature sticker styles across the platform.
-
-Table 2:
-Name: pages
-Description: Contains user-created page content including page title, category, subdomain/username reference, creation date, last modified date, visibility status, and view count. Stores the overall page configuration and metadata needed for discovery, search, filtering, and displaying page cards in the homepage feed.
-
-Table 3:
-Name: page_elements
-Description: Stores individual content elements placed on pages including element type (text/shape/divider/youtube_embed), content data, position coordinates (x, y), dimensions (width, height), z-index for layering, styling properties, and creation order. Links to parent page and enforces limits (20 elements max, 3 YouTube embeds per page).
-
-Table 4:
-Name: stickers
-Description: Records all beep and buzz stickers placed on pages including sticker type (beep/buzz), placer user reference, target page reference, coordinates on page, placement timestamp, and visibility status. Each sticker serves as both decoration and navigation link. Used for interaction tracking, sticker count analytics, and enabling click-to-navigate functionality.
-
-Table 5:
-Name: reports
-Description: Tracks user-submitted content reports including reporter user reference, reported page reference, report reason/category, additional notes, submission timestamp, and resolution status (pending/dismissed/actioned). Enables moderation queue, auto-hiding pages at 3+ reports threshold, and maintaining platform safety through community reporting.
-
-Table 6:
-Name: moderation_logs
-Description: Records all administrative moderation actions including moderator user reference, affected page or user reference, action type (approve/remove/warn/ban), timestamp, and moderator notes. Maintains complete audit trail of content moderation decisions, user warnings, bans, and page removals for accountability and review purposes.
