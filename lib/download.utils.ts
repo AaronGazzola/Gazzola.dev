@@ -1206,7 +1206,8 @@ export const processContent = (
   appStructure: FileSystemEntry[],
   getPlaceholderValue: (key: string) => string | null,
   getInitialConfiguration: () => InitialConfigurationType,
-  previewMode: boolean = false
+  previewMode: boolean = false,
+  markdownData?: MarkdownData
 ): string => {
   let processedContent = content;
 
@@ -1313,6 +1314,12 @@ export const processContent = (
       if (previewMode) {
         if (componentId === "READMEComponent") {
           hasREADMEComponent = true;
+          if (markdownData) {
+            const readmeNode = markdownData.flatIndex["readme"];
+            if (readmeNode && readmeNode.type === "file" && readmeNode.content) {
+              return readmeNode.content;
+            }
+          }
           return "";
         }
         if (componentId === "DatabaseConfiguration") {
@@ -1688,7 +1695,8 @@ const processNode = (
         getSectionOptions,
         appStructure,
         getPlaceholderValue,
-        getInitialConfiguration
+        getInitialConfiguration,
+        false
       );
 
       cleanContent = processedContent
@@ -1818,7 +1826,8 @@ export const generateAndDownloadZip = async (
           appStructure,
           getPlaceholderValue,
           getInitialConfiguration,
-          true
+          true,
+          markdownData
         );
         initialConfigurationFolder.file(file.name, processedContent);
       }

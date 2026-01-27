@@ -6,7 +6,6 @@ Description: quiz.win combines quiz content management with narrative-driven gam
 STEP 2: LAYOUTS AND PAGES
 Layouts
 Main Layout: Header with logo, navigation (Dashboard, Library, Adventures, Community), auth menu. Footer with links.
-Story Layout: Minimal header with progress bar, health, pause menu. Full-screen story with genre-specific styling. Quiz modals overlay story.
 Admin Layout: Moderation navigation header. Sidebar with content queues and analytics.
 
 Pages
@@ -14,76 +13,36 @@ Homepage /
 Landing with dual CTAs: "Build Quiz Library" and "Start Adventure." Showcases featured characters, popular quiz sets, recent completions. Quick access to active content for authenticated users.
 Access: All
 
-Dashboard /dashboard
-Split view: Quiz Library Overview (sets, performance, activity) and Adventures Overview (active/completed characters, share status). Activity feed shows community engagement and recommendations.
-Access: auth, admin
-
-Quiz Library /library
+Quiz Library /quizzes
 Sidebar with content sets (personal/imported indicators). Main view shows selected set with questions, stats, management tools. Actions: Take Quiz, Edit, Analytics, Share Toggle, Delete. Buttons for "Create New" and "Browse Community."
 Access: auth, admin
 
-Content Set Detail /library/[contentSetId]
-Header with name, description, creator, share toggle. Performance dashboard with accuracy, score trends, difficult questions. Question list with stats. If imported, shows source and community rating. Public sets display votes and comments.
-Access: auth, admin (public: all)
-
-Content Creation - Upload /library/create/upload
-Drag-drop for PDF/DOCX/TXT/MD. AI processing generates questions. Review/edit interface. Set name, description, tags, sharing (Private/Public/Unlisted).
+Character Dashboard /characters
+Character management dashboard showing all created adventure characters, their stats, achievements, and available quests. Users can customize appearance and share characters.
 Access: auth, admin
 
-Content Creation - AI Generate /library/create/generate
-Input topic or URL. Configure count, difficulty, question types. AI generates with citations. Review/edit, set sharing.
-Access: auth, admin
-
-Content Creation - Manual /library/create/manual
-Form for question text, answers, explanations. Bulk CSV/JSON import. Preview, organize, set sharing.
-Access: auth, admin
-
-Browse Community Quiz Sets /community/quiz-sets
-Filter by topic, difficulty, rating. Sort by Popular/Newest/Most Imported/Trending. Cards show title, creator, stats, upvotes. Preview with sample questions. Import button.
-Access: All
-
-Take Quiz /quiz/[contentSetId]
-Clean interface with question counter, timer, navigation. Immediate or end feedback. Results with score, breakdown, explanations. Performance saved. Attribution for imported content.
-Access: auth, admin
-
-Quiz Analytics /library/[contentSetId]/analytics
-Overview: attempts, average, trends. Score graphs, difficulty heatmaps. Category breakdowns. Community comparison for imported content. Export data. Character usage stats.
-Access: auth, admin
-
-Character Creation /adventure/create
+Character Creation /characters/create
 Step 1: Genre (Cyberpunk/Fantasy). Step 2: Class (Wizard/Brute/Assassin). Step 3: Name, visual customization. Select quiz source. Share settings (Private/Public/Share When Complete). Preview updates in real-time.
+Access: auth, admin
+
+Character Profile /characters/[characterId]
+Hero portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share. Creator link. Edit options if owned.
+Access: All (privacy-respecting)
+
+Content Creation /quizzes/create
+Quiz creation workflow with options to add quizes: upload (PDF/DOCX/MD/TXT) by button or by drag and drop, or generate with AI, or create from scratch. Quizes are populated into a quiz creation UX that the user can edit. There is the option to share the quiz, which is submitted to admin for approval 
 Access: auth, admin
 
 Story Adventure /adventure/[characterId]
 Main viewport for story text. Sidebar with portrait and stats. AI narrative with genre-appropriate atmosphere. Quiz modals with content attribution. Answer triggers consequences and story beats. Progress bar, pause menu with stats/history/share options.
 Access: auth, admin (shared: all)
 
-My Adventures /adventures
-Active characters with continue buttons, health, share status. Completed gallery with stats, community metrics. Filters by genre/class/status. Comparison tool. Share management.
-Access: auth, admin
-
-Character Profile /character/[characterId]
-Hero: portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share, import quiz, comments. Creator link. Edit options if owned.
-Access: All (privacy-respecting)
-
-Explore Characters /explore/characters
-Filter: genre, class, status, level. Sort: Upvotes/Level/Recent/Trending. Grid of character cards with portraits, stats, votes. Featured and Rising Stars sections. Discovery algorithm. Search by name/creator.
-Access: All
-
 Community Hub /community
 Tabs: Characters and Quiz Sets. Trending content, activity feed, community stats. Featured spotlight rotation. Links to full Explore pages.
 Access: All
 
-Leaderboard /leaderboard
-Tabs for character boards (Legendary/Genre/Class/Upvotes) and quiz creator boards (Upvotes/Imports/Quality). Time filters. Personal ranking highlighted. Links to profiles.
-Access: All
-
-User Profile /user/[username]
-Hero: username, avatar, bio. Stats: characters created, legendary count, quiz sets, imports, upvotes. Tabs: Characters (public, filtered/sorted) and Quiz Sets (public, filtered). Achievements. Activity timeline.
-Access: All
-
 Settings /settings
-Tabs: Profile (username, email, avatar, bio), Quiz Preferences (difficulty, feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions.
+Tabs: Profile (username, email, avatar, bio), Quiz Preferences (feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions.
 Access: auth, admin
 
 Sign In /sign-in
@@ -95,25 +54,5 @@ Step 1: Username, avatar, bio. Step 2: Tutorial on dual systems and sharing. Ste
 Access: auth, admin
 
 Content Moderation /admin
-Tabs: Overview, Flagged Characters, Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel.
-Access: admin
-
-Story Generation Review /admin/stories
-Feed of generated story beats with safety scores. Flagged content highlighted. Review with context. Pattern detection. Settings adjustment. Regeneration tools. Export for model feedback.
-Access: admin
-
-Quiz Content Moderation /admin/quiz-content
-Flagged questions/sets with reasons. Display with AI analysis. Context: user history, imports. Actions: Approve/Edit/Remove/Make Private/Warn. Verification badges. Appeal system.
-Access: admin
-
-Character Moderation /admin/characters
-Flagged characters with previews, flags, reporters. Detail view with profile, narrative, AI analysis. Actions: Approve/Rename/Edit/Make Private/Remove/Delete/Warn. Mass flag detection.
-Access: admin
-
-User Management /admin/users
-Search/filter users. Detail: all content, violation history, account health. Actions: Warn/Suspend/Ban/Remove Content/Reset/Restore. Bulk actions. Appeals. Export for compliance.
-Access: admin
-
-Analytics Dashboard /admin/analytics
-Panels: User Engagement (DAU/MAU, retention), Content Creation (sets, questions, characters, sharing), Adventure Progression (completion, difficulty), Community Health (votes, flags), Quiz Performance (topics, accuracy), Leaderboards (voting patterns), System Performance (costs, errors). Export capabilities.
+Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel.
 Access: admin

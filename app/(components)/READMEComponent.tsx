@@ -40,12 +40,13 @@ import {
   Stage,
 } from "./READMEComponent.types";
 import {
-  generateFinalReadmePrompt,
   generatePagesPrompt,
   parsePagesFromResponse,
 } from "./READMEComponent.utils";
 import { LayoutAccordionItem } from "./READMEComponent/LayoutAccordionItem";
 import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
+import { useReadmeGeneration } from "./READMEComponent.generation-handlers";
+import { buildReadmePlanPrompt } from "./READMEComponent.prompts";
 
 const MIN_TITLE_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 50;
@@ -102,6 +103,8 @@ export const READMEComponent = () => {
   const [helpPopoverWasOpened, setHelpPopoverWasOpened] = useState(false);
   const [starterKitPopoverOpen, setStarterKitPopoverOpen] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
+  const [readmePlan, setReadmePlan] = useState<string | null>(null);
+  const phase1ToastIdRef = useRef<string | number | undefined>();
 
   useEffect(() => {
     const accordionMap: Record<Stage, string> = {
@@ -184,27 +187,23 @@ export const READMEComponent = () => {
     [stage]
   );
 
-  const { mutate: generateReadme, isPending: isGeneratingReadme } =
-    useCodeGeneration((response) => {
-      console.log(
-        "README GENERATION OUTPUT:",
-        JSON.stringify(
-          {
-            responseContent: response.content,
-            fullContent: `<!-- component-READMEComponent -->\n\n${response.content}`,
-          },
-          null,
-          2
-        )
-      );
-
-      setContent(
-        "readme",
-        `<!-- component-READMEComponent -->\n\n${response.content}`
-      );
-      setReadmeGenerated(true);
-      forceRefresh();
-    });
+  const {
+    generatePlan,
+    isGeneratingPlan,
+    isGeneratingReadme
+  } = useReadmeGeneration(
+    title,
+    description,
+    layouts,
+    pages,
+    authMethods,
+    pageAccess,
+    setReadmePlan,
+    setContent,
+    setReadmeGenerated,
+    forceRefresh,
+    phase1ToastIdRef
+  );
 
   const { mutate: generatePages, isPending: isGeneratingPages } =
     useCodeGeneration((response) => {
@@ -266,8 +265,29 @@ export const READMEComponent = () => {
   ]);
 
   const handleSubmitPages = useCallback(() => {
+    if (layouts.length === 0 && pages.length === 0) {
+      toast.error("No layouts or pages found. Please add pages first.");
+      return;
+    }
+
+    console.log("========================================");
+    console.log("README GENERATION - PHASE 1: PLAN GENERATION");
+    console.log("========================================");
+    console.log("INPUT DATA:");
+    console.log("Title:", title);
+    console.log("Description:", description);
+    console.log("Layouts:", JSON.stringify(layouts, null, 2));
+    console.log("Pages:", JSON.stringify(pages, null, 2));
+    console.log("Auth Methods:", JSON.stringify(authMethods, null, 2));
+    console.log("Page Access:", JSON.stringify(pageAccess, null, 2));
+    console.log("========================================");
+
     setLastGeneratedForReadme(JSON.stringify({ layouts, pages }));
-    const prompt = generateFinalReadmePrompt(
+    phase1ToastIdRef.current = toast.loading("Generating README plan...", {
+      description: `Analyzing ${layouts.length} layouts and ${pages.length} pages`
+    });
+
+    const prompt = buildReadmePlanPrompt(
       title,
       description,
       layouts,
@@ -276,26 +296,11 @@ export const READMEComponent = () => {
       pageAccess
     );
 
-    console.log(
-      "README GENERATION INPUT:",
-      JSON.stringify(
-        {
-          prompt,
-          inputData: {
-            title,
-            description,
-            layouts,
-            pages,
-            authMethods,
-            pageAccess,
-          },
-        },
-        null,
-        2
-      )
-    );
+    console.log("AI INPUT (Prompt):");
+    console.log(prompt);
+    console.log("========================================");
 
-    generateReadme({ prompt, maxTokens: 3000 });
+    generatePlan({ prompt, maxTokens: 3000 });
   }, [
     title,
     description,
@@ -303,7 +308,7 @@ export const READMEComponent = () => {
     pages,
     authMethods,
     pageAccess,
-    generateReadme,
+    generatePlan,
     setLastGeneratedForReadme,
   ]);
 
@@ -426,7 +431,7 @@ export const READMEComponent = () => {
     );
   }
 
-  const isPending = isGeneratingReadme || isGeneratingPages;
+  const isPending = isGeneratingPlan || isGeneratingReadme || isGeneratingPages;
   const isTitleValid = title.trim().length >= MIN_TITLE_LENGTH;
   const isDescriptionValid =
     description.trim().length >= MIN_DESCRIPTION_LENGTH;
@@ -447,7 +452,7 @@ export const READMEComponent = () => {
       (p) =>
         p.name.trim().length >= MIN_PAGE_NAME_LENGTH &&
         p.description.trim().length >= MIN_PAGE_DESCRIPTION_LENGTH &&
-        (!p.route.trim() || /^\/[a-z0-9\-/\[\]]*$/.test(p.route))
+        (!p.route.trim() || /^\/[a-zA-Z0-9\-/\[\]]*$/.test(p.route))
     );
 
   const canSubmitAuth = true;
@@ -865,7 +870,7 @@ export const READMEComponent = () => {
                     }
                     className="flex-1 theme-gap-2"
                   >
-                    {isGeneratingReadme ? (
+                    {(isGeneratingPlan || isGeneratingReadme) ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
                         Regenerating...
@@ -895,7 +900,7 @@ export const READMEComponent = () => {
                   disabled={isPending || !canSubmitPages}
                   className="w-full theme-gap-2"
                 >
-                  {isGeneratingReadme ? (
+                  {(isGeneratingPlan || isGeneratingReadme) ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Generating README...

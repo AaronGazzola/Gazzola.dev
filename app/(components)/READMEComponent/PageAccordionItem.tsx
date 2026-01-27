@@ -48,7 +48,7 @@ export const PageAccordionItem = ({
 }: PageAccordionItemProps) => {
   const validateRoute = (route: string): boolean => {
     if (!route.trim()) return true;
-    return /^\/[a-z0-9\-/\[\]]*$/.test(route);
+    return /^\/[a-zA-Z0-9\-/\[\]]*$/.test(route);
   };
 
   const isRouteValid = validateRoute(page.route);
@@ -130,8 +130,8 @@ export const PageAccordionItem = ({
             />
             {!isRouteValid && (
               <p className="text-xs theme-text-destructive">
-                Route must start with / and use lowercase letters, numbers,
-                hyphens, or brackets
+                Route must start with / and use letters, numbers, hyphens, or
+                brackets
               </p>
             )}
           </div>
