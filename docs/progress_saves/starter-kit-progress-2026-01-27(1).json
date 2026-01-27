@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "timestamp": "2026-01-22T13:45:11.069Z",
+  "timestamp": "2026-01-27T12:24:16.569Z",
   "editorState": {
     "data": {
       "root": {
@@ -908,7 +908,7 @@
           "order": 1,
           "path": "readme",
           "urlPath": "/readme",
-          "content": "<!-- component-READMEComponent -->\n\n# Beep.Buzz\n\n## Overview\n\nBeep.Buzz is a playful and creative social media platform that gives users their own personalized corner of the internet at username.beep.buzz. Think of it as your own digital canvas where you can express yourself through text, shapes, patterns, illustrations, and YouTube videos, all arranged exactly how you want them.\n\nWhat makes Beep.Buzz unique is its interactive sticker system. When visitors explore your page, they can leave custom \"beep\" and \"buzz\" stickers – each one serving as a friendly hello and a link back to their own page. Every user designs their own signature beep and buzz stickers, which automatically update everywhere they've been placed when modified.\n\nThe platform prioritizes safety and creativity, using AI analysis to ensure all content and stickers remain appropriate. Users can flag concerning content for admin review, maintaining a welcoming environment for everyone.\n\n## Layouts\n\n### Main Layout\nThe primary layout features a clean, intuitive design with the Beep.Buzz logo and authentication controls in the header. A minimal footer contains essential links and information. This layout is used across most pages including the Home page, Sign In, Welcome Setup, User Pages, and Page Editor, providing a consistent and familiar experience.\n\n### Admin Layout\nReserved for administrative functions, this layout includes specialized moderation tools in the header and a practical sidebar containing the content flagging queue, user management tools, and sticker approval interface. This layout is exclusively used for the Admin Dashboard, streamlining moderation workflows.\n\n## Pages\n\n### Home (/) (Anon, Auth, Admin)\nThe discovery hub of Beep.Buzz where everyone can explore the community's creativity. Users can search pages by title or username, browse featured sections like Popular Pages and Recently Active, or discover random pages through category filters. Each page is presented as a card showing its title, creator, preview, sticker counts, and category. New visitors are greeted with an inviting \"Create Your Page\" call-to-action.\n\n### Sign In (/sign-in) (Anon)\nA streamlined authentication page featuring playful Beep.Buzz branding and animated stickers. Users simply enter their email address to receive a magic link for secure, passwordless access to their account.\n\n### Welcome Setup (/welcome) (Auth, Admin)\nThe first-time setup experience for new users after authentication. Here, users choose their unique username (3-20 URL-friendly characters) and design their personal beep and buzz stickers by selecting icons, colors, and shapes. Once complete, users can immediately start exploring and interacting with other pages.\n\n### User Page (/[username]) (Anon, Auth, Admin)\nEvery user's personal space at username.beep.buzz. Pages feature a static header showing the title, username, and creator's signature stickers. A sticky navigation bar lets visitors toggle sticker visibility and add their own beeps and buzzes. The main content area displays the creator's customized elements with visitor stickers layered naturally throughout. Clicking any sticker reveals its creator and links to their page.\n\n### Page Editor (/edit) (Auth, Admin)\nA powerful yet intuitive builder interface where users create and customize their pages. Add text blocks, shapes, dividers, and YouTube embeds with simple drag-and-drop functionality. All elements can be freely positioned, resized, and styled. Includes responsive preview modes for desktop, tablet, and mobile views.\n\n### Admin Dashboard (/admin) (Admin)\nThe central hub for platform moderation, where admins review flagged content, manage user reports, and approve new sticker designs. Features AI analysis results and comprehensive moderation tools. Admins can approve content, remove violations, issue warnings, or ban users when necessary. All actions are logged for accountability.\n\n### Settings (/settings) (Auth, Admin)\nPersonal account and sticker management center. Users can modify their beep and buzz icons, customize colors and shapes, and view activity analytics. Changes to stickers update automatically across all pages where they've been placed. Includes a detailed overview of sticker placement history with easy navigation and management options.\n\n## Authentication & Access Control\n\nBeep.Buzz uses a secure, passwordless authentication system through magic links. When signing in, users enter their email address and receive a temporary access link, eliminating the need to remember passwords while maintaining security.\n\n### Access Levels\n\n**Anonymous Access** (no authentication required):\n- Home (/)\n- Sign In (/sign-in)\n- User Page (/[username])\n\n**Authenticated Users**:\n- Welcome Setup (/welcome)\n- Page Editor (/edit)\n- Settings (/settings)\n\n**Admin Only**:\n- Admin Dashboard (/admin)\n- All authenticated user pages\n- All anonymous pages\n\n## User Experience\n\nNew visitors typically discover Beep.Buzz through shared user pages or the home page discovery features. They can immediately explore pages and view stickers, but creating their own page requires a quick sign-up through email authentication. After confirming their email, new users complete the Welcome Setup to choose their username and design their signature stickers.\n\nOnce set up, users can create their page in the Page Editor, explore other pages, and interact by placing their custom stickers. The experience emphasizes creativity and connection, with each sticker serving as a breadcrumb trail of friendly interactions across the platform.\n\n## Getting Started\n\n1. Visit beep.buzz to explore pages and get inspired\n2. Click \"Create Your Page\" and enter your email for a magic link\n3. Check your email and click the magic link to access your account\n4. Complete the Welcome Setup to choose your username and design your stickers\n5. Start creating your page or explore and interact with others by placing stickers\n\nYour personal page will be available at username.beep.buzz as soon as you complete setup!",
+          "content": "<!-- component-READMEComponent -->\n\n# Beep.Buzz\n\n## Overview\n\nBeep.Buzz is a playful and creative social media platform where users can express themselves through personalized, interactive web pages. Each user gets their own custom subdomain (username.beep.buzz) where they can create a unique vertical canvas filled with text, shapes, patterns, illustrations, and YouTube videos.\n\nWhat makes Beep.Buzz special is its unique interaction model - visitors can place decorative \"beep\" and \"buzz\" stickers on each other's pages. These stickers serve as colorful breadcrumbs, linking back to the visitor's own page and creating an interconnected web of creative expression. Users design their own custom stickers, which automatically update across all pages where they've been placed.\n\nTo ensure a safe and welcoming environment, all content is analyzed by AI before publishing, and users can flag inappropriate content for admin review. The platform combines creative freedom with strong community standards to create a unique social space for digital self-expression.\n\n## Layouts\n\n### Main Layout\nThe primary layout provides a consistent, clean interface across most of the platform. It features a header with the Beep.Buzz logo and an authentication avatar button/menu for quick access to profile settings and sign out options. A minimal footer contains essential links. This layout is used for the Home, Sign In, Welcome Setup, User Page, and Page Editor pages, providing familiar navigation while letting page content take center stage.\n\n### Admin Layout\nDesigned for content moderation and platform management, the Admin layout includes the standard header elements plus a specialized sidebar. The sidebar provides quick access to the content flagging queue, user management tools, and sticker approval system. This layout is exclusively used for the Content Moderation page, helping admins efficiently manage platform safety and community standards.\n\n## Pages\n\n### Home (/) (Anon, Auth, Admin)\nThe discovery hub of Beep.Buzz showcases the community's creativity through various browsing options. Users can search by title or username, explore featured sections like Popular Pages and Recently Active, or discover random pages. Each page preview card displays the title, username, visual preview, sticker counts, and category. New users are encouraged to join with a prominent \"Create Your Page\" call-to-action.\n\n### Sign In (/sign-in) (Anon)\nA streamlined authentication page featuring playful Beep.Buzz branding and animated stickers. Users simply enter their email address to receive a magic link for secure, passwordless access to their account.\n\n### Welcome Setup (/welcome) (Auth, Admin)\nFirst-time users begin their journey here after authentication. Choose a unique username (3-20 URL-friendly characters) and design personal beep and buzz stickers by selecting icons, colors, and shapes. After this quick setup, users can immediately start exploring and interacting with the community.\n\n### User Page (/[username]) (Anon, Auth, Admin)\nEach user's creative canvas, accessible at their custom subdomain. Features a static header with page title and creator information, plus a sticky navigation bar with sticker visibility controls. Visitors can view the creator's content and placed stickers, with each sticker revealing its creator and linking to their page.\n\n### Page Editor (/editor) (Auth, Admin)\nA powerful but intuitive builder interface for creating personal pages. Add and customize text blocks, shapes, dividers, and YouTube embeds with drag-and-drop simplicity. Preview your page across desktop, tablet, and mobile views to ensure it looks great everywhere.\n\n### Content Moderation (/admin) (Admin)\nAdministrative dashboard for maintaining community standards. Review flagged content, manage user reports, and approve new sticker designs. Includes AI analysis results and a complete audit log of moderation actions.\n\n### Settings (/settings) (Auth, Admin)\nManage your Beep.Buzz identity by customizing sticker designs and reviewing activity. Changes to your stickers automatically update across all pages where they've been placed. View analytics about your sticker interactions and manage your placed stickers.\n\n## Authentication & Access Control\n\nBeep.Buzz uses a simple, secure magic link authentication system. When signing in, users enter their email address and receive a special link that automatically logs them in - no passwords needed. This approach provides strong security while keeping the experience simple and friendly.\n\n### Access Levels\n\n**Anonymous Access** (no authentication required):\n- Home (/)\n- Sign In (/sign-in)\n- User Page (/[username])\n\n**Authenticated Users**:\n- Welcome Setup (/welcome)\n- Page Editor (/editor)\n- Settings (/settings)\n\n**Admin Only**:\n- Content Moderation (/admin)\n\n## User Experience\n\nNew visitors typically discover Beep.Buzz through shared user pages, where they can explore content and see how others interact through stickers. Creating an account is as simple as entering an email address and clicking a magic link. After setting up their username and custom stickers in the Welcome flow, users can immediately start creating their own page or placing stickers on others' pages.\n\nRegular users often start their sessions by checking who has placed new stickers on their page, then exploring those users' pages in return. The Page Editor makes it easy to keep content fresh, while the Settings page helps users track their community interactions.\n\n## Getting Started\n\n1. Visit any username.beep.buzz page to explore what others have created\n2. Click \"Create Your Page\" to start your journey\n3. Enter your email and click the magic link when it arrives\n4. Choose your username and design your personal stickers\n5. Start creating your page or explore the community!\n\nYour stickers are your identity on Beep.Buzz - use them to show appreciation for others' creativity and invite them to visit your page in return.",
           "components": [
             {
               "id": "component-READMEComponent",
@@ -1534,7 +1534,7 @@
       "contentVersion": 1
     },
     "previewMode": false,
-    "darkMode": true,
+    "darkMode": false,
     "appStructureGenerated": true,
     "readmeGenerated": true,
     "databaseGenerated": true,
@@ -1545,37 +1545,52 @@
         "type": "directory",
         "children": [
           {
-            "id": "main-layout",
+            "id": "layout-tsx",
             "name": "layout.tsx",
             "type": "file"
           },
           {
-            "id": "main-layout-hooks",
+            "id": "layout-hooks",
             "name": "layout.hooks.tsx",
             "type": "file"
           },
           {
-            "id": "main-layout-actions",
+            "id": "layout-actions",
             "name": "layout.actions.ts",
             "type": "file"
           },
           {
-            "id": "home-page",
+            "id": "layout-stores",
+            "name": "layout.stores.ts",
+            "type": "file"
+          },
+          {
+            "id": "layout-types",
+            "name": "layout.types.ts",
+            "type": "file"
+          },
+          {
+            "id": "page-tsx",
             "name": "page.tsx",
             "type": "file"
           },
           {
-            "id": "home-hooks",
+            "id": "page-hooks",
             "name": "page.hooks.tsx",
             "type": "file"
           },
           {
-            "id": "home-actions",
+            "id": "page-actions",
             "name": "page.actions.ts",
             "type": "file"
           },
           {
-            "id": "home-types",
+            "id": "page-stores",
+            "name": "page.stores.ts",
+            "type": "file"
+          },
+          {
+            "id": "page-types",
             "name": "page.types.ts",
             "type": "file"
           },
@@ -1585,22 +1600,22 @@
             "type": "directory",
             "children": [
               {
-                "id": "signin-page",
+                "id": "sign-in-page",
                 "name": "page.tsx",
                 "type": "file"
               },
               {
-                "id": "signin-hooks",
+                "id": "sign-in-hooks",
                 "name": "page.hooks.tsx",
                 "type": "file"
               },
               {
-                "id": "signin-actions",
+                "id": "sign-in-actions",
                 "name": "page.actions.ts",
                 "type": "file"
               },
               {
-                "id": "signin-types",
+                "id": "page-types-ts-1769505221434",
                 "name": "page.types.ts",
                 "type": "file"
               }
@@ -1627,12 +1642,7 @@
                 "type": "file"
               },
               {
-                "id": "welcome-stores",
-                "name": "page.stores.ts",
-                "type": "file"
-              },
-              {
-                "id": "welcome-types",
+                "id": "page-types-ts-1769505221434",
                 "name": "page.types.ts",
                 "type": "file"
               }
@@ -1659,44 +1669,39 @@
                 "type": "file"
               },
               {
-                "id": "username-stores",
-                "name": "page.stores.ts",
-                "type": "file"
-              },
-              {
-                "id": "username-types",
+                "id": "page-types-ts-1769505221435",
                 "name": "page.types.ts",
                 "type": "file"
               }
             ]
           },
           {
-            "id": "edit-dir",
-            "name": "edit",
+            "id": "editor-dir",
+            "name": "editor",
             "type": "directory",
             "children": [
               {
-                "id": "edit-page",
+                "id": "editor-page",
                 "name": "page.tsx",
                 "type": "file"
               },
               {
-                "id": "edit-hooks",
+                "id": "editor-hooks",
                 "name": "page.hooks.tsx",
                 "type": "file"
               },
               {
-                "id": "edit-actions",
+                "id": "editor-actions",
                 "name": "page.actions.ts",
                 "type": "file"
               },
               {
-                "id": "edit-stores",
+                "id": "editor-stores",
                 "name": "page.stores.ts",
                 "type": "file"
               },
               {
-                "id": "edit-types",
+                "id": "page-types-ts-1769505221435",
                 "name": "page.types.ts",
                 "type": "file"
               }
@@ -1707,31 +1712,6 @@
             "name": "admin",
             "type": "directory",
             "children": [
-              {
-                "id": "admin-layout",
-                "name": "layout.tsx",
-                "type": "file"
-              },
-              {
-                "id": "admin-layout-hooks",
-                "name": "layout.hooks.tsx",
-                "type": "file"
-              },
-              {
-                "id": "admin-layout-actions",
-                "name": "layout.actions.ts",
-                "type": "file"
-              },
-              {
-                "id": "admin-layout-stores",
-                "name": "layout.stores.ts",
-                "type": "file"
-              },
-              {
-                "id": "admin-layout-types",
-                "name": "layout.types.ts",
-                "type": "file"
-              },
               {
                 "id": "admin-page",
                 "name": "page.tsx",
@@ -1753,7 +1733,7 @@
                 "type": "file"
               },
               {
-                "id": "admin-types",
+                "id": "page-types-ts-1769505221435",
                 "name": "page.types.ts",
                 "type": "file"
               }
@@ -1785,7 +1765,7 @@
                 "type": "file"
               },
               {
-                "id": "settings-types",
+                "id": "page-types-ts-1769505221435",
                 "name": "page.types.ts",
                 "type": "file"
               }
@@ -1795,62 +1775,142 @@
       }
     ],
     "features": {
-      "main-layout": [
+      "layout-tsx": [
         {
-          "id": "ktq07yve2",
-          "title": "Sign Out User",
-          "description": "Clear user session and redirect to home",
+          "id": "0rm99xumz",
+          "title": "Sign out user",
           "linkedFiles": {
             "hooks": "/app/layout.hooks.tsx",
-            "actions": "/app/layout.actions.ts"
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useSignOutUser",
-            "actions": "signOutUserAction"
+            "hooks": "useSignOut",
+            "actions": "signOutAction",
+            "stores": "useAuthStore",
+            "types": "SignOutResult"
           }
-        }
-      ],
-      "admin-layout": [
+        },
         {
-          "id": "7b5b1e1ul",
-          "title": "Fetch Moderation Queue",
-          "description": "Get content flagging queue and user reports",
+          "id": "tl8a5xrk4",
+          "title": "Sign out user",
           "linkedFiles": {
-            "hooks": "/app/admin/layout.hooks.tsx",
-            "actions": "/app/admin/layout.actions.ts",
-            "stores": "/app/admin/layout.stores.ts",
-            "types": "/app/admin/layout.types.ts"
+            "hooks": "/app/layout.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useModerationQueue",
-            "actions": "fetchModerationQueueAction",
-            "stores": "useModerationQueueStore",
-            "types": "ModerationQueueData"
+            "hooks": "useSignOut",
+            "actions": "signOutAction",
+            "stores": "useAuthStore",
+            "types": "SignOutResult"
+          }
+        },
+        {
+          "id": "4lk7jonkz",
+          "title": "Get user profile menu",
+          "linkedFiles": {
+            "hooks": "/app/layout.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useProfileMenu",
+            "actions": "getProfileMenuAction",
+            "stores": "useProfileStore",
+            "types": "ProfileMenu"
+          }
+        },
+        {
+          "id": "h40sgwjye",
+          "title": "Get user profile menu",
+          "linkedFiles": {
+            "hooks": "/app/layout.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useProfileMenu",
+            "actions": "getProfileMenuAction",
+            "stores": "useProfileStore",
+            "types": "ProfileMenu"
           }
         }
       ],
-      "home-page": [
+      "page-tsx": [
         {
-          "id": "m9s4imhjj",
-          "title": "Fetch Featured Sections",
-          "description": "Get popular, recent, and new pages",
+          "id": "302z4uspz",
+          "title": "Search pages",
           "linkedFiles": {
             "hooks": "/app/page.hooks.tsx",
             "actions": "/app/page.actions.ts",
+            "stores": "/app/page.stores.ts",
             "types": "/app/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useFeaturedSections",
-            "actions": "fetchFeaturedSectionsAction",
-            "types": "FeaturedSectionsData"
+            "hooks": "useSearch",
+            "actions": "searchPagesAction",
+            "stores": "useSearchStore",
+            "types": "SearchResult"
+          }
+        },
+        {
+          "id": "owlimx50c",
+          "title": "Filter by category",
+          "linkedFiles": {
+            "hooks": "/app/page.hooks.tsx",
+            "actions": "/app/page.actions.ts",
+            "stores": "/app/page.stores.ts",
+            "types": "/app/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useFilter",
+            "actions": "filterPagesAction",
+            "stores": "useFilterStore",
+            "types": "FilterOptions"
+          }
+        },
+        {
+          "id": "cu8zfy4dj",
+          "title": "Get random page",
+          "linkedFiles": {
+            "hooks": "/app/page.hooks.tsx",
+            "actions": "/app/page.actions.ts",
+            "stores": "/app/page.stores.ts",
+            "types": "/app/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useRandomPage",
+            "actions": "getRandomPageAction",
+            "stores": "useRandomPageStore",
+            "types": "RandomPageResult"
+          }
+        },
+        {
+          "id": "fyefsenoc",
+          "title": "Get featured pages",
+          "linkedFiles": {
+            "hooks": "/app/page.hooks.tsx",
+            "actions": "/app/page.actions.ts",
+            "stores": "/app/page.stores.ts",
+            "types": "/app/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useFeaturedPages",
+            "actions": "getFeaturedPagesAction",
+            "stores": "useFeaturedPagesStore",
+            "types": "FeaturedPages"
           }
         }
       ],
-      "signin-page": [
+      "sign-in-page": [
         {
-          "id": "9tdliq5k0",
-          "title": "Send Magic Link",
-          "description": "Send passwordless authentication email",
+          "id": "bnt98k8xx",
+          "title": "Send magic link email",
           "linkedFiles": {
             "hooks": "/app/sign-in/page.hooks.tsx",
             "actions": "/app/sign-in/page.actions.ts",
@@ -1859,121 +1919,230 @@
           "functionNames": {
             "hooks": "useMagicLink",
             "actions": "sendMagicLinkAction",
-            "types": "MagicLinkData"
+            "types": "MagicLinkResult"
           }
         }
       ],
       "welcome-page": [
         {
-          "id": "zlt7jbond",
-          "title": "Validate Username",
-          "description": "Check username availability and scan with AI",
+          "id": "nuy1els7u",
+          "title": "Create username",
           "linkedFiles": {
             "hooks": "/app/welcome/page.hooks.tsx",
             "actions": "/app/welcome/page.actions.ts",
-            "stores": "/app/welcome/page.stores.ts",
             "types": "/app/welcome/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useUsernameValidation",
-            "actions": "validateUsernameAction",
-            "stores": "useUsernameValidationStore",
-            "types": "UsernameValidationData"
+            "hooks": "useCreateUsername",
+            "actions": "createUsernameAction",
+            "types": "UsernameResult"
           }
         },
         {
-          "id": "uu1811772",
-          "title": "Customize Sticker Identity",
-          "description": "Select and customize personal beep and buzz icons",
+          "id": "a65kjzey0",
+          "title": "Customize beep icon",
           "linkedFiles": {
             "hooks": "/app/welcome/page.hooks.tsx",
             "actions": "/app/welcome/page.actions.ts",
-            "stores": "/app/welcome/page.stores.ts",
             "types": "/app/welcome/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useStickerIdentity",
-            "actions": "customizeStickerIdentityAction",
-            "stores": "useStickerIdentityStore",
-            "types": "StickerIdentityData"
+            "hooks": "useCustomizeBeepIcon",
+            "actions": "customizeBeepIconAction",
+            "types": "BeepIconConfig"
+          }
+        },
+        {
+          "id": "fxdrynza3",
+          "title": "Customize buzz icon",
+          "linkedFiles": {
+            "hooks": "/app/welcome/page.hooks.tsx",
+            "actions": "/app/welcome/page.actions.ts",
+            "types": "/app/welcome/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useCustomizeBuzzIcon",
+            "actions": "customizeBuzzIconAction",
+            "types": "BuzzIconConfig"
           }
         }
       ],
       "username-page": [
         {
-          "id": "3hzmiinsm",
-          "title": "Place Stickers",
-          "description": "Add beep or buzz stickers to page",
+          "id": "by7hol465",
+          "title": "Toggle sticker visibility",
           "linkedFiles": {
             "hooks": "/app/[username]/page.hooks.tsx",
             "actions": "/app/[username]/page.actions.ts",
-            "stores": "/app/[username]/page.stores.ts",
             "types": "/app/[username]/page.types.ts"
           },
           "functionNames": {
-            "hooks": "usePlaceStickers",
-            "actions": "placeStickersAction",
-            "stores": "usePlaceStickersStore",
-            "types": "PlaceStickersData"
+            "hooks": "useToggleStickers",
+            "actions": "toggleStickersAction",
+            "types": "StickerVisibility"
+          }
+        },
+        {
+          "id": "1byabz1db",
+          "title": "Add beep sticker",
+          "linkedFiles": {
+            "hooks": "/app/[username]/page.hooks.tsx",
+            "actions": "/app/[username]/page.actions.ts",
+            "types": "/app/[username]/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useAddBeepSticker",
+            "actions": "addBeepStickerAction",
+            "types": "BeepSticker"
+          }
+        },
+        {
+          "id": "fb64810uq",
+          "title": "Add buzz sticker",
+          "linkedFiles": {
+            "hooks": "/app/[username]/page.hooks.tsx",
+            "actions": "/app/[username]/page.actions.ts",
+            "types": "/app/[username]/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useAddBuzzSticker",
+            "actions": "addBuzzStickerAction",
+            "types": "BuzzSticker"
+          }
+        },
+        {
+          "id": "2ce1hnbc6",
+          "title": "Get sticker details",
+          "linkedFiles": {
+            "hooks": "/app/[username]/page.hooks.tsx",
+            "actions": "/app/[username]/page.actions.ts",
+            "types": "/app/[username]/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useStickerDetails",
+            "actions": "getStickerDetailsAction",
+            "types": "StickerDetails"
           }
         }
       ],
-      "edit-page": [
+      "editor-page": [
         {
-          "id": "8jwqmubmu",
-          "title": "Add Content Elements",
-          "description": "Add text, shapes, dividers, and embeds",
+          "id": "g5ljgmcuq",
+          "title": "Add text block",
           "linkedFiles": {
-            "hooks": "/app/edit/page.hooks.tsx",
-            "actions": "/app/edit/page.actions.ts",
-            "stores": "/app/edit/page.stores.ts",
-            "types": "/app/edit/page.types.ts"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useContentElements",
-            "actions": "addContentElementsAction",
-            "stores": "useContentElementsStore",
-            "types": "ContentElementsData"
+            "hooks": "useAddTextBlock",
+            "actions": "addTextBlockAction",
+            "stores": "useEditorStore",
+            "types": "TextBlockElement"
           }
         },
         {
-          "id": "zn8wvxn4u",
-          "title": "Manipulate Elements",
-          "description": "Drag, resize, align elements",
+          "id": "kjcxmemxd",
+          "title": "Add shape",
           "linkedFiles": {
-            "hooks": "/app/edit/page.hooks.tsx",
-            "actions": "/app/edit/page.actions.ts",
-            "stores": "/app/edit/page.stores.ts",
-            "types": "/app/edit/page.types.ts"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useElementManipulation",
-            "actions": "manipulateElementsAction",
-            "stores": "useElementManipulationStore",
-            "types": "ElementManipulationData"
+            "hooks": "useAddShape",
+            "actions": "addShapeAction",
+            "stores": "useEditorStore",
+            "types": "ShapeElement"
           }
         },
         {
-          "id": "zg26vfn3v",
-          "title": "Delete Elements",
-          "description": "Remove page elements",
+          "id": "8eyjrlop1",
+          "title": "Add divider",
           "linkedFiles": {
-            "hooks": "/app/edit/page.hooks.tsx",
-            "actions": "/app/edit/page.actions.ts",
-            "types": "/app/edit/page.types.ts"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useDeleteElements",
-            "actions": "deleteElementsAction",
-            "types": "DeleteElementsData"
+            "hooks": "useAddDivider",
+            "actions": "addDividerAction",
+            "stores": "useEditorStore",
+            "types": "DividerElement"
+          }
+        },
+        {
+          "id": "9e26iibea",
+          "title": "Add YouTube embed",
+          "linkedFiles": {
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useAddYouTube",
+            "actions": "addYouTubeAction",
+            "stores": "useEditorStore",
+            "types": "YouTubeElement"
+          }
+        },
+        {
+          "id": "vzw7oevav",
+          "title": "Edit element",
+          "linkedFiles": {
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useEditElement",
+            "actions": "editElementAction",
+            "stores": "useEditorStore",
+            "types": "ElementEdit"
+          }
+        },
+        {
+          "id": "k9nbtg0e8",
+          "title": "Delete element",
+          "linkedFiles": {
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useDeleteElement",
+            "actions": "deleteElementAction",
+            "stores": "useEditorStore",
+            "types": "DeleteResult"
+          }
+        },
+        {
+          "id": "296bmg5hd",
+          "title": "Toggle preview mode",
+          "linkedFiles": {
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "usePreviewMode",
+            "actions": "togglePreviewModeAction",
+            "stores": "usePreviewStore",
+            "types": "PreviewMode"
           }
         }
       ],
       "admin-page": [
         {
-          "id": "domjbso87",
-          "title": "Fetch and Filter Flagged Content",
-          "description": "Get flagged content with filtering",
+          "id": "4u0kxx85t",
+          "title": "Review flagged content",
           "linkedFiles": {
             "hooks": "/app/admin/page.hooks.tsx",
             "actions": "/app/admin/page.actions.ts",
@@ -1981,48 +2150,97 @@
             "types": "/app/admin/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useFlaggedContent",
-            "actions": "fetchFlaggedContentAction",
-            "stores": "useFlaggedContentStore",
-            "types": "FlaggedContentData"
+            "hooks": "useReviewContent",
+            "actions": "reviewContentAction",
+            "stores": "useModeratorStore",
+            "types": "FlaggedContent"
           }
         },
         {
-          "id": "am2m9uc1y",
-          "title": "Moderate Content",
-          "description": "Approve or remove flagged content",
+          "id": "xduofp9x6",
+          "title": "Approve sticker design",
           "linkedFiles": {
             "hooks": "/app/admin/page.hooks.tsx",
             "actions": "/app/admin/page.actions.ts",
+            "stores": "/app/admin/page.stores.ts",
             "types": "/app/admin/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useModerateContent",
-            "actions": "moderateContentAction",
-            "types": "ModerateContentData"
+            "hooks": "useApproveSticker",
+            "actions": "approveStickerAction",
+            "stores": "useModeratorStore",
+            "types": "StickerApproval"
           }
         },
         {
-          "id": "4bwf36wi4",
-          "title": "Manage Users",
-          "description": "Warn or ban users",
+          "id": "zsmh5nwnt",
+          "title": "Remove content",
           "linkedFiles": {
             "hooks": "/app/admin/page.hooks.tsx",
             "actions": "/app/admin/page.actions.ts",
+            "stores": "/app/admin/page.stores.ts",
             "types": "/app/admin/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useUserManagement",
-            "actions": "manageUsersAction",
-            "types": "UserManagementData"
+            "hooks": "useRemoveContent",
+            "actions": "removeContentAction",
+            "stores": "useModeratorStore",
+            "types": "ContentRemoval"
+          }
+        },
+        {
+          "id": "rueaodpfg",
+          "title": "Warn user",
+          "linkedFiles": {
+            "hooks": "/app/admin/page.hooks.tsx",
+            "actions": "/app/admin/page.actions.ts",
+            "stores": "/app/admin/page.stores.ts",
+            "types": "/app/admin/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useWarnUser",
+            "actions": "warnUserAction",
+            "stores": "useModeratorStore",
+            "types": "UserWarning"
+          }
+        },
+        {
+          "id": "3lsi0qds5",
+          "title": "Ban user",
+          "linkedFiles": {
+            "hooks": "/app/admin/page.hooks.tsx",
+            "actions": "/app/admin/page.actions.ts",
+            "stores": "/app/admin/page.stores.ts",
+            "types": "/app/admin/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useBanUser",
+            "actions": "banUserAction",
+            "stores": "useModeratorStore",
+            "types": "UserBan"
+          }
+        },
+        {
+          "id": "jt90ydwmd",
+          "title": "Get moderation log",
+          "linkedFiles": {
+            "hooks": "/app/admin/page.hooks.tsx",
+            "actions": "/app/admin/page.actions.ts",
+            "stores": "/app/admin/page.stores.ts",
+            "types": "/app/admin/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useModerationLog",
+            "actions": "getModerationLogAction",
+            "stores": "useModerationLogStore",
+            "types": "ModerationLog"
           }
         }
       ],
       "settings-page": [
         {
-          "id": "535nl68uw",
-          "title": "Update Sticker Identity",
-          "description": "Change and customize sticker appearance",
+          "id": "yiagk29gs",
+          "title": "Update beep icon",
           "linkedFiles": {
             "hooks": "/app/settings/page.hooks.tsx",
             "actions": "/app/settings/page.actions.ts",
@@ -2030,25 +2248,74 @@
             "types": "/app/settings/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useUpdateStickerIdentity",
-            "actions": "updateStickerIdentityAction",
-            "stores": "useStickerIdentityStore",
-            "types": "StickerIdentityData"
+            "hooks": "useUpdateBeepIcon",
+            "actions": "updateBeepIconAction",
+            "stores": "useSettingsStore",
+            "types": "BeepIconUpdate"
           }
         },
         {
-          "id": "z8hxpp0if",
-          "title": "Fetch Sticker Activity",
-          "description": "Get pages with placed stickers and analytics",
+          "id": "b2svsc2h1",
+          "title": "Update buzz icon",
           "linkedFiles": {
             "hooks": "/app/settings/page.hooks.tsx",
             "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/settings/page.stores.ts",
+            "types": "/app/settings/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useUpdateBuzzIcon",
+            "actions": "updateBuzzIconAction",
+            "stores": "useSettingsStore",
+            "types": "BuzzIconUpdate"
+          }
+        },
+        {
+          "id": "ootsuelnq",
+          "title": "Get sticker activity",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/settings/page.stores.ts",
             "types": "/app/settings/page.types.ts"
           },
           "functionNames": {
             "hooks": "useStickerActivity",
-            "actions": "fetchStickerActivityAction",
-            "types": "StickerActivityData"
+            "actions": "getStickerActivityAction",
+            "stores": "useStickerActivityStore",
+            "types": "StickerActivity"
+          }
+        },
+        {
+          "id": "mfn1mxy3w",
+          "title": "Remove placed sticker",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/settings/page.stores.ts",
+            "types": "/app/settings/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useRemoveSticker",
+            "actions": "removeStickerAction",
+            "stores": "useSettingsStore",
+            "types": "StickerRemoval"
+          }
+        },
+        {
+          "id": "1uuuf8x08",
+          "title": "Get sticker analytics",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/settings/page.stores.ts",
+            "types": "/app/settings/page.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useStickerAnalytics",
+            "actions": "getStickerAnalyticsAction",
+            "stores": "useSettingsStore",
+            "types": "StickerAnalytics"
           }
         }
       ]
@@ -2080,7 +2347,9 @@
         "authentication": {
           "enabled": false,
           "emailPassword": false,
-          "magicLink": false
+          "magicLink": false,
+          "emailVerification": false,
+          "forgotPassword": false
         },
         "admin": {
           "enabled": false,
@@ -2114,88 +2383,88 @@
     }
   },
   "themeState": {
-    "selectedTheme": 4,
+    "selectedTheme": 24,
     "colors": {
       "light": {
-        "primary": "oklch(0.6209 0.1801 348.1385)",
+        "primary": "oklch(0.6489 0.237 26.9728)",
         "primaryForeground": "oklch(1 0 0)",
-        "secondary": "oklch(0.8095 0.0694 198.1863)",
-        "secondaryForeground": "oklch(0.3211 0 0)",
-        "accent": "oklch(0.9195 0.0801 87.667)",
-        "accentForeground": "oklch(0.3211 0 0)",
-        "background": "oklch(0.9399 0.0203 345.6985)",
-        "foreground": "oklch(0.4712 0 0)",
-        "card": "oklch(0.9498 0.05 86.8891)",
-        "cardForeground": "oklch(0.4712 0 0)",
+        "secondary": "oklch(0.968 0.211 109.7692)",
+        "secondaryForeground": "oklch(0 0 0)",
+        "accent": "oklch(0.5635 0.2408 260.8178)",
+        "accentForeground": "oklch(1 0 0)",
+        "background": "oklch(1 0 0)",
+        "foreground": "oklch(0 0 0)",
+        "card": "oklch(1 0 0)",
+        "cardForeground": "oklch(0 0 0)",
         "popover": "oklch(1 0 0)",
-        "popoverForeground": "oklch(0.4712 0 0)",
-        "muted": "oklch(0.88 0.0504 212.0952)",
-        "mutedForeground": "oklch(0.5795 0 0)",
-        "destructive": "oklch(0.7091 0.1697 21.9551)",
+        "popoverForeground": "oklch(0 0 0)",
+        "muted": "oklch(0.9551 0 0)",
+        "mutedForeground": "oklch(0.3211 0 0)",
+        "destructive": "oklch(0 0 0)",
         "destructiveForeground": "oklch(1 0 0)",
-        "border": "oklch(0.6209 0.1801 348.1385)",
-        "input": "oklch(0.9189 0 0)",
-        "ring": "oklch(0.7002 0.1597 350.7532)",
-        "chart1": "oklch(0.7002 0.1597 350.7532)",
-        "chart2": "oklch(0.8189 0.0799 212.0892)",
-        "chart3": "oklch(0.9195 0.0801 87.667)",
-        "chart4": "oklch(0.7998 0.111 348.1791)",
-        "chart5": "oklch(0.6197 0.1899 353.9091)",
-        "sidebarBackground": "oklch(0.914 0.0424 343.0913)",
-        "sidebarForeground": "oklch(0.3211 0 0)",
-        "sidebarPrimary": "oklch(0.6559 0.2118 354.3084)",
+        "border": "oklch(0 0 0)",
+        "input": "oklch(0 0 0)",
+        "ring": "oklch(0.6489 0.237 26.9728)",
+        "chart1": "oklch(0.6489 0.237 26.9728)",
+        "chart2": "oklch(0.968 0.211 109.7692)",
+        "chart3": "oklch(0.5635 0.2408 260.8178)",
+        "chart4": "oklch(0.7323 0.2492 142.4953)",
+        "chart5": "oklch(0.5931 0.2726 328.3634)",
+        "sidebarBackground": "oklch(0.9551 0 0)",
+        "sidebarForeground": "oklch(0 0 0)",
+        "sidebarPrimary": "oklch(0.6489 0.237 26.9728)",
         "sidebarPrimaryForeground": "oklch(1 0 0)",
-        "sidebarAccent": "oklch(0.8228 0.1095 346.0184)",
-        "sidebarAccentForeground": "oklch(0.3211 0 0)",
-        "sidebarBorder": "oklch(0.9464 0.0327 307.1745)",
-        "sidebarRing": "oklch(0.6559 0.2118 354.3084)"
+        "sidebarAccent": "oklch(0.5635 0.2408 260.8178)",
+        "sidebarAccentForeground": "oklch(1 0 0)",
+        "sidebarBorder": "oklch(0 0 0)",
+        "sidebarRing": "oklch(0.6489 0.237 26.9728)"
       },
       "dark": {
-        "primary": "oklch(0.9195 0.0801 87.667)",
-        "primaryForeground": "oklch(0.2497 0.0305 234.1628)",
-        "secondary": "oklch(0.7794 0.0803 4.133)",
-        "secondaryForeground": "oklch(0.2497 0.0305 234.1628)",
-        "accent": "oklch(0.6699 0.0988 356.9762)",
-        "accentForeground": "oklch(0.9306 0.0197 349.0785)",
-        "background": "oklch(0.2497 0.0305 234.1628)",
-        "foreground": "oklch(0.9306 0.0197 349.0785)",
-        "card": "oklch(0.2902 0.0299 233.5352)",
-        "cardForeground": "oklch(0.9306 0.0197 349.0785)",
-        "popover": "oklch(0.2902 0.0299 233.5352)",
-        "popoverForeground": "oklch(0.9306 0.0197 349.0785)",
-        "muted": "oklch(0.2713 0.0086 255.578)",
-        "mutedForeground": "oklch(0.7794 0.0803 4.133)",
-        "destructive": "oklch(0.6702 0.1806 350.3599)",
-        "destructiveForeground": "oklch(0.2497 0.0305 234.1628)",
-        "border": "oklch(0.3907 0.0399 242.2181)",
-        "input": "oklch(0.3093 0.0305 232.0027)",
-        "ring": "oklch(0.6998 0.0896 201.8672)",
-        "chart1": "oklch(0.6998 0.0896 201.8672)",
-        "chart2": "oklch(0.7794 0.0803 4.133)",
-        "chart3": "oklch(0.6699 0.0988 356.9762)",
-        "chart4": "oklch(0.4408 0.0702 217.0848)",
-        "chart5": "oklch(0.2713 0.0086 255.578)",
-        "sidebarBackground": "oklch(0.2303 0.027 235.9743)",
-        "sidebarForeground": "oklch(0.967 0.0029 264.5419)",
-        "sidebarPrimary": "oklch(0.6559 0.2118 354.3084)",
-        "sidebarPrimaryForeground": "oklch(1 0 0)",
-        "sidebarAccent": "oklch(0.8228 0.1095 346.0184)",
-        "sidebarAccentForeground": "oklch(0.2781 0.0296 256.848)",
-        "sidebarBorder": "oklch(0.3729 0.0306 259.7328)",
-        "sidebarRing": "oklch(0.6559 0.2118 354.3084)"
+        "primary": "oklch(0.7044 0.1872 23.1858)",
+        "primaryForeground": "oklch(0 0 0)",
+        "secondary": "oklch(0.9691 0.2005 109.6228)",
+        "secondaryForeground": "oklch(0 0 0)",
+        "accent": "oklch(0.6755 0.1765 252.2592)",
+        "accentForeground": "oklch(0 0 0)",
+        "background": "oklch(0 0 0)",
+        "foreground": "oklch(1 0 0)",
+        "card": "oklch(0.3211 0 0)",
+        "cardForeground": "oklch(1 0 0)",
+        "popover": "oklch(0.3211 0 0)",
+        "popoverForeground": "oklch(1 0 0)",
+        "muted": "oklch(0.2178 0 0)",
+        "mutedForeground": "oklch(0.8452 0 0)",
+        "destructive": "oklch(1 0 0)",
+        "destructiveForeground": "oklch(0 0 0)",
+        "border": "oklch(1 0 0)",
+        "input": "oklch(1 0 0)",
+        "ring": "oklch(0.7044 0.1872 23.1858)",
+        "chart1": "oklch(0.7044 0.1872 23.1858)",
+        "chart2": "oklch(0.9691 0.2005 109.6228)",
+        "chart3": "oklch(0.6755 0.1765 252.2592)",
+        "chart4": "oklch(0.7395 0.2268 142.8504)",
+        "chart5": "oklch(0.6131 0.2458 328.0714)",
+        "sidebarBackground": "oklch(0 0 0)",
+        "sidebarForeground": "oklch(1 0 0)",
+        "sidebarPrimary": "oklch(0.7044 0.1872 23.1858)",
+        "sidebarPrimaryForeground": "oklch(0 0 0)",
+        "sidebarAccent": "oklch(0.6755 0.1765 252.2592)",
+        "sidebarAccentForeground": "oklch(0 0 0)",
+        "sidebarBorder": "oklch(1 0 0)",
+        "sidebarRing": "oklch(0.7044 0.1872 23.1858)"
       }
     },
     "typography": {
       "light": {
-        "fontSans": "var(--font-poppins)",
-        "fontSerif": "var(--font-lora)",
-        "fontMono": "var(--font-fira-code)",
+        "fontSans": "var(--font-dm-sans)",
+        "fontSerif": "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
+        "fontMono": "var(--font-space-mono)",
         "letterSpacing": 0
       },
       "dark": {
-        "fontSans": "var(--font-poppins)",
-        "fontSerif": "var(--font-lora)",
-        "fontMono": "var(--font-fira-code)",
+        "fontSans": "var(--font-dm-sans)",
+        "fontSerif": "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
+        "fontMono": "var(--font-space-mono)",
         "letterSpacing": 0
       }
     },
@@ -2204,30 +2473,30 @@
         "hueShift": 0,
         "saturationMultiplier": 1,
         "lightnessMultiplier": 1,
-        "radius": 0.4,
+        "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "oklch(0.6251 0.1787 348.2109 / 0.5)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 1,
           "blurRadius": 0,
           "spread": 0,
-          "offsetX": 3,
-          "offsetY": 3
+          "offsetX": 4,
+          "offsetY": 4
         }
       },
       "dark": {
         "hueShift": 0,
         "saturationMultiplier": 1,
         "lightnessMultiplier": 1,
-        "radius": 0.4,
+        "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "oklch(0 0 0)",
+          "color": "oklch(0.0000 0.0000 0.0000)",
           "opacity": 1,
           "blurRadius": 0,
           "spread": 0,
-          "offsetX": 3,
-          "offsetY": 3
+          "offsetX": 4,
+          "offsetY": 4
         }
       }
     }
@@ -2278,7 +2547,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "n3dalnxgn",
+            "id": "n43rssbol",
             "isDefault": false,
             "isEditable": true
           },
@@ -2290,9 +2559,9 @@
               "table": "auth.users",
               "field": "id",
               "onDelete": "Cascade",
-              "relationType": "one-to-one"
+              "relationType": "many-to-one"
             },
-            "id": "mcw43qvtd",
+            "id": "jsitls62i",
             "isDefault": false,
             "isEditable": true
           },
@@ -2300,21 +2569,33 @@
             "name": "username",
             "type": "TEXT",
             "isUnique": true,
-            "id": "eatnv3wso",
+            "isOptional": false,
+            "id": "f3m8q7dmg",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "beep_style",
-            "type": "JSONB",
-            "id": "m1wlp1m64",
+            "name": "role",
+            "type": "user_role",
+            "defaultValue": "'user'",
+            "isOptional": false,
+            "id": "dlm9mghnc",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "buzz_style",
+            "name": "beep_settings",
             "type": "JSONB",
-            "id": "t4rfn2zwg",
+            "isOptional": true,
+            "id": "m1cy7ikxt",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "buzz_settings",
+            "type": "JSONB",
+            "isOptional": true,
+            "id": "k6fulfxcb",
             "isDefault": false,
             "isEditable": true
           },
@@ -2322,42 +2603,24 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "7ity5iqsa",
+            "id": "5ksl0cx39",
             "isDefault": false,
             "isEditable": true
-          },
-          {
-            "id": "d95c81tdz",
-            "name": "role",
-            "type": "user_role",
-            "isDefault": false,
-            "isEditable": true,
-            "isOptional": false,
-            "isUnique": false,
-            "isId": false,
-            "isArray": false,
-            "defaultValue": "'user'"
           },
           {
             "name": "updated_at",
             "type": "TIMESTAMP WITH TIME ZONE",
-            "defaultValue": "NOW()",
-            "id": "tl8egyjvo",
+            "isOptional": true,
+            "id": "e8lc05lnr",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "checkConstraints": [
-          {
-            "id": "ve5c1hkrt",
-            "name": "username_length",
-            "expression": "LENGTH(username) >= 3 AND LENGTH(username) <= 20"
-          }
-        ],
-        "id": "7hkg8knig",
+        "id": "mkifjwa2e",
         "isDefault": false,
         "isEditable": true,
-        "uniqueConstraints": []
+        "uniqueConstraints": [],
+        "checkConstraints": []
       },
       {
         "name": "pages",
@@ -2368,7 +2631,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "e2pa0h0sk",
+            "id": "of56yh2et",
             "isDefault": false,
             "isEditable": true
           },
@@ -2379,9 +2642,9 @@
               "table": "profiles",
               "field": "id",
               "onDelete": "Cascade",
-              "relationType": "one-to-one"
+              "relationType": "many-to-one"
             },
-            "id": "2ec7zpby3",
+            "id": "rjgjo5rq4",
             "isDefault": false,
             "isEditable": true
           },
@@ -2391,24 +2654,25 @@
             "relation": {
               "table": "auth.users",
               "field": "id",
-              "onDelete": "Cascade"
+              "relationType": "many-to-one"
             },
-            "id": "xm8xbx8wt",
+            "id": "nl6oiqx5l",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "title",
             "type": "TEXT",
-            "id": "awrubwc6l",
+            "isOptional": false,
+            "id": "igd7e5xgm",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "status",
-            "type": "content_status",
-            "defaultValue": "ACTIVE",
-            "id": "g1utxflxu",
+            "name": "visibility",
+            "type": "page_visibility",
+            "defaultValue": "'public'",
+            "id": "md0niceyi",
             "isDefault": false,
             "isEditable": true
           },
@@ -2416,20 +2680,20 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "5sye8mxu8",
+            "id": "iekg2ohd8",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "updated_at",
             "type": "TIMESTAMP WITH TIME ZONE",
-            "defaultValue": "NOW()",
-            "id": "19fl6h96g",
+            "isOptional": true,
+            "id": "yo6zfuz92",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "5d6bb5j4i",
+        "id": "qkfqlqdba",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -2444,7 +2708,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "w3hd4fypo",
+            "id": "9hw8bxwgq",
             "isDefault": false,
             "isEditable": true
           },
@@ -2454,9 +2718,22 @@
             "relation": {
               "table": "pages",
               "field": "id",
-              "onDelete": "Cascade"
+              "onDelete": "Cascade",
+              "relationType": "many-to-one"
             },
-            "id": "c2qsaqvce",
+            "id": "89ny4j99t",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "profile_id",
+            "type": "UUID",
+            "relation": {
+              "table": "profiles",
+              "field": "id",
+              "relationType": "many-to-one"
+            },
+            "id": "jmcpi4uwk",
             "isDefault": false,
             "isEditable": true
           },
@@ -2466,30 +2743,57 @@
             "relation": {
               "table": "auth.users",
               "field": "id",
-              "onDelete": "Cascade"
+              "relationType": "many-to-one"
             },
-            "id": "8gjp5bj4g",
+            "id": "hcz5g1sp4",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "element_type",
             "type": "element_type",
-            "id": "derppafts",
+            "isOptional": false,
+            "id": "wk11ycsei",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "content",
             "type": "JSONB",
-            "id": "zm11oxclr",
+            "isOptional": false,
+            "id": "wsagjsjd4",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "position",
-            "type": "JSONB",
-            "id": "hbxq39po3",
+            "name": "position_x",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "yksz41ug1",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "position_y",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "i3bau9j0p",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "width",
+            "type": "INTEGER",
+            "isOptional": true,
+            "id": "t319299ks",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "height",
+            "type": "INTEGER",
+            "isOptional": true,
+            "id": "a4sal6sak",
             "isDefault": false,
             "isEditable": true
           },
@@ -2497,20 +2801,20 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "vxl29nync",
+            "id": "dmh4skp2e",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "updated_at",
             "type": "TIMESTAMP WITH TIME ZONE",
-            "defaultValue": "NOW()",
-            "id": "qiw7zhhe9",
+            "isOptional": true,
+            "id": "7ikdcxkyx",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "ruwosmwc2",
+        "id": "bdr2e2ujh",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -2525,7 +2829,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "m30lwagq8",
+            "id": "e2guenm8t",
             "isDefault": false,
             "isEditable": true
           },
@@ -2535,9 +2839,10 @@
             "relation": {
               "table": "pages",
               "field": "id",
-              "onDelete": "Cascade"
+              "onDelete": "Cascade",
+              "relationType": "many-to-one"
             },
-            "id": "d2mhoqj8t",
+            "id": "8zdhxvmbi",
             "isDefault": false,
             "isEditable": true
           },
@@ -2547,9 +2852,9 @@
             "relation": {
               "table": "profiles",
               "field": "id",
-              "onDelete": "Cascade"
+              "relationType": "many-to-one"
             },
-            "id": "r3cgf7c9l",
+            "id": "fejdicvqt",
             "isDefault": false,
             "isEditable": true
           },
@@ -2559,23 +2864,33 @@
             "relation": {
               "table": "auth.users",
               "field": "id",
-              "onDelete": "Cascade"
+              "relationType": "many-to-one"
             },
-            "id": "2o3uerkz8",
+            "id": "xs7dgspsa",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "is_buzz",
-            "type": "BOOLEAN",
-            "id": "hi51up2nc",
+            "name": "sticker_type",
+            "type": "sticker_type",
+            "isOptional": false,
+            "id": "mxl5csapx",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "position",
-            "type": "JSONB",
-            "id": "qig8ejkcg",
+            "name": "position_x",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "d6sywbayi",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "position_y",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "laietvu5l",
             "isDefault": false,
             "isEditable": true
           },
@@ -2583,19 +2898,19 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "wycj46xzp",
+            "id": "eplkveeqr",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "ew3e13cl7",
+        "id": "28kqxv5og",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
         "checkConstraints": []
       },
       {
-        "name": "flagged_content",
+        "name": "content_flags",
         "schema": "public",
         "columns": [
           {
@@ -2603,7 +2918,314 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "xkv4qcllp",
+            "id": "2tdv7tknv",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "387pmi24g",
+            "name": "user_id",
+            "type": "UUID",
+            "isId": false,
+            "isDefault": false,
+            "isEditable": true,
+            "isOptional": false,
+            "isUnique": false,
+            "isArray": false,
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one"
+            }
+          },
+          {
+            "name": "content_type",
+            "type": "content_type",
+            "isOptional": false,
+            "id": "d0xkunq8w",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "content_id",
+            "type": "UUID",
+            "isOptional": false,
+            "id": "9ji3omw7v",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "reporter_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one"
+            },
+            "id": "wih3rnaty",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "reason",
+            "type": "flag_reason",
+            "isOptional": false,
+            "id": "0bum1wogz",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "details",
+            "type": "TEXT",
+            "isOptional": true,
+            "id": "ur8el9bxx",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "status",
+            "type": "flag_status",
+            "defaultValue": "'pending'",
+            "id": "ok7uyt90e",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "dhb40zgwk",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "resolved_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "isOptional": true,
+            "id": "1t41kz4pv",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ],
+        "id": "ti4sze2b5",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": []
+      },
+      {
+        "name": "moderation_logs",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "ruzzynifr",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "admin_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one"
+            },
+            "id": "cd8prad3e",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "content_type",
+            "type": "content_type",
+            "isOptional": false,
+            "id": "bb2go3c37",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "content_id",
+            "type": "UUID",
+            "isOptional": false,
+            "id": "60pgblnwp",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "action",
+            "type": "mod_action",
+            "isOptional": false,
+            "id": "3b6r8gd9b",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "reason",
+            "type": "TEXT",
+            "isOptional": true,
+            "id": "765v7wrln",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "6rjc2i9k8",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ],
+        "id": "v0kmezf7x",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": []
+      },
+      {
+        "name": "sticker_designs",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "b67lc0lcx",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "profile_id",
+            "type": "UUID",
+            "relation": {
+              "table": "profiles",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one"
+            },
+            "id": "iibz7hili",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one"
+            },
+            "id": "8tyaa3oi7",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "sticker_type",
+            "type": "sticker_type",
+            "isOptional": false,
+            "id": "ogt4q24j9",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "design_data",
+            "type": "JSONB",
+            "isOptional": false,
+            "id": "ykmddeu7n",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "status",
+            "type": "approval_status",
+            "defaultValue": "'pending'",
+            "id": "8xgiv0mt4",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "em2ee1nu1",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "isOptional": true,
+            "id": "71ta47sre",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ],
+        "id": "tuhg826tv",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": []
+      },
+      {
+        "name": "categories",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "9mgu1mnpc",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "name",
+            "type": "TEXT",
+            "isUnique": true,
+            "isOptional": false,
+            "id": "8wbxaghsa",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "description",
+            "type": "TEXT",
+            "isOptional": true,
+            "id": "z3gxqyubu",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "iulrjbdto",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ],
+        "id": "x9lhs66u0",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": []
+      },
+      {
+        "name": "page_categories",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "i7nm8nyje",
             "isDefault": false,
             "isEditable": true
           },
@@ -2613,21 +3235,35 @@
             "relation": {
               "table": "pages",
               "field": "id",
-              "onDelete": "Cascade"
+              "onDelete": "Cascade",
+              "relationType": "many-to-one"
             },
-            "id": "pz9weth3l",
+            "id": "qffo72jst",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "reporter_id",
+            "name": "category_id",
+            "type": "UUID",
+            "relation": {
+              "table": "categories",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one"
+            },
+            "id": "h6hdrbxx3",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "profile_id",
             "type": "UUID",
             "relation": {
               "table": "profiles",
               "field": "id",
-              "onDelete": "Cascade"
+              "relationType": "many-to-one"
             },
-            "id": "a1awpihxc",
+            "id": "ilswgs39j",
             "isDefault": false,
             "isEditable": true
           },
@@ -2637,31 +3273,9 @@
             "relation": {
               "table": "auth.users",
               "field": "id",
-              "onDelete": "Cascade"
+              "relationType": "many-to-one"
             },
-            "id": "n8hdh3tb4",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "reason",
-            "type": "TEXT",
-            "id": "9qq1yks2b",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "ai_analysis",
-            "type": "JSONB",
-            "id": "aciegnqwy",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "status",
-            "type": "content_status",
-            "defaultValue": "FLAGGED",
-            "id": "il6s0k0kw",
+            "id": "hx8wc08wu",
             "isDefault": false,
             "isEditable": true
           },
@@ -2669,20 +3283,12 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "hud0je7la",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "updated_at",
-            "type": "TIMESTAMP WITH TIME ZONE",
-            "defaultValue": "NOW()",
-            "id": "rahzo0r6o",
+            "id": "zplq18wdu",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "w7gb1kfme",
+        "id": "15duue2r0",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -2691,22 +3297,18 @@
     ],
     "enums": [
       {
-        "name": "content_status",
+        "name": "page_visibility",
         "values": [
           {
-            "value": "ACTIVE",
-            "id": "0v447julh"
+            "value": "public",
+            "id": "jlo6kxhcc"
           },
           {
-            "value": "FLAGGED",
-            "id": "19hxhjxsj"
-          },
-          {
-            "value": "REMOVED",
-            "id": "fhkb2caeo"
+            "value": "private",
+            "id": "iv28nyb8j"
           }
         ],
-        "id": "2s57yw115",
+        "id": "p72c7yx9i",
         "isDefault": false,
         "isEditable": true
       },
@@ -2714,31 +3316,155 @@
         "name": "element_type",
         "values": [
           {
-            "value": "TEXT",
-            "id": "5okb8xv9b"
+            "value": "text",
+            "id": "f5cucqwlh"
           },
           {
-            "value": "SHAPE",
-            "id": "d1smzkjnv"
+            "value": "shape",
+            "id": "hej0v1zrs"
           },
           {
-            "value": "DIVIDER",
-            "id": "sx2lzp4wh"
+            "value": "divider",
+            "id": "2gub7vk8i"
           },
           {
-            "value": "YOUTUBE",
-            "id": "t5k2vgr3r"
+            "value": "youtube",
+            "id": "c2scdbdgt"
           }
         ],
-        "id": "azhksp2bn",
+        "id": "ds7b7tfh7",
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "name": "sticker_type",
+        "values": [
+          {
+            "value": "beep",
+            "id": "grutu6r6m"
+          },
+          {
+            "value": "buzz",
+            "id": "3m77prdlb"
+          }
+        ],
+        "id": "5whw1hvo8",
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "name": "content_type",
+        "values": [
+          {
+            "value": "page",
+            "id": "e1ql13179"
+          },
+          {
+            "value": "sticker",
+            "id": "bs4oace42"
+          },
+          {
+            "value": "element",
+            "id": "2q9r2qcp6"
+          }
+        ],
+        "id": "hx2d6lky3",
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "name": "flag_reason",
+        "values": [
+          {
+            "value": "inappropriate",
+            "id": "o5n9lao16"
+          },
+          {
+            "value": "spam",
+            "id": "p1go3raxk"
+          },
+          {
+            "value": "offensive",
+            "id": "zpwia6hvi"
+          },
+          {
+            "value": "other",
+            "id": "85ssouyvp"
+          }
+        ],
+        "id": "4tt3fxg4b",
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "name": "flag_status",
+        "values": [
+          {
+            "value": "pending",
+            "id": "32y5omjds"
+          },
+          {
+            "value": "reviewed",
+            "id": "5gsgl2uqs"
+          },
+          {
+            "value": "dismissed",
+            "id": "ln556m5wx"
+          }
+        ],
+        "id": "ifclwlx6j",
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "name": "mod_action",
+        "values": [
+          {
+            "value": "approve",
+            "id": "yca6ejngq"
+          },
+          {
+            "value": "remove",
+            "id": "kpbupjziw"
+          },
+          {
+            "value": "warn",
+            "id": "692o2c4iu"
+          },
+          {
+            "value": "ban",
+            "id": "obi3tmnhl"
+          }
+        ],
+        "id": "44ace0nw2",
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "name": "approval_status",
+        "values": [
+          {
+            "value": "pending",
+            "id": "5uew4qnt8"
+          },
+          {
+            "value": "approved",
+            "id": "ib900s773"
+          },
+          {
+            "value": "rejected",
+            "id": "imkj4tjbq"
+          }
+        ],
+        "id": "pfk0p30ca",
         "isDefault": false,
         "isEditable": true
       }
     ],
     "rlsPolicies": [
       {
-        "id": "mhqud7ggc",
-        "tableId": "7hkg8knig",
+        "id": "fuog49p06",
+        "tableId": "mkifjwa2e",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -2756,8 +3482,8 @@
         ]
       },
       {
-        "id": "acdridskg",
-        "tableId": "7hkg8knig",
+        "id": "lke98njbi",
+        "tableId": "mkifjwa2e",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -2775,8 +3501,8 @@
         ]
       },
       {
-        "id": "yw5w1zjvx",
-        "tableId": "7hkg8knig",
+        "id": "l6ach1w5c",
+        "tableId": "mkifjwa2e",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -2794,8 +3520,8 @@
         ]
       },
       {
-        "id": "v4k0vys31",
-        "tableId": "7hkg8knig",
+        "id": "a59baabn4",
+        "tableId": "mkifjwa2e",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -2813,8 +3539,8 @@
         ]
       },
       {
-        "id": "pxulec5an",
-        "tableId": "5d6bb5j4i",
+        "id": "4493nrg40",
+        "tableId": "qkfqlqdba",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -2832,8 +3558,8 @@
         ]
       },
       {
-        "id": "69tzrutrf",
-        "tableId": "5d6bb5j4i",
+        "id": "p20r33rcr",
+        "tableId": "qkfqlqdba",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -2851,8 +3577,8 @@
         ]
       },
       {
-        "id": "8nz6a7g2k",
-        "tableId": "5d6bb5j4i",
+        "id": "cwralnywi",
+        "tableId": "qkfqlqdba",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -2870,8 +3596,8 @@
         ]
       },
       {
-        "id": "7w8h3wu3w",
-        "tableId": "5d6bb5j4i",
+        "id": "zawmm9laj",
+        "tableId": "qkfqlqdba",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -2889,8 +3615,8 @@
         ]
       },
       {
-        "id": "8u62jjow6",
-        "tableId": "ruwosmwc2",
+        "id": "bicyq1wcs",
+        "tableId": "bdr2e2ujh",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -2908,8 +3634,8 @@
         ]
       },
       {
-        "id": "e0xab8z0f",
-        "tableId": "ruwosmwc2",
+        "id": "udxzy4n1m",
+        "tableId": "bdr2e2ujh",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -2927,8 +3653,8 @@
         ]
       },
       {
-        "id": "bnjljt594",
-        "tableId": "ruwosmwc2",
+        "id": "qqhq4ncjq",
+        "tableId": "bdr2e2ujh",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -2946,8 +3672,8 @@
         ]
       },
       {
-        "id": "6zy48xda5",
-        "tableId": "ruwosmwc2",
+        "id": "e9y7rakd8",
+        "tableId": "bdr2e2ujh",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -2965,8 +3691,8 @@
         ]
       },
       {
-        "id": "auu5g90af",
-        "tableId": "ew3e13cl7",
+        "id": "siw1omvtp",
+        "tableId": "28kqxv5og",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -2984,8 +3710,8 @@
         ]
       },
       {
-        "id": "gg1g3e4jm",
-        "tableId": "ew3e13cl7",
+        "id": "x43fb43rt",
+        "tableId": "28kqxv5og",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -3003,8 +3729,8 @@
         ]
       },
       {
-        "id": "f8snez6mm",
-        "tableId": "ew3e13cl7",
+        "id": "dp5heaxeq",
+        "tableId": "28kqxv5og",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -3022,8 +3748,8 @@
         ]
       },
       {
-        "id": "arm7ii107",
-        "tableId": "ew3e13cl7",
+        "id": "i5v5iflgs",
+        "tableId": "28kqxv5og",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -3041,8 +3767,8 @@
         ]
       },
       {
-        "id": "96qxc6be3",
-        "tableId": "w7gb1kfme",
+        "id": "ehdw2enk5",
+        "tableId": "ti4sze2b5",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -3060,8 +3786,8 @@
         ]
       },
       {
-        "id": "u4pjc5g4u",
-        "tableId": "w7gb1kfme",
+        "id": "7v3mvwuos",
+        "tableId": "ti4sze2b5",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -3079,8 +3805,8 @@
         ]
       },
       {
-        "id": "ybj94kk6n",
-        "tableId": "w7gb1kfme",
+        "id": "jw1osk340",
+        "tableId": "ti4sze2b5",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -3098,8 +3824,8 @@
         ]
       },
       {
-        "id": "6d906ohww",
-        "tableId": "w7gb1kfme",
+        "id": "1p5k29i15",
+        "tableId": "ti4sze2b5",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -3109,6 +3835,310 @@
           {
             "role": "authenticated",
             "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "w1z4tfj2h",
+        "tableId": "v0kmezf7x",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "rbb255v31",
+        "tableId": "v0kmezf7x",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "tt9oucnar",
+        "tableId": "v0kmezf7x",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "vy78pq59x",
+        "tableId": "v0kmezf7x",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "8p88a7vrz",
+        "tableId": "tuhg826tv",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "7l7ua00kn",
+        "tableId": "tuhg826tv",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "v7xa810aj",
+        "tableId": "tuhg826tv",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "4hvuq4kb4",
+        "tableId": "tuhg826tv",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "0d9ttm9as",
+        "tableId": "x9lhs66u0",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "faihv0e65",
+        "tableId": "x9lhs66u0",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "i6alc8ut8",
+        "tableId": "x9lhs66u0",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "9zege3gr7",
+        "tableId": "x9lhs66u0",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "idtk8xikl",
+        "tableId": "15duue2r0",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "0h4ktv342",
+        "tableId": "15duue2r0",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "9w6rvn3tf",
+        "tableId": "15duue2r0",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "814glxpye",
+        "tableId": "15duue2r0",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
           },
           {
             "role": "admin",
@@ -3121,492 +4151,280 @@
   },
   "appStructureState": {
     "inferredFeatures": {
-      "layout-98qi9aumh": [
+      "layout-nb0tvqaz9": [
         {
-          "id": "ktq07yve2",
-          "pageId": "layout-98qi9aumh",
-          "title": "Sign Out User",
-          "description": "Clear user session and redirect to home",
-          "category": "authentication",
-          "complexity": "simple",
-          "actionVerbs": [
-            "signout"
-          ],
-          "dataEntities": [
-            "user"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "users",
-            "sessions"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": false
-          }
-        }
-      ],
-      "layout-u7zudpnse": [
-        {
-          "id": "7b5b1e1ul",
-          "pageId": "layout-u7zudpnse",
-          "title": "Fetch Moderation Queue",
-          "description": "Get content flagging queue and user reports",
-          "category": "data-management",
-          "complexity": "medium",
-          "actionVerbs": [
-            "fetch"
-          ],
-          "dataEntities": [
-            "flaggedContent",
-            "userReports"
-          ],
-          "requiresRealtimeUpdates": true,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "flagged_content",
-            "user_reports"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
-        }
-      ],
-      "55jxg5yox": [
-        {
-          "id": "m9s4imhjj",
-          "pageId": "55jxg5yox",
-          "title": "Fetch Featured Sections",
-          "description": "Get popular, recent, and new pages",
-          "category": "data-management",
-          "complexity": "medium",
-          "actionVerbs": [
-            "fetch"
-          ],
-          "dataEntities": [
-            "pages"
-          ],
-          "requiresRealtimeUpdates": true,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "pages",
-            "stickers"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
-        }
-      ],
-      "fkjr02nqk": [
-        {
-          "id": "9tdliq5k0",
-          "pageId": "fkjr02nqk",
-          "title": "Send Magic Link",
-          "description": "Send passwordless authentication email",
-          "category": "authentication",
-          "complexity": "medium",
-          "actionVerbs": [
-            "send"
-          ],
-          "dataEntities": [
-            "user"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": true,
-          "databaseTables": [
-            "users"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
-        }
-      ],
-      "bnkr5r2sx": [
-        {
-          "id": "zlt7jbond",
-          "pageId": "bnkr5r2sx",
-          "title": "Validate Username",
-          "description": "Check username availability and scan with AI",
-          "category": "validation",
-          "complexity": "complex",
-          "actionVerbs": [
-            "validate",
-            "scan"
-          ],
-          "dataEntities": [
-            "user"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": true,
-          "databaseTables": [
-            "users"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
+          "id": "0rm99xumz",
+          "pageId": "layout-nb0tvqaz9",
+          "title": "Sign out user",
+          "description": "Clear user session and redirect to home page"
         },
         {
-          "id": "uu1811772",
-          "pageId": "bnkr5r2sx",
-          "title": "Customize Sticker Identity",
-          "description": "Select and customize personal beep and buzz icons",
-          "category": "user-settings",
-          "complexity": "medium",
-          "actionVerbs": [
-            "select",
-            "customize",
-            "save"
-          ],
-          "dataEntities": [
-            "user",
-            "stickers"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "users",
-            "stickers"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
+          "id": "4lk7jonkz",
+          "pageId": "layout-nb0tvqaz9",
+          "title": "Get user profile menu",
+          "description": "Display authenticated user avatar and profile menu options"
         }
       ],
-      "8b6due9l7": [
+      "layout-pb4b7plwp": [
         {
-          "id": "3hzmiinsm",
-          "pageId": "8b6due9l7",
-          "title": "Place Stickers",
-          "description": "Add beep or buzz stickers to page",
-          "category": "interaction",
-          "complexity": "medium",
-          "actionVerbs": [
-            "place",
-            "add"
-          ],
-          "dataEntities": [
-            "stickers"
-          ],
-          "requiresRealtimeUpdates": true,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "stickers"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
+          "id": "tl8a5xrk4",
+          "pageId": "layout-pb4b7plwp",
+          "title": "Sign out user",
+          "description": "Clear user session and redirect to home page"
+        },
+        {
+          "id": "h40sgwjye",
+          "pageId": "layout-pb4b7plwp",
+          "title": "Get user profile menu",
+          "description": "Display authenticated user avatar and profile menu options"
         }
       ],
-      "6a7alwibf": [
+      "rl8b8v24d": [
         {
-          "id": "8jwqmubmu",
-          "pageId": "6a7alwibf",
-          "title": "Add Content Elements",
-          "description": "Add text, shapes, dividers, and embeds",
-          "category": "content-management",
-          "complexity": "complex",
-          "actionVerbs": [
-            "add"
-          ],
-          "dataEntities": [
-            "page",
-            "elements"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": true,
-          "databaseTables": [
-            "pages",
-            "elements"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
+          "id": "302z4uspz",
+          "pageId": "rl8b8v24d",
+          "title": "Search pages",
+          "description": "Search for pages by title or username"
         },
         {
-          "id": "zn8wvxn4u",
-          "pageId": "6a7alwibf",
-          "title": "Manipulate Elements",
-          "description": "Drag, resize, align elements",
-          "category": "interaction",
-          "complexity": "complex",
-          "actionVerbs": [
-            "drag",
-            "resize",
-            "align"
-          ],
-          "dataEntities": [
-            "elements"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "pages",
-            "elements"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
+          "id": "owlimx50c",
+          "pageId": "rl8b8v24d",
+          "title": "Filter pages by category",
+          "description": "Filter displayed pages based on selected category"
         },
         {
-          "id": "zg26vfn3v",
-          "pageId": "6a7alwibf",
-          "title": "Delete Elements",
-          "description": "Remove page elements",
-          "category": "content-management",
-          "complexity": "simple",
-          "actionVerbs": [
-            "delete"
-          ],
-          "dataEntities": [
-            "elements"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "pages",
-            "elements"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
+          "id": "cu8zfy4dj",
+          "pageId": "rl8b8v24d",
+          "title": "Get random page",
+          "description": "Navigate to a randomly selected user page"
+        },
+        {
+          "id": "fyefsenoc",
+          "pageId": "rl8b8v24d",
+          "title": "Get featured pages",
+          "description": "Retrieve popular, recent, and new pages for display"
         }
       ],
-      "bv1lpr8bw": [
+      "2yjux32oc": [
         {
-          "id": "domjbso87",
-          "pageId": "bv1lpr8bw",
-          "title": "Fetch and Filter Flagged Content",
-          "description": "Get flagged content with filtering",
-          "category": "data-management",
-          "complexity": "medium",
-          "actionVerbs": [
-            "fetch",
-            "filter"
-          ],
-          "dataEntities": [
-            "flaggedContent"
-          ],
-          "requiresRealtimeUpdates": true,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "flagged_content"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
-        },
-        {
-          "id": "am2m9uc1y",
-          "pageId": "bv1lpr8bw",
-          "title": "Moderate Content",
-          "description": "Approve or remove flagged content",
-          "category": "content-management",
-          "complexity": "complex",
-          "actionVerbs": [
-            "approve",
-            "remove"
-          ],
-          "dataEntities": [
-            "flaggedContent"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "flagged_content",
-            "audit_log"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
-        },
-        {
-          "id": "4bwf36wi4",
-          "pageId": "bv1lpr8bw",
-          "title": "Manage Users",
-          "description": "Warn or ban users",
-          "category": "user-management",
-          "complexity": "complex",
-          "actionVerbs": [
-            "warn",
-            "ban"
-          ],
-          "dataEntities": [
-            "user"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "users",
-            "audit_log"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
+          "id": "bnt98k8xx",
+          "pageId": "2yjux32oc",
+          "title": "Send magic link email",
+          "description": "Send authentication magic link to user's email address"
         }
       ],
-      "e6c0vgk5v": [
+      "dg8xt3z7q": [
         {
-          "id": "535nl68uw",
-          "pageId": "e6c0vgk5v",
-          "title": "Update Sticker Identity",
-          "description": "Change and customize sticker appearance",
-          "category": "user-settings",
-          "complexity": "medium",
-          "actionVerbs": [
-            "update",
-            "customize"
-          ],
-          "dataEntities": [
-            "user",
-            "stickers"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "users",
-            "stickers"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
+          "id": "nuy1els7u",
+          "pageId": "dg8xt3z7q",
+          "title": "Create username",
+          "description": "Set unique username with AI validation"
         },
         {
-          "id": "z8hxpp0if",
-          "pageId": "e6c0vgk5v",
-          "title": "Fetch Sticker Activity",
-          "description": "Get pages with placed stickers and analytics",
-          "category": "data-management",
-          "complexity": "medium",
-          "actionVerbs": [
-            "fetch"
-          ],
-          "dataEntities": [
-            "stickers",
-            "analytics"
-          ],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": [
-            "stickers",
-            "pages"
-          ],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
+          "id": "a65kjzey0",
+          "pageId": "dg8xt3z7q",
+          "title": "Customize beep icon",
+          "description": "Select and customize personal beep icon settings"
+        },
+        {
+          "id": "fxdrynza3",
+          "pageId": "dg8xt3z7q",
+          "title": "Customize buzz icon",
+          "description": "Select and customize personal buzz icon settings"
+        }
+      ],
+      "gck8gvfgb": [
+        {
+          "id": "by7hol465",
+          "pageId": "gck8gvfgb",
+          "title": "Toggle sticker visibility",
+          "description": "Show/hide stickers on the page"
+        },
+        {
+          "id": "1byabz1db",
+          "pageId": "gck8gvfgb",
+          "title": "Add beep sticker",
+          "description": "Place a beep sticker on the page"
+        },
+        {
+          "id": "fb64810uq",
+          "pageId": "gck8gvfgb",
+          "title": "Add buzz sticker",
+          "description": "Place a buzz sticker on the page"
+        },
+        {
+          "id": "2ce1hnbc6",
+          "pageId": "gck8gvfgb",
+          "title": "Get sticker details",
+          "description": "View who placed a specific sticker and navigate to their page"
+        }
+      ],
+      "b2c0ac6t3": [
+        {
+          "id": "g5ljgmcuq",
+          "pageId": "b2c0ac6t3",
+          "title": "Add text block",
+          "description": "Insert new text element on the page"
+        },
+        {
+          "id": "kjcxmemxd",
+          "pageId": "b2c0ac6t3",
+          "title": "Add shape",
+          "description": "Insert new shape element on the page"
+        },
+        {
+          "id": "8eyjrlop1",
+          "pageId": "b2c0ac6t3",
+          "title": "Add divider",
+          "description": "Insert new divider element on the page"
+        },
+        {
+          "id": "9e26iibea",
+          "pageId": "b2c0ac6t3",
+          "title": "Add YouTube embed",
+          "description": "Insert new YouTube video embed on the page"
+        },
+        {
+          "id": "vzw7oevav",
+          "pageId": "b2c0ac6t3",
+          "title": "Edit element",
+          "description": "Modify properties of selected page element"
+        },
+        {
+          "id": "k9nbtg0e8",
+          "pageId": "b2c0ac6t3",
+          "title": "Delete element",
+          "description": "Remove selected element from the page"
+        },
+        {
+          "id": "296bmg5hd",
+          "pageId": "b2c0ac6t3",
+          "title": "Toggle preview mode",
+          "description": "Switch between desktop, tablet, and mobile previews"
+        }
+      ],
+      "jp4qijm6a": [
+        {
+          "id": "4u0kxx85t",
+          "pageId": "jp4qijm6a",
+          "title": "Review flagged content",
+          "description": "View and assess reported content items"
+        },
+        {
+          "id": "xduofp9x6",
+          "pageId": "jp4qijm6a",
+          "title": "Approve sticker design",
+          "description": "Review and approve new sticker designs"
+        },
+        {
+          "id": "zsmh5nwnt",
+          "pageId": "jp4qijm6a",
+          "title": "Remove content",
+          "description": "Permanently delete flagged content"
+        },
+        {
+          "id": "rueaodpfg",
+          "pageId": "jp4qijm6a",
+          "title": "Warn user",
+          "description": "Send warning notification to user"
+        },
+        {
+          "id": "3lsi0qds5",
+          "pageId": "jp4qijm6a",
+          "title": "Ban user",
+          "description": "Disable user account access"
+        },
+        {
+          "id": "jt90ydwmd",
+          "pageId": "jp4qijm6a",
+          "title": "Get moderation log",
+          "description": "View audit trail of moderation actions"
+        }
+      ],
+      "x2bw4j7vj": [
+        {
+          "id": "yiagk29gs",
+          "pageId": "x2bw4j7vj",
+          "title": "Update beep icon",
+          "description": "Modify personal beep icon settings"
+        },
+        {
+          "id": "b2svsc2h1",
+          "pageId": "x2bw4j7vj",
+          "title": "Update buzz icon",
+          "description": "Modify personal buzz icon settings"
+        },
+        {
+          "id": "ootsuelnq",
+          "pageId": "x2bw4j7vj",
+          "title": "Get sticker activity",
+          "description": "View pages with placed stickers"
+        },
+        {
+          "id": "mfn1mxy3w",
+          "pageId": "x2bw4j7vj",
+          "title": "Remove placed sticker",
+          "description": "Delete previously placed sticker from a page"
+        },
+        {
+          "id": "1uuuf8x08",
+          "pageId": "x2bw4j7vj",
+          "title": "Get sticker analytics",
+          "description": "View statistics about received stickers."
         }
       ]
     },
     "parsedPages": [
       {
-        "id": "layout-98qi9aumh",
+        "id": "layout-nb0tvqaz9",
         "name": "Main Layout Features",
         "route": "",
-        "description": "Primary layout featuring a header with Beep.Buzz logo and authentication button/menu. Minimal footer with essential links."
+        "description": "Primary layout with header containing Beep.Buzz logo and authenticaion avatar button/menu, with a profile link button and a sign out button. Includes a minimal footer with essential links."
       },
       {
-        "id": "layout-u7zudpnse",
+        "id": "layout-pb4b7plwp",
         "name": "Admin Layout Features",
         "route": "",
-        "description": "Admin-specific layout with header containing moderation tools navigation. Includes sidebar with content flagging queue, user management, and sticker approval tools."
+        "description": "Admin-specific layout with header containing the beep.buzz logo (link to home) and the same authentication avatar button/menu as the Main layout. Includes sidebar with content flagging queue, user management, and sticker approval tools."
       },
       {
-        "id": "55jxg5yox",
+        "id": "rl8b8v24d",
         "name": "Home",
         "route": "/",
         "description": "The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action."
       },
       {
-        "id": "fkjr02nqk",
+        "id": "2yjux32oc",
         "name": "Sign In",
         "route": "/sign-in",
         "description": "Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers."
       },
       {
-        "id": "bnkr5r2sx",
+        "id": "dg8xt3z7q",
         "name": "Welcome Setup",
         "route": "/welcome",
         "description": "First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup."
       },
       {
-        "id": "8b6due9l7",
+        "id": "gck8gvfgb",
         "name": "User Page",
         "route": "/[username]",
         "description": "Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and \"Add Beep/Buzz\" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page."
       },
       {
-        "id": "6a7alwibf",
+        "id": "b2c0ac6t3",
         "name": "Page Editor",
-        "route": "/edit",
+        "route": "/editor",
         "description": "Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile."
       },
       {
-        "id": "bv1lpr8bw",
-        "name": "Admin Dashboard",
+        "id": "jp4qijm6a",
+        "name": "Content Moderation",
         "route": "/admin",
         "description": "Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions."
       },
       {
-        "id": "e6c0vgk5v",
+        "id": "x2bw4j7vj",
         "name": "Settings",
         "route": "/settings",
         "description": "Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns."
@@ -3616,64 +4434,64 @@
   },
   "readmeState": {
     "title": "Beep.Buzz",
-    "description": "beep.buzz is a simple and playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, patterns, digital illustrations, and embedded YouTube videos. Users viewing the pages interact by placing decorative \"beep\" and \"buzz\" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. Each user can design their own beep and buzz stickers, which are retroactively updated across the app. AI analysis at publish time ensures that pages and sticker content is safe. Content can be flagged as inappropriate, which is then reviewed by an admin.",
+    "description": "beep.buzz is a simple and playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, patterns, digital illustrations, and embedded YouTube videos. Users viewing the pages interact by placing decorative \"beep\" and \"buzz\" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. Each user can design their own beep and buzz stickers, which are retroactively updated across the app. AI analysis at publish time ensures that pages and sticker content is safe. Content can be flagged as inappropriate, which is then reviewed by an admin",
     "pages": [
       {
-        "id": "55jxg5yox",
+        "id": "rl8b8v24d",
         "name": "Home",
         "route": "/",
         "description": "The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action.",
         "layoutIds": [
-          "98qi9aumh"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "fkjr02nqk",
+        "id": "2yjux32oc",
         "name": "Sign In",
         "route": "/sign-in",
         "description": "Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers.",
         "layoutIds": [
-          "98qi9aumh"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "bnkr5r2sx",
+        "id": "dg8xt3z7q",
         "name": "Welcome Setup",
         "route": "/welcome",
         "description": "First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.",
         "layoutIds": [
-          "98qi9aumh"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "8b6due9l7",
+        "id": "gck8gvfgb",
         "name": "User Page",
         "route": "/[username]",
         "description": "Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and \"Add Beep/Buzz\" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page.",
         "layoutIds": [
-          "98qi9aumh"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "6a7alwibf",
+        "id": "b2c0ac6t3",
         "name": "Page Editor",
-        "route": "/edit",
+        "route": "/editor",
         "description": "Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile.",
         "layoutIds": [
-          "98qi9aumh"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "bv1lpr8bw",
-        "name": "Admin Dashboard",
+        "id": "jp4qijm6a",
+        "name": "Content Moderation",
         "route": "/admin",
         "description": "Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.",
         "layoutIds": [
-          "u7zudpnse"
+          "pb4b7plwp"
         ]
       },
       {
-        "id": "e6c0vgk5v",
+        "id": "x2bw4j7vj",
         "name": "Settings",
         "route": "/settings",
         "description": "Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns.",
@@ -3686,43 +4504,43 @@
     },
     "pageAccess": [
       {
-        "pageId": "55jxg5yox",
+        "pageId": "rl8b8v24d",
         "anon": true,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "fkjr02nqk",
+        "pageId": "2yjux32oc",
         "anon": true,
         "auth": false,
         "admin": false
       },
       {
-        "pageId": "bnkr5r2sx",
+        "pageId": "dg8xt3z7q",
         "anon": false,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "8b6due9l7",
+        "pageId": "gck8gvfgb",
         "anon": true,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "6a7alwibf",
+        "pageId": "b2c0ac6t3",
         "anon": false,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "bv1lpr8bw",
+        "pageId": "jp4qijm6a",
         "anon": false,
         "auth": false,
         "admin": true
       },
       {
-        "pageId": "e6c0vgk5v",
+        "pageId": "x2bw4j7vj",
         "anon": false,
         "auth": true,
         "admin": true
@@ -3731,116 +4549,116 @@
     "stage": "pages",
     "lastGeneratedForAuth": {
       "title": "Beep.Buzz",
-      "description": "beep.buzz is a simple and playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, patterns, digital illustrations, and embedded YouTube videos. Users viewing the pages interact by placing decorative \"beep\" and \"buzz\" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. Each user can design their own beep and buzz stickers, which are retroactively updated across the app. AI analysis at publish time ensures that pages and sticker content is safe. Content can be flagged as inappropriate, which is then reviewed by an admin."
+      "description": "beep.buzz is a simple and playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, patterns, digital illustrations, and embedded YouTube videos. Users viewing the pages interact by placing decorative \"beep\" and \"buzz\" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. Each user can design their own beep and buzz stickers, which are retroactively updated across the app. AI analysis at publish time ensures that pages and sticker content is safe. Content can be flagged as inappropriate, which is then reviewed by an admin"
     },
     "lastGeneratedForPages": {
       "emailPassword": false,
       "magicLink": true
     },
-    "lastGeneratedForReadme": "{\"layouts\":[{\"id\":\"98qi9aumh\",\"name\":\"Main Layout\",\"description\":\"Primary layout featuring a header with Beep.Buzz logo and authentication button/menu. Minimal footer with essential links.\"},{\"id\":\"u7zudpnse\",\"name\":\"Admin Layout\",\"description\":\"Admin-specific layout with header containing moderation tools navigation. Includes sidebar with content flagging queue, user management, and sticker approval tools.\"}],\"pages\":[{\"id\":\"55jxg5yox\",\"name\":\"Home\",\"route\":\"/\",\"description\":\"The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action.\",\"layoutIds\":[\"98qi9aumh\"]},{\"id\":\"fkjr02nqk\",\"name\":\"Sign In\",\"route\":\"/sign-in\",\"description\":\"Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers.\",\"layoutIds\":[\"98qi9aumh\"]},{\"id\":\"bnkr5r2sx\",\"name\":\"Welcome Setup\",\"route\":\"/welcome\",\"description\":\"First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.\",\"layoutIds\":[\"98qi9aumh\"]},{\"id\":\"8b6due9l7\",\"name\":\"User Page\",\"route\":\"/[username]\",\"description\":\"Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and \\\"Add Beep/Buzz\\\" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page.\",\"layoutIds\":[\"98qi9aumh\"]},{\"id\":\"6a7alwibf\",\"name\":\"Page Editor\",\"route\":\"/edit\",\"description\":\"Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile.\",\"layoutIds\":[\"98qi9aumh\"]},{\"id\":\"bv1lpr8bw\",\"name\":\"Admin Dashboard\",\"route\":\"/admin\",\"description\":\"Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.\",\"layoutIds\":[\"u7zudpnse\"]},{\"id\":\"e6c0vgk5v\",\"name\":\"Settings\",\"route\":\"/settings\",\"description\":\"Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns.\",\"layoutIds\":[]}]}"
+    "lastGeneratedForReadme": "{\"layouts\":[{\"id\":\"nb0tvqaz9\",\"name\":\"Main Layout\",\"description\":\"Primary layout with header containing Beep.Buzz logo and authenticaion avatar button/menu, with a profile link button and a sign out button. Includes a minimal footer with essential links.\"},{\"id\":\"pb4b7plwp\",\"name\":\"Admin Layout\",\"description\":\"Admin-specific layout with header containing the beep.buzz logo (link to home) and the same authentication avatar button/menu as the Main layout. Includes sidebar with content flagging queue, user management, and sticker approval tools.\"}],\"pages\":[{\"id\":\"rl8b8v24d\",\"name\":\"Home\",\"route\":\"/\",\"description\":\"The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"2yjux32oc\",\"name\":\"Sign In\",\"route\":\"/sign-in\",\"description\":\"Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"dg8xt3z7q\",\"name\":\"Welcome Setup\",\"route\":\"/welcome\",\"description\":\"First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"gck8gvfgb\",\"name\":\"User Page\",\"route\":\"/[username]\",\"description\":\"Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and \\\"Add Beep/Buzz\\\" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"b2c0ac6t3\",\"name\":\"Page Editor\",\"route\":\"/editor\",\"description\":\"Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"jp4qijm6a\",\"name\":\"Content Moderation\",\"route\":\"/admin\",\"description\":\"Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.\",\"layoutIds\":[\"pb4b7plwp\"]},{\"id\":\"x2bw4j7vj\",\"name\":\"Settings\",\"route\":\"/settings\",\"description\":\"Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns.\",\"layoutIds\":[]}]}"
   },
   "databaseTablesState": {
     "tableDescriptions": [
       {
-        "id": "zzmxhbg05",
+        "id": "ttycx8bfv",
         "name": "profiles",
-        "description": "Stores user profile data including username, sticker customizations, and preferences that extends auth.users"
+        "description": "Stores application-specific user profile data including username, customized beep/buzz sticker settings, and account preferences that extends the Supabase auth.users table"
       },
       {
-        "id": "p7ld60zrt",
+        "id": "3hh0ilo5n",
         "name": "pages",
-        "description": "Contains user-created pages with title, layout settings, and metadata"
+        "description": "Contains user-created pages with titles, metadata, and visibility settings"
       },
       {
-        "id": "rds7bspw5",
+        "id": "lxw12men3",
         "name": "page_elements",
-        "description": "Stores individual content elements (text, shapes, dividers, embeds) that make up each page, including position, size, and style properties"
+        "description": "Stores individual content elements (text, shapes, dividers, YouTube embeds) and their properties for each page"
       },
       {
-        "id": "hzoh28dtn",
+        "id": "04o3pymvy",
         "name": "stickers",
-        "description": "Records placed beep and buzz stickers on pages, including position, sender, and customization properties"
+        "description": "Records placed beep and buzz stickers, including position coordinates, page reference, and placement metadata"
       },
       {
-        "id": "u98qv9qp3",
+        "id": "1srusarfp",
+        "name": "content_flags",
+        "description": "Tracks reported content with reason codes, reporter information, and moderation status"
+      },
+      {
+        "id": "j302ru361",
+        "name": "moderation_logs",
+        "description": "Audit trail of all content moderation actions including approvals, removals, warnings, and bans"
+      },
+      {
+        "id": "089we8tfo",
         "name": "sticker_designs",
-        "description": "Stores user-created sticker designs including icons, colors, shapes, and approval status"
+        "description": "Stores custom sticker designs with approval status and configuration options"
       },
       {
-        "id": "zw2mivkoj",
-        "name": "flagged_content",
-        "description": "Tracks reported content including pages and stickers, with reason codes and AI analysis results"
+        "id": "sm5w2qa5c",
+        "name": "categories",
+        "description": "List of available page categories for content organization and filtering"
       },
       {
-        "id": "ox318e2ay",
-        "name": "moderation_actions",
-        "description": "Records admin actions on flagged content including approvals, removals, warnings, and bans"
-      },
-      {
-        "id": "0svme61ij",
-        "name": "audit_log",
-        "description": "Maintains history of all moderation and administrative actions for accountability"
-      },
-      {
-        "id": "mfzw9jmg4",
-        "name": "analytics",
-        "description": "Stores aggregated statistics about sticker placements, page views, and user interactions"
+        "id": "aefhha70a",
+        "name": "page_categories",
+        "description": "Junction table linking pages to their assigned categories"
       }
     ],
     "tablesGenerated": true,
     "accordionValue": "step-tables",
-    "expandedTableId": null,
+    "expandedTableId": "aefhha70a",
     "lastGeneratedAppStructure": null,
     "lastGeneratedTableDescriptions": [
       {
-        "id": "zzmxhbg05",
+        "id": "ttycx8bfv",
         "name": "profiles",
-        "description": "Stores user profile data including username, sticker customizations, and preferences that extends auth.users"
+        "description": "Stores application-specific user profile data including username, customized beep/buzz sticker settings, and account preferences that extends the Supabase auth.users table"
       },
       {
-        "id": "p7ld60zrt",
+        "id": "3hh0ilo5n",
         "name": "pages",
-        "description": "Contains user-created pages with title, layout settings, and metadata"
+        "description": "Contains user-created pages with titles, metadata, and visibility settings"
       },
       {
-        "id": "rds7bspw5",
+        "id": "lxw12men3",
         "name": "page_elements",
-        "description": "Stores individual content elements (text, shapes, dividers, embeds) that make up each page, including position, size, and style properties"
+        "description": "Stores individual content elements (text, shapes, dividers, YouTube embeds) and their properties for each page"
       },
       {
-        "id": "hzoh28dtn",
+        "id": "04o3pymvy",
         "name": "stickers",
-        "description": "Records placed beep and buzz stickers on pages, including position, sender, and customization properties"
+        "description": "Records placed beep and buzz stickers, including position coordinates, page reference, and placement metadata"
       },
       {
-        "id": "u98qv9qp3",
+        "id": "1srusarfp",
+        "name": "content_flags",
+        "description": "Tracks reported content with reason codes, reporter information, and moderation status"
+      },
+      {
+        "id": "j302ru361",
+        "name": "moderation_logs",
+        "description": "Audit trail of all content moderation actions including approvals, removals, warnings, and bans"
+      },
+      {
+        "id": "089we8tfo",
         "name": "sticker_designs",
-        "description": "Stores user-created sticker designs including icons, colors, shapes, and approval status"
+        "description": "Stores custom sticker designs with approval status and configuration options"
       },
       {
-        "id": "zw2mivkoj",
-        "name": "flagged_content",
-        "description": "Tracks reported content including pages and stickers, with reason codes and AI analysis results"
+        "id": "sm5w2qa5c",
+        "name": "categories",
+        "description": "List of available page categories for content organization and filtering"
       },
       {
-        "id": "ox318e2ay",
-        "name": "moderation_actions",
-        "description": "Records admin actions on flagged content including approvals, removals, warnings, and bans"
-      },
-      {
-        "id": "0svme61ij",
-        "name": "audit_log",
-        "description": "Maintains history of all moderation and administrative actions for accountability"
-      },
-      {
-        "id": "mfzw9jmg4",
-        "name": "analytics",
-        "description": "Stores aggregated statistics about sticker placements, page views, and user interactions"
+        "id": "aefhha70a",
+        "name": "page_categories",
+        "description": "Junction table linking pages to their assigned categories"
       }
     ]
   },
   "nextStepsState": {
-    "openStep": "step-9",
+    "openStep": "step-7",
     "unlockedSteps": [
       1,
       2,

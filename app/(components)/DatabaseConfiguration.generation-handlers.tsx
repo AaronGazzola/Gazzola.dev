@@ -244,7 +244,7 @@ export const useDatabaseGeneration = (
                 ? "supabase"
                 : "postgresql",
           } as any,
-          technologies: techUpdates,
+          technologies: techUpdates as any,
         });
 
         setTablesFromAI(tables);
