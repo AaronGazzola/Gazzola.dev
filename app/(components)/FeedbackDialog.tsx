@@ -1,5 +1,6 @@
 "use client";
 
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,8 +31,10 @@ export const FeedbackDialog = ({
   open,
   onOpenChange,
 }: FeedbackDialogProps) => {
+  const { brand } = useSubdomainStore();
   const [formData, setFormData] = useState<FeedbackFormData>({
     message: "",
+    brand,
   });
 
   const [touched, setTouched] = useState({
@@ -55,6 +58,7 @@ export const FeedbackDialog = ({
       onOpenChange(false);
       setFormData({
         message: "",
+        brand,
       });
       setTouched({
         message: false,

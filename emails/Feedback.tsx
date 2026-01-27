@@ -12,7 +12,7 @@ import {
 
 interface FeedbackEmailProps extends FeedbackFormData {}
 
-export const FeedbackEmail = ({ message }: FeedbackEmailProps) => (
+export const FeedbackEmail = ({ message, brand }: FeedbackEmailProps) => (
   <Html>
     <Head />
     <Preview>New feedback / bug report</Preview>
@@ -20,6 +20,11 @@ export const FeedbackEmail = ({ message }: FeedbackEmailProps) => (
       <Container style={container}>
         <Heading style={h1}>Feedback / Bug Report</Heading>
         <Section style={section}>
+          <Text style={label}>From</Text>
+          <Text style={text}>{brand === "gazzola" ? "Gazzola.dev" : "AzAnything.dev"}</Text>
+        </Section>
+        <Section style={section}>
+          <Text style={label}>Message</Text>
           <Text style={text}>{message}</Text>
         </Section>
       </Container>

@@ -1,5 +1,8 @@
+import { DomainBrand } from "@/lib/domain.config";
+
 export interface FeedbackFormData {
   message: string;
+  brand: DomainBrand;
 }
 
 export enum SidebarDataAttributes {
