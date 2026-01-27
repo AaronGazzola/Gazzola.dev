@@ -244,7 +244,9 @@ export const validateFeatures = (
           [FeatureComplexity.MODERATE]: 2,
           [FeatureComplexity.SIMPLE]: 1,
         };
-        return complexityScore[b.complexity] - complexityScore[a.complexity];
+        const aScore = a.complexity ? complexityScore[a.complexity] : 1;
+        const bScore = b.complexity ? complexityScore[b.complexity] : 1;
+        return bScore - aScore;
       })
       .slice(0, maxFeatures);
   }
@@ -254,7 +256,9 @@ export const validateFeatures = (
       (existing) =>
         existing.title.toLowerCase() === feature.title.toLowerCase() ||
         (existing.category === feature.category &&
-          existing.dataEntities.every((e) => feature.dataEntities.includes(e)))
+          existing.dataEntities &&
+          feature.dataEntities &&
+          existing.dataEntities.every((e) => feature.dataEntities!.includes(e)))
     );
     return isDuplicate ? acc : [...acc, feature];
   }, [] as InferredFeature[]);
@@ -264,10 +268,12 @@ export const validateFeatures = (
 
 const mergeOverlappingFeatures = (features: InferredFeature[]): InferredFeature[] => {
   const entityGroups = features.reduce((groups, feature) => {
-    feature.dataEntities.forEach((entity) => {
-      if (!groups[entity]) groups[entity] = [];
-      groups[entity].push(feature);
-    });
+    if (feature.dataEntities) {
+      feature.dataEntities.forEach((entity) => {
+        if (!groups[entity]) groups[entity] = [];
+        groups[entity].push(feature);
+      });
+    }
     return groups;
   }, {} as Record<string, InferredFeature[]>);
 
@@ -279,18 +285,23 @@ const mergeOverlappingFeatures = (features: InferredFeature[]): InferredFeature[
       return;
     }
 
-    const categories = new Set(group.map((f) => f.category));
+    const categories = new Set(group.map((f) => f.category).filter(Boolean));
     if (
       categories.size === 1 &&
       categories.has(FeatureCategory.DATA_MANAGEMENT)
     ) {
-      const mergedFeature: InferredFeature = {
-        ...group[0],
-        title: `${group[0].dataEntities[0]} Management`,
-        description: `Complete CRUD operations for ${group[0].dataEntities[0].toLowerCase()}`,
-        actionVerbs: Array.from(new Set(group.flatMap((f) => f.actionVerbs))),
-      };
-      merged.push(mergedFeature);
+      const firstEntity = group[0].dataEntities?.[0];
+      if (firstEntity) {
+        const mergedFeature: InferredFeature = {
+          ...group[0],
+          title: `${firstEntity} Management`,
+          description: `Complete CRUD operations for ${firstEntity.toLowerCase()}`,
+          actionVerbs: Array.from(new Set(group.flatMap((f) => f.actionVerbs || []))),
+        };
+        merged.push(mergedFeature);
+      } else {
+        merged.push(...group);
+      }
     } else {
       merged.push(...group);
     }

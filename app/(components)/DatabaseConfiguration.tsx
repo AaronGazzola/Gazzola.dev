@@ -241,8 +241,8 @@ export const DatabaseConfiguration = () => {
         features: features.map((f) => ({
           title: f.title,
           description: f.description,
-          operation: f.operation,
-          databaseTable: f.databaseTable,
+          operation: f.actionVerbs?.join(", ") || "not specified",
+          databaseTable: f.databaseTables?.join(", ") || "not specified",
         })),
       };
     });
@@ -310,8 +310,8 @@ export const DatabaseConfiguration = () => {
         features: features.map((f) => ({
           title: f.title,
           description: f.description,
-          operation: f.operation,
-          databaseTable: f.databaseTable,
+          operation: f.actionVerbs?.join(", ") || "not specified",
+          databaseTable: f.databaseTables?.join(", ") || "not specified",
         })),
       };
     });

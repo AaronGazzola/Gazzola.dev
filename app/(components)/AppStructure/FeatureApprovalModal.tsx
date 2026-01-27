@@ -259,7 +259,7 @@ export const FeatureApprovalModal = ({
                                     >
                                       {feature.complexity}
                                     </Badge>
-                                    {feature.databaseTables.length > 0 && (
+                                    {feature.databaseTables && feature.databaseTables.length > 0 && (
                                       <Badge
                                         variant="outline"
                                         className="flex items-center theme-gap-1 theme-font-sans theme-tracking"
@@ -271,25 +271,25 @@ export const FeatureApprovalModal = ({
                                   </div>
 
                                   <div className="flex flex-wrap theme-gap-2 text-xs">
-                                    {feature.utilityFileNeeds.hooks && (
+                                    {feature.utilityFileNeeds?.hooks && (
                                       <div className="flex items-center theme-gap-1 theme-text-muted-foreground">
                                         <FileCode className="h-3 w-3" />
                                         hooks
                                       </div>
                                     )}
-                                    {feature.utilityFileNeeds.actions && (
+                                    {feature.utilityFileNeeds?.actions && (
                                       <div className="flex items-center theme-gap-1 theme-text-muted-foreground">
                                         <Code className="h-3 w-3" />
                                         actions
                                       </div>
                                     )}
-                                    {feature.utilityFileNeeds.stores && (
+                                    {feature.utilityFileNeeds?.stores && (
                                       <div className="flex items-center theme-gap-1 theme-text-muted-foreground">
                                         <Settings className="h-3 w-3" />
                                         stores
                                       </div>
                                     )}
-                                    {feature.utilityFileNeeds.types && (
+                                    {feature.utilityFileNeeds?.types && (
                                       <div className="flex items-center theme-gap-1 theme-text-muted-foreground">
                                         <FileCode className="h-3 w-3" />
                                         types

@@ -36,7 +36,7 @@ export const linkFeatureToUtilityFiles = (
   const utilityFileTypes: UserExperienceFileType[] = ["stores", "hooks", "actions", "types"];
 
   utilityFileTypes.forEach((fileType) => {
-    if (feature.utilityFileNeeds[fileType]) {
+    if (feature.utilityFileNeeds?.[fileType]) {
       if (feature.pageId.startsWith('layout-')) {
         const filePath = determineUtilityFilePath(pagePath, fileType, 'layout');
         linkedFiles[fileType] = filePath;
@@ -155,10 +155,10 @@ export const getUtilityFileTypesNeeded = (
 ): UserExperienceFileType[] => {
   const types: UserExperienceFileType[] = [];
 
-  if (feature.utilityFileNeeds.hooks) types.push("hooks");
-  if (feature.utilityFileNeeds.actions) types.push("actions");
-  if (feature.utilityFileNeeds.stores) types.push("stores");
-  if (feature.utilityFileNeeds.types) types.push("types");
+  if (feature.utilityFileNeeds?.hooks) types.push("hooks");
+  if (feature.utilityFileNeeds?.actions) types.push("actions");
+  if (feature.utilityFileNeeds?.stores) types.push("stores");
+  if (feature.utilityFileNeeds?.types) types.push("types");
 
   return types;
 };

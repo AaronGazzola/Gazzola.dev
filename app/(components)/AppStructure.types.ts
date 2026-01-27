@@ -32,6 +32,20 @@ export interface InferredFeature {
   pageId: string;
   title: string;
   description: string;
+  category?: FeatureCategory;
+  complexity?: FeatureComplexity;
+  actionVerbs?: string[];
+  dataEntities?: string[];
+  requiresRealtimeUpdates?: boolean;
+  requiresFileUpload?: boolean;
+  requiresExternalApi?: boolean;
+  databaseTables?: string[];
+  utilityFileNeeds?: {
+    hooks: boolean;
+    actions: boolean;
+    stores: boolean;
+    types: boolean;
+  };
 }
 
 export interface FeatureInferenceAIResponse {

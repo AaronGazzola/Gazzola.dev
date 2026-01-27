@@ -32,6 +32,7 @@ export const sendCreditDepletionNotificationAction = async (
       subject: "URGENT: OpenRouter Credits Depleted",
       react: CreditDepletionEmail({
         timestamp: data.timestamp,
+        brand: data.brand,
       }),
     });
 
