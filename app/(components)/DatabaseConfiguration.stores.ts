@@ -1681,7 +1681,9 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             });
 
             table.uniqueConstraints.forEach((constraint) => {
-              columns.push(`  UNIQUE (${constraint.join(", ")})`);
+              if (Array.isArray(constraint)) {
+                columns.push(`  UNIQUE (${constraint.join(", ")})`);
+              }
             });
 
             table.checkConstraints.forEach((constraint) => {

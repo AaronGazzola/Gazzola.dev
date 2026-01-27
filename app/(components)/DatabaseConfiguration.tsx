@@ -30,17 +30,18 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SiSupabase } from "react-icons/si";
 import { toast } from "sonner";
 import { useAppStructureStore } from "./AppStructure.stores";
 import {
-  generateDatabaseSchemaPrompt,
   generateId,
   generateTableDescriptionsPrompt,
   parseDatabaseSchemaFromResponse,
   parseTableDescriptionsFromResponse,
 } from "./DatabaseConfiguration.ai";
+import { useDatabaseGeneration } from "./DatabaseConfiguration.generation-handlers";
+import { buildDatabasePlanPrompt } from "./DatabaseConfiguration.prompts";
 import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
 import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
@@ -105,6 +106,8 @@ export const DatabaseConfiguration = () => {
   const [newSchemaName, setNewSchemaName] = useState("");
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
+  const [databasePlan, setDatabasePlan] = useState<string | null>(null);
+  const phase1ToastIdRef = useRef<string | number | undefined>();
 
   const readmeData = {
     title: readmeStore.title,
@@ -154,49 +157,24 @@ export const DatabaseConfiguration = () => {
       }
     });
 
-  const { mutate: generateSchema, isPending: isGeneratingSchema } =
-    useCodeGeneration((response) => {
-      const parsed = parseDatabaseSchemaFromResponse(response.content);
-
-      if (parsed) {
-        const { configuration } = parsed;
-
-        const techUpdates: Partial<InitialConfigurationType["technologies"]> =
-          {};
-        if (configuration.databaseProvider === "supabase") {
-          techUpdates.supabase = true;
-          techUpdates.postgresql = true;
-        } else {
-          techUpdates.supabase = false;
-          techUpdates.postgresql = false;
-        }
-
-        updateInitialConfiguration({
-          questions: {
-            ...initialConfiguration.questions,
-            databaseProvider: configuration.databaseProvider,
-          },
-          database: {
-            hosting:
-              configuration.databaseProvider === "supabase"
-                ? "supabase"
-                : "postgresql",
-          },
-          technologies: {
-            ...initialConfiguration.technologies,
-            ...techUpdates,
-          },
-        });
-
-        setTablesFromAI(parsed.tables);
-        setEnumsFromAI(parsed.enums);
-        if (parsed.rlsPolicies && parsed.rlsPolicies.length > 0) {
-          setRLSPoliciesFromAI(parsed.rlsPolicies, parsed.tables);
-        }
-        setDatabaseGenerated(true);
-        setShowSuccessView(true);
-      }
-    });
+  const {
+    generatePlan,
+    isGeneratingPlan,
+    isGeneratingSchema
+  } = useDatabaseGeneration(
+    tableDescriptions,
+    readmeData,
+    appStructureData,
+    appStructure,
+    setDatabasePlan,
+    setTablesFromAI,
+    setEnumsFromAI,
+    setRLSPoliciesFromAI,
+    updateInitialConfiguration,
+    setDatabaseGenerated,
+    setShowSuccessView,
+    phase1ToastIdRef
+  );
 
   const handleGenerateTableDescriptions = useCallback(() => {
     if (
@@ -281,63 +259,47 @@ export const DatabaseConfiguration = () => {
 
   const handleGenerateFullSchema = useCallback(() => {
     if (tableDescriptions.length === 0) {
-      toast.error("No table descriptions found. Please generate tables first.");
+      toast.error("No table descriptions found. Please add tables first.");
       return;
     }
 
     setLastGeneratedTableDescriptions(tableDescriptions);
-
-    const authMethodsList = Object.entries(readmeData.authMethods)
-      .filter(([_, enabled]) => enabled)
-      .map(([method]) => method)
-      .join(", ");
-
-    const pagesWithFeatures = appStructureData.parsedPages.map((page) => {
-      const features = appStructureData.inferredFeatures[page.id] || [];
-      const access = readmeData.pageAccess.find((pa) => pa.pageId === page.id);
-      const accessLevels = access
-        ? Object.entries(access)
-            .filter(([key, value]) => key !== "pageId" && value)
-            .map(([key]) => key)
-            .join(", ")
-        : "not specified";
-
-      return {
-        name: page.name,
-        route: page.route,
-        description: page.description,
-        accessLevels,
-        features: features.map((f) => ({
-          title: f.title,
-          description: f.description,
-          operation: f.actionVerbs?.join(", ") || "not specified",
-          databaseTable: f.databaseTables?.join(", ") || "not specified",
-        })),
-      };
+    phase1ToastIdRef.current = toast.loading("Generating database plan...", {
+      description: `Analyzing ${tableDescriptions.length} tables`
     });
 
     const structuredData = {
       appTitle: readmeData.title,
       appDescription: readmeData.description,
-      authMethods: authMethodsList || "none",
-      pages: pagesWithFeatures,
+      authMethods: Object.entries(readmeData.authMethods)
+        .filter(([_, enabled]) => enabled)
+        .map(([method]) => method)
+        .join(", "),
+      pages: appStructureData.parsedPages.map((page: any) => ({
+        name: page.name,
+        route: page.route,
+        description: page.description,
+        features: (appStructureData.inferredFeatures[page.id] || []).map((f: any) => ({
+          title: f.title,
+          description: f.description,
+        })),
+      })),
     };
 
-    const structuredDataString = JSON.stringify(structuredData, null, 2);
-
-    const prompt = generateDatabaseSchemaPrompt(
-      structuredDataString,
+    const prompt = buildDatabasePlanPrompt(
+      structuredData,
       appStructure,
-      DATABASE_TEMPLATES
+      tableDescriptions,
+      appStructureData.inferredFeatures
     );
 
-    generateSchema({ prompt, maxTokens: 4000 });
+    generatePlan({ prompt, maxTokens: 4000 });
   }, [
     tableDescriptions,
     readmeData,
     appStructureData,
     appStructure,
-    generateSchema,
+    generatePlan,
     setLastGeneratedTableDescriptions,
   ]);
 
@@ -515,7 +477,7 @@ export const DatabaseConfiguration = () => {
     readmeGenerated && readmeData.title && readmeData.pages.length > 0;
   const hasAppStructure =
     appStructureGenerated && appStructureData.parsedPages.length > 0;
-  const isPending = isGeneratingTables || isGeneratingSchema;
+  const isPending = isGeneratingTables || isGeneratingPlan || isGeneratingSchema;
 
   const MIN_TABLE_NAME_LENGTH = 2;
   const MIN_TABLE_DESCRIPTION_LENGTH = 20;

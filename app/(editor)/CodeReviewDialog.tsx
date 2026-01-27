@@ -34,12 +34,13 @@ export const CodeReviewDialog = ({
   open,
   onOpenChange,
 }: CodeReviewDialogProps) => {
-  const { isAzVariant } = useSubdomainStore();
+  const { isAzVariant, brand } = useSubdomainStore();
   const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<CodeReviewFormData>({
     name: "",
     email: "",
     message: "",
+    brand,
   });
 
   useEffect(() => {
@@ -77,6 +78,7 @@ export const CodeReviewDialog = ({
         name: "",
         email: "",
         message: "",
+        brand,
       });
       setTouched({
         name: false,

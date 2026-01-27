@@ -1,4 +1,3 @@
-import { CodeReviewFormData } from "@/app/(editor)/Footer.types";
 import {
   Body,
   Container,
@@ -10,7 +9,11 @@ import {
   Text,
 } from "@react-email/components";
 
-interface CodeReviewRequestEmailProps extends CodeReviewFormData {}
+interface CodeReviewRequestEmailProps {
+  name: string;
+  email: string;
+  message: string;
+}
 
 export const CodeReviewRequestEmail = ({
   name,

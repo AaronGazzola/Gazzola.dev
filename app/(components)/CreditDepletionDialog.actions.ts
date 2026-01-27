@@ -27,7 +27,7 @@ export const sendCreditDepletionNotificationAction = async (
     const resend = new Resend(config.resendApiKey);
 
     const { error } = await resend.emails.send({
-      from: `${config.email.fromName} <onboarding@resend.dev>`,
+      from: `${config.email.fromName} <${config.email.fromEmail}>`,
       to: config.adminEmail,
       subject: "URGENT: OpenRouter Credits Depleted",
       react: CreditDepletionEmail({

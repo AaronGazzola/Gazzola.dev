@@ -1,7 +1,10 @@
+import { DomainBrand } from "@/lib/domain.config";
+
 export interface CodeReviewFormData {
   name: string;
   email: string;
   message: string;
+  brand: DomainBrand;
 }
 
 export enum FooterDataAttributes {

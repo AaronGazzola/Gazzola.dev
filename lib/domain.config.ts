@@ -19,6 +19,7 @@ export interface DomainConfig {
   };
   email: {
     fromName: string;
+    fromEmail: string;
   };
   ui: {
     sidebarTitle: string;
@@ -48,6 +49,7 @@ export const DOMAIN_CONFIGS: Record<DomainBrand, DomainConfig> = {
     },
     email: {
       fromName: "Gazzola.dev Alerts",
+      fromEmail: process.env.RESEND_FROM_EMAIL || "az@gazzola.dev",
     },
     ui: {
       sidebarTitle: "Gazzola.dev",
@@ -76,6 +78,7 @@ export const DOMAIN_CONFIGS: Record<DomainBrand, DomainConfig> = {
     },
     email: {
       fromName: "AzAnything.dev Alerts",
+      fromEmail: process.env.RESEND_FROM_EMAIL_AZANYTHING || "az@azanything.dev",
     },
     ui: {
       sidebarTitle: "AzAnything.dev",
