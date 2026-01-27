@@ -229,19 +229,26 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
 
    - Verify .gitignore includes .env.local
    - Add a .env.example file with the supabase key variable names without the values
+   - Finally, prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "supabase login" and follow the prompts to authenticate supabase 
 
 5. INITIAL COMMIT AND PUSH
    - Commit and push the changes
    - Note: I'm already authenticated with GitHub from when I cloned this repository
    - Run git add . && git commit -m "Initial Next.js setup" && git push`;
 
+import { getDomainConfig } from "@/lib/domain.utils";
+import { type DomainBrand } from "@/lib/domain.config";
+
 export const generateFinalPrompt = (
-  starterKitName: string
-) => `I need help setting up my project using the starter kit. Please work through these steps:
+  starterKitName: string,
+  brand: DomainBrand
+) => {
+  const config = getDomainConfig(brand);
+  return `I need help setting up my project using the starter kit. Please work through these steps:
 
 1. LOCATE STARTER KIT
    - Search the repository for a directory or ZIP file name containing "${starterKitName}" (it may have "(3)" or something similar appended)
-   - If not found, ask me: "I couldn't find the ${starterKitName}. Please download it from Gazzola.dev and add it to your project directory, then let me know when it's ready."
+   - If not found, ask me: "I couldn't find the ${starterKitName}. Please download it from ${config.ui.starterKitReference} and add it to your project directory, then let me know when it's ready."
    - Wait for my confirmation before proceeding
 
 2. EXTRACT AND ORGANIZE
@@ -258,3 +265,4 @@ export const generateFinalPrompt = (
    - Switch to plan mode and create a step-by-step plan from the instructions in that document
 
 IMPORTANT: Follow the starter_kit.plan.md document exactly. It contains all the detailed instructions for the setup process. DO NOT CHANGE THE IMPLEMENTATION ORDER - FOLLOW THE PLAN EXACTLY`;
+};

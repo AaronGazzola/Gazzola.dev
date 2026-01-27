@@ -10,6 +10,9 @@ export enum CreditDepletionDataAttributes {
   ERROR_NOTIFICATION = "error-credit-depletion-notification",
 }
 
+import { DomainBrand } from "@/lib/domain.config";
+
 export interface CreditDepletionNotificationData {
   timestamp: string;
+  brand: DomainBrand;
 }

@@ -1,6 +1,6 @@
 # Starter Kit Implementation Plan
 
-IMPORTANT: Implement this complete plan. Do not skip, alter or simplify any steps. Do not change the implementation order.
+IMPORTANT: Implement this complete plan. Do not skip, alter or simplify any steps. Do not change the implementation order. Do not implement the plan using multiple agents in parallel, complete each step in sequence. If you're not able to complete any of the required steps, or if you need additional information then stop and ask for clarification, don't just continue and "fill in the gaps".
 
 This is a complete step-by-step guide for building a Next.js application using the starter kit configuration files.
 
@@ -289,7 +289,7 @@ IMPORTANT: Display this exact message at the end of the process:
 >
 > Follow the steps below to test it out!
 >
-> 1. Open terminal in VS Code (`Ctrl+` or `Cmd+`)
+> 1. Open terminal in VS Code (Ctrl + \` or Cmd + \`)
 > 2. Type `npm run dev` into the terminal and hit the `Enter` key
 > 3. Type `http://localhost:3000` into your browser's URL bar
 > 4. Explore your app! You can sign in with the admin email you provided and the password: `Password123!`

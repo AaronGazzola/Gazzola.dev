@@ -1,6 +1,8 @@
 "use client";
 
 import { useThemeStore } from "@/app/layout.stores";
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
+import { getDomainConfig } from "@/lib/domain.utils";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,6 +23,8 @@ export const CreditDepletionDialog = ({
   onOpenChange,
 }: CreditDepletionDialogProps) => {
   const { gradientEnabled, singleColor, gradientColors } = useThemeStore();
+  const { brand } = useSubdomainStore();
+  const config = getDomainConfig(brand);
   const [emailSent, setEmailSent] = useState(false);
 
   const { mutate: sendNotification } = useSendCreditDepletionNotification(
@@ -31,9 +35,9 @@ export const CreditDepletionDialog = ({
 
   useEffect(() => {
     if (open && !emailSent) {
-      sendNotification({ timestamp: new Date().toISOString() });
+      sendNotification({ timestamp: new Date().toISOString(), brand });
     }
-  }, [open, emailSent, sendNotification]);
+  }, [open, emailSent, sendNotification, brand]);
 
   const getIconStyle = () => {
     if (gradientEnabled) {
@@ -66,8 +70,7 @@ export const CreditDepletionDialog = ({
 
         <div className="space-y-4 py-4 text-center">
           <p className="text-base text-gray-300">
-            Gazzola.dev has become so popular that we&apos;ve temporarily run
-            out of AI generation credits!
+            {config.ui.creditDepletionMessage}
           </p>
           <p className="text-base text-gray-300">
             The good news: Az has been automatically notified and will refill

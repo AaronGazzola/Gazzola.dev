@@ -9,15 +9,7 @@ const shouldUseParentFile = (
   feature: InferredFeature,
   fileType: UserExperienceFileType
 ): boolean => {
-  if (feature.category === FeatureCategory.AUTHENTICATION) {
-    return fileType === 'hooks' || fileType === 'stores' || fileType === 'types';
-  }
-
-  if (feature.category === FeatureCategory.NAVIGATION) {
-    return fileType === 'stores' || fileType === 'types';
-  }
-
-  if (fileType === 'types' && feature.dataEntities.length > 0) {
+  if (fileType === 'types') {
     return true;
   }
 

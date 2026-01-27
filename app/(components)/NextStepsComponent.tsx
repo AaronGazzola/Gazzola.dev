@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
 import { Button } from "@/components/editor/ui/button";
 import {
   Accordion,
@@ -65,13 +66,14 @@ export const NextStepsComponent = () => {
   } = useEditorStore();
 
   const { title: appTitle } = useREADMEStore();
+  const { brand } = useSubdomainStore();
 
   const initialConfiguration = getInitialConfiguration();
   const isNoDatabaseSelected =
     initialConfiguration.questions.databaseProvider === "none";
 
   const starterKitName = `${(appTitle || "My_Project").replace(/\s+/g, "_")}_Starter_Kit`;
-  const finalPrompt = generateFinalPrompt(starterKitName);
+  const finalPrompt = generateFinalPrompt(starterKitName, brand);
 
   const handleCopy = async (text: string, id: string) => {
     try {

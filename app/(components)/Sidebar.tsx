@@ -3,6 +3,8 @@ import { useEditorStore } from "@/app/(editor)/layout.stores";
 import type { CodeFileNode } from "@/app/(editor)/layout.types";
 import { MarkdownNode, NavigationItem } from "@/app/(editor)/layout.types";
 import { useThemeStore } from "@/app/layout.stores";
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
+import { getDomainConfig } from "@/lib/domain.utils";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -60,7 +62,6 @@ import { useEffect, useMemo, useState } from "react";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { useHeaderStore } from "./Header.store";
 import { SidebarDataAttributes } from "./Sidebar.types";
-import { useSubdomainStore } from "@/app/layout.subdomain.store";
 
 const nextSteps = [
   { icon: ListTodo, title: "Design" },
@@ -791,7 +792,9 @@ const Sidebar = () => {
         <div className="flex items-start justify-between">
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between mb-3">
-              <h1 className="text-xl font-bold text-white">Gazzola.dev</h1>
+              <h1 className="text-xl font-bold text-white">
+                {getDomainConfig(useSubdomainStore().brand).ui.sidebarTitle}
+              </h1>
               <Button
                 variant="ghost"
                 size="icon"

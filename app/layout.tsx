@@ -34,30 +34,30 @@ import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { getDomainConfigFromHostname, parseDomain } from "@/lib/domain.utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const host = headersList.get("host") || "gazzola.dev";
-  const subdomain = host.split(".")[0];
-  const isAz = subdomain === "az";
+  const { variant } = parseDomain(host);
+  const config = getDomainConfigFromHostname(host);
+
+  const isAz = variant === "az";
+  const metadataBase = isAz && config.azUrl ? config.azUrl : config.defaultUrl;
 
   return {
-    title: "Gazzola.dev | Web App Starter Kit Generator",
-    description:
-      "Generate customized starter kits for building full-stack web apps with AI assistance. Download complete configuration files including database schema, app structure, theme settings, and step-by-step implementation plans for Claude Code.",
-    metadataBase: new URL(
-      isAz ? "https://az.gazzola.dev" : "https://gazzola.dev"
-    ),
+    title: config.metadata.title,
+    description: config.metadata.description,
+    metadataBase: new URL(metadataBase),
     openGraph: {
-      title: "Gazzola.dev | Web App Starter Kit Generator",
-      description:
-        "Generate customized starter kits for building full-stack web apps with AI assistance. Download complete configuration files including database schema, app structure, theme settings, and step-by-step implementation plans for Claude Code.",
+      title: config.metadata.title,
+      description: config.metadata.description,
       images: [
         {
           url: "/GazzolaLogo.png",
           width: 2048,
           height: 2048,
-          alt: "Gazzola development logo",
+          alt: config.metadata.logoAlt,
         },
       ],
     },

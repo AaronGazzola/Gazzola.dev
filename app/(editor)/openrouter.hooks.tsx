@@ -20,48 +20,68 @@ export const useCodeGeneration = (
     ): Promise<OpenRouterResponse> => {
       const fingerprint = await getDeviceFingerprint();
 
-      let response: Response;
-      try {
-        response = await fetch("/api/openrouter", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...input,
-            fingerprint,
-          } as OpenRouterRequest),
-          signal: AbortSignal.timeout(95000),
-        });
-      } catch (error) {
-        if (error instanceof Error && error.name === "TimeoutError") {
-          throw { message: "Request timed out. Please try again." };
+      const MAX_RETRIES = 2;
+      const RETRY_DELAY = 5000;
+
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        let response: Response;
+        try {
+          response = await fetch("/api/openrouter", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...input,
+              fingerprint,
+            } as OpenRouterRequest),
+            signal: AbortSignal.timeout(180000),
+          });
+        } catch (error) {
+          if (error instanceof Error && error.name === "TimeoutError") {
+            if (attempt < MAX_RETRIES) {
+              const delay = RETRY_DELAY * Math.pow(2, attempt);
+              toast.info(`Request timed out. Retrying in ${delay / 1000}s... (Attempt ${attempt + 2}/${MAX_RETRIES + 1})`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              continue;
+            }
+            throw { message: "Request timed out. Please try again." };
+          }
+          throw { message: "Network error. Please check your connection." };
         }
-        throw { message: "Network error. Please check your connection." };
+
+        if (response.status === 429) {
+          const data = await response.json();
+          const retryAfter = data.retryAfter || 60;
+          throw {
+            message: `Rate limit exceeded. Try again in ${retryAfter} seconds.`,
+            retryAfter,
+          };
+        }
+
+        if (response.status === 402) {
+          const data = await response.json();
+          throw {
+            message:
+              data.error || "Service temporarily unavailable due to high demand",
+            isInsufficientCredits: true,
+          };
+        }
+
+        if (response.status === 504 && attempt < MAX_RETRIES) {
+          const delay = RETRY_DELAY * Math.pow(2, attempt);
+          toast.info(`Request timed out. Retrying in ${delay / 1000}s... (Attempt ${attempt + 2}/${MAX_RETRIES + 1})`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw { message: data.error || "Code generation failed" };
+        }
+
+        return response.json();
       }
 
-      if (response.status === 429) {
-        const data = await response.json();
-        const retryAfter = data.retryAfter || 60;
-        throw {
-          message: `Rate limit exceeded. Try again in ${retryAfter} seconds.`,
-          retryAfter,
-        };
-      }
-
-      if (response.status === 402) {
-        const data = await response.json();
-        throw {
-          message:
-            data.error || "Service temporarily unavailable due to high demand",
-          isInsufficientCredits: true,
-        };
-      }
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw { message: data.error || "Code generation failed" };
-      }
-
-      return response.json();
+      throw new Error("Max retries exceeded");
     },
     onSuccess: (data) => {
       toast.success("Code generated successfully!", { duration: 3000 });

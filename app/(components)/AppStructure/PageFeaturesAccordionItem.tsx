@@ -2,7 +2,6 @@
 
 import { Badge } from "@/components/editor/ui/badge";
 import { Button } from "@/components/editor/ui/button";
-import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
 import {
   Popover,
@@ -13,10 +12,7 @@ import { Textarea } from "@/components/editor/ui/textarea";
 import {
   ChevronDown,
   ChevronRight,
-  Code,
-  FileCode,
   Plus,
-  Settings,
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
@@ -160,129 +156,6 @@ export const PageFeaturesAccordionItem = ({
                       className="theme-font-sans theme-tracking "
                       rows={3}
                     />
-                  </div>
-
-                  <div className="flex flex-col theme-gap-2">
-                    <label className="font-semibold theme-text-foreground">
-                      Utility Files
-                    </label>
-                    <div className="flex flex-col lg:flex-row gap-3">
-                      <div className="flex items-center theme-gap-2">
-                        <Checkbox
-                          checked={feature.utilityFileNeeds.hooks}
-                          onCheckedChange={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                hooks: !feature.utilityFileNeeds.hooks,
-                              },
-                            })
-                          }
-                          disabled={disabled}
-                        />
-                        <label
-                          className="flex items-center theme-gap-1 text-sm theme-text-foreground cursor-pointer"
-                          onClick={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                hooks: !feature.utilityFileNeeds.hooks,
-                              },
-                            })
-                          }
-                        >
-                          <FileCode className="h-3 w-3" />
-                          hooks
-                        </label>
-                      </div>
-
-                      <div className="flex items-center theme-gap-2">
-                        <Checkbox
-                          checked={feature.utilityFileNeeds.actions}
-                          onCheckedChange={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                actions: !feature.utilityFileNeeds.actions,
-                              },
-                            })
-                          }
-                          disabled={disabled}
-                        />
-                        <label
-                          className="flex items-center theme-gap-1 text-sm theme-text-foreground cursor-pointer"
-                          onClick={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                actions: !feature.utilityFileNeeds.actions,
-                              },
-                            })
-                          }
-                        >
-                          <Code className="h-3 w-3" />
-                          actions
-                        </label>
-                      </div>
-
-                      <div className="flex items-center theme-gap-2">
-                        <Checkbox
-                          checked={feature.utilityFileNeeds.stores}
-                          onCheckedChange={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                stores: !feature.utilityFileNeeds.stores,
-                              },
-                            })
-                          }
-                          disabled={disabled}
-                        />
-                        <label
-                          className="flex items-center theme-gap-1 text-sm theme-text-foreground cursor-pointer"
-                          onClick={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                stores: !feature.utilityFileNeeds.stores,
-                              },
-                            })
-                          }
-                        >
-                          <Settings className="h-3 w-3" />
-                          stores
-                        </label>
-                      </div>
-
-                      <div className="flex items-center theme-gap-2">
-                        <Checkbox
-                          checked={feature.utilityFileNeeds.types}
-                          onCheckedChange={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                types: !feature.utilityFileNeeds.types,
-                              },
-                            })
-                          }
-                          disabled={disabled}
-                        />
-                        <label
-                          className="flex items-center theme-gap-1 text-sm theme-text-foreground cursor-pointer"
-                          onClick={() =>
-                            onUpdateFeature(feature.id, {
-                              utilityFileNeeds: {
-                                ...feature.utilityFileNeeds,
-                                types: !feature.utilityFileNeeds.types,
-                              },
-                            })
-                          }
-                        >
-                          <FileCode className="h-3 w-3" />
-                          types
-                        </label>
-                      </div>
-                    </div>
                   </div>
                 </div>
               )}

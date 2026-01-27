@@ -9,10 +9,10 @@ Description: beep.buzz is a simple and playful social media platform where users
 Layouts:
 
 Name: Main Layout
-Description: Primary layout featuring a header with Beep.Buzz logo and authentication button/menu. Minimal footer with essential links.
+Description: Primary layout with header containing Beep.Buzz logo and authenticaion avatar button/menu, with a profile link button and a sign out button. Includes a minimal footer with essential links.
 
 Name: Admin Layout
-Description: Admin-specific layout with header containing moderation tools navigation. Includes sidebar with content flagging queue, user management, and sticker approval tools.
+Description: Admin-specific layout with header containing the beep.buzz logo (link to home) and the same authentication avatar button/menu as the Main layout. Includes sidebar with content flagging queue, user management, and sticker approval tools.
 
 Name: Homepage
 Route: /

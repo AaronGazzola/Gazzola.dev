@@ -229,7 +229,7 @@ export const InlineFeatureCard = ({
   };
 
   const handlePlaceholderClick = (fileType: UserExperienceFileType) => {
-    const linkedFile = feature.linkedFiles[fileType];
+    const linkedFile = feature.linkedFiles?.[fileType];
     conditionalLog(
       {
         message: "InlineFeatureCard: handlePlaceholderClick called",
@@ -391,7 +391,7 @@ export const InlineFeatureCard = ({
 
           <div className="flex flex-col theme-gap-2">
             {fileTypes.map((fileType) => {
-              const linkedFile = feature.linkedFiles[fileType];
+              const linkedFile = feature.linkedFiles?.[fileType];
               const functionName = getDefaultFunctionName(fileType);
               const isExpanded = expandedUtilType === fileType;
 

@@ -241,9 +241,8 @@ export const DatabaseConfiguration = () => {
         features: features.map((f) => ({
           title: f.title,
           description: f.description,
-          category: f.category,
-          databaseTables: f.databaseTables,
-          dataEntities: f.dataEntities,
+          operation: f.operation,
+          databaseTable: f.databaseTable,
         })),
       };
     });
@@ -311,9 +310,8 @@ export const DatabaseConfiguration = () => {
         features: features.map((f) => ({
           title: f.title,
           description: f.description,
-          category: f.category,
-          databaseTables: f.databaseTables,
-          dataEntities: f.dataEntities,
+          operation: f.operation,
+          databaseTable: f.databaseTable,
         })),
       };
     });

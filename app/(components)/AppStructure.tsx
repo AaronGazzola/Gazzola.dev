@@ -29,16 +29,12 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
-  convertInferredFeaturesToFeatures,
-  createPageIdToPathMap,
-  getUtilityFileTypesNeeded,
-} from "./AppStructure.feature-linker";
-import {
   addUtilityFilesToStructure,
   parseRoutesToStructure,
 } from "./AppStructure.parser";
-import { buildStructureGenerationPrompt } from "./AppStructure.prompts";
-import { InferredFeature, FeatureCategory, FeatureComplexity } from "./AppStructure.types";
+import { buildStructurePlanPrompt, buildStructureFromPlanPrompt } from "./AppStructure.prompts";
+import { useStructureGeneration } from "./AppStructure.generation-handlers";
+import { InferredFeature } from "./AppStructure.types";
 import {
   addRouteSegment,
   createRouteFromPath,
@@ -61,251 +57,105 @@ export { WireFrame } from "./WireFrame";
 const isDevelopment = process.env.NODE_ENV === "development";
 
 const buildFeatureGenerationPrompt = (
-  readmeContent: string,
   layouts: LayoutInput[],
   pages: PageInput[],
   pageAccess: PageAccess[],
   authMethods: AuthMethods
 ): string => {
   const layoutsSection = layouts.length > 0
-    ? `LAYOUTS:
-${layouts.map(l => `${l.name}: ${l.description}`).join('\n')}\n`
-    : '';
+    ? `LAYOUTS:\n${layouts.map(l => {
+        return `- ${l.name}\n  Description: ${l.description}\n`;
+      }).join('')}`
+    : 'No layouts defined.\n';
 
   const pagesSection = pages.length > 0
-    ? `PAGES:
-${pages.map(p => `${p.route} - ${p.name}: ${p.description}`).join('\n')}\n`
+    ? `PAGES:\n${pages.map(p => {
+        const access = pageAccess.find(pa => pa.pageId === p.id);
+        const accessLevels = [];
+        if (access?.anon) accessLevels.push('anonymous');
+        if (access?.auth) accessLevels.push('authenticated');
+        if (access?.admin) accessLevels.push('admin');
+        const accessStr = accessLevels.length > 0 ? accessLevels.join(', ') : 'not specified';
+
+        return `- ${p.route} - ${p.name}\n  Description: ${p.description}\n  Access: ${accessStr}\n`;
+      }).join('')}`
     : '';
 
-  return `You are analyzing a Next.js web application to infer FUNCTIONAL features for layouts and pages.
+  const authMethodsSection = `AUTHENTICATION METHODS:\n- Email/Password: ${authMethods.emailPassword ? 'Yes' : 'No'}\n- Magic Link: ${authMethods.magicLink ? 'Yes' : 'No'}\n`;
+
+  return `You are generating action-based features for a Next.js web application.
+
+${authMethodsSection}
 
 ${layoutsSection}
+
 ${pagesSection}
 
-WHAT IS A FEATURE?
+FEATURE DEFINITION:
+Each feature represents a SINGLE ACTION that a user can perform.
+Features should be atomic and specific with action verbs.
 
-A feature is a FUNCTIONAL CAPABILITY that requires code implementation.
+GOOD FEATURE EXAMPLES:
+- "Sign in with email and password"
+- "Sign up with email and password"
+- "Sign out user"
+- "Send forgot password email"
+- "Reset password"
+- "Get authenticated user profile"
+- "Get all users"
+- "Edit user profile"
+- "Delete post"
+- "Create new post"
+- "Get list of messages"
+- "Send message"
+- "Submit contact form"
+- "Upload profile image"
+- "Filter products by category"
+- "Sort users by name"
 
-VALID FEATURES require at least one of:
-✅ Hook to fetch or mutate data from database/API
-✅ Action to perform server-side logic or validation
-✅ Store to manage client-side state for user interactions
-✅ Custom types to define data structures
+BAD FEATURE EXAMPLES (TOO VAGUE):
+- "User authentication" → Split into: "Sign in", "Sign up", "Sign out"
+- "Profile management" → Split into: "Get profile", "Edit profile", "Upload avatar"
+- "Dashboard display" → Split into: "Get user stats", "Get recent activity"
+- "Content management" → Split into: "Create post", "Edit post", "Delete post"
 
-INVALID FEATURES (DO NOT GENERATE):
-❌ UI structure: "Header", "Footer", "Navigation Menu", "Sidebar"
-❌ Layout components: "Main Layout", "Auth Layout", "Page Wrapper"
-❌ Generic state: "Auth State Management", "Global State", "App State"
-❌ Broad categories: "User Management", "Content Moderation", "Dashboard"
-❌ Static displays: "Show Users", "Display Table" (unless specific fetching logic needed)
+GUIDELINES:
+1. FOR LAYOUTS: Only include actions shared across ALL pages using that layout (e.g., sign out, notifications)
+2. FOR PAGES: Identify EVERY action mentioned in the description
+3. FEATURE COUNT:
+   - Simple page (static): 0-1 features
+   - Form page: 1-3 features
+   - List/view page: 1-3 features
+   - Complex page (dashboard, admin): 4-10 features
+4. Break down complex functionality into individual actions
+5. Use action verbs: get, create, edit, delete, send, submit, upload, filter, sort, etc.
 
-SPECIAL CASE - Sign Out Button:
-✅ "Sign Out User" - YES, this IS a feature (requires action to clear session)
-❌ "Header with Sign Out" - NO, the header is not a feature, only the sign out functionality
-
-CONSOLIDATE RELATED FUNCTIONALITY:
-
-When multiple actions share the same hook/action/store pathway, combine them:
-
-✅ GOOD (consolidated):
-  - "Fetch and Filter Users by Role"
-    → Hook: useUsers (handles fetch + filter)
-    → Action: getUsersAction (DB query)
-    → Store: useUserFilterStore (filter state)
-    → Types: User, UserFilter
-
-  - "Approve or Deny Flagged Content"
-    → Hook: useModerateContent
-    → Action: moderateContentAction (approve or deny logic)
-    → Types: FlaggedContent, ModerationDecision
-
-❌ BAD (unnecessarily split):
-  - "Fetch Users" + "Filter Users" (same pathway, should be one feature)
-  - "Approve Content" + "Deny Content" (same action, two paths)
-
-ACTION-ORIENTED FEATURES:
-
-Extract a feature for EVERY action verb in the description.
-
-Example description: "Users can add blocks, drag elements, resize shapes, and delete items"
-→ Generate features for: add, drag, resize, delete
-
-✅ GOOD (action-oriented):
-  - "Sign In with Email and Password"
-  - "Reset Password via Email Link"
-  - "Create New Blog Post with Tags"
-  - "Edit User Profile and Save"
-  - "Ban User with Reason and Duration"
-  - "Fetch and Filter Products by Category"
-  - "Submit Contact Form"
-  - "Add and Edit Content Blocks"
-  - "Drag and Reorder Elements"
-  - "Resize Elements"
-  - "Delete Elements"
-  - "Toggle Responsive Preview"
-
-❌ BAD (display-oriented or too broad):
-  - "User Authentication" (too broad)
-  - "Show User Profile" (no specific action)
-  - "Display Products" (unless specific fetch logic)
-  - "Header Navigation" (UI structure)
-  - "Product Management" (too broad)
-  - "Content Management" (too broad - split into specific actions)
-
-FEATURE COUNT GUIDANCE:
-
-Analyze the page description for SPECIFIC FUNCTIONALITY mentioned.
-
-- Simple page (display only, no interactions) → 0-2 features
-  Example: Static about page → 0 features
-  Example: User profile view → 1 feature (fetch user data)
-
-- Standard page (forms, CRUD operations) → 2-4 features
-  Example: Login page → 1 feature (sign in with email/password)
-  Example: Settings page → 2-3 features (fetch settings, update settings, upload avatar)
-
-- Complex page (admin dashboards, content management, editors) → 4-8 features
-  Example: Admin moderation page → 5 features:
-    1. Fetch and filter flagged content
-    2. Approve or remove flagged content
-    3. Warn or ban users
-    4. Fetch moderation audit log
-    5. Manage user reports
-
-  Example: Page builder/editor → 7 features:
-    1. Fetch and save page data
-    2. Add text blocks, shapes, dividers, embeds
-    3. Edit content blocks
-    4. Drag and reorder elements
-    5. Resize and align elements
-    6. Delete elements
-    7. Toggle responsive preview (desktop/tablet/mobile)
-
-HOW TO EXTRACT FEATURES FROM PAGE DESCRIPTIONS:
-
-Step 1: Identify ALL action verbs in the description
-  Example: "Users add blocks, drag elements, resize shapes, delete items"
-  Actions: add, drag, resize, delete
-
-Step 2: Create a feature for EACH distinct action
-  → "Add Content Blocks"
-  → "Drag and Reorder Elements"
-  → "Resize Elements"
-  → "Delete Elements"
-
-Step 3: Add data management features (fetch/save)
-  → "Fetch and Save Page Data"
-
-Step 4: Add state management features (toggles, filters, selections)
-  → "Toggle Responsive Preview"
-
-WHEN TO SPLIT vs CONSOLIDATE:
-
-Split features when they use DIFFERENT hooks/actions:
-✅ "Fetch flagged content" + "Approve or remove content" (different actions)
-✅ "Add content blocks" + "Drag and reorder elements" (different interactions)
-
-Consolidate when they share the SAME hook/action pathway:
-✅ "Approve or remove content" (one action, two code paths)
-✅ "Warn or ban users" (one action, different parameters)
-
-CRITICAL:
-- ALWAYS include ALL layouts and pages in the response, even if features array is empty
-- Use the 4-step process above to extract features from EVERY page description
-- For complex pages with many actions, generate 4-8 specific features (one per action)
-
-CRITICAL OUTPUT REQUIREMENTS:
-1. ALWAYS include ALL layouts in the "layouts" array (even if features is empty [])
-2. ALWAYS include ALL pages in the "pages" array (even if features is empty [])
-3. Match layout names and page routes EXACTLY as provided above
-4. Generate specific features for each action mentioned in descriptions
-
-Return a JSON object with this structure:
+OUTPUT FORMAT (NO markdown code blocks, just JSON):
 {
   "layouts": [
     {
       "name": "Main Layout",
       "features": [
         {
-          "title": "Sign Out User",
-          "description": "Clear user session and redirect to login",
-          "category": "authentication",
-          "complexity": "simple",
-          "actionVerbs": ["signout"],
-          "dataEntities": ["user"],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": ["profiles"],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": false
-          }
+          "title": "Sign out user",
+          "description": "Clear user session and redirect to login page"
         }
       ]
     }
   ],
   "pages": [
     {
-      "route": "/admin/moderation",
-      "name": "Content Moderation",
-      "description": "Admin dashboard for moderation",
+      "route": "/login",
+      "name": "Login Page",
+      "description": "User login page",
       "features": [
         {
-          "title": "Fetch and Filter Flagged Content",
-          "description": "Get all flagged content with filtering options",
-          "category": "data-management",
-          "complexity": "medium",
-          "actionVerbs": ["fetch", "filter"],
-          "dataEntities": ["flaggedContent"],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": ["flagged_content"],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": true,
-            "types": true
-          }
+          "title": "Sign in with email and password",
+          "description": "Authenticate user with email and password credentials"
         },
         {
-          "title": "Approve or Remove Flagged Content",
-          "description": "Take action to approve or permanently remove content",
-          "category": "content-management",
-          "complexity": "medium",
-          "actionVerbs": ["approve", "remove"],
-          "dataEntities": ["flaggedContent"],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": ["flagged_content"],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
-        },
-        {
-          "title": "Warn or Ban Users",
-          "description": "Issue warnings or ban users with reason",
-          "category": "user-management",
-          "complexity": "medium",
-          "actionVerbs": ["warn", "ban"],
-          "dataEntities": ["user"],
-          "requiresRealtimeUpdates": false,
-          "requiresFileUpload": false,
-          "requiresExternalApi": false,
-          "databaseTables": ["users"],
-          "utilityFileNeeds": {
-            "hooks": true,
-            "actions": true,
-            "stores": false,
-            "types": true
-          }
+          "title": "Send forgot password email",
+          "description": "Send password reset link to user's email"
         }
       ]
     }
@@ -313,18 +163,18 @@ Return a JSON object with this structure:
 }
 
 CRITICAL:
-- Include ALL layouts and pages in response (even if features is empty)
-- Focus on FUNCTIONAL features that require hooks/actions/stores/types
-- For complex pages, generate 4-8 specific features covering all mentioned actions
-Return only the JSON object, no additional text.`;
+- Return ONLY valid JSON (no markdown code blocks)
+- Start with { and end with }
+- Include ALL layouts from input (even if features array is empty)
+- Include ALL pages from input (even if features array is empty)
+- Each feature = single action with action verb in title`;
 };
 
 const validateFeature = (feature: InferredFeature): boolean => {
   const invalidTitles = [
     'header', 'footer', 'sidebar', 'navigation',
     'layout', 'wrapper', 'container',
-    'auth state', 'global state', 'app state',
-    'management', 'dashboard', 'page'
+    'auth state', 'global state', 'app state'
   ];
 
   const titleLower = feature.title.toLowerCase();
@@ -333,8 +183,7 @@ const validateFeature = (feature: InferredFeature): boolean => {
     return false;
   }
 
-  const hasUtility = Object.values(feature.utilityFileNeeds).some(v => v === true);
-  if (!hasUtility) {
+  if (!feature.title || feature.title.trim().length === 0) {
     return false;
   }
 
@@ -363,6 +212,7 @@ export const LayoutAndStructure = () => {
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
+  const phase1ToastIdRef = useRef<string | number | undefined>();
   const [newNodeId, setNewNodeId] = useState<string | null>(null);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
   const [newlyAddedSegmentPath, setNewlyAddedSegmentPath] = useState<
@@ -378,30 +228,23 @@ export const LayoutAndStructure = () => {
       )
     : [];
 
-  const fullReadmeContent = useMemo(() => {
-    const readmeNode = data.flatIndex["readme"];
-    if (!readmeNode || readmeNode.type !== "file" || !readmeNode.content) return null;
-    return readmeNode.content.replace(/^<!-- component-READMEComponent -->\s*\n*/g, '').trim();
-  }, [data]);
-
   const {
     inferredFeatures,
     parsedPages,
     featuresGenerated,
     accordionValue,
-    lastGeneratedReadmeContent,
     lastGeneratedForStructure,
     setInferredFeatures,
     setParsedPages,
     setFeaturesGenerated,
     setAccordionValue,
-    setLastGeneratedReadmeContent,
     setLastGeneratedForStructure,
     updateFeature,
   } = useAppStructureStore();
 
   const [globalExpandedFeatureId, setGlobalExpandedFeatureId] = useState<string | null>(null);
   const [showSuccessView, setShowSuccessView] = useState(false);
+  const [structurePlan, setStructurePlan] = useState<string | null>(null);
 
   useEffect(() => {
     if (globalExpandedFeatureId === null && featuresGenerated && Object.keys(inferredFeatures).length > 0) {
@@ -424,20 +267,6 @@ export const LayoutAndStructure = () => {
       pageId: pageId,
       title: "New Feature",
       description: "",
-      category: FeatureCategory.UI_INTERACTION,
-      complexity: FeatureComplexity.SIMPLE,
-      actionVerbs: [],
-      dataEntities: [],
-      requiresRealtimeUpdates: false,
-      requiresFileUpload: false,
-      requiresExternalApi: false,
-      databaseTables: [],
-      utilityFileNeeds: {
-        hooks: true,
-        actions: false,
-        stores: false,
-        types: true,
-      },
     };
 
     setInferredFeatures({
@@ -467,6 +296,13 @@ export const LayoutAndStructure = () => {
 
   const { mutate: generateFeatures, isPending: isGeneratingFeatures } =
     useCodeGeneration((response) => {
+      console.log("========================================");
+      console.log("FEATURE GENERATION");
+      console.log("========================================");
+      console.log("AI OUTPUT (Raw Response):");
+      console.log(response.content);
+      console.log("========================================");
+
       try {
         const cleanResponse = response.content
           .replace(/```json\n?/g, "")
@@ -497,20 +333,6 @@ export const LayoutAndStructure = () => {
                     pageId: layoutPageId,
                     title: f.title || "Untitled Feature",
                     description: f.description || "",
-                    category: f.category || "ui-interaction",
-                    complexity: f.complexity || "simple",
-                    actionVerbs: f.actionVerbs || [],
-                    dataEntities: f.dataEntities || [],
-                    requiresRealtimeUpdates: f.requiresRealtimeUpdates || false,
-                    requiresFileUpload: f.requiresFileUpload || false,
-                    requiresExternalApi: f.requiresExternalApi || false,
-                    databaseTables: f.databaseTables || [],
-                    utilityFileNeeds: f.utilityFileNeeds || {
-                      hooks: false,
-                      actions: false,
-                      stores: false,
-                      types: true,
-                    },
                   })
                 )
                 .filter(validateFeature);
@@ -555,20 +377,6 @@ export const LayoutAndStructure = () => {
                   pageId: pageId,
                   title: f.title || "Untitled Feature",
                   description: f.description || "",
-                  category: f.category || "ui-interaction",
-                  complexity: f.complexity || "simple",
-                  actionVerbs: f.actionVerbs || [],
-                  dataEntities: f.dataEntities || [],
-                  requiresRealtimeUpdates: f.requiresRealtimeUpdates || false,
-                  requiresFileUpload: f.requiresFileUpload || false,
-                  requiresExternalApi: f.requiresExternalApi || false,
-                  databaseTables: f.databaseTables || [],
-                  utilityFileNeeds: f.utilityFileNeeds || {
-                    hooks: true,
-                    actions: false,
-                    stores: false,
-                    types: true,
-                  },
                 })
               )
               .filter(validateFeature);
@@ -591,73 +399,76 @@ export const LayoutAndStructure = () => {
 
         const layoutCount = parsed.layouts?.length || 0;
         const pageCount = parsed.pages?.length || 0;
+
+        console.log("PARSED PAGES:");
+        console.log(JSON.stringify(displayPages, null, 2));
+        console.log("========================================");
+        console.log("PARSED FEATURES:");
+        console.log(JSON.stringify(allFeatures, null, 2));
+        console.log("========================================");
+        console.log("SUMMARY:", {
+          layoutCount,
+          pageCount,
+          totalFeatures: Object.values(allFeatures).reduce((sum, features) => sum + features.length, 0)
+        });
+        console.log("========================================");
+
         toast.success(
           `Generated features for ${layoutCount} layout(s) and ${pageCount} page(s)`
         );
       } catch (error) {
-        console.error("Failed to parse AI response:", error);
+        console.error("========================================");
+        console.error("FEATURE GENERATION ERROR:");
+        console.error(error instanceof Error ? error.message : String(error));
+        console.error("========================================");
         toast.error("Failed to parse AI response. Please try again.");
       }
     });
 
-  const { mutate: generateStructure, isPending: isGeneratingStructure } =
-    useCodeGeneration((response) => {
-      try {
-        const cleanResponse = response.content
-          .replace(/```json\n?/g, "")
-          .replace(/```\n?/g, "")
-          .trim();
-        const parsed = JSON.parse(cleanResponse);
-
-        console.log("APP STRUCTURE GENERATION OUTPUT:", JSON.stringify({
-          responseContent: response.content,
-          cleanedResponse: cleanResponse,
-          parsedResult: parsed,
-          structureCount: parsed.structure?.length || 0,
-          featuresCount: Object.keys(parsed.features || {}).length
-        }, null, 2));
-
-        if (!parsed.structure || !parsed.features) {
-          toast.error("Invalid AI response format");
-          return;
-        }
-
-        setAppStructure(parsed.structure);
-        setFeatures(parsed.features);
-        setAppStructureGenerated(true);
-        setShowSuccessView(true);
-
-        toast.success(`App structure generated with ${parsedPages.length} pages`);
-      } catch (error) {
-        toast.error("Failed to generate structure. Please try again.");
-      }
-    });
+  const {
+    generatePlan,
+    isGeneratingPlan,
+    isGeneratingStructure
+  } = useStructureGeneration(
+    parsedPages,
+    inferredFeatures,
+    setStructurePlan,
+    setAppStructure,
+    setFeatures,
+    setAppStructureGenerated,
+    setShowSuccessView,
+    phase1ToastIdRef
+  );
 
   const handleGenerateFeatures = useCallback(() => {
-    if (!fullReadmeContent) {
-      toast.error("No README found. Please generate README first.");
+    if (layouts.length === 0 && pages.length === 0) {
+      toast.error("No layouts or pages found. Please add pages in the README section first.");
       return;
     }
 
-    setLastGeneratedReadmeContent(fullReadmeContent);
+    console.log("========================================");
+    console.log("FEATURE GENERATION");
+    console.log("========================================");
+    console.log("INPUT DATA:");
+    console.log("Layouts:", JSON.stringify(layouts, null, 2));
+    console.log("Pages:", JSON.stringify(pages, null, 2));
+    console.log("Page Access:", JSON.stringify(pageAccess, null, 2));
+    console.log("Auth Methods:", JSON.stringify(authMethods, null, 2));
+    console.log("========================================");
 
     const combinedPrompt = buildFeatureGenerationPrompt(
-      fullReadmeContent,
       layouts,
       pages,
       pageAccess,
       authMethods
     );
 
-    console.log("FEATURE GENERATION PROMPT:", {
-      promptLength: combinedPrompt.length,
-      layoutCount: layouts.length,
-      pageCount: pages.length,
-      prompt: combinedPrompt
-    });
+    console.log("AI INPUT (Prompt):");
+    console.log(combinedPrompt);
+    console.log("========================================");
 
     generateFeatures({ prompt: combinedPrompt, maxTokens: 4500 });
-  }, [fullReadmeContent, layouts, pages, pageAccess, authMethods, generateFeatures, setLastGeneratedReadmeContent]);
+  }, [layouts, pages, pageAccess, authMethods, generateFeatures]);
 
 
   const hasFeaturesChanged = useCallback(() => {
@@ -677,24 +488,25 @@ export const LayoutAndStructure = () => {
       return;
     }
 
+    console.log("========================================");
+    console.log("PHASE 1 - PLAN GENERATION");
+    console.log("========================================");
+    console.log("INPUT DATA:");
+    console.log("Parsed Pages:", JSON.stringify(parsedPages, null, 2));
+    console.log("Inferred Features:", JSON.stringify(inferredFeatures, null, 2));
+    console.log("========================================");
+
     setLastGeneratedForStructure(JSON.stringify({ parsedPages, inferredFeatures }));
+    phase1ToastIdRef.current = toast.loading("Generating app structure plan...");
 
-    const prompt = buildStructureGenerationPrompt(parsedPages, inferredFeatures, layouts, pages);
+    const prompt = buildStructurePlanPrompt(parsedPages, inferredFeatures);
 
-    console.log("APP STRUCTURE GENERATION INPUT:", JSON.stringify({
-      prompt,
-      inputData: {
-        parsedPages,
-        inferredFeatures,
-        layouts,
-        pages,
-        pageCount: parsedPages.length,
-        totalFeatures: Object.values(inferredFeatures).reduce((sum, features) => sum + features.length, 0)
-      }
-    }, null, 2));
+    console.log("AI INPUT (Prompt):");
+    console.log(prompt);
+    console.log("========================================");
 
-    generateStructure({ prompt, maxTokens: 6000 });
-  }, [parsedPages, inferredFeatures, layouts, pages, generateStructure, setLastGeneratedForStructure]);
+    generatePlan({ prompt, maxTokens: 4000 });
+  }, [parsedPages, inferredFeatures, generatePlan, setLastGeneratedForStructure]);
 
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
@@ -787,7 +599,7 @@ export const LayoutAndStructure = () => {
 
   const routes = generateRoutesFromFileSystem(appStructure, "", true);
 
-  const hasReadme = readmeGenerated && fullReadmeContent;
+  const hasLayoutsOrPages = layouts.length > 0 || pages.length > 0;
   const isPending = isGeneratingFeatures;
 
   const totalFeatures = Object.values(inferredFeatures).reduce(
@@ -796,19 +608,19 @@ export const LayoutAndStructure = () => {
   );
 
   if (appStructure.length === 0 || !appStructureGenerated || (appStructureGenerated && !showSuccessView)) {
-    if (!hasReadme) {
+    if (!hasLayoutsOrPages) {
       return (
         <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
           <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
             <p className="text-base font-semibold theme-text-muted-foreground text-center">
-              Generate your{" "}
+              Add pages and layouts in the{" "}
               <Link
                 href="/readme"
                 className="theme-text-primary hover:underline"
               >
                 README
               </Link>{" "}
-              first
+              section first
             </p>
           </div>
         </div>
@@ -825,7 +637,7 @@ export const LayoutAndStructure = () => {
           <p className="theme-text-foreground">
             Follow the steps below to define the files and folders for your app.
             <br />
-            Start by defining the features for each page based on your README.
+            Start by defining the features for each page and layout.
           </p>
 
           {!featuresGenerated && (
@@ -898,10 +710,10 @@ export const LayoutAndStructure = () => {
                   <div className="flex flex-col sm:flex-row theme-gap-2">
                     <Button
                       onClick={handleGenerateStructure}
-                      disabled={isGeneratingStructure || !hasFeaturesChanged()}
+                      disabled={isGeneratingPlan || isGeneratingStructure || !hasFeaturesChanged()}
                       className="flex-1 theme-gap-2"
                     >
-                      {isGeneratingStructure ? (
+                      {(isGeneratingPlan || isGeneratingStructure) ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
                           Regenerating...
@@ -928,10 +740,10 @@ export const LayoutAndStructure = () => {
                 ) : (
                   <Button
                     onClick={handleGenerateStructure}
-                    disabled={isGeneratingStructure || !featuresGenerated}
+                    disabled={isGeneratingPlan || isGeneratingStructure || !featuresGenerated}
                     className="w-full theme-gap-2"
                   >
-                    {isGeneratingStructure ? (
+                    {(isGeneratingPlan || isGeneratingStructure) ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
                         Generating structure...

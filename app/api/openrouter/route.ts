@@ -7,11 +7,14 @@ import {
   OpenRouterRequest,
   OpenRouterResponse,
 } from "@/lib/openrouter.types";
+import { getDomainConfigFromHostname } from "@/lib/domain.utils";
 
-export const maxDuration = 120;
+export const maxDuration = 180;
 
 export async function POST(request: NextRequest) {
   const body: OpenRouterRequest = await request.json();
+  const hostname = request.headers.get("host") || "gazzola.dev";
+  const config = getDomainConfigFromHostname(hostname);
 
   if (!body.fingerprint) {
     throw new Error("Fingerprint required");
@@ -48,7 +51,7 @@ export async function POST(request: NextRequest) {
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 90000);
+  const timeoutId = setTimeout(() => controller.abort(), 175000);
 
   let openRouterResponse: Response;
   try {
@@ -60,8 +63,8 @@ export async function POST(request: NextRequest) {
         headers: {
           Authorization: `Bearer ${ENV.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://gazzola.dev",
-          "X-Title": "Gazzola.dev Code Generator",
+          "HTTP-Referer": config.api.referer,
+          "X-Title": config.api.title,
         },
         body: JSON.stringify({
           model: "anthropic/claude-3.5-sonnet",

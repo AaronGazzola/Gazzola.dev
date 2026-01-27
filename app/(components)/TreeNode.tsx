@@ -126,7 +126,7 @@ export const TreeNode = ({
     for (const { feature, fileId } of allFeatures) {
       if (!featureFileSelection.fileType) continue;
 
-      const linkedFile = feature.linkedFiles[featureFileSelection.fileType];
+      const linkedFile = feature.linkedFiles?.[featureFileSelection.fileType];
       if (linkedFile === currentFilePath &&
           featureFileSelection.fileId === fileId &&
           featureFileSelection.featureId === feature.id) {

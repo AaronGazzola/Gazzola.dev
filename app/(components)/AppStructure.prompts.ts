@@ -677,229 +677,363 @@ ${JSON_STRUCTURE_DEFINITION}
 `;
 };
 
-export const buildStructureGenerationPrompt = (
+export const buildStructurePlanPrompt = (
   parsedPages: ParsedPage[],
-  inferredFeatures: Record<string, InferredFeature[]>,
-  layouts?: Array<{ id: string; name: string; description: string }>,
-  pages?: Array<{ id: string; name: string; route: string; layoutIds: string[] }>
+  inferredFeatures: Record<string, InferredFeature[]>
 ): string => {
+  const featureCount = Object.values(inferredFeatures).reduce((sum, features) => sum + features.length, 0);
+  const pageIds = Object.keys(inferredFeatures);
   const pagesJson = JSON.stringify(parsedPages, null, 2);
   const featuresJson = JSON.stringify(inferredFeatures, null, 2);
 
-  const layoutsSection = layouts && layouts.length > 0
-    ? `
-LAYOUT INFORMATION:
-${layouts.map(l => {
-  const layoutPageId = `layout-${l.id}`;
-  const layoutFeatures = inferredFeatures[layoutPageId] || [];
-  return `
-**${l.name}** (ID: layout-${l.id}):
-${l.description}
-Features: ${layoutFeatures.map(f => f.title).join(', ')}`;
-}).join('\n')}
+  return `🚨 CRITICAL ANTI-TRUNCATION REQUIREMENTS 🚨
 
-PAGE-TO-LAYOUT RELATIONSHIPS:
-${pages?.map(p => {
-  const pageLayouts = p.layoutIds
-    .map(layoutId => {
-      const layout = layouts.find(l => l.id === layoutId);
-      return layout ? layout.name : null;
-    })
-    .filter(Boolean);
-  return `- ${p.name} (${p.route}) uses: ${pageLayouts.join(', ') || 'None'}`;
-}).join('\n') || 'No layout relationships'}
-`
-    : '';
+You MUST list function assignments for ALL ${featureCount} features individually. Do NOT use shortcuts like:
+❌ "[Continue with similar assignments...]"
+❌ "[And so on for remaining features...]"
+❌ "[Similar pattern for other pages...]"
+❌ Summarizing multiple features into one line
 
-  return `You are generating a Next.js App Router directory structure and feature assignments.
+✅ REQUIRED: Explicitly list EVERY feature ID (${featureCount} total) with its 4 function assignments
 
-${layoutsSection}
+Example of CORRECT format for each feature:
+/app/page.hooks.tsx:
+- useSearch() ← Search pages (302z4uspz)
+- useFilter() ← Filter by category (owlimx50c)
+- useRandomPage() ← Get random page (cu8zfy4dj)
+- useFeaturedPages() ← Get featured pages (fyefsenoc)
 
-RULES:
-1. Feature Locations:
-   - page.tsx: Features specific to that page only
-   - layout.tsx: Features shared across all child routes
+You must write ${featureCount} feature assignments like the above example. Count them to verify.
 
-2. Utility File Requirements:
-   - ALL features need: page.hooks.tsx + page.types.ts (or layout.hooks.tsx + layout.types.ts)
-   - Features with database queries need: page.actions.ts (or layout.actions.ts)
-   - Complex features need: page.stores.ts (or layout.stores.ts) (plural)
+This is an automated process - there is no human to answer questions or ask you to continue. Complete the ENTIRE plan in ONE response.
 
-3. Utility File Placement (CRITICAL):
-   - Can link to files in SAME directory or PARENT directories ONLY
-   - NEVER link to sibling directories
-   - Example: /app/dashboard/page.tsx can use:
-     ✅ /app/dashboard/page.hooks.tsx (same)
-     ✅ /app/layout.hooks.tsx (parent)
-     ❌ /app/settings/page.hooks.tsx (sibling - INVALID)
+Generate a plain text plan for Next.js App Router structure with smart utility file placement.
 
-4. Layout File Organization (NEW):
-   - Layout features create utility files with 'layout' prefix in SAME directory
-   - Example: Main Layout features → /app/layout.tsx, /app/layout.stores.ts, /app/layout.hooks.tsx, /app/layout.types.ts
-   - Page features can link to parent layout utility files
-   - Example: /app/dashboard/page.tsx can link to /app/layout.stores.ts for auth state
-
-5. Shared Utilities:
-   - When multiple pages use same feature → place at common ancestor
-   - Use layout.hooks.tsx, layout.actions.ts for shared files
-   - Example: Auth on login + register → /app/(auth)/layout.hooks.tsx
-   - Auth across entire app → /app/layout.hooks.tsx
-
-6. Route Groups:
-   - Syntax: (groupName) with parentheses
-   - NOT in URL: /app/(auth)/login → URL is /login
-   - Should have layout.tsx for shared UI
-   - Create for 2+ related pages: (auth), (admin), (dashboard)
-
-7. Function Naming:
-   - Hooks: useFeatureName (e.g., useUserAuth) → in page.hooks.tsx or layout.hooks.tsx
-   - Actions: featureNameAction (e.g., userAuthAction) → in page.actions.ts or layout.actions.ts
-   - Stores: useFeatureNameStore (e.g., useUserAuthStore) → in page.stores.ts or layout.stores.ts (PLURAL)
-   - Types: FeatureNameData (e.g., UserAuthData) → in page.types.ts or layout.types.ts
-
-8. Layout Feature Mapping (CRITICAL):
-   - Input features with pageId starting with "layout-" are LAYOUT features
-   - Create layout.tsx file in the appropriate directory
-   - Map layout features to layout.tsx file ID in the features object
-   - Example: Input pageId "layout-abc123" → structure file "layout-xyz" with name "layout.tsx" → features["layout-xyz"]
-
-9. Page ID to File ID Mapping (CRITICAL):
-   - Input features are keyed by pageId (e.g., "4cssxmqws")
-   - Each pageId has a corresponding route (e.g., "/" or "/settings")
-   - When you create a page.tsx file in the structure, assign it a unique file ID
-   - Map ALL features from that pageId to that file ID in the features object
-
-   Example:
-   Input page: { id: "abc123", route: "/settings" }
-   Input features["abc123"]: [feature1, feature2, feature3]
-
-   Generated structure:
-   { id: "settings-page-xyz", name: "page.tsx", type: "file" }
-
-   Output features:
-   features["settings-page-xyz"]: [feature1, feature2, feature3]
-
-INPUT DATA:
-
-Pages:
+INPUT PAGES:
 ${pagesJson}
 
-Features (by page ID):
+INPUT FEATURES:
 ${featuresJson}
 
-EXPECTED OUTPUT (JSON only, no markdown):
+# CORE RULES
+
+## 1. Feature Scope Analysis
+
+For EACH feature, determine scope by analyzing where it's used:
+
+**GLOBAL** (used across entire app):
+- Authentication (sign in, sign out, session checks)
+- User profile (get, update user data)
+- Theme management (dark mode, preferences)
+- Global notifications
+- App-wide settings
+→ Functions go in: /app/layout.* files
+
+**SECTION** (used within route group/section):
+- Dashboard sidebar state (all /dashboard/* pages)
+- Admin permissions (all /(admin)/* pages)
+- Section navigation state
+- Route group shared data
+→ Functions go in: /app/section/layout.* or /app/(group)/layout.* files
+
+**PAGE** (used only on specific page):
+- Contact form state (only /contact)
+- Chart data (only /analytics)
+- Page-specific filters
+- Single-page features
+→ Functions go in: /app/path/page.* files
+
+## 2. Function Generation (Each Feature → 4 Functions)
+
+For each feature, generate 4 function names and assign to appropriate files:
+
+Example - "Sign out user" (GLOBAL scope):
+- Hook: useSignOut() → /app/layout.hooks.tsx
+- Action: signOutAction() → /app/layout.actions.ts
+- Store: useAuthStore() → /app/layout.stores.ts
+- Type: SignOutResult → /app/layout.types.ts
+
+Example - "Get dashboard stats" (PAGE scope):
+- Hook: useDashboardStats() → /app/dashboard/page.hooks.tsx
+- Action: getDashboardStatsAction() → /app/dashboard/page.actions.ts
+- Store: useDashboardStore() → /app/dashboard/page.stores.ts
+- Type: DashboardStats → /app/dashboard/page.types.ts
+
+## 3. File Consolidation
+
+Multiple features at same scope level → consolidate into shared files:
+
+Example:
+- "Sign out" (global) → useSignOut() in /app/layout.hooks.tsx
+- "Update profile" (global) → useProfile() in /app/layout.hooks.tsx
+(Both functions in SAME file)
+
+Example:
+- "Export report" (dashboard page) → exportReport() in /app/dashboard/page.actions.ts
+- "Get stats" (dashboard page) → getStats() in /app/dashboard/page.actions.ts
+(Both functions in SAME file)
+
+## 4. Handling Duplicate Features
+
+When MULTIPLE features have identical titles and descriptions but different IDs (e.g., "Sign out user" appears in both Main Layout and Admin Layout):
+
+**CRITICAL RULE**: Preserve ALL feature IDs in the output, but map identical features to the SAME utility files and functions.
+
+Example - Two layouts both have "Sign out user":
+- Feature 0rm99xumz: "Sign out user" (Main Layout)
+- Feature tl8a5xrk4: "Sign out user" (Admin Layout)
+
+Both features should:
+✅ Be preserved as separate features in the output (keep both IDs)
+✅ Reference the SAME utility files: /app/layout.hooks.tsx
+✅ Reference the SAME functions: useSignOut(), signOutAction(), etc.
+
+Do NOT:
+❌ Drop duplicate features (all ${featureCount} features must be in the plan)
+❌ Create separate functions for identical features (reuse the same function)
+
+## 5. Smart File Creation
+
+ONLY create files with ≥1 function assigned. Do NOT create empty files.
+
+If no features need page-level stores:
+❌ Do NOT create /app/dashboard/page.stores.ts
+
+If 2 features need global actions:
+✅ Create /app/layout.actions.ts with both functions
+
+## 6. Next.js Routing Patterns
+
+- / → app/page.tsx
+- /dashboard → app/dashboard/page.tsx
+- /[username] → app/[username]/page.tsx
+- (auth) → route group (URL stays /login, not /auth/login)
+
+## 7. Parent Directory Linking Rule
+
+Features link to files in SAME or PARENT directories only:
+✅ /app/dashboard/page.tsx can use /app/layout.hooks.tsx (parent)
+✅ /app/dashboard/page.tsx can use /app/dashboard/page.hooks.tsx (same)
+❌ /app/dashboard/page.tsx CANNOT use /app/settings/page.hooks.tsx (sibling)
+
+# OUTPUT FORMAT (PLAIN TEXT)
+
+Write a detailed plain text plan describing:
+
+1. **Directory Structure**: List all directories and files
+2. **Scope Analysis**: For each feature, state its scope (GLOBAL/SECTION/PAGE)
+3. **Function Assignments**: For each feature, list the 4 functions and where they go
+4. **File Consolidation**: Which features share which files
+
+Example format:
+
+## Directory Structure
+
+app/
+├── layout.tsx
+├── layout.hooks.tsx (GLOBAL)
+├── layout.actions.ts (GLOBAL)
+├── layout.stores.ts (GLOBAL)
+├── layout.types.ts (GLOBAL)
+├── page.tsx
+└── dashboard/
+    ├── page.tsx
+    ├── page.hooks.tsx (PAGE-SPECIFIC)
+    ├── page.actions.ts (PAGE-SPECIFIC)
+    ├── page.stores.ts (PAGE-SPECIFIC)
+    └── page.types.ts (PAGE-SPECIFIC)
+
+## Feature Scope Analysis
+
+Feature: "Sign out user" (ID: feat-1)
+- Scope: GLOBAL (used across entire app)
+- Functions go in: /app/layout.*
+
+Feature: "Get dashboard stats" (ID: feat-2)
+- Scope: PAGE (only /dashboard)
+- Functions go in: /app/dashboard/page.*
+
+## Function Assignments
+
+🚨 YOU MUST LIST ALL ${featureCount} FEATURES BELOW - DO NOT SKIP ANY 🚨
+
+### /app/layout.hooks.tsx
+- useSignOut() ← from "Sign out user" (feat-1)
+
+### /app/layout.actions.ts
+- signOutAction() ← from "Sign out user" (feat-1)
+
+### /app/layout.stores.ts
+- useAuthStore() ← from "Sign out user" (feat-1)
+
+### /app/layout.types.ts
+- SignOutResult ← from "Sign out user" (feat-1)
+
+### /app/dashboard/page.hooks.tsx
+- useDashboardStats() ← from "Get dashboard stats" (feat-2)
+
+### /app/dashboard/page.actions.ts
+- getDashboardStatsAction() ← from "Get dashboard stats" (feat-2)
+
+### /app/dashboard/page.stores.ts
+- useDashboardStore() ← from "Get dashboard stats" (feat-2)
+
+### /app/dashboard/page.types.ts
+- DashboardStats ← from "Get dashboard stats" (feat-2)
+
+[Continue this pattern for EVERY remaining feature with its actual feature ID. List all ${featureCount} features explicitly.]
+
+## Page-to-File Mapping
+
+Input Page ID → Structure File
+- "dash-page-id" → /app/dashboard/page.tsx
+
+Feature Assignments:
+- feat-1 (Sign out user) → /app/dashboard/page.tsx (uses GLOBAL files)
+- feat-2 (Get dashboard stats) → /app/dashboard/page.tsx (uses PAGE-SPECIFIC files)
+
+# REQUIREMENTS
+
+1. Each feature → 4 functions (hook, action, store, type)
+2. Analyze scope: global vs section vs page
+3. Multiple features → consolidate into shared files
+4. Duplicate features (same title/description) → SAME utility files and functions, but PRESERVE ALL feature IDs
+5. Only create files with ≥1 function assigned
+6. No empty utility files
+7. Parent directory linking only (no siblings)
+8. Preserve ALL ${featureCount} input feature IDs in your mappings
+9. Map input page IDs to file paths clearly
+
+# FINAL VERIFICATION (REQUIRED)
+
+You MUST end your plan with this verification section:
+
+## Feature Count Verification
+
+Total input features: ${featureCount}
+
+All Feature IDs that MUST appear in Function Assignments section above:
+${Object.entries(inferredFeatures).map(([pageId, features]) => {
+    return features.map(f => `  - ${f.id}: "${f.title}"`).join('\n');
+  }).join('\n')}
+
+Features assigned in this plan:
+${pageIds.map(id => {
+    const page = parsedPages.find(p => p.id === id);
+    const count = inferredFeatures[id].length;
+    return `  - Page: ${page?.name || id} (${page?.route || ''}) - ${count} features assigned`;
+  }).join('\n')}
+
+Total features in plan: ${featureCount}
+Status: ✅ COMPLETE
+
+🚨 VERIFY: Scroll up and confirm that EVERY feature ID listed above appears in your Function Assignments section. If any are missing, your plan is INVALID and Phase 2 will fail.
+
+Return your analysis as plain text following the format above.`;
+};
+
+export const buildStructureFromPlanPrompt = (
+  plan: string,
+  parsedPages: ParsedPage[],
+  inferredFeatures: Record<string, InferredFeature[]>
+): string => {
+  const featureCount = Object.values(inferredFeatures).reduce((sum, features) => sum + features.length, 0);
+  const pageIds = Object.keys(inferredFeatures);
+
+  const pageMappingList = pageIds.map(id => {
+    const page = parsedPages.find(p => p.id === id);
+    const count = inferredFeatures[id].length;
+    return `   - Input ID: "${id}" → Route: "${page?.route || ''}" (${count} features)`;
+  }).join('\n');
+
+  return `Convert the plain text plan into a JSON structure.
+
+PLAIN TEXT PLAN:
+${plan}
+
+INPUT PAGE MAPPINGS:
+${pageMappingList}
+
+YOUR TASK: Generate JSON structure with ALL ${featureCount} features from the plan above.
+
+# JSON Format
+
+Return this exact structure:
+
 {
   "structure": [
     {
       "id": "app-root",
       "name": "app",
       "type": "directory",
-      "isExpanded": true,
       "children": [
+        { "id": "layout-tsx", "name": "layout.tsx", "type": "file" },
+        { "id": "layout-hooks", "name": "layout.hooks.tsx", "type": "file" },
+        { "id": "layout-actions", "name": "layout.actions.ts", "type": "file" },
+        { "id": "layout-stores", "name": "layout.stores.ts", "type": "file" },
+        { "id": "layout-types", "name": "layout.types.ts", "type": "file" },
         {
-          "id": "layout-xyz",
-          "name": "layout.tsx",
-          "type": "file"
-        },
-        {
-          "id": "page-abc",
-          "name": "page.tsx",
-          "type": "file"
-        },
-        {
-          "id": "page-hooks-def",
-          "name": "page.hooks.tsx",
-          "type": "file"
-        },
-        {
-          "id": "page-stores-jkl",
-          "name": "page.stores.ts",
-          "type": "file"
-        },
-        {
-          "id": "page-types-ghi",
-          "name": "page.types.ts",
-          "type": "file"
+          "id": "dashboard-dir",
+          "name": "dashboard",
+          "type": "directory",
+          "children": [
+            { "id": "dash-page", "name": "page.tsx", "type": "file" },
+            { "id": "dash-hooks", "name": "page.hooks.tsx", "type": "file" },
+            { "id": "dash-actions", "name": "page.actions.ts", "type": "file" }
+          ]
         }
       ]
     }
   ],
   "features": {
-    "page-abc": [
+    "dash-page": [
       {
-        "id": "feature-id-from-input",
-        "title": "Feature Title",
-        "description": "Feature description",
+        "id": "feat-1",
+        "title": "Sign out user",
+        "description": "Clear session and redirect to login",
         "linkedFiles": {
-          "hooks": "/app/page.hooks.tsx",
-          "stores": "/app/page.stores.ts",
-          "types": "/app/page.types.ts"
+          "hooks": "/app/layout.hooks.tsx",
+          "actions": "/app/layout.actions.ts",
+          "stores": "/app/layout.stores.ts",
+          "types": "/app/layout.types.ts"
         },
         "functionNames": {
-          "hooks": "useFeatureName",
-          "stores": "useFeatureNameStore",
-          "types": "FeatureNameData"
-        },
-        "isEditing": false
+          "hooks": "useSignOut",
+          "actions": "signOutAction",
+          "stores": "useAuthStore",
+          "types": "SignOutResult"
+        }
       }
     ]
   }
 }
 
-CRITICAL - Feature Mapping:
-- Features object keys must be FILE IDs from the structure (e.g., "page-abc"), NOT paths
-- Map each input page to its corresponding page.tsx file ID in your generated structure
-- Example: Input page with route "/" → structure file "page-abc" with name "page.tsx" → features["page-abc"]
-- Each page.tsx or layout.tsx file that has features needs an entry in the features object
-- Preserve ALL input features separately - do NOT merge or consolidate features
-- If input has 2 features for a page, output must have 2 features for that page
+# Critical Requirements
 
-COMPLETE MAPPING EXAMPLE:
+1. Map each input page ID to a structure file ID in the features object
+2. Preserve ALL ${featureCount} feature IDs from the plan (including duplicates with same title/description)
+3. Duplicate features (same title/description but different IDs) should reference the SAME linkedFiles and functionNames
+4. Include linkedFiles and functionNames based on the plan's function assignments
+5. Generate unique alphanumeric IDs for all FileSystemEntry items
+6. Use the directory structure from the plan
 
-Input:
-pages: [
-  { id: "page-id-1", route: "/", name: "Homepage" },
-  { id: "page-id-2", route: "/settings", name: "Settings" }
-]
-features: {
-  "page-id-1": [{ id: "feat-1", title: "Search Bar", ... }],
-  "page-id-2": [{ id: "feat-2", title: "Profile Form", ... }]
-}
+Example of duplicate handling:
+If the plan shows:
+- Feature 0rm99xumz: "Sign out user" → useSignOut() in /app/layout.hooks.tsx
+- Feature tl8a5xrk4: "Sign out user" → useSignOut() in /app/layout.hooks.tsx
 
-Output structure:
-{
-  id: "app-root",
-  name: "app",
-  children: [
-    { id: "home-page-file", name: "page.tsx", type: "file" },      ← Route "/"
-    { id: "home-hooks-file", name: "page.hooks.tsx", type: "file" },
-    {
-      id: "settings-dir",
-      name: "settings",
-      type: "directory",
-      children: [
-        { id: "settings-page-file", name: "page.tsx", type: "file" },  ← Route "/settings"
-        { id: "settings-hooks-file", name: "page.hooks.tsx", type: "file" }
-      ]
-    }
-  ]
-}
+Both features should appear in your output with:
+- Different IDs (0rm99xumz and tl8a5xrk4)
+- Same linkedFiles: { "hooks": "/app/layout.hooks.tsx", ... }
+- Same functionNames: { "hooks": "useSignOut", ... }
 
-Output features:
-{
-  "home-page-file": [{ id: "feat-1", title: "Search Bar", ... }],     ← Mapped from page-id-1
-  "settings-page-file": [{ id: "feat-2", title: "Profile Form", ... }] ← Mapped from page-id-2
-}
+# Validation
 
-IMPORTANT:
-- Use IDs from input features (preserve feature.id)
-- Generate new unique IDs for all FileSystemEntry items
-- Include ALL pages from input
-- Assign ALL features to appropriate files - preserve each feature separately
-- Do NOT merge or consolidate multiple features into one
-- If input page has 3 features, output must have exactly 3 features for that page
-- Follow parent directory rule strictly
-- File naming: page.stores.ts (PLURAL), not page.store.ts (singular)
-- When features need stores, CREATE page.stores.ts file in structure
-- Return ONLY valid JSON`;
+Before returning, verify:
+- features object has ${pageIds.length} keys (one per input page)
+- Total features across all pages = ${featureCount} (count every feature ID, including duplicates)
+- ALL ${featureCount} feature IDs from plan are preserved (do not drop any)
+- Duplicate features reference the same utility files and functions
+
+Return ONLY valid JSON. No markdown blocks, no explanations. Start with { and end with }.`;
 };
