@@ -36,7 +36,7 @@ export const DOMAIN_CONFIGS: Record<DomainBrand, DomainConfig> = {
     defaultUrl: "https://gazzola.dev",
     azUrl: "https://az.gazzola.dev",
     resendApiKey: process.env.RESEND_API_KEY || "",
-    adminEmail: process.env.ADMIN_EMAIL || "az@gazzola.dev",
+    adminEmail: process.env.ADMIN_EMAIL || "aaron@gazzola.dev",
     metadata: {
       title: "Gazzola.dev | Web App Starter Kit Generator",
       description:
@@ -65,7 +65,7 @@ export const DOMAIN_CONFIGS: Record<DomainBrand, DomainConfig> = {
     defaultUrl: "https://azanything.dev",
     azUrl: null,
     resendApiKey: process.env.RESEND_API_KEY_AZANYTHING || "",
-    adminEmail: process.env.ADMIN_EMAIL_AZANYTHING || "admin@azanything.dev",
+    adminEmail: process.env.ADMIN_EMAIL || "aaron@gazzola.dev",
     metadata: {
       title: "AzAnything.dev | Web App Starter Kit Generator",
       description:
