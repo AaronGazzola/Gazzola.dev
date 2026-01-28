@@ -129,6 +129,62 @@ export interface ValidationResult {
   hasWarnings: boolean;
 }
 
+export type FeatureScope = "GLOBAL" | `SECTION:${string}` | `PAGE:${string}`;
+
+export interface ScopeClassification {
+  featureId: string;
+  scope: FeatureScope;
+  route?: string;
+}
+
+export interface FunctionAssignment {
+  featureId: string;
+  pageId: string;
+  title: string;
+  description: string;
+  linkedFiles: {
+    hooks?: string;
+    actions?: string;
+    stores?: string;
+    types?: string;
+  };
+  functionNames: {
+    hooks?: string;
+    actions?: string;
+    stores?: string;
+    types?: string;
+  };
+}
+
+export interface Phase1Result {
+  phase: 1;
+  scopeMap: Record<string, FeatureScope>;
+}
+
+export interface Phase2Result {
+  phase: 2;
+  structure: import("@/app/(editor)/layout.types").FileSystemEntry[];
+  filePaths: string[];
+}
+
+export interface Phase3BatchResult {
+  phase: 3;
+  batchIndex: number;
+  assignments: FunctionAssignment[];
+}
+
+export interface Phase4Result {
+  phase: 4;
+  structure: import("@/app/(editor)/layout.types").FileSystemEntry[];
+  features: Record<string, Feature[]>;
+}
+
+export type GenerationPhaseResult =
+  | Phase1Result
+  | Phase2Result
+  | Phase3BatchResult
+  | Phase4Result;
+
 export const PAGE_FILE_ICON = "theme-text-chart-4";
 
 export const LAYOUT_COLORS = [

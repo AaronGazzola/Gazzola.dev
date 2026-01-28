@@ -229,7 +229,7 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
 
    - Verify .gitignore ignores ".env.local" but does not ignore ".env.example"
    - Add a ".env.example" file with the supabase key variable names without the values
-   - Run "npx supabase status" to check if supabase is authenticated, if not authenticated, then prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "npx supabase login" and follow the prompts to authenticate supabase 
+   - Run "npx supabase projects list" to check if supabase is authenticated, if not authenticated, then prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "npx supabase login" and follow the prompts to authenticate supabase 
 
 5. INITIAL COMMIT AND PUSH
    - Commit and push the changes

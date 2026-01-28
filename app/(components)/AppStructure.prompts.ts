@@ -1,4 +1,5 @@
-import { PatternDetectionResult, RoutePattern, InferredFeature } from "./AppStructure.types";
+import { PatternDetectionResult, RoutePattern, InferredFeature, FeatureScope, FunctionAssignment } from "./AppStructure.types";
+import { FileSystemEntry } from "@/app/(editor)/layout.types";
 
 export interface PromptGenerationConfig {
   readmeContent: string;
@@ -12,6 +13,88 @@ interface ParsedPage {
   route: string;
   description: string;
 }
+
+const SCOPE_RULES = `
+## Feature Scope Classification
+
+Classify each feature based on where it's used:
+
+**GLOBAL** - Used across entire app:
+- Authentication (sign in, sign out, session checks)
+- User profile data (get/update user)
+- Theme management (dark mode, preferences)
+- Global notifications and alerts
+- App-wide settings and configuration
+→ Utility files go in: /app/layout.*
+
+**SECTION:(group)** - Used within a route group/section:
+- Dashboard sidebar state (all /dashboard/* pages)
+- Admin permissions (all /(admin)/* pages)
+- Section navigation state
+- Route group shared data
+→ Utility files go in: /app/(group)/layout.* or /app/section/layout.*
+
+**PAGE:/route** - Used only on a specific page:
+- Contact form state (only /contact)
+- Chart data (only /analytics)
+- Page-specific filters and sorting
+- Single-page form state
+→ Utility files go in: /app/route/page.*
+`;
+
+const FUNCTION_NAMING_RULES = `
+## Function Naming Conventions
+
+For each feature, generate 4 function names:
+
+1. **Hook**: useCamelCase()
+   - Data fetching: useGetUserProfile, useSearchProducts
+   - Mutations: useUpdateSettings, useCreatePost
+   - State access: useAuthState, useThemePreference
+
+2. **Action**: camelCaseAction()
+   - Server actions: getUserProfileAction, updateSettingsAction
+   - Database operations: createPostAction, deleteItemAction
+
+3. **Store**: useCamelCaseStore()
+   - Zustand stores: useAuthStore, useDashboardStore
+   - Named for the domain: useCartStore, useNotificationStore
+
+4. **Type**: PascalCase
+   - Result types: UserProfile, SearchResult
+   - Input types: UpdateSettingsInput, CreatePostData
+   - State types: AuthState, CartItem
+`;
+
+const DIRECTORY_RULES = `
+## Next.js App Router Directory Structure
+
+### Route to File Mapping:
+- / → app/page.tsx
+- /dashboard → app/dashboard/page.tsx
+- /users/alice → app/users/[username]/page.tsx
+- /products/123 → app/products/[id]/page.tsx
+
+### Route Groups (no URL impact):
+- (auth) → groups auth pages, URL stays /login not /auth/login
+- (admin) → groups admin pages, URL stays /users not /admin/users
+
+### Dynamic Routes:
+- [id] → single parameter
+- [slug] → named parameter
+- [...slug] → catch-all
+- [[...slug]] → optional catch-all
+
+### Utility File Placement:
+- layout.stores.ts, layout.hooks.tsx, layout.actions.ts, layout.types.ts → shared by child routes
+- page.stores.ts, page.hooks.tsx, page.actions.ts, page.types.ts → specific to that page
+
+### Parent Directory Linking Rule:
+Features can link to utility files in SAME or PARENT directories only:
+✅ /app/dashboard/page.tsx → /app/layout.hooks.tsx (parent)
+✅ /app/dashboard/page.tsx → /app/dashboard/page.hooks.tsx (same)
+❌ /app/dashboard/page.tsx → /app/settings/page.hooks.tsx (sibling - NOT allowed)
+`;
 
 const PHASE_1_INSTRUCTIONS = `
 # PHASE 1: Understand the App Architecture
@@ -1036,4 +1119,384 @@ Before returning, verify:
 - Duplicate features reference the same utility files and functions
 
 Return ONLY valid JSON. No markdown blocks, no explanations. Start with { and end with }.`;
+};
+
+export const buildScopeClassificationPrompt = (
+  parsedPages: ParsedPage[],
+  inferredFeatures: Record<string, InferredFeature[]>
+): string => {
+  const allFeatures: Array<{ id: string; pageId: string; title: string; description: string; route: string }> = [];
+
+  Object.entries(inferredFeatures).forEach(([pageId, features]) => {
+    const page = parsedPages.find(p => p.id === pageId);
+    features.forEach(f => {
+      allFeatures.push({
+        id: f.id,
+        pageId,
+        title: f.title,
+        description: f.description,
+        route: page?.route || "/"
+      });
+    });
+  });
+
+  const routeGroups = new Map<string, string[]>();
+  parsedPages.forEach(page => {
+    const match = page.route.match(/^\(([^)]+)\)/);
+    if (match) {
+      const group = match[1];
+      if (!routeGroups.has(group)) {
+        routeGroups.set(group, []);
+      }
+      routeGroups.get(group)!.push(page.route);
+    }
+  });
+
+  return `Classify each feature's scope. Return ONLY valid JSON.
+
+${SCOPE_RULES}
+
+## Input Features (${allFeatures.length} total)
+
+${allFeatures.map(f => `- ID: ${f.id}
+  Page: ${f.route}
+  Title: "${f.title}"
+  Description: "${f.description}"`).join('\n\n')}
+
+## Route Groups Detected
+
+${routeGroups.size > 0
+  ? Array.from(routeGroups.entries()).map(([group, routes]) =>
+      `- (${group}): ${routes.join(', ')}`
+    ).join('\n')
+  : 'No route groups detected'}
+
+## Output Format
+
+Return a JSON object mapping feature ID to scope:
+
+{
+  "scopeMap": {
+    "feat-id-1": "GLOBAL",
+    "feat-id-2": "PAGE:/dashboard",
+    "feat-id-3": "SECTION:(admin)"
+  }
+}
+
+Scope values:
+- "GLOBAL" - for auth, user profile, theme, notifications
+- "PAGE:/route" - for page-specific features (use the actual route)
+- "SECTION:(group)" - for route group shared features
+
+Return ONLY the JSON object. No explanations.`;
+};
+
+export const buildDirectoryStructurePrompt = (
+  parsedPages: ParsedPage[],
+  scopeMap: Record<string, string>
+): string => {
+  const globalFeatureCount = Object.values(scopeMap).filter(s => s === "GLOBAL").length;
+  const sectionScopes = [...new Set(Object.values(scopeMap).filter(s => s.startsWith("SECTION:")))];
+
+  return `Generate Next.js App Router directory structure. Return ONLY valid JSON.
+
+${DIRECTORY_RULES}
+
+## Input Pages (${parsedPages.length} total)
+
+${parsedPages.map(p => `- Route: ${p.route}
+  Name: ${p.name}
+  Description: ${p.description}`).join('\n\n')}
+
+## Scope Analysis Summary
+
+- Global features: ${globalFeatureCount} (need layout.* files at /app/)
+- Section scopes: ${sectionScopes.length > 0 ? sectionScopes.join(', ') : 'None'}
+- Page-specific features: ${Object.values(scopeMap).filter(s => s.startsWith("PAGE:")).length}
+
+## Requirements
+
+1. Create app/ directory with layout.tsx and page.tsx
+2. Create subdirectories for each route
+3. Include utility files based on scope:
+   - If global features exist → add layout.hooks.tsx, layout.actions.ts, layout.stores.ts, layout.types.ts at /app/
+   - For section scopes → add layout.* files at section directory
+   - For page features → add page.* files at page directory
+4. Use route groups for (auth), (admin) etc if present in routes
+5. Use dynamic routes [id], [slug] as appropriate
+
+## Output Format
+
+Return a JSON object with structure array:
+
+{
+  "structure": [
+    {
+      "id": "app-root",
+      "name": "app",
+      "type": "directory",
+      "isExpanded": true,
+      "children": [
+        { "id": "layout-tsx", "name": "layout.tsx", "type": "file" },
+        { "id": "layout-hooks", "name": "layout.hooks.tsx", "type": "file" },
+        { "id": "page-tsx", "name": "page.tsx", "type": "file" },
+        {
+          "id": "dashboard-dir",
+          "name": "dashboard",
+          "type": "directory",
+          "children": [
+            { "id": "dash-page", "name": "page.tsx", "type": "file" },
+            { "id": "dash-hooks", "name": "page.hooks.tsx", "type": "file" }
+          ]
+        }
+      ]
+    }
+  ],
+  "filePaths": [
+    "/app/layout.tsx",
+    "/app/layout.hooks.tsx",
+    "/app/page.tsx",
+    "/app/dashboard/page.tsx",
+    "/app/dashboard/page.hooks.tsx"
+  ]
+}
+
+IMPORTANT:
+- Generate unique alphanumeric IDs (e.g., "app-root", "dash-page-tsx")
+- Include filePaths array listing all file paths for reference
+- Only create utility files where features need them
+
+Return ONLY the JSON object. No explanations.`;
+};
+
+export const buildFunctionAssignmentPrompt = (
+  featureBatch: Array<{ id: string; pageId: string; title: string; description: string; route: string }>,
+  scopeMap: Record<string, string>,
+  filePaths: string[],
+  previousAssignments: FunctionAssignment[],
+  batchIndex: number,
+  totalBatches: number
+): string => {
+  const existingFunctions = new Set<string>();
+  previousAssignments.forEach(a => {
+    if (a.functionNames.hooks) existingFunctions.add(a.functionNames.hooks);
+    if (a.functionNames.actions) existingFunctions.add(a.functionNames.actions);
+    if (a.functionNames.stores) existingFunctions.add(a.functionNames.stores);
+    if (a.functionNames.types) existingFunctions.add(a.functionNames.types);
+  });
+
+  return `Generate function assignments for feature batch ${batchIndex + 1}/${totalBatches}. Return ONLY valid JSON.
+
+${FUNCTION_NAMING_RULES}
+
+## Available File Paths
+
+${filePaths.join('\n')}
+
+## Previously Assigned Functions (avoid duplicates)
+
+${existingFunctions.size > 0
+  ? Array.from(existingFunctions).join(', ')
+  : 'None yet'}
+
+## Features to Assign (${featureBatch.length} in this batch)
+
+${featureBatch.map(f => {
+  const scope = scopeMap[f.id] || "PAGE:" + f.route;
+  return `- ID: ${f.id}
+  Page ID: ${f.pageId}
+  Route: ${f.route}
+  Scope: ${scope}
+  Title: "${f.title}"
+  Description: "${f.description}"`;
+}).join('\n\n')}
+
+## Assignment Rules
+
+1. Based on scope, choose the appropriate utility file paths:
+   - GLOBAL → /app/layout.hooks.tsx, /app/layout.actions.ts, etc.
+   - SECTION:(group) → /app/(group)/layout.hooks.tsx, etc.
+   - PAGE:/route → /app/route/page.hooks.tsx, etc.
+
+2. Generate unique function names following naming conventions
+3. Reuse existing functions for duplicate features (same title)
+4. Only link to files that exist in the Available File Paths list
+
+## Output Format
+
+{
+  "assignments": [
+    {
+      "featureId": "feat-id-1",
+      "pageId": "page-id-1",
+      "title": "Feature Title",
+      "description": "Feature description",
+      "linkedFiles": {
+        "hooks": "/app/layout.hooks.tsx",
+        "actions": "/app/layout.actions.ts",
+        "stores": "/app/layout.stores.ts",
+        "types": "/app/layout.types.ts"
+      },
+      "functionNames": {
+        "hooks": "useFeatureName",
+        "actions": "featureNameAction",
+        "stores": "useFeatureStore",
+        "types": "FeatureResult"
+      }
+    }
+  ]
+}
+
+IMPORTANT:
+- Provide assignments for ALL ${featureBatch.length} features in this batch
+- Each feature needs all 4 utility file types (hooks, actions, stores, types)
+- Function names must be unique (except for duplicate features)
+
+Return ONLY the JSON object. No explanations.`;
+};
+
+export const assembleStructure = (
+  directoryStructure: FileSystemEntry[],
+  parsedPages: ParsedPage[],
+  allAssignments: FunctionAssignment[]
+): { structure: FileSystemEntry[]; features: Record<string, import("@/app/(editor)/layout.types").Feature[]> } => {
+  const pageIdToFileId = new Map<string, string>();
+  const allPageFiles: Array<{ id: string; path: string; name: string }> = [];
+  const allLayoutFiles: Array<{ id: string; path: string; name: string }> = [];
+
+  const collectFiles = (entries: FileSystemEntry[], path: string = "") => {
+    entries.forEach(entry => {
+      const entryPath = path + "/" + entry.name;
+      if (entry.type === "file") {
+        if (entry.name === "page.tsx") {
+          allPageFiles.push({ id: entry.id, path: entryPath, name: entry.name });
+        } else if (entry.name === "layout.tsx") {
+          allLayoutFiles.push({ id: entry.id, path: entryPath, name: entry.name });
+        }
+      }
+      if (entry.children) {
+        collectFiles(entry.children, entryPath);
+      }
+    });
+  };
+
+  collectFiles(directoryStructure);
+
+  console.log("========================================");
+  console.log("PHASE 4 - ASSEMBLY DEBUG");
+  console.log("========================================");
+  console.log("📁 Page files collected:");
+  allPageFiles.forEach(f => console.log(`  ID: "${f.id}" | Name: "${f.name}" | Path: "${f.path}"`));
+  console.log("📁 Layout files collected:");
+  allLayoutFiles.forEach(f => console.log(`  ID: "${f.id}" | Name: "${f.name}" | Path: "${f.path}"`));
+
+  const stripRouteGroups = (path: string): string => {
+    return path.replace(/\/\([^)]+\)/g, "");
+  };
+
+  const getRouteFromPath = (filePath: string): string => {
+    const stripped = stripRouteGroups(filePath);
+    const route = stripped
+      .replace("/app", "")
+      .replace("/page.tsx", "")
+      .replace("/layout.tsx", "");
+    return route || "/";
+  };
+
+  console.log("🗺️ PAGE ID → FILE ID MAPPING:");
+  parsedPages.forEach(page => {
+    if (page.route === "" || page.id.startsWith("layout-")) {
+      const rootLayout = allLayoutFiles.find(f => f.path === "/app/layout.tsx");
+      if (rootLayout) {
+        pageIdToFileId.set(page.id, rootLayout.id);
+        console.log(`  ✅ LAYOUT: "${page.id}" → "${rootLayout.id}" (route: "")`);
+      } else {
+        console.log(`  ❌ LAYOUT: "${page.id}" → NO LAYOUT FILE FOUND`);
+      }
+      return;
+    }
+
+    const normalizedRoute = page.route === "/" ? "/" : page.route;
+
+    let matchedFile = allPageFiles.find(f => {
+      const fileRoute = getRouteFromPath(f.path);
+      return fileRoute === normalizedRoute;
+    });
+
+    if (!matchedFile) {
+      const routeSegments = normalizedRoute.split("/").filter(Boolean);
+      matchedFile = allPageFiles.find(f => {
+        const fileRoute = getRouteFromPath(f.path);
+        const fileSegments = fileRoute.split("/").filter(Boolean);
+
+        if (routeSegments.length !== fileSegments.length) return false;
+
+        return routeSegments.every((seg, i) => {
+          const fileSeg = fileSegments[i];
+          if (seg.startsWith("[") && fileSeg.startsWith("[")) return true;
+          return seg === fileSeg;
+        });
+      });
+    }
+
+    if (matchedFile) {
+      pageIdToFileId.set(page.id, matchedFile.id);
+      console.log(`  ✅ PAGE: "${page.id}" → "${matchedFile.id}" (route: "${normalizedRoute}")`);
+    } else {
+      console.log(`  ❌ PAGE: "${page.id}" → NO MATCH (route: "${normalizedRoute}")`);
+      console.log(`     Available routes:`, allPageFiles.map(f => getRouteFromPath(f.path)));
+    }
+  });
+
+  const features: Record<string, import("@/app/(editor)/layout.types").Feature[]> = {};
+  const unmappedAssignments: FunctionAssignment[] = [];
+
+  console.log("🔗 FEATURE ASSIGNMENT:");
+  allAssignments.forEach(assignment => {
+    let fileId = pageIdToFileId.get(assignment.pageId);
+    const originalFileId = fileId;
+
+    if (!fileId) {
+      unmappedAssignments.push(assignment);
+      const rootPage = allPageFiles.find(f => f.path === "/app/page.tsx");
+      if (rootPage) {
+        fileId = rootPage.id;
+        console.log(`  ⚠️ "${assignment.featureId}" (${assignment.title}) → FALLBACK to "${fileId}" (pageId "${assignment.pageId}" not found)`);
+      } else {
+        console.log(`  ❌ "${assignment.featureId}" (${assignment.title}) → DROPPED (no mapping, no fallback)`);
+      }
+    }
+
+    if (fileId) {
+      if (!features[fileId]) {
+        features[fileId] = [];
+      }
+
+      features[fileId].push({
+        id: assignment.featureId,
+        title: assignment.title,
+        description: assignment.description,
+        linkedFiles: assignment.linkedFiles,
+        functionNames: assignment.functionNames,
+        isEditing: false
+      });
+    }
+  });
+
+  if (unmappedAssignments.length > 0) {
+    console.warn(`⚠️ ${unmappedAssignments.length} assignments used fallback mapping:`,
+      unmappedAssignments.map(a => ({ id: a.featureId, pageId: a.pageId, title: a.title })));
+  }
+
+  console.log("📊 FINAL FEATURE COUNTS BY FILE:");
+  Object.entries(features).forEach(([fileId, featureList]) => {
+    const file = allPageFiles.find(f => f.id === fileId) || allLayoutFiles.find(f => f.id === fileId);
+    console.log(`  "${fileId}" (${file?.name || "unknown"} at ${file?.path || "unknown"}): ${featureList.length} features`);
+  });
+
+  const totalOutput = Object.values(features).reduce((sum, arr) => sum + arr.length, 0);
+  console.log(`📈 TOTAL: ${allAssignments.length} input → ${totalOutput} output`);
+  console.log("========================================");
+
+  return { structure: directoryStructure, features };
 };

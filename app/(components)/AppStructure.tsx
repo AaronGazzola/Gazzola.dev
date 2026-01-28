@@ -32,7 +32,7 @@ import {
   addUtilityFilesToStructure,
   parseRoutesToStructure,
 } from "./AppStructure.parser";
-import { buildStructurePlanPrompt, buildStructureFromPlanPrompt } from "./AppStructure.prompts";
+import { buildStructureFromPlanPrompt } from "./AppStructure.prompts";
 import { useStructureGeneration } from "./AppStructure.generation-handlers";
 import { InferredFeature } from "./AppStructure.types";
 import {
@@ -488,24 +488,9 @@ export const LayoutAndStructure = () => {
       return;
     }
 
-    console.log("========================================");
-    console.log("PHASE 1 - PLAN GENERATION");
-    console.log("========================================");
-    console.log("INPUT DATA:");
-    console.log("Parsed Pages:", JSON.stringify(parsedPages, null, 2));
-    console.log("Inferred Features:", JSON.stringify(inferredFeatures, null, 2));
-    console.log("========================================");
-
     setLastGeneratedForStructure(JSON.stringify({ parsedPages, inferredFeatures }));
-    phase1ToastIdRef.current = toast.loading("Generating app structure plan...");
 
-    const prompt = buildStructurePlanPrompt(parsedPages, inferredFeatures);
-
-    console.log("AI INPUT (Prompt):");
-    console.log(prompt);
-    console.log("========================================");
-
-    generatePlan({ prompt, maxTokens: 4000 });
+    generatePlan();
   }, [parsedPages, inferredFeatures, generatePlan, setLastGeneratedForStructure]);
 
 

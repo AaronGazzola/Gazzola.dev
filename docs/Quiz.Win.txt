@@ -1,7 +1,7 @@
 QUIZ.WIN - APP SPECIFICATION
 STEP 1: APP INFORMATION
 Title: Quiz.Win
-Description: quiz.win combines quiz content management with narrative-driven gamification. Users build quiz libraries by uploading materials, manually creating questions, or using AI generation. They track performance with detailed analytics per content set. Users create adventure characters (Cyberpunk/Fantasy genre; Wizard/Brute/Assassin class) that progress through AI-generated narratives by answering quiz questions. Correct answers advance the story; incorrect answers cause health loss or story branching. Characters evolve visually with stats, achievements, and items. Both characters and quiz sets can be shared publicly for community voting, commenting, and importing. Any quiz content can fuel any character's adventure.
+Description: quiz.win combines quiz content management with narrative-driven gamification. Users build quiz libraries by uploading materials, manually creating questions, or using AI generation. They track performance with detailed analytics per content set. Users create adventure characters (Cyberpunk/Fantasy genre; Wizard/Brute/Assassin class) that progress through AI-generated narratives by answering quiz questions. Correct answers advance the story; incorrect answers cause health loss or story branching. Characters evolve visually with stats, achievements, and items. Both characters and quiz sets can be shared publicly for community voting, and importing. Any quiz content can fuel any character's adventure.
 
 STEP 2: LAYOUTS AND PAGES
 Layouts
