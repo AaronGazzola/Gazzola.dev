@@ -41,7 +41,6 @@ import {
   parseTableDescriptionsFromResponse,
 } from "./DatabaseConfiguration.ai";
 import { useDatabaseGeneration } from "./DatabaseConfiguration.generation-handlers";
-import { buildDatabasePlanPrompt } from "./DatabaseConfiguration.prompts";
 import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
 import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
@@ -49,7 +48,6 @@ import {
   DatabaseTableDescription,
   useDatabaseTablesStore,
 } from "./DatabaseConfiguration.tables.stores";
-import { DATABASE_TEMPLATES } from "./DatabaseConfiguration.types";
 import { DatabaseTableDescriptionItem } from "./DatabaseConfiguration/DatabaseTableDescriptionItem";
 import { useREADMEStore } from "./READMEComponent.stores";
 
@@ -106,7 +104,6 @@ export const DatabaseConfiguration = () => {
   const [newSchemaName, setNewSchemaName] = useState("");
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
-  const [databasePlan, setDatabasePlan] = useState<string | null>(null);
   const phase1ToastIdRef = useRef<string | number | undefined>();
 
   const readmeData = {
@@ -166,7 +163,6 @@ export const DatabaseConfiguration = () => {
     readmeData,
     appStructureData,
     appStructure,
-    setDatabasePlan,
     setTablesFromAI,
     setEnumsFromAI,
     setRLSPoliciesFromAI,
@@ -264,41 +260,10 @@ export const DatabaseConfiguration = () => {
     }
 
     setLastGeneratedTableDescriptions(tableDescriptions);
-    phase1ToastIdRef.current = toast.loading("Generating database plan...", {
-      description: `Analyzing ${tableDescriptions.length} tables`
-    });
 
-    const structuredData = {
-      appTitle: readmeData.title,
-      appDescription: readmeData.description,
-      authMethods: Object.entries(readmeData.authMethods)
-        .filter(([_, enabled]) => enabled)
-        .map(([method]) => method)
-        .join(", "),
-      pages: appStructureData.parsedPages.map((page: any) => ({
-        name: page.name,
-        route: page.route,
-        description: page.description,
-        features: (appStructureData.inferredFeatures[page.id] || []).map((f: any) => ({
-          title: f.title,
-          description: f.description,
-        })),
-      })),
-    };
-
-    const prompt = buildDatabasePlanPrompt(
-      structuredData,
-      appStructure,
-      tableDescriptions,
-      appStructureData.inferredFeatures
-    );
-
-    generatePlan({ prompt, maxTokens: 4000 });
+    generatePlan();
   }, [
     tableDescriptions,
-    readmeData,
-    appStructureData,
-    appStructure,
     generatePlan,
     setLastGeneratedTableDescriptions,
   ]);

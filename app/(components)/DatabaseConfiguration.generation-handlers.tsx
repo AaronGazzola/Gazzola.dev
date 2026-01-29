@@ -28,7 +28,6 @@ export const useDatabaseGeneration = (
   readmeData: any,
   appStructureData: any,
   appStructure: any,
-  setDatabasePlan: (plan: string | null) => void,
   setTablesFromAI: (tables: any[]) => void,
   setEnumsFromAI: (enums: any[]) => void,
   setRLSPoliciesFromAI: (policies: any[], tables: any[]) => void,
@@ -58,7 +57,6 @@ export const useDatabaseGeneration = (
 
     const plan = response.content.trim();
     planRef.current = plan;
-    setDatabasePlan(plan);
 
     if (phase1ToastIdRef.current) {
       toast.dismiss(phase1ToastIdRef.current);
