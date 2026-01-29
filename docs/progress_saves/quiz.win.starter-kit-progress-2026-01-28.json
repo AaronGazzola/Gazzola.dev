@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "timestamp": "2026-01-27T13:55:30.018Z",
+  "timestamp": "2026-01-28T01:13:32.184Z",
   "editorState": {
     "data": {
       "root": {
@@ -908,7 +908,7 @@
           "order": 1,
           "path": "readme",
           "urlPath": "/readme",
-          "content": "<!-- component-READMEComponent -->\n\n# Quiz.Win\n\n## Overview\n\nQuiz.Win is a gamified learning platform that transforms traditional quiz content into immersive narrative adventures. By combining educational content management with role-playing game elements, users can both create quiz libraries and embark on genre-themed questing experiences.\n\nThe platform serves educators, students, and learning enthusiasts seeking to make studying more engaging. Whether you're uploading existing materials, creating custom questions, or leveraging AI generation, your quiz content becomes fuel for character-driven adventures in fantasy and cyberpunk settings.\n\n## Layouts\n\n### Main Layout\n\nThe Main Layout provides a consistent framework across most of Quiz.Win, featuring an intuitive header with the platform logo and profile controls. The smart sidebar offers quick access to your quiz library, character management, and adventure mode selection. A dynamic footer displays community statistics and platform status.\n\nThis layout serves all pages except admin functions, ensuring users always have access to core features while maintaining a clean, focused interface. The responsive design adapts seamlessly across devices, keeping navigation efficient regardless of screen size.\n\n### Admin Layout\n\nThe Admin Layout is purpose-built for content moderation and platform management. It features a specialized header with moderation navigation and real-time queue statistics. The sidebar provides instant access to content review queues, user reports, and comprehensive analytics.\n\nUsed exclusively for the content moderation page, this layout streamlines administrative workflows with bulk action tools, detailed audit logs, and content preview panels. The design prioritizes efficient review processes and clear oversight of platform activity.\n\n## Pages\n\n### Home (/) [All Users]\nLayout: Main Layout\n\nThe home page serves as the gateway to Quiz.Win, featuring a dynamic hero section with clear calls-to-action for both content creation and adventure modes. A carousel showcases featured characters while a grid displays popular quiz sets and recent community activity.\n\nFor authenticated users, a personalized dashboard appears with quick access to recent activities and recommended content. The page adapts its display based on user history, ensuring relevant content is always front and center.\n\n### Profile (/profile) [Authenticated]\nLayout: Main Layout\n\nYour profile hub displays character progression, quiz creation statistics, and achievement badges. Users can customize their display name, avatar, and preferred adventure settings.\n\nThe page includes a detailed activity log showing quiz completions, character milestones, and community contributions. Performance analytics provide insights into learning patterns and achievement trends.\n\n### Quiz Creation (/create) [Authenticated]\nLayout: Main Layout\n\nThe quiz creation interface offers both manual and AI-assisted question generation. Users can organize content into themed sets, add multimedia elements, and set difficulty parameters.\n\nA preview mode allows creators to experience their quiz from a player perspective before publishing. The page includes template libraries and community examples for inspiration.\n\n### Quiz Library (/library) [Authenticated]\nLayout: Main Layout\n\nBrowse and manage your created and saved quiz sets in a filterable grid view. Quick actions allow for editing, sharing, and launching content directly into adventure mode.\n\nThe library includes analytics on quiz usage, completion rates, and user feedback. Organization tools help maintain collections through tags, folders, and search functionality.\n\n### Adventure Mode (/adventure) [Authenticated]\nLayout: Main Layout\n\nSelect your character and embark on narrative-driven learning quests. The adventure interface combines quiz content with story elements, character progression, and achievement tracking.\n\nPlayers can choose between fantasy and cyberpunk themes, each offering unique storylines and progression paths. The page tracks quest completion and provides rewards for learning milestones.\n\n### Character Creation (/characters/new) [Authenticated]\nLayout: Main Layout\n\nDesign your in-game persona with detailed customization options for appearance, background story, and specializations. Character choices influence available quests and progression paths.\n\nThe creation process includes preset templates and randomization options for quick starts. Preview tools show how your character will appear in different game contexts.\n\n### Character Management (/characters) [Authenticated]\nLayout: Main Layout\n\nView and manage your roster of characters, their progression stats, and equipped items. Each character's history shows completed quests and earned achievements.\n\nThe management interface allows for character respecialization and appearance updates. Performance metrics help track learning progress across different character builds.\n\n### Community Hub (/community) [All Users]\nLayout: Main Layout\n\nDiscover popular quiz creators, share achievements, and join study groups. The community feed highlights recent activities, upcoming events, and featured content.\n\nUsers can participate in discussions, rate content, and contribute to community challenges. The page includes leaderboards and recognition for top contributors.\n\n### Leaderboards (/leaderboards) [All Users]\nLayout: Main Layout\n\nCompare achievements across various categories including quiz creation, completion rates, and character progression. Leaderboards reset periodically to maintain competitive engagement.\n\nDetailed statistics show top performers in different subject areas and quest types. Users can filter views by time period and category.\n\n### Settings (/settings) [Authenticated]\nLayout: Main Layout\n\nCustomize your Quiz.Win experience with controls for notifications, privacy preferences, and interface options. Manage connected accounts and notification preferences.\n\nThe settings page includes options for content filtering, difficulty preferences, and accessibility features. Account management tools provide security and privacy controls.\n\n### Help Center (/help) [All Users]\nLayout: Main Layout\n\nAccess comprehensive guides, tutorials, and FAQs about platform features. Interactive walkthroughs help new users navigate key functionality.\n\nThe help center includes community tips, troubleshooting guides, and direct support access. Content is categorized for easy reference and searchability.\n\n### Achievements (/achievements) [Authenticated]\nLayout: Main Layout\n\nTrack your earned badges, titles, and special rewards across both quiz creation and adventure modes. Achievement categories span educational milestones and gaming accomplishments.\n\nThe page displays progress towards upcoming achievements and suggests activities to complete collections. Special event achievements are highlighted with time-limited availability.\n\n### Analytics (/analytics) [Authenticated]\nLayout: Main Layout\n\nView detailed insights into your learning progress, quiz performance, and platform engagement. Interactive charts display trends across different subjects and time periods.\n\nThe analytics dashboard includes comparative metrics, suggested improvements, and personalized study recommendations. Export options allow sharing progress with educators or study groups.\n\n### Content Moderation (/admin) [Admin]\nLayout: Admin Layout\n\nReview and manage user-generated content, handle reports, and maintain platform quality standards. The moderation queue prioritizes items needing immediate attention.\n\nComprehensive tools support bulk actions, content filtering, and user management. Detailed audit logs track moderation activities and policy enforcement.\n\n## Authentication & Access Control\n\nQuiz.Win uses secure authentication to protect user data and content. Anonymous users can explore public features including the home page, community hub, and leaderboards. Authenticated users gain access to personal features like quiz creation, adventure mode, and profile management. Admin access is restricted to platform moderators for content oversight.\n\n## User Experience\n\nThe platform guides users through an engaging journey from initial exploration to full platform mastery. New users begin with basic quiz creation or adventure participation, gradually unlocking more advanced features as they engage with the community.\n\nNavigation patterns focus on quick access to frequently used features while maintaining clear paths to discovery. The combination of educational content with gaming elements creates natural progression cycles that encourage continued learning and participation.\n\n## Getting Started\n\n1. Create your Quiz.Win account through the home page signup\n2. Choose your first character theme (Fantasy or Cyberpunk)\n3. Create a quiz set or jump into Adventure Mode\n4. Explore the community hub to connect with other learners\n5. Track your progress through achievements and analytics\n\nFor educational content creators, start with the quiz creation tools to build your library. For learners, begin with Adventure Mode to experience gamified learning immediately.",
+          "content": "<!-- component-READMEComponent -->\n",
           "components": [
             {
               "id": "component-READMEComponent",
@@ -980,7 +980,7 @@
           "order": 3,
           "path": "app-directory",
           "urlPath": "/app-directory",
-          "content": "# App Directory\n\n<!-- component-LayoutAndStructure -->\n",
+          "content": "# App Directory\n\n<!-- component-LayoutAndStructure -->",
           "components": [
             {
               "id": "component-LayoutAndStructure",
@@ -1402,30 +1402,1351 @@
     },
     "previewMode": false,
     "darkMode": true,
-    "appStructureGenerated": false,
-    "readmeGenerated": true,
+    "appStructureGenerated": true,
+    "readmeGenerated": false,
     "databaseGenerated": false,
     "appStructure": [
       {
-        "id": "dfludgeve",
+        "id": "app-root",
         "name": "app",
         "type": "directory",
         "isExpanded": true,
         "children": [
           {
-            "id": "vc66wi1yf",
+            "id": "layout-tsx",
             "name": "layout.tsx",
             "type": "file"
           },
           {
-            "id": "v7ai9qykj",
+            "id": "layout-hooks",
+            "name": "layout.hooks.tsx",
+            "type": "file"
+          },
+          {
+            "id": "layout-stores",
+            "name": "layout.stores.ts",
+            "type": "file"
+          },
+          {
+            "id": "layout-actions",
+            "name": "layout.actions.ts",
+            "type": "file"
+          },
+          {
+            "id": "layout-types",
+            "name": "layout.types.ts",
+            "type": "file"
+          },
+          {
+            "id": "page-tsx",
             "name": "page.tsx",
             "type": "file"
+          },
+          {
+            "id": "page-hooks",
+            "name": "page.hooks.tsx",
+            "type": "file"
+          },
+          {
+            "id": "auth-group",
+            "name": "(auth)",
+            "type": "directory",
+            "children": [
+              {
+                "id": "signin-dir",
+                "name": "sign-in",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "signin-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "signin-hooks",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  }
+                ]
+              },
+              {
+                "id": "signup-dir",
+                "name": "sign-up",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "signup-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "signup-hooks",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  }
+                ]
+              },
+              {
+                "id": "forgot-dir",
+                "name": "forgot-password",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "forgot-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "page-hooks-tsx-1769562465575",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  }
+                ]
+              },
+              {
+                "id": "reset-dir",
+                "name": "reset-password",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "reset-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "page-hooks-tsx-1769562465575",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "welcome-dir",
+            "name": "welcome",
+            "type": "directory",
+            "children": [
+              {
+                "id": "welcome-page",
+                "name": "page.tsx",
+                "type": "file"
+              },
+              {
+                "id": "welcome-hooks",
+                "name": "page.hooks.tsx",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "id": "quizzes-dir",
+            "name": "quizzes",
+            "type": "directory",
+            "children": [
+              {
+                "id": "quizzes-page",
+                "name": "page.tsx",
+                "type": "file"
+              },
+              {
+                "id": "quizzes-hooks",
+                "name": "page.hooks.tsx",
+                "type": "file"
+              },
+              {
+                "id": "quizzes-stores",
+                "name": "page.stores.ts",
+                "type": "file"
+              },
+              {
+                "id": "create-dir",
+                "name": "create",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "create-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "create-hooks",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "characters-dir",
+            "name": "characters",
+            "type": "directory",
+            "children": [
+              {
+                "id": "chars-page",
+                "name": "page.tsx",
+                "type": "file"
+              },
+              {
+                "id": "chars-hooks",
+                "name": "page.hooks.tsx",
+                "type": "file"
+              },
+              {
+                "id": "char-dynamic",
+                "name": "[characterId]",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "char-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "char-hooks",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "adventure-dir",
+            "name": "adventure",
+            "type": "directory",
+            "children": [
+              {
+                "id": "adv-char-dir",
+                "name": "[characterId]",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "adv-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "adv-hooks",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "adv-stores",
+                    "name": "page.stores.ts",
+                    "type": "file"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "community-dir",
+            "name": "community",
+            "type": "directory",
+            "children": [
+              {
+                "id": "comm-page",
+                "name": "page.tsx",
+                "type": "file"
+              },
+              {
+                "id": "comm-hooks",
+                "name": "page.hooks.tsx",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "id": "settings-dir",
+            "name": "settings",
+            "type": "directory",
+            "children": [
+              {
+                "id": "settings-page",
+                "name": "page.tsx",
+                "type": "file"
+              },
+              {
+                "id": "settings-hooks",
+                "name": "page.hooks.tsx",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "id": "admin-group",
+            "name": "(admin)",
+            "type": "directory",
+            "children": [
+              {
+                "id": "admin-dir",
+                "name": "admin",
+                "type": "directory",
+                "children": [
+                  {
+                    "id": "admin-page",
+                    "name": "page.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "admin-hooks",
+                    "name": "page.hooks.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "admin-stores",
+                    "name": "page.stores.ts",
+                    "type": "file"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
     ],
-    "features": {},
+    "features": {
+      "layout-tsx": [
+        {
+          "id": "p8l8cg23g",
+          "title": "Sign out user",
+          "description": "Clear user session and redirect to login page",
+          "linkedFiles": {
+            "hooks": "/app/layout.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useSignOut",
+            "actions": "signOutAction",
+            "stores": "useAuthStore",
+            "types": "SignOutResult"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "mqxfge8ct",
+          "title": "Toggle user profile menu",
+          "description": "Show/hide user profile popover menu",
+          "linkedFiles": {
+            "hooks": "/app/layout.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useProfileMenu",
+            "actions": "toggleProfileMenuAction",
+            "stores": "useProfileMenuStore",
+            "types": "ProfileMenuState"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "zjxp122xu",
+          "title": "Get community stats",
+          "description": "Fetch and display community statistics in footer",
+          "linkedFiles": {
+            "hooks": "/app/layout.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useCommunityStats",
+            "actions": "getCommunityStatsAction",
+            "stores": "useCommunityStatsStore",
+            "types": "CommunityStats"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "aq82co3dq",
+          "title": "Get content queue metrics",
+          "description": "Fetch current moderation queue statistics",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useQueueMetrics",
+            "actions": "getQueueMetricsAction",
+            "stores": "useQueueMetricsStore",
+            "types": "QueueMetrics"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "uwsfkq4hy",
+          "title": "Get moderation analytics",
+          "description": "Fetch and display content moderation analytics",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useModerationAnalytics",
+            "actions": "getModerationAnalyticsAction",
+            "stores": "useModerationStore",
+            "types": "ModerationAnalytics"
+          },
+          "isEditing": false
+        }
+      ],
+      "page-tsx": [
+        {
+          "id": "jthuxilak",
+          "title": "Get featured characters",
+          "description": "Fetch and display featured character profiles",
+          "linkedFiles": {
+            "hooks": "/app/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useFeaturedCharacters",
+            "actions": "getFeaturedCharactersAction",
+            "stores": "useCharacterStore",
+            "types": "FeaturedCharacter"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "ngyvwbs7d",
+          "title": "Get popular quiz sets",
+          "description": "Fetch and display trending quiz collections",
+          "linkedFiles": {
+            "hooks": "/app/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "usePopularQuizzes",
+            "actions": "getPopularQuizzesAction",
+            "stores": "useQuizStore",
+            "types": "PopularQuizSet"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "2ir0al9yq",
+          "title": "Get recent completions",
+          "description": "Fetch and display recently completed quizzes and adventures",
+          "linkedFiles": {
+            "hooks": "/app/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useRecentCompletions",
+            "actions": "getRecentCompletionsAction",
+            "stores": "useCompletionsStore",
+            "types": "RecentCompletion"
+          },
+          "isEditing": false
+        }
+      ],
+      "signin-page": [
+        {
+          "id": "e1fizbyli",
+          "title": "Sign in with email and password",
+          "description": "Authenticate user with email and password credentials",
+          "linkedFiles": {
+            "hooks": "/app/(auth)/sign-in/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useSignIn",
+            "actions": "signInAction",
+            "stores": "useAuthStore",
+            "types": "SignInCredentials"
+          },
+          "isEditing": false
+        }
+      ],
+      "signup-page": [
+        {
+          "id": "w3dya0vdj",
+          "title": "Create user account",
+          "description": "Register new user with email and password",
+          "linkedFiles": {
+            "hooks": "/app/(auth)/sign-up/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useSignUp",
+            "actions": "signUpAction",
+            "stores": "useAuthStore",
+            "types": "SignUpCredentials"
+          },
+          "isEditing": false
+        }
+      ],
+      "forgot-page": [
+        {
+          "id": "e8lrs61gg",
+          "title": "Send password reset email",
+          "description": "Send password reset link to user's email address",
+          "linkedFiles": {
+            "hooks": "/app/(auth)/forgot-password/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "usePasswordResetEmail",
+            "actions": "sendPasswordResetEmailAction",
+            "stores": "useAuthStore",
+            "types": "PasswordResetEmail"
+          },
+          "isEditing": false
+        }
+      ],
+      "reset-page": [
+        {
+          "id": "7i4208nrv",
+          "title": "Reset user password",
+          "description": "Update user's password using reset token",
+          "linkedFiles": {
+            "hooks": "/app/(auth)/reset-password/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "usePasswordReset",
+            "actions": "resetPasswordAction",
+            "stores": "useAuthStore",
+            "types": "PasswordResetCredentials"
+          },
+          "isEditing": false
+        }
+      ],
+      "welcome-page": [
+        {
+          "id": "7nkwkb47u",
+          "title": "Update user profile",
+          "description": "Save initial user profile details including name and bio",
+          "linkedFiles": {
+            "hooks": "/app/welcome/page.hooks.tsx",
+            "actions": "/app/welcome/page.hooks.tsx",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useUpdateProfile",
+            "actions": "updateProfileAction",
+            "stores": "useProfileStore",
+            "types": "UpdateProfileInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "omot26l5d",
+          "title": "Upload avatar image",
+          "description": "Upload and save user profile picture",
+          "linkedFiles": {
+            "hooks": "/app/welcome/page.hooks.tsx",
+            "actions": "/app/welcome/page.hooks.tsx",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useAvatarUpload",
+            "actions": "uploadAvatarAction",
+            "stores": "useProfileStore",
+            "types": "AvatarUploadResult"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "w3y1drh3g",
+          "title": "Set quiz preferences",
+          "description": "Save user's quiz and content preferences",
+          "linkedFiles": {
+            "hooks": "/app/welcome/page.hooks.tsx",
+            "actions": "/app/welcome/page.hooks.tsx",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useQuizPreferences",
+            "actions": "setQuizPreferencesAction",
+            "stores": "usePreferencesStore",
+            "types": "QuizPreferencesInput"
+          },
+          "isEditing": false
+        }
+      ],
+      "quizzes-page": [
+        {
+          "id": "dztxotx9g",
+          "title": "Get quiz sets",
+          "description": "Fetch user's personal and imported quiz collections",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/page.hooks.tsx",
+            "actions": "/app/quizzes/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useQuizSets",
+            "actions": "getQuizSetsAction",
+            "stores": "useQuizStore",
+            "types": "QuizSetCollection"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "yq754q82e",
+          "title": "Take quiz",
+          "description": "Start selected quiz session",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/page.hooks.tsx",
+            "actions": "/app/quizzes/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useQuizSession",
+            "actions": "startQuizSessionAction",
+            "stores": "useQuizStore",
+            "types": "QuizSession"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "g7q1wbeom",
+          "title": "Edit quiz set",
+          "description": "Modify existing quiz content and settings",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/page.hooks.tsx",
+            "actions": "/app/quizzes/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useEditQuiz",
+            "actions": "editQuizSetAction",
+            "stores": "useQuizStore",
+            "types": "EditQuizInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "53g4phov9",
+          "title": "Get quiz analytics",
+          "description": "View performance statistics for quiz set",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/page.hooks.tsx",
+            "actions": "/app/quizzes/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useQuizAnalytics",
+            "actions": "getQuizAnalyticsAction",
+            "stores": "useQuizStore",
+            "types": "QuizAnalytics"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "yc08r1gqy",
+          "title": "Toggle quiz sharing",
+          "description": "Enable/disable public access to quiz set",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/page.hooks.tsx",
+            "actions": "/app/quizzes/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useQuizSharing",
+            "actions": "toggleQuizSharingAction",
+            "stores": "useQuizStore",
+            "types": "QuizSharingState"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "3l2dl1npr",
+          "title": "Delete quiz set",
+          "description": "Remove quiz set from library",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/page.hooks.tsx",
+            "actions": "/app/quizzes/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useDeleteQuiz",
+            "actions": "deleteQuizSetAction",
+            "stores": "useQuizStore",
+            "types": "DeleteQuizResult"
+          },
+          "isEditing": false
+        }
+      ],
+      "chars-page": [
+        {
+          "id": "49mcsjqfl",
+          "title": "Get user characters",
+          "description": "Fetch all characters created by user",
+          "linkedFiles": {
+            "hooks": "/app/characters/page.hooks.tsx",
+            "actions": "/app/characters/page.hooks.tsx",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useUserCharacters",
+            "actions": "getUserCharactersAction",
+            "stores": "useCharacterStore",
+            "types": "UserCharacter"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "eckrkpjwq",
+          "title": "Get character stats",
+          "description": "Fetch statistics and achievements for each character",
+          "linkedFiles": {
+            "hooks": "/app/characters/page.hooks.tsx",
+            "actions": "/app/characters/page.hooks.tsx",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useCharacterStats",
+            "actions": "getCharacterStatsAction",
+            "stores": "useCharacterStore",
+            "types": "CharacterStats"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "49926ylbq",
+          "title": "Get available quests",
+          "description": "Fetch available adventure quests for characters",
+          "linkedFiles": {
+            "hooks": "/app/characters/page.hooks.tsx",
+            "actions": "/app/characters/page.hooks.tsx",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useAvailableQuests",
+            "actions": "getAvailableQuestsAction",
+            "stores": "useCharacterStore",
+            "types": "AvailableQuest"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "3zr3qb05g",
+          "title": "Customize character appearance",
+          "description": "Modify character visual attributes",
+          "linkedFiles": {
+            "hooks": "/app/characters/page.hooks.tsx",
+            "actions": "/app/characters/page.hooks.tsx",
+            "stores": "/app/characters/page.hooks.tsx",
+            "types": "/app/characters/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useCustomizeAppearance",
+            "actions": "updateCharacterAppearanceAction",
+            "stores": "useCharacterCustomizationStore",
+            "types": "CharacterAppearanceInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "s8773ugid",
+          "title": "Share character",
+          "description": "Generate and copy character share link",
+          "linkedFiles": {
+            "hooks": "/app/characters/page.hooks.tsx",
+            "actions": "/app/characters/page.hooks.tsx",
+            "stores": "/app/characters/page.hooks.tsx",
+            "types": "/app/characters/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useCharacterSharing",
+            "actions": "generateCharacterShareLinkAction",
+            "stores": "useCharacterSharingStore",
+            "types": "CharacterShareResult"
+          },
+          "isEditing": false
+        }
+      ],
+      "adv-page": [
+        {
+          "id": "ptng3cxn3",
+          "title": "Get character stats",
+          "description": "Fetch current character statistics and status",
+          "linkedFiles": {
+            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
+            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
+            "stores": "/app/adventure/[characterId]/page.stores.ts",
+            "types": "/app/adventure/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useAdventureCharacterStats",
+            "actions": "getAdventureCharacterStatsAction",
+            "stores": "useAdventureStatsStore",
+            "types": "AdventureCharacterStats"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "fuw4bhz01",
+          "title": "Generate story content",
+          "description": "Create AI-driven narrative based on context",
+          "linkedFiles": {
+            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
+            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
+            "stores": "/app/adventure/[characterId]/page.stores.ts",
+            "types": "/app/adventure/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useStoryGeneration",
+            "actions": "generateStoryContentAction",
+            "stores": "useStoryContentStore",
+            "types": "StoryContent"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "mmy50eki0",
+          "title": "Submit quiz answer",
+          "description": "Process quiz response and update story",
+          "linkedFiles": {
+            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
+            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
+            "stores": "/app/adventure/[characterId]/page.stores.ts",
+            "types": "/app/adventure/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useQuizSubmission",
+            "actions": "submitAdventureQuizAnswerAction",
+            "stores": "useAdventureQuizStore",
+            "types": "AdventureQuizSubmission"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "btsh0ouzy",
+          "title": "Get progress status",
+          "description": "Fetch current adventure progress",
+          "linkedFiles": {
+            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
+            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
+            "stores": "/app/adventure/[characterId]/page.stores.ts",
+            "types": "/app/adventure/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useAdventureProgress",
+            "actions": "getAdventureProgressAction",
+            "stores": "useProgressStore",
+            "types": "AdventureProgress"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "kuc97v3jt",
+          "title": "Share adventure status",
+          "description": "Generate and share current adventure progress",
+          "linkedFiles": {
+            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
+            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
+            "stores": "/app/adventure/[characterId]/page.stores.ts",
+            "types": "/app/adventure/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useAdventureSharing",
+            "actions": "shareAdventureStatusAction",
+            "stores": "useAdventureSharingStore",
+            "types": "AdventureShareResult"
+          },
+          "isEditing": false
+        }
+      ],
+      "create-page": [
+        {
+          "id": "e2xkyt9nh",
+          "title": "Upload quiz document",
+          "description": "Import quiz content from PDF/DOCX/MD/TXT file",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/create/page.hooks.tsx",
+            "actions": "/app/quizzes/create/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/quizzes/create/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useQuizDocumentUpload",
+            "actions": "uploadQuizDocumentAction",
+            "stores": "useQuizUploadStore",
+            "types": "QuizDocumentUpload"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "xoz7sg9my",
+          "title": "Generate AI quiz content",
+          "description": "Create quiz questions using AI assistance",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/create/page.hooks.tsx",
+            "actions": "/app/quizzes/create/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/quizzes/create/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useAIQuizGeneration",
+            "actions": "generateAIQuizContentAction",
+            "stores": "useQuizGenerationStore",
+            "types": "AIGeneratedQuiz"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "bttmcx1ar",
+          "title": "Create quiz manually",
+          "description": "Add quiz questions through form interface",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/create/page.hooks.tsx",
+            "actions": "/app/quizzes/create/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/quizzes/create/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useManualQuizCreation",
+            "actions": "createManualQuizAction",
+            "stores": "useQuizCreationStore",
+            "types": "ManualQuizInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "8fff6hi52",
+          "title": "Submit quiz for approval",
+          "description": "Send quiz for community sharing approval",
+          "linkedFiles": {
+            "hooks": "/app/quizzes/create/page.hooks.tsx",
+            "actions": "/app/quizzes/create/page.hooks.tsx",
+            "stores": "/app/quizzes/page.stores.ts",
+            "types": "/app/quizzes/create/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useQuizApprovalSubmission",
+            "actions": "submitQuizForApprovalAction",
+            "stores": "useQuizApprovalStore",
+            "types": "QuizApprovalSubmission"
+          },
+          "isEditing": false
+        }
+      ],
+      "char-page": [
+        {
+          "id": "r48jhrah0",
+          "title": "Get character details",
+          "description": "Fetch character profile, stats, and history",
+          "linkedFiles": {
+            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
+            "actions": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/page.hooks.tsx",
+            "types": "/app/characters/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useCharacterDetails",
+            "actions": "getCharacterDetailsAction",
+            "stores": "useCharacterDetailsStore",
+            "types": "CharacterDetails"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "s3pkrgu0u",
+          "title": "Get achievement gallery",
+          "description": "Fetch character's earned achievements",
+          "linkedFiles": {
+            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
+            "actions": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "types": "/app/characters/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useAchievementGallery",
+            "actions": "getAchievementGalleryAction",
+            "stores": "useAchievementStore",
+            "types": "AchievementGallery"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "iiv4aqwko",
+          "title": "Get inventory items",
+          "description": "Fetch character's collected items",
+          "linkedFiles": {
+            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
+            "actions": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "types": "/app/characters/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useInventoryItems",
+            "actions": "getInventoryItemsAction",
+            "stores": "useInventoryStore",
+            "types": "InventoryItem"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "4luc65jjq",
+          "title": "Vote on character",
+          "description": "Submit upvote or downvote on character",
+          "linkedFiles": {
+            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
+            "actions": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "types": "/app/characters/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useCharacterVoting",
+            "actions": "submitCharacterVoteAction",
+            "stores": "useVotingStore",
+            "types": "CharacterVote"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "qlw2wdj5q",
+          "title": "Share character profile",
+          "description": "Generate and copy character profile link",
+          "linkedFiles": {
+            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
+            "actions": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "types": "/app/characters/[characterId]/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useProfileSharing",
+            "actions": "generateProfileShareLinkAction",
+            "stores": "useProfileSharingStore",
+            "types": "ProfileShareResult"
+          },
+          "isEditing": false
+        }
+      ],
+      "comm-page": [
+        {
+          "id": "bhue4f2oh",
+          "title": "Get trending content",
+          "description": "Fetch popular characters and quiz sets",
+          "linkedFiles": {
+            "hooks": "/app/community/page.hooks.tsx",
+            "actions": "/app/community/page.hooks.tsx",
+            "stores": "/app/community/page.hooks.tsx",
+            "types": "/app/community/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useTrendingContent",
+            "actions": "getTrendingContentAction",
+            "stores": "useTrendingStore",
+            "types": "TrendingContent"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "71olg56fm",
+          "title": "Get activity feed",
+          "description": "Fetch recent community activities",
+          "linkedFiles": {
+            "hooks": "/app/community/page.hooks.tsx",
+            "actions": "/app/community/page.hooks.tsx",
+            "stores": "/app/community/page.hooks.tsx",
+            "types": "/app/community/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useActivityFeed",
+            "actions": "getActivityFeedAction",
+            "stores": "useActivityStore",
+            "types": "ActivityFeed"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "v1ci28pmf",
+          "title": "Get community statistics",
+          "description": "Fetch overall community metrics",
+          "linkedFiles": {
+            "hooks": "/app/community/page.hooks.tsx",
+            "actions": "/app/community/page.hooks.tsx",
+            "stores": "/app/community/page.hooks.tsx",
+            "types": "/app/community/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useCommunityStats",
+            "actions": "getCommunityStatsAction",
+            "stores": "useCommunityStatsStore",
+            "types": "CommunityStats"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "yavwvvv06",
+          "title": "Get featured spotlight",
+          "description": "Fetch currently featured content",
+          "linkedFiles": {
+            "hooks": "/app/community/page.hooks.tsx",
+            "actions": "/app/community/page.hooks.tsx",
+            "stores": "/app/community/page.hooks.tsx",
+            "types": "/app/community/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useSpotlightContent",
+            "actions": "getSpotlightContentAction",
+            "stores": "useSpotlightStore",
+            "types": "SpotlightContent"
+          },
+          "isEditing": false
+        }
+      ],
+      "settings-page": [
+        {
+          "id": "42fabnfiv",
+          "title": "Update profile settings",
+          "description": "Modify user profile information",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.hooks.tsx",
+            "stores": "/app/settings/page.hooks.tsx",
+            "types": "/app/settings/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useUpdateProfile",
+            "actions": "updateProfileAction",
+            "stores": "useProfileStore",
+            "types": "UpdateProfileInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "bjje05918",
+          "title": "Update quiz preferences",
+          "description": "Modify quiz feedback and reminder settings",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.hooks.tsx",
+            "stores": "/app/settings/page.hooks.tsx",
+            "types": "/app/settings/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useQuizPreferences",
+            "actions": "setQuizPreferencesAction",
+            "stores": "usePreferencesStore",
+            "types": "QuizPreferencesInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "pkx6xorlt",
+          "title": "Update adventure preferences",
+          "description": "Modify adventure gameplay settings",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.hooks.tsx",
+            "stores": "/app/settings/page.hooks.tsx",
+            "types": "/app/settings/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useAdventurePreferences",
+            "actions": "setAdventurePreferencesAction",
+            "stores": "useAdventurePrefsStore",
+            "types": "AdventurePreferencesInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "ds1i0yyt9",
+          "title": "Update privacy settings",
+          "description": "Modify content visibility and permissions",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.hooks.tsx",
+            "stores": "/app/settings/page.hooks.tsx",
+            "types": "/app/settings/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "usePrivacySettings",
+            "actions": "updatePrivacySettingsAction",
+            "stores": "usePrivacyStore",
+            "types": "PrivacySettings"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "o9tt9u4n8",
+          "title": "Update notification settings",
+          "description": "Modify notification preferences",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.hooks.tsx",
+            "stores": "/app/settings/page.hooks.tsx",
+            "types": "/app/settings/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useNotificationSettings",
+            "actions": "updateNotificationSettingsAction",
+            "stores": "useNotificationStore",
+            "types": "NotificationSettings"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "18hsxt3ni",
+          "title": "Export user data",
+          "description": "Download user data and content",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.hooks.tsx",
+            "stores": "/app/settings/page.hooks.tsx",
+            "types": "/app/settings/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useDataExport",
+            "actions": "exportUserDataAction",
+            "stores": "useDataExportStore",
+            "types": "UserDataExport"
+          },
+          "isEditing": false
+        }
+      ],
+      "admin-page": [
+        {
+          "id": "hg794phal",
+          "title": "Get moderation queue",
+          "description": "Fetch pending content for review",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/(admin)/admin/page.hooks.tsx",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/(admin)/admin/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useModerationQueue",
+            "actions": "getModerationQueueAction",
+            "stores": "useModerationQueueStore",
+            "types": "ModerationQueueItem"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "ykzzoatt6",
+          "title": "Get flagged content",
+          "description": "Fetch reported content items",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/(admin)/admin/page.hooks.tsx",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/(admin)/admin/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useFlaggedContent",
+            "actions": "getFlaggedContentAction",
+            "stores": "useFlaggedContentStore",
+            "types": "FlaggedContent"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "8z3erzdbo",
+          "title": "Get user reports",
+          "description": "Fetch user behavior reports",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/(admin)/admin/page.hooks.tsx",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/(admin)/admin/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useUserReports",
+            "actions": "getUserReportsAction",
+            "stores": "useUserReportsStore",
+            "types": "UserReport"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "67q6i4r0a",
+          "title": "Moderate content item",
+          "description": "Approve/remove/hide content items",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/(admin)/admin/page.hooks.tsx",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/(admin)/admin/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useContentModeration",
+            "actions": "moderateContentAction",
+            "stores": "useContentModerationStore",
+            "types": "ContentModerationInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "ff8y6emzw",
+          "title": "Take user action",
+          "description": "Warn/suspend/ban user accounts",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/(admin)/admin/page.hooks.tsx",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/(admin)/admin/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useUserModeration",
+            "actions": "takeUserActionAction",
+            "stores": "useUserModerationStore",
+            "types": "UserModerationAction"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "m5vhye4o9",
+          "title": "Get audit log",
+          "description": "Fetch moderation action history.",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/(admin)/admin/page.hooks.tsx",
+            "stores": "/app/(admin)/admin/page.stores.ts",
+            "types": "/app/(admin)/admin/page.hooks.tsx"
+          },
+          "functionNames": {
+            "hooks": "useAuditLog",
+            "actions": "getAuditLogAction",
+            "stores": "useAuditLogStore",
+            "types": "AuditLogEntry"
+          },
+          "isEditing": false
+        }
+      ]
+    },
     "initialConfiguration": {
       "technologies": {
         "nextjs": true,
@@ -1978,7 +3299,7 @@
           "id": "m5vhye4o9",
           "pageId": "rfzebp1md",
           "title": "Get audit log",
-          "description": "Fetch moderation action history"
+          "description": "Fetch moderation action history."
         }
       ]
     },
@@ -2306,7 +3627,7 @@
       "emailPassword": true,
       "magicLink": false
     },
-    "lastGeneratedForReadme": "{\"layouts\":[{\"id\":\"4kjy9abn9\",\"name\":\"Main Layout\",\"description\":\"Primary layout with header containing Quiz.Win logo and user profile popover menu and Includes sidebar for quick access to quiz library, character management, and adventure modes. Footer displays community stats and links.\"},{\"id\":\"qfe9oiiym\",\"name\":\"Admin\",\"description\":\"Moderation navigation header. Sidebar with content queues and analytics.\"}],\"pages\":[{\"id\":\"ax2ahsfnt\",\"name\":\"Home\",\"route\":\"/\",\"description\":\"Landing with dual CTAs: \\\"Build Quiz Library\\\" and \\\"Start Adventure.\\\" Showcases featured characters, popular quiz sets, recent completions. Quick access to active content for authenticated users.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"1m5s1zqzv\",\"name\":\"Sign In\",\"route\":\"/sign-in\",\"description\":\"Authentication page where existing users can sign in with email and password to access their quiz library and characters.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"yw00rx5ui\",\"name\":\"Sign Up\",\"route\":\"/sign-up\",\"description\":\"Registration page for new users to create an account with email and password, with clear benefits of joining the Quiz.Win community.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"nx68ba1qn\",\"name\":\"Forgot Password\",\"route\":\"/forgot-password\",\"description\":\"Page where users can request a password reset link by entering their email address.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"wvyoc67hn\",\"name\":\"Reset Password\",\"route\":\"/reset-password\",\"description\":\"Page where users can set a new password after clicking the reset link from their email.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"kq1bsgjyl\",\"name\":\"Welcome\",\"route\":\"/welcome\",\"description\":\"First-time setup page where new users customize their profile including user name, bio, avatar and quiz preferences. Redirects to the character creation screen\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"4robczp66\",\"name\":\"Quiz Library\",\"route\":\"/quizzes\",\"description\":\"Sidebar with content sets (personal/imported indicators). Main view shows selected set with questions, stats, management tools. Actions: Take Quiz, Edit, Analytics, Share Toggle, Delete. Buttons for \\\"Create New\\\" and \\\"Browse Community.\\\"\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"vblfj3def\",\"name\":\"Character Dashboard\",\"route\":\"/characters\",\"description\":\"Character management dashboard showing all created adventure characters, their stats, achievements, and available quests. Users can customize appearance and share characters.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"euntwkdc6\",\"name\":\"Adventure Mode\",\"route\":\"/adventure/[characterId]\",\"description\":\"Main viewport for story text. Sidebar with portrait and stats. AI narrative with genre-appropriate atmosphere. Quiz modals with content attribution. Answer triggers consequences and story beats. Progress bar, pause menu with stats/history/share options.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"2638hw18o\",\"name\":\"Create Quiz\",\"route\":\"/quizzes/create\",\"description\":\"Quiz creation workflow with options to add quizes: upload (PDF/DOCX/MD/TXT) by button or by drag and drop, or generate with AI, or create from scratch. Quizes are populated into a quiz creation UX that the user can edit. There is the option to share the quiz, which is submitted to admin for approval \",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"ya8jg183r\",\"name\":\"Character profile\",\"route\":\"/characters/[characterId]\",\"description\":\"\\nHero portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share. Creator link. Edit options if owned.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"0m8z6uvaz\",\"name\":\"Community\",\"route\":\"/community\",\"description\":\"Tabs: Characters and Quiz Sets. Trending content, activity feed, community stats. Featured spotlight rotation. Links to full Explore pages.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"di5ha02gm\",\"name\":\"Settings\",\"route\":\"/settings\",\"description\":\"Tabs: Profile (username, email, avatar, bio), Quiz Preferences (feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"rfzebp1md\",\"name\":\"Content moderation\",\"route\":\"/admin\",\"description\":\"Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel.\",\"layoutIds\":[\"qfe9oiiym\"]}]}"
+    "lastGeneratedForReadme": "{\"layouts\":[],\"pages\":[{\"id\":\"ax2ahsfnt\",\"name\":\"Home\",\"route\":\"/\",\"description\":\"Landing with dual CTAs: \\\"Build Quiz Library\\\" and \\\"Start Adventure.\\\" Showcases featured characters, popular quiz sets, recent completions. Quick access to active content for authenticated users.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"1m5s1zqzv\",\"name\":\"Sign In\",\"route\":\"/sign-in\",\"description\":\"Authentication page where existing users can sign in with email and password to access their quiz library and characters.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"yw00rx5ui\",\"name\":\"Sign Up\",\"route\":\"/sign-up\",\"description\":\"Registration page for new users to create an account with email and password, with clear benefits of joining the Quiz.Win community.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"nx68ba1qn\",\"name\":\"Forgot Password\",\"route\":\"/forgot-password\",\"description\":\"Page where users can request a password reset link by entering their email address.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"wvyoc67hn\",\"name\":\"Reset Password\",\"route\":\"/reset-password\",\"description\":\"Page where users can set a new password after clicking the reset link from their email.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"kq1bsgjyl\",\"name\":\"Welcome\",\"route\":\"/welcome\",\"description\":\"First-time setup page where new users customize their profile including user name, bio, avatar and quiz preferences. Redirects to the character creation screen\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"4robczp66\",\"name\":\"Quiz Library\",\"route\":\"/quizzes\",\"description\":\"Sidebar with content sets (personal/imported indicators). Main view shows selected set with questions, stats, management tools. Actions: Take Quiz, Edit, Analytics, Share Toggle, Delete. Buttons for \\\"Create New\\\" and \\\"Browse Community.\\\"\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"vblfj3def\",\"name\":\"Character Dashboard\",\"route\":\"/characters\",\"description\":\"Character management dashboard showing all created adventure characters, their stats, achievements, and available quests. Users can customize appearance and share characters.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"euntwkdc6\",\"name\":\"Adventure Mode\",\"route\":\"/adventure/[characterId]\",\"description\":\"Main viewport for story text. Sidebar with portrait and stats. AI narrative with genre-appropriate atmosphere. Quiz modals with content attribution. Answer triggers consequences and story beats. Progress bar, pause menu with stats/history/share options.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"2638hw18o\",\"name\":\"Create Quiz\",\"route\":\"/quizzes/create\",\"description\":\"Quiz creation workflow with options to add quizes: upload (PDF/DOCX/MD/TXT) by button or by drag and drop, or generate with AI, or create from scratch. Quizes are populated into a quiz creation UX that the user can edit. There is the option to share the quiz, which is submitted to admin for approval \",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"ya8jg183r\",\"name\":\"Character profile\",\"route\":\"/characters/[characterId]\",\"description\":\"\\nHero portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share. Creator link. Edit options if owned.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"0m8z6uvaz\",\"name\":\"Community\",\"route\":\"/community\",\"description\":\"Tabs: Characters and Quiz Sets. Trending content, activity feed, community stats. Featured spotlight rotation. Links to full Explore pages.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"di5ha02gm\",\"name\":\"Settings\",\"route\":\"/settings\",\"description\":\"Tabs: Profile (username, email, avatar, bio), Quiz Preferences (feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"rfzebp1md\",\"name\":\"Content moderation\",\"route\":\"/admin\",\"description\":\"Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel.\",\"layoutIds\":[\"qfe9oiiym\"]}]}"
   },
   "databaseTablesState": {
     "tableDescriptions": [],
