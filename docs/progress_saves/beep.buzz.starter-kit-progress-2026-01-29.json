@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "timestamp": "2026-01-28T01:13:32.184Z",
+  "timestamp": "2026-01-29T23:04:41.790Z",
   "editorState": {
     "data": {
       "root": {
@@ -908,7 +908,7 @@
           "order": 1,
           "path": "readme",
           "urlPath": "/readme",
-          "content": "<!-- component-READMEComponent -->\n",
+          "content": "<!-- component-READMEComponent -->\n\n# Beep.Buzz\n\n## Overview\n\nBeep.Buzz is a playful and creative social media platform where users can express themselves through personalized, interactive web pages. Each user gets their own custom subdomain (username.beep.buzz) where they can create a unique vertical canvas filled with text, shapes, patterns, illustrations, and YouTube videos.\n\nWhat makes Beep.Buzz special is its unique interaction model - visitors can place decorative \"beep\" and \"buzz\" stickers on each other's pages. These stickers serve as colorful breadcrumbs, linking back to the visitor's own page and creating an interconnected web of creative expression. Users design their own custom stickers, which automatically update across all pages where they've been placed.\n\nTo ensure a safe and welcoming environment, all content is analyzed by AI before publishing, and users can flag inappropriate content for admin review. The platform combines creative freedom with strong community standards to create a unique social space for digital self-expression.\n\n## Layouts\n\n### Main Layout\nThe primary layout provides a consistent, clean interface across most of the platform. It features a header with the Beep.Buzz logo and an authentication avatar button/menu for quick access to profile settings and sign out options. A minimal footer contains essential links. This layout is used for the Home, Sign In, Welcome Setup, User Page, and Page Editor pages, providing familiar navigation while letting page content take center stage.\n\n### Admin Layout\nDesigned for content moderation and platform management, the Admin layout includes the standard header elements plus a specialized sidebar. The sidebar provides quick access to the content flagging queue, user management tools, and sticker approval system. This layout is exclusively used for the Content Moderation page, helping admins efficiently manage platform safety and community standards.\n\n## Pages\n\n### Home (/) (Anon, Auth, Admin)\nThe discovery hub of Beep.Buzz showcases the community's creativity through various browsing options. Users can search by title or username, explore featured sections like Popular Pages and Recently Active, or discover random pages. Each page preview card displays the title, username, visual preview, sticker counts, and category. New users are encouraged to join with a prominent \"Create Your Page\" call-to-action.\n\n### Sign In (/sign-in) (Anon)\nA streamlined authentication page featuring playful Beep.Buzz branding and animated stickers. Users simply enter their email address to receive a magic link for secure, passwordless access to their account.\n\n### Welcome Setup (/welcome) (Auth, Admin)\nFirst-time users begin their journey here after authentication. Choose a unique username (3-20 URL-friendly characters) and design personal beep and buzz stickers by selecting icons, colors, and shapes. After this quick setup, users can immediately start exploring and interacting with the community.\n\n### User Page (/[username]) (Anon, Auth, Admin)\nEach user's creative canvas, accessible at their custom subdomain. Features a static header with page title and creator information, plus a sticky navigation bar with sticker visibility controls. Visitors can view the creator's content and placed stickers, with each sticker revealing its creator and linking to their page.\n\n### Page Editor (/editor) (Auth, Admin)\nA powerful but intuitive builder interface for creating personal pages. Add and customize text blocks, shapes, dividers, and YouTube embeds with drag-and-drop simplicity. Preview your page across desktop, tablet, and mobile views to ensure it looks great everywhere.\n\n### Content Moderation (/admin) (Admin)\nAdministrative dashboard for maintaining community standards. Review flagged content, manage user reports, and approve new sticker designs. Includes AI analysis results and a complete audit log of moderation actions.\n\n### Settings (/settings) (Auth, Admin)\nManage your Beep.Buzz identity by customizing sticker designs and reviewing activity. Changes to your stickers automatically update across all pages where they've been placed. View analytics about your sticker interactions and manage your placed stickers.\n\n## Authentication & Access Control\n\nBeep.Buzz uses a simple, secure magic link authentication system. When signing in, users enter their email address and receive a special link that automatically logs them in - no passwords needed. This approach provides strong security while keeping the experience simple and friendly.\n\n### Access Levels\n\n**Anonymous Access** (no authentication required):\n- Home (/)\n- Sign In (/sign-in)\n- User Page (/[username])\n\n**Authenticated Users**:\n- Welcome Setup (/welcome)\n- Page Editor (/editor)\n- Settings (/settings)\n\n**Admin Only**:\n- Content Moderation (/admin)\n\n## User Experience\n\nNew visitors typically discover Beep.Buzz through shared user pages, where they can explore content and see how others interact through stickers. Creating an account is as simple as entering an email address and clicking a magic link. After setting up their username and custom stickers in the Welcome flow, users can immediately start creating their own page or placing stickers on others' pages.\n\nRegular users often start their sessions by checking who has placed new stickers on their page, then exploring those users' pages in return. The Page Editor makes it easy to keep content fresh, while the Settings page helps users track their community interactions.\n\n## Getting Started\n\n1. Visit any username.beep.buzz page to explore what others have created\n2. Click \"Create Your Page\" to start your journey\n3. Enter your email and click the magic link when it arrives\n4. Choose your username and design your personal stickers\n5. Start creating your page or explore the community!\n\nYour stickers are your identity on Beep.Buzz - use them to show appreciation for others' creativity and invite them to visit your page in return.",
           "components": [
             {
               "id": "component-READMEComponent",
@@ -921,7 +921,140 @@
               "include": true
             }
           ],
-          "sections": {},
+          "sections": {
+            "section1": {
+              "option1": {
+                "content": "",
+                "include": false
+              },
+              "option2": {
+                "content": "",
+                "include": true
+              }
+            },
+            "section2": {
+              "option1": {
+                "content": "",
+                "include": true
+              },
+              "option2": {
+                "content": "",
+                "include": true
+              },
+              "option3": {
+                "content": "",
+                "include": true
+              },
+              "option4": {
+                "content": "",
+                "include": true
+              },
+              "option5": {
+                "content": "",
+                "include": true
+              },
+              "option6": {
+                "content": "",
+                "include": true
+              },
+              "option7": {
+                "content": "",
+                "include": true
+              },
+              "option8": {
+                "content": "",
+                "include": true
+              },
+              "option12": {
+                "content": "",
+                "include": true
+              },
+              "option13": {
+                "content": "",
+                "include": false
+              },
+              "option14": {
+                "content": "",
+                "include": false
+              },
+              "option15": {
+                "content": "",
+                "include": false
+              },
+              "option16": {
+                "content": "",
+                "include": false
+              },
+              "option17": {
+                "content": "",
+                "include": false
+              },
+              "option18": {
+                "content": "",
+                "include": false
+              },
+              "option19": {
+                "content": "",
+                "include": false
+              }
+            },
+            "section3": {
+              "option1": {
+                "content": "",
+                "include": true
+              },
+              "option2": {
+                "content": "",
+                "include": true
+              }
+            },
+            "section4": {
+              "option1": {
+                "content": "",
+                "include": true
+              },
+              "option5": {
+                "content": "",
+                "include": false
+              },
+              "option6": {
+                "content": "",
+                "include": false
+              },
+              "option7": {
+                "content": "",
+                "include": false
+              },
+              "option8": {
+                "content": "",
+                "include": false
+              }
+            },
+            "section5": {
+              "option1": {
+                "content": "",
+                "include": true
+              },
+              "option2": {
+                "content": "",
+                "include": false
+              },
+              "option3": {
+                "content": "",
+                "include": false
+              }
+            },
+            "section6": {
+              "option1": {
+                "content": "",
+                "include": true
+              },
+              "option2": {
+                "content": "",
+                "include": false
+              }
+            }
+          },
           "include": true,
           "includeInSidebar": true,
           "isDynamicRobotsFile": false
@@ -944,7 +1077,7 @@
           "order": 2,
           "path": "theme",
           "urlPath": "/theme",
-          "content": "# Theme configuration\n\nSelect and customize your theme! These styles will be applied to every component in your generated web app.\n\n<!-- component-ThemeConfiguration -->",
+          "content": "# Theme configuration\n\nSelect and customize your theme! These styles will be applied to every component in your generated web app.\n\n<!-- component-ThemeConfiguration -->\n",
           "components": [
             {
               "id": "component-ThemeConfiguration",
@@ -980,7 +1113,7 @@
           "order": 3,
           "path": "app-directory",
           "urlPath": "/app-directory",
-          "content": "# App Directory\n\n<!-- component-LayoutAndStructure -->",
+          "content": "# App Directory\n\n<!-- component-LayoutAndStructure -->\n",
           "components": [
             {
               "id": "component-LayoutAndStructure",
@@ -1016,7 +1149,7 @@
           "order": 4,
           "path": "database",
           "urlPath": "/database",
-          "content": "# Database\n\n<!-- component-DatabaseConfiguration -->\n",
+          "content": "# Database\n\n<!-- component-DatabaseConfiguration -->",
           "components": [
             {
               "id": "component-DatabaseConfiguration",
@@ -1052,7 +1185,7 @@
           "order": 5,
           "path": "starter-kit",
           "urlPath": "/starter-kit",
-          "content": "# Starter Kit\n\n<!-- component-NextStepsComponent -->\n",
+          "content": "# Starter Kit\n\n<!-- component-NextStepsComponent -->",
           "components": [
             {
               "id": "component-NextStepsComponent",
@@ -1401,10 +1534,10 @@
       "contentVersion": 1
     },
     "previewMode": false,
-    "darkMode": true,
+    "darkMode": false,
     "appStructureGenerated": true,
-    "readmeGenerated": false,
-    "databaseGenerated": false,
+    "readmeGenerated": true,
+    "databaseGenerated": true,
     "appStructure": [
       {
         "id": "app-root",
@@ -1468,54 +1601,37 @@
                     "type": "file"
                   }
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "id": "admin-group",
+            "name": "(admin)",
+            "type": "directory",
+            "children": [
               {
-                "id": "signup-dir",
-                "name": "sign-up",
+                "id": "admin-dir",
+                "name": "admin",
                 "type": "directory",
                 "children": [
                   {
-                    "id": "signup-page",
+                    "id": "admin-layout",
+                    "name": "layout.tsx",
+                    "type": "file"
+                  },
+                  {
+                    "id": "admin-page",
                     "name": "page.tsx",
                     "type": "file"
                   },
                   {
-                    "id": "signup-hooks",
+                    "id": "admin-hooks",
                     "name": "page.hooks.tsx",
-                    "type": "file"
-                  }
-                ]
-              },
-              {
-                "id": "forgot-dir",
-                "name": "forgot-password",
-                "type": "directory",
-                "children": [
-                  {
-                    "id": "forgot-page",
-                    "name": "page.tsx",
                     "type": "file"
                   },
                   {
-                    "id": "page-hooks-tsx-1769562465575",
-                    "name": "page.hooks.tsx",
-                    "type": "file"
-                  }
-                ]
-              },
-              {
-                "id": "reset-dir",
-                "name": "reset-password",
-                "type": "directory",
-                "children": [
-                  {
-                    "id": "reset-page",
-                    "name": "page.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "page-hooks-tsx-1769562465575",
-                    "name": "page.hooks.tsx",
+                    "id": "admin-actions",
+                    "name": "page.actions.ts",
                     "type": "file"
                   }
                 ]
@@ -1536,124 +1652,42 @@
                 "id": "welcome-hooks",
                 "name": "page.hooks.tsx",
                 "type": "file"
+              },
+              {
+                "id": "welcome-actions",
+                "name": "page.actions.ts",
+                "type": "file"
               }
             ]
           },
           {
-            "id": "quizzes-dir",
-            "name": "quizzes",
+            "id": "editor-dir",
+            "name": "editor",
             "type": "directory",
             "children": [
               {
-                "id": "quizzes-page",
+                "id": "editor-page",
                 "name": "page.tsx",
                 "type": "file"
               },
               {
-                "id": "quizzes-hooks",
+                "id": "editor-hooks",
                 "name": "page.hooks.tsx",
                 "type": "file"
               },
               {
-                "id": "quizzes-stores",
+                "id": "editor-stores",
                 "name": "page.stores.ts",
                 "type": "file"
               },
               {
-                "id": "create-dir",
-                "name": "create",
-                "type": "directory",
-                "children": [
-                  {
-                    "id": "create-page",
-                    "name": "page.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "create-hooks",
-                    "name": "page.hooks.tsx",
-                    "type": "file"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "characters-dir",
-            "name": "characters",
-            "type": "directory",
-            "children": [
-              {
-                "id": "chars-page",
-                "name": "page.tsx",
+                "id": "editor-actions",
+                "name": "page.actions.ts",
                 "type": "file"
               },
               {
-                "id": "chars-hooks",
-                "name": "page.hooks.tsx",
-                "type": "file"
-              },
-              {
-                "id": "char-dynamic",
-                "name": "[characterId]",
-                "type": "directory",
-                "children": [
-                  {
-                    "id": "char-page",
-                    "name": "page.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "char-hooks",
-                    "name": "page.hooks.tsx",
-                    "type": "file"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "adventure-dir",
-            "name": "adventure",
-            "type": "directory",
-            "children": [
-              {
-                "id": "adv-char-dir",
-                "name": "[characterId]",
-                "type": "directory",
-                "children": [
-                  {
-                    "id": "adv-page",
-                    "name": "page.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "adv-hooks",
-                    "name": "page.hooks.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "adv-stores",
-                    "name": "page.stores.ts",
-                    "type": "file"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "community-dir",
-            "name": "community",
-            "type": "directory",
-            "children": [
-              {
-                "id": "comm-page",
-                "name": "page.tsx",
-                "type": "file"
-              },
-              {
-                "id": "comm-hooks",
-                "name": "page.hooks.tsx",
+                "id": "page-types-ts-1769726850476",
+                "name": "page.types.ts",
                 "type": "file"
               }
             ]
@@ -1672,35 +1706,43 @@
                 "id": "settings-hooks",
                 "name": "page.hooks.tsx",
                 "type": "file"
+              },
+              {
+                "id": "settings-actions",
+                "name": "page.actions.ts",
+                "type": "file"
               }
             ]
           },
           {
-            "id": "admin-group",
-            "name": "(admin)",
+            "id": "username-dir",
+            "name": "[username]",
             "type": "directory",
             "children": [
               {
-                "id": "admin-dir",
-                "name": "admin",
-                "type": "directory",
-                "children": [
-                  {
-                    "id": "admin-page",
-                    "name": "page.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "admin-hooks",
-                    "name": "page.hooks.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "admin-stores",
-                    "name": "page.stores.ts",
-                    "type": "file"
-                  }
-                ]
+                "id": "username-page",
+                "name": "page.tsx",
+                "type": "file"
+              },
+              {
+                "id": "username-hooks",
+                "name": "page.hooks.tsx",
+                "type": "file"
+              },
+              {
+                "id": "username-stores",
+                "name": "page.stores.ts",
+                "type": "file"
+              },
+              {
+                "id": "page-actions-ts-1769726850476",
+                "name": "page.actions.ts",
+                "type": "file"
+              },
+              {
+                "id": "page-types-ts-1769726850476",
+                "name": "page.types.ts",
+                "type": "file"
               }
             ]
           }
@@ -1710,9 +1752,9 @@
     "features": {
       "layout-tsx": [
         {
-          "id": "p8l8cg23g",
+          "id": "0rm99xumz",
           "title": "Sign out user",
-          "description": "Clear user session and redirect to login page",
+          "description": "Clear user session and redirect to home page",
           "linkedFiles": {
             "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
@@ -1728,9 +1770,9 @@
           "isEditing": false
         },
         {
-          "id": "mqxfge8ct",
-          "title": "Toggle user profile menu",
-          "description": "Show/hide user profile popover menu",
+          "id": "4lk7jonkz",
+          "title": "Get user profile menu",
+          "description": "Display authenticated user avatar and profile menu options",
           "linkedFiles": {
             "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
@@ -1739,16 +1781,16 @@
           },
           "functionNames": {
             "hooks": "useProfileMenu",
-            "actions": "toggleProfileMenuAction",
-            "stores": "useProfileMenuStore",
-            "types": "ProfileMenuState"
+            "actions": "getProfileMenuAction",
+            "stores": "useProfileStore",
+            "types": "ProfileMenuData"
           },
           "isEditing": false
         },
         {
-          "id": "zjxp122xu",
-          "title": "Get community stats",
-          "description": "Fetch and display community statistics in footer",
+          "id": "tl8a5xrk4",
+          "title": "Sign out user",
+          "description": "Clear user session and redirect to home page",
           "linkedFiles": {
             "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
@@ -1756,55 +1798,37 @@
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useCommunityStats",
-            "actions": "getCommunityStatsAction",
-            "stores": "useCommunityStatsStore",
-            "types": "CommunityStats"
+            "hooks": "useSignOut",
+            "actions": "signOutAction",
+            "stores": "useAuthStore",
+            "types": "SignOutResult"
           },
           "isEditing": false
         },
         {
-          "id": "aq82co3dq",
-          "title": "Get content queue metrics",
-          "description": "Fetch current moderation queue statistics",
+          "id": "h40sgwjye",
+          "title": "Get user profile menu",
+          "description": "Display authenticated user avatar and profile menu options",
           "linkedFiles": {
-            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
-            "stores": "/app/(admin)/admin/page.stores.ts",
+            "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useQueueMetrics",
-            "actions": "getQueueMetricsAction",
-            "stores": "useQueueMetricsStore",
-            "types": "QueueMetrics"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "uwsfkq4hy",
-          "title": "Get moderation analytics",
-          "description": "Fetch and display content moderation analytics",
-          "linkedFiles": {
-            "hooks": "/app/(admin)/admin/page.hooks.tsx",
-            "actions": "/app/layout.actions.ts",
-            "stores": "/app/(admin)/admin/page.stores.ts",
-            "types": "/app/layout.types.ts"
-          },
-          "functionNames": {
-            "hooks": "useModerationAnalytics",
-            "actions": "getModerationAnalyticsAction",
-            "stores": "useModerationStore",
-            "types": "ModerationAnalytics"
+            "hooks": "useProfileMenu",
+            "actions": "getProfileMenuAction",
+            "stores": "useProfileStore",
+            "types": "ProfileMenuData"
           },
           "isEditing": false
         }
       ],
       "page-tsx": [
         {
-          "id": "jthuxilak",
-          "title": "Get featured characters",
-          "description": "Fetch and display featured character profiles",
+          "id": "302z4uspz",
+          "title": "Search pages",
+          "description": "Search for pages by title or username",
           "linkedFiles": {
             "hooks": "/app/page.hooks.tsx",
             "actions": "/app/layout.actions.ts",
@@ -1812,17 +1836,17 @@
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useFeaturedCharacters",
-            "actions": "getFeaturedCharactersAction",
-            "stores": "useCharacterStore",
-            "types": "FeaturedCharacter"
+            "hooks": "useSearchPages",
+            "actions": "searchPagesAction",
+            "stores": "useSearchStore",
+            "types": "SearchPagesResult"
           },
           "isEditing": false
         },
         {
-          "id": "ngyvwbs7d",
-          "title": "Get popular quiz sets",
-          "description": "Fetch and display trending quiz collections",
+          "id": "owlimx50c",
+          "title": "Filter pages by category",
+          "description": "Filter displayed pages based on selected category",
           "linkedFiles": {
             "hooks": "/app/page.hooks.tsx",
             "actions": "/app/layout.actions.ts",
@@ -1830,17 +1854,17 @@
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "usePopularQuizzes",
-            "actions": "getPopularQuizzesAction",
-            "stores": "useQuizStore",
-            "types": "PopularQuizSet"
+            "hooks": "useFilterPages",
+            "actions": "filterPagesAction",
+            "stores": "useFilterStore",
+            "types": "FilterPagesInput"
           },
           "isEditing": false
         },
         {
-          "id": "2ir0al9yq",
-          "title": "Get recent completions",
-          "description": "Fetch and display recently completed quizzes and adventures",
+          "id": "cu8zfy4dj",
+          "title": "Get random page",
+          "description": "Navigate to a randomly selected user page",
           "linkedFiles": {
             "hooks": "/app/page.hooks.tsx",
             "actions": "/app/layout.actions.ts",
@@ -1848,19 +1872,37 @@
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useRecentCompletions",
-            "actions": "getRecentCompletionsAction",
-            "stores": "useCompletionsStore",
-            "types": "RecentCompletion"
+            "hooks": "useRandomPage",
+            "actions": "getRandomPageAction",
+            "stores": "useNavigationStore",
+            "types": "RandomPageResult"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "fyefsenoc",
+          "title": "Get featured pages",
+          "description": "Retrieve popular, recent, and new pages for display",
+          "linkedFiles": {
+            "hooks": "/app/page.hooks.tsx",
+            "actions": "/app/layout.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useFeaturedPages",
+            "actions": "getFeaturedPagesAction",
+            "stores": "useFeaturedStore",
+            "types": "FeaturedPagesData"
           },
           "isEditing": false
         }
       ],
       "signin-page": [
         {
-          "id": "e1fizbyli",
-          "title": "Sign in with email and password",
-          "description": "Authenticate user with email and password credentials",
+          "id": "bnt98k8xx",
+          "title": "Send magic link email",
+          "description": "Send authentication magic link to user's email address",
           "linkedFiles": {
             "hooks": "/app/(auth)/sign-in/page.hooks.tsx",
             "actions": "/app/layout.actions.ts",
@@ -1868,880 +1910,470 @@
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useSignIn",
-            "actions": "signInAction",
+            "hooks": "useMagicLink",
+            "actions": "sendMagicLinkAction",
             "stores": "useAuthStore",
-            "types": "SignInCredentials"
-          },
-          "isEditing": false
-        }
-      ],
-      "signup-page": [
-        {
-          "id": "w3dya0vdj",
-          "title": "Create user account",
-          "description": "Register new user with email and password",
-          "linkedFiles": {
-            "hooks": "/app/(auth)/sign-up/page.hooks.tsx",
-            "actions": "/app/layout.actions.ts",
-            "stores": "/app/layout.stores.ts",
-            "types": "/app/layout.types.ts"
-          },
-          "functionNames": {
-            "hooks": "useSignUp",
-            "actions": "signUpAction",
-            "stores": "useAuthStore",
-            "types": "SignUpCredentials"
-          },
-          "isEditing": false
-        }
-      ],
-      "forgot-page": [
-        {
-          "id": "e8lrs61gg",
-          "title": "Send password reset email",
-          "description": "Send password reset link to user's email address",
-          "linkedFiles": {
-            "hooks": "/app/(auth)/forgot-password/page.hooks.tsx",
-            "actions": "/app/layout.actions.ts",
-            "stores": "/app/layout.stores.ts",
-            "types": "/app/layout.types.ts"
-          },
-          "functionNames": {
-            "hooks": "usePasswordResetEmail",
-            "actions": "sendPasswordResetEmailAction",
-            "stores": "useAuthStore",
-            "types": "PasswordResetEmail"
-          },
-          "isEditing": false
-        }
-      ],
-      "reset-page": [
-        {
-          "id": "7i4208nrv",
-          "title": "Reset user password",
-          "description": "Update user's password using reset token",
-          "linkedFiles": {
-            "hooks": "/app/(auth)/reset-password/page.hooks.tsx",
-            "actions": "/app/layout.actions.ts",
-            "stores": "/app/layout.stores.ts",
-            "types": "/app/layout.types.ts"
-          },
-          "functionNames": {
-            "hooks": "usePasswordReset",
-            "actions": "resetPasswordAction",
-            "stores": "useAuthStore",
-            "types": "PasswordResetCredentials"
+            "types": "MagicLinkInput"
           },
           "isEditing": false
         }
       ],
       "welcome-page": [
         {
-          "id": "7nkwkb47u",
-          "title": "Update user profile",
-          "description": "Save initial user profile details including name and bio",
+          "id": "nuy1els7u",
+          "title": "Create username",
+          "description": "Set unique username with AI validation",
           "linkedFiles": {
             "hooks": "/app/welcome/page.hooks.tsx",
-            "actions": "/app/welcome/page.hooks.tsx",
+            "actions": "/app/welcome/page.actions.ts",
             "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useUpdateProfile",
-            "actions": "updateProfileAction",
+            "hooks": "useCreateUsername",
+            "actions": "createUsernameAction",
             "stores": "useProfileStore",
-            "types": "UpdateProfileInput"
+            "types": "CreateUsernameInput"
           },
           "isEditing": false
         },
         {
-          "id": "omot26l5d",
-          "title": "Upload avatar image",
-          "description": "Upload and save user profile picture",
+          "id": "a65kjzey0",
+          "title": "Customize beep icon",
+          "description": "Select and customize personal beep icon settings",
           "linkedFiles": {
             "hooks": "/app/welcome/page.hooks.tsx",
-            "actions": "/app/welcome/page.hooks.tsx",
+            "actions": "/app/welcome/page.actions.ts",
             "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useAvatarUpload",
-            "actions": "uploadAvatarAction",
-            "stores": "useProfileStore",
-            "types": "AvatarUploadResult"
+            "hooks": "useBeepIcon",
+            "actions": "customizeBeepIconAction",
+            "stores": "useIconStore",
+            "types": "BeepIconSettings"
           },
           "isEditing": false
         },
         {
-          "id": "w3y1drh3g",
-          "title": "Set quiz preferences",
-          "description": "Save user's quiz and content preferences",
+          "id": "fxdrynza3",
+          "title": "Customize buzz icon",
+          "description": "Select and customize personal buzz icon settings",
           "linkedFiles": {
             "hooks": "/app/welcome/page.hooks.tsx",
-            "actions": "/app/welcome/page.hooks.tsx",
+            "actions": "/app/welcome/page.actions.ts",
             "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useQuizPreferences",
-            "actions": "setQuizPreferencesAction",
-            "stores": "usePreferencesStore",
-            "types": "QuizPreferencesInput"
+            "hooks": "useBuzzIcon",
+            "actions": "customizeBuzzIconAction",
+            "stores": "useIconStore",
+            "types": "BuzzIconSettings"
           },
           "isEditing": false
         }
       ],
-      "quizzes-page": [
+      "username-page": [
         {
-          "id": "dztxotx9g",
-          "title": "Get quiz sets",
-          "description": "Fetch user's personal and imported quiz collections",
+          "id": "by7hol465",
+          "title": "Toggle sticker visibility",
+          "description": "Show/hide stickers on the page",
           "linkedFiles": {
-            "hooks": "/app/quizzes/page.hooks.tsx",
-            "actions": "/app/quizzes/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/layout.types.ts"
+            "hooks": "/app/[username]/page.hooks.tsx",
+            "actions": "/app/[username]/page.actions.ts",
+            "stores": "/app/[username]/page.stores.ts",
+            "types": "/app/[username]/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useQuizSets",
-            "actions": "getQuizSetsAction",
-            "stores": "useQuizStore",
-            "types": "QuizSetCollection"
+            "hooks": "useStickerVisibility",
+            "actions": "toggleStickersAction",
+            "stores": "useStickerStore",
+            "types": "StickerVisibilityState"
           },
           "isEditing": false
         },
         {
-          "id": "yq754q82e",
-          "title": "Take quiz",
-          "description": "Start selected quiz session",
+          "id": "1byabz1db",
+          "title": "Add beep sticker",
+          "description": "Place a beep sticker on the page",
           "linkedFiles": {
-            "hooks": "/app/quizzes/page.hooks.tsx",
-            "actions": "/app/quizzes/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/layout.types.ts"
+            "hooks": "/app/[username]/page.hooks.tsx",
+            "actions": "/app/[username]/page.actions.ts",
+            "stores": "/app/[username]/page.stores.ts",
+            "types": "/app/[username]/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useQuizSession",
-            "actions": "startQuizSessionAction",
-            "stores": "useQuizStore",
-            "types": "QuizSession"
+            "hooks": "useBeepSticker",
+            "actions": "addBeepStickerAction",
+            "stores": "useStickerStore",
+            "types": "BeepStickerInput"
           },
           "isEditing": false
         },
         {
-          "id": "g7q1wbeom",
-          "title": "Edit quiz set",
-          "description": "Modify existing quiz content and settings",
+          "id": "fb64810uq",
+          "title": "Add buzz sticker",
+          "description": "Place a buzz sticker on the page",
           "linkedFiles": {
-            "hooks": "/app/quizzes/page.hooks.tsx",
-            "actions": "/app/quizzes/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/layout.types.ts"
+            "hooks": "/app/[username]/page.hooks.tsx",
+            "actions": "/app/[username]/page.actions.ts",
+            "stores": "/app/[username]/page.stores.ts",
+            "types": "/app/[username]/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useEditQuiz",
-            "actions": "editQuizSetAction",
-            "stores": "useQuizStore",
-            "types": "EditQuizInput"
+            "hooks": "useBuzzSticker",
+            "actions": "addBuzzStickerAction",
+            "stores": "useStickerStore",
+            "types": "BuzzStickerInput"
           },
           "isEditing": false
         },
         {
-          "id": "53g4phov9",
-          "title": "Get quiz analytics",
-          "description": "View performance statistics for quiz set",
+          "id": "2ce1hnbc6",
+          "title": "Get sticker details",
+          "description": "View who placed a specific sticker and navigate to their page",
           "linkedFiles": {
-            "hooks": "/app/quizzes/page.hooks.tsx",
-            "actions": "/app/quizzes/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/layout.types.ts"
+            "hooks": "/app/[username]/page.hooks.tsx",
+            "actions": "/app/[username]/page.actions.ts",
+            "stores": "/app/[username]/page.stores.ts",
+            "types": "/app/[username]/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useQuizAnalytics",
-            "actions": "getQuizAnalyticsAction",
-            "stores": "useQuizStore",
-            "types": "QuizAnalytics"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "yc08r1gqy",
-          "title": "Toggle quiz sharing",
-          "description": "Enable/disable public access to quiz set",
-          "linkedFiles": {
-            "hooks": "/app/quizzes/page.hooks.tsx",
-            "actions": "/app/quizzes/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/layout.types.ts"
-          },
-          "functionNames": {
-            "hooks": "useQuizSharing",
-            "actions": "toggleQuizSharingAction",
-            "stores": "useQuizStore",
-            "types": "QuizSharingState"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "3l2dl1npr",
-          "title": "Delete quiz set",
-          "description": "Remove quiz set from library",
-          "linkedFiles": {
-            "hooks": "/app/quizzes/page.hooks.tsx",
-            "actions": "/app/quizzes/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/layout.types.ts"
-          },
-          "functionNames": {
-            "hooks": "useDeleteQuiz",
-            "actions": "deleteQuizSetAction",
-            "stores": "useQuizStore",
-            "types": "DeleteQuizResult"
+            "hooks": "useStickerDetails",
+            "actions": "getStickerDetailsAction",
+            "stores": "useStickerStore",
+            "types": "StickerDetails"
           },
           "isEditing": false
         }
       ],
-      "chars-page": [
+      "editor-page": [
         {
-          "id": "49mcsjqfl",
-          "title": "Get user characters",
-          "description": "Fetch all characters created by user",
+          "id": "g5ljgmcuq",
+          "title": "Add text block",
+          "description": "Insert new text element on the page",
           "linkedFiles": {
-            "hooks": "/app/characters/page.hooks.tsx",
-            "actions": "/app/characters/page.hooks.tsx",
-            "stores": "/app/layout.stores.ts",
-            "types": "/app/layout.types.ts"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useUserCharacters",
-            "actions": "getUserCharactersAction",
-            "stores": "useCharacterStore",
-            "types": "UserCharacter"
+            "hooks": "useTextBlock",
+            "actions": "addTextBlockAction",
+            "stores": "useEditorStore",
+            "types": "TextBlockInput"
           },
           "isEditing": false
         },
         {
-          "id": "eckrkpjwq",
-          "title": "Get character stats",
-          "description": "Fetch statistics and achievements for each character",
+          "id": "kjcxmemxd",
+          "title": "Add shape",
+          "description": "Insert new shape element on the page",
           "linkedFiles": {
-            "hooks": "/app/characters/page.hooks.tsx",
-            "actions": "/app/characters/page.hooks.tsx",
-            "stores": "/app/layout.stores.ts",
-            "types": "/app/layout.types.ts"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useCharacterStats",
-            "actions": "getCharacterStatsAction",
-            "stores": "useCharacterStore",
-            "types": "CharacterStats"
+            "hooks": "useShape",
+            "actions": "addShapeAction",
+            "stores": "useEditorStore",
+            "types": "ShapeInput"
           },
           "isEditing": false
         },
         {
-          "id": "49926ylbq",
-          "title": "Get available quests",
-          "description": "Fetch available adventure quests for characters",
+          "id": "8eyjrlop1",
+          "title": "Add divider",
+          "description": "Insert new divider element on the page",
           "linkedFiles": {
-            "hooks": "/app/characters/page.hooks.tsx",
-            "actions": "/app/characters/page.hooks.tsx",
-            "stores": "/app/layout.stores.ts",
-            "types": "/app/layout.types.ts"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useAvailableQuests",
-            "actions": "getAvailableQuestsAction",
-            "stores": "useCharacterStore",
-            "types": "AvailableQuest"
+            "hooks": "useDivider",
+            "actions": "addDividerAction",
+            "stores": "useEditorStore",
+            "types": "DividerInput"
           },
           "isEditing": false
         },
         {
-          "id": "3zr3qb05g",
-          "title": "Customize character appearance",
-          "description": "Modify character visual attributes",
+          "id": "9e26iibea",
+          "title": "Add YouTube embed",
+          "description": "Insert new YouTube video embed on the page",
           "linkedFiles": {
-            "hooks": "/app/characters/page.hooks.tsx",
-            "actions": "/app/characters/page.hooks.tsx",
-            "stores": "/app/characters/page.hooks.tsx",
-            "types": "/app/characters/page.hooks.tsx"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useCustomizeAppearance",
-            "actions": "updateCharacterAppearanceAction",
-            "stores": "useCharacterCustomizationStore",
-            "types": "CharacterAppearanceInput"
+            "hooks": "useYouTubeEmbed",
+            "actions": "addYouTubeEmbedAction",
+            "stores": "useEditorStore",
+            "types": "YouTubeEmbedInput"
           },
           "isEditing": false
         },
         {
-          "id": "s8773ugid",
-          "title": "Share character",
-          "description": "Generate and copy character share link",
+          "id": "vzw7oevav",
+          "title": "Edit element",
+          "description": "Modify properties of selected page element",
           "linkedFiles": {
-            "hooks": "/app/characters/page.hooks.tsx",
-            "actions": "/app/characters/page.hooks.tsx",
-            "stores": "/app/characters/page.hooks.tsx",
-            "types": "/app/characters/page.hooks.tsx"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useCharacterSharing",
-            "actions": "generateCharacterShareLinkAction",
-            "stores": "useCharacterSharingStore",
-            "types": "CharacterShareResult"
-          },
-          "isEditing": false
-        }
-      ],
-      "adv-page": [
-        {
-          "id": "ptng3cxn3",
-          "title": "Get character stats",
-          "description": "Fetch current character statistics and status",
-          "linkedFiles": {
-            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
-            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
-            "stores": "/app/adventure/[characterId]/page.stores.ts",
-            "types": "/app/adventure/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useAdventureCharacterStats",
-            "actions": "getAdventureCharacterStatsAction",
-            "stores": "useAdventureStatsStore",
-            "types": "AdventureCharacterStats"
+            "hooks": "useElementEditor",
+            "actions": "updateElementAction",
+            "stores": "useEditorStore",
+            "types": "ElementUpdateInput"
           },
           "isEditing": false
         },
         {
-          "id": "fuw4bhz01",
-          "title": "Generate story content",
-          "description": "Create AI-driven narrative based on context",
+          "id": "k9nbtg0e8",
+          "title": "Delete element",
+          "description": "Remove selected element from the page",
           "linkedFiles": {
-            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
-            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
-            "stores": "/app/adventure/[characterId]/page.stores.ts",
-            "types": "/app/adventure/[characterId]/page.hooks.tsx"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useStoryGeneration",
-            "actions": "generateStoryContentAction",
-            "stores": "useStoryContentStore",
-            "types": "StoryContent"
+            "hooks": "useElementDelete",
+            "actions": "deleteElementAction",
+            "stores": "useEditorStore",
+            "types": "ElementDeleteInput"
           },
           "isEditing": false
         },
         {
-          "id": "mmy50eki0",
-          "title": "Submit quiz answer",
-          "description": "Process quiz response and update story",
+          "id": "296bmg5hd",
+          "title": "Toggle preview mode",
+          "description": "Switch between desktop, tablet, and mobile previews",
           "linkedFiles": {
-            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
-            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
-            "stores": "/app/adventure/[characterId]/page.stores.ts",
-            "types": "/app/adventure/[characterId]/page.hooks.tsx"
+            "hooks": "/app/editor/page.hooks.tsx",
+            "actions": "/app/editor/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
-            "hooks": "useQuizSubmission",
-            "actions": "submitAdventureQuizAnswerAction",
-            "stores": "useAdventureQuizStore",
-            "types": "AdventureQuizSubmission"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "btsh0ouzy",
-          "title": "Get progress status",
-          "description": "Fetch current adventure progress",
-          "linkedFiles": {
-            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
-            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
-            "stores": "/app/adventure/[characterId]/page.stores.ts",
-            "types": "/app/adventure/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useAdventureProgress",
-            "actions": "getAdventureProgressAction",
-            "stores": "useProgressStore",
-            "types": "AdventureProgress"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "kuc97v3jt",
-          "title": "Share adventure status",
-          "description": "Generate and share current adventure progress",
-          "linkedFiles": {
-            "hooks": "/app/adventure/[characterId]/page.hooks.tsx",
-            "actions": "/app/adventure/[characterId]/page.hooks.tsx",
-            "stores": "/app/adventure/[characterId]/page.stores.ts",
-            "types": "/app/adventure/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useAdventureSharing",
-            "actions": "shareAdventureStatusAction",
-            "stores": "useAdventureSharingStore",
-            "types": "AdventureShareResult"
-          },
-          "isEditing": false
-        }
-      ],
-      "create-page": [
-        {
-          "id": "e2xkyt9nh",
-          "title": "Upload quiz document",
-          "description": "Import quiz content from PDF/DOCX/MD/TXT file",
-          "linkedFiles": {
-            "hooks": "/app/quizzes/create/page.hooks.tsx",
-            "actions": "/app/quizzes/create/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/quizzes/create/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useQuizDocumentUpload",
-            "actions": "uploadQuizDocumentAction",
-            "stores": "useQuizUploadStore",
-            "types": "QuizDocumentUpload"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "xoz7sg9my",
-          "title": "Generate AI quiz content",
-          "description": "Create quiz questions using AI assistance",
-          "linkedFiles": {
-            "hooks": "/app/quizzes/create/page.hooks.tsx",
-            "actions": "/app/quizzes/create/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/quizzes/create/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useAIQuizGeneration",
-            "actions": "generateAIQuizContentAction",
-            "stores": "useQuizGenerationStore",
-            "types": "AIGeneratedQuiz"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "bttmcx1ar",
-          "title": "Create quiz manually",
-          "description": "Add quiz questions through form interface",
-          "linkedFiles": {
-            "hooks": "/app/quizzes/create/page.hooks.tsx",
-            "actions": "/app/quizzes/create/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/quizzes/create/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useManualQuizCreation",
-            "actions": "createManualQuizAction",
-            "stores": "useQuizCreationStore",
-            "types": "ManualQuizInput"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "8fff6hi52",
-          "title": "Submit quiz for approval",
-          "description": "Send quiz for community sharing approval",
-          "linkedFiles": {
-            "hooks": "/app/quizzes/create/page.hooks.tsx",
-            "actions": "/app/quizzes/create/page.hooks.tsx",
-            "stores": "/app/quizzes/page.stores.ts",
-            "types": "/app/quizzes/create/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useQuizApprovalSubmission",
-            "actions": "submitQuizForApprovalAction",
-            "stores": "useQuizApprovalStore",
-            "types": "QuizApprovalSubmission"
-          },
-          "isEditing": false
-        }
-      ],
-      "char-page": [
-        {
-          "id": "r48jhrah0",
-          "title": "Get character details",
-          "description": "Fetch character profile, stats, and history",
-          "linkedFiles": {
-            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
-            "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/page.hooks.tsx",
-            "types": "/app/characters/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useCharacterDetails",
-            "actions": "getCharacterDetailsAction",
-            "stores": "useCharacterDetailsStore",
-            "types": "CharacterDetails"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "s3pkrgu0u",
-          "title": "Get achievement gallery",
-          "description": "Fetch character's earned achievements",
-          "linkedFiles": {
-            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
-            "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
-            "types": "/app/characters/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useAchievementGallery",
-            "actions": "getAchievementGalleryAction",
-            "stores": "useAchievementStore",
-            "types": "AchievementGallery"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "iiv4aqwko",
-          "title": "Get inventory items",
-          "description": "Fetch character's collected items",
-          "linkedFiles": {
-            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
-            "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
-            "types": "/app/characters/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useInventoryItems",
-            "actions": "getInventoryItemsAction",
-            "stores": "useInventoryStore",
-            "types": "InventoryItem"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "4luc65jjq",
-          "title": "Vote on character",
-          "description": "Submit upvote or downvote on character",
-          "linkedFiles": {
-            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
-            "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
-            "types": "/app/characters/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useCharacterVoting",
-            "actions": "submitCharacterVoteAction",
-            "stores": "useVotingStore",
-            "types": "CharacterVote"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "qlw2wdj5q",
-          "title": "Share character profile",
-          "description": "Generate and copy character profile link",
-          "linkedFiles": {
-            "hooks": "/app/characters/[characterId]/page.hooks.tsx",
-            "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
-            "types": "/app/characters/[characterId]/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useProfileSharing",
-            "actions": "generateProfileShareLinkAction",
-            "stores": "useProfileSharingStore",
-            "types": "ProfileShareResult"
-          },
-          "isEditing": false
-        }
-      ],
-      "comm-page": [
-        {
-          "id": "bhue4f2oh",
-          "title": "Get trending content",
-          "description": "Fetch popular characters and quiz sets",
-          "linkedFiles": {
-            "hooks": "/app/community/page.hooks.tsx",
-            "actions": "/app/community/page.hooks.tsx",
-            "stores": "/app/community/page.hooks.tsx",
-            "types": "/app/community/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useTrendingContent",
-            "actions": "getTrendingContentAction",
-            "stores": "useTrendingStore",
-            "types": "TrendingContent"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "71olg56fm",
-          "title": "Get activity feed",
-          "description": "Fetch recent community activities",
-          "linkedFiles": {
-            "hooks": "/app/community/page.hooks.tsx",
-            "actions": "/app/community/page.hooks.tsx",
-            "stores": "/app/community/page.hooks.tsx",
-            "types": "/app/community/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useActivityFeed",
-            "actions": "getActivityFeedAction",
-            "stores": "useActivityStore",
-            "types": "ActivityFeed"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "v1ci28pmf",
-          "title": "Get community statistics",
-          "description": "Fetch overall community metrics",
-          "linkedFiles": {
-            "hooks": "/app/community/page.hooks.tsx",
-            "actions": "/app/community/page.hooks.tsx",
-            "stores": "/app/community/page.hooks.tsx",
-            "types": "/app/community/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useCommunityStats",
-            "actions": "getCommunityStatsAction",
-            "stores": "useCommunityStatsStore",
-            "types": "CommunityStats"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "yavwvvv06",
-          "title": "Get featured spotlight",
-          "description": "Fetch currently featured content",
-          "linkedFiles": {
-            "hooks": "/app/community/page.hooks.tsx",
-            "actions": "/app/community/page.hooks.tsx",
-            "stores": "/app/community/page.hooks.tsx",
-            "types": "/app/community/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useSpotlightContent",
-            "actions": "getSpotlightContentAction",
-            "stores": "useSpotlightStore",
-            "types": "SpotlightContent"
-          },
-          "isEditing": false
-        }
-      ],
-      "settings-page": [
-        {
-          "id": "42fabnfiv",
-          "title": "Update profile settings",
-          "description": "Modify user profile information",
-          "linkedFiles": {
-            "hooks": "/app/settings/page.hooks.tsx",
-            "actions": "/app/settings/page.hooks.tsx",
-            "stores": "/app/settings/page.hooks.tsx",
-            "types": "/app/settings/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useUpdateProfile",
-            "actions": "updateProfileAction",
-            "stores": "useProfileStore",
-            "types": "UpdateProfileInput"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "bjje05918",
-          "title": "Update quiz preferences",
-          "description": "Modify quiz feedback and reminder settings",
-          "linkedFiles": {
-            "hooks": "/app/settings/page.hooks.tsx",
-            "actions": "/app/settings/page.hooks.tsx",
-            "stores": "/app/settings/page.hooks.tsx",
-            "types": "/app/settings/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useQuizPreferences",
-            "actions": "setQuizPreferencesAction",
-            "stores": "usePreferencesStore",
-            "types": "QuizPreferencesInput"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "pkx6xorlt",
-          "title": "Update adventure preferences",
-          "description": "Modify adventure gameplay settings",
-          "linkedFiles": {
-            "hooks": "/app/settings/page.hooks.tsx",
-            "actions": "/app/settings/page.hooks.tsx",
-            "stores": "/app/settings/page.hooks.tsx",
-            "types": "/app/settings/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useAdventurePreferences",
-            "actions": "setAdventurePreferencesAction",
-            "stores": "useAdventurePrefsStore",
-            "types": "AdventurePreferencesInput"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "ds1i0yyt9",
-          "title": "Update privacy settings",
-          "description": "Modify content visibility and permissions",
-          "linkedFiles": {
-            "hooks": "/app/settings/page.hooks.tsx",
-            "actions": "/app/settings/page.hooks.tsx",
-            "stores": "/app/settings/page.hooks.tsx",
-            "types": "/app/settings/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "usePrivacySettings",
-            "actions": "updatePrivacySettingsAction",
-            "stores": "usePrivacyStore",
-            "types": "PrivacySettings"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "o9tt9u4n8",
-          "title": "Update notification settings",
-          "description": "Modify notification preferences",
-          "linkedFiles": {
-            "hooks": "/app/settings/page.hooks.tsx",
-            "actions": "/app/settings/page.hooks.tsx",
-            "stores": "/app/settings/page.hooks.tsx",
-            "types": "/app/settings/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useNotificationSettings",
-            "actions": "updateNotificationSettingsAction",
-            "stores": "useNotificationStore",
-            "types": "NotificationSettings"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "18hsxt3ni",
-          "title": "Export user data",
-          "description": "Download user data and content",
-          "linkedFiles": {
-            "hooks": "/app/settings/page.hooks.tsx",
-            "actions": "/app/settings/page.hooks.tsx",
-            "stores": "/app/settings/page.hooks.tsx",
-            "types": "/app/settings/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useDataExport",
-            "actions": "exportUserDataAction",
-            "stores": "useDataExportStore",
-            "types": "UserDataExport"
+            "hooks": "usePreviewMode",
+            "actions": "togglePreviewModeAction",
+            "stores": "useEditorStore",
+            "types": "PreviewModeState"
           },
           "isEditing": false
         }
       ],
       "admin-page": [
         {
-          "id": "hg794phal",
-          "title": "Get moderation queue",
-          "description": "Fetch pending content for review",
+          "id": "4u0kxx85t",
+          "title": "Review flagged content",
+          "description": "View and assess reported content items",
           "linkedFiles": {
             "hooks": "/app/(admin)/admin/page.hooks.tsx",
-            "actions": "/app/(admin)/admin/page.hooks.tsx",
-            "stores": "/app/(admin)/admin/page.stores.ts",
-            "types": "/app/(admin)/admin/page.hooks.tsx"
-          },
-          "functionNames": {
-            "hooks": "useModerationQueue",
-            "actions": "getModerationQueueAction",
-            "stores": "useModerationQueueStore",
-            "types": "ModerationQueueItem"
-          },
-          "isEditing": false
-        },
-        {
-          "id": "ykzzoatt6",
-          "title": "Get flagged content",
-          "description": "Fetch reported content items",
-          "linkedFiles": {
-            "hooks": "/app/(admin)/admin/page.hooks.tsx",
-            "actions": "/app/(admin)/admin/page.hooks.tsx",
-            "stores": "/app/(admin)/admin/page.stores.ts",
-            "types": "/app/(admin)/admin/page.hooks.tsx"
+            "actions": "/app/(admin)/admin/page.actions.ts",
+            "stores": "/app/editor/page.stores.ts",
+            "types": "/app/editor/page.types.ts"
           },
           "functionNames": {
             "hooks": "useFlaggedContent",
-            "actions": "getFlaggedContentAction",
-            "stores": "useFlaggedContentStore",
-            "types": "FlaggedContent"
+            "actions": "reviewFlaggedContentAction",
+            "stores": "useModeratorStore",
+            "types": "FlaggedContentData"
           },
           "isEditing": false
         },
         {
-          "id": "8z3erzdbo",
-          "title": "Get user reports",
-          "description": "Fetch user behavior reports",
+          "id": "xduofp9x6",
+          "title": "Approve sticker design",
+          "description": "Review and approve new sticker designs",
           "linkedFiles": {
             "hooks": "/app/(admin)/admin/page.hooks.tsx",
-            "actions": "/app/(admin)/admin/page.hooks.tsx",
-            "stores": "/app/(admin)/admin/page.stores.ts",
-            "types": "/app/(admin)/admin/page.hooks.tsx"
+            "actions": "/app/(admin)/admin/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useUserReports",
-            "actions": "getUserReportsAction",
-            "stores": "useUserReportsStore",
-            "types": "UserReport"
+            "hooks": "useApproveStickerDesign",
+            "actions": "approveStickerDesignAction",
+            "stores": "useModeratorStore",
+            "types": "StickerApprovalInput"
           },
           "isEditing": false
         },
         {
-          "id": "67q6i4r0a",
-          "title": "Moderate content item",
-          "description": "Approve/remove/hide content items",
+          "id": "zsmh5nwnt",
+          "title": "Remove content",
+          "description": "Permanently delete flagged content",
           "linkedFiles": {
             "hooks": "/app/(admin)/admin/page.hooks.tsx",
-            "actions": "/app/(admin)/admin/page.hooks.tsx",
-            "stores": "/app/(admin)/admin/page.stores.ts",
-            "types": "/app/(admin)/admin/page.hooks.tsx"
+            "actions": "/app/(admin)/admin/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useContentModeration",
-            "actions": "moderateContentAction",
-            "stores": "useContentModerationStore",
-            "types": "ContentModerationInput"
+            "hooks": "useRemoveContent",
+            "actions": "removeContentAction",
+            "stores": "useModeratorStore",
+            "types": "ContentRemovalInput"
           },
           "isEditing": false
         },
         {
-          "id": "ff8y6emzw",
-          "title": "Take user action",
-          "description": "Warn/suspend/ban user accounts",
+          "id": "rueaodpfg",
+          "title": "Warn user",
+          "description": "Send warning notification to user",
           "linkedFiles": {
             "hooks": "/app/(admin)/admin/page.hooks.tsx",
-            "actions": "/app/(admin)/admin/page.hooks.tsx",
-            "stores": "/app/(admin)/admin/page.stores.ts",
-            "types": "/app/(admin)/admin/page.hooks.tsx"
+            "actions": "/app/(admin)/admin/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useUserModeration",
-            "actions": "takeUserActionAction",
-            "stores": "useUserModerationStore",
-            "types": "UserModerationAction"
+            "hooks": "useWarnUser",
+            "actions": "warnUserAction",
+            "stores": "useModeratorStore",
+            "types": "UserWarningInput"
           },
           "isEditing": false
         },
         {
-          "id": "m5vhye4o9",
-          "title": "Get audit log",
-          "description": "Fetch moderation action history.",
+          "id": "3lsi0qds5",
+          "title": "Ban user",
+          "description": "Disable user account access",
           "linkedFiles": {
             "hooks": "/app/(admin)/admin/page.hooks.tsx",
-            "actions": "/app/(admin)/admin/page.hooks.tsx",
-            "stores": "/app/(admin)/admin/page.stores.ts",
-            "types": "/app/(admin)/admin/page.hooks.tsx"
+            "actions": "/app/(admin)/admin/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useAuditLog",
-            "actions": "getAuditLogAction",
-            "stores": "useAuditLogStore",
-            "types": "AuditLogEntry"
+            "hooks": "useBanUser",
+            "actions": "banUserAction",
+            "stores": "useModeratorStore",
+            "types": "UserBanInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "jt90ydwmd",
+          "title": "Get moderation log",
+          "description": "View audit trail of moderation actions",
+          "linkedFiles": {
+            "hooks": "/app/(admin)/admin/page.hooks.tsx",
+            "actions": "/app/(admin)/admin/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useModerationLog",
+            "actions": "getModerationLogAction",
+            "stores": "useModeratorStore",
+            "types": "ModerationLogData"
+          },
+          "isEditing": false
+        }
+      ],
+      "settings-page": [
+        {
+          "id": "yiagk29gs",
+          "title": "Update beep icon",
+          "description": "Modify personal beep icon settings",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useUpdateBeepIcon",
+            "actions": "updateBeepIconAction",
+            "stores": "useIconStore",
+            "types": "BeepIconUpdateInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "b2svsc2h1",
+          "title": "Update buzz icon",
+          "description": "Modify personal buzz icon settings",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useUpdateBuzzIcon",
+            "actions": "updateBuzzIconAction",
+            "stores": "useIconStore",
+            "types": "BuzzIconUpdateInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "ootsuelnq",
+          "title": "Get sticker activity",
+          "description": "View pages with placed stickers",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useStickerActivity",
+            "actions": "getStickerActivityAction",
+            "stores": "useStickerStore",
+            "types": "StickerActivityData"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "mfn1mxy3w",
+          "title": "Remove placed sticker",
+          "description": "Delete previously placed sticker from a page",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useRemovePlacedSticker",
+            "actions": "removePlacedStickerAction",
+            "stores": "useStickerStore",
+            "types": "StickerRemovalInput"
+          },
+          "isEditing": false
+        },
+        {
+          "id": "1uuuf8x08",
+          "title": "Get sticker analytics",
+          "description": "View statistics about received stickers.",
+          "linkedFiles": {
+            "hooks": "/app/settings/page.hooks.tsx",
+            "actions": "/app/settings/page.actions.ts",
+            "stores": "/app/layout.stores.ts",
+            "types": "/app/layout.types.ts"
+          },
+          "functionNames": {
+            "hooks": "useStickerAnalytics",
+            "actions": "getStickerAnalyticsAction",
+            "stores": "useStickerStore",
+            "types": "StickerAnalyticsData"
           },
           "isEditing": false
         }
@@ -2755,8 +2387,8 @@
         "shadcn": true,
         "zustand": true,
         "reactQuery": true,
-        "supabase": false,
-        "postgresql": false,
+        "supabase": true,
+        "postgresql": true,
         "vercel": true,
         "railway": false,
         "playwright": false,
@@ -2767,14 +2399,16 @@
         "openrouter": false
       },
       "questions": {
-        "databaseProvider": "none",
+        "databaseProvider": "supabase",
         "alwaysOnServer": false
       },
       "features": {
         "authentication": {
           "enabled": false,
           "emailPassword": false,
-          "magicLink": false
+          "magicLink": false,
+          "emailVerification": false,
+          "forgotPassword": false
         },
         "admin": {
           "enabled": false,
@@ -2800,7 +2434,7 @@
         "fileStorage": false
       },
       "database": {
-        "hosting": "neondb"
+        "hosting": "supabase"
       },
       "deployment": {
         "platform": "vercel"
@@ -2808,88 +2442,88 @@
     }
   },
   "themeState": {
-    "selectedTheme": 33,
+    "selectedTheme": 24,
     "colors": {
       "light": {
-        "primary": "oklch(0.5553 0.1455 48.9975)",
+        "primary": "oklch(0.6489 0.237 26.9728)",
         "primaryForeground": "oklch(1 0 0)",
-        "secondary": "oklch(0.8276 0.0752 74.44)",
-        "secondaryForeground": "oklch(0.4444 0.0096 73.639)",
-        "accent": "oklch(0.9 0.05 74.9889)",
-        "accentForeground": "oklch(0.4444 0.0096 73.639)",
-        "background": "oklch(0.9885 0.0057 84.5659)",
-        "foreground": "oklch(0.366 0.0251 49.6085)",
-        "card": "oklch(0.9686 0.0091 78.2818)",
-        "cardForeground": "oklch(0.366 0.0251 49.6085)",
-        "popover": "oklch(0.9686 0.0091 78.2818)",
-        "popoverForeground": "oklch(0.366 0.0251 49.6085)",
-        "muted": "oklch(0.9363 0.0218 83.2637)",
-        "mutedForeground": "oklch(0.5534 0.0116 58.0708)",
-        "destructive": "oklch(0.4437 0.1613 26.8994)",
+        "secondary": "oklch(0.968 0.211 109.7692)",
+        "secondaryForeground": "oklch(0 0 0)",
+        "accent": "oklch(0.5635 0.2408 260.8178)",
+        "accentForeground": "oklch(1 0 0)",
+        "background": "oklch(1 0 0)",
+        "foreground": "oklch(0 0 0)",
+        "card": "oklch(1 0 0)",
+        "cardForeground": "oklch(0 0 0)",
+        "popover": "oklch(1 0 0)",
+        "popoverForeground": "oklch(0 0 0)",
+        "muted": "oklch(0.9551 0 0)",
+        "mutedForeground": "oklch(0.3211 0 0)",
+        "destructive": "oklch(0 0 0)",
         "destructiveForeground": "oklch(1 0 0)",
-        "border": "oklch(0.8866 0.0404 89.6994)",
-        "input": "oklch(0.8866 0.0404 89.6994)",
-        "ring": "oklch(0.5553 0.1455 48.9975)",
-        "chart1": "oklch(0.5553 0.1455 48.9975)",
-        "chart2": "oklch(0.5534 0.0116 58.0708)",
-        "chart3": "oklch(0.5538 0.1207 66.4416)",
-        "chart4": "oklch(0.5534 0.0116 58.0708)",
-        "chart5": "oklch(0.6806 0.1423 75.834)",
-        "sidebarBackground": "oklch(0.9363 0.0218 83.2637)",
-        "sidebarForeground": "oklch(0.366 0.0251 49.6085)",
-        "sidebarPrimary": "oklch(0.5553 0.1455 48.9975)",
+        "border": "oklch(0 0 0)",
+        "input": "oklch(0 0 0)",
+        "ring": "oklch(0.6489 0.237 26.9728)",
+        "chart1": "oklch(0.6489 0.237 26.9728)",
+        "chart2": "oklch(0.968 0.211 109.7692)",
+        "chart3": "oklch(0.5635 0.2408 260.8178)",
+        "chart4": "oklch(0.7323 0.2492 142.4953)",
+        "chart5": "oklch(0.5931 0.2726 328.3634)",
+        "sidebarBackground": "oklch(0.9551 0 0)",
+        "sidebarForeground": "oklch(0 0 0)",
+        "sidebarPrimary": "oklch(0.6489 0.237 26.9728)",
         "sidebarPrimaryForeground": "oklch(1 0 0)",
-        "sidebarAccent": "oklch(0.5538 0.1207 66.4416)",
+        "sidebarAccent": "oklch(0.5635 0.2408 260.8178)",
         "sidebarAccentForeground": "oklch(1 0 0)",
-        "sidebarBorder": "oklch(0.8866 0.0404 89.6994)",
-        "sidebarRing": "oklch(0.5553 0.1455 48.9975)"
+        "sidebarBorder": "oklch(0 0 0)",
+        "sidebarRing": "oklch(0.6489 0.237 26.9728)"
       },
       "dark": {
-        "primary": "oklch(0.7049 0.1867 47.6044)",
-        "primaryForeground": "oklch(1 0 0)",
-        "secondary": "oklch(0.4444 0.0096 73.639)",
-        "secondaryForeground": "oklch(0.9232 0.0026 48.7171)",
-        "accent": "oklch(0.3598 0.0497 229.3202)",
-        "accentForeground": "oklch(0.9232 0.0026 48.7171)",
-        "background": "oklch(0.2161 0.0061 56.0434)",
-        "foreground": "oklch(0.9699 0.0013 106.4238)",
-        "card": "oklch(0.2685 0.0063 34.2976)",
-        "cardForeground": "oklch(0.9699 0.0013 106.4238)",
-        "popover": "oklch(0.2685 0.0063 34.2976)",
-        "popoverForeground": "oklch(0.9699 0.0013 106.4238)",
-        "muted": "oklch(0.233 0.0073 67.4563)",
-        "mutedForeground": "oklch(0.7161 0.0091 56.259)",
-        "destructive": "oklch(0.5771 0.2152 27.325)",
-        "destructiveForeground": "oklch(1 0 0)",
-        "border": "oklch(0.3741 0.0087 67.5582)",
-        "input": "oklch(0.3741 0.0087 67.5582)",
-        "ring": "oklch(0.7049 0.1867 47.6044)",
-        "chart1": "oklch(0.7049 0.1867 47.6044)",
-        "chart2": "oklch(0.6847 0.1479 237.3225)",
-        "chart3": "oklch(0.7952 0.1617 86.0468)",
-        "chart4": "oklch(0.7161 0.0091 56.259)",
-        "chart5": "oklch(0.5534 0.0116 58.0708)",
-        "sidebarBackground": "oklch(0.2685 0.0063 34.2976)",
-        "sidebarForeground": "oklch(0.9699 0.0013 106.4238)",
-        "sidebarPrimary": "oklch(0.7049 0.1867 47.6044)",
-        "sidebarPrimaryForeground": "oklch(1 0 0)",
-        "sidebarAccent": "oklch(0.6847 0.1479 237.3225)",
-        "sidebarAccentForeground": "oklch(0.2839 0.0734 254.5378)",
-        "sidebarBorder": "oklch(0.3741 0.0087 67.5582)",
-        "sidebarRing": "oklch(0.7049 0.1867 47.6044)"
+        "primary": "oklch(0.7044 0.1872 23.1858)",
+        "primaryForeground": "oklch(0 0 0)",
+        "secondary": "oklch(0.9691 0.2005 109.6228)",
+        "secondaryForeground": "oklch(0 0 0)",
+        "accent": "oklch(0.6755 0.1765 252.2592)",
+        "accentForeground": "oklch(0 0 0)",
+        "background": "oklch(0 0 0)",
+        "foreground": "oklch(1 0 0)",
+        "card": "oklch(0.3211 0 0)",
+        "cardForeground": "oklch(1 0 0)",
+        "popover": "oklch(0.3211 0 0)",
+        "popoverForeground": "oklch(1 0 0)",
+        "muted": "oklch(0.2178 0 0)",
+        "mutedForeground": "oklch(0.8452 0 0)",
+        "destructive": "oklch(1 0 0)",
+        "destructiveForeground": "oklch(0 0 0)",
+        "border": "oklch(1 0 0)",
+        "input": "oklch(1 0 0)",
+        "ring": "oklch(0.7044 0.1872 23.1858)",
+        "chart1": "oklch(0.7044 0.1872 23.1858)",
+        "chart2": "oklch(0.9691 0.2005 109.6228)",
+        "chart3": "oklch(0.6755 0.1765 252.2592)",
+        "chart4": "oklch(0.7395 0.2268 142.8504)",
+        "chart5": "oklch(0.6131 0.2458 328.0714)",
+        "sidebarBackground": "oklch(0 0 0)",
+        "sidebarForeground": "oklch(1 0 0)",
+        "sidebarPrimary": "oklch(0.7044 0.1872 23.1858)",
+        "sidebarPrimaryForeground": "oklch(0 0 0)",
+        "sidebarAccent": "oklch(0.6755 0.1765 252.2592)",
+        "sidebarAccentForeground": "oklch(0 0 0)",
+        "sidebarBorder": "oklch(1 0 0)",
+        "sidebarRing": "oklch(0.7044 0.1872 23.1858)"
       }
     },
     "typography": {
       "light": {
-        "fontSans": "var(--font-oxanium)",
-        "fontSerif": "var(--font-merriweather)",
-        "fontMono": "var(--font-fira-code)",
+        "fontSans": "var(--font-dm-sans)",
+        "fontSerif": "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
+        "fontMono": "var(--font-space-mono)",
         "letterSpacing": 0
       },
       "dark": {
-        "fontSans": "var(--font-oxanium)",
-        "fontSerif": "var(--font-merriweather)",
-        "fontMono": "var(--font-fira-code)",
+        "fontSans": "var(--font-dm-sans)",
+        "fontSerif": "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
+        "fontMono": "var(--font-space-mono)",
         "letterSpacing": 0
       }
     },
@@ -2898,750 +2532,2425 @@
         "hueShift": 0,
         "saturationMultiplier": 1,
         "lightnessMultiplier": 1,
-        "radius": 0.3,
+        "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "oklch(0.3771 0.0245 63.1679)",
-          "opacity": 0.18,
-          "blurRadius": 3,
+          "color": "oklch(0.0000 0.0000 0.0000)",
+          "opacity": 1,
+          "blurRadius": 0,
           "spread": 0,
-          "offsetX": 0,
-          "offsetY": 2
+          "offsetX": 4,
+          "offsetY": 4
         }
       },
       "dark": {
         "hueShift": 0,
         "saturationMultiplier": 1,
         "lightnessMultiplier": 1,
-        "radius": 0.3,
+        "radius": 0,
         "spacing": 0.25,
         "shadow": {
-          "color": "oklch(0.1579 0.0000 89.8756)",
-          "opacity": 0.18,
-          "blurRadius": 3,
+          "color": "oklch(0.0000 0.0000 0.0000)",
+          "opacity": 1,
+          "blurRadius": 0,
           "spread": 0,
-          "offsetX": 0,
-          "offsetY": 2
+          "offsetX": 4,
+          "offsetY": 4
         }
       }
     }
   },
   "databaseState": {
-    "tables": [],
-    "enums": [],
-    "rlsPolicies": [],
-    "plugins": []
+    "tables": [
+      {
+        "id": "default-users",
+        "name": "users",
+        "schema": "auth",
+        "isDefault": true,
+        "isEditable": false,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "questionId": "authentication",
+        "columns": [
+          {
+            "id": "users-id",
+            "name": "id",
+            "type": "UUID",
+            "isDefault": true,
+            "isEditable": false,
+            "isOptional": false,
+            "isUnique": false,
+            "isId": true,
+            "isArray": false,
+            "defaultValue": "gen_random_uuid()"
+          },
+          {
+            "id": "users-email",
+            "name": "email",
+            "type": "TEXT",
+            "isDefault": true,
+            "isEditable": false,
+            "isOptional": false,
+            "isUnique": true,
+            "isId": false,
+            "isArray": false
+          }
+        ]
+      },
+      {
+        "id": "groiw4wer",
+        "name": "users",
+        "schema": "auth",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "id": "2z5i40kvs",
+            "name": "id",
+            "type": "UUID",
+            "isDefault": true,
+            "isEditable": false,
+            "isOptional": false,
+            "isUnique": false,
+            "isId": true,
+            "isArray": false,
+            "defaultValue": "gen_random_uuid()"
+          },
+          {
+            "id": "zo6avajhp",
+            "name": "email",
+            "type": "TEXT",
+            "isDefault": true,
+            "isEditable": false,
+            "isOptional": false,
+            "isUnique": true,
+            "isId": false,
+            "isArray": false
+          }
+        ]
+      },
+      {
+        "id": "kfqgjjlva",
+        "name": "profiles",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "t0c2i2zpn",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "3aotmp8la",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "isUnique": true,
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "3aotmp8la"
+            },
+            "id": "r8hjqcv8f",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "username",
+            "type": "TEXT",
+            "isUnique": true,
+            "isOptional": false,
+            "id": "ggx21gig7",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "role",
+            "type": "user_role",
+            "defaultValue": "'user'",
+            "isOptional": false,
+            "id": "jlbskzun5",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "beep_settings",
+            "type": "JSONB",
+            "isOptional": true,
+            "id": "x4qyi06mr",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "buzz_settings",
+            "type": "JSONB",
+            "isOptional": true,
+            "id": "b1pijqwn4",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "i7cu878xv",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "isOptional": true,
+            "id": "64sihwouy",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "1dnmk80ft",
+        "name": "pages",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "696ed8qfd",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "rse2qnqmt",
+            "name": "profilesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "profile_id",
+            "type": "UUID",
+            "relation": {
+              "table": "profiles",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "rse2qnqmt"
+            },
+            "id": "0x3niw4gk",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "ioqtn42cy",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "ioqtn42cy"
+            },
+            "id": "ku4fqfdg5",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "title",
+            "type": "TEXT",
+            "isOptional": false,
+            "id": "no63u05sd",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "visibility",
+            "type": "page_visibility",
+            "defaultValue": "'public'",
+            "id": "h7ofv6yiv",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "wljf3p39v",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "isOptional": true,
+            "id": "qe0nm2yq3",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "qavv5gbby",
+        "name": "page_elements",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "prbydrbpu",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "2r7w0raqg",
+            "name": "pagesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "page_id",
+            "type": "UUID",
+            "relation": {
+              "table": "pages",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "2r7w0raqg"
+            },
+            "id": "5w9iu7n1e",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "nt4yjnj1k",
+            "name": "profilesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "profile_id",
+            "type": "UUID",
+            "relation": {
+              "table": "profiles",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "nt4yjnj1k"
+            },
+            "id": "qh6ytkwgh",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "mabqm4u97",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "mabqm4u97"
+            },
+            "id": "hxcvrx3un",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "element_type",
+            "type": "element_type",
+            "isOptional": false,
+            "id": "xo9yra7jf",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "content",
+            "type": "JSONB",
+            "isOptional": false,
+            "id": "h5jofstvl",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "position_x",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "utuupg8gc",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "position_y",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "n9d5zz1e9",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "width",
+            "type": "INTEGER",
+            "isOptional": true,
+            "id": "qv40ax3mi",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "height",
+            "type": "INTEGER",
+            "isOptional": true,
+            "id": "4afzcbelo",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "4e62lwhx8",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "isOptional": true,
+            "id": "29gs3itbr",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "rncgwnwwq",
+        "name": "stickers",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "1rjreow44",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "m3w88j274",
+            "name": "pagesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "page_id",
+            "type": "UUID",
+            "relation": {
+              "table": "pages",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "m3w88j274"
+            },
+            "id": "8uzaz2gcp",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "0wkvh2tfs",
+            "name": "profilesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "profile_id",
+            "type": "UUID",
+            "relation": {
+              "table": "profiles",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "0wkvh2tfs"
+            },
+            "id": "spc8lnrlh",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "89ghmg9t2",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "89ghmg9t2"
+            },
+            "id": "iwppw4m36",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "sticker_type",
+            "type": "sticker_type",
+            "isOptional": false,
+            "id": "bnfaurtj2",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "position_x",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "76sayum2l",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "position_y",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "yregtiamv",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "8g4yydmpj",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "78vw67ttj",
+        "name": "content_flags",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "wlxhpq2dl",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "uoume7x65",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isOptional": false,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "id": "i6wve7ojx",
+            "name": "user_id",
+            "type": "UUID",
+            "isId": false,
+            "isDefault": false,
+            "isEditable": true,
+            "isOptional": false,
+            "isUnique": false,
+            "isArray": false,
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "uoume7x65"
+            }
+          },
+          {
+            "name": "content_type",
+            "type": "content_type",
+            "isOptional": false,
+            "id": "nc0xz7az9",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "content_id",
+            "type": "UUID",
+            "isOptional": false,
+            "id": "t75pmg47w",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "reporter_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one"
+            },
+            "id": "lyr1eo5sc",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "reason",
+            "type": "flag_reason",
+            "isOptional": false,
+            "id": "24nl8oa5z",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "details",
+            "type": "TEXT",
+            "isOptional": true,
+            "id": "kytpxynwc",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "status",
+            "type": "flag_status",
+            "defaultValue": "'pending'",
+            "id": "h65pm459t",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "xdy50fdnm",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "resolved_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "isOptional": true,
+            "id": "eny15kqpm",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "9oo8vdply",
+        "name": "moderation_logs",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "p8mmkl3s3",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "r4hi6y5h4",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "admin_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "r4hi6y5h4"
+            },
+            "id": "grec3nukv",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "content_type",
+            "type": "content_type",
+            "isOptional": false,
+            "id": "sx88d821h",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "content_id",
+            "type": "UUID",
+            "isOptional": false,
+            "id": "a2sc8l27g",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "action",
+            "type": "mod_action",
+            "isOptional": false,
+            "id": "2g6ry1vcu",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "reason",
+            "type": "TEXT",
+            "isOptional": true,
+            "id": "gajzzmm3f",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "72r1rtcqq",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "mxc542qso",
+        "name": "sticker_designs",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "e8tul06nd",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "wjdjbdpnb",
+            "name": "profilesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "profile_id",
+            "type": "UUID",
+            "relation": {
+              "table": "profiles",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "wjdjbdpnb"
+            },
+            "id": "87qug52hv",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "v5hvj5ohm",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "v5hvj5ohm"
+            },
+            "id": "fh0d6qt07",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "sticker_type",
+            "type": "sticker_type",
+            "isOptional": false,
+            "id": "hzk4lu6lm",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "design_data",
+            "type": "JSONB",
+            "isOptional": false,
+            "id": "lrcvr89e4",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "status",
+            "type": "approval_status",
+            "defaultValue": "'pending'",
+            "id": "un0gx736z",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "r78dy5hvc",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "isOptional": true,
+            "id": "c46ugiv8q",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "g7we5xmbs",
+        "name": "categories",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "p42zdwxv0",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "name",
+            "type": "TEXT",
+            "isUnique": true,
+            "isOptional": false,
+            "id": "x0frjekmi",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "description",
+            "type": "TEXT",
+            "isOptional": true,
+            "id": "ipdboohbq",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "s57afo2de",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      },
+      {
+        "id": "916cwrwpl",
+        "name": "page_categories",
+        "schema": "public",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "isId": true,
+            "defaultValue": "gen_random_uuid()",
+            "id": "fjiah4xvs",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "2c7r5uxfl",
+            "name": "pagesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "page_id",
+            "type": "UUID",
+            "relation": {
+              "table": "pages",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "2c7r5uxfl"
+            },
+            "id": "cx531yw98",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "qlhat7zwv",
+            "name": "categoriesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "category_id",
+            "type": "UUID",
+            "relation": {
+              "table": "categories",
+              "field": "id",
+              "onDelete": "Cascade",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "qlhat7zwv"
+            },
+            "id": "zktftsh6d",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "2a69uztop",
+            "name": "profilesId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "profile_id",
+            "type": "UUID",
+            "relation": {
+              "table": "profiles",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "2a69uztop"
+            },
+            "id": "ucnbmddf2",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "id": "2m5ty0qj6",
+            "name": "usersId",
+            "type": "UUID",
+            "isDefault": false,
+            "isEditable": true,
+            "isUnique": false,
+            "isId": false,
+            "isArray": false
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "relation": {
+              "table": "auth.users",
+              "field": "id",
+              "relationType": "many-to-one",
+              "foreignKeyFieldId": "2m5ty0qj6"
+            },
+            "id": "vid3wabmy",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "1420xdixq",
+            "isDefault": false,
+            "isEditable": true
+          }
+        ]
+      }
+    ],
+    "enums": [
+      {
+        "id": "hp139y6ah",
+        "name": "page_visibility",
+        "values": [
+          {
+            "id": "btrk8khy0",
+            "value": "public"
+          },
+          {
+            "id": "g5sanwgzv",
+            "value": "private"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "id": "49nrgs79x",
+        "name": "element_type",
+        "values": [
+          {
+            "id": "et3e7hqe5",
+            "value": "text"
+          },
+          {
+            "id": "klp3luyj9",
+            "value": "shape"
+          },
+          {
+            "id": "ij14xieyw",
+            "value": "divider"
+          },
+          {
+            "id": "ohj5mzzda",
+            "value": "youtube"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "id": "qa0ihnm1g",
+        "name": "sticker_type",
+        "values": [
+          {
+            "id": "5xp7vpjpy",
+            "value": "beep"
+          },
+          {
+            "id": "k56vvkzml",
+            "value": "buzz"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "id": "z4nn2bnui",
+        "name": "content_type",
+        "values": [
+          {
+            "id": "4s9js8zkb",
+            "value": "page"
+          },
+          {
+            "id": "jnlt53zek",
+            "value": "sticker"
+          },
+          {
+            "id": "k1aglvdoy",
+            "value": "element"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "id": "29mdo5cp4",
+        "name": "flag_reason",
+        "values": [
+          {
+            "id": "4vtcfbetk",
+            "value": "inappropriate"
+          },
+          {
+            "id": "0fx2wr142",
+            "value": "spam"
+          },
+          {
+            "id": "rwbn051l6",
+            "value": "offensive"
+          },
+          {
+            "id": "k7pambac8",
+            "value": "other"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "id": "molh8h52e",
+        "name": "flag_status",
+        "values": [
+          {
+            "id": "qq5f34q3z",
+            "value": "pending"
+          },
+          {
+            "id": "32xxzv4lu",
+            "value": "reviewed"
+          },
+          {
+            "id": "2n624qpkx",
+            "value": "dismissed"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "id": "vzmngwrcd",
+        "name": "mod_action",
+        "values": [
+          {
+            "id": "ztkdp4w7g",
+            "value": "approve"
+          },
+          {
+            "id": "lggfwp808",
+            "value": "remove"
+          },
+          {
+            "id": "11mdg30ju",
+            "value": "warn"
+          },
+          {
+            "id": "vjce92ayi",
+            "value": "ban"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      },
+      {
+        "id": "2722vkiuq",
+        "name": "approval_status",
+        "values": [
+          {
+            "id": "mgqfa3a1e",
+            "value": "pending"
+          },
+          {
+            "id": "8nno15fe7",
+            "value": "approved"
+          },
+          {
+            "id": "yf5tas6g5",
+            "value": "rejected"
+          }
+        ],
+        "isDefault": false,
+        "isEditable": true
+      }
+    ],
+    "rlsPolicies": [
+      {
+        "id": "cajq2lhv9",
+        "tableId": "kfqgjjlva",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "escyrl48z",
+        "tableId": "kfqgjjlva",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "03bo8rfek",
+        "tableId": "kfqgjjlva",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "l5u57o5rn",
+        "tableId": "kfqgjjlva",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "hadywjva5",
+        "tableId": "1dnmk80ft",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "tt4q39y1g",
+        "tableId": "1dnmk80ft",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "wxvqsj9x9",
+        "tableId": "1dnmk80ft",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "uj5vifbkr",
+        "tableId": "1dnmk80ft",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "nox7gqjfs",
+        "tableId": "qavv5gbby",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "xxxi6gao3",
+        "tableId": "qavv5gbby",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "wrdbmq4jh",
+        "tableId": "qavv5gbby",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "8o5g7nyzd",
+        "tableId": "qavv5gbby",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "w2jacvtn5",
+        "tableId": "rncgwnwwq",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "9h0fehkim",
+        "tableId": "rncgwnwwq",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "pg5yjl2ua",
+        "tableId": "rncgwnwwq",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "soxrnn11v",
+        "tableId": "rncgwnwwq",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "e0kp076ta",
+        "tableId": "78vw67ttj",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "gj262ddpj",
+        "tableId": "78vw67ttj",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "s5s21x80q",
+        "tableId": "78vw67ttj",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "kn61c8yic",
+        "tableId": "78vw67ttj",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "ucxuahb84",
+        "tableId": "9oo8vdply",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "jtotgngs4",
+        "tableId": "9oo8vdply",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "08ttpv1dl",
+        "tableId": "9oo8vdply",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "8dvu6f2mi",
+        "tableId": "9oo8vdply",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "5sn04l2rq",
+        "tableId": "mxc542qso",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "ifdwbze9p",
+        "tableId": "mxc542qso",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "heqn52bo1",
+        "tableId": "mxc542qso",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "r06upss68",
+        "tableId": "mxc542qso",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "o8bqd48wq",
+        "tableId": "g7we5xmbs",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "mpn17l308",
+        "tableId": "g7we5xmbs",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "ngqxl7bz6",
+        "tableId": "g7we5xmbs",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "hqwo0ub3f",
+        "tableId": "g7we5xmbs",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "none"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "u0crwb3bo",
+        "tableId": "916cwrwpl",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "obf113tql",
+        "tableId": "916cwrwpl",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "emszaiztn",
+        "tableId": "916cwrwpl",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "r8v3pwk4d",
+        "tableId": "916cwrwpl",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      }
+    ],
+    "plugins": [],
+    "activeTab": "schema"
   },
   "appStructureState": {
     "inferredFeatures": {
-      "layout-4kjy9abn9": [
+      "layout-nb0tvqaz9": [
         {
-          "id": "p8l8cg23g",
-          "pageId": "layout-4kjy9abn9",
+          "id": "0rm99xumz",
+          "pageId": "layout-nb0tvqaz9",
           "title": "Sign out user",
-          "description": "Clear user session and redirect to login page"
+          "description": "Clear user session and redirect to home page"
         },
         {
-          "id": "mqxfge8ct",
-          "pageId": "layout-4kjy9abn9",
-          "title": "Toggle user profile menu",
-          "description": "Show/hide user profile popover menu"
-        },
-        {
-          "id": "zjxp122xu",
-          "pageId": "layout-4kjy9abn9",
-          "title": "Get community stats",
-          "description": "Fetch and display community statistics in footer"
+          "id": "4lk7jonkz",
+          "pageId": "layout-nb0tvqaz9",
+          "title": "Get user profile menu",
+          "description": "Display authenticated user avatar and profile menu options"
         }
       ],
-      "layout-qfe9oiiym": [
+      "layout-pb4b7plwp": [
         {
-          "id": "aq82co3dq",
-          "pageId": "layout-qfe9oiiym",
-          "title": "Get content queue metrics",
-          "description": "Fetch current moderation queue statistics"
+          "id": "tl8a5xrk4",
+          "pageId": "layout-pb4b7plwp",
+          "title": "Sign out user",
+          "description": "Clear user session and redirect to home page"
         },
         {
-          "id": "uwsfkq4hy",
-          "pageId": "layout-qfe9oiiym",
-          "title": "Get moderation analytics",
-          "description": "Fetch and display content moderation analytics"
+          "id": "h40sgwjye",
+          "pageId": "layout-pb4b7plwp",
+          "title": "Get user profile menu",
+          "description": "Display authenticated user avatar and profile menu options"
         }
       ],
-      "ax2ahsfnt": [
+      "rl8b8v24d": [
         {
-          "id": "jthuxilak",
-          "pageId": "ax2ahsfnt",
-          "title": "Get featured characters",
-          "description": "Fetch and display featured character profiles"
+          "id": "302z4uspz",
+          "pageId": "rl8b8v24d",
+          "title": "Search pages",
+          "description": "Search for pages by title or username"
         },
         {
-          "id": "ngyvwbs7d",
-          "pageId": "ax2ahsfnt",
-          "title": "Get popular quiz sets",
-          "description": "Fetch and display trending quiz collections"
+          "id": "owlimx50c",
+          "pageId": "rl8b8v24d",
+          "title": "Filter pages by category",
+          "description": "Filter displayed pages based on selected category"
         },
         {
-          "id": "2ir0al9yq",
-          "pageId": "ax2ahsfnt",
-          "title": "Get recent completions",
-          "description": "Fetch and display recently completed quizzes and adventures"
+          "id": "cu8zfy4dj",
+          "pageId": "rl8b8v24d",
+          "title": "Get random page",
+          "description": "Navigate to a randomly selected user page"
+        },
+        {
+          "id": "fyefsenoc",
+          "pageId": "rl8b8v24d",
+          "title": "Get featured pages",
+          "description": "Retrieve popular, recent, and new pages for display"
         }
       ],
-      "1m5s1zqzv": [
+      "2yjux32oc": [
         {
-          "id": "e1fizbyli",
-          "pageId": "1m5s1zqzv",
-          "title": "Sign in with email and password",
-          "description": "Authenticate user with email and password credentials"
+          "id": "bnt98k8xx",
+          "pageId": "2yjux32oc",
+          "title": "Send magic link email",
+          "description": "Send authentication magic link to user's email address"
         }
       ],
-      "yw00rx5ui": [
+      "dg8xt3z7q": [
         {
-          "id": "w3dya0vdj",
-          "pageId": "yw00rx5ui",
-          "title": "Create user account",
-          "description": "Register new user with email and password"
+          "id": "nuy1els7u",
+          "pageId": "dg8xt3z7q",
+          "title": "Create username",
+          "description": "Set unique username with AI validation"
+        },
+        {
+          "id": "a65kjzey0",
+          "pageId": "dg8xt3z7q",
+          "title": "Customize beep icon",
+          "description": "Select and customize personal beep icon settings"
+        },
+        {
+          "id": "fxdrynza3",
+          "pageId": "dg8xt3z7q",
+          "title": "Customize buzz icon",
+          "description": "Select and customize personal buzz icon settings"
         }
       ],
-      "nx68ba1qn": [
+      "gck8gvfgb": [
         {
-          "id": "e8lrs61gg",
-          "pageId": "nx68ba1qn",
-          "title": "Send password reset email",
-          "description": "Send password reset link to user's email address"
+          "id": "by7hol465",
+          "pageId": "gck8gvfgb",
+          "title": "Toggle sticker visibility",
+          "description": "Show/hide stickers on the page"
+        },
+        {
+          "id": "1byabz1db",
+          "pageId": "gck8gvfgb",
+          "title": "Add beep sticker",
+          "description": "Place a beep sticker on the page"
+        },
+        {
+          "id": "fb64810uq",
+          "pageId": "gck8gvfgb",
+          "title": "Add buzz sticker",
+          "description": "Place a buzz sticker on the page"
+        },
+        {
+          "id": "2ce1hnbc6",
+          "pageId": "gck8gvfgb",
+          "title": "Get sticker details",
+          "description": "View who placed a specific sticker and navigate to their page"
         }
       ],
-      "wvyoc67hn": [
+      "b2c0ac6t3": [
         {
-          "id": "7i4208nrv",
-          "pageId": "wvyoc67hn",
-          "title": "Reset user password",
-          "description": "Update user's password using reset token"
+          "id": "g5ljgmcuq",
+          "pageId": "b2c0ac6t3",
+          "title": "Add text block",
+          "description": "Insert new text element on the page"
+        },
+        {
+          "id": "kjcxmemxd",
+          "pageId": "b2c0ac6t3",
+          "title": "Add shape",
+          "description": "Insert new shape element on the page"
+        },
+        {
+          "id": "8eyjrlop1",
+          "pageId": "b2c0ac6t3",
+          "title": "Add divider",
+          "description": "Insert new divider element on the page"
+        },
+        {
+          "id": "9e26iibea",
+          "pageId": "b2c0ac6t3",
+          "title": "Add YouTube embed",
+          "description": "Insert new YouTube video embed on the page"
+        },
+        {
+          "id": "vzw7oevav",
+          "pageId": "b2c0ac6t3",
+          "title": "Edit element",
+          "description": "Modify properties of selected page element"
+        },
+        {
+          "id": "k9nbtg0e8",
+          "pageId": "b2c0ac6t3",
+          "title": "Delete element",
+          "description": "Remove selected element from the page"
+        },
+        {
+          "id": "296bmg5hd",
+          "pageId": "b2c0ac6t3",
+          "title": "Toggle preview mode",
+          "description": "Switch between desktop, tablet, and mobile previews"
         }
       ],
-      "kq1bsgjyl": [
+      "jp4qijm6a": [
         {
-          "id": "7nkwkb47u",
-          "pageId": "kq1bsgjyl",
-          "title": "Update user profile",
-          "description": "Save initial user profile details including name and bio"
+          "id": "4u0kxx85t",
+          "pageId": "jp4qijm6a",
+          "title": "Review flagged content",
+          "description": "View and assess reported content items"
         },
         {
-          "id": "omot26l5d",
-          "pageId": "kq1bsgjyl",
-          "title": "Upload avatar image",
-          "description": "Upload and save user profile picture"
+          "id": "xduofp9x6",
+          "pageId": "jp4qijm6a",
+          "title": "Approve sticker design",
+          "description": "Review and approve new sticker designs"
         },
         {
-          "id": "w3y1drh3g",
-          "pageId": "kq1bsgjyl",
-          "title": "Set quiz preferences",
-          "description": "Save user's quiz and content preferences"
+          "id": "zsmh5nwnt",
+          "pageId": "jp4qijm6a",
+          "title": "Remove content",
+          "description": "Permanently delete flagged content"
+        },
+        {
+          "id": "rueaodpfg",
+          "pageId": "jp4qijm6a",
+          "title": "Warn user",
+          "description": "Send warning notification to user"
+        },
+        {
+          "id": "3lsi0qds5",
+          "pageId": "jp4qijm6a",
+          "title": "Ban user",
+          "description": "Disable user account access"
+        },
+        {
+          "id": "jt90ydwmd",
+          "pageId": "jp4qijm6a",
+          "title": "Get moderation log",
+          "description": "View audit trail of moderation actions"
         }
       ],
-      "4robczp66": [
+      "x2bw4j7vj": [
         {
-          "id": "dztxotx9g",
-          "pageId": "4robczp66",
-          "title": "Get quiz sets",
-          "description": "Fetch user's personal and imported quiz collections"
+          "id": "yiagk29gs",
+          "pageId": "x2bw4j7vj",
+          "title": "Update beep icon",
+          "description": "Modify personal beep icon settings"
         },
         {
-          "id": "yq754q82e",
-          "pageId": "4robczp66",
-          "title": "Take quiz",
-          "description": "Start selected quiz session"
+          "id": "b2svsc2h1",
+          "pageId": "x2bw4j7vj",
+          "title": "Update buzz icon",
+          "description": "Modify personal buzz icon settings"
         },
         {
-          "id": "g7q1wbeom",
-          "pageId": "4robczp66",
-          "title": "Edit quiz set",
-          "description": "Modify existing quiz content and settings"
+          "id": "ootsuelnq",
+          "pageId": "x2bw4j7vj",
+          "title": "Get sticker activity",
+          "description": "View pages with placed stickers"
         },
         {
-          "id": "53g4phov9",
-          "pageId": "4robczp66",
-          "title": "Get quiz analytics",
-          "description": "View performance statistics for quiz set"
+          "id": "mfn1mxy3w",
+          "pageId": "x2bw4j7vj",
+          "title": "Remove placed sticker",
+          "description": "Delete previously placed sticker from a page"
         },
         {
-          "id": "yc08r1gqy",
-          "pageId": "4robczp66",
-          "title": "Toggle quiz sharing",
-          "description": "Enable/disable public access to quiz set"
-        },
-        {
-          "id": "3l2dl1npr",
-          "pageId": "4robczp66",
-          "title": "Delete quiz set",
-          "description": "Remove quiz set from library"
-        }
-      ],
-      "vblfj3def": [
-        {
-          "id": "49mcsjqfl",
-          "pageId": "vblfj3def",
-          "title": "Get user characters",
-          "description": "Fetch all characters created by user"
-        },
-        {
-          "id": "eckrkpjwq",
-          "pageId": "vblfj3def",
-          "title": "Get character stats",
-          "description": "Fetch statistics and achievements for each character"
-        },
-        {
-          "id": "49926ylbq",
-          "pageId": "vblfj3def",
-          "title": "Get available quests",
-          "description": "Fetch available adventure quests for characters"
-        },
-        {
-          "id": "3zr3qb05g",
-          "pageId": "vblfj3def",
-          "title": "Customize character appearance",
-          "description": "Modify character visual attributes"
-        },
-        {
-          "id": "s8773ugid",
-          "pageId": "vblfj3def",
-          "title": "Share character",
-          "description": "Generate and copy character share link"
-        }
-      ],
-      "euntwkdc6": [
-        {
-          "id": "ptng3cxn3",
-          "pageId": "euntwkdc6",
-          "title": "Get character stats",
-          "description": "Fetch current character statistics and status"
-        },
-        {
-          "id": "fuw4bhz01",
-          "pageId": "euntwkdc6",
-          "title": "Generate story content",
-          "description": "Create AI-driven narrative based on context"
-        },
-        {
-          "id": "mmy50eki0",
-          "pageId": "euntwkdc6",
-          "title": "Submit quiz answer",
-          "description": "Process quiz response and update story"
-        },
-        {
-          "id": "btsh0ouzy",
-          "pageId": "euntwkdc6",
-          "title": "Get progress status",
-          "description": "Fetch current adventure progress"
-        },
-        {
-          "id": "kuc97v3jt",
-          "pageId": "euntwkdc6",
-          "title": "Share adventure status",
-          "description": "Generate and share current adventure progress"
-        }
-      ],
-      "2638hw18o": [
-        {
-          "id": "e2xkyt9nh",
-          "pageId": "2638hw18o",
-          "title": "Upload quiz document",
-          "description": "Import quiz content from PDF/DOCX/MD/TXT file"
-        },
-        {
-          "id": "xoz7sg9my",
-          "pageId": "2638hw18o",
-          "title": "Generate AI quiz content",
-          "description": "Create quiz questions using AI assistance"
-        },
-        {
-          "id": "bttmcx1ar",
-          "pageId": "2638hw18o",
-          "title": "Create quiz manually",
-          "description": "Add quiz questions through form interface"
-        },
-        {
-          "id": "8fff6hi52",
-          "pageId": "2638hw18o",
-          "title": "Submit quiz for approval",
-          "description": "Send quiz for community sharing approval"
-        }
-      ],
-      "ya8jg183r": [
-        {
-          "id": "r48jhrah0",
-          "pageId": "ya8jg183r",
-          "title": "Get character details",
-          "description": "Fetch character profile, stats, and history"
-        },
-        {
-          "id": "s3pkrgu0u",
-          "pageId": "ya8jg183r",
-          "title": "Get achievement gallery",
-          "description": "Fetch character's earned achievements"
-        },
-        {
-          "id": "iiv4aqwko",
-          "pageId": "ya8jg183r",
-          "title": "Get inventory items",
-          "description": "Fetch character's collected items"
-        },
-        {
-          "id": "4luc65jjq",
-          "pageId": "ya8jg183r",
-          "title": "Vote on character",
-          "description": "Submit upvote or downvote on character"
-        },
-        {
-          "id": "qlw2wdj5q",
-          "pageId": "ya8jg183r",
-          "title": "Share character profile",
-          "description": "Generate and copy character profile link"
-        }
-      ],
-      "0m8z6uvaz": [
-        {
-          "id": "bhue4f2oh",
-          "pageId": "0m8z6uvaz",
-          "title": "Get trending content",
-          "description": "Fetch popular characters and quiz sets"
-        },
-        {
-          "id": "71olg56fm",
-          "pageId": "0m8z6uvaz",
-          "title": "Get activity feed",
-          "description": "Fetch recent community activities"
-        },
-        {
-          "id": "v1ci28pmf",
-          "pageId": "0m8z6uvaz",
-          "title": "Get community statistics",
-          "description": "Fetch overall community metrics"
-        },
-        {
-          "id": "yavwvvv06",
-          "pageId": "0m8z6uvaz",
-          "title": "Get featured spotlight",
-          "description": "Fetch currently featured content"
-        }
-      ],
-      "di5ha02gm": [
-        {
-          "id": "42fabnfiv",
-          "pageId": "di5ha02gm",
-          "title": "Update profile settings",
-          "description": "Modify user profile information"
-        },
-        {
-          "id": "bjje05918",
-          "pageId": "di5ha02gm",
-          "title": "Update quiz preferences",
-          "description": "Modify quiz feedback and reminder settings"
-        },
-        {
-          "id": "pkx6xorlt",
-          "pageId": "di5ha02gm",
-          "title": "Update adventure preferences",
-          "description": "Modify adventure gameplay settings"
-        },
-        {
-          "id": "ds1i0yyt9",
-          "pageId": "di5ha02gm",
-          "title": "Update privacy settings",
-          "description": "Modify content visibility and permissions"
-        },
-        {
-          "id": "o9tt9u4n8",
-          "pageId": "di5ha02gm",
-          "title": "Update notification settings",
-          "description": "Modify notification preferences"
-        },
-        {
-          "id": "18hsxt3ni",
-          "pageId": "di5ha02gm",
-          "title": "Export user data",
-          "description": "Download user data and content"
-        }
-      ],
-      "rfzebp1md": [
-        {
-          "id": "hg794phal",
-          "pageId": "rfzebp1md",
-          "title": "Get moderation queue",
-          "description": "Fetch pending content for review"
-        },
-        {
-          "id": "ykzzoatt6",
-          "pageId": "rfzebp1md",
-          "title": "Get flagged content",
-          "description": "Fetch reported content items"
-        },
-        {
-          "id": "8z3erzdbo",
-          "pageId": "rfzebp1md",
-          "title": "Get user reports",
-          "description": "Fetch user behavior reports"
-        },
-        {
-          "id": "67q6i4r0a",
-          "pageId": "rfzebp1md",
-          "title": "Moderate content item",
-          "description": "Approve/remove/hide content items"
-        },
-        {
-          "id": "ff8y6emzw",
-          "pageId": "rfzebp1md",
-          "title": "Take user action",
-          "description": "Warn/suspend/ban user accounts"
-        },
-        {
-          "id": "m5vhye4o9",
-          "pageId": "rfzebp1md",
-          "title": "Get audit log",
-          "description": "Fetch moderation action history."
+          "id": "1uuuf8x08",
+          "pageId": "x2bw4j7vj",
+          "title": "Get sticker analytics",
+          "description": "View statistics about received stickers."
         }
       ]
     },
     "parsedPages": [
       {
-        "id": "layout-4kjy9abn9",
+        "id": "layout-nb0tvqaz9",
         "name": "Main Layout Features",
         "route": "",
-        "description": "Primary layout with header containing Quiz.Win logo and user profile popover menu and Includes sidebar for quick access to quiz library, character management, and adventure modes. Footer displays community stats and links."
+        "description": "Primary layout with header containing Beep.Buzz logo and authenticaion avatar button/menu, with a profile link button and a sign out button. Includes a minimal footer with essential links."
       },
       {
-        "id": "layout-qfe9oiiym",
-        "name": "Admin Features",
+        "id": "layout-pb4b7plwp",
+        "name": "Admin Layout Features",
         "route": "",
-        "description": "Moderation navigation header. Sidebar with content queues and analytics."
+        "description": "Admin-specific layout with header containing the beep.buzz logo (link to home) and the same authentication avatar button/menu as the Main layout. Includes sidebar with content flagging queue, user management, and sticker approval tools."
       },
       {
-        "id": "ax2ahsfnt",
+        "id": "rl8b8v24d",
         "name": "Home",
         "route": "/",
-        "description": "Landing with dual CTAs: \"Build Quiz Library\" and \"Start Adventure.\" Showcases featured characters, popular quiz sets, recent completions. Quick access to active content for authenticated users."
+        "description": "The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action."
       },
       {
-        "id": "1m5s1zqzv",
+        "id": "2yjux32oc",
         "name": "Sign In",
         "route": "/sign-in",
-        "description": "Authentication page where existing users can sign in with email and password to access their quiz library and characters."
+        "description": "Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers."
       },
       {
-        "id": "yw00rx5ui",
-        "name": "Sign Up",
-        "route": "/sign-up",
-        "description": "Registration page for new users to create an account with email and password, with clear benefits of joining the Quiz.Win community."
-      },
-      {
-        "id": "nx68ba1qn",
-        "name": "Forgot Password",
-        "route": "/forgot-password",
-        "description": "Page where users can request a password reset link by entering their email address."
-      },
-      {
-        "id": "wvyoc67hn",
-        "name": "Reset Password",
-        "route": "/reset-password",
-        "description": "Page where users can set a new password after clicking the reset link from their email."
-      },
-      {
-        "id": "kq1bsgjyl",
-        "name": "Welcome",
+        "id": "dg8xt3z7q",
+        "name": "Welcome Setup",
         "route": "/welcome",
-        "description": "First-time setup page where new users customize their profile including user name, bio, avatar and quiz preferences. Redirects to the character creation screen"
+        "description": "First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup."
       },
       {
-        "id": "4robczp66",
-        "name": "Quiz Library",
-        "route": "/quizzes",
-        "description": "Sidebar with content sets (personal/imported indicators). Main view shows selected set with questions, stats, management tools. Actions: Take Quiz, Edit, Analytics, Share Toggle, Delete. Buttons for \"Create New\" and \"Browse Community.\""
+        "id": "gck8gvfgb",
+        "name": "User Page",
+        "route": "/[username]",
+        "description": "Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and \"Add Beep/Buzz\" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page."
       },
       {
-        "id": "vblfj3def",
-        "name": "Character Dashboard",
-        "route": "/characters",
-        "description": "Character management dashboard showing all created adventure characters, their stats, achievements, and available quests. Users can customize appearance and share characters."
+        "id": "b2c0ac6t3",
+        "name": "Page Editor",
+        "route": "/editor",
+        "description": "Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile."
       },
       {
-        "id": "euntwkdc6",
-        "name": "Adventure Mode",
-        "route": "/adventure/[characterId]",
-        "description": "Main viewport for story text. Sidebar with portrait and stats. AI narrative with genre-appropriate atmosphere. Quiz modals with content attribution. Answer triggers consequences and story beats. Progress bar, pause menu with stats/history/share options."
+        "id": "jp4qijm6a",
+        "name": "Content Moderation",
+        "route": "/admin",
+        "description": "Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions."
       },
       {
-        "id": "2638hw18o",
-        "name": "Create Quiz",
-        "route": "/quizzes/create",
-        "description": "Quiz creation workflow with options to add quizes: upload (PDF/DOCX/MD/TXT) by button or by drag and drop, or generate with AI, or create from scratch. Quizes are populated into a quiz creation UX that the user can edit. There is the option to share the quiz, which is submitted to admin for approval "
-      },
-      {
-        "id": "ya8jg183r",
-        "name": "Character profile",
-        "route": "/characters/[characterId]",
-        "description": "\nHero portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share. Creator link. Edit options if owned."
-      },
-      {
-        "id": "0m8z6uvaz",
-        "name": "Community",
-        "route": "/community",
-        "description": "Tabs: Characters and Quiz Sets. Trending content, activity feed, community stats. Featured spotlight rotation. Links to full Explore pages."
-      },
-      {
-        "id": "di5ha02gm",
+        "id": "x2bw4j7vj",
         "name": "Settings",
         "route": "/settings",
-        "description": "Tabs: Profile (username, email, avatar, bio), Quiz Preferences (feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions."
-      },
-      {
-        "id": "rfzebp1md",
-        "name": "Content moderation",
-        "route": "/admin",
-        "description": "Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel."
+        "description": "Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns."
       }
     ],
     "featuresGenerated": true
   },
   "readmeState": {
-    "title": "Quiz.Win",
-    "description": "quiz.win combines quiz content management with narrative-driven gamification. Users build quiz libraries by uploading materials, manually creating questions, or using AI generation. They track performance with detailed analytics per content set. Users create adventure characters (Cyberpunk/Fantasy genre; Wizard/Brute/Assassin class) that progress through AI-generated narratives by answering quiz questions. Correct answers advance the story; incorrect answers cause health loss or story branching. Characters evolve visually with stats, achievements, and items. Both characters and quiz sets can be shared publicly for community voting, commenting, and importing. Any quiz content can fuel any character's adventure.",
+    "title": "Beep.Buzz",
+    "description": "beep.buzz is a simple and playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, patterns, digital illustrations, and embedded YouTube videos. Users viewing the pages interact by placing decorative \"beep\" and \"buzz\" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. Each user can design their own beep and buzz stickers, which are retroactively updated across the app. AI analysis at publish time ensures that pages and sticker content is safe. Content can be flagged as inappropriate, which is then reviewed by an admin",
     "pages": [
       {
-        "id": "ax2ahsfnt",
+        "id": "rl8b8v24d",
         "name": "Home",
         "route": "/",
-        "description": "Landing with dual CTAs: \"Build Quiz Library\" and \"Start Adventure.\" Showcases featured characters, popular quiz sets, recent completions. Quick access to active content for authenticated users.",
+        "description": "The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action.",
         "layoutIds": [
-          "4kjy9abn9"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "1m5s1zqzv",
+        "id": "2yjux32oc",
         "name": "Sign In",
         "route": "/sign-in",
-        "description": "Authentication page where existing users can sign in with email and password to access their quiz library and characters.",
+        "description": "Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers.",
         "layoutIds": [
-          "4kjy9abn9"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "yw00rx5ui",
-        "name": "Sign Up",
-        "route": "/sign-up",
-        "description": "Registration page for new users to create an account with email and password, with clear benefits of joining the Quiz.Win community.",
-        "layoutIds": [
-          "4kjy9abn9"
-        ]
-      },
-      {
-        "id": "nx68ba1qn",
-        "name": "Forgot Password",
-        "route": "/forgot-password",
-        "description": "Page where users can request a password reset link by entering their email address.",
-        "layoutIds": [
-          "4kjy9abn9"
-        ]
-      },
-      {
-        "id": "wvyoc67hn",
-        "name": "Reset Password",
-        "route": "/reset-password",
-        "description": "Page where users can set a new password after clicking the reset link from their email.",
-        "layoutIds": [
-          "4kjy9abn9"
-        ]
-      },
-      {
-        "id": "kq1bsgjyl",
-        "name": "Welcome",
+        "id": "dg8xt3z7q",
+        "name": "Welcome Setup",
         "route": "/welcome",
-        "description": "First-time setup page where new users customize their profile including user name, bio, avatar and quiz preferences. Redirects to the character creation screen",
+        "description": "First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.",
         "layoutIds": [
-          "4kjy9abn9"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "4robczp66",
-        "name": "Quiz Library",
-        "route": "/quizzes",
-        "description": "Sidebar with content sets (personal/imported indicators). Main view shows selected set with questions, stats, management tools. Actions: Take Quiz, Edit, Analytics, Share Toggle, Delete. Buttons for \"Create New\" and \"Browse Community.\"",
+        "id": "gck8gvfgb",
+        "name": "User Page",
+        "route": "/[username]",
+        "description": "Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and \"Add Beep/Buzz\" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page.",
         "layoutIds": [
-          "4kjy9abn9"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "vblfj3def",
-        "name": "Character Dashboard",
-        "route": "/characters",
-        "description": "Character management dashboard showing all created adventure characters, their stats, achievements, and available quests. Users can customize appearance and share characters.",
+        "id": "b2c0ac6t3",
+        "name": "Page Editor",
+        "route": "/editor",
+        "description": "Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile.",
         "layoutIds": [
-          "4kjy9abn9"
+          "nb0tvqaz9"
         ]
       },
       {
-        "id": "euntwkdc6",
-        "name": "Adventure Mode",
-        "route": "/adventure/[characterId]",
-        "description": "Main viewport for story text. Sidebar with portrait and stats. AI narrative with genre-appropriate atmosphere. Quiz modals with content attribution. Answer triggers consequences and story beats. Progress bar, pause menu with stats/history/share options.",
+        "id": "jp4qijm6a",
+        "name": "Content Moderation",
+        "route": "/admin",
+        "description": "Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.",
         "layoutIds": [
-          "4kjy9abn9"
+          "pb4b7plwp"
         ]
       },
       {
-        "id": "2638hw18o",
-        "name": "Create Quiz",
-        "route": "/quizzes/create",
-        "description": "Quiz creation workflow with options to add quizes: upload (PDF/DOCX/MD/TXT) by button or by drag and drop, or generate with AI, or create from scratch. Quizes are populated into a quiz creation UX that the user can edit. There is the option to share the quiz, which is submitted to admin for approval ",
-        "layoutIds": [
-          "4kjy9abn9"
-        ]
-      },
-      {
-        "id": "ya8jg183r",
-        "name": "Character profile",
-        "route": "/characters/[characterId]",
-        "description": "\nHero portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share. Creator link. Edit options if owned.",
-        "layoutIds": [
-          "4kjy9abn9"
-        ]
-      },
-      {
-        "id": "0m8z6uvaz",
-        "name": "Community",
-        "route": "/community",
-        "description": "Tabs: Characters and Quiz Sets. Trending content, activity feed, community stats. Featured spotlight rotation. Links to full Explore pages.",
-        "layoutIds": [
-          "4kjy9abn9"
-        ]
-      },
-      {
-        "id": "di5ha02gm",
+        "id": "x2bw4j7vj",
         "name": "Settings",
         "route": "/settings",
-        "description": "Tabs: Profile (username, email, avatar, bio), Quiz Preferences (feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions.",
-        "layoutIds": [
-          "4kjy9abn9"
-        ]
-      },
-      {
-        "id": "rfzebp1md",
-        "name": "Content moderation",
-        "route": "/admin",
-        "description": "Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel.",
-        "layoutIds": [
-          "qfe9oiiym"
-        ]
+        "description": "Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns.",
+        "layoutIds": []
       }
     ],
     "authMethods": {
-      "emailPassword": true,
-      "magicLink": false
+      "emailPassword": false,
+      "magicLink": true
     },
     "pageAccess": [
       {
-        "pageId": "ax2ahsfnt",
+        "pageId": "rl8b8v24d",
         "anon": true,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "1m5s1zqzv",
-        "anon": true,
-        "auth": false,
-        "admin": false
-      },
-      {
-        "pageId": "yw00rx5ui",
+        "pageId": "2yjux32oc",
         "anon": true,
         "auth": false,
         "admin": false
       },
       {
-        "pageId": "nx68ba1qn",
-        "anon": true,
-        "auth": false,
-        "admin": false
-      },
-      {
-        "pageId": "wvyoc67hn",
-        "anon": true,
-        "auth": false,
-        "admin": false
-      },
-      {
-        "pageId": "kq1bsgjyl",
+        "pageId": "dg8xt3z7q",
         "anon": false,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "4robczp66",
-        "anon": false,
-        "auth": true,
-        "admin": true
-      },
-      {
-        "pageId": "vblfj3def",
-        "anon": false,
-        "auth": true,
-        "admin": true
-      },
-      {
-        "pageId": "euntwkdc6",
-        "anon": false,
-        "auth": true,
-        "admin": true
-      },
-      {
-        "pageId": "2638hw18o",
-        "anon": false,
-        "auth": true,
-        "admin": true
-      },
-      {
-        "pageId": "ya8jg183r",
+        "pageId": "gck8gvfgb",
         "anon": true,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "0m8z6uvaz",
-        "anon": true,
+        "pageId": "b2c0ac6t3",
+        "anon": false,
         "auth": true,
         "admin": true
       },
       {
-        "pageId": "rfzebp1md",
+        "pageId": "jp4qijm6a",
         "anon": false,
         "auth": false,
+        "admin": true
+      },
+      {
+        "pageId": "x2bw4j7vj",
+        "anon": false,
+        "auth": true,
         "admin": true
       }
     ],
     "stage": "pages",
     "lastGeneratedForAuth": {
-      "title": "Quiz.Win",
-      "description": "quiz.win combines quiz content management with narrative-driven gamification. Users build quiz libraries by uploading materials, manually creating questions, or using AI generation. They track performance with detailed analytics per content set. Users create adventure characters (Cyberpunk/Fantasy genre; Wizard/Brute/Assassin class) that progress through AI-generated narratives by answering quiz questions. Correct answers advance the story; incorrect answers cause health loss or story branching. Characters evolve visually with stats, achievements, and items. Both characters and quiz sets can be shared publicly for community voting, commenting, and importing. Any quiz content can fuel any character's adventure."
+      "title": "Beep.Buzz",
+      "description": "beep.buzz is a simple and playful social media platform where users create personalized pages at their own subdomain (username.beep.buzz). Each page is a customizable, vertically-scrolling canvas containing text, shapes, patterns, digital illustrations, and embedded YouTube videos. Users viewing the pages interact by placing decorative \"beep\" and \"buzz\" stickers on each other's pages, with each sticker serving as a clickable link to that visitor's page. Each user can design their own beep and buzz stickers, which are retroactively updated across the app. AI analysis at publish time ensures that pages and sticker content is safe. Content can be flagged as inappropriate, which is then reviewed by an admin"
     },
     "lastGeneratedForPages": {
-      "emailPassword": true,
-      "magicLink": false
+      "emailPassword": false,
+      "magicLink": true
     },
-    "lastGeneratedForReadme": "{\"layouts\":[],\"pages\":[{\"id\":\"ax2ahsfnt\",\"name\":\"Home\",\"route\":\"/\",\"description\":\"Landing with dual CTAs: \\\"Build Quiz Library\\\" and \\\"Start Adventure.\\\" Showcases featured characters, popular quiz sets, recent completions. Quick access to active content for authenticated users.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"1m5s1zqzv\",\"name\":\"Sign In\",\"route\":\"/sign-in\",\"description\":\"Authentication page where existing users can sign in with email and password to access their quiz library and characters.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"yw00rx5ui\",\"name\":\"Sign Up\",\"route\":\"/sign-up\",\"description\":\"Registration page for new users to create an account with email and password, with clear benefits of joining the Quiz.Win community.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"nx68ba1qn\",\"name\":\"Forgot Password\",\"route\":\"/forgot-password\",\"description\":\"Page where users can request a password reset link by entering their email address.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"wvyoc67hn\",\"name\":\"Reset Password\",\"route\":\"/reset-password\",\"description\":\"Page where users can set a new password after clicking the reset link from their email.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"kq1bsgjyl\",\"name\":\"Welcome\",\"route\":\"/welcome\",\"description\":\"First-time setup page where new users customize their profile including user name, bio, avatar and quiz preferences. Redirects to the character creation screen\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"4robczp66\",\"name\":\"Quiz Library\",\"route\":\"/quizzes\",\"description\":\"Sidebar with content sets (personal/imported indicators). Main view shows selected set with questions, stats, management tools. Actions: Take Quiz, Edit, Analytics, Share Toggle, Delete. Buttons for \\\"Create New\\\" and \\\"Browse Community.\\\"\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"vblfj3def\",\"name\":\"Character Dashboard\",\"route\":\"/characters\",\"description\":\"Character management dashboard showing all created adventure characters, their stats, achievements, and available quests. Users can customize appearance and share characters.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"euntwkdc6\",\"name\":\"Adventure Mode\",\"route\":\"/adventure/[characterId]\",\"description\":\"Main viewport for story text. Sidebar with portrait and stats. AI narrative with genre-appropriate atmosphere. Quiz modals with content attribution. Answer triggers consequences and story beats. Progress bar, pause menu with stats/history/share options.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"2638hw18o\",\"name\":\"Create Quiz\",\"route\":\"/quizzes/create\",\"description\":\"Quiz creation workflow with options to add quizes: upload (PDF/DOCX/MD/TXT) by button or by drag and drop, or generate with AI, or create from scratch. Quizes are populated into a quiz creation UX that the user can edit. There is the option to share the quiz, which is submitted to admin for approval \",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"ya8jg183r\",\"name\":\"Character profile\",\"route\":\"/characters/[characterId]\",\"description\":\"\\nHero portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share. Creator link. Edit options if owned.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"0m8z6uvaz\",\"name\":\"Community\",\"route\":\"/community\",\"description\":\"Tabs: Characters and Quiz Sets. Trending content, activity feed, community stats. Featured spotlight rotation. Links to full Explore pages.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"di5ha02gm\",\"name\":\"Settings\",\"route\":\"/settings\",\"description\":\"Tabs: Profile (username, email, avatar, bio), Quiz Preferences (feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions.\",\"layoutIds\":[\"4kjy9abn9\"]},{\"id\":\"rfzebp1md\",\"name\":\"Content moderation\",\"route\":\"/admin\",\"description\":\"Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel.\",\"layoutIds\":[\"qfe9oiiym\"]}]}"
+    "lastGeneratedForReadme": "{\"layouts\":[{\"id\":\"nb0tvqaz9\",\"name\":\"Main Layout\",\"description\":\"Primary layout with header containing Beep.Buzz logo and authenticaion avatar button/menu, with a profile link button and a sign out button. Includes a minimal footer with essential links.\"},{\"id\":\"pb4b7plwp\",\"name\":\"Admin Layout\",\"description\":\"Admin-specific layout with header containing the beep.buzz logo (link to home) and the same authentication avatar button/menu as the Main layout. Includes sidebar with content flagging queue, user management, and sticker approval tools.\"}],\"pages\":[{\"id\":\"rl8b8v24d\",\"name\":\"Home\",\"route\":\"/\",\"description\":\"The main discovery and navigation hub. Users can search for pages by title or username, browse featured sections (Popular Pages, Recently Active, New Pages), filter by categories, or discover random pages. Each page card displays title, username, preview, sticker counts, and category. Includes a prominent 'Create Your Page' call-to-action.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"2yjux32oc\",\"name\":\"Sign In\",\"route\":\"/sign-in\",\"description\":\"Authentication page where users enter their email address to receive a magic link for passwordless sign-in. Features playful beep.buzz branding and animated stickers.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"dg8xt3z7q\",\"name\":\"Welcome Setup\",\"route\":\"/welcome\",\"description\":\"First-time user profile setup after email magic link authentication. Choose unique username (3-20 URL-friendly characters, AI-scanned). Select and customize personal beep and buzz icons, choosing icons, colors, and shapes. Immediate access to explore and place stickers after setup.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"gck8gvfgb\",\"name\":\"User Page\",\"route\":\"/[username]\",\"description\":\"Each user's personal subdomain page. Shows static header with page title, username, creator's stickers, and counts. Sticky header with sticker visibility toggle and \\\"Add Beep/Buzz\\\" buttons. Main content area with creator's elements and visitor stickers layered on top. Clicking stickers reveals who placed them and navigates to their page.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"b2c0ac6t3\",\"name\":\"Page Editor\",\"route\":\"/editor\",\"description\":\"Builder interface for creating and customizing personal pages. Users add text blocks, shapes, dividers, and YouTube embeds. Elements can be dragged, resized, aligned, edited, and deleted. Includes responsive preview toggles for desktop, tablet, and mobile.\",\"layoutIds\":[\"nb0tvqaz9\"]},{\"id\":\"jp4qijm6a\",\"name\":\"Content Moderation\",\"route\":\"/admin\",\"description\":\"Admin dashboard for reviewing flagged content, managing user reports, and approving new sticker designs. Includes AI analysis results and content moderation tools. Actions include approve (unhide/dismiss reports), remove permanently, warn users, and ban users. Audit log tracks all moderation actions.\",\"layoutIds\":[\"pb4b7plwp\"]},{\"id\":\"x2bw4j7vj\",\"name\":\"Settings\",\"route\":\"/settings\",\"description\":\"Manage personal sticker identity and account. Change beep and buzz icons from available libraries, customize colors and background shapes. Changes update retroactively everywhere. Activity overview shows all pages with placed stickers, with navigation and removal options. Analytics show total stickers received with breakdowns.\",\"layoutIds\":[]}]}"
   },
   "databaseTablesState": {
-    "tableDescriptions": [],
-    "tablesGenerated": false,
-    "accordionValue": "",
-    "expandedTableId": null,
+    "tableDescriptions": [
+      {
+        "id": "ttycx8bfv",
+        "name": "profiles",
+        "description": "Stores application-specific user profile data including username, customized beep/buzz sticker settings, and account preferences that extends the Supabase auth.users table"
+      },
+      {
+        "id": "3hh0ilo5n",
+        "name": "pages",
+        "description": "Contains user-created pages with titles, metadata, and visibility settings"
+      },
+      {
+        "id": "lxw12men3",
+        "name": "page_elements",
+        "description": "Stores individual content elements (text, shapes, dividers, YouTube embeds) and their properties for each page"
+      },
+      {
+        "id": "04o3pymvy",
+        "name": "stickers",
+        "description": "Records placed beep and buzz stickers, including position coordinates, page reference, and placement metadata"
+      },
+      {
+        "id": "1srusarfp",
+        "name": "content_flags",
+        "description": "Tracks reported content with reason codes, reporter information, and moderation status"
+      },
+      {
+        "id": "j302ru361",
+        "name": "moderation_logs",
+        "description": "Audit trail of all content moderation actions including approvals, removals, warnings, and bans"
+      },
+      {
+        "id": "089we8tfo",
+        "name": "sticker_designs",
+        "description": "Stores custom sticker designs with approval status and configuration options"
+      },
+      {
+        "id": "sm5w2qa5c",
+        "name": "categories",
+        "description": "List of available page categories for content organization and filtering"
+      },
+      {
+        "id": "aefhha70a",
+        "name": "page_categories",
+        "description": "Junction table linking pages to their assigned categories"
+      }
+    ],
+    "tablesGenerated": true,
+    "accordionValue": "step-tables",
+    "expandedTableId": "aefhha70a",
     "lastGeneratedAppStructure": null,
-    "lastGeneratedTableDescriptions": null
+    "lastGeneratedTableDescriptions": [
+      {
+        "id": "ttycx8bfv",
+        "name": "profiles",
+        "description": "Stores application-specific user profile data including username, customized beep/buzz sticker settings, and account preferences that extends the Supabase auth.users table"
+      },
+      {
+        "id": "3hh0ilo5n",
+        "name": "pages",
+        "description": "Contains user-created pages with titles, metadata, and visibility settings"
+      },
+      {
+        "id": "lxw12men3",
+        "name": "page_elements",
+        "description": "Stores individual content elements (text, shapes, dividers, YouTube embeds) and their properties for each page"
+      },
+      {
+        "id": "04o3pymvy",
+        "name": "stickers",
+        "description": "Records placed beep and buzz stickers, including position coordinates, page reference, and placement metadata"
+      },
+      {
+        "id": "1srusarfp",
+        "name": "content_flags",
+        "description": "Tracks reported content with reason codes, reporter information, and moderation status"
+      },
+      {
+        "id": "j302ru361",
+        "name": "moderation_logs",
+        "description": "Audit trail of all content moderation actions including approvals, removals, warnings, and bans"
+      },
+      {
+        "id": "089we8tfo",
+        "name": "sticker_designs",
+        "description": "Stores custom sticker designs with approval status and configuration options"
+      },
+      {
+        "id": "sm5w2qa5c",
+        "name": "categories",
+        "description": "List of available page categories for content organization and filtering"
+      },
+      {
+        "id": "aefhha70a",
+        "name": "page_categories",
+        "description": "Junction table linking pages to their assigned categories"
+      }
+    ]
   },
   "nextStepsState": {
-    "openStep": "step-1",
+    "openStep": "step-9",
     "unlockedSteps": [
       1,
-      2
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
     ]
   }
 }
