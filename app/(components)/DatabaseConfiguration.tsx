@@ -341,7 +341,7 @@ export const DatabaseConfiguration = () => {
   }, []);
 
   useEffect(() => {
-    if (databaseGenerated) {
+    if (databaseGenerated && !showSuccessView) {
       setShowSuccessView(true);
     }
   }, [databaseGenerated]);

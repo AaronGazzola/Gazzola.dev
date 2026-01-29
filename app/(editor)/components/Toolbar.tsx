@@ -654,6 +654,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           enums: databaseState.enums,
           rlsPolicies: databaseState.rlsPolicies,
           plugins: databaseState.plugins,
+          activeTab: databaseState.activeTab,
         },
         appStructureState: {
           inferredFeatures: appStructureState.inferredFeatures,
@@ -778,6 +779,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             progressData.databaseState.plugins.forEach((plugin: any) => {
               databaseStore.addPlugin(plugin);
             });
+          }
+          if (progressData.databaseState.activeTab !== undefined) {
+            databaseStore.setActiveTab(progressData.databaseState.activeTab);
           }
         }
 
@@ -912,6 +916,8 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         }
 
         editorStore.forceRefresh();
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
         toast.success("Progress restored successfully!");
         setUploadDialogOpen(false);

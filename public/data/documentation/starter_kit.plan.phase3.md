@@ -1,0 +1,142 @@
+# Starter Kit Implementation Plan - Phase 3
+
+IMPORTANT: Implement this complete plan. Do not skip, alter or simplify any steps. Do not change the implementation order. Do not implement the plan using multiple agents in parallel, complete each step in sequence. If you're not able to complete any of the required steps, or if you need additional information then stop and ask for clarification, don't just continue and "fill in the gaps".
+
+This is a complete step-by-step guide for building a Next.js application using the starter kit configuration files.
+
+---
+
+## Phase 3: Build Application
+
+Complete each of the steps in this phase for each page in each directory of `documentation/initial_configuration/App_Directory.md`.
+Construct each page using the information provided in the `README.md` file.
+
+### Build Order Strategy
+
+Work from the root outward, completing all pages at each directory nesting level before proceeding deeper. Build layouts with their first page or before.
+
+**Example build order:**
+
+```txt
+app/
+├── 1. layout.tsx (+ layout.stores.ts, layout.actions.ts, layout.types.ts)
+├── 2. page.tsx (+ page.hooks.tsx, page.types.ts, etc.)
+│
+├── (auth)/
+│   ├── 3. layout.tsx
+│   └── login/
+│       └── 3. page.tsx (+ page.hooks.tsx, page.types.ts)
+│
+├── (dashboard)/
+│   ├── 4. layout.tsx (+ layout.stores.ts)
+│   ├── 4. page.tsx (+ page.hooks.tsx)
+│   │
+│   └── analytics/
+│       └── 6. page.tsx (+ page.stores.ts, page.hooks.tsx)
+│
+└── [username]/
+    ├── 5. page.tsx (+ page.actions.ts, page.types.ts)
+    │
+    └── edit/
+        └── 7. page.tsx (+ page.stores.ts, page.hooks.tsx)
+```
+
+**Order explanation:**
+
+1. Root layout (wraps entire app)
+2. Root page (first level)
+3. First-level directories: `(auth)/login` and `(dashboard)/` root
+4. Continue first-level: `(dashboard)/` root and `[username]/`
+5. Second-level: `(dashboard)/analytics/` and `[username]/edit/`
+
+When building each page, ensure its parent layouts are already built.
+
+### Step 3.1: Read Page Specification
+
+From `documentation/initial_configuration/App_Directory.md`, identify:
+
+- Page or layout path and route
+- Required features
+- Hooks, actions, stores, types needed
+
+From `README.md`, identify:
+
+- The purpose, structure and overall functionality of each page and related layout(s)
+
+### Step 3.2: Create Types
+
+In the corresponding `page.types.ts` or `layout.types.ts` file, define types using the types in `supabase/types.ts`, following the approach demonstrated in `documentation/template_files/template.types.ts`
+
+### Step 3.3: Create Actions (if needed)
+
+In the corresponding `page.actions.ts` or `layout.actions.ts` file, define server action(s) following the approach demonstrated in `documentation/template_files/template.actions.ts`
+
+### Step 3.4: Create Stores
+
+In the corresponding `page.stores.ts` or `layout.stores.ts` file, define Zustand store(s) following the approach demonstrated in `documentation/template_files/template.stores.ts`
+
+### Step 3.5: Create Hooks
+
+In the corresponding `page.hooks.ts` or `layout.hooks.ts` file, define React-Query hook(s) following the approach demonstrated in `documentation/template_files/template.hooks.ts`
+
+### Step 3.6: Build Page Component
+
+In `page.tsx` or `layout.tsx`, implement the UI.
+
+All pages and components must be fully responsive down to 320px screen width. This ensures the application works on all mobile devices, including smaller smartphones.
+
+**Implementation considerations:**
+
+- Layouts may need to rearrange at lower screen widths (e.g., switching from horizontal to vertical layouts)
+- Component scaling should adjust appropriately (e.g., reducing padding, font sizes, or element dimensions)
+- Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`, etc.) to handle breakpoints
+- Ensure interactive elements remain accessible and usable at all screen sizes
+- Horizontal scrolling should only occur when intentional (e.g., image carousels)
+
+---
+
+## Phase 4: Final Steps
+
+### Step 4.1: Create Commit
+
+```bash
+git add .
+git commit -m "Initialize application with starter kit
+
+- Set up Next.js 15 with Tailwind v4 and Shadcn
+- Configure Supabase with migrations and type generation
+- Add all pages and features from App_Directory.md
+- Apply theme configuration
+- Test all functionality"
+```
+
+### Step 4.2: Push to Repository
+
+```bash
+git push
+```
+
+### Step 4.3: Inform User
+
+IMPORTANT: Display this exact message at the end of the process:
+
+> "Setup complete! Your application is initialized and ready to start development. The foundation is ready, including: database integration, authentication, application architecture, programming patterns, and themed components.
+>
+> Follow the steps below to test it out!
+>
+> 1. Open terminal in VS Code (Ctrl + \` or Cmd + \`)
+> 2. Type `npm run dev` into the terminal and hit the `Enter` key
+> 3. Type `http://localhost:3000` into your browser's URL bar
+> 4. Explore your app! You can sign in with the admin email you provided and the password: `Password123!`
+>
+> Keep in mind that this is a first version - there will likely be bugs and some missing features. You can now chat with me to shape your app towards your vision.
+>
+> You can ask me to:
+>
+> - Add new features or pages
+> - Modify existing functionality
+> - Fix bugs or improve performance
+>
+> Where would you like to begin?"
+
+---

@@ -600,7 +600,11 @@ const generateThemeCss = (): string => {
     const darkOther = theme.other.dark;
 
     const formatShadow = (shadow: any) => {
-      return `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${shadow.color} / ${shadow.opacity}`;
+      const hasOpacity = shadow.opacity !== undefined && shadow.opacity !== 1;
+      const colorWithOpacity = hasOpacity
+        ? shadow.color.replace(/\)$/, ` / ${shadow.opacity})`)
+        : shadow.color;
+      return `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${colorWithOpacity}`;
     };
 
     const extractFontName = (fontValue: string): string => {
@@ -694,21 +698,41 @@ const generateThemeCss = (): string => {
       { key: "sidebarRing", css: "--sidebar-ring" },
     ];
 
-    const fontSans = extractFontName(lightTypography.fontSans || "Inter");
-    const fontSerif = extractFontName(lightTypography.fontSerif || "Merriweather");
-    const fontMono = extractFontName(lightTypography.fontMono || "JetBrains Mono");
-    const fontSansDark = extractFontName(darkTypography.fontSans || lightTypography.fontSans || "Inter");
-    const fontSerifDark = extractFontName(darkTypography.fontSerif || lightTypography.fontSerif || "Merriweather");
-    const fontMonoDark = extractFontName(darkTypography.fontMono || lightTypography.fontMono || "JetBrains Mono");
+    const isGoogleFont = (fontValue: string): boolean => {
+      return fontValue.includes('var(--font-');
+    };
 
-    const allFonts = new Set([fontSans, fontSerif, fontMono, fontSansDark, fontSerifDark, fontMonoDark]);
-    const fontImports = Array.from(allFonts).map(font => getFontImportName(font)).join(', ');
+    const fontSansValue = lightTypography.fontSans || "var(--font-inter)";
+    const fontSerifValue = lightTypography.fontSerif || "var(--font-merriweather)";
+    const fontMonoValue = lightTypography.fontMono || "var(--font-jetbrains)";
+    const fontSansDarkValue = darkTypography.fontSans || lightTypography.fontSans || "var(--font-inter)";
+    const fontSerifDarkValue = darkTypography.fontSerif || lightTypography.fontSerif || "var(--font-merriweather)";
+    const fontMonoDarkValue = darkTypography.fontMono || lightTypography.fontMono || "var(--font-jetbrains)";
+
+    const googleFontValues = [
+      fontSansValue,
+      fontSerifValue,
+      fontMonoValue,
+      fontSansDarkValue,
+      fontSerifDarkValue,
+      fontMonoDarkValue
+    ].filter(isGoogleFont);
+
+    const fontSans = extractFontName(fontSansValue);
+    const fontSerif = extractFontName(fontSerifValue);
+    const fontMono = extractFontName(fontMonoValue);
+    const fontSansDark = extractFontName(fontSansDarkValue);
+    const fontSerifDark = extractFontName(fontSerifDarkValue);
+    const fontMonoDark = extractFontName(fontMonoDarkValue);
+
+    const allGoogleFonts = new Set(googleFontValues.map(v => extractFontName(v)));
+    const fontImports = Array.from(allGoogleFonts).map(font => getFontImportName(font)).join(', ');
 
     const fontConfigs: string[] = [];
     const fontVariables: string[] = [];
     const processedFonts = new Set<string>();
 
-    allFonts.forEach((font) => {
+    allGoogleFonts.forEach((font) => {
       const importName = getFontImportName(font);
       const constName = `font${importName}`;
       const cssVarName = getFontVariableName(font);
@@ -777,10 +801,14 @@ const generateThemeCss = (): string => {
       }
     });
 
+    const getFontCssValue = (fontValue: string, fontName: string, fallback: string): string => {
+      return isGoogleFont(fontValue) ? `${getFontCssVariable(fontName)}, ${fallback}` : fontValue;
+    };
+
     lines.push(``);
-    lines.push(`  --font-sans: ${getFontCssVariable(fontSans)}, sans-serif;`);
-    lines.push(`  --font-serif: ${getFontCssVariable(fontSerif)}, serif;`);
-    lines.push(`  --font-mono: ${getFontCssVariable(fontMono)}, monospace;`);
+    lines.push(`  --font-sans: ${getFontCssValue(fontSansValue, fontSans, 'sans-serif')};`);
+    lines.push(`  --font-serif: ${getFontCssValue(fontSerifValue, fontSerif, 'serif')};`);
+    lines.push(`  --font-mono: ${getFontCssValue(fontMonoValue, fontMono, 'monospace')};`);
     lines.push(`  --letter-spacing: ${lightTypography.letterSpacing}px;`);
     lines.push(``);
     lines.push(`  --radius: ${lightOther.radius}rem;`);
@@ -805,9 +833,9 @@ const generateThemeCss = (): string => {
     });
 
     lines.push(``);
-    lines.push(`  --font-sans: ${getFontCssVariable(fontSansDark)}, sans-serif;`);
-    lines.push(`  --font-serif: ${getFontCssVariable(fontSerifDark)}, serif;`);
-    lines.push(`  --font-mono: ${getFontCssVariable(fontMonoDark)}, monospace;`);
+    lines.push(`  --font-sans: ${getFontCssValue(fontSansDarkValue, fontSansDark, 'sans-serif')};`);
+    lines.push(`  --font-serif: ${getFontCssValue(fontSerifDarkValue, fontSerifDark, 'serif')};`);
+    lines.push(`  --font-mono: ${getFontCssValue(fontMonoDarkValue, fontMonoDark, 'monospace')};`);
     lines.push(`  --letter-spacing: ${darkTypography.letterSpacing}px;`);
     lines.push(``);
     lines.push(`  --radius: ${darkOther.radius}rem;`);

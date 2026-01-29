@@ -256,7 +256,7 @@ export const LayoutAndStructure = () => {
   }, [featuresGenerated, inferredFeatures, globalExpandedFeatureId]);
 
   useEffect(() => {
-    if (appStructureGenerated) {
+    if (appStructureGenerated && !showSuccessView) {
       setShowSuccessView(true);
     }
   }, [appStructureGenerated]);

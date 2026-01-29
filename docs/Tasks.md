@@ -1,3 +1,4 @@
 # Tasks
 
-- expand the context window and request limit for the app directory generation and database generation
+- Ensure save and load functionality works properly
+- Add a download button for the claude settings that the user should first place in the root dir

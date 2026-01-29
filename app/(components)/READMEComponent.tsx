@@ -116,7 +116,7 @@ export const READMEComponent = () => {
   }, [stage]);
 
   useEffect(() => {
-    if (readmeGenerated) {
+    if (readmeGenerated && !showSuccessView) {
       setShowSuccessView(true);
     }
   }, [readmeGenerated]);
@@ -371,7 +371,7 @@ export const READMEComponent = () => {
             className="h-8 w-8 rounded-full"
             onClick={() => {
               setShowSuccessView(false);
-              setAccordionValue("step-3-pages");
+              setAccordionValue("step-1-description");
             }}
           >
             <CornerLeftUp className="h-4 w-4" />

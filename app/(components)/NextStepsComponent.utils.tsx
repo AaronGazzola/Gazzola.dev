@@ -205,6 +205,7 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
    - Once prerequisites are confirmed, install Next.js in the current directory
    - Use the command: npx create-next-app@latest . --no-tailwind --yes
    - This accepts all defaults (TypeScript, ESLint, App Router) but skips Tailwind so we can install v4 manually later
+   - If there are files and/or directories in the root dir then first move them to a temporary directory, then run the create-next-app command, then replace them 
 
 3. CLEAN UP BOILERPLATE
    - After installation, help me delete unnecessary boilerplate files
@@ -219,7 +220,8 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
      3. Click "API Keys" in the left settings menu
      4. Scroll down to "Publishable key" and click the copy button next to the "default" key and paste it here (starts with "sb_publishable_")
      5. Scroll down to "Secret keys" and click the copy button next to the "default" key and paste it here (starts with "sb_secret_")
-     6. Also copy the URL in your browser's URL/search bar (starts with: "https://supabase.com/dashboard/project/") and paste it here 
+     6. Also copy the URL in your browser's URL/search bar (starts with: "https://supabase.com/dashboard/project/") and paste it here
+     7. In the dashboard sidebar, click "Authentication" → "URL Configuration" → add "http://localhost:3000/auth/callback" to Redirect URLs and save. Also add any other domain names that you will use for this app, ie "https://yourdomain.com/auth/callback"
 
    - After I provide these credentials, create a .env.local file (extract the supabase URL and project ref from the full url provided, eg: "https://supabase.com/dashboard/project/cqblezzhywdjerslhgho/settings/api-keys/legacy" -> "https://cqblezzhywdjerslhgho.supabase.co" + "cqblezzhywdjerslhgho"):
      NEXT_PUBLIC_SUPABASE_URL=<my-project-url>
@@ -229,7 +231,7 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
 
    - Verify .gitignore ignores ".env.local" but does not ignore ".env.example"
    - Add a ".env.example" file with the supabase key variable names without the values
-   - Run "npx supabase status" to check if supabase is authenticated, if not authenticated, then prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "npx supabase login" and follow the prompts to authenticate supabase 
+   - Run "npx supabase projects list" to check if supabase is authenticated, if not authenticated, then prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "npx supabase login" and follow the prompts to authenticate supabase 
 
 5. INITIAL COMMIT AND PUSH
    - Commit and push the changes
@@ -260,9 +262,9 @@ export const generateFinalPrompt = (
    - Verify all files and folders are in place
    - IMPORTANT: Delete the "${starterKitName}" directory or zip file after extracting all contents
 
-3. CREATE IMPLEMENTATION PLAN
-   - Read documentation/starter_kit.plan.md
+3. CREATE IMPLEMENTATION PLAN FOR PHASE 1
+   - Read documentation/starter_kit.plan.phase1.md
    - Switch to plan mode and create a step-by-step plan from the instructions in that document
 
-IMPORTANT: Follow the starter_kit.plan.md document exactly. It contains all the detailed instructions for the setup process. DO NOT CHANGE THE IMPLEMENTATION ORDER - FOLLOW THE PLAN EXACTLY`;
+IMPORTANT: Follow the starter_kit.plan.phase1.md document exactly. It contains all the detailed instructions for Phase 1 (Tailwind and Shadcn configuration). After completing Phase 1, you will be directed to Phase 2 and Phase 3. DO NOT CHANGE THE IMPLEMENTATION ORDER - FOLLOW THE PLAN EXACTLY`;
 };
