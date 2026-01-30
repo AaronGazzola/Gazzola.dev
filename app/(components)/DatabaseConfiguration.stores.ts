@@ -2008,6 +2008,12 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
         });
       },
 
+      setTables: (tables) => set({ tables }),
+
+      setEnums: (enums) => set({ enums }),
+
+      setRLSPolicies: (rlsPolicies) => set({ rlsPolicies }),
+
       setEnumsFromAI: (newEnums) => {
         set({ enums: newEnums });
       },

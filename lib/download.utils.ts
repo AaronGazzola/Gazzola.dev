@@ -1811,6 +1811,30 @@ export const generateAndDownloadZip = async (
     throw new Error("Failed to create starter kit folder");
   }
 
+  const claudeFolder = starterKitFolder.folder(".claude");
+  if (claudeFolder) {
+    const settingsContent = {
+      permissions: {
+        allow: [
+          "Bash(npm:*)",
+          "Bash(npx:*)",
+          "Bash(git:*)",
+          "Bash(supabase:*)",
+          "Bash(node:*)",
+          "Bash(mkdir:*)",
+          "Bash(rm:*)",
+          "Bash(mv:*)",
+          "Bash(cp:*)",
+          "Bash(ls:*)",
+          "Bash(cat:*)",
+          "Bash(touch:*)",
+          "Bash(unzip:*)"
+        ]
+      }
+    };
+    claudeFolder.file("settings.local.json", JSON.stringify(settingsContent, null, 2));
+  }
+
   try {
     const claudeResponse = await fetch("/data/CLAUDE.md");
     if (claudeResponse.ok) {

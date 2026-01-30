@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "timestamp": "2026-01-29T23:21:32.477Z",
+  "timestamp": "2026-01-30T00:53:16.761Z",
   "editorState": {
     "data": {
       "root": {
@@ -908,7 +908,7 @@
           "order": 1,
           "path": "readme",
           "urlPath": "/readme",
-          "content": "<!-- component-READMEComponent -->\n\n# Quiz.Win\n\n## Overview\n\nQuiz.Win transforms traditional learning into an engaging adventure by merging educational quizzes with immersive storytelling. Users create and manage personalized quiz libraries while embarking on narrative-driven journeys where knowledge becomes power. Whether you're an educator crafting custom content or a learner seeking an exciting way to master new topics, Quiz.Win offers a unique blend of education and entertainment.\n\nThe platform features AI-powered quiz generation, character-driven storylines, and robust community features that encourage sharing and collaboration. Track your progress through detailed analytics while building a collection of achievements that showcase your learning journey. With multiple quiz creation methods and flexible content management, Quiz.Win adapts to your unique learning style and goals.\n\n## Pages\n\n### Home (/) [Public]\nThe welcoming gateway to Quiz.Win presents two distinct pathways: Quiz Library creation and Adventure Mode. The hero section showcases trending characters and popular quiz sets, while an activity feed highlights recent community achievements. Featured content rotates regularly to showcase top-rated quizzes and successful learning journeys.\n\nFor authenticated users, the home page transforms into a personalized dashboard displaying active quizzes, character progress, and recommended content based on interests and past performance. Quick-access controls enable instant quiz creation or adventure continuation.\n\n### Sign In (/sign-in) [Public]\nThe sign-in page offers a streamlined authentication experience with email and password fields. Clear error messaging helps users quickly resolve any login issues, while prominent links guide them to account recovery or registration if needed.\n\nSocial authentication options provide alternative login methods, and the \"Remember Me\" feature enables convenient access for returning users. The page maintains Quiz.Win's engaging visual style while prioritizing security and ease of use.\n\n### Sign Up (/sign-up) [Public]\nNew users begin their Quiz.Win journey through an inviting registration form that highlights platform benefits. The signup process collects essential information while explaining how Quiz.Win will enhance their learning experience.\n\nEmail verification ensures account security, and users receive immediate access to a guided welcome tour. The page includes social proof elements showing community statistics and testimonials from active users.\n\n### Forgot Password (/forgot-password) [Public]\nThe password recovery page presents a simple, focused interface for users to request account access restoration. Clear instructions guide users through the process, explaining each step and expected timeframes.\n\nSecurity measures protect user privacy while maintaining ease of use. The system provides immediate feedback and clear next steps after submission.\n\n### Reset Password (/reset-password) [Public]\nUsers complete their password reset journey on this security-focused page. Password requirements are clearly displayed, helping users create strong credentials while preventing common mistakes.\n\nThe page includes additional account security recommendations and offers direct access to support if needed. Upon successful reset, users are guided back to the login page with confirmation of their updated credentials.\n\n### Welcome (/welcome) [Private]\nNew users begin their Quiz.Win experience with a personalized onboarding wizard. This multi-step process helps them set learning preferences, customize their profile, and create their first adventure character.\n\nInteractive tutorials introduce key features while users make meaningful choices about their learning journey. The welcome flow concludes with personalized content recommendations and clear next steps for beginning their adventure.\n\n### Profile (/profile) [Private]\nUsers manage their Quiz.Win identity through a comprehensive profile dashboard. Achievement badges, learning statistics, and created content are prominently displayed, celebrating progress and encouraging continued engagement.\n\nProfile customization options allow users to express their personality while managing privacy settings and notification preferences. The page includes sections for favorite quizzes, character collections, and community contributions.\n\n### Quiz Creator (/create) [Private]\nThe quiz creation hub offers multiple pathways for content generation. Users can manually craft questions, import existing content, or utilize AI assistance to rapidly build comprehensive quiz sets.\n\nRich formatting tools and media integration options enable engaging, multi-modal learning experiences. Preview functionality helps creators ensure quality before publishing to their library or the community.\n\n### Quiz Library (/library) [Private]\nPersonal quiz collections are organized in an intuitive library interface. Users can sort, filter, and categorize their content while tracking usage statistics and performance metrics for each quiz set.\n\nSharing controls enable flexible content distribution to individuals or groups. The library includes version history and editing tools for maintaining and improving quiz content over time.\n\n### Adventure Mode (/adventure) [Private]\nEnter an immersive learning environment where knowledge powers progress through narrative scenarios. Users select their character and embark on themed quests that combine quiz challenges with storytelling.\n\nReal-time feedback and adaptive difficulty ensure engaging, effective learning sessions. The adventure interface tracks progress, rewards achievements, and suggests personalized learning paths.\n\n### Character Creator (/characters) [Private]\nDesign unique avatars to represent your learning journey. The character creator offers extensive customization options while tying appearance elements to achievements and progress milestones.\n\nCharacters gain abilities and equipment through successful quiz completion, creating visible representations of knowledge growth. The page includes a character gallery and sharing options for community interaction.\n\n### Community Hub (/community) [Private]\nConnect with fellow learners in a vibrant space for content sharing and collaboration. Browse popular quizzes, follow favorite creators, and participate in community challenges and events.\n\nModerated forums enable knowledge exchange and support, while a reputation system recognizes valuable contributors. Users can form study groups and share learning resources.\n\n### Leaderboards (/leaderboards) [Private]\nTrack your standing across various achievement categories. Leaderboards showcase top performers in quiz creation, adventure progress, and community contribution.\n\nRegular competitions and seasonal events provide fresh challenges and rewards. Users can view detailed statistics and share their accomplishments on social media.\n\n### Settings (/settings) [Private]\nCustomize your Quiz.Win experience through comprehensive control panels. Manage account security, notification preferences, privacy settings, and content display options.\n\nIntegration settings allow connection with external learning tools and social platforms. The page includes data management options and accessibility features.\n\n## Authentication & Access Control\n\nQuiz.Win implements secure authentication through email/password combinations and popular social login providers. Two-factor authentication is available for enhanced security. Public pages include Home, Sign In, Sign Up, and password recovery flows, while all other features require authentication.\n\nAccess levels ensure content privacy and user data protection. Premium features are clearly marked, and parental controls are available for educational accounts.\n\n## User Experience\n\nQuiz.Win prioritizes intuitive navigation and engaging interactions. The platform adapts to user preferences, offering both quick-access tools for efficient quiz management and immersive features for adventure mode. Clear progress indicators and achievement feedback maintain motivation while learning.\n\nResponsive design ensures seamless experiences across devices, while accessibility features make content available to all users. Regular engagement prompts and personalized recommendations help users maintain learning momentum.\n\n## Getting Started\n\n1. Create your account through email registration or social login\n2. Complete the welcome wizard to personalize your experience\n3. Create your first character or generate a quiz set\n4. Explore Adventure Mode or share content with the community\n5. Track progress through achievements and statistics\n6. Join community challenges and connect with other learners",
+          "content": "<!-- component-READMEComponent -->\n\n# Quiz.Win\n\n## Overview\n\nQuiz.Win revolutionizes educational engagement by seamlessly blending quiz-based learning with narrative adventures. This innovative platform transforms traditional study materials into immersive experiences where knowledge acquisition drives character progression and story development.\n\nThrough advanced AI technology, Quiz.Win automatically converts various content formats into engaging quiz sets while weaving them into dynamic storytelling experiences. Students create unique characters who grow stronger through successful quiz completion, making learning feel like a compelling game rather than a chore.\n\nThe platform fosters a vibrant community where educators and learners can share content, showcase achievements, and collaborate on educational journeys. With comprehensive analytics and progress tracking, Quiz.Win provides meaningful insights into learning patterns while maintaining an engaging, game-like atmosphere.\n\n## Pages\n\n### Home (/) [Public]\n\nThe Home page welcomes users with a striking hero section featuring dual call-to-action buttons for quiz creation and adventure mode. A dynamic content grid showcases popular quiz sets and active adventures, while a real-time activity feed highlights community achievements and shared content.\n\nUsers can quickly access their recent quizzes, view personalized recommendations based on their learning history, and see their characters' latest achievements. The page serves as a central hub, providing clear pathways to all core platform features.\n\nFeatured content is automatically curated based on user preferences, community ratings, and current learning trends, ensuring relevant and engaging material is always at the forefront.\n\n### Sign In (/sign-in) [Public]\n\nThe Sign In page presents a streamlined authentication interface with email and password fields. The clean, minimalist design emphasizes security while maintaining accessibility, with clear options for password recovery and new account creation.\n\nUsers can enable \"Remember Me\" functionality for convenient access on trusted devices, while robust error handling provides clear feedback for incorrect credentials. Social authentication options are prominently displayed for quick access.\n\nThe page includes helpful links to the help center and community guidelines, ensuring users can quickly resolve access issues or learn more about platform features.\n\n### Sign Up (/sign-up) [Public]\n\nThe Sign Up page features an intuitive registration form that clearly communicates platform benefits while collecting essential user information. The form implements real-time validation with visual feedback, ensuring users create secure accounts.\n\nNew users can choose their primary interests and preferred learning styles during registration, enabling personalized content recommendations from their first login. The page includes clear terms of service and privacy policy links.\n\nA progressive form design breaks registration into manageable steps, preventing overwhelming new users while collecting necessary information for a personalized experience.\n\n### Forgot Password (/forgot-password) [Public]\n\nThe Forgot Password page provides a simple, secure way to regain account access. Users enter their email address to receive a time-limited reset link, with clear instructions and confirmation messaging throughout the process.\n\nRate limiting and security measures protect against abuse while maintaining a user-friendly experience. The page includes alternative contact options for users needing additional assistance.\n\nClear status messages keep users informed about the recovery process, with estimated timeframes for reset link delivery and expiration information.\n\n### Reset Password (/reset-password) [Public]\n\nThe Reset Password page guides users through creating a new secure password. A strength meter provides real-time feedback as users type, ensuring compliance with security requirements while explaining any issues in user-friendly language.\n\nThe page requires password confirmation to prevent typos and includes visibility toggles for password fields. After successful reset, users receive confirmation and are directed to sign in with their new credentials.\n\nSecurity features include automatic invalidation of old reset links and notification of successful password changes to the account email.\n\n### Welcome (/welcome) [Authenticated]\n\nThe Welcome page introduces new users to Quiz.Win through an engaging setup wizard. Users personalize their experience by selecting interests, learning goals, and preferred quiz types through an interactive interface.\n\nThe character creation process is introduced here, with users selecting their first character class and customizing appearance. The wizard provides tips and explanations for each choice's impact on the learning experience.\n\nProgress is automatically saved at each step, allowing users to return later if needed. Upon completion, users receive their first quest and recommended content based on their selections.\n\n### Quiz Library (/quizzes) [Authenticated]\n\nThe Quiz Library serves as the content management hub, displaying user-created and saved quizzes in an organized grid view. Advanced filtering and search capabilities help users quickly find specific content or discover new material.\n\nUsers can create quiz sets manually or through AI-assisted generation, with options to import from various file formats. Analytics provide insights into quiz performance and learning patterns.\n\nSharing controls allow users to make quizzes public or private, with options to collaborate with specific users or groups. Integration with the adventure system shows which quizzes are currently active in storylines.\n\n### Character Dashboard (/characters) [Authenticated]\n\nThe Character Dashboard displays all user characters in an visually appealing grid, showcasing character statistics, achievements, and current quests. Each character card provides quick access to continue adventures or view detailed profiles.\n\nUsers can create new characters, customize appearances, and manage character progression. The dashboard highlights character synergies and suggests optimal quiz combinations for advancement.\n\nReal-time updates show character experience gains and achievement unlocks, with celebrations for significant milestones.\n\n### Adventure Mode (/adventure/[characterId]) [Authenticated]\n\nAdventure Mode transforms quiz-taking into an epic journey, with a dynamic story viewport that adapts to user choices and quiz performance. The character sidebar displays relevant stats and quest progress.\n\nThe narrative automatically incorporates quiz content into the story, creating meaningful context for learning. Users can pause adventures at any time, with progress automatically saved.\n\nAI-driven story generation ensures each adventure feels unique, with multiple possible paths based on quiz performance and character choices.\n\n### Create Quiz (/quizzes/create) [Authenticated]\n\nThe Create Quiz interface offers multiple content creation methods, from manual entry to AI-assisted generation. Users can upload documents, paste text, or write questions directly, with real-time preview and editing capabilities.\n\nThe AI assistant helps generate questions, suggests improvements, and ensures balanced difficulty levels. Multiple question types are supported, including multiple choice, short answer, and matching.\n\nCollaboration features allow multiple users to work on quiz sets simultaneously, with version history and change tracking.\n\n### Character Profile (/characters/[characterId]) [Authenticated]\n\nCharacter Profiles showcase detailed character statistics, achievement history, and current quests. A prominent character portrait and customization options allow users to personalize their learning avatar.\n\nThe profile tracks learning progress across different subjects and quiz types, displaying this information through engaging visualizations. Social features enable character sharing and community interaction.\n\nAn activity feed shows recent achievements and quest completions, with options to share milestones on the community board.\n\n### Community (/community) [Authenticated]\n\nThe Community hub features a tabbed interface showcasing shared content, character achievements, and learning milestones. Users can interact with shared content through comments, ratings, and quiz attempts.\n\nContent discovery tools help users find relevant materials and connect with others sharing similar interests. Featured content rotates regularly to maintain engagement and highlight quality contributions.\n\nModeration tools ensure community guidelines are maintained, with options to report inappropriate content or behavior.\n\n### Settings (/settings) [Authenticated]\n\nThe Settings page provides comprehensive control over account preferences, notification settings, and privacy options. Users can manage their profile information, connected accounts, and learning preferences.\n\nAdvanced options include quiz default settings, adventure preferences, and accessibility features. Data export and account management tools are clearly organized and easily accessible.\n\nSecurity settings allow users to review active sessions, change authentication methods, and manage connected applications.\n\n### Content Moderation (/admin) [Admin]\n\nThe Content Moderation dashboard provides administrators with tools to review and manage user-generated content. Moderation queues organize content by type and priority, streamlining the review process.\n\nDetailed analytics track content quality metrics and user behavior patterns. Administrative tools enable quick action on reported content and user management.\n\nThe interface includes bulk action capabilities and automated moderation features to maintain community standards efficiently.\n\n## Authentication & Access Control\n\nQuiz.Win implements a secure, multi-level authentication system to protect user data and content. Authentication methods include email/password login and optional social authentication through major providers.\n\nAccess levels:\n\n- Public: Home, Sign In, Sign Up, Forgot Password, Reset Password\n- Authenticated: All main features and community content\n- Admin: Content moderation and platform management\n\n## User Experience\n\nQuiz.Win prioritizes an intuitive, engaging user journey that begins with simple registration and evolves into a rich learning adventure. The platform guides new users through character creation and initial quiz selection, ensuring a smooth onboarding experience.\n\nNavigation follows natural learning progressions, with clear pathways between quiz creation, character development, and adventure mode. Interactive elements provide immediate feedback, while achievements and character progression create compelling motivation for continued engagement.\n\nThe interface adapts to user preferences and learning patterns, presenting personalized content recommendations and tailored adventure opportunities. Social features are seamlessly integrated, encouraging community participation while maintaining focus on individual learning goals.\n\n## Getting Started\n\n1. Create your account\n\n- Sign up with email or social authentication\n- Complete the welcome wizard\n- Create your first character\n\n2. Build your quiz library\n\n- Import existing materials\n- Use AI-assisted generation\n- Create custom quiz sets\n\n3. Begin your adventure\n\n- Select a quest line\n- Complete quizzes to progress\n- Track achievements and character growth\n\n4. Join the community\n\n- Share your content\n- Connect with other learners\n- Participate in events and challenges",
           "components": [
             {
               "id": "component-READMEComponent",
@@ -1077,7 +1077,7 @@
           "order": 2,
           "path": "theme",
           "urlPath": "/theme",
-          "content": "# Theme configuration\n\nSelect and customize your theme! These styles will be applied to every component in your generated web app.\n\n<!-- component-ThemeConfiguration -->",
+          "content": "# Theme configuration\n\nSelect and customize your theme! These styles will be applied to every component in your generated web app.\n\n<!-- component-ThemeConfiguration -->\n",
           "components": [
             {
               "id": "component-ThemeConfiguration",
@@ -1113,7 +1113,7 @@
           "order": 3,
           "path": "app-directory",
           "urlPath": "/app-directory",
-          "content": "# App Directory\n\n<!-- component-LayoutAndStructure -->",
+          "content": "# App Directory\n\n<!-- component-LayoutAndStructure -->\n",
           "components": [
             {
               "id": "component-LayoutAndStructure",
@@ -1586,7 +1586,7 @@
             "type": "directory",
             "children": [
               {
-                "id": "signin-dir",
+                "id": "sign-in-dir",
                 "name": "sign-in",
                 "type": "directory",
                 "children": [
@@ -1594,27 +1594,17 @@
                     "id": "signin-page",
                     "name": "page.tsx",
                     "type": "file"
-                  },
-                  {
-                    "id": "signin-hooks",
-                    "name": "page.hooks.tsx",
-                    "type": "file"
                   }
                 ]
               },
               {
-                "id": "signup-dir",
+                "id": "sign-up-dir",
                 "name": "sign-up",
                 "type": "directory",
                 "children": [
                   {
                     "id": "signup-page",
                     "name": "page.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "signup-hooks",
-                    "name": "page.hooks.tsx",
                     "type": "file"
                   }
                 ]
@@ -1628,11 +1618,6 @@
                     "id": "forgot-page",
                     "name": "page.tsx",
                     "type": "file"
-                  },
-                  {
-                    "id": "page-hooks-tsx-1769562465575",
-                    "name": "page.hooks.tsx",
-                    "type": "file"
                   }
                 ]
               },
@@ -1644,11 +1629,6 @@
                   {
                     "id": "reset-page",
                     "name": "page.tsx",
-                    "type": "file"
-                  },
-                  {
-                    "id": "page-hooks-tsx-1769562465575",
-                    "name": "page.hooks.tsx",
                     "type": "file"
                   }
                 ]
@@ -1727,21 +1707,26 @@
                 "type": "file"
               },
               {
-                "id": "char-dynamic",
+                "id": "char-id-dir",
                 "name": "[characterId]",
                 "type": "directory",
                 "children": [
                   {
-                    "id": "char-page",
+                    "id": "charid-page",
                     "name": "page.tsx",
                     "type": "file"
                   },
                   {
-                    "id": "char-hooks",
+                    "id": "charid-hooks",
                     "name": "page.hooks.tsx",
                     "type": "file"
                   }
                 ]
+              },
+              {
+                "id": "page-stores-ts-1769732753186",
+                "name": "page.stores.ts",
+                "type": "file"
               }
             ]
           },
@@ -1751,7 +1736,7 @@
             "type": "directory",
             "children": [
               {
-                "id": "adv-char-dir",
+                "id": "adv-charid-dir",
                 "name": "[characterId]",
                 "type": "directory",
                 "children": [
@@ -1780,12 +1765,12 @@
             "type": "directory",
             "children": [
               {
-                "id": "comm-page",
+                "id": "community-page",
                 "name": "page.tsx",
                 "type": "file"
               },
               {
-                "id": "comm-hooks",
+                "id": "community-hooks",
                 "name": "page.hooks.tsx",
                 "type": "file"
               }
@@ -1948,7 +1933,7 @@
             "hooks": "useFeaturedCharacters",
             "actions": "getFeaturedCharactersAction",
             "stores": "useCharacterStore",
-            "types": "FeaturedCharacter"
+            "types": "FeaturedCharacters"
           },
           "isEditing": false
         },
@@ -1966,7 +1951,7 @@
             "hooks": "usePopularQuizzes",
             "actions": "getPopularQuizzesAction",
             "stores": "useQuizStore",
-            "types": "PopularQuizSet"
+            "types": "PopularQuizzes"
           },
           "isEditing": false
         },
@@ -1984,7 +1969,7 @@
             "hooks": "useRecentCompletions",
             "actions": "getRecentCompletionsAction",
             "stores": "useCompletionsStore",
-            "types": "RecentCompletion"
+            "types": "RecentCompletions"
           },
           "isEditing": false
         }
@@ -1995,7 +1980,7 @@
           "title": "Sign in with email and password",
           "description": "Authenticate user with email and password credentials",
           "linkedFiles": {
-            "hooks": "/app/(auth)/sign-in/page.hooks.tsx",
+            "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
             "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
@@ -2015,7 +2000,7 @@
           "title": "Create user account",
           "description": "Register new user with email and password",
           "linkedFiles": {
-            "hooks": "/app/(auth)/sign-up/page.hooks.tsx",
+            "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
             "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
@@ -2035,16 +2020,16 @@
           "title": "Send password reset email",
           "description": "Send password reset link to user's email address",
           "linkedFiles": {
-            "hooks": "/app/(auth)/forgot-password/page.hooks.tsx",
+            "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
             "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "usePasswordResetEmail",
-            "actions": "sendPasswordResetEmailAction",
+            "hooks": "useForgotPassword",
+            "actions": "forgotPasswordAction",
             "stores": "useAuthStore",
-            "types": "PasswordResetEmail"
+            "types": "ForgotPasswordInput"
           },
           "isEditing": false
         }
@@ -2055,16 +2040,16 @@
           "title": "Reset user password",
           "description": "Update user's password using reset token",
           "linkedFiles": {
-            "hooks": "/app/(auth)/reset-password/page.hooks.tsx",
+            "hooks": "/app/layout.hooks.tsx",
             "actions": "/app/layout.actions.ts",
             "stores": "/app/layout.stores.ts",
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "usePasswordReset",
+            "hooks": "useResetPassword",
             "actions": "resetPasswordAction",
             "stores": "useAuthStore",
-            "types": "PasswordResetCredentials"
+            "types": "ResetPasswordInput"
           },
           "isEditing": false
         }
@@ -2140,7 +2125,7 @@
             "hooks": "useQuizSets",
             "actions": "getQuizSetsAction",
             "stores": "useQuizStore",
-            "types": "QuizSetCollection"
+            "types": "QuizSet"
           },
           "isEditing": false
         },
@@ -2157,8 +2142,8 @@
           "functionNames": {
             "hooks": "useQuizSession",
             "actions": "startQuizSessionAction",
-            "stores": "useQuizStore",
-            "types": "QuizSession"
+            "stores": "useQuizSessionStore",
+            "types": "QuizSessionData"
           },
           "isEditing": false
         },
@@ -2173,10 +2158,10 @@
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useEditQuiz",
+            "hooks": "useEditQuizSet",
             "actions": "editQuizSetAction",
             "stores": "useQuizStore",
-            "types": "EditQuizInput"
+            "types": "EditQuizSetInput"
           },
           "isEditing": false
         },
@@ -2193,7 +2178,7 @@
           "functionNames": {
             "hooks": "useQuizAnalytics",
             "actions": "getQuizAnalyticsAction",
-            "stores": "useQuizStore",
+            "stores": "useAnalyticsStore",
             "types": "QuizAnalytics"
           },
           "isEditing": false
@@ -2227,7 +2212,7 @@
             "types": "/app/layout.types.ts"
           },
           "functionNames": {
-            "hooks": "useDeleteQuiz",
+            "hooks": "useDeleteQuizSet",
             "actions": "deleteQuizSetAction",
             "stores": "useQuizStore",
             "types": "DeleteQuizResult"
@@ -2285,7 +2270,7 @@
           "functionNames": {
             "hooks": "useAvailableQuests",
             "actions": "getAvailableQuestsAction",
-            "stores": "useCharacterStore",
+            "stores": "useQuestStore",
             "types": "AvailableQuest"
           },
           "isEditing": false
@@ -2301,10 +2286,10 @@
             "types": "/app/characters/page.hooks.tsx"
           },
           "functionNames": {
-            "hooks": "useCustomizeAppearance",
+            "hooks": "useCharacterCustomization",
             "actions": "updateCharacterAppearanceAction",
             "stores": "useCharacterCustomizationStore",
-            "types": "CharacterAppearanceInput"
+            "types": "CharacterAppearanceData"
           },
           "isEditing": false
         },
@@ -2322,7 +2307,7 @@
             "hooks": "useCharacterSharing",
             "actions": "generateCharacterShareLinkAction",
             "stores": "useCharacterSharingStore",
-            "types": "CharacterShareResult"
+            "types": "CharacterShareData"
           },
           "isEditing": false
         }
@@ -2378,7 +2363,7 @@
             "hooks": "useQuizSubmission",
             "actions": "submitAdventureQuizAnswerAction",
             "stores": "useAdventureQuizStore",
-            "types": "AdventureQuizSubmission"
+            "types": "AdventureQuizAnswer"
           },
           "isEditing": false
         },
@@ -2414,7 +2399,7 @@
             "hooks": "useAdventureSharing",
             "actions": "shareAdventureStatusAction",
             "stores": "useAdventureSharingStore",
-            "types": "AdventureShareResult"
+            "types": "AdventureShareData"
           },
           "isEditing": false
         }
@@ -2452,7 +2437,7 @@
             "hooks": "useAIQuizGeneration",
             "actions": "generateAIQuizContentAction",
             "stores": "useQuizGenerationStore",
-            "types": "AIGeneratedQuiz"
+            "types": "AIQuizContent"
           },
           "isEditing": false
         },
@@ -2470,7 +2455,7 @@
             "hooks": "useManualQuizCreation",
             "actions": "createManualQuizAction",
             "stores": "useQuizCreationStore",
-            "types": "ManualQuizInput"
+            "types": "ManualQuizData"
           },
           "isEditing": false
         },
@@ -2488,12 +2473,12 @@
             "hooks": "useQuizApprovalSubmission",
             "actions": "submitQuizForApprovalAction",
             "stores": "useQuizApprovalStore",
-            "types": "QuizApprovalSubmission"
+            "types": "QuizApprovalData"
           },
           "isEditing": false
         }
       ],
-      "char-page": [
+      "charid-page": [
         {
           "id": "r48jhrah0",
           "title": "Get character details",
@@ -2519,7 +2504,7 @@
           "linkedFiles": {
             "hooks": "/app/characters/[characterId]/page.hooks.tsx",
             "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/page.stores.ts",
             "types": "/app/characters/[characterId]/page.hooks.tsx"
           },
           "functionNames": {
@@ -2537,7 +2522,7 @@
           "linkedFiles": {
             "hooks": "/app/characters/[characterId]/page.hooks.tsx",
             "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/page.stores.ts",
             "types": "/app/characters/[characterId]/page.hooks.tsx"
           },
           "functionNames": {
@@ -2555,7 +2540,7 @@
           "linkedFiles": {
             "hooks": "/app/characters/[characterId]/page.hooks.tsx",
             "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/page.stores.ts",
             "types": "/app/characters/[characterId]/page.hooks.tsx"
           },
           "functionNames": {
@@ -2573,19 +2558,19 @@
           "linkedFiles": {
             "hooks": "/app/characters/[characterId]/page.hooks.tsx",
             "actions": "/app/characters/[characterId]/page.hooks.tsx",
-            "stores": "/app/characters/[characterId]/page.hooks.tsx",
+            "stores": "/app/characters/page.stores.ts",
             "types": "/app/characters/[characterId]/page.hooks.tsx"
           },
           "functionNames": {
             "hooks": "useProfileSharing",
             "actions": "generateProfileShareLinkAction",
             "stores": "useProfileSharingStore",
-            "types": "ProfileShareResult"
+            "types": "ProfileShareData"
           },
           "isEditing": false
         }
       ],
-      "comm-page": [
+      "community-page": [
         {
           "id": "bhue4f2oh",
           "title": "Get trending content",
@@ -2633,10 +2618,10 @@
             "types": "/app/community/page.hooks.tsx"
           },
           "functionNames": {
-            "hooks": "useCommunityStats",
-            "actions": "getCommunityStatsAction",
-            "stores": "useCommunityStatsStore",
-            "types": "CommunityStats"
+            "hooks": "useCommunityMetrics",
+            "actions": "getCommunityMetricsAction",
+            "stores": "useMetricsStore",
+            "types": "CommunityMetrics"
           },
           "isEditing": false
         },
@@ -2671,10 +2656,10 @@
             "types": "/app/settings/page.hooks.tsx"
           },
           "functionNames": {
-            "hooks": "useUpdateProfile",
-            "actions": "updateProfileAction",
-            "stores": "useProfileStore",
-            "types": "UpdateProfileInput"
+            "hooks": "useProfileSettings",
+            "actions": "updateProfileSettingsAction",
+            "stores": "useSettingsStore",
+            "types": "ProfileSettings"
           },
           "isEditing": false
         },
@@ -2689,10 +2674,10 @@
             "types": "/app/settings/page.hooks.tsx"
           },
           "functionNames": {
-            "hooks": "useQuizPreferences",
-            "actions": "setQuizPreferencesAction",
-            "stores": "usePreferencesStore",
-            "types": "QuizPreferencesInput"
+            "hooks": "useQuizSettings",
+            "actions": "updateQuizSettingsAction",
+            "stores": "useQuizSettingsStore",
+            "types": "QuizSettings"
           },
           "isEditing": false
         },
@@ -2707,10 +2692,10 @@
             "types": "/app/settings/page.hooks.tsx"
           },
           "functionNames": {
-            "hooks": "useAdventurePreferences",
-            "actions": "setAdventurePreferencesAction",
-            "stores": "useAdventurePrefsStore",
-            "types": "AdventurePreferencesInput"
+            "hooks": "useAdventureSettings",
+            "actions": "updateAdventureSettingsAction",
+            "stores": "useAdventureSettingsStore",
+            "types": "AdventureSettings"
           },
           "isEditing": false
         },
@@ -2727,7 +2712,7 @@
           "functionNames": {
             "hooks": "usePrivacySettings",
             "actions": "updatePrivacySettingsAction",
-            "stores": "usePrivacyStore",
+            "stores": "usePrivacySettingsStore",
             "types": "PrivacySettings"
           },
           "isEditing": false
@@ -2745,7 +2730,7 @@
           "functionNames": {
             "hooks": "useNotificationSettings",
             "actions": "updateNotificationSettingsAction",
-            "stores": "useNotificationStore",
+            "stores": "useNotificationSettingsStore",
             "types": "NotificationSettings"
           },
           "isEditing": false
@@ -2853,10 +2838,10 @@
             "types": "/app/(admin)/admin/page.hooks.tsx"
           },
           "functionNames": {
-            "hooks": "useUserModeration",
+            "hooks": "useUserAction",
             "actions": "takeUserActionAction",
-            "stores": "useUserModerationStore",
-            "types": "UserModerationAction"
+            "stores": "useUserActionStore",
+            "types": "UserActionInput"
           },
           "isEditing": false
         },
@@ -3097,6 +3082,40 @@
         ]
       },
       {
+        "id": "0b7wj50ik",
+        "name": "users",
+        "schema": "auth",
+        "isDefault": false,
+        "isEditable": true,
+        "uniqueConstraints": [],
+        "checkConstraints": [],
+        "columns": [
+          {
+            "id": "urlvvd17f",
+            "name": "id",
+            "type": "UUID",
+            "isDefault": true,
+            "isEditable": false,
+            "isOptional": false,
+            "isUnique": false,
+            "isId": true,
+            "isArray": false,
+            "defaultValue": "gen_random_uuid()"
+          },
+          {
+            "id": "68a5fhx2o",
+            "name": "email",
+            "type": "TEXT",
+            "isDefault": true,
+            "isEditable": false,
+            "isOptional": false,
+            "isUnique": true,
+            "isId": false,
+            "isArray": false
+          }
+        ]
+      },
+      {
         "name": "profiles",
         "schema": "public",
         "columns": [
@@ -3105,7 +3124,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "py755x0fe",
+            "id": "5u3jfrmg7",
             "isDefault": false,
             "isEditable": true
           },
@@ -3115,7 +3134,7 @@
             "isOptional": false,
             "references": "auth.users.id",
             "onDelete": "CASCADE",
-            "id": "v40xfreg3",
+            "id": "nmv3voyyf",
             "isDefault": false,
             "isEditable": true
           },
@@ -3123,15 +3142,7 @@
             "name": "username",
             "type": "TEXT",
             "isOptional": false,
-            "id": "2115jo6zq",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "bio",
-            "type": "TEXT",
-            "isOptional": true,
-            "id": "zxcw11w9m",
+            "id": "vfjragkqm",
             "isDefault": false,
             "isEditable": true
           },
@@ -3139,7 +3150,15 @@
             "name": "avatar_url",
             "type": "TEXT",
             "isOptional": true,
-            "id": "zt2xrchv2",
+            "id": "evxq7ubvn",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "bio",
+            "type": "TEXT",
+            "isOptional": true,
+            "id": "ug1dsp0v5",
             "isDefault": false,
             "isEditable": true
           },
@@ -3148,7 +3167,7 @@
             "type": "JSONB",
             "isOptional": true,
             "defaultValue": "'{}'::jsonb",
-            "id": "jqw9izad8",
+            "id": "rslx3yb4d",
             "isDefault": false,
             "isEditable": true
           },
@@ -3157,7 +3176,7 @@
             "type": "JSONB",
             "isOptional": true,
             "defaultValue": "'{}'::jsonb",
-            "id": "ysl7m5sfx",
+            "id": "flr47ymqg",
             "isDefault": false,
             "isEditable": true
           },
@@ -3166,7 +3185,7 @@
             "type": "JSONB",
             "isOptional": true,
             "defaultValue": "'{}'::jsonb",
-            "id": "cv8suq4qa",
+            "id": "bo3jgqb3t",
             "isDefault": false,
             "isEditable": true
           },
@@ -3175,7 +3194,7 @@
             "type": "user_role",
             "isOptional": false,
             "defaultValue": "'user'",
-            "id": "8rkyyikdl",
+            "id": "nwsmd60e6",
             "isDefault": false,
             "isEditable": true
           },
@@ -3183,7 +3202,7 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "7sqfo2ye5",
+            "id": "lzyrimcjv",
             "isDefault": false,
             "isEditable": true
           },
@@ -3191,20 +3210,17 @@
             "name": "updated_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "isOptional": true,
-            "id": "1l6zikp6v",
+            "id": "3grf7cvdn",
             "isDefault": false,
             "isEditable": true
           }
         ],
         "uniqueConstraints": [
           [
-            "user_id"
-          ],
-          [
             "username"
           ]
         ],
-        "id": "6qhw40hrw",
+        "id": "8gqimyanp",
         "isDefault": false,
         "isEditable": true,
         "checkConstraints": []
@@ -3218,7 +3234,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "opahfa6nx",
+            "id": "odjkk2mf6",
             "isDefault": false,
             "isEditable": true
           },
@@ -3227,7 +3243,7 @@
             "type": "UUID",
             "references": "auth.users.id",
             "isOptional": false,
-            "id": "kn6w22fin",
+            "id": "pl1r8hf4f",
             "isDefault": false,
             "isEditable": true
           },
@@ -3237,7 +3253,7 @@
             "references": "profiles.id",
             "onDelete": "CASCADE",
             "isOptional": false,
-            "id": "hzgp0pfin",
+            "id": "8f3195xxq",
             "isDefault": false,
             "isEditable": true
           },
@@ -3245,7 +3261,7 @@
             "name": "title",
             "type": "TEXT",
             "isOptional": false,
-            "id": "cmzxit8l2",
+            "id": "pk06ueaj4",
             "isDefault": false,
             "isEditable": true
           },
@@ -3253,15 +3269,15 @@
             "name": "description",
             "type": "TEXT",
             "isOptional": true,
-            "id": "v06ssgee4",
+            "id": "npqfk2zca",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "sharing_enabled",
+            "name": "is_public",
             "type": "BOOLEAN",
             "defaultValue": "false",
-            "id": "tgnf54dzc",
+            "id": "qxyf50mf6",
             "isDefault": false,
             "isEditable": true
           },
@@ -3269,15 +3285,15 @@
             "name": "approval_status",
             "type": "approval_status",
             "defaultValue": "'pending'",
-            "id": "bq98niwpx",
+            "id": "4033mg7e9",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "metadata",
-            "type": "JSONB",
-            "defaultValue": "'{}'::jsonb",
-            "id": "as6g5kycq",
+            "name": "tags",
+            "type": "TEXT[]",
+            "isOptional": true,
+            "id": "2u3pe1umr",
             "isDefault": false,
             "isEditable": true
           },
@@ -3285,7 +3301,7 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "x4zpbnkpp",
+            "id": "by6zarjhu",
             "isDefault": false,
             "isEditable": true
           },
@@ -3293,12 +3309,12 @@
             "name": "updated_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "isOptional": true,
-            "id": "w5rqgrz8w",
+            "id": "vtv1nzvss",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "f0xqtfxf6",
+        "id": "l9snlmxeb",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -3313,7 +3329,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "xex5rne0g",
+            "id": "2yrokbpqv",
             "isDefault": false,
             "isEditable": true
           },
@@ -3323,7 +3339,7 @@
             "references": "quiz_sets.id",
             "onDelete": "CASCADE",
             "isOptional": false,
-            "id": "sv1ljobpa",
+            "id": "1fg1ikh7n",
             "isDefault": false,
             "isEditable": true
           },
@@ -3332,7 +3348,7 @@
             "type": "UUID",
             "references": "auth.users.id",
             "isOptional": false,
-            "id": "zwg8gjk6b",
+            "id": "l3qc10nbo",
             "isDefault": false,
             "isEditable": true
           },
@@ -3340,7 +3356,7 @@
             "name": "question_text",
             "type": "TEXT",
             "isOptional": false,
-            "id": "g7da68zmf",
+            "id": "c4v1by7c8",
             "isDefault": false,
             "isEditable": true
           },
@@ -3348,15 +3364,15 @@
             "name": "correct_answer",
             "type": "TEXT",
             "isOptional": false,
-            "id": "ogeyk5axe",
+            "id": "75f5gvnrr",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "wrong_answers",
-            "type": "JSONB",
+            "type": "TEXT[]",
             "isOptional": false,
-            "id": "zyyra23v2",
+            "id": "6nrrjfer1",
             "isDefault": false,
             "isEditable": true
           },
@@ -3364,15 +3380,15 @@
             "name": "explanation",
             "type": "TEXT",
             "isOptional": true,
-            "id": "5ro10xpk1",
+            "id": "w3a9pi11n",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "metadata",
-            "type": "JSONB",
-            "defaultValue": "'{}'::jsonb",
-            "id": "56ma492hu",
+            "name": "order_index",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "dx8z7zse3",
             "isDefault": false,
             "isEditable": true
           },
@@ -3380,20 +3396,12 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "clwvidt11",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "updated_at",
-            "type": "TIMESTAMP WITH TIME ZONE",
-            "isOptional": true,
-            "id": "ctfxahaq9",
+            "id": "wl6l5esod",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "fw8okm2xq",
+        "id": "jo8uplj0i",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -3408,7 +3416,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "s8yuorre7",
+            "id": "pyxgx1f5m",
             "isDefault": false,
             "isEditable": true
           },
@@ -3417,7 +3425,7 @@
             "type": "UUID",
             "references": "auth.users.id",
             "isOptional": false,
-            "id": "1e5p06aec",
+            "id": "lo2tgff2t",
             "isDefault": false,
             "isEditable": true
           },
@@ -3427,7 +3435,7 @@
             "references": "quiz_sets.id",
             "onDelete": "CASCADE",
             "isOptional": false,
-            "id": "j5gfm61xm",
+            "id": "216tm96zu",
             "isDefault": false,
             "isEditable": true
           },
@@ -3437,7 +3445,7 @@
             "references": "characters.id",
             "onDelete": "SET NULL",
             "isOptional": true,
-            "id": "1s05hg1tf",
+            "id": "uuoxzr1ay",
             "isDefault": false,
             "isEditable": true
           },
@@ -3445,7 +3453,7 @@
             "name": "answers",
             "type": "JSONB",
             "isOptional": false,
-            "id": "erlrqlvgt",
+            "id": "5ldj59y9u",
             "isDefault": false,
             "isEditable": true
           },
@@ -3453,15 +3461,15 @@
             "name": "score",
             "type": "INTEGER",
             "isOptional": false,
-            "id": "zvr2atae4",
+            "id": "7ob01i1l0",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "completed_at",
             "type": "TIMESTAMP WITH TIME ZONE",
-            "isOptional": true,
-            "id": "6ugogm43d",
+            "defaultValue": "NOW()",
+            "id": "aepj703g3",
             "isDefault": false,
             "isEditable": true
           },
@@ -3469,12 +3477,12 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "rcl6ruxui",
+            "id": "jvlp7eq3x",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "y6uy1tmf5",
+        "id": "urf50rutc",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -3489,7 +3497,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "xdu9bt0yu",
+            "id": "utoihly2e",
             "isDefault": false,
             "isEditable": true
           },
@@ -3498,7 +3506,7 @@
             "type": "UUID",
             "isOptional": false,
             "references": "auth.users.id",
-            "id": "2winw68m5",
+            "id": "ikqtcojyc",
             "isDefault": false,
             "isEditable": true
           },
@@ -3508,7 +3516,7 @@
             "isOptional": false,
             "references": "profiles.id",
             "onDelete": "CASCADE",
-            "id": "ghss6uskw",
+            "id": "s9dy9gqaj",
             "isDefault": false,
             "isEditable": true
           },
@@ -3516,23 +3524,23 @@
             "name": "name",
             "type": "TEXT",
             "isOptional": false,
-            "id": "yd3xh8wd9",
+            "id": "u94kbur39",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "character_class",
+            "name": "class_type",
             "type": "character_class",
             "isOptional": false,
-            "id": "loqvu54u6",
+            "id": "nsy3hxa0c",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "genre",
-            "type": "genre_type",
+            "type": "story_genre",
             "isOptional": false,
-            "id": "ydw11ey3l",
+            "id": "3ylizv8uf",
             "isDefault": false,
             "isEditable": true
           },
@@ -3540,23 +3548,23 @@
             "name": "stats",
             "type": "JSONB",
             "isOptional": false,
-            "id": "c24dfohho",
+            "id": "19cyg9sn9",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "appearance",
             "type": "JSONB",
-            "defaultValue": "'{}'::jsonb",
-            "id": "ak2k0cm9u",
+            "isOptional": true,
+            "id": "nkrgefa54",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "sharing_enabled",
+            "name": "is_public",
             "type": "BOOLEAN",
-            "defaultValue": false,
-            "id": "8nn32iqrs",
+            "defaultValue": "false",
+            "id": "wwtj510mm",
             "isDefault": false,
             "isEditable": true
           },
@@ -3564,7 +3572,7 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "6o7zd0gs9",
+            "id": "gvw2evelh",
             "isDefault": false,
             "isEditable": true
           },
@@ -3572,16 +3580,22 @@
             "name": "updated_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "n7408obpr",
+            "id": "6b9eccqwf",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "jtk3d1opq",
+        "checkConstraints": [
+          {
+            "id": "h6fsvu45c",
+            "name": "name_length",
+            "expression": "LENGTH(name) <= 100"
+          }
+        ],
+        "id": "k1eby10k5",
         "isDefault": false,
         "isEditable": true,
-        "uniqueConstraints": [],
-        "checkConstraints": []
+        "uniqueConstraints": []
       },
       {
         "name": "character_achievements",
@@ -3592,7 +3606,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "kwyvjo7cg",
+            "id": "mij0odzg0",
             "isDefault": false,
             "isEditable": true
           },
@@ -3602,7 +3616,7 @@
             "isOptional": false,
             "references": "characters.id",
             "onDelete": "CASCADE",
-            "id": "z0hmw4xhv",
+            "id": "vj1odys1x",
             "isDefault": false,
             "isEditable": true
           },
@@ -3611,7 +3625,7 @@
             "type": "UUID",
             "isOptional": false,
             "references": "auth.users.id",
-            "id": "se6qu3fvo",
+            "id": "da6fe2k7x",
             "isDefault": false,
             "isEditable": true
           },
@@ -3619,7 +3633,7 @@
             "name": "achievement_type",
             "type": "achievement_type",
             "isOptional": false,
-            "id": "temkz4iii",
+            "id": "l2irsb50m",
             "isDefault": false,
             "isEditable": true
           },
@@ -3627,20 +3641,28 @@
             "name": "earned_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "eclahboci",
+            "id": "keb9u513n",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "metadata",
             "type": "JSONB",
-            "defaultValue": "'{}'::jsonb",
-            "id": "bshn6tjb1",
+            "isOptional": true,
+            "id": "o0i101qwt",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "47bgte2rg",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "jmevlgoo7",
+        "id": "1g6pyfzcn",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -3655,7 +3677,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "66jb7fzp8",
+            "id": "6flqrwnsy",
             "isDefault": false,
             "isEditable": true
           },
@@ -3665,7 +3687,7 @@
             "isOptional": false,
             "references": "characters.id",
             "onDelete": "CASCADE",
-            "id": "fcxm8c3ed",
+            "id": "ywhzf8glf",
             "isDefault": false,
             "isEditable": true
           },
@@ -3674,7 +3696,7 @@
             "type": "UUID",
             "isOptional": false,
             "references": "auth.users.id",
-            "id": "ixlwmm5nh",
+            "id": "ffx6clz8t",
             "isDefault": false,
             "isEditable": true
           },
@@ -3682,15 +3704,15 @@
             "name": "item_type",
             "type": "item_type",
             "isOptional": false,
-            "id": "2ysyyl4zc",
+            "id": "sda9ihjb3",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "item_data",
+            "name": "properties",
             "type": "JSONB",
             "isOptional": false,
-            "id": "060fu19on",
+            "id": "mr39w5bg8",
             "isDefault": false,
             "isEditable": true
           },
@@ -3698,12 +3720,20 @@
             "name": "acquired_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "pb3hwwl13",
+            "id": "xhsmg72d9",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "p1ewmcors",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "zhjigwmtf",
+        "id": "3nxol7tsz",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -3718,7 +3748,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "jrysud4x4",
+            "id": "y1oq0w32d",
             "isDefault": false,
             "isEditable": true
           },
@@ -3728,7 +3758,7 @@
             "isOptional": false,
             "references": "characters.id",
             "onDelete": "CASCADE",
-            "id": "2aj700445",
+            "id": "ptuyhd5if",
             "isDefault": false,
             "isEditable": true
           },
@@ -3737,32 +3767,31 @@
             "type": "UUID",
             "isOptional": false,
             "references": "auth.users.id",
-            "id": "t71owu8el",
+            "id": "dn18dynsp",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "story_id",
-            "type": "UUID",
-            "isOptional": false,
-            "references": "adventure_stories.id",
-            "id": "kopw6ag90",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "current_state",
+            "name": "story_state",
             "type": "JSONB",
             "isOptional": false,
-            "id": "1o5tg7vgy",
+            "id": "x9t1pqoor",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "current_health",
+            "type": "INTEGER",
+            "isOptional": false,
+            "id": "sval0lc87",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "quiz_performance",
             "type": "JSONB",
-            "defaultValue": "'{}'::jsonb",
-            "id": "pr4ljxggs",
+            "isOptional": true,
+            "id": "oucmet47p",
             "isDefault": false,
             "isEditable": true
           },
@@ -3770,7 +3799,7 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "5dkfqm6jj",
+            "id": "a1otqk3sw",
             "isDefault": false,
             "isEditable": true
           },
@@ -3778,16 +3807,22 @@
             "name": "updated_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "id": "857t0tw9k",
+            "id": "schlbqf7e",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "298nezfmm",
+        "checkConstraints": [
+          {
+            "id": "50oqrp8c7",
+            "name": "health_range",
+            "expression": "current_health >= 0 AND current_health <= 100"
+          }
+        ],
+        "id": "tyjpumw85",
         "isDefault": false,
         "isEditable": true,
-        "uniqueConstraints": [],
-        "checkConstraints": []
+        "uniqueConstraints": []
       },
       {
         "name": "adventure_stories",
@@ -3798,41 +3833,56 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "h64t8a136",
+            "id": "i906tujvf",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "genre",
-            "type": "genre_type",
+            "name": "character_id",
+            "type": "UUID",
             "isOptional": false,
-            "id": "fipe7k5em",
+            "references": {
+              "table": "characters",
+              "column": "id",
+              "onDelete": "CASCADE"
+            },
+            "id": "1jwtug7di",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "narrative_content",
-            "type": "JSONB",
+            "name": "user_id",
+            "type": "UUID",
             "isOptional": false,
-            "id": "moo8eek2i",
+            "references": {
+              "table": "auth.users",
+              "column": "id"
+            },
+            "id": "zwk8v7ozx",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "narrative_text",
+            "type": "TEXT",
+            "isOptional": false,
+            "id": "87mxpa617",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "story_branches",
             "type": "JSONB",
-            "defaultValue": "[]",
             "isOptional": true,
-            "id": "8ltt7bbrd",
+            "id": "nq0sfm1yo",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "metadata",
-            "type": "JSONB",
-            "defaultValue": "{}",
-            "isOptional": true,
-            "id": "viicfjr55",
+            "name": "generated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "fxd7hfuyz",
             "isDefault": false,
             "isEditable": true
           },
@@ -3840,13 +3890,20 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "isOptional": true,
-            "id": "a6dhbqhrm",
+            "id": "7aoi5f97f",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "m853k8k92",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "64aslb29e",
+        "id": "3xtyfnijv",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -3861,7 +3918,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "m6l2vyok9",
+            "id": "qr3r5613t",
             "isDefault": false,
             "isEditable": true
           },
@@ -3873,7 +3930,7 @@
               "table": "auth.users",
               "column": "id"
             },
-            "id": "m2ykhb5l2",
+            "id": "iowtjg2cb",
             "isDefault": false,
             "isEditable": true
           },
@@ -3881,7 +3938,7 @@
             "name": "content_type",
             "type": "content_type",
             "isOptional": false,
-            "id": "dw1tz3esn",
+            "id": "ic8nfphqf",
             "isDefault": false,
             "isEditable": true
           },
@@ -3889,7 +3946,7 @@
             "name": "content_id",
             "type": "UUID",
             "isOptional": false,
-            "id": "5undp10hx",
+            "id": "yluz3idlp",
             "isDefault": false,
             "isEditable": true
           },
@@ -3897,7 +3954,7 @@
             "name": "vote_type",
             "type": "vote_type",
             "isOptional": false,
-            "id": "u7zzy8n7c",
+            "id": "9jd0570wo",
             "isDefault": false,
             "isEditable": true
           },
@@ -3905,8 +3962,15 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "isOptional": true,
-            "id": "l26y751rw",
+            "id": "njnluuttx",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "n80ma4hp5",
             "isDefault": false,
             "isEditable": true
           }
@@ -3918,7 +3982,7 @@
             "content_id"
           ]
         ],
-        "id": "u3kodezx5",
+        "id": "lviiz3leo",
         "isDefault": false,
         "isEditable": true,
         "checkConstraints": []
@@ -3932,7 +3996,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "0o6htayl6",
+            "id": "zsx8kak9b",
             "isDefault": false,
             "isEditable": true
           },
@@ -3944,7 +4008,7 @@
               "table": "auth.users",
               "column": "id"
             },
-            "id": "d1s3cdrc8",
+            "id": "kclmm2nad",
             "isDefault": false,
             "isEditable": true
           },
@@ -3952,7 +4016,7 @@
             "name": "content_type",
             "type": "content_type",
             "isOptional": false,
-            "id": "qwplifutk",
+            "id": "mjhf4ovka",
             "isDefault": false,
             "isEditable": true
           },
@@ -3960,7 +4024,7 @@
             "name": "content_id",
             "type": "UUID",
             "isOptional": false,
-            "id": "m4xu95h5z",
+            "id": "21vhu0jy2",
             "isDefault": false,
             "isEditable": true
           },
@@ -3968,7 +4032,7 @@
             "name": "flag_reason",
             "type": "flag_reason",
             "isOptional": false,
-            "id": "9ji5ilcn6",
+            "id": "fvtw187eb",
             "isDefault": false,
             "isEditable": true
           },
@@ -3976,16 +4040,7 @@
             "name": "flag_status",
             "type": "flag_status",
             "defaultValue": "'pending'",
-            "isOptional": true,
-            "id": "ut5yau02e",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "notes",
-            "type": "TEXT",
-            "isOptional": true,
-            "id": "jvr627zd1",
+            "id": "9odpomnys",
             "isDefault": false,
             "isEditable": true
           },
@@ -3993,21 +4048,28 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "isOptional": true,
-            "id": "ol4pmjt68",
+            "id": "19zyvwc1o",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "resolved_at",
+            "name": "reviewed_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "isOptional": true,
-            "id": "rf6qwxocq",
+            "id": "6apv2r913",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "jf9solpwt",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "pj9ghtky1",
+        "id": "th1g48zzd",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -4022,7 +4084,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "4e2176blk",
+            "id": "treevv5lb",
             "isDefault": false,
             "isEditable": true
           },
@@ -4034,23 +4096,19 @@
               "table": "auth.users",
               "column": "id"
             },
-            "id": "bpzkq3h8x",
+            "id": "9r24svve7",
             "isDefault": false,
             "isEditable": true
           },
           {
-            "name": "target_type",
-            "type": "content_type",
-            "isOptional": false,
-            "id": "0hvlnnqd5",
-            "isDefault": false,
-            "isEditable": true
-          },
-          {
-            "name": "target_id",
+            "name": "target_user_id",
             "type": "UUID",
             "isOptional": false,
-            "id": "7ybfylf2p",
+            "references": {
+              "table": "auth.users",
+              "column": "id"
+            },
+            "id": "0p0u3a95y",
             "isDefault": false,
             "isEditable": true
           },
@@ -4058,7 +4116,7 @@
             "name": "action_type",
             "type": "mod_action",
             "isOptional": false,
-            "id": "ug0n0h5po",
+            "id": "g61o8e23x",
             "isDefault": false,
             "isEditable": true
           },
@@ -4066,16 +4124,15 @@
             "name": "reason",
             "type": "TEXT",
             "isOptional": false,
-            "id": "ll24juaic",
+            "id": "6uuwh6ze7",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "metadata",
             "type": "JSONB",
-            "defaultValue": "{}",
             "isOptional": true,
-            "id": "5nqgg8z4e",
+            "id": "rmouo6wbb",
             "isDefault": false,
             "isEditable": true
           },
@@ -4083,13 +4140,20 @@
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
             "defaultValue": "NOW()",
-            "isOptional": true,
-            "id": "24bsye7ma",
+            "id": "fo9hbko4d",
+            "isDefault": false,
+            "isEditable": true
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "defaultValue": "NOW()",
+            "id": "azjtyt9io",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "id": "hicw2r0zf",
+        "id": "nnauzeg5y",
         "isDefault": false,
         "isEditable": true,
         "uniqueConstraints": [],
@@ -4104,7 +4168,7 @@
             "type": "UUID",
             "isId": true,
             "defaultValue": "gen_random_uuid()",
-            "id": "md9k7fxm6",
+            "id": "iqqgsda2b",
             "isDefault": false,
             "isEditable": true
           },
@@ -4113,10 +4177,11 @@
             "type": "UUID",
             "isOptional": false,
             "references": {
-              "table": "auth.users",
+              "table": "users",
+              "schema": "auth",
               "column": "id"
             },
-            "id": "9fwkh1zob",
+            "id": "1gkj7doby",
             "isDefault": false,
             "isEditable": true
           },
@@ -4126,9 +4191,10 @@
             "isOptional": false,
             "references": {
               "table": "profiles",
-              "column": "id"
+              "column": "id",
+              "onDelete": "CASCADE"
             },
-            "id": "gzuasn6bd",
+            "id": "1v8tsnsfz",
             "isDefault": false,
             "isEditable": true
           },
@@ -4136,7 +4202,7 @@
             "name": "activity_type",
             "type": "activity_type",
             "isOptional": false,
-            "id": "366fey47k",
+            "id": "99q62n3ib",
             "isDefault": false,
             "isEditable": true
           },
@@ -4144,7 +4210,7 @@
             "name": "content_type",
             "type": "content_type",
             "isOptional": true,
-            "id": "cwj0rkrap",
+            "id": "kt26apdk5",
             "isDefault": false,
             "isEditable": true
           },
@@ -4152,7 +4218,7 @@
             "name": "content_id",
             "type": "UUID",
             "isOptional": true,
-            "id": "xvven06ha",
+            "id": "ldn02714q",
             "isDefault": false,
             "isEditable": true
           },
@@ -4160,32 +4226,25 @@
             "name": "metadata",
             "type": "JSONB",
             "isOptional": true,
-            "defaultValue": "'{}'::jsonb",
-            "id": "b98ju5yw7",
+            "id": "vjvo4qsg7",
             "isDefault": false,
             "isEditable": true
           },
           {
             "name": "created_at",
             "type": "TIMESTAMP WITH TIME ZONE",
-            "isOptional": false,
             "defaultValue": "NOW()",
-            "id": "9qy0fntcj",
+            "isOptional": false,
+            "id": "7gc4p28uo",
             "isDefault": false,
             "isEditable": true
           }
         ],
-        "checkConstraints": [
-          {
-            "id": "12y5lhsoo",
-            "name": "valid_content_reference",
-            "expression": "(content_type IS NULL AND content_id IS NULL) OR (content_type IS NOT NULL AND content_id IS NOT NULL)"
-          }
-        ],
-        "id": "6221l5wmq",
+        "uniqueConstraints": [],
+        "id": "98o45cov0",
         "isDefault": false,
         "isEditable": true,
-        "uniqueConstraints": []
+        "checkConstraints": []
       }
     ],
     "enums": [
@@ -4202,7 +4261,7 @@
             "value": "rejected"
           }
         ],
-        "id": "le4ofkuuk",
+        "id": "68blez6ef",
         "isDefault": false,
         "isEditable": true
       },
@@ -4219,12 +4278,12 @@
             "value": "assassin"
           }
         ],
-        "id": "fc8mf8p19",
+        "id": "xb2qtg5og",
         "isDefault": false,
         "isEditable": true
       },
       {
-        "name": "genre_type",
+        "name": "story_genre",
         "values": [
           {
             "value": "cyberpunk"
@@ -4233,7 +4292,7 @@
             "value": "fantasy"
           }
         ],
-        "id": "e55z3e127",
+        "id": "l9154xkky",
         "isDefault": false,
         "isEditable": true
       },
@@ -4241,16 +4300,19 @@
         "name": "achievement_type",
         "values": [
           {
-            "value": "story_complete"
-          },
-          {
-            "value": "quiz_master"
+            "value": "quest_complete"
           },
           {
             "value": "level_up"
+          },
+          {
+            "value": "item_found"
+          },
+          {
+            "value": "boss_defeated"
           }
         ],
-        "id": "ysu70atfv",
+        "id": "b971bimt5",
         "isDefault": false,
         "isEditable": true
       },
@@ -4264,13 +4326,13 @@
             "value": "armor"
           },
           {
-            "value": "consumable"
+            "value": "potion"
           },
           {
-            "value": "quest_item"
+            "value": "artifact"
           }
         ],
-        "id": "cir9jp3x6",
+        "id": "ve600k7y8",
         "isDefault": false,
         "isEditable": true
       },
@@ -4284,10 +4346,10 @@
             "value": "character"
           },
           {
-            "value": "story"
+            "value": "achievement"
           }
         ],
-        "id": "txlnuocmz",
+        "id": "v4my4r157",
         "isDefault": false,
         "isEditable": true
       },
@@ -4301,7 +4363,7 @@
             "value": "downvote"
           }
         ],
-        "id": "61lxi8xaj",
+        "id": "068digx5h",
         "isDefault": false,
         "isEditable": true
       },
@@ -4321,7 +4383,7 @@
             "value": "other"
           }
         ],
-        "id": "h5jnk4epi",
+        "id": "41419jjrj",
         "isDefault": false,
         "isEditable": true
       },
@@ -4338,7 +4400,7 @@
             "value": "dismissed"
           }
         ],
-        "id": "7ojb6cgx3",
+        "id": "thd46oz82",
         "isDefault": false,
         "isEditable": true
       },
@@ -4356,9 +4418,12 @@
           },
           {
             "value": "ban"
+          },
+          {
+            "value": "suspend"
           }
         ],
-        "id": "xanemy2ar",
+        "id": "he5bef3ci",
         "isDefault": false,
         "isEditable": true
       },
@@ -4366,24 +4431,27 @@
         "name": "activity_type",
         "values": [
           {
-            "value": "achievement_earned"
+            "value": "created_quiz"
           },
           {
-            "value": "quest_complete"
+            "value": "completed_quest"
           },
           {
-            "value": "item_found"
+            "value": "earned_achievement"
+          },
+          {
+            "value": "shared_character"
           }
         ],
-        "id": "xvxcwkddt",
+        "id": "qoi10co5g",
         "isDefault": false,
         "isEditable": true
       }
     ],
     "rlsPolicies": [
       {
-        "id": "g4ma8d3rp",
-        "tableId": "6qhw40hrw",
+        "id": "f6wzsdh6b",
+        "tableId": "8gqimyanp",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4401,8 +4469,8 @@
         ]
       },
       {
-        "id": "wltv1lmg3",
-        "tableId": "6qhw40hrw",
+        "id": "1d5ib7mhk",
+        "tableId": "8gqimyanp",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4420,8 +4488,8 @@
         ]
       },
       {
-        "id": "tthfkhdg9",
-        "tableId": "6qhw40hrw",
+        "id": "nep2jnwpj",
+        "tableId": "8gqimyanp",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4439,8 +4507,8 @@
         ]
       },
       {
-        "id": "1j4xwmo5p",
-        "tableId": "6qhw40hrw",
+        "id": "o5wpdfjaq",
+        "tableId": "8gqimyanp",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4458,8 +4526,8 @@
         ]
       },
       {
-        "id": "38b7bv30t",
-        "tableId": "f0xqtfxf6",
+        "id": "1907e1qe8",
+        "tableId": "l9snlmxeb",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4477,8 +4545,8 @@
         ]
       },
       {
-        "id": "kb6ahlebe",
-        "tableId": "f0xqtfxf6",
+        "id": "ddtsapuzs",
+        "tableId": "l9snlmxeb",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4496,8 +4564,8 @@
         ]
       },
       {
-        "id": "1gnblz9ph",
-        "tableId": "f0xqtfxf6",
+        "id": "h044dr172",
+        "tableId": "l9snlmxeb",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4515,8 +4583,8 @@
         ]
       },
       {
-        "id": "1va2lq775",
-        "tableId": "f0xqtfxf6",
+        "id": "rj0r6jedz",
+        "tableId": "l9snlmxeb",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4534,8 +4602,8 @@
         ]
       },
       {
-        "id": "s650zw592",
-        "tableId": "fw8okm2xq",
+        "id": "id4l17pal",
+        "tableId": "jo8uplj0i",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4553,8 +4621,8 @@
         ]
       },
       {
-        "id": "0qjteghw4",
-        "tableId": "fw8okm2xq",
+        "id": "25h9wyk1h",
+        "tableId": "jo8uplj0i",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4572,8 +4640,8 @@
         ]
       },
       {
-        "id": "8pcf3fu72",
-        "tableId": "fw8okm2xq",
+        "id": "nkjqkvvqi",
+        "tableId": "jo8uplj0i",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4591,8 +4659,8 @@
         ]
       },
       {
-        "id": "9756kzcnk",
-        "tableId": "fw8okm2xq",
+        "id": "tbdvdpq4h",
+        "tableId": "jo8uplj0i",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4610,8 +4678,8 @@
         ]
       },
       {
-        "id": "5et4443uw",
-        "tableId": "y6uy1tmf5",
+        "id": "cki0gvs6n",
+        "tableId": "urf50rutc",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4629,8 +4697,8 @@
         ]
       },
       {
-        "id": "kmrimj22l",
-        "tableId": "y6uy1tmf5",
+        "id": "0z9i244jl",
+        "tableId": "urf50rutc",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4648,8 +4716,8 @@
         ]
       },
       {
-        "id": "c1cbw7dj0",
-        "tableId": "y6uy1tmf5",
+        "id": "icbszrkom",
+        "tableId": "urf50rutc",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4667,8 +4735,8 @@
         ]
       },
       {
-        "id": "wm0vjo3ni",
-        "tableId": "y6uy1tmf5",
+        "id": "motu0ejfi",
+        "tableId": "urf50rutc",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4686,8 +4754,8 @@
         ]
       },
       {
-        "id": "vkvkt8wko",
-        "tableId": "jtk3d1opq",
+        "id": "pzbnpltiy",
+        "tableId": "k1eby10k5",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4705,8 +4773,8 @@
         ]
       },
       {
-        "id": "s49kpah95",
-        "tableId": "jtk3d1opq",
+        "id": "7jmh9xcbq",
+        "tableId": "k1eby10k5",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4724,8 +4792,8 @@
         ]
       },
       {
-        "id": "t7yfwj7ak",
-        "tableId": "jtk3d1opq",
+        "id": "mjwblxvd7",
+        "tableId": "k1eby10k5",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4743,8 +4811,8 @@
         ]
       },
       {
-        "id": "b9kqh7fv8",
-        "tableId": "jtk3d1opq",
+        "id": "kl5qkv9y9",
+        "tableId": "k1eby10k5",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4762,8 +4830,8 @@
         ]
       },
       {
-        "id": "vgg5dc3p7",
-        "tableId": "jmevlgoo7",
+        "id": "j3k5rngmd",
+        "tableId": "1g6pyfzcn",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4781,8 +4849,8 @@
         ]
       },
       {
-        "id": "vkcmnpnvn",
-        "tableId": "jmevlgoo7",
+        "id": "1b4lwsnk6",
+        "tableId": "1g6pyfzcn",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4800,8 +4868,8 @@
         ]
       },
       {
-        "id": "am66t0ozc",
-        "tableId": "jmevlgoo7",
+        "id": "1wh5sol8k",
+        "tableId": "1g6pyfzcn",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4819,8 +4887,8 @@
         ]
       },
       {
-        "id": "smnjk5ren",
-        "tableId": "jmevlgoo7",
+        "id": "ezg50gxus",
+        "tableId": "1g6pyfzcn",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4838,8 +4906,8 @@
         ]
       },
       {
-        "id": "m9v8zv2b1",
-        "tableId": "zhjigwmtf",
+        "id": "r73030wgd",
+        "tableId": "3nxol7tsz",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4857,8 +4925,8 @@
         ]
       },
       {
-        "id": "gpfpbjrzf",
-        "tableId": "zhjigwmtf",
+        "id": "cfvbnklcu",
+        "tableId": "3nxol7tsz",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4876,8 +4944,8 @@
         ]
       },
       {
-        "id": "hrngc9upw",
-        "tableId": "zhjigwmtf",
+        "id": "wa0nup0tq",
+        "tableId": "3nxol7tsz",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4895,8 +4963,8 @@
         ]
       },
       {
-        "id": "409eixydu",
-        "tableId": "zhjigwmtf",
+        "id": "q22bss216",
+        "tableId": "3nxol7tsz",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4914,8 +4982,8 @@
         ]
       },
       {
-        "id": "w3k6do7g4",
-        "tableId": "298nezfmm",
+        "id": "415am68r0",
+        "tableId": "tyjpumw85",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -4933,8 +5001,8 @@
         ]
       },
       {
-        "id": "22vchw6d1",
-        "tableId": "298nezfmm",
+        "id": "6xgk5pxjv",
+        "tableId": "tyjpumw85",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -4952,8 +5020,8 @@
         ]
       },
       {
-        "id": "yrq4hcw7w",
-        "tableId": "298nezfmm",
+        "id": "x95anl323",
+        "tableId": "tyjpumw85",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -4971,8 +5039,8 @@
         ]
       },
       {
-        "id": "oukxhioab",
-        "tableId": "298nezfmm",
+        "id": "p0h8jgi04",
+        "tableId": "tyjpumw85",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -4990,8 +5058,8 @@
         ]
       },
       {
-        "id": "qa5igtnzy",
-        "tableId": "64aslb29e",
+        "id": "33q2rpovv",
+        "tableId": "3xtyfnijv",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -5009,84 +5077,8 @@
         ]
       },
       {
-        "id": "9irsm4pnn",
-        "tableId": "64aslb29e",
-        "operation": "INSERT",
-        "rolePolicies": [
-          {
-            "role": "anon",
-            "accessType": "none"
-          },
-          {
-            "role": "authenticated",
-            "accessType": "none"
-          },
-          {
-            "role": "admin",
-            "accessType": "global"
-          }
-        ]
-      },
-      {
-        "id": "s9amok79r",
-        "tableId": "64aslb29e",
-        "operation": "UPDATE",
-        "rolePolicies": [
-          {
-            "role": "anon",
-            "accessType": "none"
-          },
-          {
-            "role": "authenticated",
-            "accessType": "none"
-          },
-          {
-            "role": "admin",
-            "accessType": "global"
-          }
-        ]
-      },
-      {
-        "id": "ek2j6m38t",
-        "tableId": "64aslb29e",
-        "operation": "DELETE",
-        "rolePolicies": [
-          {
-            "role": "anon",
-            "accessType": "none"
-          },
-          {
-            "role": "authenticated",
-            "accessType": "none"
-          },
-          {
-            "role": "admin",
-            "accessType": "global"
-          }
-        ]
-      },
-      {
-        "id": "y3o7ue089",
-        "tableId": "u3kodezx5",
-        "operation": "SELECT",
-        "rolePolicies": [
-          {
-            "role": "anon",
-            "accessType": "public"
-          },
-          {
-            "role": "authenticated",
-            "accessType": "public"
-          },
-          {
-            "role": "admin",
-            "accessType": "global"
-          }
-        ]
-      },
-      {
-        "id": "8sfmlc822",
-        "tableId": "u3kodezx5",
+        "id": "naphkcgez",
+        "tableId": "3xtyfnijv",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -5104,8 +5096,8 @@
         ]
       },
       {
-        "id": "7nc8fb6gb",
-        "tableId": "u3kodezx5",
+        "id": "xu8zswgut",
+        "tableId": "3xtyfnijv",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -5123,8 +5115,8 @@
         ]
       },
       {
-        "id": "8jyn6ka9i",
-        "tableId": "u3kodezx5",
+        "id": "4ssj9onon",
+        "tableId": "3xtyfnijv",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -5142,8 +5134,8 @@
         ]
       },
       {
-        "id": "qxuyhdfqc",
-        "tableId": "pj9ghtky1",
+        "id": "pfvtuqn6f",
+        "tableId": "lviiz3leo",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -5161,8 +5153,8 @@
         ]
       },
       {
-        "id": "vzclyn6wu",
-        "tableId": "pj9ghtky1",
+        "id": "ljmtktx01",
+        "tableId": "lviiz3leo",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -5180,8 +5172,8 @@
         ]
       },
       {
-        "id": "be9qs5tz5",
-        "tableId": "pj9ghtky1",
+        "id": "wmctci8h0",
+        "tableId": "lviiz3leo",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -5199,8 +5191,8 @@
         ]
       },
       {
-        "id": "fjl9h2yde",
-        "tableId": "pj9ghtky1",
+        "id": "p9vgy6hli",
+        "tableId": "lviiz3leo",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -5218,8 +5210,8 @@
         ]
       },
       {
-        "id": "0anldnwim",
-        "tableId": "hicw2r0zf",
+        "id": "jiqvzypfo",
+        "tableId": "th1g48zzd",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -5237,8 +5229,84 @@
         ]
       },
       {
-        "id": "1nnj4l7uq",
-        "tableId": "hicw2r0zf",
+        "id": "x9iytqohp",
+        "tableId": "th1g48zzd",
+        "operation": "INSERT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "gl68x5hdm",
+        "tableId": "th1g48zzd",
+        "operation": "UPDATE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "owrxoa3e5",
+        "tableId": "th1g48zzd",
+        "operation": "DELETE",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "none"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "own"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "ur55yszlh",
+        "tableId": "nnauzeg5y",
+        "operation": "SELECT",
+        "rolePolicies": [
+          {
+            "role": "anon",
+            "accessType": "public"
+          },
+          {
+            "role": "authenticated",
+            "accessType": "public"
+          },
+          {
+            "role": "admin",
+            "accessType": "global"
+          }
+        ]
+      },
+      {
+        "id": "vf9e4y7c7",
+        "tableId": "nnauzeg5y",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -5256,8 +5324,8 @@
         ]
       },
       {
-        "id": "xdw1cbv5g",
-        "tableId": "hicw2r0zf",
+        "id": "h8r9of3e8",
+        "tableId": "nnauzeg5y",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -5275,8 +5343,8 @@
         ]
       },
       {
-        "id": "46s46uni8",
-        "tableId": "hicw2r0zf",
+        "id": "81bkfjgym",
+        "tableId": "nnauzeg5y",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -5294,8 +5362,8 @@
         ]
       },
       {
-        "id": "w71oz5gun",
-        "tableId": "6221l5wmq",
+        "id": "jfrem9e4m",
+        "tableId": "98o45cov0",
         "operation": "SELECT",
         "rolePolicies": [
           {
@@ -5313,8 +5381,8 @@
         ]
       },
       {
-        "id": "tifup9fim",
-        "tableId": "6221l5wmq",
+        "id": "hp8amamuz",
+        "tableId": "98o45cov0",
         "operation": "INSERT",
         "rolePolicies": [
           {
@@ -5332,8 +5400,8 @@
         ]
       },
       {
-        "id": "hwr7tlaub",
-        "tableId": "6221l5wmq",
+        "id": "zzajxtbea",
+        "tableId": "98o45cov0",
         "operation": "UPDATE",
         "rolePolicies": [
           {
@@ -5351,8 +5419,8 @@
         ]
       },
       {
-        "id": "5a759laqu",
-        "tableId": "6221l5wmq",
+        "id": "wlv1jol2a",
+        "tableId": "98o45cov0",
         "operation": "DELETE",
         "rolePolicies": [
           {
@@ -5842,11 +5910,14 @@
         "description": "Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel."
       }
     ],
-    "featuresGenerated": true
+    "featuresGenerated": true,
+    "lastGeneratedReadmeContent": null,
+    "lastGeneratedForStructure": "{\"parsedPages\":[{\"id\":\"layout-4kjy9abn9\",\"name\":\"Main Layout Features\",\"route\":\"\",\"description\":\"Primary layout with header containing Quiz.Win logo and user profile popover menu and Includes sidebar for quick access to quiz library, character management, and adventure modes. Footer displays community stats and links.\"},{\"id\":\"layout-qfe9oiiym\",\"name\":\"Admin Features\",\"route\":\"\",\"description\":\"Moderation navigation header. Sidebar with content queues and analytics.\"},{\"id\":\"ax2ahsfnt\",\"name\":\"Home\",\"route\":\"/\",\"description\":\"Landing with dual CTAs: \\\"Build Quiz Library\\\" and \\\"Start Adventure.\\\" Showcases featured characters, popular quiz sets, recent completions. Quick access to active content for authenticated users.\"},{\"id\":\"1m5s1zqzv\",\"name\":\"Sign In\",\"route\":\"/sign-in\",\"description\":\"Authentication page where existing users can sign in with email and password to access their quiz library and characters.\"},{\"id\":\"yw00rx5ui\",\"name\":\"Sign Up\",\"route\":\"/sign-up\",\"description\":\"Registration page for new users to create an account with email and password, with clear benefits of joining the Quiz.Win community.\"},{\"id\":\"nx68ba1qn\",\"name\":\"Forgot Password\",\"route\":\"/forgot-password\",\"description\":\"Page where users can request a password reset link by entering their email address.\"},{\"id\":\"wvyoc67hn\",\"name\":\"Reset Password\",\"route\":\"/reset-password\",\"description\":\"Page where users can set a new password after clicking the reset link from their email.\"},{\"id\":\"kq1bsgjyl\",\"name\":\"Welcome\",\"route\":\"/welcome\",\"description\":\"First-time setup page where new users customize their profile including user name, bio, avatar and quiz preferences. Redirects to the character creation screen\"},{\"id\":\"4robczp66\",\"name\":\"Quiz Library\",\"route\":\"/quizzes\",\"description\":\"Sidebar with content sets (personal/imported indicators). Main view shows selected set with questions, stats, management tools. Actions: Take Quiz, Edit, Analytics, Share Toggle, Delete. Buttons for \\\"Create New\\\" and \\\"Browse Community.\\\"\"},{\"id\":\"vblfj3def\",\"name\":\"Character Dashboard\",\"route\":\"/characters\",\"description\":\"Character management dashboard showing all created adventure characters, their stats, achievements, and available quests. Users can customize appearance and share characters.\"},{\"id\":\"euntwkdc6\",\"name\":\"Adventure Mode\",\"route\":\"/adventure/[characterId]\",\"description\":\"Main viewport for story text. Sidebar with portrait and stats. AI narrative with genre-appropriate atmosphere. Quiz modals with content attribution. Answer triggers consequences and story beats. Progress bar, pause menu with stats/history/share options.\"},{\"id\":\"2638hw18o\",\"name\":\"Create Quiz\",\"route\":\"/quizzes/create\",\"description\":\"Quiz creation workflow with options to add quizes: upload (PDF/DOCX/MD/TXT) by button or by drag and drop, or generate with AI, or create from scratch. Quizes are populated into a quiz creation UX that the user can edit. There is the option to share the quiz, which is submitted to admin for approval \"},{\"id\":\"ya8jg183r\",\"name\":\"Character profile\",\"route\":\"/characters/[characterId]\",\"description\":\"\\nHero portrait with atmospheric background, name, class, genre. Stats sheet: health, level, attributes with bars. Quiz performance: content used, accuracy. Journey summary: 5-10 key story moments. Achievements gallery. Inventory display. Social: upvote/downvote, share. Creator link. Edit options if owned.\"},{\"id\":\"0m8z6uvaz\",\"name\":\"Community\",\"route\":\"/community\",\"description\":\"Tabs: Characters and Quiz Sets. Trending content, activity feed, community stats. Featured spotlight rotation. Links to full Explore pages.\"},{\"id\":\"di5ha02gm\",\"name\":\"Settings\",\"route\":\"/settings\",\"description\":\"Tabs: Profile (username, email, avatar, bio), Quiz Preferences (feedback timing, reminders), Adventure Preferences (pacing, consequences, default sharing), Privacy (visibility defaults, permissions), Notifications, Data Management (export, backup), Account Actions.\"},{\"id\":\"rfzebp1md\",\"name\":\"Content moderation\",\"route\":\"/admin\",\"description\":\"Tabs: Overview, Submitted/Flagged Characters, Submitted/Flagged Quiz Content, User Reports. Queue items show previews, flags, AI analysis. Actions: Approve/Remove/Hide/Warn/Suspend/Ban. Bulk actions. Audit log. Analytics panel.\"}],\"inferredFeatures\":{\"layout-4kjy9abn9\":[{\"id\":\"p8l8cg23g\",\"pageId\":\"layout-4kjy9abn9\",\"title\":\"Sign out user\",\"description\":\"Clear user session and redirect to login page\"},{\"id\":\"mqxfge8ct\",\"pageId\":\"layout-4kjy9abn9\",\"title\":\"Toggle user profile menu\",\"description\":\"Show/hide user profile popover menu\"},{\"id\":\"zjxp122xu\",\"pageId\":\"layout-4kjy9abn9\",\"title\":\"Get community stats\",\"description\":\"Fetch and display community statistics in footer\"}],\"layout-qfe9oiiym\":[{\"id\":\"aq82co3dq\",\"pageId\":\"layout-qfe9oiiym\",\"title\":\"Get content queue metrics\",\"description\":\"Fetch current moderation queue statistics\"},{\"id\":\"uwsfkq4hy\",\"pageId\":\"layout-qfe9oiiym\",\"title\":\"Get moderation analytics\",\"description\":\"Fetch and display content moderation analytics\"}],\"ax2ahsfnt\":[{\"id\":\"jthuxilak\",\"pageId\":\"ax2ahsfnt\",\"title\":\"Get featured characters\",\"description\":\"Fetch and display featured character profiles\"},{\"id\":\"ngyvwbs7d\",\"pageId\":\"ax2ahsfnt\",\"title\":\"Get popular quiz sets\",\"description\":\"Fetch and display trending quiz collections\"},{\"id\":\"2ir0al9yq\",\"pageId\":\"ax2ahsfnt\",\"title\":\"Get recent completions\",\"description\":\"Fetch and display recently completed quizzes and adventures\"}],\"1m5s1zqzv\":[{\"id\":\"e1fizbyli\",\"pageId\":\"1m5s1zqzv\",\"title\":\"Sign in with email and password\",\"description\":\"Authenticate user with email and password credentials\"}],\"yw00rx5ui\":[{\"id\":\"w3dya0vdj\",\"pageId\":\"yw00rx5ui\",\"title\":\"Create user account\",\"description\":\"Register new user with email and password\"}],\"nx68ba1qn\":[{\"id\":\"e8lrs61gg\",\"pageId\":\"nx68ba1qn\",\"title\":\"Send password reset email\",\"description\":\"Send password reset link to user's email address\"}],\"wvyoc67hn\":[{\"id\":\"7i4208nrv\",\"pageId\":\"wvyoc67hn\",\"title\":\"Reset user password\",\"description\":\"Update user's password using reset token\"}],\"kq1bsgjyl\":[{\"id\":\"7nkwkb47u\",\"pageId\":\"kq1bsgjyl\",\"title\":\"Update user profile\",\"description\":\"Save initial user profile details including name and bio\"},{\"id\":\"omot26l5d\",\"pageId\":\"kq1bsgjyl\",\"title\":\"Upload avatar image\",\"description\":\"Upload and save user profile picture\"},{\"id\":\"w3y1drh3g\",\"pageId\":\"kq1bsgjyl\",\"title\":\"Set quiz preferences\",\"description\":\"Save user's quiz and content preferences\"}],\"4robczp66\":[{\"id\":\"dztxotx9g\",\"pageId\":\"4robczp66\",\"title\":\"Get quiz sets\",\"description\":\"Fetch user's personal and imported quiz collections\"},{\"id\":\"yq754q82e\",\"pageId\":\"4robczp66\",\"title\":\"Take quiz\",\"description\":\"Start selected quiz session\"},{\"id\":\"g7q1wbeom\",\"pageId\":\"4robczp66\",\"title\":\"Edit quiz set\",\"description\":\"Modify existing quiz content and settings\"},{\"id\":\"53g4phov9\",\"pageId\":\"4robczp66\",\"title\":\"Get quiz analytics\",\"description\":\"View performance statistics for quiz set\"},{\"id\":\"yc08r1gqy\",\"pageId\":\"4robczp66\",\"title\":\"Toggle quiz sharing\",\"description\":\"Enable/disable public access to quiz set\"},{\"id\":\"3l2dl1npr\",\"pageId\":\"4robczp66\",\"title\":\"Delete quiz set\",\"description\":\"Remove quiz set from library\"}],\"vblfj3def\":[{\"id\":\"49mcsjqfl\",\"pageId\":\"vblfj3def\",\"title\":\"Get user characters\",\"description\":\"Fetch all characters created by user\"},{\"id\":\"eckrkpjwq\",\"pageId\":\"vblfj3def\",\"title\":\"Get character stats\",\"description\":\"Fetch statistics and achievements for each character\"},{\"id\":\"49926ylbq\",\"pageId\":\"vblfj3def\",\"title\":\"Get available quests\",\"description\":\"Fetch available adventure quests for characters\"},{\"id\":\"3zr3qb05g\",\"pageId\":\"vblfj3def\",\"title\":\"Customize character appearance\",\"description\":\"Modify character visual attributes\"},{\"id\":\"s8773ugid\",\"pageId\":\"vblfj3def\",\"title\":\"Share character\",\"description\":\"Generate and copy character share link\"}],\"euntwkdc6\":[{\"id\":\"ptng3cxn3\",\"pageId\":\"euntwkdc6\",\"title\":\"Get character stats\",\"description\":\"Fetch current character statistics and status\"},{\"id\":\"fuw4bhz01\",\"pageId\":\"euntwkdc6\",\"title\":\"Generate story content\",\"description\":\"Create AI-driven narrative based on context\"},{\"id\":\"mmy50eki0\",\"pageId\":\"euntwkdc6\",\"title\":\"Submit quiz answer\",\"description\":\"Process quiz response and update story\"},{\"id\":\"btsh0ouzy\",\"pageId\":\"euntwkdc6\",\"title\":\"Get progress status\",\"description\":\"Fetch current adventure progress\"},{\"id\":\"kuc97v3jt\",\"pageId\":\"euntwkdc6\",\"title\":\"Share adventure status\",\"description\":\"Generate and share current adventure progress\"}],\"2638hw18o\":[{\"id\":\"e2xkyt9nh\",\"pageId\":\"2638hw18o\",\"title\":\"Upload quiz document\",\"description\":\"Import quiz content from PDF/DOCX/MD/TXT file\"},{\"id\":\"xoz7sg9my\",\"pageId\":\"2638hw18o\",\"title\":\"Generate AI quiz content\",\"description\":\"Create quiz questions using AI assistance\"},{\"id\":\"bttmcx1ar\",\"pageId\":\"2638hw18o\",\"title\":\"Create quiz manually\",\"description\":\"Add quiz questions through form interface\"},{\"id\":\"8fff6hi52\",\"pageId\":\"2638hw18o\",\"title\":\"Submit quiz for approval\",\"description\":\"Send quiz for community sharing approval\"}],\"ya8jg183r\":[{\"id\":\"r48jhrah0\",\"pageId\":\"ya8jg183r\",\"title\":\"Get character details\",\"description\":\"Fetch character profile, stats, and history\"},{\"id\":\"s3pkrgu0u\",\"pageId\":\"ya8jg183r\",\"title\":\"Get achievement gallery\",\"description\":\"Fetch character's earned achievements\"},{\"id\":\"iiv4aqwko\",\"pageId\":\"ya8jg183r\",\"title\":\"Get inventory items\",\"description\":\"Fetch character's collected items\"},{\"id\":\"4luc65jjq\",\"pageId\":\"ya8jg183r\",\"title\":\"Vote on character\",\"description\":\"Submit upvote or downvote on character\"},{\"id\":\"qlw2wdj5q\",\"pageId\":\"ya8jg183r\",\"title\":\"Share character profile\",\"description\":\"Generate and copy character profile link\"}],\"0m8z6uvaz\":[{\"id\":\"bhue4f2oh\",\"pageId\":\"0m8z6uvaz\",\"title\":\"Get trending content\",\"description\":\"Fetch popular characters and quiz sets\"},{\"id\":\"71olg56fm\",\"pageId\":\"0m8z6uvaz\",\"title\":\"Get activity feed\",\"description\":\"Fetch recent community activities\"},{\"id\":\"v1ci28pmf\",\"pageId\":\"0m8z6uvaz\",\"title\":\"Get community statistics\",\"description\":\"Fetch overall community metrics\"},{\"id\":\"yavwvvv06\",\"pageId\":\"0m8z6uvaz\",\"title\":\"Get featured spotlight\",\"description\":\"Fetch currently featured content\"}],\"di5ha02gm\":[{\"id\":\"42fabnfiv\",\"pageId\":\"di5ha02gm\",\"title\":\"Update profile settings\",\"description\":\"Modify user profile information\"},{\"id\":\"bjje05918\",\"pageId\":\"di5ha02gm\",\"title\":\"Update quiz preferences\",\"description\":\"Modify quiz feedback and reminder settings\"},{\"id\":\"pkx6xorlt\",\"pageId\":\"di5ha02gm\",\"title\":\"Update adventure preferences\",\"description\":\"Modify adventure gameplay settings\"},{\"id\":\"ds1i0yyt9\",\"pageId\":\"di5ha02gm\",\"title\":\"Update privacy settings\",\"description\":\"Modify content visibility and permissions\"},{\"id\":\"o9tt9u4n8\",\"pageId\":\"di5ha02gm\",\"title\":\"Update notification settings\",\"description\":\"Modify notification preferences\"},{\"id\":\"18hsxt3ni\",\"pageId\":\"di5ha02gm\",\"title\":\"Export user data\",\"description\":\"Download user data and content\"}],\"rfzebp1md\":[{\"id\":\"hg794phal\",\"pageId\":\"rfzebp1md\",\"title\":\"Get moderation queue\",\"description\":\"Fetch pending content for review\"},{\"id\":\"ykzzoatt6\",\"pageId\":\"rfzebp1md\",\"title\":\"Get flagged content\",\"description\":\"Fetch reported content items\"},{\"id\":\"8z3erzdbo\",\"pageId\":\"rfzebp1md\",\"title\":\"Get user reports\",\"description\":\"Fetch user behavior reports\"},{\"id\":\"67q6i4r0a\",\"pageId\":\"rfzebp1md\",\"title\":\"Moderate content item\",\"description\":\"Approve/remove/hide content items\"},{\"id\":\"ff8y6emzw\",\"pageId\":\"rfzebp1md\",\"title\":\"Take user action\",\"description\":\"Warn/suspend/ban user accounts\"},{\"id\":\"m5vhye4o9\",\"pageId\":\"rfzebp1md\",\"title\":\"Get audit log\",\"description\":\"Fetch moderation action history.\"}]}}"
   },
   "readmeState": {
     "title": "Quiz.Win",
     "description": "quiz.win combines quiz content management with narrative-driven gamification. Users build quiz libraries by uploading materials, manually creating questions, or using AI generation. They track performance with detailed analytics per content set. Users create adventure characters (Cyberpunk/Fantasy genre; Wizard/Brute/Assassin class) that progress through AI-generated narratives by answering quiz questions. Correct answers advance the story; incorrect answers cause health loss or story branching. Characters evolve visually with stats, achievements, and items. Both characters and quiz sets can be shared publicly for community voting, commenting, and importing. Any quiz content can fuel any character's adventure.",
+    "layouts": [],
     "pages": [
       {
         "id": "ax2ahsfnt",
@@ -6211,7 +6282,7 @@
     ]
   },
   "nextStepsState": {
-    "openStep": "step-7",
+    "openStep": "step-9",
     "unlockedSteps": [
       1,
       2,
@@ -6220,7 +6291,8 @@
       5,
       6,
       7,
-      8
+      8,
+      9
     ]
   }
 }

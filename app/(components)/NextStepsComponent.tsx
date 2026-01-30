@@ -25,7 +25,6 @@ import {
   FolderDown,
   FolderTree,
   Laptop,
-  MessagesSquare,
   PackageOpen,
   ScrollText,
 } from "lucide-react";
@@ -37,7 +36,6 @@ import {
   ClaudeCodeLogo,
   generateFinalPrompt,
   GitHubSmallLogo,
-  SETUP_PROMPT,
   SupabaseLogo,
   VercelLogo,
   VSCodeLogo,
@@ -113,7 +111,7 @@ export const NextStepsComponent = () => {
     setOpenStep(`step-${nextStepId}`);
 
     const stepAfterNext = nextStepId + 1;
-    if (stepAfterNext <= 9 && !unlockedSteps.has(stepAfterNext)) {
+    if (stepAfterNext <= 8 && !unlockedSteps.has(stepAfterNext)) {
       unlockStep(stepAfterNext);
     }
   };
@@ -123,7 +121,7 @@ export const NextStepsComponent = () => {
     if (value) {
       const stepId = parseInt(value.replace("step-", ""));
       const nextStepId = stepId + 1;
-      if (nextStepId <= 9 && !unlockedSteps.has(nextStepId)) {
+      if (nextStepId <= 8 && !unlockedSteps.has(nextStepId)) {
         unlockStep(nextStepId);
       }
     }
@@ -404,75 +402,6 @@ export const NextStepsComponent = () => {
     },
     {
       id: 7,
-      title: "Set up your project with Claude",
-      description: "Use Claude to scaffold your Next.js application",
-      content: (
-        <div className="flex flex-col theme-gap-4">
-          <div className="theme-bg-muted theme-radius theme-p-4">
-            <h4 className="font-semibold theme-text-foreground mb-2">
-              Chat with Claude to Set Up Your Project
-            </h4>
-            <p className="theme-text-foreground mb-3">
-              Copy the prompt below and paste it into your Claude chat in VS
-              Code. Claude will scaffold your Next.js project and set up all
-              configurations.
-            </p>
-            <Popover
-              open={promptPopoverOpen}
-              onOpenChange={setPromptPopoverOpen}
-            >
-              <PopoverTrigger asChild>
-                <Button variant="link" className="theme-gap-2 w-full mb-4">
-                  View prompt
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[500px] max-h-[400px] overflow-y-auto">
-                <pre className="text-xs theme-text-foreground whitespace-pre-wrap font-mono">
-                  {SETUP_PROMPT}
-                </pre>
-              </PopoverContent>
-            </Popover>
-            <Button
-              variant="outline"
-              onClick={() => handleCopy(SETUP_PROMPT, "setup")}
-              className="w-full flex flex-col items-center py-6 h-auto"
-            >
-              {copied === "setup" ? (
-                <>
-                  <CheckCircle2
-                    className="h-5 w-5 mr-2 flex-shrink-0"
-                    style={{ width: "1.25rem", height: "1.25rem" }}
-                  />
-                  <span className="text-lg">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center justify-center theme-gap-3 mb-3">
-                    <ScrollText
-                      className="flex-shrink-0"
-                      style={{ width: "2rem", height: "2rem" }}
-                    />
-                    <ArrowRight
-                      className="flex-shrink-0"
-                      style={{ width: "1.5rem", height: "1.5rem" }}
-                    />
-                    <ClaudeCodeLogo
-                      className="flex-shrink-0"
-                      style={{ width: "2rem", height: "2rem" }}
-                    />
-                  </div>
-                  <span className="text-lg sm:inline hidden mt-3">
-                    Click here to copy the prompt
-                  </span>
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: 8,
       title: "Deploy with Vercel (Optional)",
       description: "Set up automatic deployments",
       content: (
@@ -523,7 +452,7 @@ export const NextStepsComponent = () => {
       ),
     },
     {
-      id: 9,
+      id: 8,
       title: "Download your starter kit",
       description: "Get your project documentation and templates",
       content:
@@ -571,6 +500,18 @@ export const NextStepsComponent = () => {
                 <li>
                   Move your starter kit into the top level of your project
                   directory
+                </li>
+                <li>
+                  Move the <code className="theme-bg-card px-1 rounded">.claude</code> folder from inside your starter kit to your project root
+                </li>
+                <li>
+                  <strong>Completely reset Claude Code</strong> (not just /clear):
+                  <ul className="list-disc list-inside ml-4 mt-1">
+                    <li>Open Command Palette (Cmd+Shift+P / Ctrl+Shift+P)</li>
+                    <li>Search for &quot;Claude: Sign Out and Clear All Data&quot;</li>
+                    <li>Or restart VS Code entirely</li>
+                  </ul>
+                  <p className="text-sm italic mt-1">This is needed so Claude Code loads the new permissions settings.</p>
                 </li>
                 <li>
                   Copy the prompt below and paste it into your Claude chat in
@@ -697,12 +638,8 @@ export const NextStepsComponent = () => {
           </div>
         );
       case 7:
-        return (
-          <MessagesSquare className="h-5 w-5 flex-shrink-0 theme-text-primary" />
-        );
-      case 8:
         return <VercelLogo className="h-5 w-5 flex-shrink-0" />;
-      case 9:
+      case 8:
         return <PackageOpen className="h-5 w-5 flex-shrink-0" />;
       default:
         return null;

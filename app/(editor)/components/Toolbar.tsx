@@ -660,10 +660,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           inferredFeatures: appStructureState.inferredFeatures,
           parsedPages: appStructureState.parsedPages,
           featuresGenerated: appStructureState.featuresGenerated,
+          lastGeneratedReadmeContent: appStructureState.lastGeneratedReadmeContent,
+          lastGeneratedForStructure: appStructureState.lastGeneratedForStructure,
         },
         readmeState: {
           title: readmeState.title,
           description: readmeState.description,
+          layouts: readmeState.layouts,
           pages: readmeState.pages,
           authMethods: readmeState.authMethods,
           pageAccess: readmeState.pageAccess,
@@ -731,49 +734,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         }
 
         if (progressData.databaseState) {
-          databaseStore.reset();
-          const tableIdMap = new Map<string, string>();
-
           if (progressData.databaseState.tables) {
-            progressData.databaseState.tables.forEach((table: any) => {
-              const newTableId = databaseStore.addTable(
-                table.name,
-                table.schema
-              );
-              tableIdMap.set(table.id, newTableId);
-
-              if (table.columns) {
-                table.columns.forEach((col: any) => {
-                  databaseStore.addColumn(newTableId, col);
-                });
-              }
-            });
+            databaseStore.setTables(progressData.databaseState.tables);
           }
           if (progressData.databaseState.enums) {
-            progressData.databaseState.enums.forEach((enumData: any) => {
-              const enumId = databaseStore.addEnum(enumData.name);
-              if (enumData.values) {
-                enumData.values.forEach((val: any) => {
-                  databaseStore.addEnumValue(enumId, val.value);
-                });
-              }
-            });
+            databaseStore.setEnums(progressData.databaseState.enums);
           }
           if (progressData.databaseState.rlsPolicies) {
-            progressData.databaseState.rlsPolicies.forEach((policy: any) => {
-              const newTableId = tableIdMap.get(policy.tableId);
-              if (newTableId && policy.rolePolicies) {
-                policy.rolePolicies.forEach((rolePolicy: any) => {
-                  databaseStore.addOrUpdateRLSPolicy(
-                    newTableId,
-                    policy.operation,
-                    rolePolicy.role,
-                    rolePolicy.accessType,
-                    rolePolicy.relatedTable
-                  );
-                });
-              }
-            });
+            databaseStore.setRLSPolicies(progressData.databaseState.rlsPolicies);
           }
           if (progressData.databaseState.plugins) {
             progressData.databaseState.plugins.forEach((plugin: any) => {
@@ -801,6 +769,16 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               progressData.appStructureState.featuresGenerated
             );
           }
+          if (progressData.appStructureState.lastGeneratedReadmeContent !== undefined) {
+            appStructureStore.setLastGeneratedReadmeContent(
+              progressData.appStructureState.lastGeneratedReadmeContent
+            );
+          }
+          if (progressData.appStructureState.lastGeneratedForStructure !== undefined) {
+            appStructureStore.setLastGeneratedForStructure(
+              progressData.appStructureState.lastGeneratedForStructure
+            );
+          }
         }
 
         if (progressData.readmeState) {
@@ -809,6 +787,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           }
           if (progressData.readmeState.description !== undefined) {
             readmeStore.setDescription(progressData.readmeState.description);
+          }
+          if (progressData.readmeState.layouts) {
+            readmeStore.setLayouts(progressData.readmeState.layouts);
           }
           if (progressData.readmeState.pages) {
             readmeStore.setPages(progressData.readmeState.pages);

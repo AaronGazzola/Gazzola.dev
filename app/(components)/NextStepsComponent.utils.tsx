@@ -194,24 +194,46 @@ export const VercelLogo = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const SETUP_PROMPT = `I need help setting up my Next.js project. Please work through these steps one at a time, pause to ask for my input only when needed:
+import { type DomainBrand } from "@/lib/domain.config";
+import { getDomainConfig } from "@/lib/domain.utils";
 
-1. CHECK PREREQUISITES
+export const generateFinalPrompt = (
+  starterKitName: string,
+  brand: DomainBrand
+) => {
+  const config = getDomainConfig(brand);
+  return `I need help setting up my Next.js project using my starter kit. Please work through these steps one at a time, pause to ask for my input only when needed:
+
+1. LOCATE STARTER KIT
+   - Search the repository for a directory or ZIP file name containing "${starterKitName}" (it may have "(3)" or something similar appended)
+   - If not found, ask me: "I couldn't find the ${starterKitName}. Please download it from ${config.ui.starterKitReference} and add it to your project directory, then let me know when it's ready."
+   - Wait for my confirmation before proceeding
+
+2. CHECK PREREQUISITES
    - Check if git and Node.js are installed by running: git --version && node --version
    - If git is missing: guide me to install it for my operating system
    - If Node.js is missing or version is below 18: direct me to download the LTS version from nodejs.org
 
-2. INSTALL NEXT.JS
+3. INSTALL NEXT.JS
    - Once prerequisites are confirmed, install Next.js in the current directory
    - Use the command: npx create-next-app@latest . --no-tailwind --yes
    - This accepts all defaults (TypeScript, ESLint, App Router) but skips Tailwind so we can install v4 manually later
-   - If there are files and/or directories in the root dir then first move them to a temporary directory, then run the create-next-app command, then replace them 
+   - If there are files and/or directories in the root dir then first move them to a temporary directory, then run the create-next-app command, then replace them
 
-3. CLEAN UP BOILERPLATE
+4. CLEAN UP BOILERPLATE
    - After installation, help me delete unnecessary boilerplate files
    - Set up a clean initial project structure
 
-4. CONFIGURE ENVIRONMENT (only when we reach this step)
+5. EXTRACT AND ORGANIZE STARTER KIT
+   - If the starter kit is a ZIP file, extract it
+   - Move all contents from the starter kit to the project root:
+     * documentation/ directory (and all contents) → root
+     * CLAUDE.md → root
+     * README.md from documentation/initial_configuration/ → root (overwrite if exists)
+   - Verify all files and folders are in place
+   - IMPORTANT: Delete the "${starterKitName}" directory or zip file after extracting all contents
+
+6. CONFIGURE ENVIRONMENT (only when we reach this step)
    - Guide me to find my Supabase credentials in the dashboard:
 
      To get your keys:
@@ -231,38 +253,14 @@ export const SETUP_PROMPT = `I need help setting up my Next.js project. Please w
 
    - Verify .gitignore ignores ".env.local" but does not ignore ".env.example"
    - Add a ".env.example" file with the supabase key variable names without the values
-   - Run "npx supabase projects list" to check if supabase is authenticated, if not authenticated, then prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "npx supabase login" and follow the prompts to authenticate supabase 
+   - Run "npx supabase projects list" to check if supabase is authenticated, if not authenticated, then prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "npx supabase login" and follow the prompts to authenticate supabase
 
-5. INITIAL COMMIT AND PUSH
+7. INITIAL COMMIT AND PUSH
    - Commit and push the changes
    - Note: I'm already authenticated with GitHub from when I cloned this repository
-   - Run git add . && git commit -m "Initial Next.js setup" && git push`;
+   - Run git add . && git commit -m "Initial Next.js setup" && git push
 
-import { type DomainBrand } from "@/lib/domain.config";
-import { getDomainConfig } from "@/lib/domain.utils";
-
-export const generateFinalPrompt = (
-  starterKitName: string,
-  brand: DomainBrand
-) => {
-  const config = getDomainConfig(brand);
-  return `I need help setting up my project using the starter kit. Please work through these steps:
-
-1. LOCATE STARTER KIT
-   - Search the repository for a directory or ZIP file name containing "${starterKitName}" (it may have "(3)" or something similar appended)
-   - If not found, ask me: "I couldn't find the ${starterKitName}. Please download it from ${config.ui.starterKitReference} and add it to your project directory, then let me know when it's ready."
-   - Wait for my confirmation before proceeding
-
-2. EXTRACT AND ORGANIZE
-   - If it's a ZIP file, extract it
-   - Move all contents from the starter kit to the project root:
-     * documentation/ directory (and all contents) → root
-     * CLAUDE.md → root
-     * README.md from documentation/initial_configuration/ → root (overwrite if exists)
-   - Verify all files and folders are in place
-   - IMPORTANT: Delete the "${starterKitName}" directory or zip file after extracting all contents
-
-3. CREATE IMPLEMENTATION PLAN FOR PHASE 1
+8. CREATE IMPLEMENTATION PLAN FOR PHASE 1
    - Read documentation/starter_kit.plan.phase1.md
    - Switch to plan mode and create a step-by-step plan from the instructions in that document
 

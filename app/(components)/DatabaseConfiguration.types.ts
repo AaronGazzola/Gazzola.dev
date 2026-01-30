@@ -134,6 +134,9 @@ export interface DatabaseConfigurationState {
     config: import("@/app/(editor)/layout.types").InitialConfigurationType
   ) => void;
   setTablesFromAI: (tables: DatabaseTable[]) => void;
+  setTables: (tables: DatabaseTable[]) => void;
+  setEnums: (enums: DatabaseEnum[]) => void;
+  setRLSPolicies: (rlsPolicies: RLSPolicy[]) => void;
   setEnumsFromAI: (enums: DatabaseEnum[]) => void;
   setRLSPoliciesFromAI: (
     policies: {
