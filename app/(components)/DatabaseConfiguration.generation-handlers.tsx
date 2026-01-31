@@ -406,6 +406,18 @@ export const useDatabaseGeneration = (
             },
             {
               id: generateId(),
+              name: 'role',
+              type: 'user_role',
+              isDefault: false,
+              isEditable: true,
+              isOptional: false,
+              isUnique: false,
+              isId: false,
+              isArray: false,
+              defaultValue: "'user'",
+            },
+            {
+              id: generateId(),
               name: 'created_at',
               type: 'TIMESTAMP WITH TIME ZONE',
               isId: false,
@@ -475,6 +487,35 @@ export const useDatabaseGeneration = (
           },
           { label: LOG_LABELS.DATABASE }
         );
+      }
+
+      const profilesTable = allTablesRef.current.find((t: any) => t.name === 'profiles' && t.schema === 'public');
+      if (profilesTable) {
+        const hasRoleColumn = profilesTable.columns.some((c: any) => c.name === 'role');
+        if (!hasRoleColumn) {
+          const updatedAtIndex = profilesTable.columns.findIndex((c: any) => c.name === 'updated_at');
+          const insertIndex = updatedAtIndex >= 0 ? updatedAtIndex : profilesTable.columns.length;
+          profilesTable.columns.splice(insertIndex, 0, {
+            id: generateId(),
+            name: 'role',
+            type: 'user_role',
+            isDefault: false,
+            isEditable: true,
+            isOptional: false,
+            isUnique: false,
+            isId: false,
+            isArray: false,
+            defaultValue: "'user'",
+          });
+
+          conditionalLog(
+            {
+              message: "Auto-injected role column into profiles table",
+              table: profilesTable.name
+            },
+            { label: LOG_LABELS.DATABASE }
+          );
+        }
       }
 
       const techUpdates: Partial<InitialConfigurationType["technologies"]> = {
