@@ -1,6 +1,6 @@
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
 import { toast } from "sonner";
-import { buildReadmePlanPrompt, buildReadmeFromPlanPrompt } from "./READMEComponent.prompts";
+import { buildReadmePlan, buildReadmeFromPlanPrompt } from "./READMEComponent.prompts";
 import React, { useRef } from "react";
 import { LayoutInput, PageInput, AuthMethods, PageAccess } from "./READMEComponent.types";
 
@@ -19,53 +19,61 @@ export const useReadmeGeneration = (
 ) => {
   const phase2LoadingToastIdRef = useRef<string | number | undefined>();
 
-  const { mutate: generatePlan, isPending: isGeneratingPlan } =
-    useCodeGeneration((response) => {
-      console.log("========================================");
-      console.log("README GENERATION - PHASE 1: PLAN");
-      console.log("========================================");
-      console.log("INPUT DATA:");
-      console.log("Title:", title);
-      console.log("Description:", description);
-      console.log("Layouts:", JSON.stringify(layouts, null, 2));
-      console.log("Pages:", JSON.stringify(pages, null, 2));
-      console.log("Auth Methods:", JSON.stringify(authMethods, null, 2));
-      console.log("Page Access:", JSON.stringify(pageAccess, null, 2));
-      console.log("========================================");
-      console.log("AI OUTPUT (Full Plan):");
-      console.log(response.content);
-      console.log("========================================");
+  const generatePlanProgrammatically = () => {
+    console.log("========================================");
+    console.log("README GENERATION - PHASE 1: PLAN (PROGRAMMATIC)");
+    console.log("========================================");
+    console.log("INPUT DATA:");
+    console.log("Title:", title);
+    console.log("Description:", description);
+    console.log("Layouts:", JSON.stringify(layouts, null, 2));
+    console.log("Pages:", JSON.stringify(pages, null, 2));
+    console.log("Auth Methods:", JSON.stringify(authMethods, null, 2));
+    console.log("Page Access:", JSON.stringify(pageAccess, null, 2));
+    console.log("========================================");
 
-      const plan = response.content.trim();
-      setReadmePlan(plan);
+    const plan = buildReadmePlan(
+      title,
+      description,
+      layouts,
+      pages,
+      authMethods,
+      pageAccess
+    );
 
-      const layoutCount = layouts.length;
-      const pageCount = pages.length;
+    console.log("GENERATED PLAN:");
+    console.log(plan);
+    console.log("========================================");
 
-      if (phase1ToastIdRef.current) {
-        toast.dismiss(phase1ToastIdRef.current);
-      }
+    setReadmePlan(plan);
 
-      toast.success("Plan generated. Creating README...", {
-        duration: 5000,
-        description: "This may take up to 2 minutes for complex READMEs..."
-      });
+    const layoutCount = layouts.length;
+    const pageCount = pages.length;
 
-      const prompt = buildReadmeFromPlanPrompt(plan, title, layouts, pages);
+    if (phase1ToastIdRef.current) {
+      toast.dismiss(phase1ToastIdRef.current);
+    }
 
-      console.log("========================================");
-      console.log("README GENERATION - PHASE 2: MARKDOWN FROM PLAN");
-      console.log("========================================");
-      console.log("AI INPUT (Prompt):");
-      console.log(prompt);
-      console.log("========================================");
-
-      phase2LoadingToastIdRef.current = toast.loading("Generating README from plan...", {
-        description: `Processing ${layoutCount} layouts and ${pageCount} pages`
-      });
-
-      generateReadmeFromPlan({ prompt, maxTokens: 3000 });
+    toast.success("Plan created. Generating README...", {
+      duration: 3000,
+      description: "Converting plan to markdown..."
     });
+
+    const prompt = buildReadmeFromPlanPrompt(plan, title, layouts, pages);
+
+    console.log("========================================");
+    console.log("README GENERATION - PHASE 2: MARKDOWN FROM PLAN");
+    console.log("========================================");
+    console.log("AI INPUT (Prompt):");
+    console.log(prompt);
+    console.log("========================================");
+
+    phase2LoadingToastIdRef.current = toast.loading("Generating README from plan...", {
+      description: `Processing ${layoutCount} layouts and ${pageCount} pages`
+    });
+
+    generateReadmeFromPlan({ prompt, maxTokens: 4000 });
+  };
 
   const { mutate: generateReadmeFromPlan, isPending: isGeneratingReadme } =
     useCodeGeneration((response) => {
@@ -148,9 +156,9 @@ export const useReadmeGeneration = (
     });
 
   return {
-    generatePlan,
+    generatePlan: generatePlanProgrammatically,
     generateReadmeFromPlan,
-    isGeneratingPlan,
+    isGeneratingPlan: false,
     isGeneratingReadme
   };
 };

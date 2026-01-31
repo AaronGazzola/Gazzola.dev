@@ -9,51 +9,211 @@ import {
   PageInput,
 } from "./READMEComponent.types";
 
+export const generateAuthPages = (
+  authMethods: AuthMethods
+): { pages: PageInput[]; pageAccess: PageAccess[] } => {
+  const pages: PageInput[] = [];
+  const pageAccess: PageAccess[] = [];
+
+  if (authMethods.emailPassword && !authMethods.magicLink) {
+    const signUpPage: PageInput = {
+      id: generateId(),
+      name: "Sign Up",
+      route: "/sign-up",
+      description: "Where new users create an account with email and password",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(signUpPage);
+    pageAccess.push({
+      pageId: signUpPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+
+    const signInPage: PageInput = {
+      id: generateId(),
+      name: "Sign In",
+      route: "/sign-in",
+      description: "Where existing users sign in with email and password",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(signInPage);
+    pageAccess.push({
+      pageId: signInPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+  }
+
+  if (authMethods.magicLink && !authMethods.emailPassword) {
+    const signInPage: PageInput = {
+      id: generateId(),
+      name: "Sign In",
+      route: "/sign-in",
+      description:
+        "Where users enter their email to receive a magic link for passwordless sign-in",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(signInPage);
+    pageAccess.push({
+      pageId: signInPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+  }
+
+  if (authMethods.magicLink && authMethods.emailPassword) {
+    const signInPage: PageInput = {
+      id: generateId(),
+      name: "Sign In",
+      route: "/sign-in",
+      description:
+        "Users can select between email only sign in to receive a magic link for passwordless sign-in, or email and password sign in",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(signInPage);
+    pageAccess.push({
+      pageId: signInPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+
+    const signUpPage: PageInput = {
+      id: generateId(),
+      name: "Sign Up",
+      route: "/sign-up",
+      description:
+        "Users can select between creating an account with email only via magic link sign up, or email and password sign up",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(signUpPage);
+    pageAccess.push({
+      pageId: signUpPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+  }
+
+  if (authMethods.emailPassword) {
+    const forgotPasswordPage: PageInput = {
+      id: generateId(),
+      name: "Forgot Password",
+      route: "/forgot-password",
+      description: "Where users request a password reset link",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(forgotPasswordPage);
+    pageAccess.push({
+      pageId: forgotPasswordPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+
+    const resetPasswordPage: PageInput = {
+      id: generateId(),
+      name: "Reset Password",
+      route: "/reset-password",
+      description:
+        "Where users set a new password after clicking the reset link",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(resetPasswordPage);
+    pageAccess.push({
+      pageId: resetPasswordPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+  }
+
+  if (authMethods.emailPassword || authMethods.magicLink) {
+    const verifyPage: PageInput = {
+      id: generateId(),
+      name: "Verify Email",
+      route: "/verify",
+      description:
+        "Email verification page that displays a message informing users to check their inbox and click the verification link to complete their account setup and sign in.",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(verifyPage);
+    pageAccess.push({
+      pageId: verifyPage.id,
+      anon: true,
+      auth: false,
+      admin: false,
+    });
+
+    const welcomePage: PageInput = {
+      id: generateId(),
+      name: "Welcome",
+      route: "/welcome",
+      description:
+        "First-time user profile setup after initial sign in. All relevant profile data is collected",
+      layoutIds: [],
+      isAuthRequired: true,
+    };
+    pages.push(welcomePage);
+    pageAccess.push({
+      pageId: welcomePage.id,
+      anon: false,
+      auth: true,
+      admin: true,
+    });
+  }
+
+  return { pages, pageAccess };
+};
+
 export const generatePagesPrompt = (
   title: string,
   description: string,
   authMethods: AuthMethods
 ): string => {
-  const authPagesNeeded: string[] = [];
+  const authPagesInfo: string[] = [];
 
-  if (authMethods.emailPassword) {
-    authPagesNeeded.push(
-      "- Forgot Password page (/forgot-password) - Anon access - Where users request a password reset link"
-    );
-    authPagesNeeded.push(
-      "- Reset Password page (/reset-password) - Anon access - Where users set a new password after clicking the reset link"
-    );
-  }
   if (authMethods.emailPassword && !authMethods.magicLink) {
-    authPagesNeeded.push(
-      "- Sign Up page (/sign-up) - Anon access - Where new users create an account with email and password"
+    authPagesInfo.push(
+      "- Sign Up (/sign-up)",
+      "- Sign In (/sign-in)",
+      "- Forgot Password (/forgot-password)",
+      "- Reset Password (/reset-password)",
+      "- Verify Email (/verify)",
+      "- Welcome (/welcome)"
     );
-    authPagesNeeded.push(
-      "- Sign In page (/sign-in) - Anon access - Where existing users sign in with email and password"
+  } else if (authMethods.magicLink && !authMethods.emailPassword) {
+    authPagesInfo.push(
+      "- Sign In (/sign-in)",
+      "- Verify Email (/verify)",
+      "- Welcome (/welcome)"
     );
-  }
-  if (authMethods.magicLink && !authMethods.emailPassword) {
-    authPagesNeeded.push(
-      "- Sign in page (/sign-in) - Anon access - Where users enter their email to receive a magic link for passwordless sign-in"
-    );
-  }
-  if (authMethods.magicLink && authMethods.emailPassword) {
-    authPagesNeeded.push(
-      "- Sign in page (/sign-in) - Anon access - Users can select between email only sign in to receive a magic link for passwordless sign-in, or email and password sign in"
-    );
-    authPagesNeeded.push(
-      "- Sign Up page (/sign-up) - Anon access - Users can select between creating an account with email only via magic link sign up, or email and password sign up"
-    );
-  }
-  if (authMethods.emailPassword || authMethods.magicLink) {
-    authPagesNeeded.push(
-      "- Welcome page (/welcome) - Auth and admin access - First-time user profile setup after initial sign in. All relevant profile data is collected"
+  } else if (authMethods.magicLink && authMethods.emailPassword) {
+    authPagesInfo.push(
+      "- Sign In (/sign-in)",
+      "- Sign Up (/sign-up)",
+      "- Forgot Password (/forgot-password)",
+      "- Reset Password (/reset-password)",
+      "- Verify Email (/verify)",
+      "- Welcome (/welcome)"
     );
   }
 
   const authPagesSection =
-    authPagesNeeded.length > 0
-      ? `\n\nAuthentication pages required based on selected auth methods:\n${authPagesNeeded.join("\n")}\nINCLUDE ALL these authentication pages in your response.`
+    authPagesInfo.length > 0
+      ? `\n\nIMPORTANT: The following authentication pages will be automatically included (DO NOT generate these):\n${authPagesInfo.join("\n")}\n\nFocus ONLY on generating app-specific pages needed for the core functionality.`
       : "";
 
   return `You must return ONLY a valid JSON object. Do not include any explanations, markdown formatting, or code blocks. Your response must start with { and end with }.
@@ -61,7 +221,7 @@ export const generatePagesPrompt = (
 App Title: ${title}
 App Description: ${description}${authPagesSection}
 
-Generate >=3 relevant pages AND appropriate layouts for this web application based on the description above.
+Generate app-specific pages AND appropriate layouts for this web application based on the description above.
 
 LAYOUTS:
 Layouts are reusable UI wrappers that provide shared elements (headers, sidebars, footers, navigation) for groups of pages.
@@ -86,11 +246,11 @@ Consider:
 - What pages would users need to accomplish the app's goals?
 - What are the main user flows described?
 - Common web app patterns (home, dashboard, profile, settings, etc.)
-- Authentication pages needed based on the auth methods above
 - Next.js routing conventions (/, /about, /[id], /[slug], etc.)
 - Which pages should be anon (anonymous), auth (authenticated), or admin-only
 - Include an Admin page (/admin) only if admin features are mentioned in the description
 - Which layout(s) should wrap each page
+- Generate as many pages as needed to fully support the app's functionality (typically 5-15 app-specific pages)
 
 For each page, provide:
 - name: User-friendly page name (e.g., "Home", "Dashboard", "User Profile")
@@ -123,14 +283,13 @@ REQUIRED JSON FORMAT (return exactly this structure):
 }
 
 CRITICAL RULES:
-- Generate >=3 pages (app pages + auth pages)
+- Generate 5-15 app-specific pages based on the app's needs (authentication pages are handled separately)
 - Generate >=1 layouts (Main Layout always required, Admin Layout only if admin features exist)
 - Main Layout must mention header with site name and auth button
 - Main Layout should only include sidebar if it makes sense for the app type
 - Include at least a home page (/)
-- Include ALL authentication pages listed above
+- DO NOT generate authentication pages (sign-in, sign-up, verify, welcome, forgot-password, reset-password) - these are automatically included
 - Include an Admin page (/admin) ONLY if admin features are mentioned
-- All authentication pages should have anon access
 - Admin pages should have admin access and use "Admin Layout"
 - Routes must follow Next.js conventions
 - Descriptions should be specific to this app, not generic
@@ -229,20 +388,6 @@ export const generateFinalReadmePrompt = (
   authMethods: AuthMethods,
   pageAccess: PageAccess[]
 ): string => {
-  const pagesSection = pages
-    .map((p) => {
-      const access = pageAccess.find((pa) => pa.pageId === p.id);
-      const accessLevels = [];
-      if (access?.anon) accessLevels.push("Anon");
-      if (access?.auth) accessLevels.push("Auth");
-      if (access?.admin) accessLevels.push("Admin");
-      const accessText =
-        accessLevels.length > 0 ? ` (${accessLevels.join(", ")})` : "";
-
-      return `### ${p.name} (\`${p.route}\`)${accessText}\\n\\n${p.description}`;
-    })
-    .join("\\n\\n");
-
   const enabledAuthMethods = Object.entries(authMethods)
     .filter(([_, enabled]) => enabled)
     .map(([method]) => {

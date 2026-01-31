@@ -1,5 +1,6 @@
 //-| File path: app/(components)/Header.tsx
 "use client";
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -45,7 +46,6 @@ import {
 import { useHeaderStore } from "./Header.store";
 import { testimonials } from "./Header.types";
 import { LovableLogo } from "./LovableLogo";
-import { useSubdomainStore } from "@/app/layout.subdomain.store";
 import { TestimonialCard } from "./TestimonialCard";
 import ThemeControlPanel from "./ThemeControlPanel";
 
@@ -232,7 +232,9 @@ const Header = () => {
               {!mounted ? (
                 <div className="h-4 w-20 bg-gray-700 rounded animate-pulse my-0.5" />
               ) : (
-                <span className="">{isAzVariant ? "Youtube" : "@AzAnything"}</span>
+                <span className="">
+                  {isAzVariant ? "Youtube" : "@AzAnything"}
+                </span>
               )}
             </div>
 

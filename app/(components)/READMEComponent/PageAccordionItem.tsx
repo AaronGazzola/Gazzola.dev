@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/editor/ui/select";
-import { ChevronDown, ChevronRight, Trash2, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Trash2, X, Shield } from "lucide-react";
 import { LayoutInput, PageAccess, PageInput } from "../READMEComponent.types";
 
 interface PageAccordionItemProps {
@@ -73,7 +73,7 @@ export const PageAccordionItem = ({
           ) : (
             <ChevronRight className="h-4 w-4 theme-text-primary shrink-0" />
           )}
-          <div className="flex items-center theme-gap-2">
+          <div className="flex items-center theme-gap-2 flex-wrap">
             <span className="text-sm font-semibold theme-text-foreground">
               {page.name || `Page ${index + 1}`}
             </span>
@@ -82,9 +82,18 @@ export const PageAccordionItem = ({
                 {page.route}
               </span>
             )}
+            {page.isAuthRequired && (
+              <Badge
+                variant="outline"
+                className="theme-gap-1 text-xs h-5 px-1.5 theme-border-primary theme-text-primary"
+              >
+                <Shield className="h-3 w-3" />
+                Required by Auth
+              </Badge>
+            )}
           </div>
         </button>
-        {totalPages > 1 && (
+        {totalPages > 1 && !page.isAuthRequired && (
           <Button
             variant="ghost"
             size="sm"
@@ -99,6 +108,16 @@ export const PageAccordionItem = ({
 
       {isExpanded && (
         <div className="flex flex-col theme-gap-3 theme-pl-6 theme-pt-2">
+          {page.isAuthRequired && (
+            <div className="flex items-start theme-gap-2 theme-p-2 theme-bg-primary/10 theme-radius theme-border theme-border-primary/20">
+              <Shield className="h-4 w-4 theme-text-primary mt-0.5 shrink-0" />
+              <p className="text-xs theme-text-foreground">
+                This page is required for the authentication method(s) you
+                selected and cannot be modified or removed.
+              </p>
+            </div>
+          )}
+
           <div className="flex flex-col theme-gap-1">
             <label className="text-xs font-semibold theme-text-foreground">
               Page Name
@@ -107,8 +126,8 @@ export const PageAccordionItem = ({
               value={page.name}
               onChange={(e) => onUpdate(page.id, { name: e.target.value })}
               placeholder="Home"
-              disabled={disabled}
-              className={`theme-shadow ${!isNameValid ? "border-destructive" : ""}`}
+              disabled={disabled || page.isAuthRequired}
+              className={`theme-shadow ${!isNameValid ? "border-destructive" : ""} ${page.isAuthRequired ? "opacity-100 cursor-not-allowed" : ""}`}
             />
             {!isNameValid && (
               <p className="text-xs theme-text-destructive">
@@ -125,8 +144,8 @@ export const PageAccordionItem = ({
               value={page.route}
               onChange={(e) => onUpdate(page.id, { route: e.target.value })}
               placeholder="/"
-              disabled={disabled}
-              className={`theme-shadow theme-font-mono ${!isRouteValid ? "border-destructive" : ""}`}
+              disabled={disabled || page.isAuthRequired}
+              className={`theme-shadow theme-font-mono ${!isRouteValid ? "border-destructive" : ""} ${page.isAuthRequired ? "opacity-100 cursor-not-allowed" : ""}`}
             />
             {!isRouteValid && (
               <p className="text-xs theme-text-destructive">
@@ -147,8 +166,8 @@ export const PageAccordionItem = ({
               }
               onKeyDown={(e) => e.stopPropagation()}
               placeholder="Describe what users see and do on this page..."
-              disabled={disabled}
-              className={`theme-shadow min-h-[80px] ${!isDescriptionValid ? "border-destructive" : ""}`}
+              disabled={disabled || page.isAuthRequired}
+              className={`theme-shadow min-h-[80px] ${!isDescriptionValid ? "border-destructive" : ""} ${page.isAuthRequired ? "opacity-100 cursor-not-allowed" : ""}`}
             />
             <p
               className={`text-xs ${isDescriptionValid ? "theme-text-muted-foreground" : "theme-text-destructive"} font-semibold`}
@@ -173,51 +192,54 @@ export const PageAccordionItem = ({
                       <Badge
                         key={layoutId}
                         variant="secondary"
-                        className="cursor-pointer theme-gap-1"
+                        className={`theme-gap-1 ${!page.isAuthRequired ? "cursor-pointer" : ""}`}
                       >
                         {layout.name}
-                        <X
-                          className="h-3 w-3"
-                          onClick={() =>
-                            !disabled &&
-                            onUpdate(page.id, {
-                              layoutIds: page.layoutIds.filter(
-                                (id) => id !== layoutId
-                              ),
-                            })
-                          }
-                        />
+                        {!page.isAuthRequired && (
+                          <X
+                            className="h-3 w-3"
+                            onClick={() =>
+                              !disabled &&
+                              onUpdate(page.id, {
+                                layoutIds: page.layoutIds.filter(
+                                  (id) => id !== layoutId
+                                ),
+                              })
+                            }
+                          />
+                        )}
                       </Badge>
                     );
                   })}
                 </div>
               )}
-              {layouts.filter((l) => !page.layoutIds.includes(l.id)).length >
-                0 && (
-                <Select
-                  disabled={disabled}
-                  onValueChange={(layoutId) => {
-                    if (!page.layoutIds.includes(layoutId)) {
-                      onUpdate(page.id, {
-                        layoutIds: [...page.layoutIds, layoutId],
-                      });
-                    }
-                  }}
-                >
-                  <SelectTrigger className="w-full theme-shadow">
-                    <SelectValue placeholder="Add layout..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {layouts
-                      .filter((l) => !page.layoutIds.includes(l.id))
-                      .map((layout) => (
-                        <SelectItem key={layout.id} value={layout.id}>
-                          {layout.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              )}
+              {!page.isAuthRequired &&
+                layouts.filter((l) => !page.layoutIds.includes(l.id)).length >
+                  0 && (
+                  <Select
+                    disabled={disabled}
+                    onValueChange={(layoutId) => {
+                      if (!page.layoutIds.includes(layoutId)) {
+                        onUpdate(page.id, {
+                          layoutIds: [...page.layoutIds, layoutId],
+                        });
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-full theme-shadow">
+                      <SelectValue placeholder="Add layout..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {layouts
+                        .filter((l) => !page.layoutIds.includes(l.id))
+                        .map((layout) => (
+                          <SelectItem key={layout.id} value={layout.id}>
+                            {layout.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                )}
             </div>
           )}
 
@@ -229,9 +251,10 @@ export const PageAccordionItem = ({
               <div className="flex theme-gap-2 mb-2">
                 <Badge
                   variant={pageAccess?.anon ? "default" : "outline"}
-                  className="cursor-pointer"
+                  className={!page.isAuthRequired ? "cursor-pointer" : ""}
                   onClick={() =>
                     !disabled &&
+                    !page.isAuthRequired &&
                     onUpdateAccess(page.id, "anon", !pageAccess?.anon)
                   }
                 >
@@ -239,9 +262,10 @@ export const PageAccordionItem = ({
                 </Badge>
                 <Badge
                   variant={pageAccess?.auth ? "default" : "outline"}
-                  className="cursor-pointer"
+                  className={!page.isAuthRequired ? "cursor-pointer" : ""}
                   onClick={() =>
                     !disabled &&
+                    !page.isAuthRequired &&
                     onUpdateAccess(page.id, "auth", !pageAccess?.auth)
                   }
                 >
@@ -249,9 +273,10 @@ export const PageAccordionItem = ({
                 </Badge>
                 <Badge
                   variant={pageAccess?.admin ? "default" : "outline"}
-                  className="cursor-pointer"
+                  className={!page.isAuthRequired ? "cursor-pointer" : ""}
                   onClick={() =>
                     !disabled &&
+                    !page.isAuthRequired &&
                     onUpdateAccess(page.id, "admin", !pageAccess?.admin)
                   }
                 >

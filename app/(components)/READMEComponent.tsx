@@ -38,15 +38,16 @@ import {
   LayoutInput,
   PageInput,
   Stage,
+  PageAccess,
 } from "./READMEComponent.types";
 import {
   generatePagesPrompt,
   parsePagesFromResponse,
+  generateAuthPages,
 } from "./READMEComponent.utils";
 import { LayoutAccordionItem } from "./READMEComponent/LayoutAccordionItem";
 import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
 import { useReadmeGeneration } from "./READMEComponent.generation-handlers";
-import { buildReadmePlanPrompt } from "./READMEComponent.prompts";
 
 const MIN_TITLE_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 50;
@@ -105,6 +106,7 @@ export const READMEComponent = () => {
   const [showSuccessView, setShowSuccessView] = useState(false);
   const [readmePlan, setReadmePlan] = useState<string | null>(null);
   const phase1ToastIdRef = useRef<string | number | undefined>();
+  const successViewDismissedRef = useRef(false);
 
   useEffect(() => {
     const accordionMap: Record<Stage, string> = {
@@ -116,15 +118,18 @@ export const READMEComponent = () => {
   }, [stage]);
 
   useEffect(() => {
-    if (readmeGenerated && !showSuccessView) {
+    if (readmeGenerated && !showSuccessView && !successViewDismissedRef.current) {
       setShowSuccessView(true);
     }
-  }, [readmeGenerated]);
+  }, [readmeGenerated, showSuccessView]);
 
   useEffect(() => {
     if (pages.length > 0 && !hasAutoExpandedRef.current) {
-      setExpandedPageId(pages[0].id);
-      hasAutoExpandedRef.current = true;
+      const firstNonRequiredPage = pages.find((page) => !page.isAuthRequired);
+      if (firstNonRequiredPage) {
+        setExpandedPageId(firstNonRequiredPage.id);
+        hasAutoExpandedRef.current = true;
+      }
     }
   }, [pages]);
 
@@ -145,8 +150,23 @@ export const READMEComponent = () => {
 
   const hasReadmeInputChanged = useCallback(() => {
     if (!lastGeneratedForReadme) return true;
-    return lastGeneratedForReadme !== JSON.stringify({ layouts, pages });
-  }, [lastGeneratedForReadme, layouts, pages]);
+    return (
+      lastGeneratedForReadme.title !== title ||
+      lastGeneratedForReadme.description !== description ||
+      JSON.stringify(lastGeneratedForReadme.authMethods) !==
+        JSON.stringify(authMethods) ||
+      JSON.stringify(lastGeneratedForReadme.layouts) !==
+        JSON.stringify(layouts) ||
+      JSON.stringify(lastGeneratedForReadme.pages) !== JSON.stringify(pages)
+    );
+  }, [
+    lastGeneratedForReadme,
+    title,
+    description,
+    authMethods,
+    layouts,
+    pages,
+  ]);
 
   const hasAnyInputChanged = useCallback(() => {
     return (
@@ -207,6 +227,7 @@ export const READMEComponent = () => {
 
   const { mutate: generatePages, isPending: isGeneratingPages } =
     useCodeGeneration((response) => {
+      const authPagesData = generateAuthPages(authMethods);
       const parsed = parsePagesFromResponse(response.content);
 
       if (parsed && parsed.pages.length > 0) {
@@ -217,60 +238,68 @@ export const READMEComponent = () => {
           }
         }
 
-        let finalPages = parsed.pages;
-
-        if (authMethods.emailPassword || authMethods.magicLink) {
-          const hasVerifyPage = finalPages.some(
-            (p) => p.route === "/verify" || p.name.toLowerCase() === "verify"
-          );
-
-          if (!hasVerifyPage) {
-            const verifyPage: PageInput = {
-              id: generateId(),
-              name: "Verify Email",
-              route: "/verify",
-              description: "Email verification page that displays a message informing users to check their inbox and click the verification link to complete their account setup and sign in.",
-              layoutIds: [],
-            };
-            finalPages = [...finalPages, verifyPage];
-          }
-        }
+        const finalPages = [...authPagesData.pages, ...parsed.pages];
+        const finalPageAccess = [
+          ...authPagesData.pageAccess,
+          ...parsed.pageAccess,
+        ];
 
         setPages(finalPages);
-        setPageAccess(parsed.pageAccess);
+        setPageAccess(finalPageAccess);
         setStage("pages");
+
+        const authPageCount = authPagesData.pages.length;
+        const appPageCount = parsed.pages.length;
+        toast.success(
+          `Generated ${authPageCount} authentication page${authPageCount !== 1 ? "s" : ""} and ${appPageCount} app page${appPageCount !== 1 ? "s" : ""}`,
+          {
+            duration: 5000,
+          }
+        );
       } else {
         const fallbackPages: PageInput[] = [
           {
             id: generateId(),
             name: "Home",
             route: "/",
-            description: "",
+            description: "Landing page for the application",
             layoutIds: [],
           },
           {
             id: generateId(),
             name: "Dashboard",
             route: "/dashboard",
-            description: "",
+            description: "Main dashboard for authenticated users",
             layoutIds: [],
           },
         ];
 
-        if (authMethods.emailPassword || authMethods.magicLink) {
-          fallbackPages.push({
-            id: generateId(),
-            name: "Verify Email",
-            route: "/verify",
-            description: "Email verification page that displays a message informing users to check their inbox and click the verification link to complete their account setup and sign in.",
-            layoutIds: [],
-          });
-        }
+        const fallbackPageAccess: PageAccess[] = [
+          {
+            pageId: fallbackPages[0].id,
+            anon: true,
+            auth: true,
+            admin: true,
+          },
+          {
+            pageId: fallbackPages[1].id,
+            anon: false,
+            auth: true,
+            admin: true,
+          },
+        ];
 
-        setPages(fallbackPages);
+        const finalPages = [...authPagesData.pages, ...fallbackPages];
+        const finalPageAccess = [
+          ...authPagesData.pageAccess,
+          ...fallbackPageAccess,
+        ];
+
+        setPages(finalPages);
+        setPageAccess(finalPageAccess);
         setStage("pages");
         toast.warning(
-          "Could not generate pages automatically. Default pages added.",
+          "Could not generate app pages. Default pages added with authentication pages.",
           {
             duration: 5000,
           }
@@ -286,7 +315,7 @@ export const READMEComponent = () => {
   const handleSubmitAuth = useCallback(() => {
     setLastGeneratedForPages(authMethods);
     const prompt = generatePagesPrompt(title, description, authMethods);
-    generatePages({ prompt, maxTokens: 1200 });
+    generatePages({ prompt, maxTokens: 2500 });
   }, [
     title,
     description,
@@ -301,44 +330,25 @@ export const READMEComponent = () => {
       return;
     }
 
-    console.log("========================================");
-    console.log("README GENERATION - PHASE 1: PLAN GENERATION");
-    console.log("========================================");
-    console.log("INPUT DATA:");
-    console.log("Title:", title);
-    console.log("Description:", description);
-    console.log("Layouts:", JSON.stringify(layouts, null, 2));
-    console.log("Pages:", JSON.stringify(pages, null, 2));
-    console.log("Auth Methods:", JSON.stringify(authMethods, null, 2));
-    console.log("Page Access:", JSON.stringify(pageAccess, null, 2));
-    console.log("========================================");
-
-    setLastGeneratedForReadme(JSON.stringify({ layouts, pages }));
-    phase1ToastIdRef.current = toast.loading("Generating README plan...", {
-      description: `Analyzing ${layouts.length} layouts and ${pages.length} pages`
-    });
-
-    const prompt = buildReadmePlanPrompt(
+    setLastGeneratedForReadme({
       title,
       description,
+      authMethods,
       layouts,
       pages,
-      authMethods,
-      pageAccess
-    );
+    });
 
-    console.log("AI INPUT (Prompt):");
-    console.log(prompt);
-    console.log("========================================");
+    phase1ToastIdRef.current = toast.loading("Creating README plan...", {
+      description: `Structuring ${layouts.length} layouts and ${pages.length} pages`
+    });
 
-    generatePlan({ prompt, maxTokens: 3000 });
+    generatePlan();
   }, [
     title,
     description,
     layouts,
     pages,
     authMethods,
-    pageAccess,
     generatePlan,
     setLastGeneratedForReadme,
   ]);
@@ -401,8 +411,9 @@ export const READMEComponent = () => {
             size="icon"
             className="h-8 w-8 rounded-full"
             onClick={() => {
+              successViewDismissedRef.current = true;
               setShowSuccessView(false);
-              setAccordionValue("step-1-description");
+              setAccordionValue("step-3-pages");
             }}
           >
             <CornerLeftUp className="h-4 w-4" />

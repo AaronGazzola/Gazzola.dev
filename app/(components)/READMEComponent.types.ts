@@ -10,6 +10,7 @@ export interface PageInput {
   route: string;
   description: string;
   layoutIds: string[];
+  isAuthRequired?: boolean;
 }
 
 export type Stage = "description" | "auth" | "pages";
@@ -28,6 +29,14 @@ export interface AuthMethods {
   magicLink: boolean;
 }
 
+export interface ReadmeSnapshot {
+  title: string;
+  description: string;
+  authMethods: AuthMethods;
+  layouts: LayoutInput[];
+  pages: PageInput[];
+}
+
 export interface READMEState {
   title: string;
   description: string;
@@ -38,7 +47,7 @@ export interface READMEState {
   stage: Stage;
   lastGeneratedForAuth: { title: string; description: string } | null;
   lastGeneratedForPages: AuthMethods | null;
-  lastGeneratedForReadme: string | null;
+  lastGeneratedForReadme: ReadmeSnapshot | null;
 }
 
 export interface PageGenerationAIResponse {

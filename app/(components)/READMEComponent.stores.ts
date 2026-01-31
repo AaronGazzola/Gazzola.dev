@@ -6,6 +6,7 @@ import {
   type PageAccess,
   type PageInput,
   type READMEState,
+  type ReadmeSnapshot,
   type Stage,
   initialAuthMethods,
 } from "./READMEComponent.types";
@@ -41,7 +42,7 @@ interface READMEStore extends READMEState {
   updatePageAccess: (pageId: string, level: "anon" | "auth" | "admin", value: boolean) => void;
   setLastGeneratedForAuth: (data: { title: string; description: string } | null) => void;
   setLastGeneratedForPages: (authMethods: AuthMethods | null) => void;
-  setLastGeneratedForReadme: (pagesSnapshot: string | null) => void;
+  setLastGeneratedForReadme: (snapshot: ReadmeSnapshot | null) => void;
   reset: () => void;
 }
 
@@ -122,7 +123,7 @@ export const useREADMEStore = create<READMEStore>()(
 
       setLastGeneratedForAuth: (data) => set({ lastGeneratedForAuth: data }),
       setLastGeneratedForPages: (authMethods) => set({ lastGeneratedForPages: authMethods }),
-      setLastGeneratedForReadme: (pagesSnapshot) => set({ lastGeneratedForReadme: pagesSnapshot }),
+      setLastGeneratedForReadme: (snapshot) => set({ lastGeneratedForReadme: snapshot }),
 
       reset: () => set(getInitialState()),
     }),

@@ -35,11 +35,13 @@ import {
   ChevronRight,
   Ellipsis,
   HardDriveUpload,
+  HelpCircle,
   ListRestart,
   MessagesSquare,
   Palette,
   RotateCcw,
   Save,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
@@ -154,6 +156,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
 
   const allPages = useMemo(() => {
     const pages: { path: string; url: string; title: string; order: number }[] =
@@ -660,8 +663,10 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           inferredFeatures: appStructureState.inferredFeatures,
           parsedPages: appStructureState.parsedPages,
           featuresGenerated: appStructureState.featuresGenerated,
-          lastGeneratedReadmeContent: appStructureState.lastGeneratedReadmeContent,
-          lastGeneratedForStructure: appStructureState.lastGeneratedForStructure,
+          lastGeneratedReadmeContent:
+            appStructureState.lastGeneratedReadmeContent,
+          lastGeneratedForStructure:
+            appStructureState.lastGeneratedForStructure,
         },
         readmeState: {
           title: readmeState.title,
@@ -691,10 +696,11 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         },
       };
 
-      const appName = readmeState.title
-        ?.toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "") || "starter-kit";
+      const appName =
+        readmeState.title
+          ?.toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "starter-kit";
       const dateString = new Date().toISOString().split("T")[0];
 
       const blob = new Blob([JSON.stringify(progressData, null, 2)], {
@@ -747,7 +753,9 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             databaseStore.setEnums(progressData.databaseState.enums);
           }
           if (progressData.databaseState.rlsPolicies) {
-            databaseStore.setRLSPolicies(progressData.databaseState.rlsPolicies);
+            databaseStore.setRLSPolicies(
+              progressData.databaseState.rlsPolicies
+            );
           }
           if (progressData.databaseState.plugins) {
             progressData.databaseState.plugins.forEach((plugin: any) => {
@@ -775,12 +783,18 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               progressData.appStructureState.featuresGenerated
             );
           }
-          if (progressData.appStructureState.lastGeneratedReadmeContent !== undefined) {
+          if (
+            progressData.appStructureState.lastGeneratedReadmeContent !==
+            undefined
+          ) {
             appStructureStore.setLastGeneratedReadmeContent(
               progressData.appStructureState.lastGeneratedReadmeContent
             );
           }
-          if (progressData.appStructureState.lastGeneratedForStructure !== undefined) {
+          if (
+            progressData.appStructureState.lastGeneratedForStructure !==
+            undefined
+          ) {
             appStructureStore.setLastGeneratedForStructure(
               progressData.appStructureState.lastGeneratedForStructure
             );
@@ -1140,7 +1154,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             <div className="flex md:hidden items-center gap-1 pl-2 pr-1">
               <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
             </div>
-
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={() => setVideoDialogOpen(true)}
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden rounded-full h-8 w-8"
+                >
+                  <HelpCircle className="!h-6 !w-6" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>How it works</p>
+              </TooltipContent>
+            </Tooltip>
             <EditorPopover
               open={mobileMenuOpen}
               onOpenChange={setMobileMenuOpen}
@@ -1212,7 +1240,21 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               <div className="px-1">
                 <ThemeSwitch darkMode={darkMode} onToggle={setDarkMode} />
               </div>
-
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => setVideoDialogOpen(true)}
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full h-8 w-8"
+                  >
+                    <HelpCircle className="!h-6 !w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>How it works</p>
+                </TooltipContent>
+              </Tooltip>
               <EditorPopover
                 open={resetPopoverOpen}
                 onOpenChange={setResetPopoverOpen}
@@ -1451,6 +1493,37 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 </div>
               </EditorDialogContent>
             </EditorDialog>
+
+            {videoDialogOpen && (
+              <div
+                className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center"
+                onClick={() => setVideoDialogOpen(false)}
+              >
+                <Button
+                  onClick={() => setVideoDialogOpen(false)}
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-4 right-4 z-10 rounded-full h-12 w-12 bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                >
+                  <X className="h-7 w-7" />
+                </Button>
+                <div
+                  className="relative aspect-[9/16] bg-black/50 p-4 rounded-lg"
+                  style={{
+                    height: 'min(100vh, calc(100vw * 16 / 9))',
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <iframe
+                    className="w-full h-full rounded"
+                    src="https://www.youtube.com/embed/kBHy4ATV6aY"
+                    title="How it works"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center theme-gap-4">
@@ -1505,7 +1578,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     onClick={handleNext}
                     size={currentPageIndex <= 4 ? "sm" : "default"}
                     variant={currentPageIndex <= 4 ? "default" : "outline"}
-                    className=" theme-py-1 theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
+                    className=" theme-py-1 theme-px1 xs:theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
                   >
                     <span className="xs:block hidden">Next</span>
                     <ChevronRight className="h-4 w-4" />
