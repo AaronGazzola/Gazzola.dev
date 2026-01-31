@@ -56,6 +56,8 @@ npx shadcn@latest add --all --yes
 
 **Note:** This step is important and not optional. Complete the process for ALL of the shadcn components.
 
+Move the custom toast componen template from `documentation/template_files/CustomToast.template.tsx` to `components/CustomToast.tsx`
+
 Update ALL components in `components/ui/` to use the custom theme classes from `documentation/initial_configuration/Theme.md`. Work through each component file systematically:
 
 **For all components:**

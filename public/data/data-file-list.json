@@ -5,6 +5,7 @@
   "documentation/starter_kit.plan.phase2.md",
   "documentation/starter_kit.plan.phase3.md",
   "documentation/template_files/.gitkeep",
+  "documentation/template_files/CustomToast.template.tsx",
   "documentation/template_files/admin-client.ts",
   "documentation/template_files/auth-callback-route.ts",
   "documentation/template_files/auth-error-page.tsx",

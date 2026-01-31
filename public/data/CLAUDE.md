@@ -148,3 +148,18 @@ app/
 - Never use `persist` for sensitive user data (email, etc.)
 - Function naming: `useFeatureNameStore` (e.g., `useAuthStore`, `useSidebarStore`)
 - File naming: **plural** `page.stores.ts` (NOT singular `page.store.ts`)
+
+# Supabase CLI
+
+This project uses a remote Supabase repository. There is no local database.
+
+Create migrations using:
+
+`npx supabase migration new [migration name]`
+(do not create migration files manually)
+
+Push migrations using:
+
+`npx supabase db push`
+
+In order to query the database, create and run a custom typescript script. (Do not use `psql`)

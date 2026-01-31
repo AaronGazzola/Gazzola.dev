@@ -1,14 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/supabase/browser-client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
-  getUserProfileAction,
   createPostAction,
-  updatePostAction,
   deletePostAction,
   getPostsAction,
+  getUserProfileAction,
+  updatePostAction,
 } from "./template.actions";
-import type { PostInsert, PostUpdate } from "./template.types";
 import { usePostsStore } from "./template.stores";
+import type { PostInsert, PostUpdate } from "./template.types";
+import { CustomToast } from "@/components/CustomToast";
 
 export function useUserProfile(userId: string) {
   return useQuery({
@@ -20,6 +22,73 @@ export function useUserProfile(userId: string) {
 export function useUserAuth() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+
+  const signUp = useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/welcome`,
+        },
+      });
+
+      if (error) {
+        console.error(error);
+        if (error.status === 400 && error.message.includes("already registered")) {
+          const { error: resendError } = await supabase.auth.resend({
+            type: "signup",
+            email,
+          });
+
+          if (resendError) {
+            console.error(resendError);
+            throw new Error("User already exists. Failed to resend verification email");
+          }
+
+          return { needsVerification: true };
+        }
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      if ("needsVerification" in data) {
+        toast.custom(() => (
+          <CustomToast
+            variant="notification"
+            title="Verification email resent"
+            message="Please check your email to verify your account"
+          />
+        ));
+      } else {
+        toast.custom(() => (
+          <CustomToast
+            variant="success"
+            title="Account created"
+            message="Please check your email to verify your account"
+          />
+        ));
+      }
+      window.location.href = "/verify";
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <CustomToast
+          variant="error"
+          title="Sign up failed"
+          message={error.message}
+        />
+      ));
+    },
+  });
 
   const signIn = useMutation({
     mutationFn: async ({
@@ -43,6 +112,22 @@ export function useUserAuth() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.custom(() => (
+        <CustomToast
+          variant="success"
+          title="Signed in successfully"
+          message="Welcome back!"
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <CustomToast
+          variant="error"
+          title="Sign in failed"
+          message={error.message}
+        />
+      ));
     },
   });
 
@@ -57,10 +142,26 @@ export function useUserAuth() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.custom(() => (
+        <CustomToast
+          variant="success"
+          title="Signed out successfully"
+          message="See you next time!"
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <CustomToast
+          variant="error"
+          title="Sign out failed"
+          message={error.message}
+        />
+      ));
     },
   });
 
-  return { signIn, signOut };
+  return { signUp, signIn, signOut };
 }
 
 export function usePosts(userId?: string) {
@@ -85,6 +186,22 @@ export function useCreatePost() {
     onSuccess: (newPost) => {
       addPost(newPost);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.custom(() => (
+        <CustomToast
+          variant="success"
+          title="Post created"
+          message="Your post has been created successfully"
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <CustomToast
+          variant="error"
+          title="Failed to create post"
+          message={error.message}
+        />
+      ));
     },
   });
 }
@@ -104,6 +221,22 @@ export function useUpdatePost() {
     onSuccess: (updatedPost) => {
       updatePost(updatedPost.id, updatedPost);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.custom(() => (
+        <CustomToast
+          variant="success"
+          title="Post updated"
+          message="Your post has been updated successfully"
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <CustomToast
+          variant="error"
+          title="Failed to update post"
+          message={error.message}
+        />
+      ));
     },
   });
 }
@@ -117,6 +250,22 @@ export function useDeletePost() {
     onSuccess: (_, postId) => {
       removePost(postId);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.custom(() => (
+        <CustomToast
+          variant="success"
+          title="Post deleted"
+          message="Your post has been deleted successfully"
+        />
+      ));
+    },
+    onError: (error) => {
+      toast.custom(() => (
+        <CustomToast
+          variant="error"
+          title="Failed to delete post"
+          message={error.message}
+        />
+      ));
     },
   });
 }

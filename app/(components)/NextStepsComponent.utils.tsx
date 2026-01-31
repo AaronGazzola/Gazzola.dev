@@ -204,34 +204,46 @@ export const generateFinalPrompt = (
   const config = getDomainConfig(brand);
   return `I need help setting up my Next.js project using my starter kit. Please work through these steps one at a time, pause to ask for my input only when needed:
 
-1. LOCATE STARTER KIT
+1. CHECK IF STARTER KIT IS ALREADY UNPACKED
+   - Check if the following files and folders exist in the project root:
+     * documentation/ directory
+     * CLAUDE.md file
+     * .claude/settings.local.json file
+   - If all three exist, SKIP TO STEP 3 (the starter kit is already unpacked)
+   - If any are missing, continue to STEP 2
+
+2. LOCATE AND UNPACK STARTER KIT
    - Search the repository for a directory or ZIP file name containing "${starterKitName}" (it may have "(3)" or something similar appended)
    - If not found, ask me: "I couldn't find the ${starterKitName}. Please download it from ${config.ui.starterKitReference} and add it to your project directory, then let me know when it's ready."
    - Wait for my confirmation before proceeding
 
-2. CHECK PREREQUISITES
+   UNPACKING INSTRUCTIONS:
+   - If the starter kit is a ZIP file, extract it first
+   - Move all contents from the starter kit directory to the project root:
+     * documentation/ directory (and all contents) → root/documentation/
+     * CLAUDE.md → root/CLAUDE.md
+     * .claude/settings.local.json → root/.claude/settings.local.json
+   - Verify all files and folders are in place
+   - Delete the "${starterKitName}" directory or zip file after extracting all contents
+
+   IMPORTANT: After unpacking is complete, inform me: "The starter kit has been unpacked successfully. You now need to completely close this Claude Code chat and start a fresh chat to load the new permissions settings. Once you've started a new chat, paste this same prompt again and I'll continue from Step 3."
+
+   STOP HERE - wait for me to create a new chat and paste the prompt again.
+
+3. CHECK PREREQUISITES
    - Check if git and Node.js are installed by running: git --version && node --version
    - If git is missing: guide me to install it for my operating system
    - If Node.js is missing or version is below 18: direct me to download the LTS version from nodejs.org
 
-3. INSTALL NEXT.JS
+4. INSTALL NEXT.JS
    - Once prerequisites are confirmed, install Next.js in the current directory
    - Use the command: npx create-next-app@latest . --no-tailwind --yes
    - This accepts all defaults (TypeScript, ESLint, App Router) but skips Tailwind so we can install v4 manually later
    - If there are files and/or directories in the root dir then first move them to a temporary directory, then run the create-next-app command, then replace them
 
-4. CLEAN UP BOILERPLATE
+5. CLEAN UP BOILERPLATE
    - After installation, help me delete unnecessary boilerplate files
    - Set up a clean initial project structure
-
-5. EXTRACT AND ORGANIZE STARTER KIT
-   - If the starter kit is a ZIP file, extract it
-   - Move all contents from the starter kit to the project root:
-     * documentation/ directory (and all contents) → root
-     * CLAUDE.md → root
-     * README.md from documentation/initial_configuration/ → root (overwrite if exists)
-   - Verify all files and folders are in place
-   - IMPORTANT: Delete the "${starterKitName}" directory or zip file after extracting all contents
 
 6. CONFIGURE ENVIRONMENT (only when we reach this step)
    - Guide me to find my Supabase credentials in the dashboard:

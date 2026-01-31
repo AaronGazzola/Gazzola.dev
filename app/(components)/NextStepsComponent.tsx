@@ -496,26 +496,20 @@ export const NextStepsComponent = () => {
           <div className="flex flex-col theme-gap-4">
             <div className="theme-bg-muted theme-radius theme-p-4">
               <ol className="theme-text-foreground space-y-2 list-decimal list-inside mb-3">
-                <li>Download your starter kit</li>
+                <li>Download your starter kit (ZIP file)</li>
                 <li>
-                  Move your starter kit into the top level of your project
+                  Move the starter kit ZIP into the top level of your project
                   directory
                 </li>
                 <li>
-                  Move the <code className="theme-bg-card px-1 rounded">.claude</code> folder from inside your starter kit to your project root
+                  Copy the prompt below and paste it into Claude Code in VS Code
                 </li>
-                <li>
-                  <strong>Completely reset Claude Code</strong> (not just /clear):
-                  <ul className="list-disc list-inside ml-4 mt-1">
-                    <li>Open Command Palette (Cmd+Shift+P / Ctrl+Shift+P)</li>
-                    <li>Search for &quot;Claude: Sign Out and Clear All Data&quot;</li>
-                    <li>Or restart VS Code entirely</li>
-                  </ul>
-                  <p className="text-sm italic mt-1">This is needed so Claude Code loads the new permissions settings.</p>
-                </li>
-                <li>
-                  Copy the prompt below and paste it into your Claude chat in
-                  VSCode
+                <li className="ml-4 list-none">
+                  <p className="text-sm italic mt-1">
+                    Note: The prompt will guide Claude to unpack the starter kit, including moving the{" "}
+                    <code className="theme-bg-card px-1 rounded">.claude</code> folder to your project root.
+                    After unpacking, Claude will ask you to close the chat and start a new one to load the permissions.
+                  </p>
                 </li>
               </ol>
               <Popover

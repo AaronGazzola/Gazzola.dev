@@ -5,7 +5,8 @@ Description: quiz.win combines quiz content management with narrative-driven gam
 
 STEP 2: LAYOUTS AND PAGES
 Layouts
-Main Layout: Header with logo, navigation (Dashboard, Library, Adventures, Community), auth menu. Footer with links.
+Main Layout: Header with logo, navigation (Quizes, Adventures, Community), auth menu. Footer with links.
+
 Admin Layout: Moderation navigation header. Sidebar with content queues and analytics.
 
 Pages

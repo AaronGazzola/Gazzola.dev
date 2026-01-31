@@ -216,7 +216,27 @@ export const READMEComponent = () => {
             setExpandedLayoutId(parsed.layouts[0].id);
           }
         }
-        setPages(parsed.pages);
+
+        let finalPages = parsed.pages;
+
+        if (authMethods.emailPassword || authMethods.magicLink) {
+          const hasVerifyPage = finalPages.some(
+            (p) => p.route === "/verify" || p.name.toLowerCase() === "verify"
+          );
+
+          if (!hasVerifyPage) {
+            const verifyPage: PageInput = {
+              id: generateId(),
+              name: "Verify Email",
+              route: "/verify",
+              description: "Email verification page that displays a message informing users to check their inbox and click the verification link to complete their account setup and sign in.",
+              layoutIds: [],
+            };
+            finalPages = [...finalPages, verifyPage];
+          }
+        }
+
+        setPages(finalPages);
         setPageAccess(parsed.pageAccess);
         setStage("pages");
       } else {
@@ -236,6 +256,17 @@ export const READMEComponent = () => {
             layoutIds: [],
           },
         ];
+
+        if (authMethods.emailPassword || authMethods.magicLink) {
+          fallbackPages.push({
+            id: generateId(),
+            name: "Verify Email",
+            route: "/verify",
+            description: "Email verification page that displays a message informing users to check their inbox and click the verification link to complete their account setup and sign in.",
+            layoutIds: [],
+          });
+        }
+
         setPages(fallbackPages);
         setStage("pages");
         toast.warning(

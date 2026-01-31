@@ -77,7 +77,20 @@ In the corresponding `page.stores.ts` or `layout.stores.ts` file, define Zustand
 
 ### Step 3.5: Create Hooks
 
-In the corresponding `page.hooks.ts` or `layout.hooks.ts` file, define React-Query hook(s) following the approach demonstrated in `documentation/template_files/template.hooks.ts`
+In the corresponding `page.hooks.ts` or `layout.hooks.ts` file, define React-Query hook(s) following the approach demonstrated in `documentation/template_files/template.hooks.ts`.
+
+**Email verification workflow:**
+
+When implementing email/password authentication, follow this pattern:
+
+1. User signs up via the `signUp` mutation - no profile is created at this stage
+2. User is redirected to `/verify`, which displays a message informing the user to check their inbox for a verification link
+3. Supabase sends a verification email with a link that redirects to `/welcome`
+4. User clicks the verification link in their email
+5. A database trigger automatically creates their profile when the user is verified
+6. User is redirected to `/welcome` where they can update their profile data using the UI on the welcome page
+
+If a user attempts to sign in or sign up with an email that already exists but is not verified, the system automatically resends the verification email and redirects to `/verify`.
 
 ### Step 3.6: Build Page Component
 
@@ -85,13 +98,19 @@ In `page.tsx` or `layout.tsx`, implement the UI.
 
 All pages and components must be fully responsive down to 320px screen width. This ensures the application works on all mobile devices, including smaller smartphones.
 
-**Implementation considerations:**
+**Responsive design considerations:**
 
 - Layouts may need to rearrange at lower screen widths (e.g., switching from horizontal to vertical layouts)
 - Component scaling should adjust appropriately (e.g., reducing padding, font sizes, or element dimensions)
 - Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`, etc.) to handle breakpoints
 - Ensure interactive elements remain accessible and usable at all screen sizes
 - Horizontal scrolling should only occur when intentional (e.g., image carousels)
+
+**Authentication workflow considerations:**
+
+- Email verification is required before users can access protected routes
+- Profiles are created on the `/welcome` page after email verification, not during sign up
+- Use the email verification pattern demonstrated in `template.hooks.tsx`
 
 ---
 

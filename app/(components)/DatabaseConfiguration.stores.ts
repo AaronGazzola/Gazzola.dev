@@ -1738,6 +1738,53 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
           lines.push("  SELECT (SELECT role FROM public.profiles WHERE user_id = auth.uid()) IN ('admin', 'super-admin');");
           lines.push("$$;");
           lines.push("");
+
+          const profilesTable = userTables.find(t => t.name === 'profiles' && t.schema === 'public');
+
+          if (profilesTable) {
+            const insertColumns: string[] = [];
+            const insertValues: string[] = [];
+
+            profilesTable.columns.forEach((col) => {
+              if (col.name === 'id') {
+                insertColumns.push('id');
+                insertValues.push('NEW.id');
+              } else if (col.name === 'user_id' || col.name === 'userId') {
+                insertColumns.push(col.name);
+                insertValues.push('NEW.id');
+              } else if (col.defaultValue || col.isOptional) {
+                insertColumns.push(col.name);
+                if (col.defaultValue) {
+                  insertValues.push(col.defaultValue);
+                } else {
+                  insertValues.push('NULL');
+                }
+              }
+            });
+
+            if (insertColumns.length > 0) {
+              lines.push("-- Create trigger function for automatic profile creation");
+              lines.push("-- Automatically creates a profile when a user signs up via Supabase Auth");
+              lines.push("CREATE OR REPLACE FUNCTION public.handle_new_user()");
+              lines.push("RETURNS trigger");
+              lines.push("LANGUAGE plpgsql");
+              lines.push("SECURITY DEFINER");
+              lines.push("AS $$");
+              lines.push("BEGIN");
+              lines.push(`  INSERT INTO public.profiles (${insertColumns.join(', ')})`);
+              lines.push(`  VALUES (${insertValues.join(', ')});`);
+              lines.push("  RETURN NEW;");
+              lines.push("END;");
+              lines.push("$$;");
+              lines.push("");
+              lines.push("-- Create trigger on auth.users table");
+              lines.push("CREATE TRIGGER on_auth_user_created");
+              lines.push("  AFTER INSERT ON auth.users");
+              lines.push("  FOR EACH ROW");
+              lines.push("  EXECUTE FUNCTION public.handle_new_user();");
+              lines.push("");
+            }
+          }
         }
 
         if (rlsPolicies.length > 0) {

@@ -702,12 +702,55 @@ const generateThemeCss = (): string => {
       return fontValue.includes('var(--font-');
     };
 
-    const fontSansValue = lightTypography.fontSans || "var(--font-inter)";
-    const fontSerifValue = lightTypography.fontSerif || "var(--font-merriweather)";
+    const isSerifFont = (fontName: string): boolean => {
+      const serifFonts = [
+        'merriweather',
+        'playfair display',
+        'playfair-display',
+        'lora',
+        'crimson text',
+        'crimson-text',
+        'eb garamond',
+        'eb-garamond',
+        'libre baskerville',
+        'libre-baskerville',
+        'source serif pro',
+        'source-serif-pro',
+        'pt serif',
+        'pt-serif',
+        'old standard tt',
+        'old-standard-tt',
+        'vollkorn',
+        'cardo',
+        'gelasio',
+        'spectral',
+      ];
+      return serifFonts.some(serif => fontName.toLowerCase().includes(serif));
+    };
+
+    let fontSansValue = lightTypography.fontSans || "var(--font-inter)";
+    let fontSerifValue = lightTypography.fontSerif || "var(--font-merriweather)";
     const fontMonoValue = lightTypography.fontMono || "var(--font-jetbrains)";
-    const fontSansDarkValue = darkTypography.fontSans || lightTypography.fontSans || "var(--font-inter)";
-    const fontSerifDarkValue = darkTypography.fontSerif || lightTypography.fontSerif || "var(--font-merriweather)";
+    let fontSansDarkValue = darkTypography.fontSans || lightTypography.fontSans || "var(--font-inter)";
+    let fontSerifDarkValue = darkTypography.fontSerif || lightTypography.fontSerif || "var(--font-merriweather)";
     const fontMonoDarkValue = darkTypography.fontMono || lightTypography.fontMono || "var(--font-jetbrains)";
+
+    const primaryFontName = extractFontName(fontSansValue);
+    const isPrimaryFontSerif = isSerifFont(primaryFontName);
+    const primaryDarkFontName = extractFontName(fontSansDarkValue);
+    const isPrimaryDarkFontSerif = isSerifFont(primaryDarkFontName);
+
+    if (isPrimaryFontSerif) {
+      const temp = fontSansValue;
+      fontSansValue = fontSerifValue;
+      fontSerifValue = temp;
+    }
+
+    if (isPrimaryDarkFontSerif) {
+      const temp = fontSansDarkValue;
+      fontSansDarkValue = fontSerifDarkValue;
+      fontSerifDarkValue = temp;
+    }
 
     const googleFontValues = [
       fontSansValue,
@@ -850,12 +893,14 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
     lines.push(`}`);
     lines.push(``);
+    const bodyFontClass = isPrimaryFontSerif ? 'font-serif' : 'font-sans';
+
     lines.push(`@layer base {`);
     lines.push(`  * {`);
     lines.push(`    @apply border-border;`);
     lines.push(`  }`);
     lines.push(`  body {`);
-    lines.push(`    @apply bg-background text-foreground font-sans;`);
+    lines.push(`    @apply bg-background text-foreground ${bodyFontClass};`);
     lines.push(`    letter-spacing: var(--letter-spacing);`);
     lines.push(`  }`);
     lines.push(`}`);
@@ -1813,26 +1858,15 @@ export const generateAndDownloadZip = async (
 
   const claudeFolder = starterKitFolder.folder(".claude");
   if (claudeFolder) {
-    const settingsContent = {
-      permissions: {
-        allow: [
-          "Bash(npm:*)",
-          "Bash(npx:*)",
-          "Bash(git:*)",
-          "Bash(supabase:*)",
-          "Bash(node:*)",
-          "Bash(mkdir:*)",
-          "Bash(rm:*)",
-          "Bash(mv:*)",
-          "Bash(cp:*)",
-          "Bash(ls:*)",
-          "Bash(cat:*)",
-          "Bash(touch:*)",
-          "Bash(unzip:*)"
-        ]
+    try {
+      const settingsResponse = await fetch("/data/.claude/settings.local.json");
+      if (settingsResponse.ok) {
+        const settingsContent = await settingsResponse.text();
+        claudeFolder.file("settings.local.json", settingsContent);
       }
-    };
-    claudeFolder.file("settings.local.json", JSON.stringify(settingsContent, null, 2));
+    } catch (error) {
+      console.error("Failed to load .claude/settings.local.json:", error);
+    }
   }
 
   try {
