@@ -691,13 +691,19 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         },
       };
 
+      const appName = readmeState.title
+        ?.toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "starter-kit";
+      const dateString = new Date().toISOString().split("T")[0];
+
       const blob = new Blob([JSON.stringify(progressData, null, 2)], {
         type: "application/json",
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `starter-kit-progress-${new Date().toISOString().split("T")[0]}.json`;
+      a.download = `${appName}-progress-${dateString}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
