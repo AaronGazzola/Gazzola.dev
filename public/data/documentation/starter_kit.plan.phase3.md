@@ -1,6 +1,7 @@
 # Starter Kit Implementation Plan - Phase 3
 
 IMPORTANT: Implement this complete plan. Do not skip, alter or simplify any steps. Do not change the implementation order. Do not implement the plan using multiple agents in parallel, complete each step in sequence. If you're not able to complete any of the required steps, or if you need additional information then stop and ask for clarification, don't just continue and "fill in the gaps".
+Complete the process using a single agent in series, do not use multiple agents in parallel.
 
 This is a complete step-by-step guide for building a Next.js application using the starter kit configuration files.
 
