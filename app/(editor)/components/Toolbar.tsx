@@ -1196,7 +1196,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <ListRestart className="h-4 w-4" />
+                    <ListRestart className="!h-5 !w-5" />
                     Reset current page
                   </Button>
                   <Button
@@ -1207,7 +1207,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <RotateCcw className="h-4 w-4" />
+                    <RotateCcw className="!h-5 !w-5" />
                     Reset all pages
                   </Button>
                   <Button
@@ -1218,7 +1218,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <Save className="h-4 w-4" />
+                    <Save className="!h-5 !w-5" />
                     Save your progress
                   </Button>
                   <Button
@@ -1229,7 +1229,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <HardDriveUpload className="h-4 w-4" />
+                    <HardDriveUpload className="!h-5 !w-5" />
                     Upload saved progress
                   </Button>
                 </div>
@@ -1268,7 +1268,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                           size="icon"
                           className="rounded-[3px] h-8 w-8"
                         >
-                          <RotateCcw className="h-4 w-4" />
+                          <RotateCcw className="!h-5 !w-5" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -1287,7 +1287,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         setResetPopoverOpen(false);
                       }}
                     >
-                      <ListRestart className="h-4 w-4" />
+                      <ListRestart className="!h-5 !w-5" />
                       Reset current page
                     </Button>
                     <Button
@@ -1298,7 +1298,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         setResetPopoverOpen(false);
                       }}
                     >
-                      <RotateCcw className="h-4 w-4" />
+                      <RotateCcw className="!h-5 !w-5" />
                       Reset all pages
                     </Button>
                   </div>
@@ -1318,7 +1318,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                           size="icon"
                           className="rounded-[3px] h-8 w-8"
                         >
-                          <Save className="h-4 w-4" />
+                          <Save className="!h-5 !w-5" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -1334,7 +1334,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       className="w-full justify-start theme-gap-2 h-9"
                       onClick={handleSaveProgress}
                     >
-                      <Save className="h-4 w-4" />
+                      <Save className="h-5 w-5" />
                       Save your progress
                     </Button>
                     <Button
@@ -1510,7 +1510,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                 <div
                   className="relative aspect-[9/16] bg-black/50 p-4 rounded-lg"
                   style={{
-                    height: 'min(100vh, calc(100vw * 16 / 9))',
+                    height: "min(100vh, calc(100vw * 16 / 9))",
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
