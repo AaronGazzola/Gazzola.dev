@@ -1334,7 +1334,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       className="w-full justify-start theme-gap-2 h-9"
                       onClick={handleSaveProgress}
                     >
-                      <Save className="h-5 w-5" />
+                      <Save className="!h-5 !w-5" />
                       Save your progress
                     </Button>
                     <Button
@@ -1345,7 +1345,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                         setSavePopoverOpen(false);
                       }}
                     >
-                      <HardDriveUpload className="h-4 w-4" />
+                      <HardDriveUpload className="!h-5 !w-5" />
                       Upload saved progress
                     </Button>
                   </div>
