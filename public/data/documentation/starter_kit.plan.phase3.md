@@ -114,9 +114,15 @@ All pages and components must be fully responsive down to 320px screen width. Th
 
 ---
 
-## Phase 4: Final Steps
+## Phase 4: Run build and fix
 
-### Step 4.1: Create Commit
+Run `npm run build` and fix any errors
+
+---
+
+## Phase 5: Final Steps
+
+### Step 5.1: Create Commit
 
 ```bash
 git add .
@@ -129,13 +135,13 @@ git commit -m "Initialize application with starter kit
 - Test all functionality"
 ```
 
-### Step 4.2: Push to Repository
+### Step 5.2: Push to Repository
 
 ```bash
 git push
 ```
 
-### Step 4.3: Inform User
+### Step 5.3: Inform User
 
 IMPORTANT: Display this exact message at the end of the process:
 
