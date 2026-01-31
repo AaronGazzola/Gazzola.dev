@@ -245,34 +245,12 @@ export const generateFinalPrompt = (
    - After installation, help me delete unnecessary boilerplate files
    - Set up a clean initial project structure
 
-6. CONFIGURE ENVIRONMENT (only when we reach this step)
-   - Guide me to find my Supabase credentials in the dashboard:
-
-     To get your keys:
-     1. Go to your Supabase project dashboard
-     2. Click "Project Settings" in the left sidebar
-     3. Click "API Keys" in the left settings menu
-     4. Scroll down to "Publishable key" and click the copy button next to the "default" key and paste it here (starts with "sb_publishable_")
-     5. Scroll down to "Secret keys" and click the copy button next to the "default" key and paste it here (starts with "sb_secret_")
-     6. Also copy the URL in your browser's URL/search bar (starts with: "https://supabase.com/dashboard/project/") and paste it here
-     7. In the dashboard sidebar, click "Authentication" → "URL Configuration" → add "http://localhost:3000/auth/callback" to Redirect URLs and save. Also add any other domain names that you will use for this app, ie "https://yourdomain.com/auth/callback"
-
-   - After I provide these credentials, create a .env.local file (extract the supabase URL and project ref from the full url provided, eg: "https://supabase.com/dashboard/project/cqblezzhywdjerslhgho/settings/api-keys/legacy" -> "https://cqblezzhywdjerslhgho.supabase.co" + "cqblezzhywdjerslhgho"):
-     NEXT_PUBLIC_SUPABASE_URL=<my-project-url>
-     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<my-anon-key>
-     NEXT_PUBLIC_SUPABASE_PROJECT_REF=<my-project-ref>
-     SUPABASE_SECRET_KEY=<my-service-role-key>
-
-   - Verify .gitignore ignores ".env.local" but does not ignore ".env.example"
-   - Add a ".env.example" file with the supabase key variable names without the values
-   - Run "npx supabase projects list" to check if supabase is authenticated, if not authenticated, then prompt me to open the terminal with Cmd + \` or Ctrl + \` and enter "npx supabase login" and follow the prompts to authenticate supabase
-
-7. INITIAL COMMIT AND PUSH
+6. INITIAL COMMIT AND PUSH
    - Commit and push the changes
    - Note: I'm already authenticated with GitHub from when I cloned this repository
    - Run git add . && git commit -m "Initial Next.js setup" && git push
 
-8. CREATE IMPLEMENTATION PLAN FOR PHASE 1
+7. CREATE IMPLEMENTATION PLAN FOR PHASE 1
    - Read documentation/starter_kit.plan.phase1.md
    - Switch to plan mode and create a step-by-step plan from the instructions in that document
 
