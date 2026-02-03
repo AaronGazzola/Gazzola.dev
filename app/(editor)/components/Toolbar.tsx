@@ -817,7 +817,27 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             readmeStore.setDescription(progressData.readmeState.description);
           }
           if (progressData.readmeState.layouts) {
-            readmeStore.setLayouts(progressData.readmeState.layouts);
+            const migratedLayouts = progressData.readmeState.layouts.map((layout: any) => ({
+              ...layout,
+              options: {
+                header: {
+                  ...layout.options.header,
+                  themeToggle: layout.options.header.themeToggle ?? false,
+                },
+                leftSidebar: {
+                  ...layout.options.leftSidebar,
+                  themeToggle: layout.options.leftSidebar.themeToggle ?? false,
+                },
+                rightSidebar: {
+                  ...layout.options.rightSidebar,
+                  themeToggle: layout.options.rightSidebar.themeToggle ?? false,
+                },
+                footer: {
+                  ...layout.options.footer,
+                },
+              },
+            }));
+            readmeStore.setLayouts(migratedLayouts);
           }
           if (progressData.readmeState.pages) {
             readmeStore.setPages(progressData.readmeState.pages);

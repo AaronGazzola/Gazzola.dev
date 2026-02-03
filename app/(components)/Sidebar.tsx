@@ -45,11 +45,12 @@ import {
   FolderOpen,
   FolderTree,
   ListTodo,
-  Menu,
   MessageSquare,
   Package,
   Paintbrush,
   Palette,
+  PanelRightClose,
+  PanelRightOpen,
   Rocket,
   Shield,
   ShieldCheck,
@@ -814,7 +815,7 @@ const Sidebar = () => {
                 onClick={toggleSidebar}
                 data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
               >
-                <Menu className="h-5 w-5" />
+                <PanelRightOpen className="h-5 w-5" />
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
             </div>
@@ -888,6 +889,17 @@ const Sidebar = () => {
             <Bug className="h-4 w-4 flex-shrink-0" />
             Feedback
           </Button>
+          <Button
+            variant="highlight"
+            className="w-full justify-start h-8 px-2 gap-2 text-white font-medium"
+            onClick={() => {
+              setDialogOpen("yesPlease");
+              setIsExpanded(true);
+            }}
+          >
+            <Rocket className="h-4 w-4 flex-shrink-0" />
+            AI QA Services
+          </Button>
         </div>
       )}
     </SidebarContent>
@@ -903,7 +915,7 @@ const Sidebar = () => {
           onClick={toggleSidebar}
           data-cy={DataCyAttributes.TOGGLE_SIDEBAR_BUTTON}
         >
-          <Menu className="h-5 w-5" />
+          <PanelRightClose className="h-5 w-5" />
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
         <Tooltip>
@@ -987,6 +999,27 @@ const Sidebar = () => {
               className="bg-gray-900 text-white border-gray-700"
             >
               Feedback
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="highlight"
+                size="icon"
+                className="border border-transparent text-white px-2 !py-0"
+                onClick={() => {
+                  setDialogOpen("yesPlease");
+                  setIsExpanded(true);
+                }}
+              >
+                <Rocket className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="bg-gray-900 text-white border-gray-700"
+            >
+              AI QA Services
             </TooltipContent>
           </Tooltip>
         </div>

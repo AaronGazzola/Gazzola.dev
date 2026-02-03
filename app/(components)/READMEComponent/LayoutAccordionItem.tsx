@@ -73,12 +73,14 @@ export const LayoutAccordionItem = ({
 
   const CheckboxOption = ({
     label,
+    subtitle,
     checked,
     onChange,
     disabled: optionDisabled,
     indent = false,
   }: {
     label: string;
+    subtitle?: string;
     checked: boolean;
     onChange: (value: boolean) => void;
     disabled?: boolean;
@@ -92,7 +94,7 @@ export const LayoutAccordionItem = ({
         disabled={disabled || optionDisabled}
       />
       <div
-        className="flex-1 cursor-pointer"
+        className="flex flex-col theme-gap-1 flex-1 cursor-pointer"
         onClick={() => !disabled && !optionDisabled && onChange(!checked)}
       >
         <label
@@ -101,6 +103,11 @@ export const LayoutAccordionItem = ({
         >
           {label}
         </label>
+        {subtitle && (
+          <p className="text-xs theme-text-foreground cursor-pointer">
+            {subtitle}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -173,14 +180,16 @@ export const LayoutAccordionItem = ({
               {layout.options.header.enabled && (
                 <div className="flex flex-col theme-gap-2 theme-pl-6">
                   <CheckboxOption
-                    label="Title (links to home page)"
+                    label="Title"
+                    subtitle="Links to home page"
                     checked={layout.options.header.title}
                     onChange={(value) => updateOption("header", "title", value)}
                     disabled={!layout.options.header.enabled}
                     indent
                   />
                   <CheckboxOption
-                    label="Navigation items (on large screens)"
+                    label="Navigation items"
+                    subtitle="Shown on large screens"
                     checked={layout.options.header.navigationItems}
                     onChange={(value) =>
                       updateOption("header", "navigationItems", value)
@@ -190,6 +199,7 @@ export const LayoutAccordionItem = ({
                   />
                   <CheckboxOption
                     label="Profile avatar popover menu"
+                    subtitle="Includes a profile link and a sign out button, is replaced with a sign in button when not authenticated"
                     checked={layout.options.header.profileAvatarPopover}
                     onChange={(value) =>
                       updateOption("header", "profileAvatarPopover", value)
@@ -198,7 +208,18 @@ export const LayoutAccordionItem = ({
                     indent
                   />
                   <CheckboxOption
-                    label="Sticky (stays at top on scroll)"
+                    label="Theme toggle"
+                    subtitle="Light/dark mode switch"
+                    checked={layout.options.header.themeToggle}
+                    onChange={(value) =>
+                      updateOption("header", "themeToggle", value)
+                    }
+                    disabled={!layout.options.header.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Sticky"
+                    subtitle="Stays at top on scroll"
                     checked={layout.options.header.sticky}
                     onChange={(value) => updateOption("header", "sticky", value)}
                     disabled={!layout.options.header.enabled}
@@ -229,7 +250,8 @@ export const LayoutAccordionItem = ({
               {layout.options.leftSidebar.enabled && (
                 <div className="flex flex-col theme-gap-2 theme-pl-6">
                   <CheckboxOption
-                    label="Title (links to home page)"
+                    label="Title"
+                    subtitle="Links to home page"
                     checked={layout.options.leftSidebar.title}
                     onChange={(value) =>
                       updateOption("leftSidebar", "title", value)
@@ -248,9 +270,20 @@ export const LayoutAccordionItem = ({
                   />
                   <CheckboxOption
                     label="Profile avatar popover menu"
+                    subtitle="Includes a profile link and a sign out button, is replaced with a sign in button when not authenticated"
                     checked={layout.options.leftSidebar.profileAvatarPopover}
                     onChange={(value) =>
                       updateOption("leftSidebar", "profileAvatarPopover", value)
+                    }
+                    disabled={!layout.options.leftSidebar.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Theme toggle"
+                    subtitle="Light/dark mode switch"
+                    checked={layout.options.leftSidebar.themeToggle}
+                    onChange={(value) =>
+                      updateOption("leftSidebar", "themeToggle", value)
                     }
                     disabled={!layout.options.leftSidebar.enabled}
                     indent
@@ -270,7 +303,8 @@ export const LayoutAccordionItem = ({
               {layout.options.rightSidebar.enabled && (
                 <div className="flex flex-col theme-gap-2 theme-pl-6">
                   <CheckboxOption
-                    label="Title (links to home page)"
+                    label="Title"
+                    subtitle="Links to home page"
                     checked={layout.options.rightSidebar.title}
                     onChange={(value) =>
                       updateOption("rightSidebar", "title", value)
@@ -289,9 +323,20 @@ export const LayoutAccordionItem = ({
                   />
                   <CheckboxOption
                     label="Profile avatar popover menu"
+                    subtitle="Includes a profile link and a sign out button, is replaced with a sign in button when not authenticated"
                     checked={layout.options.rightSidebar.profileAvatarPopover}
                     onChange={(value) =>
                       updateOption("rightSidebar", "profileAvatarPopover", value)
+                    }
+                    disabled={!layout.options.rightSidebar.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Theme toggle"
+                    subtitle="Light/dark mode switch"
+                    checked={layout.options.rightSidebar.themeToggle}
+                    onChange={(value) =>
+                      updateOption("rightSidebar", "themeToggle", value)
                     }
                     disabled={!layout.options.rightSidebar.enabled}
                     indent
@@ -309,7 +354,8 @@ export const LayoutAccordionItem = ({
               {layout.options.footer.enabled && (
                 <div className="flex flex-col theme-gap-2 theme-pl-6">
                   <CheckboxOption
-                    label="Title (links to home page)"
+                    label="Title"
+                    subtitle="Links to home page"
                     checked={layout.options.footer.title}
                     onChange={(value) => updateOption("footer", "title", value)}
                     disabled={!layout.options.footer.enabled}
@@ -325,7 +371,8 @@ export const LayoutAccordionItem = ({
                     indent
                   />
                   <CheckboxOption
-                    label="Legal navigation items (terms, privacy, contact, about)"
+                    label="Legal navigation items"
+                    subtitle="Terms, privacy, contact, about"
                     checked={layout.options.footer.legalNavItems}
                     onChange={(value) =>
                       updateOption("footer", "legalNavItems", value)

@@ -6,18 +6,21 @@ export interface LayoutOptions {
     profileAvatarPopover: boolean;
     sticky: boolean;
     sidebarToggleButton: boolean;
+    themeToggle: boolean;
   };
   leftSidebar: {
     enabled: boolean;
     title: boolean;
     navigationItems: boolean;
     profileAvatarPopover: boolean;
+    themeToggle: boolean;
   };
   rightSidebar: {
     enabled: boolean;
     title: boolean;
     navigationItems: boolean;
     profileAvatarPopover: boolean;
+    themeToggle: boolean;
   };
   footer: {
     enabled: boolean;
@@ -108,18 +111,21 @@ export const getDefaultLayoutOptions = (): LayoutOptions => ({
     profileAvatarPopover: false,
     sticky: false,
     sidebarToggleButton: false,
+    themeToggle: false,
   },
   leftSidebar: {
     enabled: false,
     title: false,
     navigationItems: false,
     profileAvatarPopover: false,
+    themeToggle: false,
   },
   rightSidebar: {
     enabled: false,
     title: false,
     navigationItems: false,
     profileAvatarPopover: false,
+    themeToggle: false,
   },
   footer: {
     enabled: false,
