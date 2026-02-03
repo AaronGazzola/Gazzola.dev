@@ -248,6 +248,7 @@ export const generateFinalPrompt = (
 6. INITIAL COMMIT AND PUSH
    - Commit and push the changes
    - Note: I'm already authenticated with GitHub from when I cloned this repository
+   - IMPORTANT: Confirm that the ".env.local" file is ignored by the ".gitignore"
    - Run git add . && git commit -m "Initial Next.js setup" && git push
 
 7. CREATE IMPLEMENTATION PLAN FOR PHASE 1
