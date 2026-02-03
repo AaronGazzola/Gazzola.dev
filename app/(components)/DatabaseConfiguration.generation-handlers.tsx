@@ -435,9 +435,10 @@ export const useDatabaseGeneration = (
               isId: false,
               isDefault: false,
               isEditable: true,
-              isOptional: true,
+              isOptional: false,
               isUnique: false,
               isArray: false,
+              defaultValue: 'NOW()',
             }
           ],
           uniqueConstraints: [],
@@ -719,7 +720,8 @@ COLUMN RULES:
 - All id columns use UUID type with DEFAULT gen_random_uuid()
 - Use enum type NAMES (not TEXT) for columns that reference enums
 - Include user_id (UUID REFERENCES auth.users.id) for user-owned tables
-- Include created_at and updated_at timestamps
+- Include created_at (TIMESTAMP WITH TIME ZONE DEFAULT NOW())
+- Include updated_at (TIMESTAMP WITH TIME ZONE DEFAULT NOW())
 
 OUTPUT FORMAT (JSON only):
 {

@@ -39,11 +39,13 @@ import {
   PageInput,
   Stage,
   PageAccess,
+  getDefaultLayoutOptions,
 } from "./READMEComponent.types";
 import {
   generatePagesPrompt,
   parsePagesFromResponse,
   generateAuthPages,
+  generateCompliancePages,
 } from "./READMEComponent.utils";
 import { LayoutAccordionItem } from "./READMEComponent/LayoutAccordionItem";
 import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
@@ -228,6 +230,7 @@ export const READMEComponent = () => {
   const { mutate: generatePages, isPending: isGeneratingPages } =
     useCodeGeneration((response) => {
       const authPagesData = generateAuthPages(authMethods);
+      const compliancePagesData = generateCompliancePages();
       const parsed = parsePagesFromResponse(response.content);
 
       if (parsed && parsed.pages.length > 0) {
@@ -238,10 +241,11 @@ export const READMEComponent = () => {
           }
         }
 
-        const finalPages = [...authPagesData.pages, ...parsed.pages];
+        const finalPages = [...authPagesData.pages, ...parsed.pages, ...compliancePagesData.pages];
         const finalPageAccess = [
           ...authPagesData.pageAccess,
           ...parsed.pageAccess,
+          ...compliancePagesData.pageAccess,
         ];
 
         setPages(finalPages);
@@ -289,10 +293,11 @@ export const READMEComponent = () => {
           },
         ];
 
-        const finalPages = [...authPagesData.pages, ...fallbackPages];
+        const finalPages = [...authPagesData.pages, ...fallbackPages, ...compliancePagesData.pages];
         const finalPageAccess = [
           ...authPagesData.pageAccess,
           ...fallbackPageAccess,
+          ...compliancePagesData.pageAccess,
         ];
 
         setPages(finalPages);
@@ -357,7 +362,7 @@ export const READMEComponent = () => {
     const newLayout: LayoutInput = {
       id: generateId(),
       name: "",
-      description: "",
+      options: getDefaultLayoutOptions(),
     };
     addLayout(newLayout);
     setExpandedLayoutId(newLayout.id);
@@ -480,12 +485,10 @@ export const READMEComponent = () => {
   const canSubmitInitial = isTitleValid && isDescriptionValid;
 
   const MIN_LAYOUT_NAME_LENGTH = 2;
-  const MIN_LAYOUT_DESCRIPTION_LENGTH = 20;
 
   const areLayoutsValid = layouts.every(
     (l) =>
-      l.name.trim().length >= MIN_LAYOUT_NAME_LENGTH &&
-      l.description.trim().length >= MIN_LAYOUT_DESCRIPTION_LENGTH
+      l.name.trim().length >= MIN_LAYOUT_NAME_LENGTH
   );
 
   const canSubmitPages =
@@ -815,9 +818,7 @@ export const READMEComponent = () => {
               <div className="flex flex-col theme-gap-1">
                 <h3 className="font-semibold text-lg">Define Your Layouts</h3>
                 <p className="   theme-text-foreground font-semibold">
-                  Layouts wrap your pages with shared UI elements like headers,
-                  sidebars, and footers. You can apply multiple layouts to any
-                  page.
+                  Layouts wrap your pages with shared UI elements. Configure which components each layout includes: headers, sidebars, footers, and their specific features. You can apply multiple layouts to any page.
                 </p>
               </div>
 

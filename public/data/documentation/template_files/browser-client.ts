@@ -1,8 +1,8 @@
 import { ENV, getBrowserAPI } from "@/lib/env.utils";
 import type { Database } from "@/supabase/types";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
-export const supabase = createClient<Database>(
+export const supabase = createBrowserClient<Database>(
   ENV.SUPABASE_URL,
   ENV.SUPABASE_PUBLISHABLE_KEY,
   {

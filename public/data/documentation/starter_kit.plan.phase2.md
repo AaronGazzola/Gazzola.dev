@@ -121,7 +121,11 @@ Ask the user for an email address that will be used to seed the admin user, this
 - `documentation/template_files/seed.template.ts` → `supabase/seed.ts`
 - `documentation/template_files/reset-seed.ts` → `scipts/reset-seed.ts`
 
-3. Replace `admin@example.com` in `scripts/seed.ts` file with the user's provided email
+3. Update `supabase/seed.ts`:
+   - Replace `admin@example.com` with the user's provided email
+   - Remove manual profile insertion (lines 64-88) - profiles are created by DB trigger
+   - Update profile querying to wait for trigger-created profiles
+   - Ensure all column names, types, and enums match generated types in `supabase/types.ts`
 4. Add scripts to `package.json`:
    - `"db:seed": "tsx supabase/seed.ts"`
    - `"db:reset-seed": "bash scripts/reset-seed.sh"`

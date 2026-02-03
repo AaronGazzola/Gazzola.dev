@@ -56,6 +56,57 @@ export { WireFrame } from "./WireFrame";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
+const formatLayoutOptions = (layout: LayoutInput): string => {
+  const parts: string[] = [];
+  if (layout.options.header.enabled) {
+    const headerParts: string[] = ["Header"];
+    const headerDetails: string[] = [];
+    if (layout.options.header.title) headerDetails.push("app title");
+    if (layout.options.header.navigationItems) headerDetails.push("navigation");
+    if (layout.options.header.profileAvatarPopover) headerDetails.push("profile menu");
+    if (layout.options.header.sticky) headerDetails.push("sticky");
+    if (layout.options.header.sidebarToggleButton) headerDetails.push("sidebar toggle");
+    if (headerDetails.length > 0) {
+      headerParts.push(`(${headerDetails.join(", ")})`);
+    }
+    parts.push(headerParts.join(" "));
+  }
+  if (layout.options.leftSidebar.enabled) {
+    const sidebarParts: string[] = ["Left Sidebar"];
+    const sidebarDetails: string[] = [];
+    if (layout.options.leftSidebar.title) sidebarDetails.push("app title");
+    if (layout.options.leftSidebar.navigationItems) sidebarDetails.push("navigation");
+    if (layout.options.leftSidebar.profileAvatarPopover) sidebarDetails.push("profile menu");
+    if (sidebarDetails.length > 0) {
+      sidebarParts.push(`(${sidebarDetails.join(", ")})`);
+    }
+    parts.push(sidebarParts.join(" "));
+  }
+  if (layout.options.rightSidebar.enabled) {
+    const sidebarParts: string[] = ["Right Sidebar"];
+    const sidebarDetails: string[] = [];
+    if (layout.options.rightSidebar.title) sidebarDetails.push("app title");
+    if (layout.options.rightSidebar.navigationItems) sidebarDetails.push("navigation");
+    if (layout.options.rightSidebar.profileAvatarPopover) sidebarDetails.push("profile menu");
+    if (sidebarDetails.length > 0) {
+      sidebarParts.push(`(${sidebarDetails.join(", ")})`);
+    }
+    parts.push(sidebarParts.join(" "));
+  }
+  if (layout.options.footer.enabled) {
+    const footerParts: string[] = ["Footer"];
+    const footerDetails: string[] = [];
+    if (layout.options.footer.title) footerDetails.push("app title");
+    if (layout.options.footer.allNavItems) footerDetails.push("all nav items");
+    if (layout.options.footer.legalNavItems) footerDetails.push("legal links");
+    if (footerDetails.length > 0) {
+      footerParts.push(`(${footerDetails.join(", ")})`);
+    }
+    parts.push(footerParts.join(" "));
+  }
+  return parts.join(", ");
+};
+
 const buildFeatureGenerationPrompt = (
   layouts: LayoutInput[],
   pages: PageInput[],
@@ -64,7 +115,7 @@ const buildFeatureGenerationPrompt = (
 ): string => {
   const layoutsSection = layouts.length > 0
     ? `LAYOUTS:\n${layouts.map(l => {
-        return `- ${l.name}\n  Description: ${l.description}\n`;
+        return `- ${l.name}: ${formatLayoutOptions(l)}\n`;
       }).join('')}`
     : 'No layouts defined.\n';
 
@@ -346,7 +397,7 @@ export const LayoutAndStructure = () => {
               id: layoutPageId,
               name: `${layout.name} Features`,
               route: '',
-              description: layout.description,
+              description: formatLayoutOptions(layout),
             });
           });
         }

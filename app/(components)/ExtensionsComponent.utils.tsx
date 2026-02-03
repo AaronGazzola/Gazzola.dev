@@ -142,3 +142,145 @@ export const PlaywrightPlusVitestLogo = () => (
     <VitestLogo />
   </div>
 );
+
+export const generateResendEmailPrompt = () => {
+  return `I need help setting up custom email delivery with Resend for my Next.js + Supabase application. Let's work through this step by step.
+
+PHASE 1: RESEND ACCOUNT SETUP & DOMAIN VERIFICATION
+
+1. CREATE RESEND ACCOUNT
+   - Sign up at https://resend.com/signup
+   - Once signed in, you'll be directed to the dashboard
+
+2. ADD YOUR DOMAIN
+   - In the Resend dashboard, navigate to "Domains"
+   - Click "Add Domain"
+   - Enter your domain (e.g., yourdomain.com or mail.yourdomain.com)
+   - Resend will generate the required DNS records
+
+3. ADD DNS RECORDS TO YOUR DOMAIN REGISTRAR
+   Resend requires the following DNS records for domain verification:
+
+   - SPF Record (TXT): Authorizes Resend to send emails from your domain
+   - DKIM Record (TXT): Contains a public key for email authentication
+   - Optional DMARC Record (TXT): Additional email authentication policy
+
+   Steps:
+   - Copy each DNS record from Resend dashboard
+   - Log into your domain registrar (GoDaddy, Namecheap, Cloudflare, etc.)
+   - Navigate to DNS settings
+   - Add each TXT record exactly as shown in Resend
+   - Save changes
+
+   Note: DNS propagation can take up to 24 hours. You can check status using:
+   - Resend dashboard (will show "Verified" when ready)
+   - https://dns.email (Resend's DNS lookup tool)
+
+4. GET YOUR RESEND API KEY
+   - In Resend dashboard, go to "API Keys"
+   - Click "Create API Key"
+   - Give it a name (e.g., "Production Sending Key")
+   - Permissions: Select "Sending access" for your verified domain
+   - Copy the API key (you'll only see it once!)
+   - Store it securely
+
+5. PROVIDE YOUR CREDENTIALS
+   Once your domain is verified and you have your API key, please provide:
+   - Resend API Key: [paste here]
+   - Sending Domain: [e.g., yourdomain.com]
+   - From Email Address: [e.g., noreply@yourdomain.com]
+
+Wait for me to provide these details before proceeding to Phase 2.
+
+PHASE 2: EMAIL TEMPLATE IMPLEMENTATION
+
+After I provide the credentials, you will:
+
+1. REVIEW CODEBASE FOR EMAIL REQUIREMENTS
+   - Search for all existing email usage in the codebase
+   - Identify Supabase auth emails that need custom templates
+   - Find any other email-sending functionality
+   - Document all required email templates
+
+2. UPDATE ENVIRONMENT VARIABLES
+   - Add RESEND_API_KEY to .env.local
+   - Add RESEND_FROM_EMAIL to .env.local
+   - Update .env.example with placeholders
+
+3. CREATE EMAIL TEMPLATES DIRECTORY STRUCTURE
+   Create organized email templates in emails/ directory:
+   - emails/auth/ (for Supabase auth emails)
+   - emails/transactional/ (for app-specific transactional emails)
+
+4. BUILD EMAIL TEMPLATES WITH THEME CLASSES
+   For each required email template, create React Email components using the existing theme system:
+
+   Theme Classes to Use (from styles/theme.css and styles/globals.css):
+   - Backgrounds: theme-bg-card, theme-bg-muted, theme-bg-background
+   - Text Colors: theme-text-foreground, theme-text-muted-foreground, theme-text-primary
+   - Borders: theme-border-border
+   - Spacing: theme-gap-4, theme-p-4, theme-px-4, theme-py-2, etc.
+   - Border Radius: theme-radius
+   - Box Shadow: theme-shadow
+   - Fonts: theme-font-sans, theme-font-serif, theme-font-mono
+   - Letter Spacing: theme-tracking
+
+   CSS Variables (from globals.css :root):
+   - Colors: --background, --foreground, --card, --muted, --border, etc.
+   - Radius: --radius
+   - Other: Define as inline styles where theme classes aren't available
+
+   Email Template Requirements:
+   - Match the existing dark theme aesthetic (black/dark gray backgrounds)
+   - Use proper semantic HTML for email compatibility
+   - Include @react-email/components (Html, Head, Body, Container, Section, Text, Link, etc.)
+   - Add appropriate Preview text for email clients
+   - Keep layouts simple and email-client compatible
+   - Test with common email clients in mind
+
+5. IMPLEMENT SUPABASE AUTH EMAIL INTEGRATION
+   - Configure Supabase to use custom SMTP (Resend)
+   - Update Supabase dashboard settings with Resend SMTP details
+   - Map Supabase auth email types to custom templates:
+     * Confirmation email
+     * Password reset email
+     * Magic link email
+     * Email change confirmation
+
+6. CREATE EMAIL PREVIEW ROUTE (DEV ONLY)
+   - Create app/api/preview-emails/route.tsx
+   - Build an HTML page that lists all email templates
+   - Add links to preview each template with sample data
+   - Include query param routing (e.g., ?template=welcome)
+   - Make it accessible only in development (check process.env.NODE_ENV)
+   - Use realistic placeholder data for previews
+
+7. CREATE SERVER ACTIONS FOR SENDING EMAILS
+   - Update or create action files for email sending
+   - Use Resend SDK to send emails
+   - Implement proper error handling
+   - Add TypeScript types for email data
+
+8. UPDATE EXISTING EMAIL-SENDING CODE
+   - Find all places where emails are currently sent
+   - Update to use new Resend-based implementation
+   - Ensure proper error handling and logging
+
+9. TESTING & VALIDATION
+   - Test email preview route in development
+   - Verify all templates render correctly
+   - Check mobile responsiveness of emails
+   - Test actual email sending in development
+   - Document any email sending limits or considerations
+
+IMPORTANT IMPLEMENTATION NOTES:
+- Follow the project's CLAUDE.md guidelines (no comments, proper error handling, etc.)
+- Use existing project patterns for file organization
+- All theme classes should match the current dark theme aesthetic
+- Email templates must be compatible with major email clients
+- Preview route should ONLY work in development environment
+- Use the existing Resend package already installed in package.json
+- Follow the existing email template patterns in emails/ directory
+
+Please confirm you're ready to proceed once I provide the Resend credentials above.`;
+};

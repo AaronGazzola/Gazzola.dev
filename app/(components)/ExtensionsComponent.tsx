@@ -7,14 +7,23 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Blocks, Construction, MailIcon } from "lucide-react";
+import { Button } from "@/components/editor/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ArrowRight, Blocks, CheckCircle2, Construction, MailIcon, ScrollText } from "lucide-react";
+import { useState } from "react";
 import {
   CloudflareLogo,
+  generateResendEmailPrompt,
   MilestoneIcon,
   PlaywrightPlusVitestLogo,
   StripeLogo,
   SupabaseIcon,
 } from "./ExtensionsComponent.utils";
+import { ClaudeCodeLogo } from "./NextStepsComponent.utils";
 
 interface Extension {
   id: string;
@@ -24,6 +33,21 @@ interface Extension {
 }
 
 export const ExtensionsComponent = () => {
+  const [copied, setCopied] = useState<string | null>(null);
+  const [promptPopoverOpen, setPromptPopoverOpen] = useState<string | null>(null);
+
+  const handleCopy = async (text: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(id);
+      setTimeout(() => setCopied(null), 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
+  };
+
+  const resendPrompt = generateResendEmailPrompt();
+
   const extensions: Extension[] = [
     {
       id: "resend",
@@ -32,22 +56,78 @@ export const ExtensionsComponent = () => {
       content: (
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
-            <p className="theme-text-foreground">
-              This extension provides comprehensive documentation and setup
-              guides for implementing custom email delivery using Resend as your
-              SMTP provider. Includes configuration for Supabase Auth emails,
-              custom email templates, and a preview system for testing your
-              templates.
+            <p className="theme-text-foreground mb-3">
+              This guide will walk you through setting up custom email delivery using Resend as your
+              SMTP provider. Includes:
             </p>
+            <ul className="theme-text-foreground list-disc list-inside space-y-2">
+              <li>Resend account creation and domain verification</li>
+              <li>DNS record configuration</li>
+              <li>Supabase Auth email integration</li>
+              <li>Custom email templates with your app's theme</li>
+              <li>Development email preview system</li>
+            </ul>
           </div>
-          <div className="flex items-center justify-center theme-p-8">
-            <Badge
-              variant="secondary"
-              className="theme-gap-2 px-4 py-2 text-base"
+          <div className="theme-bg-muted theme-radius theme-p-4">
+            <h4 className="font-semibold theme-text-foreground mb-2">
+              Setup Instructions
+            </h4>
+            <ol className="theme-text-foreground space-y-2 list-decimal list-inside mb-3">
+              <li>Copy the prompt below</li>
+              <li>Paste it into Claude Code in VS Code</li>
+              <li>Follow the step-by-step guidance to set up Resend</li>
+              <li>Claude will help you configure your domain and implement email templates</li>
+            </ol>
+            <Popover
+              open={promptPopoverOpen === "resend"}
+              onOpenChange={(open) => setPromptPopoverOpen(open ? "resend" : null)}
             >
-              <Construction className="h-5 w-5" />
-              Coming Soon
-            </Badge>
+              <PopoverTrigger asChild>
+                <Button variant="link" className="theme-gap-2 w-full mb-4">
+                  View prompt
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[500px] max-h-[400px] overflow-y-auto">
+                <pre className="text-xs theme-text-foreground whitespace-pre-wrap font-mono">
+                  {resendPrompt}
+                </pre>
+              </PopoverContent>
+            </Popover>
+            <Button
+              variant="outline"
+              onClick={() => handleCopy(resendPrompt, "resend")}
+              className="w-full flex flex-col items-center py-6 h-auto mb-4"
+            >
+              {copied === "resend" ? (
+                <>
+                  <CheckCircle2
+                    className="h-5 w-5 mr-2 flex-shrink-0"
+                    style={{ width: "1.25rem", height: "1.25rem" }}
+                  />
+                  <span className="text-lg">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-center theme-gap-3">
+                    <ScrollText
+                      className="flex-shrink-0"
+                      style={{ width: "2rem", height: "2rem" }}
+                    />
+                    <ArrowRight
+                      className="flex-shrink-0"
+                      style={{ width: "1.5rem", height: "1.5rem" }}
+                    />
+                    <ClaudeCodeLogo
+                      className="flex-shrink-0"
+                      style={{ width: "2rem", height: "2rem" }}
+                    />
+                  </div>
+                  <span className="text-lg sm:inline hidden mt-3">
+                    Click here to copy the prompt
+                  </span>
+                </>
+              )}
+            </Button>
           </div>
         </div>
       ),

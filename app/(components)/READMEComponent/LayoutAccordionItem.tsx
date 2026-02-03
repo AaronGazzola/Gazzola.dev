@@ -1,7 +1,6 @@
-import { Badge } from "@/components/editor/ui/badge";
 import { Button } from "@/components/editor/ui/button";
+import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
-import { Textarea } from "@/components/editor/ui/textarea";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { LayoutInput } from "../READMEComponent.types";
 
@@ -17,7 +16,6 @@ interface LayoutAccordionItemProps {
 }
 
 const MIN_LAYOUT_NAME_LENGTH = 2;
-const MIN_LAYOUT_DESCRIPTION_LENGTH = 20;
 
 export const LayoutAccordionItem = ({
   layout,
@@ -31,9 +29,81 @@ export const LayoutAccordionItem = ({
 }: LayoutAccordionItemProps) => {
   const isNameValid =
     layout.name.trim().length >= MIN_LAYOUT_NAME_LENGTH || !layout.name.trim();
-  const isDescriptionValid =
-    layout.description.trim().length >= MIN_LAYOUT_DESCRIPTION_LENGTH ||
-    !layout.description.trim();
+
+  const updateOption = <T extends keyof LayoutInput["options"]>(
+    section: T,
+    key: keyof LayoutInput["options"][T],
+    value: boolean
+  ) => {
+    const updatedOptions = {
+      ...layout.options,
+      [section]: {
+        ...layout.options[section],
+        [key]: value,
+      },
+    };
+
+    if (section !== "header" && section !== "leftSidebar" && section !== "rightSidebar" && section !== "footer") {
+      return;
+    }
+
+    if (key === "enabled" && !value) {
+      const sectionObj = updatedOptions[section];
+      Object.keys(sectionObj).forEach((k) => {
+        if (k !== "enabled") {
+          (sectionObj as any)[k] = false;
+        }
+      });
+    }
+
+    if (section === "header" && key === "enabled" && !value) {
+      updatedOptions.header.sidebarToggleButton = false;
+    }
+
+    if (section === "leftSidebar" && key === "enabled" && !value) {
+      updatedOptions.header.sidebarToggleButton = false;
+    }
+
+    if (section === "header" && key === "sidebarToggleButton" && value && !updatedOptions.leftSidebar.enabled) {
+      return;
+    }
+
+    onUpdate(layout.id, { options: updatedOptions });
+  };
+
+  const CheckboxOption = ({
+    label,
+    checked,
+    onChange,
+    disabled: optionDisabled,
+    indent = false,
+  }: {
+    label: string;
+    checked: boolean;
+    onChange: (value: boolean) => void;
+    disabled?: boolean;
+    indent?: boolean;
+  }) => (
+    <div className={`flex items-start theme-gap-3 ${indent ? "theme-pl-6" : ""}`}>
+      <Checkbox
+        id={`${layout.id}-${label}`}
+        checked={checked}
+        onCheckedChange={(value) => onChange(value as boolean)}
+        disabled={disabled || optionDisabled}
+      />
+      <div
+        className="flex-1 cursor-pointer"
+        onClick={() => !disabled && !optionDisabled && onChange(!checked)}
+      >
+        <label
+          htmlFor={`${layout.id}-${label}`}
+          className="text-sm font-semibold cursor-pointer"
+        >
+          {label}
+        </label>
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -89,27 +159,183 @@ export const LayoutAccordionItem = ({
             )}
           </div>
 
-          <div className="flex flex-col theme-gap-1">
-            <label className="text-xs font-semibold theme-text-foreground">
-              Description
-            </label>
-            <Textarea
-              value={layout.description}
-              onChange={(e) =>
-                onUpdate(layout.id, { description: e.target.value })
-              }
-              onKeyDown={(e) => e.stopPropagation()}
-              placeholder="Describe the structure and purpose of this layout..."
-              disabled={disabled}
-              className={`theme-shadow min-h-[80px] ${!isDescriptionValid ? "border-destructive" : ""}`}
-            />
-            <p
-              className={`text-xs ${isDescriptionValid ? "theme-text-muted-foreground" : "theme-text-destructive"} font-semibold`}
-            >
-              Minimum {MIN_LAYOUT_DESCRIPTION_LENGTH} characters
-              {layout.description.length > 0 &&
-                ` (${layout.description.trim().length}/${MIN_LAYOUT_DESCRIPTION_LENGTH})`}
-            </p>
+          <div className="flex flex-col theme-gap-3 theme-pt-2">
+            <h4 className="text-sm font-bold theme-text-foreground">
+              Layout Components
+            </h4>
+
+            <div className="flex flex-col theme-gap-2">
+              <CheckboxOption
+                label="Header"
+                checked={layout.options.header.enabled}
+                onChange={(value) => updateOption("header", "enabled", value)}
+              />
+              {layout.options.header.enabled && (
+                <div className="flex flex-col theme-gap-2 theme-pl-6">
+                  <CheckboxOption
+                    label="Title (links to home page)"
+                    checked={layout.options.header.title}
+                    onChange={(value) => updateOption("header", "title", value)}
+                    disabled={!layout.options.header.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Navigation items (on large screens)"
+                    checked={layout.options.header.navigationItems}
+                    onChange={(value) =>
+                      updateOption("header", "navigationItems", value)
+                    }
+                    disabled={!layout.options.header.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Profile avatar popover menu"
+                    checked={layout.options.header.profileAvatarPopover}
+                    onChange={(value) =>
+                      updateOption("header", "profileAvatarPopover", value)
+                    }
+                    disabled={!layout.options.header.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Sticky (stays at top on scroll)"
+                    checked={layout.options.header.sticky}
+                    onChange={(value) => updateOption("header", "sticky", value)}
+                    disabled={!layout.options.header.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Sidebar toggle button"
+                    checked={layout.options.header.sidebarToggleButton}
+                    onChange={(value) =>
+                      updateOption("header", "sidebarToggleButton", value)
+                    }
+                    disabled={
+                      !layout.options.header.enabled ||
+                      !layout.options.leftSidebar.enabled
+                    }
+                    indent
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col theme-gap-2">
+              <CheckboxOption
+                label="Left Sidebar"
+                checked={layout.options.leftSidebar.enabled}
+                onChange={(value) => updateOption("leftSidebar", "enabled", value)}
+              />
+              {layout.options.leftSidebar.enabled && (
+                <div className="flex flex-col theme-gap-2 theme-pl-6">
+                  <CheckboxOption
+                    label="Title (links to home page)"
+                    checked={layout.options.leftSidebar.title}
+                    onChange={(value) =>
+                      updateOption("leftSidebar", "title", value)
+                    }
+                    disabled={!layout.options.leftSidebar.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Navigation items"
+                    checked={layout.options.leftSidebar.navigationItems}
+                    onChange={(value) =>
+                      updateOption("leftSidebar", "navigationItems", value)
+                    }
+                    disabled={!layout.options.leftSidebar.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Profile avatar popover menu"
+                    checked={layout.options.leftSidebar.profileAvatarPopover}
+                    onChange={(value) =>
+                      updateOption("leftSidebar", "profileAvatarPopover", value)
+                    }
+                    disabled={!layout.options.leftSidebar.enabled}
+                    indent
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col theme-gap-2">
+              <CheckboxOption
+                label="Right Sidebar"
+                checked={layout.options.rightSidebar.enabled}
+                onChange={(value) =>
+                  updateOption("rightSidebar", "enabled", value)
+                }
+              />
+              {layout.options.rightSidebar.enabled && (
+                <div className="flex flex-col theme-gap-2 theme-pl-6">
+                  <CheckboxOption
+                    label="Title (links to home page)"
+                    checked={layout.options.rightSidebar.title}
+                    onChange={(value) =>
+                      updateOption("rightSidebar", "title", value)
+                    }
+                    disabled={!layout.options.rightSidebar.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Navigation items"
+                    checked={layout.options.rightSidebar.navigationItems}
+                    onChange={(value) =>
+                      updateOption("rightSidebar", "navigationItems", value)
+                    }
+                    disabled={!layout.options.rightSidebar.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Profile avatar popover menu"
+                    checked={layout.options.rightSidebar.profileAvatarPopover}
+                    onChange={(value) =>
+                      updateOption("rightSidebar", "profileAvatarPopover", value)
+                    }
+                    disabled={!layout.options.rightSidebar.enabled}
+                    indent
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col theme-gap-2">
+              <CheckboxOption
+                label="Footer"
+                checked={layout.options.footer.enabled}
+                onChange={(value) => updateOption("footer", "enabled", value)}
+              />
+              {layout.options.footer.enabled && (
+                <div className="flex flex-col theme-gap-2 theme-pl-6">
+                  <CheckboxOption
+                    label="Title (links to home page)"
+                    checked={layout.options.footer.title}
+                    onChange={(value) => updateOption("footer", "title", value)}
+                    disabled={!layout.options.footer.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="All navigation items"
+                    checked={layout.options.footer.allNavItems}
+                    onChange={(value) =>
+                      updateOption("footer", "allNavItems", value)
+                    }
+                    disabled={!layout.options.footer.enabled}
+                    indent
+                  />
+                  <CheckboxOption
+                    label="Legal navigation items (terms, privacy, contact, about)"
+                    checked={layout.options.footer.legalNavItems}
+                    onChange={(value) =>
+                      updateOption("footer", "legalNavItems", value)
+                    }
+                    disabled={!layout.options.footer.enabled}
+                    indent
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

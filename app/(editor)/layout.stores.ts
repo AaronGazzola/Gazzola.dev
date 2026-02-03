@@ -1519,7 +1519,6 @@ export const useEditorStore = create<EditorState>()(
         version: state.version,
         data: state.data,
         darkMode: state.darkMode,
-        previewMode: state.previewMode,
         visitedPages: state.visitedPages,
         appStructure: state.appStructure,
         placeholderValues: state.placeholderValues,

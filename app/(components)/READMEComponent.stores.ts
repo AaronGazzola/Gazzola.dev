@@ -9,6 +9,7 @@ import {
   type ReadmeSnapshot,
   type Stage,
   initialAuthMethods,
+  getDefaultLayoutOptions,
 } from "./READMEComponent.types";
 
 const getInitialState = (): READMEState => ({
@@ -129,7 +130,7 @@ export const useREADMEStore = create<READMEStore>()(
     }),
     {
       name: "readme-store",
-      version: 2,
+      version: 3,
       migrate: (persistedState: any, version: number) => {
         if (version < 2) {
           if (!persistedState.layouts) {
@@ -154,6 +155,20 @@ export const useREADMEStore = create<READMEStore>()(
                 newAccess.admin = access.admin;
               }
               return newAccess;
+            });
+          }
+        }
+        if (version < 3) {
+          if (persistedState.layouts) {
+            persistedState.layouts = persistedState.layouts.map((layout: any) => {
+              if (layout.description !== undefined && !layout.options) {
+                return {
+                  id: layout.id,
+                  name: layout.name,
+                  options: getDefaultLayoutOptions(),
+                };
+              }
+              return layout;
             });
           }
         }

@@ -9,6 +9,84 @@ import {
   PageInput,
 } from "./READMEComponent.types";
 
+export const generateCompliancePages = (): {
+  pages: PageInput[];
+  pageAccess: PageAccess[];
+} => {
+  const pages: PageInput[] = [];
+  const pageAccess: PageAccess[] = [];
+
+  const termsPage: PageInput = {
+    id: generateId(),
+    name: "Terms and Conditions",
+    route: "/terms",
+    description:
+      "Legal terms and conditions governing the use of the service, including user responsibilities, acceptable use policy, and liability disclaimers",
+    layoutIds: [],
+    isCompliancePage: true,
+  };
+  pages.push(termsPage);
+  pageAccess.push({
+    pageId: termsPage.id,
+    anon: true,
+    auth: true,
+    admin: true,
+  });
+
+  const privacyPage: PageInput = {
+    id: generateId(),
+    name: "Privacy Policy",
+    route: "/privacy",
+    description:
+      "Privacy policy detailing how user data is collected, used, stored, and protected, including information about cookies and third-party services",
+    layoutIds: [],
+    isCompliancePage: true,
+  };
+  pages.push(privacyPage);
+  pageAccess.push({
+    pageId: privacyPage.id,
+    anon: true,
+    auth: true,
+    admin: true,
+  });
+
+  const aboutPage: PageInput = {
+    id: generateId(),
+    name: "About",
+    route: "/about",
+    description:
+      "Information about the company or organization, mission statement, team information, and company history",
+    layoutIds: [],
+    isCompliancePage: true,
+  };
+  pages.push(aboutPage);
+  pageAccess.push({
+    pageId: aboutPage.id,
+    anon: true,
+    auth: true,
+    admin: true,
+  });
+
+  const contactPage: PageInput = {
+    id: generateId(),
+    name: "Contact",
+    route: "/contact",
+    description:
+      "Contact page with email form for inquiries and business contact details including address, phone number, and support email",
+    layoutIds: [],
+    isCompliancePage: true,
+  };
+  pages.push(contactPage);
+  pageAccess.push({
+    pageId: contactPage.id,
+    anon: true,
+    auth: true,
+    admin: true,
+  });
+
+  return { pages, pageAccess };
+};
+
 export const generateAuthPages = (
   authMethods: AuthMethods
 ): { pages: PageInput[]; pageAccess: PageAccess[] } => {
@@ -227,19 +305,30 @@ LAYOUTS:
 Layouts are reusable UI wrappers that provide shared elements (headers, sidebars, footers, navigation) for groups of pages.
 
 Generate >=1 layouts based on these guidelines:
-- ALWAYS include a "Main Layout" with:
-  * Header containing the site name (${title})
-  * A "Sign in" nav button for anon users, replaced with an authentication popover menu for auth and admin users, which contains a sign out button and other relevant buttons such as settings and/or profile nav buttons if appropriate  
-  * Only include a sidebar if it makes sense for the app's UI (e.g., dashboards, content management apps benefit from sidebars; simple sites/blogs do not)
-  * Footer (optional)
-- Include an "Admin Layout" only if the app description mentions admin features, admin panel, or content moderation:
-  * Admin-specific header with admin navigation
-  * Admin sidebar with management tools
-  * Should wrap any admin pages
+- ALWAYS include a "Main Layout" configured appropriately for the app type
+- Include an "Admin Layout" only if the app description mentions admin features, admin panel, or content moderation
 
 For each layout, provide:
 - name: Layout name (must be exactly "Main Layout" or "Admin Layout")
-- description: What shared UI elements this layout provides (20-100 words), be specific about whether it includes a sidebar
+- options: Configuration object specifying which UI elements to include:
+  * header.enabled: true/false - Include a header bar
+  * header.title: true/false - Include app title linking to home (only if header.enabled)
+  * header.navigationItems: true/false - Include nav items on large screens (only if header.enabled)
+  * header.profileAvatarPopover: true/false - Include profile avatar with popover menu (sign out, profile, settings) for auth/admin users; shows "sign in" link for anon (only if header.enabled)
+  * header.sticky: true/false - Header stays at top on scroll (only if header.enabled)
+  * header.sidebarToggleButton: true/false - Include button to toggle sidebar visibility (only if header.enabled AND leftSidebar.enabled)
+  * leftSidebar.enabled: true/false - Include left sidebar (recommend true for dashboards, admin panels; false for simple sites)
+  * leftSidebar.title: true/false - Include app title linking to home (only if leftSidebar.enabled)
+  * leftSidebar.navigationItems: true/false - Include nav items (only if leftSidebar.enabled)
+  * leftSidebar.profileAvatarPopover: true/false - Include profile avatar with popover menu (only if leftSidebar.enabled)
+  * rightSidebar.enabled: true/false - Include right sidebar (typically false unless app needs secondary navigation)
+  * rightSidebar.title: true/false - Include app title linking to home (only if rightSidebar.enabled)
+  * rightSidebar.navigationItems: true/false - Include nav items (only if rightSidebar.enabled)
+  * rightSidebar.profileAvatarPopover: true/false - Include profile avatar with popover menu (only if rightSidebar.enabled)
+  * footer.enabled: true/false - Include footer
+  * footer.title: true/false - Include app title linking to home (only if footer.enabled)
+  * footer.allNavItems: true/false - Include all navigation items (only if footer.enabled)
+  * footer.legalNavItems: true/false - Include legal links like terms, privacy, contact, about (only if footer.enabled)
 
 PAGES:
 Consider:
@@ -264,7 +353,34 @@ REQUIRED JSON FORMAT (return exactly this structure):
   "layouts": [
     {
       "name": "Main Layout",
-      "description": "Primary layout with header (site name + auth button), optional sidebar for navigation, and footer for all pages"
+      "options": {
+        "header": {
+          "enabled": true,
+          "title": true,
+          "navigationItems": true,
+          "profileAvatarPopover": true,
+          "sticky": false,
+          "sidebarToggleButton": false
+        },
+        "leftSidebar": {
+          "enabled": false,
+          "title": false,
+          "navigationItems": false,
+          "profileAvatarPopover": false
+        },
+        "rightSidebar": {
+          "enabled": false,
+          "title": false,
+          "navigationItems": false,
+          "profileAvatarPopover": false
+        },
+        "footer": {
+          "enabled": true,
+          "title": true,
+          "allNavItems": false,
+          "legalNavItems": true
+        }
+      }
     }
   ],
   "pages": [
@@ -285,8 +401,12 @@ REQUIRED JSON FORMAT (return exactly this structure):
 CRITICAL RULES:
 - Generate 5-15 app-specific pages based on the app's needs (authentication pages are handled separately)
 - Generate >=1 layouts (Main Layout always required, Admin Layout only if admin features exist)
-- Main Layout must mention header with site name and auth button
-- Main Layout should only include sidebar if it makes sense for the app type
+- Each layout must have properly configured options matching the app type:
+  * Simple sites/blogs: header with title + nav + profile, footer with legal links, NO sidebars
+  * Dashboards/admin: header (possibly sticky) with title + profile + sidebar toggle, left sidebar with nav + profile, footer optional
+  * Content management: similar to dashboards, consider right sidebar if needed
+- Only enable secondary options when primary is enabled (e.g., header.title only if header.enabled)
+- header.sidebarToggleButton only if both header.enabled AND leftSidebar.enabled
 - Include at least a home page (/)
 - DO NOT generate authentication pages (sign-in, sign-up, verify, welcome, forgot-password, reset-password) - these are automatically included
 - Include an Admin page (/admin) ONLY if admin features are mentioned
@@ -331,11 +451,11 @@ export const parsePagesFromResponse = (
   console.log("✅ Found pages array with", parsed.pages.length, "pages");
 
   const layouts: LayoutInput[] = (parsed.layouts || [])
-    .filter((l) => l.name && l.description)
+    .filter((l) => l.name && l.options)
     .map((l) => ({
       id: generateId(),
       name: l.name,
-      description: l.description,
+      options: l.options,
     }));
 
   console.log("📄 Processed layouts:", layouts);
@@ -450,12 +570,68 @@ ${adminPages.map((p) => `- ${p.name} (${p.route})`).join("\\n")}
 }`
       : "";
 
+  const formatLayoutOptions = (layout: LayoutInput): string => {
+    const parts: string[] = [];
+
+    if (layout.options.header.enabled) {
+      const headerParts: string[] = ["Header"];
+      const headerDetails: string[] = [];
+      if (layout.options.header.title) headerDetails.push("app title");
+      if (layout.options.header.navigationItems) headerDetails.push("navigation");
+      if (layout.options.header.profileAvatarPopover) headerDetails.push("profile menu");
+      if (layout.options.header.sticky) headerDetails.push("sticky");
+      if (layout.options.header.sidebarToggleButton) headerDetails.push("sidebar toggle");
+      if (headerDetails.length > 0) {
+        headerParts.push(`(${headerDetails.join(", ")})`);
+      }
+      parts.push(headerParts.join(" "));
+    }
+
+    if (layout.options.leftSidebar.enabled) {
+      const sidebarParts: string[] = ["Left Sidebar"];
+      const sidebarDetails: string[] = [];
+      if (layout.options.leftSidebar.title) sidebarDetails.push("app title");
+      if (layout.options.leftSidebar.navigationItems) sidebarDetails.push("navigation");
+      if (layout.options.leftSidebar.profileAvatarPopover) sidebarDetails.push("profile menu");
+      if (sidebarDetails.length > 0) {
+        sidebarParts.push(`(${sidebarDetails.join(", ")})`);
+      }
+      parts.push(sidebarParts.join(" "));
+    }
+
+    if (layout.options.rightSidebar.enabled) {
+      const sidebarParts: string[] = ["Right Sidebar"];
+      const sidebarDetails: string[] = [];
+      if (layout.options.rightSidebar.title) sidebarDetails.push("app title");
+      if (layout.options.rightSidebar.navigationItems) sidebarDetails.push("navigation");
+      if (layout.options.rightSidebar.profileAvatarPopover) sidebarDetails.push("profile menu");
+      if (sidebarDetails.length > 0) {
+        sidebarParts.push(`(${sidebarDetails.join(", ")})`);
+      }
+      parts.push(sidebarParts.join(" "));
+    }
+
+    if (layout.options.footer.enabled) {
+      const footerParts: string[] = ["Footer"];
+      const footerDetails: string[] = [];
+      if (layout.options.footer.title) footerDetails.push("app title");
+      if (layout.options.footer.allNavItems) footerDetails.push("all nav items");
+      if (layout.options.footer.legalNavItems) footerDetails.push("legal links");
+      if (footerDetails.length > 0) {
+        footerParts.push(`(${footerDetails.join(", ")})`);
+      }
+      parts.push(footerParts.join(" "));
+    }
+
+    return parts.join(", ");
+  };
+
   const layoutsSection =
     layouts.length > 0
       ? `
 
 LAYOUTS:
-${layouts.map((l) => `- ${l.name}: ${l.description}`).join("\\n")}
+${layouts.map((l) => `- ${l.name}: ${formatLayoutOptions(l)}`).join("\\n")}
 
 PAGE-TO-LAYOUT MAPPINGS:
 ${

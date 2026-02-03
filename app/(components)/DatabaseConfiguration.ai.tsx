@@ -187,6 +187,7 @@ export const parseDatabaseSchemaFromResponse = (
             isUnique: false,
             isId: false,
             isArray: false,
+            defaultValue: 'NOW()',
           }
         ],
         uniqueConstraints: [],

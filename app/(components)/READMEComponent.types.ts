@@ -1,7 +1,36 @@
+export interface LayoutOptions {
+  header: {
+    enabled: boolean;
+    title: boolean;
+    navigationItems: boolean;
+    profileAvatarPopover: boolean;
+    sticky: boolean;
+    sidebarToggleButton: boolean;
+  };
+  leftSidebar: {
+    enabled: boolean;
+    title: boolean;
+    navigationItems: boolean;
+    profileAvatarPopover: boolean;
+  };
+  rightSidebar: {
+    enabled: boolean;
+    title: boolean;
+    navigationItems: boolean;
+    profileAvatarPopover: boolean;
+  };
+  footer: {
+    enabled: boolean;
+    title: boolean;
+    allNavItems: boolean;
+    legalNavItems: boolean;
+  };
+}
+
 export interface LayoutInput {
   id: string;
   name: string;
-  description: string;
+  options: LayoutOptions;
 }
 
 export interface PageInput {
@@ -11,6 +40,7 @@ export interface PageInput {
   description: string;
   layoutIds: string[];
   isAuthRequired?: boolean;
+  isCompliancePage?: boolean;
 }
 
 export type Stage = "description" | "auth" | "pages";
@@ -53,7 +83,7 @@ export interface READMEState {
 export interface PageGenerationAIResponse {
   layouts?: Array<{
     name: string;
-    description: string;
+    options: LayoutOptions;
   }>;
   pages: Array<{
     name: string;
@@ -69,6 +99,35 @@ export interface PageGenerationAIResponse {
 }
 
 export const generateId = () => Math.random().toString(36).substring(2, 11);
+
+export const getDefaultLayoutOptions = (): LayoutOptions => ({
+  header: {
+    enabled: false,
+    title: false,
+    navigationItems: false,
+    profileAvatarPopover: false,
+    sticky: false,
+    sidebarToggleButton: false,
+  },
+  leftSidebar: {
+    enabled: false,
+    title: false,
+    navigationItems: false,
+    profileAvatarPopover: false,
+  },
+  rightSidebar: {
+    enabled: false,
+    title: false,
+    navigationItems: false,
+    profileAvatarPopover: false,
+  },
+  footer: {
+    enabled: false,
+    title: false,
+    allNavItems: false,
+    legalNavItems: false,
+  },
+});
 
 export const initialAuthMethods: AuthMethods = {
   emailPassword: true,

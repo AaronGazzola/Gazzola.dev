@@ -75,7 +75,7 @@ For each of the ${tableCount} tables provided by the user, you will:
   * user_id (UUID UNIQUE REFERENCES auth.users.id ON DELETE CASCADE)
   * role (user_role DEFAULT 'user' NOT NULL)
   * created_at (TIMESTAMP WITH TIME ZONE DEFAULT NOW())
-  * updated_at (TIMESTAMP WITH TIME ZONE)
+  * updated_at (TIMESTAMP WITH TIME ZONE DEFAULT NOW())
 
 - User ID Denormalization:
   * ANY table with profile_id MUST also have user_id (UUID REFERENCES auth.users.id)

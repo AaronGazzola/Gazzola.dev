@@ -283,6 +283,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
     return currentNode?.type === "file" && currentNode.previewOnly === true;
   }, [data, currentContentPath]);
 
+  const isPreviewEnabledPage = useMemo(() => {
+    return ["theme", "app-directory", "database"].includes(currentContentPath);
+  }, [currentContentPath]);
+
+  const canTogglePreview = isPreviewEnabledPage && !isViewingComponentFile;
+
   const nextPage =
     currentPageIndex >= 0 && currentPageIndex < numberedPages.length - 1
       ? numberedPages[currentPageIndex + 1]
@@ -298,6 +304,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleBack = () => {
     if (canGoBack) {
+      setPreviewMode(false);
       const prevPage = numberedPages[currentPageIndex - 1];
       router.push(prevPage.url);
     }
@@ -349,6 +356,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
 
   const handleNext = () => {
     if (nextPage) {
+      setPreviewMode(false);
       markPageVisited(nextPage.path);
       router.push(nextPage.url);
     }
@@ -1562,13 +1570,17 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               )}
 
               <EditModeSwitch
-                previewMode={isViewingComponentFile ? true : previewMode}
+                previewMode={
+                  isViewingComponentFile
+                    ? true
+                    : !isPreviewEnabledPage
+                      ? false
+                      : previewMode
+                }
                 onToggle={(checked) => {
-                  if (!isViewingComponentFile) {
-                    setPreviewMode(checked);
-                  }
+                  setPreviewMode(checked);
                 }}
-                disabled={isViewingComponentFile}
+                disabled={!canTogglePreview}
               />
             </div>
             {canGoNext && (

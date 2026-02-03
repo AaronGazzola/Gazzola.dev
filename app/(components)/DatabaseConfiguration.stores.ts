@@ -1746,19 +1746,22 @@ export const useDatabaseStore = create<DatabaseConfigurationState>()(
             const insertValues: string[] = [];
 
             profilesTable.columns.forEach((col) => {
+              if (col.defaultValue) {
+                return;
+              }
+
               if (col.name === 'id') {
                 insertColumns.push('id');
                 insertValues.push('NEW.id');
               } else if (col.name === 'user_id' || col.name === 'userId') {
                 insertColumns.push(col.name);
                 insertValues.push('NEW.id');
-              } else if (col.defaultValue || col.isOptional) {
+              } else if (col.name === 'email') {
                 insertColumns.push(col.name);
-                if (col.defaultValue) {
-                  insertValues.push(col.defaultValue);
-                } else {
-                  insertValues.push('NULL');
-                }
+                insertValues.push('NEW.email');
+              } else if (!col.isOptional) {
+                insertColumns.push(col.name);
+                insertValues.push(`COALESCE(NEW.raw_user_meta_data->>'${col.name}', NULL)`);
               }
             });
 

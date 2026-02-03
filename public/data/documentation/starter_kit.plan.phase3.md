@@ -68,9 +68,10 @@ From `README.md`, identify:
 
 In the corresponding `page.types.ts` or `layout.types.ts` file, define types using the types in `supabase/types.ts`, following the approach demonstrated in `documentation/template_files/template.types.ts`
 
-### Step 3.3: Create Actions (if needed)
+### Step 3.3: Create Actions
 
-In the corresponding `page.actions.ts` or `layout.actions.ts` file, define server action(s) following the approach demonstrated in `documentation/template_files/template.actions.ts`
+In the corresponding `page.actions.ts` or `layout.actions.ts` file, define server action(s) following the approach demonstrated in `documentation/template_files/template.actions.ts`.
+Ensure that all database queries identify and type tables and columns correctly bu referring to the schema in `supabase.types`. All types should be imported from the assigned `page.types.ts` or `layout.types.ts` file.
 
 ### Step 3.4: Create Stores
 
