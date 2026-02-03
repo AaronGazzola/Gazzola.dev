@@ -38,30 +38,13 @@ This is a complete step-by-step guide for building a Next.js application using t
 npx supabase link --project-ref <project-ref>
 ```
 
-### Step 2.2: Configure TypeScript Compiler
-
-Update `tsconfig.json` to exclude template files from compilation:
-
-1. Open `tsconfig.json`
-2. Add `"public/data/documentation/template_files"` to the `exclude` array
-3. If no `exclude` array exists, create one at the root level of the JSON object
-
-Example:
-
-```json
-{
-  "compilerOptions": { ... },
-  "exclude": ["node_modules", "public/data/documentation/template_files"]
-}
-```
-
-### Step 2.3: Create Migration
+### Step 2.2: Create Migration
 
 ```bash
 npx supabase migration new initial_schema
 ```
 
-### Step 2.4: Add Database Schema
+### Step 2.3: Add Database Schema
 
 Copy complete schema from `documentation/initial_configuration/Database.md` into the migration file at `supabase/migrations/<timestamp>_initial_schema.sql`.
 
@@ -72,7 +55,7 @@ The schema includes:
 - RLS policies
 - Enum types
 
-### Step 2.5: Push Migration
+### Step 2.4: Push Migration
 
 ```bash
  echo "Y" | npx supabase db push
@@ -80,7 +63,7 @@ The schema includes:
 
 Verify success message. If errors occur, check schema syntax.
 
-### Step 2.6: Generate Types
+### Step 2.5: Generate Types
 
 ```bash
 npx supabase gen types typescript --project-id <project-ref> > supabase/types.ts
@@ -88,7 +71,7 @@ npx supabase gen types typescript --project-id <project-ref> > supabase/types.ts
 
 Verify `supabase/types.ts` file is created and contains type definitions.
 
-### Step 2.7: Create Client Files
+### Step 2.6: Create Client Files
 
 Copy and rename the template client files into their corresponding locations:
 
@@ -96,7 +79,7 @@ Copy and rename the template client files into their corresponding locations:
 - `documentation/template_files/browser-client.ts` → `supabase/browser-client.ts`
 - `documentation/template_files/admin-client.ts` → `supabase/admin-client.ts`
 
-### Step 2.8: Create Authentication Routes
+### Step 2.7: Create Authentication Routes
 
 Copy and rename the template auth files into their corresponding locations:
 
@@ -105,13 +88,13 @@ Copy and rename the template auth files into their corresponding locations:
 
 These routes handle OAuth and email confirmation flows.
 
-### Step 2.9: Install Dependencies
+### Step 2.8: Install Dependencies
 
 ```bash
 npm install @supabase/supabase-js @supabase/ssr
 ```
 
-### Step 2.10: Database Seeding
+### Step 2.9: Database Seeding
 
 Ask the user for an email address that will be used to seed the admin user, this should be a valid email address that the user has access to so they can verify their account if required. If not email is provided then fallback to a generic placeholder admin email address.
 

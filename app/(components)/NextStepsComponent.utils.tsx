@@ -245,13 +245,28 @@ export const generateFinalPrompt = (
    - After installation, help me delete unnecessary boilerplate files
    - Set up a clean initial project structure
 
-6. INITIAL COMMIT AND PUSH
+6. Configure TypeScript Compiler
+
+Update "tsconfig.json" to exclude template files from compilation:
+
+- Open "tsconfig.json"
+- Add "public/data/documentation/template_files" to the "exclude" array
+- If no "exclude" array exists, create one at the root level of the JSON object
+
+Example:
+{
+  "compilerOptions": { ... },
+  "exclude": ["node_modules", "public/data/documentation/template_files"]
+}
+
+
+7. INITIAL COMMIT AND PUSH
    - Commit and push the changes
    - Note: I'm already authenticated with GitHub from when I cloned this repository
    - IMPORTANT: Confirm that the ".env.local" file is ignored by the ".gitignore"
    - Run git add . && git commit -m "Initial Next.js setup" && git push
 
-7. CREATE IMPLEMENTATION PLAN FOR PHASE 1
+8. CREATE IMPLEMENTATION PLAN FOR PHASE 1
    - Read documentation/starter_kit.plan.phase1.md
    - Switch to plan mode and create a step-by-step plan from the instructions in that document
 
