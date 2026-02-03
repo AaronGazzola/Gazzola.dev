@@ -1,6 +1,6 @@
-import { LayoutInput, PageInput, AuthMethods, PageAccess } from "./READMEComponent.types";
+import { LayoutInput, PageInput, AuthMethods, PageAccess, AIContentMap } from "./READMEComponent.types";
 
-const formatLayoutOptions = (layout: LayoutInput): string => {
+export const formatLayoutOptions = (layout: LayoutInput): string => {
   const parts: string[] = [];
   if (layout.options.header.enabled) {
     const headerParts: string[] = ["Header"];
@@ -301,4 +301,219 @@ Start with: # ${title}
 End with the Getting Started section.
 
 Complete ALL ${pageCount} pages and ALL ${layoutCount} layouts in ONE response.`;
+};
+
+export const buildReadmeTemplate = (
+  title: string,
+  description: string,
+  layouts: LayoutInput[],
+  pages: PageInput[],
+  authMethods: AuthMethods,
+  pageAccess: PageAccess[]
+): string => {
+  const enabledAuthMethods = Object.entries(authMethods)
+    .filter(([_, enabled]) => enabled)
+    .map(([method]) => {
+      const methodNames: Record<string, string> = {
+        emailPassword: "Email & Password",
+        magicLink: "Magic Link",
+      };
+      return methodNames[method] || method;
+    });
+
+  let template = `# ${title}
+
+[AI_OVERVIEW]
+
+`;
+
+  if (layouts.length > 0) {
+    template += `## Layouts
+
+`;
+    layouts.forEach((layout) => {
+      const pagesUsingLayout = pages.filter((p) =>
+        p.layoutIds.includes(layout.id)
+      );
+      template += `### ${layout.name}
+
+**Components:** ${formatLayoutOptions(layout)}
+
+**Pages using this layout:**
+${pagesUsingLayout.map((p) => `- ${p.name} (\`${p.route}\`)`).join("\n") || "- None"}
+
+`;
+    });
+  }
+
+  template += `## Pages
+
+`;
+
+  pages.forEach((page) => {
+    const access = pageAccess.find((pa) => pa.pageId === page.id);
+    const accessBadges = [];
+    if (access?.anon) accessBadges.push("🌐 Anon");
+    if (access?.auth) accessBadges.push("🔐 Auth");
+    if (access?.admin) accessBadges.push("👑 Admin");
+    const accessText = accessBadges.length > 0 ? accessBadges.join(" | ") : "None";
+
+    const pageLayouts = page.layoutIds
+      .map((layoutId) => {
+        const layout = layouts.find((l) => l.id === layoutId);
+        return layout ? layout.name : null;
+      })
+      .filter(Boolean);
+
+    template += `### ${page.name} (\`${page.route}\`)
+
+**Access:** ${accessText}
+`;
+    if (pageLayouts.length > 0) {
+      template += `**Layouts:** ${pageLayouts.join(", ")}
+`;
+    }
+    template += `
+[AI_PAGE_${page.id}]
+
+`;
+  });
+
+  if (enabledAuthMethods.length > 0) {
+    const anonCount = pages.filter((p) => {
+      const access = pageAccess.find((pa) => pa.pageId === p.id);
+      return access?.anon;
+    }).length;
+
+    const authCount = pages.filter((p) => {
+      const access = pageAccess.find((pa) => pa.pageId === p.id);
+      return access?.auth;
+    }).length;
+
+    const adminCount = pages.filter((p) => {
+      const access = pageAccess.find((pa) => pa.pageId === p.id);
+      return access?.admin;
+    }).length;
+
+    template += `## Authentication & Access Control
+
+**Authentication Methods:** ${enabledAuthMethods.join(", ")}
+
+**Access Level Summary:**
+
+| Access Level | Page Count |
+|-------------|-------|
+| 🌐 Anonymous | ${anonCount} pages |
+| 🔐 Authenticated | ${authCount} pages |
+| 👑 Admin | ${adminCount} pages |
+
+**Page Access:**
+
+${pages.map((p) => {
+  const access = pageAccess.find((pa) => pa.pageId === p.id);
+  const accessBadges = [];
+  if (access?.anon) accessBadges.push("🌐 Anon");
+  if (access?.auth) accessBadges.push("🔐 Auth");
+  if (access?.admin) accessBadges.push("👑 Admin");
+  const accessText = accessBadges.length > 0 ? accessBadges.join(", ") : "None";
+  return `- **${p.name}** (\`${p.route}\`) - ${accessText}`;
+}).join("\n")}
+
+`;
+  }
+
+  template += `## Getting Started
+
+[AI_GETTING_STARTED]`;
+
+  return template;
+};
+
+export const buildOverviewBatchPrompt = (
+  title: string,
+  description: string,
+  authMethods: AuthMethods
+): string => {
+  const enabledAuthMethods = Object.entries(authMethods)
+    .filter(([_, enabled]) => enabled)
+    .map(([method]) => {
+      const methodNames: Record<string, string> = {
+        emailPassword: "Email & Password",
+        magicLink: "Magic Link",
+      };
+      return methodNames[method] || method;
+    });
+
+  return `You are generating concise content for a README.
+
+Context:
+- App: ${title}
+- Description: ${description}
+- Auth Methods: ${enabledAuthMethods.join(", ")}
+
+Generate TWO pieces of content:
+
+1. **overview**: 2-3 paragraphs introducing the app
+   - What the app does
+   - Who it's for
+   - Key value proposition
+   - Keep it user-friendly (NOT technical)
+
+2. **gettingStarted**: 1-2 paragraphs on how to begin using the app
+   - How to access the app
+   - First steps for new users
+   ${enabledAuthMethods.length > 0 ? "- How to create an account\n   " : ""}- What to do after signing in
+
+Keep it CONCISE and USER-FOCUSED. No technical jargon or implementation details.
+
+Return ONLY valid JSON:
+{
+  "overview": "2-3 paragraphs here",
+  "gettingStarted": "1-2 paragraphs here"
+}`;
+};
+
+export const buildPagesBatchPrompt = (
+  title: string,
+  description: string,
+  batchPages: Array<{
+    id: string;
+    name: string;
+    route: string;
+    description: string;
+    access: { anon: boolean; auth: boolean; admin: boolean };
+  }>
+): string => {
+  const pagesContext = batchPages
+    .map((p, i) => {
+      const accessLevels = [];
+      if (p.access.anon) accessLevels.push("Anon");
+      if (p.access.auth) accessLevels.push("Auth");
+      if (p.access.admin) accessLevels.push("Admin");
+      return `${i + 1}. **${p.name}** (\`${p.route}\`) [${accessLevels.join(", ")}]
+   Description: ${p.description}
+   Key: page_${p.id}`;
+    })
+    .join("\n\n");
+
+  return `You are generating concise page descriptions for a README.
+
+Context:
+- App: ${title}
+- Description: ${description}
+
+Generate 1-2 SHORT paragraphs for each page below:
+- First paragraph: What users see and primary actions (2-3 sentences)
+- Second paragraph (optional): How it fits in the user flow (1-2 sentences)
+
+Keep it CONCISE and USER-FOCUSED. No technical details.
+
+Pages to describe:
+${pagesContext}
+
+Return ONLY valid JSON with keys matching the "Key" field above:
+{
+  "page_${batchPages[0].id}": "1-2 paragraphs here",
+  "page_${batchPages[1]?.id || "example"}": "1-2 paragraphs here"
+}`;
 };

@@ -140,6 +140,16 @@ export const initialAuthMethods: AuthMethods = {
   magicLink: false,
 };
 
+export interface ReadmeBatch {
+  batchNumber: number;
+  pageIds: string[];
+  type: "overview" | "pages";
+}
+
+export interface AIContentMap {
+  [key: string]: string;
+}
+
 export const initialState: READMEState = {
   title: "",
   description: "",

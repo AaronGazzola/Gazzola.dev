@@ -211,8 +211,10 @@ export const READMEComponent = () => {
 
   const {
     generatePlan,
+    generateReadmeWithBatching,
     isGeneratingPlan,
-    isGeneratingReadme
+    isGeneratingReadme,
+    isBatchGenerating
   } = useReadmeGeneration(
     title,
     description,
@@ -343,18 +345,18 @@ export const READMEComponent = () => {
       pages,
     });
 
-    phase1ToastIdRef.current = toast.loading("Creating README plan...", {
-      description: `Structuring ${layouts.length} layouts and ${pages.length} pages`
+    phase1ToastIdRef.current = toast.loading("Creating README structure...", {
+      description: `Processing ${layouts.length} layouts and ${pages.length} pages`
     });
 
-    generatePlan();
+    generateReadmeWithBatching();
   }, [
     title,
     description,
     layouts,
     pages,
     authMethods,
-    generatePlan,
+    generateReadmeWithBatching,
     setLastGeneratedForReadme,
   ]);
 
@@ -478,7 +480,7 @@ export const READMEComponent = () => {
     );
   }
 
-  const isPending = isGeneratingPlan || isGeneratingReadme || isGeneratingPages;
+  const isPending = isGeneratingPlan || isGeneratingReadme || isGeneratingPages || isBatchGenerating;
   const isTitleValid = title.trim().length >= MIN_TITLE_LENGTH;
   const isDescriptionValid =
     description.trim().length >= MIN_DESCRIPTION_LENGTH;
@@ -913,7 +915,7 @@ export const READMEComponent = () => {
                     }
                     className="flex-1 theme-gap-2"
                   >
-                    {(isGeneratingPlan || isGeneratingReadme) ? (
+                    {(isGeneratingPlan || isGeneratingReadme || isBatchGenerating) ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
                         Regenerating...
@@ -943,7 +945,7 @@ export const READMEComponent = () => {
                   disabled={isPending || !canSubmitPages}
                   className="w-full theme-gap-2"
                 >
-                  {(isGeneratingPlan || isGeneratingReadme) ? (
+                  {(isGeneratingPlan || isGeneratingReadme || isBatchGenerating) ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Generating README...
