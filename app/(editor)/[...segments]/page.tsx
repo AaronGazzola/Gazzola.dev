@@ -218,7 +218,7 @@ const Page = () => {
       const firstPath = getFirstPagePath();
       if (firstPath) {
         const firstNode = getNode(firstPath);
-        if (firstNode && firstNode.type === 'file') {
+        if (firstNode && firstNode.type === "file") {
           router.push(firstNode.urlPath);
         }
       }
@@ -428,17 +428,17 @@ const Page = () => {
 
   if (error) {
     return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font-sans theme-shadow">
+      <div className="w-full h-full theme-bg-background theme-text-foreground flex items-center justify-center theme-font theme-shadow">
         <div className="text-center flex flex-col gap-4 theme-spacing">
-          <div className="theme-text-destructive text-lg font-medium theme-font-sans theme-tracking">
+          <div className="theme-text-destructive text-lg font-medium theme-font theme-tracking">
             Failed to load editor content
           </div>
-          <div className="theme-text-muted-foreground theme-font-sans theme-tracking">
+          <div className="theme-text-muted-foreground theme-font theme-tracking">
             {error.message || "An error occurred while loading the content"}
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 theme-radius theme-bg-primary theme-text-primary-foreground theme-shadow transition-opacity hover:opacity-90 theme-font-sans theme-tracking"
+            className="px-4 py-2 theme-radius theme-bg-primary theme-text-primary-foreground theme-shadow transition-opacity hover:opacity-90 theme-font theme-tracking"
           >
             Retry
           </button>
@@ -459,7 +459,7 @@ const Page = () => {
     const codeNode = currentNode as any;
     const language = codeNode.language || "typescript";
     return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font theme-shadow overflow-hidden">
         <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
           <div
@@ -481,7 +481,7 @@ const Page = () => {
 
   if (isTsxFile) {
     return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font theme-shadow overflow-hidden">
         <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
           <div
@@ -505,7 +505,7 @@ const Page = () => {
     const fileName = currentNode?.displayName || "";
     const language = getCodeLanguage(fileName);
     return (
-      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
+      <div className="w-full h-full theme-bg-background theme-text-foreground theme-font theme-shadow overflow-hidden">
         <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
           <div
@@ -526,7 +526,7 @@ const Page = () => {
   }
 
   return (
-    <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow overflow-hidden">
+    <div className="w-full h-full theme-bg-background theme-text-foreground theme-font theme-shadow overflow-hidden">
       {previewMode ? (
         <div className="relative h-full flex flex-col max-w-full">
           <Toolbar currentContentPath={contentPath} />
@@ -550,13 +550,13 @@ const Page = () => {
               contentEditable={
                 <ContentEditable
                   className={cn(
-                    "w-full flex-1 p-6 outline-none resize-none min-h-0 theme-font-sans theme-bg-background theme-text-foreground theme-spacing h-24 border max-w-full",
+                    "w-full flex-1 p-6 outline-none resize-none min-h-0 theme-font theme-bg-background theme-text-foreground theme-spacing h-24 border max-w-full",
                     isExpanded ? "overflow-hidden" : "overflow-auto"
                   )}
                 />
               }
               placeholder={
-                <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing theme-font-sans theme-tracking">
+                <div className="absolute top-6 left-6 pointer-events-none theme-text-muted-foreground theme-spacing theme-font theme-tracking">
                   Start typing your markdown content...
                 </div>
               }

@@ -75,7 +75,10 @@ export const useThemeCSSVariables = () => {
     root.style.setProperty("--theme-sidebar-border", colors.sidebarBorder);
     root.style.setProperty("--theme-sidebar-ring", colors.sidebarRing);
 
-    const resolveFontVariable = (fontValue: string): string => {
+    const resolveFontVariable = (fontValue: string | undefined): string => {
+      if (!fontValue) {
+        return "";
+      }
       if (fontValue.startsWith("var(--font-")) {
         const varName = fontValue.slice(4, -1);
         const bodyStyle = getComputedStyle(document.body);
@@ -86,7 +89,7 @@ export const useThemeCSSVariables = () => {
     };
 
     root.style.setProperty(
-      "--theme-font-sans",
+      "--theme-font",
       resolveFontVariable(typography.fontSans)
     );
     root.style.setProperty(
@@ -97,6 +100,22 @@ export const useThemeCSSVariables = () => {
       "--theme-font-mono",
       resolveFontVariable(typography.fontMono)
     );
+
+    const primaryFontType = typography.primaryFont || "sans";
+    const primaryFontMap = {
+      sans: typography.fontSans,
+      serif: typography.fontSerif,
+      mono: typography.fontMono,
+    };
+    const primaryFontValue =
+      primaryFontMap[primaryFontType] ||
+      typography.fontSans ||
+      "system-ui, sans-serif";
+    root.style.setProperty(
+      "--theme-font",
+      resolveFontVariable(primaryFontValue)
+    );
+
     root.style.setProperty(
       "--theme-letter-spacing",
       `${typography.letterSpacing}em`

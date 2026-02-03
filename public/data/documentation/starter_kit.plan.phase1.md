@@ -94,11 +94,6 @@ Update ALL components in `components/ui/` to use the custom theme classes from `
    - On range end elements, add `data-range-end-bg-primary` and `data-range-end-text-primary-foreground`
    - On range middle elements, add `data-range-middle-bg-accent` and `data-range-middle-text-accent-foreground`
 
-7. **Typography** - Add font classes where needed:
-   - Elements that should use sans-serif: add `font-sans`
-   - Elements that should use serif: add `font-serif`
-   - Elements that should use monospace (code): add `font-mono`
-
 ---
 
 ## Next Steps

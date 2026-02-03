@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/editor/ui/select";
 import { Slider } from "@/components/editor/ui/slider";
+import { Switch } from "@/components/editor/ui/switch";
 import { conditionalLog, LOG_LABELS } from "@/lib/log.util";
 import { fontOptions } from "@/styles/fonts";
 import { ChevronDown, ChevronLeft, ChevronRight, Shuffle } from "lucide-react";
@@ -180,10 +181,10 @@ export const ThemeConfigurationSidebar = ({
           >
             <PopoverTrigger asChild>
               <button
-                className="flex-1 min-w-0 h-10 flex items-center justify-between text-md font-semibold theme-text-foreground theme-bg-muted theme-border-primary theme-radius px-3 hover:theme-bg-accent transition-colors theme-font-sans theme-tracking"
+                className="flex-1 min-w-0 h-10 flex items-center justify-between text-md font-semibold theme-text-foreground theme-bg-muted theme-border-primary theme-radius px-3 hover:theme-bg-accent transition-colors theme-font theme-tracking"
                 style={{ borderWidth: "2px", borderStyle: "solid" }}
               >
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0 theme-font-sans theme-tracking">
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis min-w-0 theme-font theme-tracking">
                   {themes[selectedTheme]?.name || "Loading..."}
                 </span>
                 <div className="flex items-center theme-gap-2 flex-shrink-0 theme-ml-4">
@@ -214,7 +215,7 @@ export const ThemeConfigurationSidebar = ({
                     placeholder="Search themes..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-8 text-md flex-1 theme-font-sans theme-tracking"
+                    className="h-8 text-md flex-1 theme-font theme-tracking"
                   />
                   <Button
                     variant="outline"
@@ -252,9 +253,9 @@ export const ThemeConfigurationSidebar = ({
                           setIsPopoverOpen(false);
                           setSearchQuery("");
                         }}
-                        className={`w-full flex items-center justify-between text-md theme-radius theme-p-6 theme-font-sans theme-tracking ${isSelected ? "theme-bg-accent theme-text-accent-foreground" : "bg-transparent theme-text-foreground"}`}
+                        className={`w-full flex items-center justify-between text-md theme-radius theme-p-6 theme-font theme-tracking ${isSelected ? "theme-bg-accent theme-text-accent-foreground" : "bg-transparent theme-text-foreground"}`}
                       >
-                        <span className="theme-font-sans theme-tracking">
+                        <span className="theme-font theme-tracking">
                           {themeItem.name}
                         </span>
                         <div className="flex items-center theme-gap-2">
@@ -297,7 +298,7 @@ export const ThemeConfigurationSidebar = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 text-md font-medium py-6 theme-font-sans theme-tracking ${isActive ? "theme-border-primary theme-text-foreground" : "theme-text-muted-foreground"}`}
+                className={`flex-1 text-md font-medium py-6 theme-font theme-tracking ${isActive ? "theme-border-primary theme-text-foreground" : "theme-text-muted-foreground"}`}
                 style={{
                   borderBottom: isActive
                     ? "2px solid"
@@ -323,8 +324,8 @@ export const ThemeConfigurationSidebar = ({
               </div>
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-3 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-3 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Primary Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -333,7 +334,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Primary
                       </Label>
                       <ColorPicker
@@ -364,7 +365,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Primary Foreground
                       </Label>
                       <ColorPicker
@@ -384,8 +385,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-3 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-3 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Secondary Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -394,7 +395,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Secondary
                       </Label>
                       <ColorPicker
@@ -409,7 +410,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Secondary Foreground
                       </Label>
                       <ColorPicker
@@ -429,8 +430,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-3 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-3 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Accent Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -439,7 +440,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Accent
                       </Label>
                       <ColorPicker
@@ -454,7 +455,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Accent Foreground
                       </Label>
                       <ColorPicker
@@ -474,8 +475,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Base Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -484,7 +485,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Background
                       </Label>
                       <ColorPicker
@@ -499,7 +500,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Foreground
                       </Label>
                       <ColorPicker
@@ -519,8 +520,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Card Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -529,7 +530,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Card Background
                       </Label>
                       <ColorPicker
@@ -544,7 +545,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Card Foreground
                       </Label>
                       <ColorPicker
@@ -564,8 +565,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Popover Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -574,7 +575,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Popover Background
                       </Label>
                       <ColorPicker
@@ -589,7 +590,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Popover Foreground
                       </Label>
                       <ColorPicker
@@ -609,8 +610,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Muted Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -619,7 +620,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Muted
                       </Label>
                       <ColorPicker
@@ -634,7 +635,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Muted Foreground
                       </Label>
                       <ColorPicker
@@ -654,8 +655,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Destructive Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -664,7 +665,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Destructive
                       </Label>
                       <ColorPicker
@@ -679,7 +680,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Destructive Foreground
                       </Label>
                       <ColorPicker
@@ -699,8 +700,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Border & Input Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -709,7 +710,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Border
                       </Label>
                       <ColorPicker
@@ -724,7 +725,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Input
                       </Label>
                       <ColorPicker
@@ -739,7 +740,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Ring
                       </Label>
                       <ColorPicker
@@ -759,8 +760,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Chart Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -773,7 +774,7 @@ export const ThemeConfigurationSidebar = ({
                         `chart${num}` as keyof typeof currentColors;
                       return (
                         <div key={num}>
-                          <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                          <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                             Chart {num}
                           </Label>
                           <ColorPicker
@@ -795,8 +796,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Sidebar Colors
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -805,7 +806,7 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Background
                       </Label>
                       <ColorPicker
@@ -820,7 +821,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Foreground
                       </Label>
                       <ColorPicker
@@ -835,7 +836,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Primary
                       </Label>
                       <ColorPicker
@@ -850,7 +851,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Primary Foreground
                       </Label>
                       <ColorPicker
@@ -865,7 +866,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Accent
                       </Label>
                       <ColorPicker
@@ -880,7 +881,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Accent Foreground
                       </Label>
                       <ColorPicker
@@ -895,7 +896,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Border
                       </Label>
                       <ColorPicker
@@ -910,7 +911,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Sidebar Ring
                       </Label>
                       <ColorPicker
@@ -940,8 +941,8 @@ export const ThemeConfigurationSidebar = ({
               </div>
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Font Family
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -950,16 +951,31 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
-                        Sans-Serif Font
-                      </Label>
+                      <div className="flex items-center justify-between theme-mb-2">
+                        <Label className="text-sm theme-text-muted-foreground theme-font theme-tracking">
+                          Sans-Serif Font
+                        </Label>
+                        <div className="flex items-center theme-gap-2">
+                          <span className="text-xs theme-text-muted-foreground theme-font theme-tracking">
+                            Primary
+                          </span>
+                          <Switch
+                            checked={currentTypography.primaryFont === "sans"}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                updateTypography(mode, { primaryFont: "sans" });
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
                       <Select
                         value={currentTypography.fontSans}
                         onValueChange={(value) =>
                           updateTypography(mode, { fontSans: value })
                         }
                       >
-                        <SelectTrigger className="h-9 text-md theme-font-sans theme-tracking">
+                        <SelectTrigger className="h-9 text-md theme-font theme-tracking">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -967,7 +983,7 @@ export const ThemeConfigurationSidebar = ({
                             <SelectItem
                               key={font.value}
                               value={font.value}
-                              className="theme-font-sans theme-tracking"
+                              className="theme-font theme-tracking"
                             >
                               {font.label}
                             </SelectItem>
@@ -976,16 +992,33 @@ export const ThemeConfigurationSidebar = ({
                       </Select>
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
-                        Serif Font
-                      </Label>
+                      <div className="flex items-center justify-between theme-mb-2">
+                        <Label className="text-sm theme-text-muted-foreground theme-font theme-tracking">
+                          Serif Font
+                        </Label>
+                        <div className="flex items-center theme-gap-2">
+                          <span className="text-xs theme-text-muted-foreground theme-font theme-tracking">
+                            Primary
+                          </span>
+                          <Switch
+                            checked={currentTypography.primaryFont === "serif"}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                updateTypography(mode, {
+                                  primaryFont: "serif",
+                                });
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
                       <Select
                         value={currentTypography.fontSerif}
                         onValueChange={(value) =>
                           updateTypography(mode, { fontSerif: value })
                         }
                       >
-                        <SelectTrigger className="h-9 text-md theme-font-sans theme-tracking">
+                        <SelectTrigger className="h-9 text-md theme-font theme-tracking">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -993,7 +1026,7 @@ export const ThemeConfigurationSidebar = ({
                             <SelectItem
                               key={font.value}
                               value={font.value}
-                              className="theme-font-sans theme-tracking"
+                              className="theme-font theme-tracking"
                             >
                               {font.label}
                             </SelectItem>
@@ -1002,16 +1035,31 @@ export const ThemeConfigurationSidebar = ({
                       </Select>
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
-                        Monospace Font
-                      </Label>
+                      <div className="flex items-center justify-between theme-mb-2">
+                        <Label className="text-sm theme-text-muted-foreground theme-font theme-tracking">
+                          Monospace Font
+                        </Label>
+                        <div className="flex items-center theme-gap-2">
+                          <span className="text-xs theme-text-muted-foreground theme-font theme-tracking">
+                            Primary
+                          </span>
+                          <Switch
+                            checked={currentTypography.primaryFont === "mono"}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                updateTypography(mode, { primaryFont: "mono" });
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
                       <Select
                         value={currentTypography.fontMono}
                         onValueChange={(value) =>
                           updateTypography(mode, { fontMono: value })
                         }
                       >
-                        <SelectTrigger className="h-9 text-md theme-font-sans theme-tracking">
+                        <SelectTrigger className="h-9 text-md theme-font theme-tracking">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1019,7 +1067,7 @@ export const ThemeConfigurationSidebar = ({
                             <SelectItem
                               key={font.value}
                               value={font.value}
-                              className="theme-font-sans theme-tracking"
+                              className="theme-font theme-tracking"
                             >
                               {font.label}
                             </SelectItem>
@@ -1033,8 +1081,8 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       Letter Spacing
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -1042,7 +1090,7 @@ export const ThemeConfigurationSidebar = ({
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div>
-                    <Label className="text-sm block theme-text-muted-foreground theme-mb-0-5 theme-font-sans theme-tracking">
+                    <Label className="text-sm block theme-text-muted-foreground theme-mb-0-5 theme-font theme-tracking">
                       Letter Spacing
                     </Label>
                     <div className="flex items-center theme-gap-4">
@@ -1064,7 +1112,7 @@ export const ThemeConfigurationSidebar = ({
                           })
                         }
                         type="number"
-                        className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                        className="h-9 w-16 text-md theme-font theme-tracking"
                       />
                     </div>
                   </div>
@@ -1083,8 +1131,8 @@ export const ThemeConfigurationSidebar = ({
               </div>
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">
                       HSL Adjustments
                     </span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
@@ -1093,11 +1141,11 @@ export const ThemeConfigurationSidebar = ({
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font-sans theme-tracking">
-                        <span className="theme-font-sans theme-tracking">
+                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font theme-tracking">
+                        <span className="theme-font theme-tracking">
                           Hue Shift
                         </span>
-                        <span className="text-[10px] theme-text-muted-foreground theme-font-sans theme-tracking">
+                        <span className="text-[10px] theme-text-muted-foreground theme-font theme-tracking">
                           deg
                         </span>
                       </Label>
@@ -1120,16 +1168,16 @@ export const ThemeConfigurationSidebar = ({
                             })
                           }
                           type="number"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font-sans theme-tracking">
-                        <span className="theme-font-sans theme-tracking">
+                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font theme-tracking">
+                        <span className="theme-font theme-tracking">
                           Saturation Multiplier
                         </span>
-                        <span className="text-[10px] theme-text-muted-foreground theme-font-sans theme-tracking">
+                        <span className="text-[10px] theme-text-muted-foreground theme-font theme-tracking">
                           x
                         </span>
                       </Label>
@@ -1154,16 +1202,16 @@ export const ThemeConfigurationSidebar = ({
                           }
                           type="number"
                           step="0.1"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font-sans theme-tracking">
-                        <span className="theme-font-sans theme-tracking">
+                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font theme-tracking">
+                        <span className="theme-font theme-tracking">
                           Lightness Multiplier
                         </span>
-                        <span className="text-[10px] theme-text-muted-foreground theme-font-sans theme-tracking">
+                        <span className="text-[10px] theme-text-muted-foreground theme-font theme-tracking">
                           x
                         </span>
                       </Label>
@@ -1188,7 +1236,7 @@ export const ThemeConfigurationSidebar = ({
                           }
                           type="number"
                           step="0.1"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>
@@ -1198,22 +1246,18 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
-                      Radius
-                    </span>
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">Radius</span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div>
-                    <Label className="text-sm flex items-center justify-between theme-text-muted-foreground mb-2 theme-font-sans theme-tracking">
-                      <span className="theme-font-sans theme-tracking">
-                        Radius
-                      </span>
+                    <Label className="text-sm flex items-center justify-between theme-text-muted-foreground mb-2 theme-font theme-tracking">
+                      <span className="theme-font theme-tracking">Radius</span>
                       <span
                         style={{ fontSize: "10px" }}
-                        className="theme-font-sans theme-tracking"
+                        className="theme-font theme-tracking"
                       >
                         rem
                       </span>
@@ -1238,7 +1282,7 @@ export const ThemeConfigurationSidebar = ({
                         }
                         type="number"
                         step="0.05"
-                        className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                        className="h-9 w-16 text-md theme-font theme-tracking"
                       />
                     </div>
                   </div>
@@ -1247,22 +1291,18 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
-                      Spacing
-                    </span>
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">Spacing</span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div>
-                    <Label className="text-sm flex items-center justify-between theme-text-muted-foreground mb-2 theme-font-sans theme-tracking">
-                      <span className="theme-font-sans theme-tracking">
-                        Spacing
-                      </span>
+                    <Label className="text-sm flex items-center justify-between theme-text-muted-foreground mb-2 theme-font theme-tracking">
+                      <span className="theme-font theme-tracking">Spacing</span>
                       <span
                         style={{ fontSize: "10px" }}
-                        className="theme-font-sans theme-tracking"
+                        className="theme-font theme-tracking"
                       >
                         rem
                       </span>
@@ -1288,7 +1328,7 @@ export const ThemeConfigurationSidebar = ({
                         }}
                         type="text"
                         inputMode="decimal"
-                        className="h-9 w-16 text-md text-center theme-font-sans theme-tracking"
+                        className="h-9 w-16 text-md text-center theme-font theme-tracking"
                       />
                     </div>
                   </div>
@@ -1297,17 +1337,15 @@ export const ThemeConfigurationSidebar = ({
 
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font-sans theme-tracking">
-                    <span className="theme-font-sans theme-tracking">
-                      Shadow
-                    </span>
+                  <button className="w-full text-md font-semibold flex items-center justify-between theme-text-foreground theme-mb-6 bg-transparent border-none cursor-pointer theme-font theme-tracking">
+                    <span className="theme-font theme-tracking">Shadow</span>
                     <ChevronDown className="w-4 h-4 theme-text-muted-foreground" />
                   </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="flex flex-col theme-gap-3">
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Shadow Color
                       </Label>
                       <ColorPicker
@@ -1316,7 +1354,7 @@ export const ThemeConfigurationSidebar = ({
                       />
                     </div>
                     <div>
-                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                      <Label className="text-sm block theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                         Shadow Opacity
                       </Label>
                       <div className="flex items-center theme-gap-3">
@@ -1341,16 +1379,16 @@ export const ThemeConfigurationSidebar = ({
                           }
                           type="number"
                           step="0.05"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font-sans theme-tracking">
-                        <span className="theme-font-sans theme-tracking">
+                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font theme-tracking">
+                        <span className="theme-font theme-tracking">
                           Blur Radius
                         </span>
-                        <span className="text-[10px] theme-text-muted-foreground theme-font-sans theme-tracking">
+                        <span className="text-[10px] theme-text-muted-foreground theme-font theme-tracking">
                           px
                         </span>
                       </Label>
@@ -1375,16 +1413,16 @@ export const ThemeConfigurationSidebar = ({
                             )
                           }
                           type="number"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font-sans theme-tracking">
-                        <span className="theme-font-sans theme-tracking">
+                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font theme-tracking">
+                        <span className="theme-font theme-tracking">
                           Spread
                         </span>
-                        <span className="text-[10px] theme-text-muted-foreground theme-font-sans theme-tracking">
+                        <span className="text-[10px] theme-text-muted-foreground theme-font theme-tracking">
                           px
                         </span>
                       </Label>
@@ -1409,16 +1447,16 @@ export const ThemeConfigurationSidebar = ({
                             )
                           }
                           type="number"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font-sans theme-tracking">
-                        <span className="theme-font-sans theme-tracking">
+                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font theme-tracking">
+                        <span className="theme-font theme-tracking">
                           Offset X
                         </span>
-                        <span className="text-[10px] theme-text-muted-foreground theme-font-sans theme-tracking">
+                        <span className="text-[10px] theme-text-muted-foreground theme-font theme-tracking">
                           px
                         </span>
                       </Label>
@@ -1443,16 +1481,16 @@ export const ThemeConfigurationSidebar = ({
                             )
                           }
                           type="number"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font-sans theme-tracking">
-                        <span className="theme-font-sans theme-tracking">
+                      <Label className="text-sm flex items-center justify-between theme-text-muted-foreground theme-mb-6 theme-font theme-tracking">
+                        <span className="theme-font theme-tracking">
                           Offset Y
                         </span>
-                        <span className="text-[10px] theme-text-muted-foreground theme-font-sans theme-tracking">
+                        <span className="text-[10px] theme-text-muted-foreground theme-font theme-tracking">
                           px
                         </span>
                       </Label>
@@ -1477,7 +1515,7 @@ export const ThemeConfigurationSidebar = ({
                             )
                           }
                           type="number"
-                          className="h-9 w-16 text-md theme-font-sans theme-tracking"
+                          className="h-9 w-16 text-md theme-font theme-tracking"
                         />
                       </div>
                     </div>

@@ -9,12 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
-import {
-  ChevronDown,
-  ChevronRight,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { InferredFeature } from "../AppStructure.types";
 
@@ -61,7 +56,7 @@ export const PageFeaturesAccordionItem = ({
             {pageRoute}
           </span>
         </div>
-        <Badge variant="secondary" className="theme-font-sans theme-tracking">
+        <Badge variant="secondary" className="theme-font theme-tracking">
           {features.length} {features.length === 1 ? "feature" : "features"}
         </Badge>
       </div>
@@ -136,7 +131,7 @@ export const PageFeaturesAccordionItem = ({
                         onUpdateFeature(feature.id, { title: e.target.value })
                       }
                       disabled={disabled}
-                      className="theme-font-sans theme-tracking "
+                      className="theme-font theme-tracking "
                     />
                   </div>
 
@@ -153,7 +148,7 @@ export const PageFeaturesAccordionItem = ({
                       }
                       onKeyDown={(e) => e.stopPropagation()}
                       disabled={disabled}
-                      className="theme-font-sans theme-tracking "
+                      className="theme-font theme-tracking "
                       rows={3}
                     />
                   </div>

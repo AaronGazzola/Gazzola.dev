@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/editor/ui/skeleton";
 
 export const EditorSkeleton = () => {
   return (
-    <div className="w-full h-full theme-bg-background theme-text-foreground theme-font-sans theme-shadow">
+    <div className="w-full h-full theme-bg-background theme-text-foreground theme-font theme-shadow">
       <div className="relative h-full flex flex-col">
         <div className="border-b theme-border-border p-2 flex items-center gap-2">
           <Skeleton className="h-8 w-8" />

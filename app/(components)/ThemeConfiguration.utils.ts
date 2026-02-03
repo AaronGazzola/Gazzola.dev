@@ -94,6 +94,7 @@ const defaultTypography: ThemeTypography = {
   fontSans: "var(--font-inter)",
   fontSerif: "Georgia, serif",
   fontMono: "var(--font-fira-code)",
+  primaryFont: "sans",
   letterSpacing: 0,
 };
 

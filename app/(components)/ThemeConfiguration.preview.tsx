@@ -18,7 +18,7 @@ export const ThemeConfigurationPreview = () => {
   return (
     <ScrollArea className="flex-1 h-full">
       <div className="sticky top-0 theme-bg-background theme-p-6 theme-pb-3 z-10 pt-0">
-        <h2 className="text-lg font-semibold theme-text-foreground theme-font-sans theme-tracking">
+        <h2 className="text-lg font-semibold theme-text-foreground theme-font theme-tracking">
           Preview components:
         </h2>
       </div>
@@ -30,13 +30,13 @@ export const ThemeConfigurationPreview = () => {
           <div className="flex-1 flex flex-col theme-gap-6">
             <Card>
               <div className="flex flex-col theme-gap-3  theme-p-6">
-                <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                <div className="text-sm theme-text-muted-foreground theme-font theme-tracking">
                   Total Revenue
                 </div>
-                <div className="text-3xl font-bold theme-text-foreground theme-font-sans theme-tracking">
+                <div className="text-3xl font-bold theme-text-foreground theme-font theme-tracking">
                   $15,231.89
                 </div>
-                <div className="text-xs theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                <div className="text-xs theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                   +20.1% from last month
                 </div>
                 <svg
@@ -81,10 +81,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                  <div className="font-semibold theme-text-foreground theme-font theme-tracking">
                     Move Goal
                   </div>
-                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                  <div className="text-sm theme-text-muted-foreground theme-font theme-tracking">
                     Set your daily activity goal.
                   </div>
                 </div>
@@ -95,15 +95,15 @@ export const ThemeConfigurationPreview = () => {
                     className="size-7 rounded-full"
                   >
                     <Minus className="h-4 w-4" />
-                    <span className="sr-only theme-font-sans theme-tracking">
+                    <span className="sr-only theme-font theme-tracking">
                       Decrease
                     </span>
                   </Button>
                   <div className="text-center flex flex-col theme-gap-1">
-                    <div className="text-4xl font-bold tracking-tighter tabular-nums theme-font-sans theme-tracking">
+                    <div className="text-4xl font-bold tracking-tighter tabular-nums theme-font theme-tracking">
                       350
                     </div>
-                    <div className="text-xs uppercase theme-text-muted-foreground theme-font-sans theme-tracking">
+                    <div className="text-xs uppercase theme-text-muted-foreground theme-font theme-tracking">
                       Calories/day
                     </div>
                   </div>
@@ -113,7 +113,7 @@ export const ThemeConfigurationPreview = () => {
                     className="size-7 rounded-full"
                   >
                     <Plus className="h-4 w-4" />
-                    <span className="sr-only theme-font-sans theme-tracking">
+                    <span className="sr-only theme-font theme-tracking">
                       Increase
                     </span>
                   </Button>
@@ -142,7 +142,7 @@ export const ThemeConfigurationPreview = () => {
                 </div>
                 <Button
                   variant="secondary"
-                  className="w-full theme-font-sans theme-tracking"
+                  className="w-full theme-font theme-tracking"
                 >
                   Set Goal
                 </Button>
@@ -152,10 +152,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                  <div className="font-semibold theme-text-foreground theme-font theme-tracking">
                     Exercise Minutes
                   </div>
-                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                  <div className="text-sm theme-text-muted-foreground theme-font theme-tracking">
                     Your exercise minutes are ahead of where you normally are.
                   </div>
                 </div>
@@ -219,10 +219,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                  <div className="font-semibold theme-text-foreground theme-font theme-tracking">
                     Upgrade your subscription
                   </div>
-                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                  <div className="text-sm theme-text-muted-foreground theme-font theme-tracking">
                     You are currently on the free plan. Upgrade to the pro plan
                     to get access to all features.
                   </div>
@@ -231,7 +231,7 @@ export const ThemeConfigurationPreview = () => {
                   <div className="flex theme-gap-4">
                     <div className="flex-1 flex flex-col theme-gap-2">
                       <label
-                        className="text-sm font-medium theme-font-sans theme-tracking"
+                        className="text-sm font-medium theme-font theme-tracking"
                         htmlFor="name"
                       >
                         Name
@@ -239,12 +239,12 @@ export const ThemeConfigurationPreview = () => {
                       <Input
                         id="name"
                         placeholder="Evil Rabbit"
-                        className="theme-font-sans theme-tracking"
+                        className="theme-font theme-tracking"
                       />
                     </div>
                     <div className="flex-1 flex flex-col theme-gap-2">
                       <label
-                        className="text-sm font-medium theme-font-sans theme-tracking"
+                        className="text-sm font-medium theme-font theme-tracking"
                         htmlFor="email"
                       >
                         Email
@@ -252,14 +252,14 @@ export const ThemeConfigurationPreview = () => {
                       <Input
                         id="email"
                         placeholder="example@acme.com"
-                        className="theme-font-sans theme-tracking"
+                        className="theme-font theme-tracking"
                       />
                     </div>
                   </div>
 
                   <div className="flex flex-col theme-gap-2">
                     <label
-                      className="text-sm font-medium theme-font-sans theme-tracking"
+                      className="text-sm font-medium theme-font theme-tracking"
                       htmlFor="card-number"
                     >
                       Card Number
@@ -271,26 +271,26 @@ export const ThemeConfigurationPreview = () => {
                       <Input
                         id="card-number"
                         placeholder="1234 1234 1234 1234"
-                        className="theme-font-sans theme-tracking"
+                        className="theme-font theme-tracking"
                       />
                       <Input
                         id="card-expiry"
                         placeholder="MM/YY"
-                        className="theme-font-sans theme-tracking"
+                        className="theme-font theme-tracking"
                       />
                       <Input
                         id="card-cvc"
                         placeholder="CVC"
-                        className="theme-font-sans theme-tracking"
+                        className="theme-font theme-tracking"
                       />
                     </div>
                   </div>
 
                   <fieldset className="flex flex-col theme-gap-2">
-                    <legend className="text-sm font-medium theme-font-sans theme-tracking">
+                    <legend className="text-sm font-medium theme-font theme-tracking">
                       Plan
                     </legend>
-                    <p className="text-sm theme-text-muted-foreground theme-mb-2 theme-font-sans theme-tracking">
+                    <p className="text-sm theme-text-muted-foreground theme-mb-2 theme-font theme-tracking">
                       Select the plan that best fits your needs.
                     </p>
                     <RadioGroup
@@ -298,29 +298,29 @@ export const ThemeConfigurationPreview = () => {
                       className="flex theme-gap-2"
                     >
                       <label
-                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 theme-font-sans theme-tracking"
+                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 theme-font theme-tracking"
                         style={{ borderWidth: "1px" }}
                       >
                         <RadioGroupItem value="starter" id="starter" />
                         <div className="grid theme-gap-1">
-                          <div className="font-medium theme-font-sans theme-tracking">
+                          <div className="font-medium theme-font theme-tracking">
                             Starter Plan
                           </div>
-                          <div className="text-xs theme-text-muted-foreground theme-font-sans theme-tracking">
+                          <div className="text-xs theme-text-muted-foreground theme-font theme-tracking">
                             Perfect for small businesses.
                           </div>
                         </div>
                       </label>
                       <label
-                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 theme-font-sans theme-tracking"
+                        className="flex items-start theme-gap-3 theme-radius theme-border-border theme-p-3 theme-font theme-tracking"
                         style={{ borderWidth: "1px" }}
                       >
                         <RadioGroupItem value="pro" id="pro" />
                         <div className="grid theme-gap-1">
-                          <div className="font-medium theme-font-sans theme-tracking">
+                          <div className="font-medium theme-font theme-tracking">
                             Pro Plan
                           </div>
-                          <div className="text-xs theme-text-muted-foreground theme-font-sans theme-tracking">
+                          <div className="text-xs theme-text-muted-foreground theme-font theme-tracking">
                             More features and storage.
                           </div>
                         </div>
@@ -330,7 +330,7 @@ export const ThemeConfigurationPreview = () => {
 
                   <div className="flex flex-col theme-gap-2">
                     <label
-                      className="text-sm font-medium theme-font-sans theme-tracking"
+                      className="text-sm font-medium theme-font theme-tracking"
                       htmlFor="notes"
                     >
                       Notes
@@ -338,7 +338,7 @@ export const ThemeConfigurationPreview = () => {
                     <Textarea
                       id="notes"
                       placeholder="Enter notes"
-                      className="theme-font-sans theme-tracking"
+                      className="theme-font theme-tracking"
                     />
                   </div>
 
@@ -346,7 +346,7 @@ export const ThemeConfigurationPreview = () => {
                     <div className="flex items-center theme-gap-2">
                       <Checkbox id="terms" />
                       <label
-                        className="text-sm theme-font-sans theme-tracking"
+                        className="text-sm theme-font theme-tracking"
                         htmlFor="terms"
                       >
                         I agree to the terms and conditions
@@ -355,7 +355,7 @@ export const ThemeConfigurationPreview = () => {
                     <div className="flex items-center theme-gap-2">
                       <Checkbox id="marketing" defaultChecked />
                       <label
-                        className="text-sm theme-font-sans theme-tracking"
+                        className="text-sm theme-font theme-tracking"
                         htmlFor="marketing"
                       >
                         Allow us to send you emails
@@ -369,10 +369,10 @@ export const ThemeConfigurationPreview = () => {
             <Card>
               <div className="flex flex-col theme-gap-4  theme-p-6">
                 <div className="flex flex-col theme-gap-2">
-                  <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                  <div className="font-semibold theme-text-foreground theme-font theme-tracking">
                     Payments
                   </div>
-                  <div className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                  <div className="text-sm theme-text-muted-foreground theme-font theme-tracking">
                     Manage your payments.
                   </div>
                 </div>
@@ -415,15 +415,15 @@ export const ThemeConfigurationPreview = () => {
                                 : "destructive"
                           }
                           style={{ width: "fit-content" }}
-                          className="theme-font-sans theme-tracking"
+                          className="theme-font theme-tracking"
                         >
                           {item.status}
                         </Badge>
-                        <div className="text-sm theme-text-foreground theme-font-sans theme-tracking">
+                        <div className="text-sm theme-text-foreground theme-font theme-tracking">
                           {item.email}
                         </div>
                       </div>
-                      <div className="font-semibold theme-text-foreground theme-font-sans theme-tracking">
+                      <div className="font-semibold theme-text-foreground theme-font theme-tracking">
                         {item.amount}
                       </div>
                     </div>

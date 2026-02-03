@@ -79,7 +79,7 @@ export const EnumsCollapsible = ({
         <div className="flex flex-col theme-gap-2 theme-ml-4 theme-mt-2">
           {enums.length === 0 && !isAddingEnum && (
             <div className="flex items-center theme-gap-2 theme-text-muted-foreground theme-p-4">
-              <p className="text-base font-semibold theme-font-sans theme-tracking">
+              <p className="text-base font-semibold theme-font theme-tracking">
                 No enums defined
               </p>
             </div>
@@ -137,11 +137,7 @@ const EnumItem = ({
   isExpanded: boolean;
   onToggle: () => void;
 }) => {
-  const {
-    deleteEnum,
-    updateEnumName,
-    addEnumValue,
-  } = useDatabaseStore();
+  const { deleteEnum, updateEnumName, addEnumValue } = useDatabaseStore();
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(enumItem.name);
   const [isAddingValue, setIsAddingValue] = useState(false);
@@ -173,130 +169,141 @@ const EnumItem = ({
 
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggle}>
-      <div className={cn(isExpanded && "border theme-border-chart-4 theme-radius theme-p-1")}>
       <div
-        className="theme-bg-background theme-radius theme-p-2 border theme-border-border cursor-pointer"
-        onClick={onToggle}
+        className={cn(
+          isExpanded && "border theme-border-chart-4 theme-radius theme-p-1"
+        )}
       >
-        <div className="flex items-center theme-gap-2">
-          <Button variant="ghost" size="icon" className="h-6 w-6">
-            {isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-          </Button>
-          {isEditingName ? (
-            <Input
-              ref={nameInputRef}
-              value={tempName}
-              onChange={(e) => setTempName(e.target.value)}
-              onBlur={handleNameSubmit}
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleNameSubmit();
-                if (e.key === "Escape") {
-                  setTempName(enumItem.name);
-                  setIsEditingName(false);
-                }
-              }}
-              className="h-7 theme-px-2 text-base w-fit theme-shadow theme-font-mono flex-1"
-            />
-          ) : (
-            <>
-              <span
-                className="text-base theme-font-mono theme-text-foreground cursor-pointer hover:underline"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsEditingName(true);
+        <div
+          className="theme-bg-background theme-radius theme-p-2 border theme-border-border cursor-pointer"
+          onClick={onToggle}
+        >
+          <div className="flex items-center theme-gap-2">
+            <Button variant="ghost" size="icon" className="h-6 w-6">
+              {isExpanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </Button>
+            {isEditingName ? (
+              <Input
+                ref={nameInputRef}
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+                onBlur={handleNameSubmit}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleNameSubmit();
+                  if (e.key === "Escape") {
+                    setTempName(enumItem.name);
+                    setIsEditingName(false);
+                  }
                 }}
+                className="h-7 theme-px-2 text-base w-fit theme-shadow theme-font-mono flex-1"
+              />
+            ) : (
+              <>
+                <span
+                  className="text-base theme-font-mono theme-text-foreground cursor-pointer hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditingName(true);
+                  }}
+                >
+                  {enumItem.name}
+                </span>
+                <span className="flex-1" />
+              </>
+            )}
+            <span className="text-sm theme-text-muted-foreground">
+              {enumItem.values.length}{" "}
+              {enumItem.values.length === 1 ? "value" : "values"}
+            </span>
+            <Popover
+              open={deleteConfirmOpen}
+              onOpenChange={setDeleteConfirmOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 opacity-60 hover:opacity-100"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-64 theme-p-3 theme-shadow"
+                align="end"
               >
-                {enumItem.name}
-              </span>
-              <span className="flex-1" />
-            </>
-          )}
-          <span className="text-sm theme-text-muted-foreground">
-            {enumItem.values.length} {enumItem.values.length === 1 ? "value" : "values"}
-          </span>
-          <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-            <PopoverTrigger asChild>
+                <div className="flex flex-col theme-gap-2">
+                  <p className="text-lg font-semibold theme-text-foreground">
+                    Delete enum &quot;{enumItem.name}&quot;?
+                  </p>
+                  <div className="flex theme-gap-2">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        deleteEnum(enumItem.id);
+                        setDeleteConfirmOpen(false);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteConfirmOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+        <CollapsibleContent>
+          <div className="flex flex-col theme-gap-1 theme-mt-1 theme-ml-8 theme-p-2 theme-radius theme-bg-background">
+            {enumItem.values.map((value) => (
+              <EnumValueItem
+                key={value.id}
+                enumId={enumItem.id}
+                value={value}
+              />
+            ))}
+            {isAddingValue ? (
+              <Input
+                autoFocus
+                value={newValue}
+                onChange={(e) => setNewValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddValue();
+                  if (e.key === "Escape") {
+                    setIsAddingValue(false);
+                    setNewValue("");
+                  }
+                }}
+                onBlur={handleAddValue}
+                placeholder="Value"
+                className="h-7 theme-px-2 text-sm theme-shadow theme-font-mono"
+              />
+            ) : (
               <Button
                 variant="ghost"
-                size="icon"
-                className="h-6 w-6 opacity-60 hover:opacity-100"
-                onClick={(e) => e.stopPropagation()}
+                size="sm"
+                onClick={() => setIsAddingValue(true)}
+                className="h-6 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
               >
-                <Trash2 className="h-3 w-3" />
+                <Plus className="h-3 w-3" />
+                Add value
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
-              <div className="flex flex-col theme-gap-2">
-                <p className="text-lg font-semibold theme-text-foreground">
-                  Delete enum &quot;{enumItem.name}&quot;?
-                </p>
-                <div className="flex theme-gap-2">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      deleteEnum(enumItem.id);
-                      setDeleteConfirmOpen(false);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDeleteConfirmOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </div>
-      <CollapsibleContent>
-        <div className="flex flex-col theme-gap-1 theme-mt-1 theme-ml-8 theme-p-2 theme-radius theme-bg-background">
-          {enumItem.values.map((value) => (
-            <EnumValueItem
-              key={value.id}
-              enumId={enumItem.id}
-              value={value}
-            />
-          ))}
-          {isAddingValue ? (
-            <Input
-              autoFocus
-              value={newValue}
-              onChange={(e) => setNewValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleAddValue();
-                if (e.key === "Escape") {
-                  setIsAddingValue(false);
-                  setNewValue("");
-                }
-              }}
-              onBlur={handleAddValue}
-              placeholder="Value"
-              className="h-7 theme-px-2 text-sm theme-shadow theme-font-mono"
-            />
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsAddingValue(true)}
-              className="h-6 theme-gap-1 theme-text-muted-foreground hover:theme-text-foreground theme-font-mono text-sm w-fit"
-            >
-              <Plus className="h-3 w-3" />
-              Add value
-            </Button>
-          )}
-        </div>
-      </CollapsibleContent>
+            )}
+          </div>
+        </CollapsibleContent>
       </div>
     </Collapsible>
   );
@@ -356,7 +363,11 @@ const EnumValueItem = ({
       )}
       <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-5 w-5 opacity-60 hover:opacity-100">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5 opacity-60 hover:opacity-100"
+          >
             <Trash2 className="h-3 w-3" />
           </Button>
         </PopoverTrigger>

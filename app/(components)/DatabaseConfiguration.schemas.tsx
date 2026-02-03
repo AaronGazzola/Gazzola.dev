@@ -14,8 +14,8 @@ import {
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight, Lock, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { DatabaseTable } from "./DatabaseConfiguration.types";
 import { TableCollapsible } from "./DatabaseConfiguration.tables";
+import type { DatabaseTable } from "./DatabaseConfiguration.types";
 
 export const SchemaCollapsible = ({
   schema,
@@ -96,7 +96,9 @@ export const SchemaCollapsible = ({
               <ChevronRight className="h-4 w-4" />
             )}
           </Button>
-          {isSystemSchema && <Lock className="h-4 w-4 theme-text-muted-foreground shrink-0" />}
+          {isSystemSchema && (
+            <Lock className="h-4 w-4 theme-text-muted-foreground shrink-0" />
+          )}
           {isEditingName ? (
             <Input
               ref={inputRef}
@@ -136,7 +138,10 @@ export const SchemaCollapsible = ({
             {tables.length} {tables.length === 1 ? "table" : "tables"}
           </span>
           {isEditable && (
-            <Popover open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+            <Popover
+              open={deleteConfirmOpen}
+              onOpenChange={setDeleteConfirmOpen}
+            >
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
@@ -147,7 +152,10 @@ export const SchemaCollapsible = ({
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 theme-p-3 theme-shadow" align="end">
+              <PopoverContent
+                className="w-64 theme-p-3 theme-shadow"
+                align="end"
+              >
                 <div className="flex flex-col theme-gap-2">
                   <p className="text-lg font-semibold theme-text-foreground">
                     Delete schema &quot;{schema}&quot; and all its tables?
@@ -182,7 +190,7 @@ export const SchemaCollapsible = ({
           {isSystemSchema && tables.length === 0 && (
             <div className="flex items-center theme-gap-2 theme-text-muted-foreground theme-p-4">
               <Lock className="h-4 w-4" />
-              <p className="text-base font-semibold theme-font-sans theme-tracking">
+              <p className="text-base font-semibold theme-font theme-tracking">
                 This schema is managed automatically.
               </p>
             </div>

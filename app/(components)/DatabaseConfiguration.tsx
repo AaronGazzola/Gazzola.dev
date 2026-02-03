@@ -37,11 +37,10 @@ import { useAppStructureStore } from "./AppStructure.stores";
 import {
   generateId,
   generateTableDescriptionsPrompt,
-  parseDatabaseSchemaFromResponse,
   parseTableDescriptionsFromResponse,
 } from "./DatabaseConfiguration.ai";
-import { useDatabaseGeneration } from "./DatabaseConfiguration.generation-handlers";
 import { EnumsCollapsible } from "./DatabaseConfiguration.enums";
+import { useDatabaseGeneration } from "./DatabaseConfiguration.generation-handlers";
 import { SchemaCollapsible } from "./DatabaseConfiguration.schemas";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
 import {
@@ -154,23 +153,20 @@ export const DatabaseConfiguration = () => {
       }
     });
 
-  const {
-    generatePlan,
-    isGeneratingPlan,
-    isGeneratingSchema
-  } = useDatabaseGeneration(
-    tableDescriptions,
-    readmeData,
-    appStructureData,
-    appStructure,
-    setTablesFromAI,
-    setEnumsFromAI,
-    setRLSPoliciesFromAI,
-    updateInitialConfiguration,
-    setDatabaseGenerated,
-    setShowSuccessView,
-    phase1ToastIdRef
-  );
+  const { generatePlan, isGeneratingPlan, isGeneratingSchema } =
+    useDatabaseGeneration(
+      tableDescriptions,
+      readmeData,
+      appStructureData,
+      appStructure,
+      setTablesFromAI,
+      setEnumsFromAI,
+      setRLSPoliciesFromAI,
+      updateInitialConfiguration,
+      setDatabaseGenerated,
+      setShowSuccessView,
+      phase1ToastIdRef
+    );
 
   const handleGenerateTableDescriptions = useCallback(() => {
     if (
@@ -250,7 +246,10 @@ export const DatabaseConfiguration = () => {
 
   const hasTableDescriptionsChanged = useCallback(() => {
     if (!lastGeneratedTableDescriptions) return true;
-    return JSON.stringify(lastGeneratedTableDescriptions) !== JSON.stringify(tableDescriptions);
+    return (
+      JSON.stringify(lastGeneratedTableDescriptions) !==
+      JSON.stringify(tableDescriptions)
+    );
   }, [lastGeneratedTableDescriptions, tableDescriptions]);
 
   const handleGenerateFullSchema = useCallback(() => {
@@ -262,11 +261,7 @@ export const DatabaseConfiguration = () => {
     setLastGeneratedTableDescriptions(tableDescriptions);
 
     generatePlan();
-  }, [
-    tableDescriptions,
-    generatePlan,
-    setLastGeneratedTableDescriptions,
-  ]);
+  }, [tableDescriptions, generatePlan, setLastGeneratedTableDescriptions]);
 
   const handleAddTable = useCallback(() => {
     const newTable: DatabaseTableDescription = {
@@ -331,38 +326,45 @@ export const DatabaseConfiguration = () => {
       tables: dbTables,
       enums,
       rlsPolicies,
-      generateSupabaseMigration
+      generateSupabaseMigration,
     } = useDatabaseStore.getState();
 
-    console.log("DATABASE CONFIGURATION STATE:", JSON.stringify({
-      databaseStore: {
-        tables: dbTables,
-        enums,
-        rlsPolicies,
-      },
-      editorStore: {
-        initialConfiguration,
-        databaseGenerated,
-        readmeGenerated,
-        appStructureGenerated,
-      },
-      tablesStore: {
-        tableDescriptions,
-        tablesGenerated,
-        accordionValue,
-        expandedTableId: expandedTableDescId,
-        lastGeneratedTableDescriptions,
-      },
-      localState: {
-        expandedSchema,
-        expandedTableId,
-        expandedEnums,
-        isAddingSchema,
-        newSchemaName,
-        showSuccessView,
-      },
-      generatedSQL: generateSupabaseMigration(),
-    }, null, 2));
+    console.log(
+      "DATABASE CONFIGURATION STATE:",
+      JSON.stringify(
+        {
+          databaseStore: {
+            tables: dbTables,
+            enums,
+            rlsPolicies,
+          },
+          editorStore: {
+            initialConfiguration,
+            databaseGenerated,
+            readmeGenerated,
+            appStructureGenerated,
+          },
+          tablesStore: {
+            tableDescriptions,
+            tablesGenerated,
+            accordionValue,
+            expandedTableId: expandedTableDescId,
+            lastGeneratedTableDescriptions,
+          },
+          localState: {
+            expandedSchema,
+            expandedTableId,
+            expandedEnums,
+            isAddingSchema,
+            newSchemaName,
+            showSuccessView,
+          },
+          generatedSQL: generateSupabaseMigration(),
+        },
+        null,
+        2
+      )
+    );
   }, [
     tables,
     initialConfiguration,
@@ -442,7 +444,8 @@ export const DatabaseConfiguration = () => {
     readmeGenerated && readmeData.title && readmeData.pages.length > 0;
   const hasAppStructure =
     appStructureGenerated && appStructureData.parsedPages.length > 0;
-  const isPending = isGeneratingTables || isGeneratingPlan || isGeneratingSchema;
+  const isPending =
+    isGeneratingTables || isGeneratingPlan || isGeneratingSchema;
 
   const MIN_TABLE_NAME_LENGTH = 2;
   const MIN_TABLE_DESCRIPTION_LENGTH = 20;
@@ -511,7 +514,7 @@ export const DatabaseConfiguration = () => {
       const message = renderMessage();
 
       return (
-        <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+        <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
           <div className="flex flex-col theme-gap-2">
             <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
               <Database className="h-5 w-5 theme-text-primary" />
@@ -524,7 +527,7 @@ export const DatabaseConfiguration = () => {
     }
 
     return (
-      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
         <div className="flex flex-col theme-gap-3">
           <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
             <Database className="h-5 w-5 theme-text-primary" />
@@ -669,7 +672,7 @@ export const DatabaseConfiguration = () => {
   }
 
   return (
-    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
+    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto relative">
       <div className="absolute top-2 right-2 flex items-center theme-gap-2 z-10">
         <Button
           variant="ghost"
@@ -700,29 +703,29 @@ export const DatabaseConfiguration = () => {
               <HelpCircle className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
-        <PopoverContent
-          className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
-          style={{ borderColor: "var(--theme-primary)" }}
-          align="end"
-        >
-          <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
-            <h4 className="font-semibold text-base theme-font-sans theme-tracking">
-              Database Configuration
-            </h4>
-            <div className="flex flex-col theme-gap-2 text-sm">
-              <p className="theme-font-sans theme-tracking">
-                Choose whether to use a <strong>Supabase database</strong> for
-                your application using the toggle.
-              </p>
-              <p className="theme-font-sans theme-tracking">
-                Add and edit <strong>enums</strong>, <strong>schemas</strong>,{" "}
-                <strong>tables</strong>, and <strong>columns</strong> to define
-                your database structure.
-              </p>
+          <PopoverContent
+            className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
+            style={{ borderColor: "var(--theme-primary)" }}
+            align="end"
+          >
+            <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
+              <h4 className="font-semibold text-base theme-font theme-tracking">
+                Database Configuration
+              </h4>
+              <div className="flex flex-col theme-gap-2 text-sm">
+                <p className="theme-font theme-tracking">
+                  Choose whether to use a <strong>Supabase database</strong> for
+                  your application using the toggle.
+                </p>
+                <p className="theme-font theme-tracking">
+                  Add and edit <strong>enums</strong>, <strong>schemas</strong>,{" "}
+                  <strong>tables</strong>, and <strong>columns</strong> to
+                  define your database structure.
+                </p>
+              </div>
             </div>
-          </div>
-        </PopoverContent>
-      </Popover>
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="flex flex-col theme-gap-4">
         <div className="theme-bg-card border-2 theme-radius theme-shadow theme-p-6 pb-0">
@@ -891,7 +894,7 @@ export const DatabaseConfiguration = () => {
               </div>
             ) : (
               <div>
-                <p className="text-base theme-text-muted-foreground theme-font-sans theme-tracking font-semibold">
+                <p className="text-base theme-text-muted-foreground theme-font theme-tracking font-semibold">
                   No database required, this app is front-end only
                 </p>
               </div>

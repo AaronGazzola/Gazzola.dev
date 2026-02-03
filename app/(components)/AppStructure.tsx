@@ -26,14 +26,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import {
-  addUtilityFilesToStructure,
-  parseRoutesToStructure,
-} from "./AppStructure.parser";
-import { buildStructureFromPlanPrompt } from "./AppStructure.prompts";
 import { useStructureGeneration } from "./AppStructure.generation-handlers";
+import { useAppStructureStore } from "./AppStructure.stores";
 import { InferredFeature } from "./AppStructure.types";
 import {
   addRouteSegment,
@@ -46,11 +42,15 @@ import {
   validateRoutePath,
 } from "./AppStructure.utils";
 import { PageFeaturesAccordionItem } from "./AppStructure/PageFeaturesAccordionItem";
-import { useAppStructureStore } from "./AppStructure.stores";
+import { useREADMEStore } from "./READMEComponent.stores";
+import {
+  AuthMethods,
+  LayoutInput,
+  PageAccess,
+  PageInput,
+} from "./READMEComponent.types";
 import { SiteMapNode } from "./SiteMapNode";
 import { TreeNode } from "./TreeNode";
-import { useREADMEStore } from "./READMEComponent.stores";
-import { LayoutInput, PageInput, PageAccess, AuthMethods } from "./READMEComponent.types";
 
 export { WireFrame } from "./WireFrame";
 
@@ -63,9 +63,11 @@ const formatLayoutOptions = (layout: LayoutInput): string => {
     const headerDetails: string[] = [];
     if (layout.options.header.title) headerDetails.push("app title");
     if (layout.options.header.navigationItems) headerDetails.push("navigation");
-    if (layout.options.header.profileAvatarPopover) headerDetails.push("profile menu");
+    if (layout.options.header.profileAvatarPopover)
+      headerDetails.push("profile menu");
     if (layout.options.header.sticky) headerDetails.push("sticky");
-    if (layout.options.header.sidebarToggleButton) headerDetails.push("sidebar toggle");
+    if (layout.options.header.sidebarToggleButton)
+      headerDetails.push("sidebar toggle");
     if (headerDetails.length > 0) {
       headerParts.push(`(${headerDetails.join(", ")})`);
     }
@@ -75,8 +77,10 @@ const formatLayoutOptions = (layout: LayoutInput): string => {
     const sidebarParts: string[] = ["Left Sidebar"];
     const sidebarDetails: string[] = [];
     if (layout.options.leftSidebar.title) sidebarDetails.push("app title");
-    if (layout.options.leftSidebar.navigationItems) sidebarDetails.push("navigation");
-    if (layout.options.leftSidebar.profileAvatarPopover) sidebarDetails.push("profile menu");
+    if (layout.options.leftSidebar.navigationItems)
+      sidebarDetails.push("navigation");
+    if (layout.options.leftSidebar.profileAvatarPopover)
+      sidebarDetails.push("profile menu");
     if (sidebarDetails.length > 0) {
       sidebarParts.push(`(${sidebarDetails.join(", ")})`);
     }
@@ -86,8 +90,10 @@ const formatLayoutOptions = (layout: LayoutInput): string => {
     const sidebarParts: string[] = ["Right Sidebar"];
     const sidebarDetails: string[] = [];
     if (layout.options.rightSidebar.title) sidebarDetails.push("app title");
-    if (layout.options.rightSidebar.navigationItems) sidebarDetails.push("navigation");
-    if (layout.options.rightSidebar.profileAvatarPopover) sidebarDetails.push("profile menu");
+    if (layout.options.rightSidebar.navigationItems)
+      sidebarDetails.push("navigation");
+    if (layout.options.rightSidebar.profileAvatarPopover)
+      sidebarDetails.push("profile menu");
     if (sidebarDetails.length > 0) {
       sidebarParts.push(`(${sidebarDetails.join(", ")})`);
     }
@@ -113,26 +119,35 @@ const buildFeatureGenerationPrompt = (
   pageAccess: PageAccess[],
   authMethods: AuthMethods
 ): string => {
-  const layoutsSection = layouts.length > 0
-    ? `LAYOUTS:\n${layouts.map(l => {
-        return `- ${l.name}: ${formatLayoutOptions(l)}\n`;
-      }).join('')}`
-    : 'No layouts defined.\n';
+  const layoutsSection =
+    layouts.length > 0
+      ? `LAYOUTS:\n${layouts
+          .map((l) => {
+            return `- ${l.name}: ${formatLayoutOptions(l)}\n`;
+          })
+          .join("")}`
+      : "No layouts defined.\n";
 
-  const pagesSection = pages.length > 0
-    ? `PAGES:\n${pages.map(p => {
-        const access = pageAccess.find(pa => pa.pageId === p.id);
-        const accessLevels = [];
-        if (access?.anon) accessLevels.push('anonymous');
-        if (access?.auth) accessLevels.push('authenticated');
-        if (access?.admin) accessLevels.push('admin');
-        const accessStr = accessLevels.length > 0 ? accessLevels.join(', ') : 'not specified';
+  const pagesSection =
+    pages.length > 0
+      ? `PAGES:\n${pages
+          .map((p) => {
+            const access = pageAccess.find((pa) => pa.pageId === p.id);
+            const accessLevels = [];
+            if (access?.anon) accessLevels.push("anonymous");
+            if (access?.auth) accessLevels.push("authenticated");
+            if (access?.admin) accessLevels.push("admin");
+            const accessStr =
+              accessLevels.length > 0
+                ? accessLevels.join(", ")
+                : "not specified";
 
-        return `- ${p.route} - ${p.name}\n  Description: ${p.description}\n  Access: ${accessStr}\n`;
-      }).join('')}`
-    : '';
+            return `- ${p.route} - ${p.name}\n  Description: ${p.description}\n  Access: ${accessStr}\n`;
+          })
+          .join("")}`
+      : "";
 
-  const authMethodsSection = `AUTHENTICATION METHODS:\n- Email/Password: ${authMethods.emailPassword ? 'Yes' : 'No'}\n- Magic Link: ${authMethods.magicLink ? 'Yes' : 'No'}\n`;
+  const authMethodsSection = `AUTHENTICATION METHODS:\n- Email/Password: ${authMethods.emailPassword ? "Yes" : "No"}\n- Magic Link: ${authMethods.magicLink ? "Yes" : "No"}\n`;
 
   return `You are generating action-based features for a Next.js web application.
 
@@ -223,14 +238,21 @@ CRITICAL:
 
 const validateFeature = (feature: InferredFeature): boolean => {
   const invalidTitles = [
-    'header', 'footer', 'sidebar', 'navigation',
-    'layout', 'wrapper', 'container',
-    'auth state', 'global state', 'app state'
+    "header",
+    "footer",
+    "sidebar",
+    "navigation",
+    "layout",
+    "wrapper",
+    "container",
+    "auth state",
+    "global state",
+    "app state",
   ];
 
   const titleLower = feature.title.toLowerCase();
 
-  if (invalidTitles.some(invalid => titleLower.includes(invalid))) {
+  if (invalidTitles.some((invalid) => titleLower.includes(invalid))) {
     return false;
   }
 
@@ -293,12 +315,18 @@ export const LayoutAndStructure = () => {
     updateFeature,
   } = useAppStructureStore();
 
-  const [globalExpandedFeatureId, setGlobalExpandedFeatureId] = useState<string | null>(null);
+  const [globalExpandedFeatureId, setGlobalExpandedFeatureId] = useState<
+    string | null
+  >(null);
   const [showSuccessView, setShowSuccessView] = useState(false);
   const [structurePlan, setStructurePlan] = useState<string | null>(null);
 
   useEffect(() => {
-    if (globalExpandedFeatureId === null && featuresGenerated && Object.keys(inferredFeatures).length > 0) {
+    if (
+      globalExpandedFeatureId === null &&
+      featuresGenerated &&
+      Object.keys(inferredFeatures).length > 0
+    ) {
       const firstPageFeatures = Object.values(inferredFeatures)[0];
       if (firstPageFeatures && firstPageFeatures.length > 0) {
         setGlobalExpandedFeatureId(firstPageFeatures[0].id);
@@ -312,36 +340,42 @@ export const LayoutAndStructure = () => {
     }
   }, [appStructureGenerated]);
 
-  const handleAddFeature = useCallback((pageId: string) => {
-    const newFeature: InferredFeature = {
-      id: generateId(),
-      pageId: pageId,
-      title: "New Feature",
-      description: "",
-    };
+  const handleAddFeature = useCallback(
+    (pageId: string) => {
+      const newFeature: InferredFeature = {
+        id: generateId(),
+        pageId: pageId,
+        title: "New Feature",
+        description: "",
+      };
 
-    setInferredFeatures({
-      ...inferredFeatures,
-      [pageId]: [...(inferredFeatures[pageId] || []), newFeature],
-    });
-    setGlobalExpandedFeatureId(newFeature.id);
-  }, [inferredFeatures, setInferredFeatures]);
+      setInferredFeatures({
+        ...inferredFeatures,
+        [pageId]: [...(inferredFeatures[pageId] || []), newFeature],
+      });
+      setGlobalExpandedFeatureId(newFeature.id);
+    },
+    [inferredFeatures, setInferredFeatures]
+  );
 
-  const handleDeleteFeature = useCallback((featureId: string) => {
-    const updatedFeatures = { ...inferredFeatures };
+  const handleDeleteFeature = useCallback(
+    (featureId: string) => {
+      const updatedFeatures = { ...inferredFeatures };
 
-    for (const pageId in updatedFeatures) {
-      updatedFeatures[pageId] = updatedFeatures[pageId].filter(
-        (f) => f.id !== featureId
-      );
-    }
+      for (const pageId in updatedFeatures) {
+        updatedFeatures[pageId] = updatedFeatures[pageId].filter(
+          (f) => f.id !== featureId
+        );
+      }
 
-    setInferredFeatures(updatedFeatures);
+      setInferredFeatures(updatedFeatures);
 
-    if (globalExpandedFeatureId === featureId) {
-      setGlobalExpandedFeatureId(null);
-    }
-  }, [inferredFeatures, setInferredFeatures, globalExpandedFeatureId]);
+      if (globalExpandedFeatureId === featureId) {
+        setGlobalExpandedFeatureId(null);
+      }
+    },
+    [inferredFeatures, setInferredFeatures, globalExpandedFeatureId]
+  );
 
   useEffect(() => {}, []);
 
@@ -371,21 +405,19 @@ export const LayoutAndStructure = () => {
 
         if (parsed.layouts && Array.isArray(parsed.layouts)) {
           parsed.layouts.forEach((layoutData: any) => {
-            const layout = layouts.find(l => l.name === layoutData.name);
+            const layout = layouts.find((l) => l.name === layoutData.name);
             if (!layout) return;
 
             const layoutPageId = `layout-${layout.id}`;
 
             if (layoutData.features && Array.isArray(layoutData.features)) {
               const inferredFeatures: InferredFeature[] = layoutData.features
-                .map(
-                  (f: any) => ({
-                    id: generateId(),
-                    pageId: layoutPageId,
-                    title: f.title || "Untitled Feature",
-                    description: f.description || "",
-                  })
-                )
+                .map((f: any) => ({
+                  id: generateId(),
+                  pageId: layoutPageId,
+                  title: f.title || "Untitled Feature",
+                  description: f.description || "",
+                }))
                 .filter(validateFeature);
 
               if (inferredFeatures.length > 0) {
@@ -396,7 +428,7 @@ export const LayoutAndStructure = () => {
             displayPages.push({
               id: layoutPageId,
               name: `${layout.name} Features`,
-              route: '',
+              route: "",
               description: formatLayoutOptions(layout),
             });
           });
@@ -408,7 +440,7 @@ export const LayoutAndStructure = () => {
         }
 
         parsed.pages.forEach((pageData: any) => {
-          const page = pages.find(p => p.route === pageData.route);
+          const page = pages.find((p) => p.route === pageData.route);
           if (!page) return;
 
           const pageId = page.id;
@@ -422,14 +454,12 @@ export const LayoutAndStructure = () => {
 
           if (pageData.features && Array.isArray(pageData.features)) {
             const inferredFeatures: InferredFeature[] = pageData.features
-              .map(
-                (f: any) => ({
-                  id: generateId(),
-                  pageId: pageId,
-                  title: f.title || "Untitled Feature",
-                  description: f.description || "",
-                })
-              )
+              .map((f: any) => ({
+                id: generateId(),
+                pageId: pageId,
+                title: f.title || "Untitled Feature",
+                description: f.description || "",
+              }))
               .filter(validateFeature);
 
             if (inferredFeatures.length > 0) {
@@ -460,7 +490,10 @@ export const LayoutAndStructure = () => {
         console.log("SUMMARY:", {
           layoutCount,
           pageCount,
-          totalFeatures: Object.values(allFeatures).reduce((sum, features) => sum + features.length, 0)
+          totalFeatures: Object.values(allFeatures).reduce(
+            (sum, features) => sum + features.length,
+            0
+          ),
         });
         console.log("========================================");
 
@@ -476,24 +509,23 @@ export const LayoutAndStructure = () => {
       }
     });
 
-  const {
-    generatePlan,
-    isGeneratingPlan,
-    isGeneratingStructure
-  } = useStructureGeneration(
-    parsedPages,
-    inferredFeatures,
-    setStructurePlan,
-    setAppStructure,
-    setFeatures,
-    setAppStructureGenerated,
-    setShowSuccessView,
-    phase1ToastIdRef
-  );
+  const { generatePlan, isGeneratingPlan, isGeneratingStructure } =
+    useStructureGeneration(
+      parsedPages,
+      inferredFeatures,
+      setStructurePlan,
+      setAppStructure,
+      setFeatures,
+      setAppStructureGenerated,
+      setShowSuccessView,
+      phase1ToastIdRef
+    );
 
   const handleGenerateFeatures = useCallback(() => {
     if (layouts.length === 0 && pages.length === 0) {
-      toast.error("No layouts or pages found. Please add pages in the README section first.");
+      toast.error(
+        "No layouts or pages found. Please add pages in the README section first."
+      );
       return;
     }
 
@@ -521,7 +553,6 @@ export const LayoutAndStructure = () => {
     generateFeatures({ prompt: combinedPrompt, maxTokens: 4500 });
   }, [layouts, pages, pageAccess, authMethods, generateFeatures]);
 
-
   const hasFeaturesChanged = useCallback(() => {
     if (!lastGeneratedForStructure) return true;
     const currentState = JSON.stringify({ parsedPages, inferredFeatures });
@@ -539,11 +570,17 @@ export const LayoutAndStructure = () => {
       return;
     }
 
-    setLastGeneratedForStructure(JSON.stringify({ parsedPages, inferredFeatures }));
+    setLastGeneratedForStructure(
+      JSON.stringify({ parsedPages, inferredFeatures })
+    );
 
     generatePlan();
-  }, [parsedPages, inferredFeatures, generatePlan, setLastGeneratedForStructure]);
-
+  }, [
+    parsedPages,
+    inferredFeatures,
+    generatePlan,
+    setLastGeneratedForStructure,
+  ]);
 
   const handleUpdate = (id: string, updates: Partial<FileSystemEntry>) => {
     updateAppStructureNode(id, updates);
@@ -643,10 +680,14 @@ export const LayoutAndStructure = () => {
     0
   );
 
-  if (appStructure.length === 0 || !appStructureGenerated || (appStructureGenerated && !showSuccessView)) {
+  if (
+    appStructure.length === 0 ||
+    !appStructureGenerated ||
+    (appStructureGenerated && !showSuccessView)
+  ) {
     if (!hasLayoutsOrPages) {
       return (
-        <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+        <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
           <div className="flex flex-col items-center justify-center theme-py-12 theme-gap-4">
             <p className="text-base font-semibold theme-text-muted-foreground text-center">
               Add pages and layouts in the{" "}
@@ -664,7 +705,7 @@ export const LayoutAndStructure = () => {
     }
 
     return (
-      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
         <div className="flex flex-col theme-gap-3">
           <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
             <FolderTree className="h-5 w-5 theme-text-primary" />
@@ -746,10 +787,14 @@ export const LayoutAndStructure = () => {
                   <div className="flex flex-col sm:flex-row theme-gap-2">
                     <Button
                       onClick={handleGenerateStructure}
-                      disabled={isGeneratingPlan || isGeneratingStructure || !hasFeaturesChanged()}
+                      disabled={
+                        isGeneratingPlan ||
+                        isGeneratingStructure ||
+                        !hasFeaturesChanged()
+                      }
                       className="flex-1 theme-gap-2"
                     >
-                      {(isGeneratingPlan || isGeneratingStructure) ? (
+                      {isGeneratingPlan || isGeneratingStructure ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
                           Regenerating...
@@ -776,10 +821,14 @@ export const LayoutAndStructure = () => {
                 ) : (
                   <Button
                     onClick={handleGenerateStructure}
-                    disabled={isGeneratingPlan || isGeneratingStructure || !featuresGenerated}
+                    disabled={
+                      isGeneratingPlan ||
+                      isGeneratingStructure ||
+                      !featuresGenerated
+                    }
                     className="w-full theme-gap-2"
                   >
-                    {(isGeneratingPlan || isGeneratingStructure) ? (
+                    {isGeneratingPlan || isGeneratingStructure ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
                         Generating structure...
@@ -801,7 +850,7 @@ export const LayoutAndStructure = () => {
   }
 
   return (
-    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
+    <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto relative">
       <div className="absolute top-2 right-2 flex items-center theme-gap-2">
         <Button
           variant="ghost"
@@ -832,54 +881,56 @@ export const LayoutAndStructure = () => {
               <HelpCircle className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
-        <PopoverContent
-          className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
-          style={{ borderColor: "var(--theme-primary)" }}
-          align="end"
-        >
-          <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
-            <h4 className="font-semibold text-base theme-font-sans theme-tracking">
-              App Structure
-            </h4>
-            <div className="flex flex-col theme-gap-2 text-sm">
-              <p className="theme-font-sans theme-tracking">
-                This is your Next.js web app architecture.
-              </p>
-              <p className="theme-font-sans theme-tracking">
-                <strong>Page.tsx</strong> files define pages of your app.
-              </p>
-              <p className="theme-font-sans theme-tracking">
-                <strong>Layout.tsx</strong> files wrap child pages with shared
-                UI
-              </p>
-              <p className="theme-font-sans theme-tracking">
-                Add <strong>Features</strong> to pages or layouts
-              </p>
-              <p className="theme-font-sans theme-tracking">
-                Add <strong>hooks, actions, stores or types</strong> to features
-              </p>
-              <p className="theme-font-sans theme-tracking">
-                Each hook, action, store, and type is assigned to a utility file
-                in any parent directory (eg. <strong>page.hooks.ts</strong>)
-              </p>
-              <a
-                href="https://nextjs.org/docs/app/building-your-application/routing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm theme-text-primary hover:underline theme-font-sans theme-tracking theme-pt-2"
-              >
-                Next.js App Router docs →
-              </a>
+          <PopoverContent
+            className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
+            style={{ borderColor: "var(--theme-primary)" }}
+            align="end"
+          >
+            <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
+              <h4 className="font-semibold text-base theme-font theme-tracking">
+                App Structure
+              </h4>
+              <div className="flex flex-col theme-gap-2 text-sm">
+                <p className="theme-font theme-tracking">
+                  This is your Next.js web app architecture.
+                </p>
+                <p className="theme-font theme-tracking">
+                  <strong>Page.tsx</strong> files define pages of your app.
+                </p>
+                <p className="theme-font theme-tracking">
+                  <strong>Layout.tsx</strong> files wrap child pages with shared
+                  UI
+                </p>
+                <p className="theme-font theme-tracking">
+                  Add <strong>Features</strong> to pages or layouts
+                </p>
+                <p className="theme-font theme-tracking">
+                  Add <strong>hooks, actions, stores or types</strong> to
+                  features
+                </p>
+                <p className="theme-font theme-tracking">
+                  Each hook, action, store, and type is assigned to a utility
+                  file in any parent directory (eg.{" "}
+                  <strong>page.hooks.ts</strong>)
+                </p>
+                <a
+                  href="https://nextjs.org/docs/app/building-your-application/routing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm theme-text-primary hover:underline theme-font theme-tracking theme-pt-2"
+                >
+                  Next.js App Router docs →
+                </a>
+              </div>
             </div>
-          </div>
-        </PopoverContent>
-      </Popover>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="flex flex-col theme-gap-2 md:theme-gap-4 min-h-[calc(100vh-800px)]">
         <div className="flex flex-col flex-[2] min-h-0 overflow-hidden">
           <div className="flex items-center justify-between theme-mb-2">
-            <h3 className="text-base md:text-lg font-semibold theme-text-card-foreground theme-font-sans theme-tracking">
+            <h3 className="text-base md:text-lg font-semibold theme-text-card-foreground theme-font theme-tracking">
               App Directory
             </h3>
           </div>
@@ -907,7 +958,7 @@ export const LayoutAndStructure = () => {
 
         {routes.length > 0 && (
           <div className="flex flex-col flex-[1] min-h-0 overflow-hidden">
-            <h3 className="text-base md:text-lg font-semibold theme-mb-2 theme-text-card-foreground theme-font-sans theme-tracking">
+            <h3 className="text-base md:text-lg font-semibold theme-mb-2 theme-text-card-foreground theme-font theme-tracking">
               Site Map
             </h3>
 

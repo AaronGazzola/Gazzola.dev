@@ -120,7 +120,14 @@ export const useReadmeGeneration = (
 
     if (batchesQueueRef.current.length === 0) {
       console.log("All batches complete, finalizing...");
+
+      if (phase1ToastIdRef.current) {
+        toast.dismiss(phase1ToastIdRef.current);
+        phase1ToastIdRef.current = undefined;
+      }
       toast.dismiss("readme-batch");
+      toast.dismiss("readme-structure");
+
       toast.loading("Finalizing README...", {
         id: "readme-finalize",
         duration: Infinity
@@ -154,8 +161,9 @@ export const useReadmeGeneration = (
       setReadmeGenerated(true);
       forceRefresh();
 
-      toast.dismiss("readme-finalize");
-      toast.success(`README generated with ${pages.length} pages and ${wordCount} words`);
+      toast.success(`README generated with ${pages.length} pages and ${wordCount} words`, {
+        id: "readme-finalize"
+      });
 
       setIsBatchGenerating(false);
       return;
@@ -278,7 +286,15 @@ export const useReadmeGeneration = (
       console.error("ERROR IN generateReadmeWithBatching:");
       console.error(error);
       console.error("========================================");
+
+      if (phase1ToastIdRef.current) {
+        toast.dismiss(phase1ToastIdRef.current);
+        phase1ToastIdRef.current = undefined;
+      }
       toast.dismiss("readme-structure");
+      toast.dismiss("readme-batch");
+      toast.dismiss("readme-finalize");
+
       toast.error("Failed to start README generation");
       setIsBatchGenerating(false);
     }

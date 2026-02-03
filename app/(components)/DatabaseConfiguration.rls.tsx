@@ -9,7 +9,12 @@ import {
 } from "@/components/editor/ui/select";
 import { Lock } from "lucide-react";
 import { useDatabaseStore } from "./DatabaseConfiguration.stores";
-import type { DatabaseTable, RLSPolicy, UserRole, RLSAccessType } from "./DatabaseConfiguration.types";
+import type {
+  DatabaseTable,
+  RLSAccessType,
+  RLSPolicy,
+  UserRole,
+} from "./DatabaseConfiguration.types";
 
 export const TableRLSContent = ({ table }: { table: DatabaseTable }) => {
   const { addOrUpdateRLSPolicy, getRLSPolicyForOperation, tables } =
@@ -20,8 +25,12 @@ export const TableRLSContent = ({ table }: { table: DatabaseTable }) => {
 
   const enabledRoles: UserRole[] = ["anon", "authenticated", "admin"];
 
-  const operations: RLSPolicy["operation"][] =
-    ["INSERT", "SELECT", "UPDATE", "DELETE"];
+  const operations: RLSPolicy["operation"][] = [
+    "INSERT",
+    "SELECT",
+    "UPDATE",
+    "DELETE",
+  ];
 
   const availableTables = tables.filter((t) => t.id !== table.id);
 
@@ -34,7 +43,7 @@ export const TableRLSContent = ({ table }: { table: DatabaseTable }) => {
       <div className="flex flex-col theme-p-4 theme-gap-2">
         <div className="flex items-center theme-gap-2 theme-text-muted-foreground">
           <Lock className="h-4 w-4" />
-          <p className="text-base font-semibold theme-font-sans theme-tracking">
+          <p className="text-base font-semibold theme-font theme-tracking">
             All auth schema security is handled by {authProvider}
           </p>
         </div>
@@ -52,7 +61,7 @@ export const TableRLSContent = ({ table }: { table: DatabaseTable }) => {
             key={operation}
             className="theme-bg-muted theme-radius theme-p-3"
           >
-            <h4 className="text-base font-semibold theme-text-foreground theme-mb-2 theme-font-sans theme-tracking">
+            <h4 className="text-base font-semibold theme-text-foreground theme-mb-2 theme-font theme-tracking">
               {operation}
             </h4>
             <div className="flex flex-col items-stretch theme-gap-2">

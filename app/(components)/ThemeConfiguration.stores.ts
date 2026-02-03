@@ -84,6 +84,7 @@ const defaultTypography: ThemeTypography = {
   fontSans: "var(--font-inter)",
   fontSerif: "Georgia, serif",
   fontMono: "var(--font-fira-code)",
+  primaryFont: "sans",
   letterSpacing: 0,
 };
 
@@ -156,8 +157,8 @@ export const useThemeStore = create<ThemeState>()(
           theme: {
             ...state.theme,
             typography: {
-              light: { ...state.theme.typography.light, ...typography },
-              dark: { ...state.theme.typography.dark, ...typography },
+              ...state.theme.typography,
+              [mode]: { ...state.theme.typography[mode], ...typography },
             },
           },
         })),
@@ -248,13 +249,31 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: "theme-storage",
-      version: 4,
+      version: 5,
       migrate: (persistedState: any, version: number) => {
         if (version < 3 || !persistedState?.theme?.typography?.light) {
           return { theme: defaultTheme, hasInteracted: false };
         }
         if (version < 4) {
           return { ...persistedState, hasInteracted: false };
+        }
+        if (version < 5) {
+          return {
+            ...persistedState,
+            theme: {
+              ...persistedState.theme,
+              typography: {
+                light: {
+                  ...persistedState.theme.typography.light,
+                  primaryFont: persistedState.theme.typography.light.primaryFont || "sans",
+                },
+                dark: {
+                  ...persistedState.theme.typography.dark,
+                  primaryFont: persistedState.theme.typography.dark.primaryFont || "sans",
+                },
+              },
+            },
+          };
         }
         return persistedState;
       },

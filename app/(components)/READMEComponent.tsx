@@ -32,24 +32,24 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useReadmeGeneration } from "./READMEComponent.generation-handlers";
 import { useREADMEStore } from "./READMEComponent.stores";
 import {
   generateId,
+  getDefaultLayoutOptions,
   LayoutInput,
+  PageAccess,
   PageInput,
   Stage,
-  PageAccess,
-  getDefaultLayoutOptions,
 } from "./READMEComponent.types";
 import {
-  generatePagesPrompt,
-  parsePagesFromResponse,
   generateAuthPages,
   generateCompliancePages,
+  generatePagesPrompt,
+  parsePagesFromResponse,
 } from "./READMEComponent.utils";
 import { LayoutAccordionItem } from "./READMEComponent/LayoutAccordionItem";
 import { PageAccordionItem } from "./READMEComponent/PageAccordionItem";
-import { useReadmeGeneration } from "./READMEComponent.generation-handlers";
 
 const MIN_TITLE_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 50;
@@ -120,7 +120,11 @@ export const READMEComponent = () => {
   }, [stage]);
 
   useEffect(() => {
-    if (readmeGenerated && !showSuccessView && !successViewDismissedRef.current) {
+    if (
+      readmeGenerated &&
+      !showSuccessView &&
+      !successViewDismissedRef.current
+    ) {
       setShowSuccessView(true);
     }
   }, [readmeGenerated, showSuccessView]);
@@ -161,14 +165,7 @@ export const READMEComponent = () => {
         JSON.stringify(layouts) ||
       JSON.stringify(lastGeneratedForReadme.pages) !== JSON.stringify(pages)
     );
-  }, [
-    lastGeneratedForReadme,
-    title,
-    description,
-    authMethods,
-    layouts,
-    pages,
-  ]);
+  }, [lastGeneratedForReadme, title, description, authMethods, layouts, pages]);
 
   const hasAnyInputChanged = useCallback(() => {
     return (
@@ -214,7 +211,7 @@ export const READMEComponent = () => {
     generateReadmeWithBatching,
     isGeneratingPlan,
     isGeneratingReadme,
-    isBatchGenerating
+    isBatchGenerating,
   } = useReadmeGeneration(
     title,
     description,
@@ -243,7 +240,11 @@ export const READMEComponent = () => {
           }
         }
 
-        const finalPages = [...authPagesData.pages, ...parsed.pages, ...compliancePagesData.pages];
+        const finalPages = [
+          ...authPagesData.pages,
+          ...parsed.pages,
+          ...compliancePagesData.pages,
+        ];
         const finalPageAccess = [
           ...authPagesData.pageAccess,
           ...parsed.pageAccess,
@@ -295,7 +296,11 @@ export const READMEComponent = () => {
           },
         ];
 
-        const finalPages = [...authPagesData.pages, ...fallbackPages, ...compliancePagesData.pages];
+        const finalPages = [
+          ...authPagesData.pages,
+          ...fallbackPages,
+          ...compliancePagesData.pages,
+        ];
         const finalPageAccess = [
           ...authPagesData.pageAccess,
           ...fallbackPageAccess,
@@ -346,7 +351,7 @@ export const READMEComponent = () => {
     });
 
     phase1ToastIdRef.current = toast.loading("Creating README structure...", {
-      description: `Processing ${layouts.length} layouts and ${pages.length} pages`
+      description: `Processing ${layouts.length} layouts and ${pages.length} pages`,
     });
 
     generateReadmeWithBatching();
@@ -411,7 +416,7 @@ export const READMEComponent = () => {
 
   if (readmeGenerated && showSuccessView) {
     return (
-      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto relative">
+      <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto relative">
         <div className="absolute top-2 right-2 flex items-center theme-gap-2">
           <Button
             variant="ghost"
@@ -444,20 +449,20 @@ export const READMEComponent = () => {
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
+              className="sm:w-96 theme-text-popover-foreground theme-shadow theme-font theme-tracking p-0 theme-radius max-h-[45vh] overflow-y-auto"
               style={{ borderColor: "var(--theme-primary)" }}
               align="end"
             >
               <div className="flex flex-col theme-gap-3 theme-bg-background p-4">
-                <h4 className="font-semibold text-base theme-font-sans theme-tracking">
+                <h4 className="font-semibold text-base theme-font theme-tracking">
                   README
                 </h4>
                 <div className="flex flex-col theme-gap-2 text-sm">
-                  <p className="theme-font-sans theme-tracking">
+                  <p className="theme-font theme-tracking">
                     This README will be used in the next step to generate your
                     app directory structure and initial database configuration.
                   </p>
-                  <p className="theme-font-sans theme-tracking">
+                  <p className="theme-font theme-tracking">
                     You can edit it directly in the editor below.
                   </p>
                 </div>
@@ -480,7 +485,11 @@ export const READMEComponent = () => {
     );
   }
 
-  const isPending = isGeneratingPlan || isGeneratingReadme || isGeneratingPages || isBatchGenerating;
+  const isPending =
+    isGeneratingPlan ||
+    isGeneratingReadme ||
+    isGeneratingPages ||
+    isBatchGenerating;
   const isTitleValid = title.trim().length >= MIN_TITLE_LENGTH;
   const isDescriptionValid =
     description.trim().length >= MIN_DESCRIPTION_LENGTH;
@@ -489,8 +498,7 @@ export const READMEComponent = () => {
   const MIN_LAYOUT_NAME_LENGTH = 2;
 
   const areLayoutsValid = layouts.every(
-    (l) =>
-      l.name.trim().length >= MIN_LAYOUT_NAME_LENGTH
+    (l) => l.name.trim().length >= MIN_LAYOUT_NAME_LENGTH
   );
 
   const canSubmitPages =
@@ -505,7 +513,7 @@ export const READMEComponent = () => {
   const canSubmitAuth = true;
 
   return (
-    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-2">
         <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
           <BookText className="h-5 w-5 theme-text-primary" />
@@ -820,7 +828,10 @@ export const READMEComponent = () => {
               <div className="flex flex-col theme-gap-1">
                 <h3 className="font-semibold text-lg">Define Your Layouts</h3>
                 <p className="   theme-text-foreground font-semibold">
-                  Layouts wrap your pages with shared UI elements. Configure which components each layout includes: headers, sidebars, footers, and their specific features. You can apply multiple layouts to any page.
+                  Layouts wrap your pages with shared UI elements. Configure
+                  which components each layout includes: headers, sidebars,
+                  footers, and their specific features. You can apply multiple
+                  layouts to any page.
                 </p>
               </div>
 
@@ -915,7 +926,9 @@ export const READMEComponent = () => {
                     }
                     className="flex-1 theme-gap-2"
                   >
-                    {(isGeneratingPlan || isGeneratingReadme || isBatchGenerating) ? (
+                    {isGeneratingPlan ||
+                    isGeneratingReadme ||
+                    isBatchGenerating ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
                         Regenerating...
@@ -945,7 +958,9 @@ export const READMEComponent = () => {
                   disabled={isPending || !canSubmitPages}
                   className="w-full theme-gap-2"
                 >
-                  {(isGeneratingPlan || isGeneratingReadme || isBatchGenerating) ? (
+                  {isGeneratingPlan ||
+                  isGeneratingReadme ||
+                  isBatchGenerating ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Generating README...

@@ -817,26 +817,30 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
             readmeStore.setDescription(progressData.readmeState.description);
           }
           if (progressData.readmeState.layouts) {
-            const migratedLayouts = progressData.readmeState.layouts.map((layout: any) => ({
-              ...layout,
-              options: {
-                header: {
-                  ...layout.options.header,
-                  themeToggle: layout.options.header.themeToggle ?? false,
+            const migratedLayouts = progressData.readmeState.layouts.map(
+              (layout: any) => ({
+                ...layout,
+                options: {
+                  header: {
+                    ...layout.options.header,
+                    themeToggle: layout.options.header.themeToggle ?? false,
+                  },
+                  leftSidebar: {
+                    ...layout.options.leftSidebar,
+                    themeToggle:
+                      layout.options.leftSidebar.themeToggle ?? false,
+                  },
+                  rightSidebar: {
+                    ...layout.options.rightSidebar,
+                    themeToggle:
+                      layout.options.rightSidebar.themeToggle ?? false,
+                  },
+                  footer: {
+                    ...layout.options.footer,
+                  },
                 },
-                leftSidebar: {
-                  ...layout.options.leftSidebar,
-                  themeToggle: layout.options.leftSidebar.themeToggle ?? false,
-                },
-                rightSidebar: {
-                  ...layout.options.rightSidebar,
-                  themeToggle: layout.options.rightSidebar.themeToggle ?? false,
-                },
-                footer: {
-                  ...layout.options.footer,
-                },
-              },
-            }));
+              })
+            );
             readmeStore.setLayouts(migratedLayouts);
           }
           if (progressData.readmeState.pages) {
@@ -1146,7 +1150,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           onDrop={handleDrop}
         />
       )}
-      <div className="w-full max-w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow theme-font-sans theme-tracking overflow-hidden">
+      <div className="w-full max-w-full border-b theme-border-border theme-bg-background theme-text-foreground theme-shadow theme-font theme-tracking overflow-hidden">
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="w-full max-w-full">
@@ -1156,7 +1160,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
               />
             </div>
           </TooltipTrigger>
-          <TooltipContent className="theme-font-sans theme-tracking">
+          <TooltipContent className="theme-font theme-tracking">
             <p>
               {progressInfo.currentTitle} ({progressInfo.currentStep} of{" "}
               {progressInfo.totalSteps})
@@ -1172,7 +1176,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   handleBack();
                 }}
                 variant="outline"
-                className="theme-py-1 px-2 md:theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking"
+                className="theme-py-1 px-2 md:theme-px-3 flex items-center theme-gap-2 font-semibold theme-font theme-tracking text-md"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="hidden md:inline">Back</span>
@@ -1210,7 +1214,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <Ellipsis style={{ width: 24, height: 24 }} />
                 </Button>
               </EditorPopoverTrigger>
-              <EditorPopoverContent className="w-64 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+              <EditorPopoverContent className="w-64 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font theme-tracking p-2">
                 <div className="flex flex-col theme-gap-1">
                   <div className="flex items-center justify-between px-2 py-1 theme-border-border border-b mb-1">
                     <span className="text-sm">Dark mode</span>
@@ -1305,7 +1309,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     </Tooltip>
                   </div>
                 </EditorPopoverTrigger>
-                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font theme-tracking p-2">
                   <div className="flex flex-col theme-gap-1">
                     <Button
                       variant="ghost"
@@ -1355,7 +1359,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     </Tooltip>
                   </div>
                 </EditorPopoverTrigger>
-                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking p-2">
+                <EditorPopoverContent className="w-56 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font theme-tracking p-2">
                   <div className="flex flex-col theme-gap-1">
                     <Button
                       variant="ghost"
@@ -1406,14 +1410,14 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <Button
                     variant="outline"
                     onClick={() => setResetPageDialogOpen(false)}
-                    className="theme-font-sans theme-tracking"
+                    className="theme-font theme-tracking"
                   >
                     Cancel
                   </Button>
                   <Button
                     variant="destructive"
                     onClick={handleResetPage}
-                    className="theme-font-sans theme-tracking"
+                    className="theme-font theme-tracking"
                   >
                     Reset Page
                   </Button>
@@ -1437,7 +1441,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                   <Button
                     variant="outline"
                     onClick={() => setResetAllDialogOpen(false)}
-                    className="theme-font-sans theme-tracking"
+                    className="theme-font theme-tracking"
                   >
                     Cancel
                   </Button>
@@ -1445,7 +1449,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     variant="destructive"
                     onClick={handleResetAll}
                     disabled={resetAllLoading}
-                    className="theme-font-sans theme-tracking"
+                    className="theme-font theme-tracking"
                   >
                     {resetAllLoading ? "Resetting..." : "Reset All"}
                   </Button>
@@ -1569,19 +1573,19 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                       <AlertCircle className="h-6 w-6 theme-text-primary" />
                     </button>
                   </EditorPopoverTrigger>
-                  <EditorPopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
+                  <EditorPopoverContent className="w-80 theme-bg-popover theme-text-popover-foreground theme-shadow theme-font theme-tracking">
                     <div className="flex flex-col theme-gap-2">
-                      <h4 className="font-semibold text-sm theme-font-sans theme-tracking">
+                      <h4 className="font-semibold text-sm theme-font theme-tracking">
                         Preview Mode (Read Only)
                       </h4>
-                      <p className="text-sm theme-font-sans theme-tracking">
+                      <p className="text-sm theme-font theme-tracking">
                         You are currently in preview mode.
                       </p>
-                      <p className="text-sm theme-font-sans theme-tracking">
+                      <p className="text-sm theme-font theme-tracking">
                         This shows exactly how your content will look when
                         downloaded.
                       </p>
-                      <p className="text-sm theme-font-sans theme-tracking">
+                      <p className="text-sm theme-font theme-tracking">
                         Switch back to Edit mode to continue making changes.
                       </p>
                     </div>
@@ -1610,13 +1614,13 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
                     onClick={handleNext}
                     size={currentPageIndex <= 4 ? "sm" : "default"}
                     variant={currentPageIndex <= 4 ? "default" : "outline"}
-                    className=" theme-py-1 theme-px1 xs:theme-px-3 flex items-center theme-gap-2 font-medium theme-font-sans theme-tracking "
+                    className=" theme-py-1 theme-px1 xs:theme-px-3 flex items-center theme-gap-2 font-semibold theme-font theme-tracking text-md"
                   >
                     <span className="xs:block hidden">Next</span>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow theme-font-sans theme-tracking">
+                <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-shadow theme-font theme-tracking">
                   <p>Next: {nextPageTitle}</p>
                 </TooltipContent>
               </Tooltip>

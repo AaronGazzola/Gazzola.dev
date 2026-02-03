@@ -82,8 +82,8 @@ const DEFAULT_THEME: ThemeConfiguration = {
     },
   },
   typography: {
-    light: { fontSans: "Inter, system-ui, sans-serif", fontSerif: "Georgia, serif", fontMono: "Fira Code, monospace", letterSpacing: 0 },
-    dark: { fontSans: "Inter, system-ui, sans-serif", fontSerif: "Georgia, serif", fontMono: "Fira Code, monospace", letterSpacing: 0 },
+    light: { fontSans: "Inter, system-ui, sans-serif", fontSerif: "Georgia, serif", fontMono: "Fira Code, monospace", primaryFont: "sans", letterSpacing: 0 },
+    dark: { fontSans: "Inter, system-ui, sans-serif", fontSerif: "Georgia, serif", fontMono: "Fira Code, monospace", primaryFont: "sans", letterSpacing: 0 },
   },
   other: {
     light: { hueShift: 0, saturationMultiplier: 1, lightnessMultiplier: 1, radius: 0.5, spacing: 1, shadow: { offsetX: 0, offsetY: 4, blurRadius: 6, spread: -1, color: "hsl(0, 0%, 0%)", opacity: 0.1 } },

@@ -41,6 +41,7 @@ interface ThemeTypography {
   fontSans: string;
   fontSerif: string;
   fontMono: string;
+  primaryFont: "sans" | "serif" | "mono";
   letterSpacing: number;
 }
 
@@ -139,6 +140,7 @@ const defaultTypography: ThemeTypography = {
   fontSans: "var(--font-inter)",
   fontSerif: "Georgia, serif",
   fontMono: "var(--font-fira-code)",
+  primaryFont: "sans",
   letterSpacing: 0,
 };
 
@@ -208,6 +210,34 @@ const normalizeFontValue = (fontValue: string): string => {
   };
 
   return fontMap[fontValue] || fontValue;
+};
+
+const extractFontName = (fontValue: string): string => {
+  if (!fontValue) return "";
+
+  if (fontValue.includes('var(--font-')) {
+    const match = fontValue.match(/var\(--font-([^)]+)\)/);
+    if (match && match[1]) {
+      return match[1].toLowerCase().replace(/-/g, ' ');
+    }
+  }
+
+  const firstFont = fontValue.split(',')[0].trim();
+  return firstFont.replace(/['"]/g, '').toLowerCase();
+};
+
+const isSerifFont = (fontName: string): boolean => {
+  const serifFonts = [
+    'merriweather', 'playfair', 'lora', 'crimson',
+    'garamond', 'baskerville', 'pt serif', 'pt-serif',
+    'georgia', 'times', 'serif'
+  ];
+  return serifFonts.some(serif => fontName.includes(serif));
+};
+
+const detectPrimaryFont = (typography: Partial<ThemeTypography>): "sans" | "serif" | "mono" => {
+  const sansFontName = extractFontName(typography.fontSans || "");
+  return isSerifFont(sansFontName) ? "serif" : "sans";
 };
 
 function sanitizeThemeColors(colors: ThemeColors): ThemeColors {
@@ -376,6 +406,9 @@ const parseThemesFromJSON = (): ParsedTheme[] => {
 
     const lightTypography = { ...defaultTypography, ...lightParsed.typography };
     const darkTypography = { ...defaultTypography, ...darkParsed.typography };
+
+    lightTypography.primaryFont = detectPrimaryFont(lightTypography);
+    darkTypography.primaryFont = detectPrimaryFont(darkTypography);
 
     const lightOther = sanitizeThemeOther({
       ...defaultOther,

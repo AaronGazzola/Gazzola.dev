@@ -506,9 +506,12 @@ export const NextStepsComponent = () => {
                 </li>
                 <li className="ml-4 list-none">
                   <p className="text-sm italic mt-1">
-                    Note: The prompt will guide Claude to unpack the starter kit, including moving the{" "}
-                    <code className="theme-bg-card px-1 rounded">.claude</code> folder to your project root.
-                    After unpacking, Claude will ask you to close the chat and start a new one to load the permissions.
+                    Note: The prompt will guide Claude to unpack the starter
+                    kit, including moving the{" "}
+                    <code className="theme-bg-card px-1 rounded">.claude</code>{" "}
+                    folder to your project root. After unpacking, Claude will
+                    ask you to close the chat and start a new one to load the
+                    permissions.
                   </p>
                 </li>
               </ol>
@@ -641,7 +644,7 @@ export const NextStepsComponent = () => {
   };
 
   return (
-    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-2 mb-4">
         <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
           <Laptop className="h-5 w-5 flex-shrink-0 theme-text-primary" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/editor/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -7,13 +8,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/editor/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ArrowRight, Blocks, CheckCircle2, Construction, MailIcon, ScrollText } from "lucide-react";
+import {
+  ArrowRight,
+  Blocks,
+  CheckCircle2,
+  Construction,
+  MailIcon,
+  ScrollText,
+} from "lucide-react";
 import { useState } from "react";
 import {
   CloudflareLogo,
@@ -34,7 +41,9 @@ interface Extension {
 
 export const ExtensionsComponent = () => {
   const [copied, setCopied] = useState<string | null>(null);
-  const [promptPopoverOpen, setPromptPopoverOpen] = useState<string | null>(null);
+  const [promptPopoverOpen, setPromptPopoverOpen] = useState<string | null>(
+    null
+  );
 
   const handleCopy = async (text: string, id: string) => {
     try {
@@ -57,8 +66,8 @@ export const ExtensionsComponent = () => {
         <div className="flex flex-col theme-gap-4">
           <div className="theme-bg-muted theme-radius theme-p-4">
             <p className="theme-text-foreground mb-3">
-              This guide will walk you through setting up custom email delivery using Resend as your
-              SMTP provider. Includes:
+              This guide will walk you through setting up custom email delivery
+              using Resend as your SMTP provider. Includes:
             </p>
             <ul className="theme-text-foreground list-disc list-inside space-y-2">
               <li>Resend account creation and domain verification</li>
@@ -76,11 +85,16 @@ export const ExtensionsComponent = () => {
               <li>Copy the prompt below</li>
               <li>Paste it into Claude Code in VS Code</li>
               <li>Follow the step-by-step guidance to set up Resend</li>
-              <li>Claude will help you configure your domain and implement email templates</li>
+              <li>
+                Claude will help you configure your domain and implement email
+                templates
+              </li>
             </ol>
             <Popover
               open={promptPopoverOpen === "resend"}
-              onOpenChange={(open) => setPromptPopoverOpen(open ? "resend" : null)}
+              onOpenChange={(open) =>
+                setPromptPopoverOpen(open ? "resend" : null)
+              }
             >
               <PopoverTrigger asChild>
                 <Button variant="link" className="theme-gap-2 w-full mb-4">
@@ -345,7 +359,7 @@ export const ExtensionsComponent = () => {
   ];
 
   return (
-    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font-sans theme-tracking max-w-2xl mx-auto">
+    <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
       <div className="flex flex-col theme-gap-2 mb-4">
         <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
           <Blocks className="h-5 w-5 flex-shrink-0 theme-text-primary" />

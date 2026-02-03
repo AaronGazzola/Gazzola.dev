@@ -33,10 +33,13 @@ export interface ThemeColors {
   sidebarRing: string;
 }
 
+export type PrimaryFontType = "sans" | "serif" | "mono";
+
 export interface ThemeTypography {
   fontSans: string;
   fontSerif: string;
   fontMono: string;
+  primaryFont: PrimaryFontType;
   letterSpacing: number;
 }
 

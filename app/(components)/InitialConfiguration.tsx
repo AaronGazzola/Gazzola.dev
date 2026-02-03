@@ -26,13 +26,12 @@ import {
   Upload,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   SiCypress,
   SiNextdotjs,
   SiPaypal,
   SiPostgresql,
-  SiPrisma,
   SiResend,
   SiStripe,
   SiSupabase,
@@ -731,12 +730,10 @@ export const InitialConfiguration = () => {
 
   return (
     <TooltipProvider>
-      <div
-        className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow theme-p-2 border theme-font-sans theme-tracking"
-      >
+      <div className="theme-bg-card theme-text-card-foreground theme-border-border theme-radius theme-shadow theme-p-2 border theme-font theme-tracking">
         {enabledTechnologies.length > 0 && (
           <div className="theme-bg-background theme-radius theme-shadow sticky top-[-24px] z-50 theme-mb-1 theme-p-3 md:theme-p-6 backdrop-blur-lg">
-            <h4 className="theme-text-card-foreground text-xs md:text-sm font-semibold theme-mb-2 md:theme-mb-3 theme-font-sans theme-tracking">
+            <h4 className="theme-text-card-foreground text-xs md:text-sm font-semibold theme-mb-2 md:theme-mb-3 theme-font theme-tracking">
               Required Technologies
             </h4>
             <div className="flex flex-wrap theme-gap-1 md:theme-gap-2">
@@ -747,12 +744,12 @@ export const InitialConfiguration = () => {
                 return (
                   <Tooltip key={tech.id}>
                     <TooltipTrigger asChild>
-                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-1.5 md:theme-px-2 theme-py-0\.5 rounded-full text-xs font-semibold cursor-help border whitespace-nowrap theme-font-sans theme-tracking">
+                      <div className="theme-bg-secondary theme-text-secondary-foreground theme-border-border theme-shadow flex items-center theme-gap-1 theme-px-1.5 md:theme-px-2 theme-py-0\.5 rounded-full text-xs font-semibold cursor-help border whitespace-nowrap theme-font theme-tracking">
                         <Icon className="w-3 h-3" />
                         <span>{tech.name}</span>
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow theme-font-sans theme-tracking">
+                    <TooltipContent className="theme-bg-popover theme-text-popover-foreground theme-border-border theme-radius theme-shadow theme-font theme-tracking">
                       <div className="max-w-[12rem]">
                         <p className="font-medium theme-mb-1">{tech.name}</p>
                         <p className="font-medium theme-mb-1 text-xs">
@@ -836,14 +833,14 @@ export const InitialConfiguration = () => {
                     <div className="flex flex-col theme-gap-0.5">
                       <span
                         className={cn(
-                          "theme-text-foreground text-sm md:text-lg font-semibold theme-font-sans theme-tracking",
+                          "theme-text-foreground text-sm md:text-lg font-semibold theme-font theme-tracking",
                           isQuestionDisabled && "opacity-50"
                         )}
                       >
                         {question.question}
                       </span>
                       {question.comingSoon && (
-                        <span className="text-[10px] md:text-xs text-white font-semibold theme-font-sans theme-tracking opacity-80">
+                        <span className="text-[10px] md:text-xs text-white font-semibold theme-font theme-tracking opacity-80">
                           Coming soon
                         </span>
                       )}
@@ -861,13 +858,18 @@ export const InitialConfiguration = () => {
                         <div className="flex flex-col xs:flex-row theme-gap-3">
                           <div
                             onClick={() => {
-                              const currentSupabase = initialConfiguration.technologies.supabase;
-                              const techUpdates: Partial<InitialConfigurationType["technologies"]> = {};
+                              const currentSupabase =
+                                initialConfiguration.technologies.supabase;
+                              const techUpdates: Partial<
+                                InitialConfigurationType["technologies"]
+                              > = {};
 
                               techUpdates.supabase = !currentSupabase;
                               techUpdates.postgresql = !currentSupabase;
 
-                              const newProvider = !currentSupabase ? "supabase" : "none";
+                              const newProvider = !currentSupabase
+                                ? "supabase"
+                                : "none";
 
                               updateInitialConfiguration({
                                 questions: {
@@ -875,7 +877,9 @@ export const InitialConfiguration = () => {
                                   databaseProvider: newProvider,
                                 },
                                 database: {
-                                  hosting: !currentSupabase ? "supabase" : "postgresql",
+                                  hosting: !currentSupabase
+                                    ? "supabase"
+                                    : "postgresql",
                                 },
                                 technologies: {
                                   ...initialConfiguration.technologies,
@@ -885,56 +889,70 @@ export const InitialConfiguration = () => {
                             }}
                             className={cn(
                               "theme-bg-card theme-border-border border-2 theme-radius theme-shadow theme-p-4 cursor-pointer transition-all hover:theme-bg-accent flex-1 relative",
-                              initialConfiguration.technologies.supabase && "border-white"
+                              initialConfiguration.technologies.supabase &&
+                                "border-white"
                             )}
                           >
                             <Checkbox
-                              checked={initialConfiguration.technologies.supabase}
+                              checked={
+                                initialConfiguration.technologies.supabase
+                              }
                               className="size-6 border-2 border-white/30 dark:border-black/30 data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none absolute top-2 right-2"
                             />
                             <div className="flex flex-col items-center theme-gap-2 text-center">
                               <SiSupabase className="w-12 h-12 theme-text-foreground" />
-                              <h4 className="text-sm font-semibold theme-text-foreground theme-font-sans theme-tracking">Supabase</h4>
+                              <h4 className="text-sm font-semibold theme-text-foreground theme-font theme-tracking">
+                                Supabase
+                              </h4>
                             </div>
                           </div>
                         </div>
 
-                        {initialConfiguration.questions.databaseProvider !== "none" && (
+                        {initialConfiguration.questions.databaseProvider !==
+                          "none" && (
                           <div className="flex flex-col theme-gap-3">
                             <div className="flex flex-wrap theme-gap-1">
                               {["supabase", "postgresql"].map((techId) => {
-                                  const tech = technologies.find((t) => t.id === techId);
-                                  if (!tech) return null;
-                                  const Icon = tech.icon;
-                                  const isActive = initialConfiguration.technologies[techId as keyof InitialConfigurationType["technologies"]];
-                                  return (
-                                    <div
-                                      key={techId}
-                                      className={cn(
-                                        "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 text-xs font-medium border theme-font-sans theme-tracking",
-                                        isActive
-                                          ? "theme-bg-primary theme-text-primary-foreground theme-border-primary"
-                                          : "theme-bg-secondary theme-text-secondary-foreground theme-border-border"
-                                      )}
-                                    >
-                                      <Icon className="w-3 h-3" />
-                                      <span>{tech.name}</span>
-                                    </div>
-                                  );
-                                })}
+                                const tech = technologies.find(
+                                  (t) => t.id === techId
+                                );
+                                if (!tech) return null;
+                                const Icon = tech.icon;
+                                const isActive =
+                                  initialConfiguration.technologies[
+                                    techId as keyof InitialConfigurationType["technologies"]
+                                  ];
+                                return (
+                                  <div
+                                    key={techId}
+                                    className={cn(
+                                      "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 text-xs font-medium border theme-font theme-tracking",
+                                      isActive
+                                        ? "theme-bg-primary theme-text-primary-foreground theme-border-primary"
+                                        : "theme-bg-secondary theme-text-secondary-foreground theme-border-border"
+                                    )}
+                                  >
+                                    <Icon className="w-3 h-3" />
+                                    <span>{tech.name}</span>
+                                  </div>
+                                );
+                              })}
                             </div>
-                            <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
-                              Supabase for all backend logic and database functionality. Excellent for enterprise audit compliance
+                            <p className="text-sm theme-text-muted-foreground theme-font theme-tracking">
+                              Supabase for all backend logic and database
+                              functionality. Excellent for enterprise audit
+                              compliance
                             </p>
                           </div>
                         )}
                         {!initialConfiguration.technologies.supabase && (
-                          <p className="text-sm theme-text-muted-foreground theme-font-sans theme-tracking">
+                          <p className="text-sm theme-text-muted-foreground theme-font theme-tracking">
                             No database required, this app is front-end only
                           </p>
                         )}
                       </div>
-                    ) : question.subOptions && question.subOptions.length > 0 ? (
+                    ) : question.subOptions &&
+                      question.subOptions.length > 0 ? (
                       <div className="flex flex-col theme-gap-1">
                         {question.subOptions.map((option) => {
                           const isSubOptionDisabled =
@@ -981,7 +999,7 @@ export const InitialConfiguration = () => {
                                       className="size-4 theme-mt-0\.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
                                     />
                                   </TooltipTrigger>
-                                  <TooltipContent className="theme-font-sans theme-tracking">
+                                  <TooltipContent className="theme-font theme-tracking">
                                     <p>
                                       {getDisabledReason(
                                         question.id,
@@ -1053,10 +1071,10 @@ export const InitialConfiguration = () => {
                                 />
                               )}
                               <div>
-                                <span className="theme-text-foreground text-sm md:text-base font-medium block theme-font-sans theme-tracking">
+                                <span className="theme-text-foreground text-sm md:text-base font-medium block theme-font theme-tracking">
                                   {option.label}
                                 </span>
-                                <span className="theme-text-muted-foreground text-xs md:text-base block theme-mt-0\.5 font-medium theme-font-sans theme-tracking">
+                                <span className="theme-text-muted-foreground text-xs md:text-base block theme-mt-0\.5 font-medium theme-font theme-tracking">
                                   {option.description}
                                 </span>
                                 <div className="flex flex-wrap theme-gap-0.5 md:theme-gap-1 theme-mt-1 md:theme-mt-2">
@@ -1110,7 +1128,7 @@ export const InitialConfiguration = () => {
                                       <div
                                         key={techId}
                                         className={cn(
-                                          "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 text-xs font-medium border theme-font-sans theme-tracking",
+                                          "theme-radius theme-shadow flex items-center theme-gap-1 theme-px-1.5 theme-py-0.5 text-xs font-medium border theme-font theme-tracking",
                                           !isAvailable
                                             ? "theme-bg-muted theme-text-muted-foreground theme-border-border line-through opacity-50"
                                             : isBadgeActive
@@ -1147,7 +1165,7 @@ export const InitialConfiguration = () => {
                                 className="size-4 theme-mt-0\.5 border border-[hsl(var(--input))] data-[state=checked]:bg-[hsl(var(--primary))] data-[state=checked]:border-[hsl(var(--primary))] data-[state=checked]:text-[hsl(var(--primary-foreground))] select-none"
                               />
                             </TooltipTrigger>
-                            <TooltipContent className="theme-font-sans theme-tracking">
+                            <TooltipContent className="theme-font theme-tracking">
                               <p>
                                 {getDisabledReason(
                                   question.id,
@@ -1168,10 +1186,10 @@ export const InitialConfiguration = () => {
                           />
                         )}
                         <div>
-                          <span className="theme-text-foreground text-sm md:text-base font-medium block theme-font-sans theme-tracking">
+                          <span className="theme-text-foreground text-sm md:text-base font-medium block theme-font theme-tracking">
                             {question.question}
                           </span>
-                          <span className="theme-text-muted-foreground text-xs md:text-base block theme-mt-0\.5 font-medium theme-font-sans theme-tracking">
+                          <span className="theme-text-muted-foreground text-xs md:text-base block theme-mt-0\.5 font-medium theme-font theme-tracking">
                             {question.description}
                           </span>
                         </div>

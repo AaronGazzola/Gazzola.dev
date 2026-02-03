@@ -2237,6 +2237,9 @@
   margin-left: auto;
 }
 
+.theme-font {
+  font-family: var(--theme-font);
+}
 .theme-font-sans {
   font-family: var(--theme-font-sans);
 }
@@ -2260,7 +2263,9 @@
 }
 
 [data-state="active"].data-\[state\=active\]\:shadow {
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1),
+    0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 .theme-focus-visible\:ring-ring:focus-visible {

@@ -41,7 +41,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-9 w-max items-center justify-center theme-radius theme-bg-background theme-px-4 theme-py-2 text-sm font-medium transition-colors hover:theme-bg-accent hover:theme-text-accent-foreground focus:theme-bg-accent focus:theme-text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:theme-text-accent-foreground data-[state=open]:theme-bg-accent/50 data-[state=open]:hover:theme-bg-accent data-[state=open]:focus:theme-bg-accent theme-font-sans theme-tracking"
+  "group inline-flex h-9 w-max items-center justify-center theme-radius theme-bg-background theme-px-4 theme-py-2 text-sm font-medium transition-colors hover:theme-bg-accent hover:theme-text-accent-foreground focus:theme-bg-accent focus:theme-text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:theme-text-accent-foreground data-[state=open]:theme-bg-accent/50 data-[state=open]:hover:theme-bg-accent data-[state=open]:focus:theme-bg-accent theme-font theme-tracking"
 );
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -86,7 +86,7 @@ const NavigationMenuViewport = React.forwardRef<
   <div className={cn("absolute left-0 top-full flex justify-center")}>
     <NavigationMenuPrimitive.Viewport
       className={cn(
-        "origin-top-center relative theme-mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden theme-radius border theme-bg-popover theme-text-popover-foreground theme-shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)] theme-border-border theme-font-sans theme-tracking",
+        "origin-top-center relative theme-mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden theme-radius border theme-bg-popover theme-text-popover-foreground theme-shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)] theme-border-border theme-font theme-tracking",
         className
       )}
       ref={ref}

@@ -10,10 +10,7 @@ export const ResendLogo = () => (
       d="M6 8h12v1.5H6V8zm0 3.5h12V13H6v-1.5zm0 3.5h7v1.5H6V15z"
       fill="white"
     />
-    <path
-      d="M15 15l3 2.5-3 2.5v-5z"
-      fill="white"
-    />
+    <path d="M15 15l3 2.5-3 2.5v-5z" fill="white" />
   </svg>
 );
 
@@ -111,23 +108,19 @@ export const VitestLogo = () => (
       </linearGradient>
     </defs>
     <rect width="256" height="256" fill="url(#vitest-green)" rx="32" />
-    <path
-      d="M128 40L200 200H56L128 40z"
-      fill="url(#vitest-yellow)"
-    />
-    <path
-      d="M128 90L170 170H86L128 90z"
-      fill="url(#vitest-green)"
-    />
+    <path d="M128 40L200 200H56L128 40z" fill="url(#vitest-yellow)" />
+    <path d="M128 90L170 170H86L128 90z" fill="url(#vitest-green)" />
   </svg>
 );
 
-import { Plus, Mail, Milestone } from "lucide-react";
+import { Mail, Milestone, Plus } from "lucide-react";
 import { SupabaseLogo as SupabaseLogoBase } from "./NextStepsComponent.utils";
 
 export const MailIcon = () => <Mail className="h-5 w-5 flex-shrink-0" />;
 
-export const MilestoneIcon = () => <Milestone className="h-5 w-5 flex-shrink-0" />;
+export const MilestoneIcon = () => (
+  <Milestone className="h-5 w-5 flex-shrink-0" />
+);
 
 export const SupabaseIcon = () => (
   <div className="h-5 w-5 flex-shrink-0">
@@ -222,7 +215,7 @@ After I provide the credentials, you will:
    - Spacing: theme-gap-4, theme-p-4, theme-px-4, theme-py-2, etc.
    - Border Radius: theme-radius
    - Box Shadow: theme-shadow
-   - Fonts: theme-font-sans, theme-font-serif, theme-font-mono
+   - Fonts: theme-font, theme-font-serif, theme-font-mono
    - Letter Spacing: theme-tracking
 
    CSS Variables (from globals.css :root):

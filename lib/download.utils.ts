@@ -702,32 +702,6 @@ const generateThemeCss = (): string => {
       return fontValue.includes('var(--font-');
     };
 
-    const isSerifFont = (fontName: string): boolean => {
-      const serifFonts = [
-        'merriweather',
-        'playfair display',
-        'playfair-display',
-        'lora',
-        'crimson text',
-        'crimson-text',
-        'eb garamond',
-        'eb-garamond',
-        'libre baskerville',
-        'libre-baskerville',
-        'source serif pro',
-        'source-serif-pro',
-        'pt serif',
-        'pt-serif',
-        'old standard tt',
-        'old-standard-tt',
-        'vollkorn',
-        'cardo',
-        'gelasio',
-        'spectral',
-      ];
-      return serifFonts.some(serif => fontName.toLowerCase().includes(serif));
-    };
-
     let fontSansValue = lightTypography.fontSans || "var(--font-inter)";
     let fontSerifValue = lightTypography.fontSerif || "var(--font-merriweather)";
     const fontMonoValue = lightTypography.fontMono || "var(--font-jetbrains)";
@@ -735,18 +709,16 @@ const generateThemeCss = (): string => {
     let fontSerifDarkValue = darkTypography.fontSerif || lightTypography.fontSerif || "var(--font-merriweather)";
     const fontMonoDarkValue = darkTypography.fontMono || lightTypography.fontMono || "var(--font-jetbrains)";
 
-    const primaryFontName = extractFontName(fontSansValue);
-    const isPrimaryFontSerif = isSerifFont(primaryFontName);
-    const primaryDarkFontName = extractFontName(fontSansDarkValue);
-    const isPrimaryDarkFontSerif = isSerifFont(primaryDarkFontName);
+    const lightPrimaryFont = lightTypography.primaryFont || "sans";
+    const darkPrimaryFont = darkTypography.primaryFont || "sans";
 
-    if (isPrimaryFontSerif) {
+    if (lightPrimaryFont === "serif") {
       const temp = fontSansValue;
       fontSansValue = fontSerifValue;
       fontSerifValue = temp;
     }
 
-    if (isPrimaryDarkFontSerif) {
+    if (darkPrimaryFont === "serif") {
       const temp = fontSansDarkValue;
       fontSansDarkValue = fontSerifDarkValue;
       fontSerifDarkValue = temp;
@@ -852,6 +824,7 @@ const generateThemeCss = (): string => {
     lines.push(`  --font-sans: ${getFontCssValue(fontSansValue, fontSans, 'sans-serif')};`);
     lines.push(`  --font-serif: ${getFontCssValue(fontSerifValue, fontSerif, 'serif')};`);
     lines.push(`  --font-mono: ${getFontCssValue(fontMonoValue, fontMono, 'monospace')};`);
+    lines.push(`  --font: var(--font-${lightPrimaryFont});`);
     lines.push(`  --letter-spacing: ${lightTypography.letterSpacing}px;`);
     lines.push(``);
     lines.push(`  --radius: ${lightOther.radius}rem;`);
@@ -879,6 +852,7 @@ const generateThemeCss = (): string => {
     lines.push(`  --font-sans: ${getFontCssValue(fontSansDarkValue, fontSansDark, 'sans-serif')};`);
     lines.push(`  --font-serif: ${getFontCssValue(fontSerifDarkValue, fontSerifDark, 'serif')};`);
     lines.push(`  --font-mono: ${getFontCssValue(fontMonoDarkValue, fontMonoDark, 'monospace')};`);
+    lines.push(`  --font: var(--font-${darkPrimaryFont});`);
     lines.push(`  --letter-spacing: ${darkTypography.letterSpacing}px;`);
     lines.push(``);
     lines.push(`  --radius: ${darkOther.radius}rem;`);
@@ -893,14 +867,13 @@ const generateThemeCss = (): string => {
     lines.push(`  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);`);
     lines.push(`}`);
     lines.push(``);
-    const bodyFontClass = isPrimaryFontSerif ? 'font-serif' : 'font-sans';
 
     lines.push(`@layer base {`);
     lines.push(`  * {`);
     lines.push(`    @apply border-border;`);
     lines.push(`  }`);
     lines.push(`  body {`);
-    lines.push(`    @apply bg-background text-foreground ${bodyFontClass};`);
+    lines.push(`    @apply bg-background text-foreground font;`);
     lines.push(`    letter-spacing: var(--letter-spacing);`);
     lines.push(`  }`);
     lines.push(`}`);
@@ -986,6 +959,10 @@ const generateThemeCss = (): string => {
     lines.push(``);
     lines.push(`.font-mono {`);
     lines.push(`  font-family: var(--font-mono);`);
+    lines.push(`}`);
+    lines.push(``);
+    lines.push(`.font {`);
+    lines.push(`  font-family: var(--font);`);
     lines.push(`}`);
     lines.push(``);
     lines.push(`[data-state="checked"].data-checked-bg-primary {`);
