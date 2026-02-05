@@ -6,6 +6,11 @@ import { useSubdomainStore } from "@/app/layout.subdomain.store";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
 import {
   Accordion,
@@ -59,7 +64,6 @@ export const READMEComponent = () => {
     readmeGenerated,
     setReadmeGenerated,
     readmeWasPasted,
-    setReadmeWasPasted,
     forceRefresh,
   } = useEditorStore();
 
@@ -87,7 +91,6 @@ export const READMEComponent = () => {
     addPage,
     updatePage,
     deletePage,
-    setAuthMethods,
     toggleAuthMethod,
     setPageAccess,
     updatePageAccess,
@@ -105,7 +108,7 @@ export const READMEComponent = () => {
   const [helpPopoverWasOpened, setHelpPopoverWasOpened] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
-  const [readmePlan, setReadmePlan] = useState<string | null>(null);
+  const [, setReadmePlan] = useState<string | null>(null);
   const successViewDismissedRef = useRef(false);
 
   useEffect(() => {

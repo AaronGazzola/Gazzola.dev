@@ -161,7 +161,7 @@ PHASE 1: SETUP REACT EMAIL TEMPLATES
 2. Check if @react-email/components is installed in package.json devDependencies
    - If not, add it with: npm install -D @react-email/components@latest
 
-3. Read styles/globals.css to extract CSS variables from :root selector (light mode):
+3. Read app/globals.css to extract CSS variables from :root selector (light mode):
    - --font (font family)
    - --shadow (box shadow)
    - --radius (border radius)
@@ -302,7 +302,7 @@ PHASE 3: UPDATE DOCUMENTATION
 
    ## Template Structure
 
-   Email templates use CSS variables from \`styles/globals.css\` (light mode) for
+   Email templates use CSS variables from \`app/globals.css\` (light mode) for
    consistent styling with the application. Templates are compiled to HTML with
    inline styles for email client compatibility.
 
