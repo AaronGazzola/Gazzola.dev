@@ -209,7 +209,7 @@ PHASE 1: SETUP REACT EMAIL TEMPLATES
    - email_change.tsx - Email change confirmation
 
    Each template should:
-   - Import necessary components from @react-email/components
+   - Import necessary components from @react-email/components (Do not use pure HTML, use react-email)
    - Import the Google Font using <Font> component or inline @import
    - Use CSS variables from globals.css converted to inline styles
    - Include app logo/title in header
@@ -219,7 +219,7 @@ PHASE 1: SETUP REACT EMAIL TEMPLATES
    - Use --font for all text
    - Use --letter-spacing for text
    - Use --spacing for margins/padding (multiply as needed: calc(var(--spacing) * 2))
-   - Include Supabase template variables: {{ .ConfirmationURL }}, {{ .Token }}, {{ .Email }}, etc.
+   - Include Supabase template variables: {{ .ConfirmationURL }}, {{ .Token }}, {{ .Email }}, etc. (React Email preserves these string literals in HTML export)
    - Be responsive and compatible with email clients
 
 7. Add email compilation script to package.json scripts:
