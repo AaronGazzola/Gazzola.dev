@@ -363,7 +363,7 @@ export const ExtensionsComponent = () => {
       <div className="flex flex-col theme-gap-2 mb-4">
         <h2 className="text-xl font-bold theme-text-foreground flex items-center theme-gap-2">
           <Blocks className="h-5 w-5 flex-shrink-0 theme-text-primary" />
-          Web App Extensions
+          Extension Prompts
         </h2>
         <p className="theme-text-foreground">
           Extend your application with these powerful integrations and features.
