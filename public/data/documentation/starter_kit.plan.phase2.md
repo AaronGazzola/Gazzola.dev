@@ -19,7 +19,9 @@ This is a complete step-by-step guide for building a Next.js application using t
   4.  Scroll down to "Publishable key" and click the copy button next to the "default" key and paste it here (starts with "sb*publishable*")
   5.  Scroll down to "Secret keys" and click the copy button next to the "default" key and paste it here (starts with "sb*secret*")
   6.  Also copy the URL in your browser's URL/search bar (starts with: "https://supabase.com/dashboard/project/") and paste it here
-  7.  In the dashboard sidebar, click "Authentication" → "URL Configuration" → add "http://localhost:3000/auth/callback" to Redirect URLs and save. Also add any other domain names that you will use for this app, ie "https://yourdomain.com/auth/callback"
+  7.  In the dashboard sidebar, click "Authentication" → "URL Configuration"
+  8. Add "http://localhost:3000" to the Site URL and save.
+  9. Add "http://localhost:3000/auth/callback" to the Redirect URLs and save. Also add a redirect URL for any other domain name that you will use for this app, ie "https://yourdomain.com/auth/callback"
   ```
 
 - After I provide these credentials, create a .env.local file (extract the supabase URL and project ref from the full url provided, eg: "https://supabase.com/dashboard/project/cqblezzhywdjerslhgho/settings/api-keys/legacy" -> "https://cqblezzhywdjerslhgho.supabase.co" + "cqblezzhywdjerslhgho"):
