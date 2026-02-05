@@ -188,12 +188,15 @@ PHASE 1: SETUP REACT EMAIL TEMPLATES
      --input
      --ring
 
+   NOTE: If colors use OKLCH format, convert to hex/RGB (email clients don't support OKLCH)
+
 4. Read the app's header component to get:
    - App logo URL or component
    - App title/name
    - Check common locations: components/Header.tsx, components/header.tsx, or layout files
 
 5. Identify the Google Font used in --font variable and note the font family name
+   NOTE: Prepare web-safe fallbacks (custom fonts don't load reliably in emails)
 
 6. Create email template files in emails/ directory:
    Required templates:
@@ -227,9 +230,19 @@ PHASE 1: SETUP REACT EMAIL TEMPLATES
 
 PHASE 2: CONFIGURE SUPABASE
 ----------------------------
-1. Check if supabase/config.toml exists
+1. Create supabase/templates/ directory if it doesn't exist
 
-2. Add email template configuration to supabase/config.toml:
+2. Verify Supabase CLI is linked:
+   - Check if project is linked with: supabase projects list
+   - If needed, guide user to link: supabase link --project-ref [project-ref from ".env.local"]
+
+3. Pull existing configuration from remote:
+   Run: npx supabase config pull
+
+   This will create a config.toml with ALL your current Supabase settings.
+   IMPORTANT: This step ensures you don't overwrite existing configuration.
+
+4. Add email template configuration to the existing supabase/config.toml:
    [auth.email.template.confirmation]
    subject = "Confirm your email - [App Name]"
    content_path = "./supabase/templates/confirmation.html"
@@ -250,19 +263,16 @@ PHASE 2: CONFIGURE SUPABASE
    subject = "Confirm your email change - [App Name]"
    content_path = "./supabase/templates/email_change.html"
 
-3. Create supabase/templates/ directory if it doesn't exist
-
-4. Compile React Email templates to HTML:
+5. Compile React Email templates to HTML:
    Run: npm run email:build
 
    This will export all templates from emails/ and copy them to supabase/templates/
 
-5. Verify Supabase CLI is linked:
-   - Check if project is linked with: supabase projects list
-   - If needed, guide user to link: supabase link --project-ref [project-ref from ".env.local"]
+6. Push the complete configuration back to Supabase:
+   npx supabase config push
 
-6. Push configuration to Supabase:
-   supabase config push
+   This pushes ALL settings in config.toml, including both existing configuration
+   and the new email template settings.
 
 
 PHASE 3: UPDATE DOCUMENTATION
@@ -325,8 +335,9 @@ I've configured all the email templates in your repository. Now you need to comp
    - magic_link.tsx - Magic link authentication
    - email_change.tsx - Email change confirmation
 ✅ Compiled templates to HTML in \`supabase/templates/\`
-✅ Configured \`supabase/config.toml\` with template paths
-✅ Pushed configuration to your Supabase project
+✅ Pulled existing Supabase configuration from remote
+✅ Added email template configuration to \`supabase/config.toml\`
+✅ Pushed complete configuration back to your Supabase project
 ✅ Updated CLAUDE.md with preview instructions
 
 ## Preview Your Templates
@@ -461,7 +472,7 @@ You need to complete these steps in Resend and Supabase Dashboard.
 
 4. Add **"Redirect URLs"** if needed:
    - Add any callback URLs your app uses
-   - Example: \`https://yourdomain.com/auth/callback\`
+   - Example: \`https://yourdomain.com/**\`
 
 5. Click **"Save"**
 
@@ -494,8 +505,9 @@ Email templates have been created and deployed to supabase - Users will receive 
   1. Edit the React component in emails/
   2. Preview changes: npx react-email dev
   3. Compile to HTML: npm run email:build
-  4. Push to Supabase: npx supabase config push
-  5. Test with a real auth flow
+  4. If working on a new machine or remote config changed: npx supabase config pull
+  5. Push to Supabase: npx supabase config push
+  6. Test with a real auth flow
 
 === END VERBATIM USER INSTRUCTIONS ===`;
 };

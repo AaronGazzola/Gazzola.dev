@@ -29,6 +29,32 @@ export async function getUserProfileAction(userId: string) {
   return data;
 }
 
+export async function getCurrentProfileAction() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return data;
+}
+
 export async function createPostAction(post: PostInsert) {
   const supabase = await createClient();
 

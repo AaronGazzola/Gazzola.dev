@@ -4,11 +4,12 @@ import { toast } from "sonner";
 import {
   createPostAction,
   deletePostAction,
+  getCurrentProfileAction,
   getPostsAction,
   getUserProfileAction,
   updatePostAction,
 } from "./template.actions";
-import { usePostsStore } from "./template.stores";
+import { useAuthStore, usePostsStore } from "./template.stores";
 import type { PostInsert, PostUpdate } from "./template.types";
 import { CustomToast } from "@/components/CustomToast";
 
@@ -16,6 +17,45 @@ export function useUserProfile(userId: string) {
   return useQuery({
     queryKey: ["userProfile", userId],
     queryFn: () => getUserProfileAction(userId),
+  });
+}
+
+export function useAuth() {
+  const supabase = createClient();
+  const { setUser, setProfile, setLoading } = useAuthStore();
+
+  return useQuery({
+    queryKey: ["auth"],
+    queryFn: async () => {
+      setLoading(true);
+
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error) {
+        console.error(error);
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
+        return null;
+      }
+
+      setUser(user);
+
+      if (user) {
+        const profile = await getCurrentProfileAction();
+        setProfile(profile);
+      } else {
+        setProfile(null);
+      }
+
+      setLoading(false);
+      return user;
+    },
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -111,6 +151,7 @@ export function useUserAuth() {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
       queryClient.invalidateQueries({ queryKey: ["user"] });
       toast.custom(() => (
         <CustomToast
