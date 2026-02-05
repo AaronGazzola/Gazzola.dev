@@ -947,7 +947,7 @@ export const READMEComponent = () => {
                   disabled={isPending || !canSubmitPages}
                   className="w-full theme-gap-2"
                 >
-                  {isGeneratingPlan ||
+                  {isGeneratingPages ||
                   isGeneratingReadme ||
                   isBatchGenerating ? (
                     <>
