@@ -2,14 +2,10 @@
 
 import { useEditorStore } from "@/app/(editor)/layout.stores";
 import { useCodeGeneration } from "@/app/(editor)/openrouter.hooks";
+import { useSubdomainStore } from "@/app/layout.subdomain.store";
 import { Button } from "@/components/editor/ui/button";
 import { Checkbox } from "@/components/editor/ui/checkbox";
 import { Input } from "@/components/editor/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/editor/ui/popover";
 import { Textarea } from "@/components/editor/ui/textarea";
 import {
   Accordion,
@@ -17,6 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { getDomainConfig } from "@/lib/domain.utils";
 import {
   ArrowRight,
   BookText,
@@ -25,10 +22,10 @@ import {
   CornerLeftUp,
   HelpCircle,
   Loader2,
-  PackageOpen,
   Plus,
   Shield,
   Sparkles,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -65,6 +62,8 @@ export const READMEComponent = () => {
     setReadmeWasPasted,
     forceRefresh,
   } = useEditorStore();
+
+  const brand = useSubdomainStore().brand;
 
   const {
     title,
@@ -104,8 +103,8 @@ export const READMEComponent = () => {
   const hasAutoExpandedRef = useRef(false);
   const [helpPopoverOpen, setHelpPopoverOpen] = useState(false);
   const [helpPopoverWasOpened, setHelpPopoverWasOpened] = useState(false);
-  const [starterKitPopoverOpen, setStarterKitPopoverOpen] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const [readmePlan, setReadmePlan] = useState<string | null>(null);
   const successViewDismissedRef = useRef(false);
 
@@ -205,22 +204,19 @@ export const READMEComponent = () => {
     [stage]
   );
 
-  const {
-    generateReadmeWithBatching,
-    isGeneratingReadme,
-    isBatchGenerating,
-  } = useReadmeGeneration(
-    title,
-    description,
-    layouts,
-    pages,
-    authMethods,
-    pageAccess,
-    setReadmePlan,
-    setContent,
-    setReadmeGenerated,
-    forceRefresh
-  );
+  const { generateReadmeWithBatching, isGeneratingReadme, isBatchGenerating } =
+    useReadmeGeneration(
+      title,
+      description,
+      layouts,
+      pages,
+      authMethods,
+      pageAccess,
+      setReadmePlan,
+      setContent,
+      setReadmeGenerated,
+      forceRefresh
+    );
 
   const { mutate: generatePages, isPending: isGeneratingPages } =
     useCodeGeneration((response) => {
@@ -478,9 +474,7 @@ export const READMEComponent = () => {
   }
 
   const isPending =
-    isGeneratingReadme ||
-    isGeneratingPages ||
-    isBatchGenerating;
+    isGeneratingReadme || isGeneratingPages || isBatchGenerating;
   const isTitleValid = title.trim().length >= MIN_TITLE_LENGTH;
   const isDescriptionValid =
     description.trim().length >= MIN_DESCRIPTION_LENGTH;
@@ -511,55 +505,19 @@ export const READMEComponent = () => {
           Generate your web app starter kit!
         </h2>
         <p className="theme-text-foreground">
-          Follow the steps below to create a detailed README for your app.
-          <br />
-          This is the first step in generating a custom starter kit for your
-          app&apos;s codebase.
+          <strong>{getDomainConfig(brand).ui.sidebarTitle}</strong> is a web app
+          starter kit generator - follow the steps to build your custom web app
+          with <strong>Next.js</strong>, <strong>Supabase</strong> and{" "}
+          <strong>Claude Code</strong>
         </p>
-        <Popover
-          open={starterKitPopoverOpen}
-          onOpenChange={setStarterKitPopoverOpen}
+        <Button
+          variant="link"
+          className="theme-gap-2 w-fit text-md"
+          onClick={() => setVideoDialogOpen(true)}
         >
-          <PopoverTrigger asChild>
-            <Button variant="link" className="theme-gap-2 w-fit px-0">
-              What&apos;s a starter kit?
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[500px] max-h-[500px] overflow-y-auto">
-            <div className="flex flex-col theme-gap-4">
-              <div className="flex items-center theme-gap-2">
-                <PackageOpen className="h-5 w-5 theme-text-primary" />
-                <h4 className="font-semibold text-base">Starter Kit</h4>
-              </div>
-              <div className="flex flex-col theme-gap-3 text-sm theme-text-foreground">
-                <p>
-                  A starter kit is a downloadable package containing all the
-                  configuration files and documentation needed to initialize
-                  your custom web application with AI assistance.
-                </p>
-                <p className="font-semibold">What&apos;s included:</p>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>Database schema and configuration</li>
-                  <li>App directory structure with page specifications</li>
-                  <li>Theme configuration (colors, fonts, components)</li>
-                  <li>Step-by-step implementation plan</li>
-                  <li>Code templates and patterns</li>
-                  <li>Setup prompts for Claude Code</li>
-                </ul>
-                <p className="font-semibold">How it works:</p>
-                <ol className="list-decimal list-inside space-y-1 ml-2">
-                  <li>Download your customized starter kit</li>
-                  <li>Place it in your project directory</li>
-                  <li>Copy and paste the provided prompt into Claude Code</li>
-                  <li>
-                    Claude reads your starter kit and scaffolds your entire
-                    application
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+          <HelpCircle className="!h-6 !w-6" />
+          Watch a guide by the developer
+        </Button>
       </div>
 
       <Accordion
@@ -966,6 +924,37 @@ export const READMEComponent = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+
+      {videoDialogOpen && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center"
+          onClick={() => setVideoDialogOpen(false)}
+        >
+          <Button
+            onClick={() => setVideoDialogOpen(false)}
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 z-10 rounded-full h-12 w-12 bg-white/20 hover:bg-white/30 text-white border border-white/30"
+          >
+            <X className="h-7 w-7" />
+          </Button>
+          <div
+            className="relative aspect-[9/16] bg-black/50 p-4 rounded-lg"
+            style={{
+              height: "min(100vh, calc(100vw * 16 / 9))",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <iframe
+              className="w-full h-full rounded"
+              src="https://www.youtube.com/embed/kBHy4ATV6aY"
+              title="How it works"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
