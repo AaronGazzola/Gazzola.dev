@@ -189,6 +189,8 @@ PHASE 1: SETUP REACT EMAIL TEMPLATES
      --ring
 
    NOTE: If colors use OKLCH format, convert to hex/RGB (email clients don't support OKLCH)
+   - Install culori: npm install -D culori
+   - Use formatHex() from culori to convert OKLCH to hex: formatHex({ mode: 'oklch', l, c, h })
 
 4. Read the app's header component to get:
    - App logo URL or component
