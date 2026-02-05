@@ -107,7 +107,6 @@ export const READMEComponent = () => {
   const [starterKitPopoverOpen, setStarterKitPopoverOpen] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
   const [readmePlan, setReadmePlan] = useState<string | null>(null);
-  const phase1ToastIdRef = useRef<string | number | undefined>();
   const successViewDismissedRef = useRef(false);
 
   useEffect(() => {
@@ -207,9 +206,7 @@ export const READMEComponent = () => {
   );
 
   const {
-    generatePlan,
     generateReadmeWithBatching,
-    isGeneratingPlan,
     isGeneratingReadme,
     isBatchGenerating,
   } = useReadmeGeneration(
@@ -222,8 +219,7 @@ export const READMEComponent = () => {
     setReadmePlan,
     setContent,
     setReadmeGenerated,
-    forceRefresh,
-    phase1ToastIdRef
+    forceRefresh
   );
 
   const { mutate: generatePages, isPending: isGeneratingPages } =
@@ -348,10 +344,6 @@ export const READMEComponent = () => {
       authMethods,
       layouts,
       pages,
-    });
-
-    phase1ToastIdRef.current = toast.loading("Creating README structure...", {
-      description: `Processing ${layouts.length} layouts and ${pages.length} pages`,
     });
 
     generateReadmeWithBatching();
@@ -486,7 +478,6 @@ export const READMEComponent = () => {
   }
 
   const isPending =
-    isGeneratingPlan ||
     isGeneratingReadme ||
     isGeneratingPages ||
     isBatchGenerating;
@@ -926,9 +917,7 @@ export const READMEComponent = () => {
                     }
                     className="flex-1 theme-gap-2"
                   >
-                    {isGeneratingPlan ||
-                    isGeneratingReadme ||
-                    isBatchGenerating ? (
+                    {isGeneratingReadme || isBatchGenerating ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
                         Regenerating...

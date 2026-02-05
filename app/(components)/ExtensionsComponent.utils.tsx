@@ -487,29 +487,15 @@ You need to complete these steps in Resend and Supabase Dashboard.
    - Check delivery status
    - View any errors or bounces
 
+Email templates have been created and deployed to supabase - Users will receive branded transactional emails for all authentication flows once you have completed the configuration steps described above.
 
-### UPDATING TEMPLATES LATER
+  To modify email templates in the future:
 
-To modify email templates in the future:
-
-1. Edit the React component in \`emails/\`
-2. Preview changes: \`npx react-email dev\`
-3. Compile to HTML: \`npm run email:build\`
-4. Push to Supabase: \`supabase config push\`
-5. Test with a real auth flow
-
-
----
-
-## Summary
-
-✅ **In Repo:** All email templates created and configured
-✅ **Resend:** Account created, domain verified, API key obtained
-✅ **Supabase:** SMTP configured with Resend credentials
-✅ **Testing:** Verified emails send with custom templates
-
-Your email setup is now complete! Users will receive branded transactional emails
-for all authentication flows.
+  1. Edit the React component in emails/
+  2. Preview changes: npx react-email dev
+  3. Compile to HTML: npm run email:build
+  4. Push to Supabase: npx supabase config push
+  5. Test with a real auth flow
 
 === END VERBATIM USER INSTRUCTIONS ===`;
 };
