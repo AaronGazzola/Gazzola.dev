@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(npx create-next-app*)",
+      "Bash(npx shadcn*)",
+      "Bash(npx supabase link*)",
+      "Bash(npx supabase migration*)",
+      "Bash(npx supabase gen*)",
+      "Bash(npx supabase login*)",
+      "Bash(npx supabase projects*)",
+      "Bash(tsx *)",
+      "Bash(echo *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(mv *)",
+      "Bash(cp *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(touch *)",
+      "Bash(unzip *)",
+      "Bash(cd *)",
+      "Bash(pwd*)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(git --version*)",
+      "Bash(git status*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(node --version*)"
+    ]
+  }
+}
