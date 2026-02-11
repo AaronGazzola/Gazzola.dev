@@ -1,0 +1,7 @@
+# Eco3d.shop
+
+Eco3d.shop is a web platform that combines 3D model design with on-demand printing using biodegradable filaments. Users access a browser-based 3D editor to create custom models, can save multiple projects, and optionally publish designs to a community gallery after admin approval.
+
+When ready to print, users select their project, choose a size and up to three filament colors (white, black, or natural), and submit for printability review. Admins verify the design is technically feasible, finalize the cost based on size and filament count, and approve the order. Pricing scales with model size and number of filaments used. Once payment is complete, the item is printed and shipped worldwide with tracking available in the user's dashboard.
+
+All filaments are biodegradable bio-plastics that are strong and durable when maintained but decompose naturally over time. The platform includes a public gallery for browsing published designs, authenticated user dashboards for managing projects and orders, and admin tools for reviewing publications and print orders.

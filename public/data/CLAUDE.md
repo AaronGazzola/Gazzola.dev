@@ -153,13 +153,19 @@ app/
 
 This project uses a remote Supabase repository. There is no local database.
 
-Create migrations using:
+## Create migrations:
 
 `npx supabase migration new [migration name]`
 (do not create migration files manually)
 
-Push migrations using:
+## Push migrations:
 
 `npx supabase db push`
 
+## Query the database:
+
 In order to query the database, create and run a custom typescript script. (Do not use `psql`)
+
+## Generate types:
+
+`npx supabase gen types typescript --project-id <project-ref> > supabase/types.ts`
