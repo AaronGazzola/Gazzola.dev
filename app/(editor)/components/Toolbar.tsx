@@ -733,6 +733,7 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
   const processUploadedFile = useCallback(
     async (file: File) => {
       try {
+        console.log("[PROGRESS UPLOAD] Starting file processing");
         const text = await file.text();
         const progressData = JSON.parse(text);
 
@@ -741,6 +742,16 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           return;
         }
 
+        console.log("[PROGRESS UPLOAD] Valid progress file, flags:", {
+          readmeGenerated: progressData.editorState.readmeGenerated,
+          appStructureGenerated: progressData.editorState.appStructureGenerated,
+          databaseGenerated: progressData.editorState.databaseGenerated,
+        });
+
+        setUploadDialogOpen(false);
+        setSavePopoverOpen(false);
+        setUploadedFile(null);
+
         const editorStore = useEditorStore.getState();
         const themeStore = useThemeConfigStore.getState();
         const databaseStore = useDatabaseStore.getState();
@@ -748,6 +759,12 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         const readmeStore = useREADMEStore.getState();
         const databaseTablesStore = useDatabaseTablesStore.getState();
         const nextStepsStore = useNextStepsStore.getState();
+
+        console.log("[PROGRESS UPLOAD] Current store states before restore:", {
+          readmeGenerated: editorStore.readmeGenerated,
+          appStructureGenerated: editorStore.appStructureGenerated,
+          databaseGenerated: editorStore.databaseGenerated,
+        });
 
         if (progressData.themeState) {
           themeStore.setTheme(progressData.themeState);
@@ -925,19 +942,31 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
         }
 
         if (progressData.editorState) {
-          editorStore.setMarkdownData(progressData.editorState.data);
+          console.log("[PROGRESS UPLOAD] Setting markdown data, length:", progressData.editorState.data?.flatIndex ? Object.keys(progressData.editorState.data.flatIndex).length : 0);
+
+          const currentVersion = editorStore.data.contentVersion;
+          console.log("[PROGRESS UPLOAD] Preserving current version:", currentVersion);
+
+          editorStore.setMarkdownData({
+            ...progressData.editorState.data,
+            contentVersion: currentVersion
+          });
+
           editorStore.setPreviewMode(progressData.editorState.previewMode);
           editorStore.setDarkMode(progressData.editorState.darkMode);
-          editorStore.setAppStructureGenerated(
-            progressData.editorState.appStructureGenerated
-          );
+          editorStore.setAppStructure(progressData.editorState.appStructure);
+
+          console.log("[PROGRESS UPLOAD] Setting generated flags");
           editorStore.setReadmeGenerated(
             progressData.editorState.readmeGenerated
+          );
+          editorStore.setAppStructureGenerated(
+            progressData.editorState.appStructureGenerated
           );
           editorStore.setDatabaseGenerated(
             progressData.editorState.databaseGenerated
           );
-          editorStore.setAppStructure(progressData.editorState.appStructure);
+
           if (progressData.editorState.features) {
             editorStore.setFeatures(progressData.editorState.features);
           }
@@ -948,21 +977,36 @@ export const Toolbar = ({ currentContentPath }: ToolbarProps) => {
           }
         }
 
-        editorStore.forceRefresh();
+        const progressLoadTimestamp = Date.now();
 
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        let targetPage = numberedPages.find((page) => page.order === 1);
+
+        if (progressData.editorState.databaseGenerated) {
+          targetPage =
+            numberedPages.find((page) => page.path === "database") ||
+            targetPage;
+        } else if (progressData.editorState.appStructureGenerated) {
+          targetPage =
+            numberedPages.find((page) => page.path === "app-directory") ||
+            targetPage;
+        } else if (progressData.editorState.readmeGenerated) {
+          targetPage =
+            numberedPages.find((page) => page.path === "readme") || targetPage;
+        }
+
+        console.log("[PROGRESS UPLOAD] Navigating to:", targetPage?.url, "with timestamp:", progressLoadTimestamp);
+
+        if (targetPage) {
+          router.push(targetPage.url + `?progressLoaded=${progressLoadTimestamp}`);
+        }
+
+        console.log("[PROGRESS UPLOAD] Restore complete, final flags:", {
+          readmeGenerated: editorStore.readmeGenerated,
+          appStructureGenerated: editorStore.appStructureGenerated,
+          databaseGenerated: editorStore.databaseGenerated,
+        });
 
         toast.success("Progress restored successfully!");
-        setUploadDialogOpen(false);
-        setSavePopoverOpen(false);
-        setUploadedFile(null);
-
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        const homePage = numberedPages.find((page) => page.order === 1);
-        if (homePage) {
-          router.push(homePage.url);
-        }
       } catch (error) {
         console.error("Failed to upload progress:", error);
         toast.error(

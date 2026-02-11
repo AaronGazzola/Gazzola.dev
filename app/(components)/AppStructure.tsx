@@ -28,6 +28,7 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 import { useStructureGeneration } from "./AppStructure.generation-handlers";
 import { useAppStructureStore } from "./AppStructure.stores";
 import { InferredFeature } from "./AppStructure.types";
@@ -282,6 +283,7 @@ export const LayoutAndStructure = () => {
   } = useEditorStore();
 
   const { layouts, pages, pageAccess, authMethods } = useREADMEStore();
+  const searchParams = useSearchParams();
 
   const [routeInputValue, setRouteInputValue] = useState("");
   const routeInputRef = useRef<HTMLInputElement>(null);
@@ -335,10 +337,28 @@ export const LayoutAndStructure = () => {
   }, [featuresGenerated, inferredFeatures, globalExpandedFeatureId]);
 
   useEffect(() => {
-    if (appStructureGenerated && !showSuccessView) {
+    const progressLoaded = searchParams?.get("progressLoaded");
+    console.log("[APP STRUCTURE] Progress loaded effect:", {
+      progressLoaded,
+      appStructureGenerated,
+      showSuccessView,
+    });
+    if (progressLoaded && appStructureGenerated) {
+      console.log("[APP STRUCTURE] Showing success view from progress load");
       setShowSuccessView(true);
     }
-  }, [appStructureGenerated]);
+  }, [searchParams, appStructureGenerated]);
+
+  useEffect(() => {
+    console.log("[APP STRUCTURE] Normal success view effect:", {
+      appStructureGenerated,
+      showSuccessView,
+    });
+    if (appStructureGenerated && !showSuccessView) {
+      console.log("[APP STRUCTURE] Showing success view from normal flow");
+      setShowSuccessView(true);
+    }
+  }, [appStructureGenerated, showSuccessView]);
 
   const handleAddFeature = useCallback(
     (pageId: string) => {
@@ -680,11 +700,18 @@ export const LayoutAndStructure = () => {
     0
   );
 
+  console.log("[APP STRUCTURE] Render:", {
+    appStructureGenerated,
+    showSuccessView,
+    appStructureLength: appStructure.length,
+  });
+
   if (
     appStructure.length === 0 ||
     !appStructureGenerated ||
     (appStructureGenerated && !showSuccessView)
   ) {
+    console.log("[APP STRUCTURE] Rendering FORM VIEW");
     if (!hasLayoutsOrPages) {
       return (
         <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto">
@@ -849,6 +876,8 @@ export const LayoutAndStructure = () => {
     );
   }
 
+  console.log("[APP STRUCTURE] Rendering SUCCESS VIEW");
+
   return (
     <div className="theme-p-2 md:theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto relative">
       <div className="absolute top-2 right-2 flex items-center theme-gap-2">
@@ -857,6 +886,7 @@ export const LayoutAndStructure = () => {
           size="icon"
           className="h-8 w-8 rounded-full"
           onClick={() => {
+            console.log("[APP STRUCTURE] Dismissing success view");
             setShowSuccessView(false);
             setAccordionValue("step-features");
           }}

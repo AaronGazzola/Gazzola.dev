@@ -33,6 +33,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SiSupabase } from "react-icons/si";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 import { useAppStructureStore } from "./AppStructure.stores";
 import {
   generateId,
@@ -78,6 +79,7 @@ export const DatabaseConfiguration = () => {
   } = useEditorStore();
   const readmeStore = useREADMEStore();
   const appStructureStore = useAppStructureStore();
+  const searchParams = useSearchParams();
 
   const {
     tableDescriptions,
@@ -301,10 +303,28 @@ export const DatabaseConfiguration = () => {
   }, []);
 
   useEffect(() => {
-    if (databaseGenerated && !showSuccessView) {
+    const progressLoaded = searchParams?.get("progressLoaded");
+    console.log("[DATABASE] Progress loaded effect:", {
+      progressLoaded,
+      databaseGenerated,
+      showSuccessView,
+    });
+    if (progressLoaded && databaseGenerated) {
+      console.log("[DATABASE] Showing success view from progress load");
       setShowSuccessView(true);
     }
-  }, [databaseGenerated]);
+  }, [searchParams, databaseGenerated]);
+
+  useEffect(() => {
+    console.log("[DATABASE] Normal success view effect:", {
+      databaseGenerated,
+      showSuccessView,
+    });
+    if (databaseGenerated && !showSuccessView) {
+      console.log("[DATABASE] Showing success view from normal flow");
+      setShowSuccessView(true);
+    }
+  }, [databaseGenerated, showSuccessView]);
 
   useEffect(() => {
     initializeFromConfig(initialConfiguration);
@@ -456,7 +476,10 @@ export const DatabaseConfiguration = () => {
       t.description.trim().length >= MIN_TABLE_DESCRIPTION_LENGTH
   );
 
+  console.log("[DATABASE] Render:", { databaseGenerated, showSuccessView, mounted });
+
   if (!databaseGenerated || (databaseGenerated && !showSuccessView)) {
+    console.log("[DATABASE] Rendering FORM VIEW");
     if (!hasReadme || !hasAppStructure) {
       const renderMessage = () => {
         if (!hasReadme && !hasAppStructure) {
@@ -671,6 +694,8 @@ export const DatabaseConfiguration = () => {
     );
   }
 
+  console.log("[DATABASE] Rendering SUCCESS VIEW");
+
   return (
     <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto relative">
       <div className="absolute top-2 right-2 flex items-center theme-gap-2 z-10">
@@ -679,6 +704,7 @@ export const DatabaseConfiguration = () => {
           size="icon"
           className="h-8 w-8 rounded-full"
           onClick={() => {
+            console.log("[DATABASE] Dismissing success view");
             setShowSuccessView(false);
             setAccordionValue("step-tables");
           }}

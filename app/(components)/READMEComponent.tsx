@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 import { useReadmeGeneration } from "./READMEComponent.generation-handlers";
 import { useREADMEStore } from "./READMEComponent.stores";
 import {
@@ -68,6 +69,7 @@ export const READMEComponent = () => {
   } = useEditorStore();
 
   const brand = useSubdomainStore().brand;
+  const searchParams = useSearchParams();
 
   const {
     title,
@@ -121,11 +123,32 @@ export const READMEComponent = () => {
   }, [stage]);
 
   useEffect(() => {
+    const progressLoaded = searchParams?.get("progressLoaded");
+    console.log("[README] Progress loaded effect:", {
+      progressLoaded,
+      readmeGenerated,
+      showSuccessView,
+      successViewDismissed: successViewDismissedRef.current,
+    });
+    if (progressLoaded && readmeGenerated) {
+      console.log("[README] Showing success view from progress load");
+      successViewDismissedRef.current = false;
+      setShowSuccessView(true);
+    }
+  }, [searchParams, readmeGenerated]);
+
+  useEffect(() => {
+    console.log("[README] Normal success view effect:", {
+      readmeGenerated,
+      showSuccessView,
+      successViewDismissed: successViewDismissedRef.current,
+    });
     if (
       readmeGenerated &&
       !showSuccessView &&
       !successViewDismissedRef.current
     ) {
+      console.log("[README] Showing success view from normal flow");
       setShowSuccessView(true);
     }
   }, [readmeGenerated, showSuccessView]);
@@ -405,7 +428,10 @@ export const READMEComponent = () => {
     }
   };
 
+  console.log("[README] Render:", { readmeGenerated, showSuccessView });
+
   if (readmeGenerated && showSuccessView) {
+    console.log("[README] Rendering SUCCESS VIEW");
     return (
       <div className="flex flex-col theme-gap-4 theme-p-4 theme-radius theme-border-border theme-bg-card theme-text-card-foreground theme-shadow theme-font theme-tracking max-w-2xl mx-auto relative">
         <div className="absolute top-2 right-2 flex items-center theme-gap-2">
@@ -414,6 +440,7 @@ export const READMEComponent = () => {
             size="icon"
             className="h-8 w-8 rounded-full"
             onClick={() => {
+              console.log("[README] Dismissing success view");
               successViewDismissedRef.current = true;
               setShowSuccessView(false);
               setAccordionValue("step-3-pages");
