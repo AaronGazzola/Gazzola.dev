@@ -8,3 +8,4 @@
 - Implement the contact form with the resend prompt
 - Add terms, privacy, about and contact instructions to the starter kit plan prompt
 - remove "More options coming soon" from readme component - add sign in options to the extensions
+- Make it very clear that each plan phase should end with creating a new plan for the next phase

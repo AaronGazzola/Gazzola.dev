@@ -1,0 +1,46 @@
+WHY SUPABASE
+
+SECURITY & COMPLIANCE
+- SOC 2 Type 2 compliant and regularly audited (required by B2B SaaS)
+- Row Level Security (RLS) at database layer - data protected even if API fails
+- All traffic encrypted HTTPS/TLS 1.2+, database files/backups encrypted AES-256
+- pgAudit extension for comprehensive audit trails
+- Full SQL query transparency - everything auditable by security teams
+
+POSTGRESQL FOUNDATION
+- Built on PostgreSQL: world's most stable and advanced open-source database (40+ years proven)
+- Full ACID compliance, transactions, complex joins (unlike NoSQL)
+- Standard SQL means no vendor lock-in or proprietary query languages
+- Relational integrity at core for complex data relationships
+
+OPEN-SOURCE & CLIENT TRUST
+- Fully open-source - inspect, modify, self-host for maximum control
+- No vendor lock-in: migrate to any PostgreSQL provider
+- Transparent codebase builds client confidence
+- Community-driven development with transparent roadmap
+
+AUTO-GENERATED APIS & REAL-TIME
+- Automatically generates RESTful APIs via PostgREST (respects RLS policies)
+- Real-time subscriptions via WebSockets (Supabase Realtime)
+- GraphQL support through pg_graphql extension
+- No backend CRUD code needed
+
+AI & MODERN CAPABILITIES
+- pg_vector for AI embeddings within relational database (no separate vector DB needed)
+- Positioned as "Open-Source Standard for Relational AI" in 2026
+- Built-in authentication with multiple providers
+- Edge Functions for serverless logic
+- Storage with image transformations
+
+DEVELOPMENT & COST
+- Exceptional documentation with interactive playgrounds
+- Multiple client libraries: JavaScript, Python, Dart, Swift, Kotlin
+- Generous free tier: unlimited API requests, 50K MAU, 500MB database
+- Pro plan $25/month: 100K MAU, 8GB database (no surprise bills)
+
+VS FIREBASE
+- PostgreSQL relational vs Firestore NoSQL (better for complex relationships)
+- Direct SQL access vs limited query capabilities
+- Open-source/self-hostable vs proprietary
+- Database-layer security vs service-specific rules
+- No vendor lock-in with standard PostgreSQL
