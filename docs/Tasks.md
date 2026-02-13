@@ -9,3 +9,13 @@
 - Add terms, privacy, about and contact instructions to the starter kit plan prompt
 - remove "More options coming soon" from readme component - add sign in options to the extensions
 - Make it very clear that each plan phase should end with creating a new plan for the next phase
+- change resend key and beep.buzz keys
+- when signing up, check the
+  When email confirmation is enabled,
+  Supabase doesn't return an error for
+  duplicate emails — it returns a successful
+  response with data.user.identities as an
+  empty array. The fix now checks for that
+  empty identities array after the error
+  check and throws before onSuccess can
+  redirect to /verify.
